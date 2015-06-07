@@ -21,34 +21,29 @@ import java.util.Map;
 
 import net.sf.saxon.lib.ModuleURIResolver;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ResourceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An <a href="http://camel.apache.org/xquery.html">XQuery Component</a>
  * for performing transforming messages
  */
-public class XQueryComponent extends DefaultComponent {
+public class XQueryComponent extends UriEndpointComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(XQueryComponent.class);
     private ModuleURIResolver moduleURIResolver = new XQueryModuleURIResolver(this);
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String resourceUri = remaining;
-        URL url = resolveModuleResource(resourceUri);
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
-
-        XQueryBuilder xslt = XQueryBuilder.xquery(url);
-        xslt.setModuleURIResolver(getModuleURIResolver());
-        configureXslt(xslt, uri, remaining, parameters);
-        return new ProcessorEndpoint(uri, this, xslt);
+    public XQueryComponent() {
+        super(XQueryEndpoint.class);
     }
 
-    protected void configureXslt(XQueryBuilder xQueryBuilder, String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        setProperties(xQueryBuilder, parameters);
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        XQueryEndpoint answer = new XQueryEndpoint(uri, this);
+        setProperties(answer, parameters);
+
+        answer.setResourceUri(remaining);
+        answer.setModuleURIResolver(getModuleURIResolver());
+
+        return answer;
     }
 
     public URL resolveModuleResource(String uri) throws Exception {
@@ -59,6 +54,9 @@ public class XQueryComponent extends DefaultComponent {
         return moduleURIResolver;
     }
 
+    /**
+     * To use the custom {@link ModuleURIResolver}
+     */
     public void setModuleURIResolver(ModuleURIResolver moduleURIResolver) {
         this.moduleURIResolver = moduleURIResolver;
     }

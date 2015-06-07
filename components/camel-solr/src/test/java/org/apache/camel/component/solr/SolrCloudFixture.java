@@ -28,7 +28,6 @@ import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.cloud.MiniSolrCloudCluster;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.cloud.SolrZkClient;
-import org.apache.solr.common.cloud.ZkNodeProps;
 import org.apache.solr.common.params.CollectionParams.CollectionAction;
 import org.apache.solr.common.params.CoreAdminParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
@@ -132,23 +131,11 @@ public class SolrCloudFixture {
 
         Map<String, Object> props = new HashMap<String, Object>();
         props.put("configName", "conf1");
-        final ZkNodeProps zkProps = new ZkNodeProps(props);
-
-        // zkClient.makePath("/collections/collection1",
-        // ZkStateReader.toJSON(zkProps), CreateMode.PERSISTENT, true);
-        // zkClient.makePath("/collections/collection1/shards",
-        // CreateMode.PERSISTENT, true);
-        // zkClient.makePath("/collections/control_collection",
-        // ZkStateReader.toJSON(zkProps), CreateMode.PERSISTENT, true);
-        // zkClient.makePath("/collections/control_collection/shards",
-        // CreateMode.PERSISTENT, true);
 
         // for now, always upload the config and schema to the canonical names
         putConfig("conf1", zkClient, solrhome, config, "solrconfig.xml");
         putConfig("conf1", zkClient, solrhome, schema, "schema.xml");
 
-        // putConfig("conf1", zkClient, solrhome,
-        // "solrconfig.snippet.randomindexconfig.xml");
         putConfig("conf1", zkClient, solrhome, "stopwords.txt");
         putConfig("conf1", zkClient, solrhome, "stopwords_en.txt");
         putConfig("conf1", zkClient, solrhome, "protwords.txt");

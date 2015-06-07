@@ -47,7 +47,8 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
                 getHttpResponseFactory(),
                 getHttpExpectationVerifier(),
                 getSSLContext(),
-                false);
+                false,
+                new String[]{"TLSv1.2"});
         registerHandler(localServer);
         localServer.start();
 

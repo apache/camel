@@ -15,5 +15,5 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.jsch.JschComponent
-strategy.factory.class=org.apache.camel.component.jsch.ScpProcessStrategyFactory
+class=org.apache.camel.component.scp.ScpComponent
+strategy.factory.class=org.apache.camel.component.scp.ScpProcessStrategyFactory

@@ -22,8 +22,10 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.apache.camel.spring.javaconfig.test.JavaConfigContextLoader;
+import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
+import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -36,9 +38,9 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * @version 
  */
 // START SNIPPET: example
-@ContextConfiguration(
-        locations = "org.apache.camel.spring.javaconfig.patterns.FilterTest$ContextConfig",
-        loader = JavaConfigContextLoader.class)
+
+@RunWith(CamelSpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {FilterTest.ContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
 public class FilterTest extends AbstractJUnit4SpringContextTests {
 
     @EndpointInject(uri = "mock:result")

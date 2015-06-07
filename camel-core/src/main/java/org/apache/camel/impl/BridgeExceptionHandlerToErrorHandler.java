@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.util.UnitOfWorkHelper;
 
 /**

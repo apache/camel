@@ -20,18 +20,20 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.vertx.java.core.Vertx;
 import org.vertx.java.core.eventbus.EventBus;
 
 /**
  * A Camel Endpoint for working with <a href="http://vertx.io/">vert.x</a> event bus endpoints
  */
-@UriEndpoint(scheme = "vertx", consumerClass = VertxConsumer.class)
+@UriEndpoint(scheme = "vertx", title = "Vert.x", syntax = "vertx:address", consumerClass = VertxConsumer.class, label = "eventbus")
 public class VertxEndpoint extends DefaultEndpoint {
 
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String address;
     @UriParam
     private Boolean pubSub;
@@ -61,7 +63,11 @@ public class VertxEndpoint extends DefaultEndpoint {
     }
 
     public EventBus getEventBus() {
-        return getVertx().eventBus();
+        if (getVertx() != null) {
+            return getVertx().eventBus();
+        } else {
+            return null;
+        }
     }
 
     public Vertx getVertx() {
@@ -72,6 +78,13 @@ public class VertxEndpoint extends DefaultEndpoint {
         return address;
     }
 
+    /**
+     * Sets the event bus address used to communicate
+     */
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public boolean isPubSub() {
         return pubSub != null && pubSub;
     }
@@ -80,14 +93,11 @@ public class VertxEndpoint extends DefaultEndpoint {
         return pubSub;
     }
 
+    /**
+     * Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint.
+     */
     public void setPubSub(Boolean pubSub) {
         this.pubSub = pubSub;
     }
 
-    /**
-     * Sets the event bus address used to communicate
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }

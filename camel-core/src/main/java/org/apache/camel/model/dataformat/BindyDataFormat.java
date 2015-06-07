@@ -25,14 +25,16 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents the Bindy {@link org.apache.camel.spi.DataFormat}
+ * Bindy data format
  *
  * @version 
  */
+@Metadata(label = "dataformat,transformation", title = "Bindy")
 @XmlRootElement(name = "bindy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BindyDataFormat extends DataFormatDefinition {
@@ -48,12 +50,16 @@ public class BindyDataFormat extends DataFormatDefinition {
     private Class<?> clazz;
 
     public BindyDataFormat() {
+        super("bindy");
     }
 
     public BindyType getType() {
         return type;
     }
 
+    /**
+     * Whether to use csv, fixed or key value pairs mode.
+     */
     public void setType(BindyType type) {
         this.type = type;
     }
@@ -63,6 +69,9 @@ public class BindyDataFormat extends DataFormatDefinition {
         return packages;
     }
 
+    /**
+     * The java package names to scan for model classes.
+     */
     public void setPackages(String[] packages) {
         this.packages = packages;
     }
@@ -72,6 +81,9 @@ public class BindyDataFormat extends DataFormatDefinition {
         return classType;
     }
 
+    /**
+     * Name of model class to use.
+     */
     public void setClassType(String classType) {
         this.classType = classType;
     }
@@ -84,6 +96,11 @@ public class BindyDataFormat extends DataFormatDefinition {
         return locale;
     }
 
+    /**
+     * To configure a default locale to use, such as <tt>us</tt> for united states.
+     * <p/>
+     * To use the JVM platform default locale then use the name <tt>default</tt>
+     */
     public void setLocale(String locale) {
         this.locale = locale;
     }

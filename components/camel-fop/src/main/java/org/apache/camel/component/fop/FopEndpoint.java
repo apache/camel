@@ -16,36 +16,41 @@
  */
 package org.apache.camel.component.fop;
 
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.xml.sax.SAXException;
-
 import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.fop.apps.FopFactory;
 
 /**
  * Represents a Fop endpoint.
  */
+@UriEndpoint(scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, label = "transformation")
 public class FopEndpoint extends DefaultEndpoint {
-    private String userConfigURL;
-    private FopFactory fopFactory;
-    private String remaining;
 
-    public FopEndpoint(String uri, FopComponent component, String remaining) {
+    @UriPath @Metadata(required = "true")
+    private FopOutputType outputType;
+    @UriParam
+    private String userConfigURL;
+    @UriParam
+    private FopFactory fopFactory;
+
+    public FopEndpoint(String uri, FopComponent component, FopOutputType outputType) {
         super(uri, component);
-        this.remaining = remaining;
+        this.outputType = outputType;
     }
 
     public Producer createProducer() throws Exception {
-        return new FopProducer(this, fopFactory, remaining);
+        return new FopProducer(this, fopFactory, outputType.getFormatExtended());
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -56,15 +61,40 @@ public class FopEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    FopFactory getFopFactory() {
-        return fopFactory;
+    public FopOutputType getOutputType() {
+        return outputType;
     }
 
+    /**
+     * The primary output format is PDF but other output formats are also supported.
+     */
+    public void setOutputType(FopOutputType outputType) {
+        this.outputType = outputType;
+    }
+
+    public String getUserConfigURL() {
+        return userConfigURL;
+    }
+
+    /**
+     * The location of a configuration file which can be loaded from classpath or file system.
+     */
     public void setUserConfigURL(String userConfigURL) {
         this.userConfigURL = userConfigURL;
     }
 
-    private static void updateConfigurations(InputStream is, FopFactory fopFactory) throws SAXException, IOException, ConfigurationException {
+    public FopFactory getFopFactory() {
+        return fopFactory;
+    }
+
+    /**
+     * Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory.
+     */
+    public void setFopFactory(FopFactory fopFactory) {
+        this.fopFactory = fopFactory;
+    }
+
+    private static void updateConfigurations(InputStream is, FopFactory fopFactory) throws Exception {
         DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
         Configuration cfg = cfgBuilder.build(is);
         fopFactory.setUserConfig(cfg);

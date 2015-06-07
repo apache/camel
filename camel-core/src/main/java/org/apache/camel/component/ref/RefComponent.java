@@ -19,15 +19,18 @@ package org.apache.camel.component.ref;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Component for lookup of existing endpoints bound in the {@link org.apache.camel.spi.Registry}.
+ * The <a href="http://camel.apache.org/ref.html">Ref Component</a> is for lookup of existing endpoints bound in the {@link org.apache.camel.spi.Registry}.
  * <p/>
  * This component uses the <tt>ref:</tt> notation instead of the mostly common <tt>uri:</tt> notation. 
  */
-public class RefComponent extends DefaultComponent {
+public class RefComponent extends UriEndpointComponent {
+
+    public RefComponent() {
+        super(RefEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // first remove the scheme from the URI
@@ -39,19 +42,11 @@ public class RefComponent extends DefaultComponent {
         if (name.startsWith("//")) {
             name = name.substring(2);
         }
-        return lookupEndpoint(name, parameters);
+
+        RefEndpoint answer = new RefEndpoint(uri, this);
+        answer.setName(name);
+        setProperties(answer, parameters);
+        return answer;
     }
 
-    /**
-     * Looks up a mandatory endpoint for a given name.
-     * <p/>
-     * Derived classes could use this name as a logical name and look it up on some registry.
-     * <p/>
-     * The default implementation will do a mandatory look up the name in the {@link org.apache.camel.spi.Registry}.
-     *
-     * @throws org.apache.camel.NoSuchBeanException if not found in the {@link org.apache.camel.spi.Registry}
-     */
-    protected Endpoint lookupEndpoint(String name, Map<String, Object> parameters) {
-        return CamelContextHelper.mandatoryLookup(getCamelContext(), name, Endpoint.class);
-    }
 }

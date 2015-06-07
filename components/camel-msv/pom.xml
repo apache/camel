@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.16-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-msv</artifactId>
@@ -31,6 +31,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.validator.msv.*</camel.osgi.export.pkg>
+    <camel.osgi.import.pkg>org.apache.camel,*</camel.osgi.import.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=msv</camel.osgi.export.service>
   </properties>
 
@@ -40,28 +41,21 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.isorelax</artifactId>
-      <version>${isorelax-bundle-version}</version>
-      <exclusions>
-        <!-- exclude the following dependency as it's content is already embedded inside the SMX bundle anyway! -->
-        <!-- other than that it causes problems with Maven 3.0.4+ as it's not POM model 4.0.0 complaint -->
-        <exclusion>
-          <groupId>org.iso_relax.verifier.jaxp.validation</groupId>
-          <artifactId>isorelax-jaxp-bridge</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.jopendocument</groupId>
+      <artifactId>isorelax-jaxp-bridge-ILM</artifactId>
+      <version>${isorelax-jaxp-bridge-version}</version>
     </dependency>
     <dependency>
-      <groupId>msv</groupId>
-      <artifactId>msv</artifactId>
+      <groupId>com.sun.xml.bind.jaxb</groupId>
+      <artifactId>isorelax</artifactId>
+      <version>${isorelax-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.java.dev.msv</groupId>
+      <artifactId>msv-core</artifactId>
       <version>${msv-version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.sun.msv.datatype.xsd</groupId>
-      <artifactId>xsdlib</artifactId>
-      <version>${xsdlib-version}</version>
-    </dependency>
+    
 
     <!-- test dependencies -->
     <dependency>

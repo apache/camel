@@ -203,6 +203,20 @@ public interface ShutdownStrategy extends StaticService {
     boolean isShutdownRoutesInReverseOrder();
 
     /**
+     * Sets whether to log information about the inflight {@link org.apache.camel.Exchange}s which are still running
+     * during a shutdown which didn't complete without the given timeout.
+     *
+     * @param logInflightExchangesOnTimeout <tt>true</tt> to log information about the inflight exchanges, <tt>false</tt> to not log
+     */
+    void setLogInflightExchangesOnTimeout(boolean logInflightExchangesOnTimeout);
+
+    /**
+     * Whether to log information about the inflight {@link org.apache.camel.Exchange}s which are still running
+     * during a shutdown which didn't complete without the given timeout.
+     */
+    boolean isLogInflightExchangesOnTimeout();
+
+    /**
      * Whether a service is forced to shutdown.
      * <p/>
      * Can be used to signal to services that they are no longer allowed to run, such as if a forced

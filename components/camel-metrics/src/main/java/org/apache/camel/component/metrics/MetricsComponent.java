@@ -23,11 +23,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.metrics.counter.CounterEndpoint;
-import org.apache.camel.component.metrics.histogram.HistogramEndpoint;
-import org.apache.camel.component.metrics.meter.MeterEndpoint;
-import org.apache.camel.component.metrics.timer.TimerEndpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -36,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages metrics endpoints.
  */
-public class MetricsComponent extends DefaultComponent {
+public class MetricsComponent extends UriEndpointComponent {
 
     public static final String METRIC_REGISTRY_NAME = "metricRegistry";
     public static final MetricsType DEFAULT_METRICS_TYPE = MetricsType.METER;
@@ -46,6 +42,10 @@ public class MetricsComponent extends DefaultComponent {
 
     private MetricRegistry metricRegistry;
 
+    public MetricsComponent() {
+        super(MetricsEndpoint.class);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (metricRegistry == null) {
@@ -54,8 +54,9 @@ public class MetricsComponent extends DefaultComponent {
         }
         String metricsName = getMetricsName(remaining);
         MetricsType metricsType = getMetricsType(remaining);
-        LOG.info("Metrics type: {}; name: {}", metricsType, metricsName);
-        Endpoint endpoint = createNewEndpoint(metricRegistry, metricsType, metricsName);
+
+        LOG.debug("Metrics type: {}; name: {}", metricsType, metricsName);
+        Endpoint endpoint = new MetricsEndpoint(uri, this, metricRegistry, metricsType, metricsName);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -63,27 +64,6 @@ public class MetricsComponent extends DefaultComponent {
     String getMetricsName(String remaining) {
         String name = ObjectHelper.after(remaining, ":");
         return name == null ? remaining : name;
-    }
-
-    Endpoint createNewEndpoint(MetricRegistry registry, MetricsType type, String metricsName) {
-        Endpoint endpoint;
-        switch (type) {
-        case COUNTER:
-            endpoint = new CounterEndpoint(registry, metricsName);
-            break;
-        case METER:
-            endpoint = new MeterEndpoint(registry, metricsName);
-            break;
-        case HISTOGRAM:
-            endpoint = new HistogramEndpoint(registry, metricsName);
-            break;
-        case TIMER:
-            endpoint = new TimerEndpoint(registry, metricsName);
-            break;
-        default:
-            throw new RuntimeCamelException("Metrics type \"" + type.toString() + "\" not supported");
-        }
-        return endpoint;
     }
 
     MetricsType getMetricsType(String remaining) {
@@ -124,5 +104,16 @@ public class MetricsComponent extends DefaultComponent {
                 .build();
         reporter.start(DEFAULT_REPORTING_INTERVAL_SECONDS, TimeUnit.SECONDS);
         return registry;
+    }
+
+    public MetricRegistry getMetricRegistry() {
+        return metricRegistry;
+    }
+
+    /**
+     * To use a custom configured MetricRegistry.
+     */
+    public void setMetricRegistry(MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
     }
 }

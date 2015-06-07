@@ -42,7 +42,7 @@ import org.apache.camel.util.IOHelper;
  * @version 
  */
 public class XStreamDataFormat extends AbstractXStreamWrapper  {
-    String encoding;
+    private String encoding;
     
     public XStreamDataFormat() {
     }

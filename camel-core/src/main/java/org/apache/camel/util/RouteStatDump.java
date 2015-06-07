@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * A model of a route stat dump from {@link org.apache.camel.api.management.mbean.ManagedRouteMBean#dumpRouteAsXml()}.
+ * A model of a route stat dump from {@link org.apache.camel.api.management.mbean.ManagedRouteMBean#dumpRouteStatsAsXml(boolean, boolean)}.
  */
 @XmlRootElement(name = "routeStat")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -34,6 +34,9 @@ public final class RouteStatDump {
 
     @XmlAttribute
     private String id;
+
+    @XmlAttribute
+    private String state;
 
     @XmlAttribute
     private Long exchangesCompleted;
@@ -66,7 +69,13 @@ public final class RouteStatDump {
     private Long meanProcessingTime;
 
     @XmlAttribute
+    private Long exchangesInflight;
+
+    @XmlAttribute
     private Long selfProcessingTime;
+
+    @XmlAttribute
+    private String startTimestamp;
 
     @XmlAttribute
     private String resetTimestamp;
@@ -107,6 +116,14 @@ public final class RouteStatDump {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public Long getExchangesCompleted() {
@@ -195,6 +212,22 @@ public final class RouteStatDump {
 
     public void setSelfProcessingTime(Long selfProcessingTime) {
         this.selfProcessingTime = selfProcessingTime;
+    }
+
+    public Long getExchangesInflight() {
+        return exchangesInflight;
+    }
+
+    public void setExchangesInflight(Long exchangesInflight) {
+        this.exchangesInflight = exchangesInflight;
+    }
+
+    public String getStartTimestamp() {
+        return startTimestamp;
+    }
+
+    public void setStartTimestamp(String startTimestamp) {
+        this.startTimestamp = startTimestamp;
     }
 
     public String getResetTimestamp() {

@@ -73,7 +73,9 @@ public class VertxConsumer extends DefaultConsumer {
             LOG.debug("Registering EventBus handler on address {}", endpoint.getAddress());
         }
 
-        endpoint.getEventBus().registerHandler(endpoint.getAddress(), handler);
+        if (endpoint.getEventBus() != null) {
+            endpoint.getEventBus().registerHandler(endpoint.getAddress(), handler);
+        }
         super.doStart();
     }
 
@@ -82,7 +84,15 @@ public class VertxConsumer extends DefaultConsumer {
             LOG.debug("Unregistering EventBus handler on address {}", endpoint.getAddress());
         }
 
-        endpoint.getEventBus().unregisterHandler(endpoint.getAddress(), handler);
+        try {
+            if (endpoint.getEventBus() != null) {
+                endpoint.getEventBus().unregisterHandler(endpoint.getAddress(), handler);
+            }
+        } catch (IllegalStateException e) {
+            LOG.warn("EventBus already stopped on address {}", endpoint.getAddress());
+            // ignore if already stopped as vertx throws this exception if its already stopped etc.
+            // unfortunately it does not provide an nicer api to know its state
+        }
         super.doStop();
     }
 }

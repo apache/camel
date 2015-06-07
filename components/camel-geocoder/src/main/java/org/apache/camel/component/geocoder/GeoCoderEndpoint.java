@@ -20,17 +20,27 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Represents a GeoCoder endpoint.
  */
+@UriEndpoint(scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng", producerOnly = true, label = "api,location")
 public class GeoCoderEndpoint extends DefaultEndpoint {
 
+    @UriPath
     private String address;
+    @UriPath
     private String latlng;
+    @UriParam(defaultValue = "en")
     private String language = "en";
+    @UriParam
     private String clientId;
+    @UriParam
     private String clientKey;
+    @UriParam
     private boolean headersOnly;
 
     public GeoCoderEndpoint() {
@@ -56,6 +66,9 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         return language;
     }
 
+    /**
+     * The language to use.
+     */
     public void setLanguage(String language) {
         this.language = language;
     }
@@ -64,6 +77,9 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         return address;
     }
 
+    /**
+     * The geo address which should be prefixed with <tt>address:</tt>
+     */
     public void setAddress(String address) {
         this.address = address;
     }
@@ -72,6 +88,9 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         return latlng;
     }
 
+    /**
+     * The geo latitude and longitude which should be prefixed with <tt>latlng:</tt>
+     */
     public void setLatlng(String latlng) {
         this.latlng = latlng;
     }
@@ -80,6 +99,9 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         return headersOnly;
     }
 
+    /**
+     * Whether to only enrich the Exchange with headers, and leave the body as-is.
+     */
     public void setHeadersOnly(boolean headersOnly) {
         this.headersOnly = headersOnly;
     }
@@ -88,6 +110,9 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         return clientId;
     }
 
+    /**
+     * To use google premium with this client id
+     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
@@ -96,6 +121,9 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         return clientKey;
     }
 
+    /**
+     * To use google premium with this client key
+     */
     public void setClientKey(String clientKey) {
         this.clientKey = clientKey;
     }

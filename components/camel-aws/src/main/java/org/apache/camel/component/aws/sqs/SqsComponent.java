@@ -20,19 +20,20 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS Component</a> 
  * 
  */
-public class SqsComponent extends DefaultComponent {
+public class SqsComponent extends UriEndpointComponent {
     
     public SqsComponent() {
+        super(SqsEndpoint.class);
     }
 
     public SqsComponent(CamelContext context) {
-        super(context);
+        super(context, SqsEndpoint.class);
     }
 
     @Override

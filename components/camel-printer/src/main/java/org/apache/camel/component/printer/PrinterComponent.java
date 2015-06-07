@@ -20,9 +20,13 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-public class PrinterComponent extends DefaultComponent {
+public class PrinterComponent extends UriEndpointComponent {
+
+    public PrinterComponent() {
+        super(PrinterEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

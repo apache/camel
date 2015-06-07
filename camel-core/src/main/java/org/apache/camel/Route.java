@@ -30,12 +30,13 @@ import org.apache.camel.spi.RouteContext;
  * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
  * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
  */
-public interface Route {
+public interface Route extends EndpointAware {
 
     String ID_PROPERTY = "id";
     String PARENT_PROPERTY = "parent";
     String GROUP_PROPERTY = "group";
     String REST_PROPERTY = "rest";
+    String DESCRIPTION_PROPERTY = "description";
 
     /**
      * Gets the route id
@@ -43,13 +44,6 @@ public interface Route {
      * @return the route id
      */
     String getId();
-
-    /**
-     * Gets the inbound endpoint
-     *
-     * @return the inbound endpoint
-     */
-    Endpoint getEndpoint();
 
     /**
      * Gets the inbound {@link Consumer}
@@ -71,6 +65,15 @@ public interface Route {
      * @return properties
      */
     Map<String, Object> getProperties();
+
+    /**
+     * Gets the route description (if any has been configured).
+     * <p/>
+     * The description is configured using the {@link #DESCRIPTION_PROPERTY} as key in the {@link #getProperties()}.
+     *
+     * @return the description, or <tt>null</tt> if no description has been configured.
+     */
+    String getDescription();
 
     /**
      * Gets the route context
@@ -107,6 +110,14 @@ public interface Route {
      * @return a navigator for {@link Processor}.
      */
     Navigate<Processor> navigate();
+
+    /**
+     * Returns a list of all the {@link Processor}s from this route that has id's matching the pattern
+     *
+     * @param pattern the pattern to match by ids
+     * @return a list of {@link Processor}, is never <tt>null</tt>.
+     */
+    List<Processor> filter(String pattern);
 
     /**
      * Callback preparing the route to be started, by warming up the route.

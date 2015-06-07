@@ -26,22 +26,25 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class NettyRfc5425Test extends CamelTestSupport {
 
     private static String uri;
+    private static String uriClient;
     private static int serverPort;
     private final String rfc3164Message = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
                                           + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n" + "         Conveyer1=OK, Conveyer2=OK # %%";
     private final String rfc5424Message = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - BOM'su root' failed for lonvick on /dev/pts/8";
+    private final String rfc5424WithStructuredData = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 "
+        + "[exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"] BOM'su root' failed for lonvick on /dev/pts/8";
 
     @BeforeClass
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
         uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoder=#encoder";
+        uriClient = uri + "&useChannelBuffer=true";
     }
 
     @Override
@@ -61,10 +64,18 @@ public class NettyRfc5425Test extends CamelTestSupport {
         mock2.expectedMessageCount(2);
         mock2.expectedBodiesReceived(rfc3164Message, rfc5424Message);
 
-        template.sendBody(uri, new BigEndianHeapChannelBuffer(rfc3164Message.getBytes("UTF8")));
-        template.sendBody(uri, new BigEndianHeapChannelBuffer(rfc5424Message.getBytes("UTF8")));
+        template.sendBody(uriClient , rfc3164Message.getBytes("UTF8"));
+        template.sendBody(uriClient, rfc5424Message.getBytes("UTF8"));
 
         assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testStructuredData() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:syslogReceiver");
+        mock.expectedMessageCount(1);
+        
+        template.sendBody("direct:checkStructuredData", rfc5424WithStructuredData);
     }
 
     @Override
@@ -84,6 +95,16 @@ public class NettyRfc5425Test extends CamelTestSupport {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }
                 }).to("mock:syslogReceiver").marshal(syslogDataFormat).to("mock:syslogReceiver2");
+                
+                
+                from("direct:checkStructuredData").unmarshal(syslogDataFormat).process(new Processor() {
+                    @Override
+                    public void process(Exchange ex) {
+                        Object body = ex.getIn().getBody();
+                        assertTrue(body instanceof Rfc5424SyslogMessage);
+                        assertEquals("[exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"]", ((Rfc5424SyslogMessage)body).getStructuredData());
+                    }
+                }).to("mock:syslogReceiver");
             }
         };
     }

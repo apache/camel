@@ -23,7 +23,7 @@ import com.codahale.metrics.Timer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.impl.RoutePolicySupport;
+import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**

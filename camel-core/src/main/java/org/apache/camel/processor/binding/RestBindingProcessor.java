@@ -17,14 +17,17 @@
 package org.apache.camel.processor.binding;
 
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Route;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -48,10 +51,15 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     private final String consumes;
     private final String produces;
     private final String bindingMode;
+    private final boolean skipBindingOnErrorCode;
+    private final boolean enableCORS;
+    private final Map<String, String> corsHeaders;
 
     public RestBindingProcessor(DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                                 DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
-                                String consumes, String produces, String bindingMode) {
+                                String consumes, String produces, String bindingMode,
+                                boolean skipBindingOnErrorCode, boolean enableCORS,
+                                Map<String, String> corsHeaders) {
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
@@ -82,6 +90,9 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         this.consumes = consumes;
         this.produces = produces;
         this.bindingMode = bindingMode;
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+        this.enableCORS = enableCORS;
+        this.corsHeaders = corsHeaders;
     }
 
     @Override
@@ -91,6 +102,10 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
+        if (enableCORS) {
+            exchange.addOnCompletion(new RestBindingCORSOnCompletion(corsHeaders));
+        }
+
         if (bindingMode == null || "off".equals(bindingMode)) {
             // binding is off
             callback.done(true);
@@ -110,14 +125,14 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
         String contentType = ExchangeHelper.getContentType(exchange);
         if (contentType != null) {
-            isXml = contentType.toLowerCase(Locale.US).contains("xml");
-            isJson = contentType.toLowerCase(Locale.US).contains("json");
+            isXml = contentType.toLowerCase(Locale.ENGLISH).contains("xml");
+            isJson = contentType.toLowerCase(Locale.ENGLISH).contains("json");
         }
         // if content type could not tell us if it was json or xml, then fallback to if the binding was configured with
         // that information in the consumes
         if (!isXml && !isJson) {
-            isXml = consumes != null && consumes.toLowerCase(Locale.US).contains("xml");
-            isJson = consumes != null && consumes.toLowerCase(Locale.US).contains("json");
+            isXml = consumes != null && consumes.toLowerCase(Locale.ENGLISH).contains("xml");
+            isJson = consumes != null && consumes.toLowerCase(Locale.ENGLISH).contains("json");
         }
 
         // only allow xml/json if the binding mode allows that
@@ -240,6 +255,14 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
                 return;
             }
 
+            if (skipBindingOnErrorCode) {
+                Integer code = exchange.hasOut() ? exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class) : exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+                // if there is a custom http error code then skip binding
+                if (code != null && code >= 300) {
+                    return;
+                }
+            }
+
             if (bindingMode == null || "off".equals(bindingMode)) {
                 // binding is off
                 return;
@@ -260,22 +283,22 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
             // accept takes precedence
             if (accept != null) {
-                isXml = accept.toLowerCase(Locale.US).contains("xml");
-                isJson = accept.toLowerCase(Locale.US).contains("json");
+                isXml = accept.toLowerCase(Locale.ENGLISH).contains("xml");
+                isJson = accept.toLowerCase(Locale.ENGLISH).contains("json");
             }
             // fallback to content type if still undecided
             if (!isXml && !isJson) {
                 String contentType = ExchangeHelper.getContentType(exchange);
                 if (contentType != null) {
-                    isXml = contentType.toLowerCase(Locale.US).contains("xml");
-                    isJson = contentType.toLowerCase(Locale.US).contains("json");
+                    isXml = contentType.toLowerCase(Locale.ENGLISH).contains("xml");
+                    isJson = contentType.toLowerCase(Locale.ENGLISH).contains("json");
                 }
             }
             // if content type could not tell us if it was json or xml, then fallback to if the binding was configured with
             // that information in the consumes
             if (!isXml && !isJson) {
-                isXml = produces != null && produces.toLowerCase(Locale.US).contains("xml");
-                isJson = produces != null && produces.toLowerCase(Locale.US).contains("json");
+                isXml = produces != null && produces.toLowerCase(Locale.ENGLISH).contains("xml");
+                isJson = produces != null && produces.toLowerCase(Locale.ENGLISH).contains("json");
             }
 
             // only allow xml/json if the binding mode allows that
@@ -328,6 +351,54 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             } catch (Throwable e) {
                 exchange.setException(e);
             }
+        }
+
+        @Override
+        public String toString() {
+            return "RestBindingMarshalOnCompletion";
+        }
+    }
+
+    private final class RestBindingCORSOnCompletion extends SynchronizationAdapter {
+
+        private final Map<String, String> corsHeaders;
+
+        private RestBindingCORSOnCompletion(Map<String, String> corsHeaders) {
+            this.corsHeaders = corsHeaders;
+        }
+
+        @Override
+        public void onAfterRoute(Route route, Exchange exchange) {
+            // add the CORS headers after routing, but before the consumer writes the response
+            Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+
+            // use default value if none has been configured
+            String allowOrigin = corsHeaders != null ? corsHeaders.get("Access-Control-Allow-Origin") : null;
+            if (allowOrigin == null) {
+                allowOrigin = RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN;
+            }
+            String allowMethods = corsHeaders != null ? corsHeaders.get("Access-Control-Allow-Methods") : null;
+            if (allowMethods == null) {
+                allowMethods = RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS;
+            }
+            String allowHeaders = corsHeaders != null ? corsHeaders.get("Access-Control-Allow-Headers") : null;
+            if (allowHeaders == null) {
+                allowHeaders = RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS;
+            }
+            String maxAge = corsHeaders != null ? corsHeaders.get("Access-Control-Max-Age") : null;
+            if (maxAge == null) {
+                maxAge = RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE;
+            }
+
+            msg.setHeader("Access-Control-Allow-Origin", allowOrigin);
+            msg.setHeader("Access-Control-Allow-Methods", allowMethods);
+            msg.setHeader("Access-Control-Allow-Headers", allowHeaders);
+            msg.setHeader("Access-Control-Max-Age", maxAge);
+        }
+
+        @Override
+        public String toString() {
+            return "RestBindingCORSOnCompletion";
         }
     }
 

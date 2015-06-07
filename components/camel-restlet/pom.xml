@@ -6,9 +6,9 @@
     The ASF licenses this file to You under the Apache License, Version 2.0
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
-    
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.16-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-restlet</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: Restlet</name>
   <description>Camel REST (Restlet baesd) Component</description>
-  
+
   <properties>
         <camel.osgi.export.pkg>
             org.apache.camel.component.restlet.*
@@ -51,27 +51,31 @@
     </dependency>
 
     <dependency>
-      <groupId>org.restlet.osgi</groupId>
+      <groupId>org.restlet.jee</groupId>
       <artifactId>org.restlet</artifactId>
-      <version>${restlet-version}</version>
     </dependency>
 
     <dependency>
-     <groupId>org.restlet.osgi</groupId>
+     <groupId>org.restlet.jee</groupId>
      <artifactId>org.restlet.ext.httpclient</artifactId>
-     <version>${restlet-version}</version>
+    </dependency>
+
+    <dependency>
+     <groupId>org.apache.httpcomponents</groupId>
+     <artifactId>httpclient</artifactId>
+     <version>${httpclient4-version}</version>
     </dependency>
 
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>      
+      <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty</artifactId>
+      <artifactId>camel-jetty8</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -106,6 +110,7 @@
     </dependency>
 
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -117,5 +122,20 @@
       </plugin>
     </plugins>
   </build>
+
+    <!-- skip tests on windows -->
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

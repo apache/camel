@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import javax.mail.Flags;
@@ -27,7 +29,11 @@ import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Store;
+import javax.mail.search.SearchTerm;
 
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPStore;
+import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
@@ -50,6 +56,13 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     private final JavaMailSender sender;
     private Folder folder;
     private Store store;
+    private boolean skipFailedMessage;
+    private boolean handleFailedMessage;
+
+    /**
+     * Is true if server is an IMAP server and supports IMAP SORT extension.
+     */
+    private boolean serverCanSort;
 
     public MailConsumer(MailEndpoint endpoint, Processor processor, JavaMailSender sender) {
         super(endpoint, processor);
@@ -103,20 +116,14 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         try {
             int count = folder.getMessageCount();
             if (count > 0) {
-                Message[] messages;
-
-                if (getEndpoint().getSearchTerm() != null) {
-                    // use custom search term
-                    messages = folder.search(getEndpoint().getSearchTerm());
-                } else if (getEndpoint().getConfiguration().isUnseen()) {
-                    // only unseen messages
-                    messages = folder.search(new SearchTermBuilder().unseen().build());
-                } else {
-                    // get all messages
-                    messages = folder.getMessages();
-                }
+                Message[] messages = retrieveMessages();
 
                 polledMessages = processBatch(CastUtils.cast(createExchanges(messages)));
+
+                final MailBoxPostProcessAction postProcessor = getEndpoint().getPostProcessAction();
+                if (postProcessor != null) {
+                    postProcessor.process(folder);
+                }
             } else if (count == -1) {
                 throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
             }
@@ -227,6 +234,71 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Error setting peak property to true on: " + mail + ". This exception is ignored.", e);
             }
         }
+    }
+
+    /**
+     * @return Messages from input folder according to the search and sort criteria stored in the endpoint
+     * @throws MessagingException If message retrieval fails
+     */
+    private Message[] retrieveMessages() throws MessagingException {
+        Message[] messages;
+        final SortTerm[] sortTerm = getEndpoint().getSortTerm();
+        final SearchTerm searchTerm = computeSearchTerm();
+        if (sortTerm != null && serverCanSort) {
+            final IMAPFolder imapFolder = (IMAPFolder) folder;
+            if (searchTerm != null) {
+                // Sort and search using server capability
+                messages = imapFolder.getSortedMessages(sortTerm, searchTerm);
+            } else {
+                // Only sort using server capability
+                messages = imapFolder.getSortedMessages(sortTerm);
+            }
+        } else {
+            if (searchTerm != null) {
+                messages = folder.search(searchTerm, retrieveAllMessages());
+            } else {
+                messages = retrieveAllMessages();
+            }
+            // Now we can sort (emulate email sort but restrict sort terms)
+            if (sortTerm != null) {
+                MailSorter.sortMessages(messages, sortTerm);
+            }
+        }
+        return messages;
+    }
+
+    private Message[] retrieveAllMessages() throws MessagingException {
+        int total = folder.getMessageCount();
+        List<Message> msgs = new ArrayList<Message>();
+
+        // Note that message * numbers start at 1, not 0
+        for (int i = 1; i <= total; i++) {
+            try {
+                Message msg = folder.getMessage(i);
+                msgs.add(msg);
+            } catch (MessagingException e) {
+                if (skipFailedMessage) {
+                    LOG.debug("Skipping failed message at index " + i + " due " + e.getMessage(), e);
+                } else if (handleFailedMessage) {
+                    handleException(e);
+                } else {
+                    throw e;
+                }
+            }
+        }
+        return msgs.toArray(new Message[msgs.size()]);
+    }
+
+    /**
+     * @return Search term from endpoint (including "seen" check) or null if there is no search term
+     */
+    private SearchTerm computeSearchTerm() {
+        if (getEndpoint().getSearchTerm() != null) {
+            return getEndpoint().getSearchTerm();
+        } else if (getEndpoint().getConfiguration().isUnseen()) {
+            return new SearchTermBuilder().unseen().build();
+        }
+        return null;
     }
 
     protected Queue<Exchange> createExchanges(Message[] messages) throws MessagingException {
@@ -423,6 +495,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             }
             store = sender.getSession().getStore(config.getProtocol());
             store.connect(config.getHost(), config.getPort(), config.getUsername(), config.getPassword());
+
+            serverCanSort = hasSortCapability(store);
         }
 
         if (folder == null) {
@@ -436,9 +510,41 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
+    /**
+     * Check whether the email store has the sort capability or not.
+     *
+     * @param store Email store
+     * @return true if the store is an IMAP store and it has the store capability
+     * @throws MessagingException In case capability check fails
+     */
+    private static boolean hasSortCapability(Store store) throws MessagingException {
+        if (store instanceof IMAPStore) {
+            IMAPStore imapStore = (IMAPStore) store;
+            if (imapStore.hasCapability("SORT*")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public MailEndpoint getEndpoint() {
         return (MailEndpoint) super.getEndpoint();
     }
 
+    public boolean isSkipFailedMessage() {
+        return skipFailedMessage;
+    }
+
+    public void setSkipFailedMessage(boolean skipFailedMessage) {
+        this.skipFailedMessage = skipFailedMessage;
+    }
+
+    public boolean isHandleFailedMessage() {
+        return handleFailedMessage;
+    }
+
+    public void setHandleFailedMessage(boolean handleFailedMessage) {
+        this.handleFailedMessage = handleFailedMessage;
+    }
 }

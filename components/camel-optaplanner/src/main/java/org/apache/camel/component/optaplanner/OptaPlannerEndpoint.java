@@ -29,7 +29,7 @@ import org.optaplanner.core.api.solver.SolverFactory;
 /**
  * OptaPlanner endpoint for Camel
  */
-@UriEndpoint(scheme = "optaplanner")
+@UriEndpoint(scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:resourceUri", producerOnly = true, label = "engine,planning")
 public class OptaPlannerEndpoint extends ResourceEndpoint {
 
     private SolverFactory solverFactory;

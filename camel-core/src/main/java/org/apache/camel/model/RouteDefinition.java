@@ -47,6 +47,7 @@ import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -54,13 +55,15 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;route/&gt; element
+ * A Camel route
  *
- * @version 
+ * @version
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"inputs", "outputs"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
+// must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
@@ -135,11 +138,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
     }
 
-    @Override
-    public String getShortName() {
-        return "route";
-    }
-
     /**
      * Returns the status of the route if it has been registered with a {@link CamelContext}
      */
@@ -201,7 +199,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         ObjectHelper.notNull(camelContext, "CamelContext");
         return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
-    
+
     @Deprecated
     public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
         return adviceWith((ModelCamelContext)camelContext, builder);
@@ -362,6 +360,19 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition routeId(String id) {
         setId(id);
+        return this;
+    }
+
+    /**
+     * Set the route description for this route
+     *
+     * @param description the route description
+     * @return the builder
+     */
+    public RouteDefinition routeDescription(String description) {
+        DescriptionDefinition desc = new DescriptionDefinition();
+        desc.setText(description);
+        setDescription(desc);
         return this;
     }
 
@@ -582,6 +593,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return inputs;
     }
 
+    /**
+     * Input to the route.
+     */
     @XmlElementRef
     public void setInputs(List<FromDefinition> inputs) {
         this.inputs = inputs;
@@ -591,6 +605,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return outputs;
     }
 
+    /**
+     * Outputs are processors that determines how messages are processed by this route.
+     */
     @XmlElementRef
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
@@ -616,56 +633,95 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return group;
     }
 
+    /**
+     * The group that this route belongs to; could be the name of the RouteBuilder class
+     * or be explicitly configured in the XML.
+     * <p/>
+     * May be null.
+     */
     @XmlAttribute
     public void setGroup(String group) {
         this.group = group;
     }
 
+    /**
+     * Whether stream caching is enabled on this route.
+     */
     public String getStreamCache() {
         return streamCache;
     }
 
+    /**
+     * Whether stream caching is enabled on this route.
+     */
     @XmlAttribute
     public void setStreamCache(String streamCache) {
         this.streamCache = streamCache;
     }
 
+    /**
+     * Whether tracing is enabled on this route.
+     */
     public String getTrace() {
         return trace;
     }
 
+    /**
+     * Whether tracing is enabled on this route.
+     */
     @XmlAttribute
     public void setTrace(String trace) {
         this.trace = trace;
     }
 
+    /**
+     * Whether message history is enabled on this route.
+     */
     public String getMessageHistory() {
         return messageHistory;
     }
 
-    @XmlAttribute
+    /**
+     * Whether message history is enabled on this route.
+     */
+    @XmlAttribute @Metadata(defaultValue = "true")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
 
+    /**
+     * Whether handle fault is enabled on this route.
+     */
     public String getHandleFault() {
         return handleFault;
     }
 
+    /**
+     * Whether handle fault is enabled on this route.
+     */
     @XmlAttribute
     public void setHandleFault(String handleFault) {
         this.handleFault = handleFault;
     }
 
+    /**
+     * Whether to slow down processing messages by a given delay in msec.
+     */
     public String getDelayer() {
         return delayer;
     }
 
+    /**
+     * Whether to slow down processing messages by a given delay in msec.
+     */
     @XmlAttribute
     public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
 
+    /**
+     * Whether to auto start this route
+     */
     public String getAutoStartup() {
         return autoStartup;
     }
@@ -679,15 +735,24 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return isAutoStartup != null && isAutoStartup;
     }
 
-    @XmlAttribute
+    /**
+     * Whether to auto start this route
+     */
+    @XmlAttribute @Metadata(defaultValue = "true")
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
     }
 
+    /**
+     * To configure the ordering of the routes being started
+     */
     public Integer getStartupOrder() {
         return startupOrder;
     }
 
+    /**
+     * To configure the ordering of the routes being started
+     */
     @XmlAttribute
     public void setStartupOrder(Integer startupOrder) {
         this.startupOrder = startupOrder;
@@ -704,6 +769,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
     }
 
+    /**
+     * Sets the bean ref name of the error handler builder to use on this route
+     */
     public String getErrorHandlerRef() {
         return errorHandlerRef;
     }
@@ -717,11 +785,19 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
     }
 
+    /**
+     * Reference to custom {@link org.apache.camel.spi.RoutePolicy} to use by the route.
+     * Multiple policies can be configured by separating values using comma.
+     */
     @XmlAttribute
     public void setRoutePolicyRef(String routePolicyRef) {
         this.routePolicyRef = routePolicyRef;
     }
 
+    /**
+     * Reference to custom {@link org.apache.camel.spi.RoutePolicy} to use by the route.
+     * Multiple policies can be configured by separating values using comma.
+     */
     public String getRoutePolicyRef() {
         return routePolicyRef;
     }
@@ -739,20 +815,29 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return shutdownRoute;
     }
 
-    @XmlAttribute
+    /**
+     * To control how to shutdown the route.
+     */
+    @XmlAttribute @Metadata(defaultValue = "Default")
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
 
+    /**
+     * To control how to shutdown the route.
+     */
     public ShutdownRunningTask getShutdownRunningTask() {
         return shutdownRunningTask;
     }
 
-    @XmlAttribute
+    /**
+     * To control how to shutdown the route.
+     */
+    @XmlAttribute @Metadata(defaultValue = "CompleteCurrentTaskOnly")
     public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }
-    
+
     private ErrorHandlerFactory createErrorHandlerBuilder() {
         if (errorHandlerRef != null) {
             return new ErrorHandlerBuilderRef(errorHandlerRef);
@@ -804,7 +889,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             return routeScoped != null && contextScoped != null && routeScoped == contextScoped;
         }
 
-        return contextScopedErrorHandler;
+        return true;
     }
 
     // Implementation methods
@@ -921,10 +1006,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         routeContext.setInterceptStrategies(this.getInterceptStrategies());
         // force endpoint resolution
         routeContext.getEndpoint();
-        if (camelContext != null) {
-            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                strategy.onRouteContextCreate(routeContext);
-            }
+        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+            strategy.onRouteContextCreate(routeContext);
         }
 
         // validate route has output processors

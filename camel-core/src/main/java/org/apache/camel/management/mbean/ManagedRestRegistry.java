@@ -69,10 +69,12 @@ public class ManagedRestRegistry extends ManagedService implements ManagedRestRe
                 String state = entry.getState();
                 String inType = entry.getInType();
                 String outType = entry.getOutType();
+                String routeId = entry.getRouteId();
+                String description = entry.getDescription();
 
                 CompositeData data = new CompositeDataSupport(ct, new String[]
-                {"url", "baseUrl", "basePath", "uriTemplate", "method", "consumes", "produces", "inType", "outType", "state"},
-                        new Object[]{url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, state});
+                {"url", "baseUrl", "basePath", "uriTemplate", "method", "consumes", "produces", "inType", "outType", "state", "routeId", "description"},
+                        new Object[]{url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, state, routeId, description});
                 answer.put(data);
             }
             return answer;

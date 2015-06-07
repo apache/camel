@@ -21,18 +21,16 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.15-SNAPSHOT</version>
+        <version>2.16-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-paxlogging</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Pax Logging</name>
-    <description>Camel PaxLogging support</description>
+    <description>Camel OSGi PaxLogging support</description>
 
     <properties>
-        <camel.osgi.activator>org.apache.camel.component.paxlogging.Activator</camel.osgi.activator>
-        <camel.osgi.export.pkg>!*</camel.osgi.export.pkg>
-        <camel.osgi.private.pkg>org.apache.camel.component.paxlogging</camel.osgi.private.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.component.paxlogging</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=paxlogging</camel.osgi.export.service>
     </properties>
 
@@ -58,6 +56,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
+          <scope>provided</scope>
         </dependency>
 
         <!-- test dependencies -->

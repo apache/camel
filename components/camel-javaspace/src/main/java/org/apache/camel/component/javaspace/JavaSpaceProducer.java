@@ -118,10 +118,10 @@ public class JavaSpaceProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         // TODO: There should be a switch to enable/disable using this security hack
         Utility.setSecurityPolicy("policy.all", "policy_producer.all");
-        javaSpace = JiniSpaceAccessor.findSpace(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining(),
+        javaSpace = JiniSpaceAccessor.findSpace(((JavaSpaceEndpoint) this.getEndpoint()).getUrl(),
                 ((JavaSpaceEndpoint) this.getEndpoint()).getSpaceName());
         if (transactional) {
-            transactionHelper = TransactionHelper.getInstance(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining());
+            transactionHelper = TransactionHelper.getInstance(((JavaSpaceEndpoint) this.getEndpoint()).getUrl());
         }
         (new File("policy_producer.all")).delete();
     }

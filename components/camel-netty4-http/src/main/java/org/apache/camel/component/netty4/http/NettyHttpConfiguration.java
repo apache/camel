@@ -20,35 +20,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.netty.channel.ChannelHandler;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty4.NettyConfiguration;
-
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Extended configuration for using HTTP with Netty.
  */
+@UriParams
 public class NettyHttpConfiguration extends NettyConfiguration {
 
-    private boolean urlDecodeHeaders;
-    private boolean mapHeaders = true;
-    private boolean compression;
-    private boolean throwExceptionOnFailure = true;
-    private boolean transferException;
-    private boolean matchOnUriPrefix;
-    private boolean bridgeEndpoint;
+    @UriPath
     private String path;
+    @UriParam
+    private boolean urlDecodeHeaders;
+    @UriParam(defaultValue = "true")
+    private boolean mapHeaders = true;
+    @UriParam
+    private boolean compression;
+    @UriParam(defaultValue = "true")
+    private boolean throwExceptionOnFailure = true;
+    @UriParam
+    private boolean transferException;
+    @UriParam
+    private boolean matchOnUriPrefix;
+    @UriParam
+    private boolean bridgeEndpoint;
+    @UriParam
     private boolean disableStreamCache;
+    @UriParam(defaultValue = "true")
     private boolean send503whenSuspended = true;
+    @UriParam(defaultValue = "" + 1024 * 1024)
     private int chunkedMaxContentLength = 1024 * 1024;
+    @UriParam(defaultValue = "true")
     private boolean chunked = true;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
         setSync(true);
         setReuseAddress(true);
-        setServerPipelineFactory(new HttpServerInitializerFactory());
-        setClientPipelineFactory(new HttpClientInitializerFactory());
+        setServerInitializerFactory(new HttpServerInitializerFactory());
+        setClientInitializerFactory(new HttpClientInitializerFactory());
     }
 
     @Override
@@ -161,6 +175,15 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public void setChunkedMaxContentLength(int chunkedMaxContentLength) {
         this.chunkedMaxContentLength = chunkedMaxContentLength;
+    }
+    
+    // Don't support allowDefaultCodec
+    public boolean isAllowDefaultCodec() {
+        return false;
+    }
+    
+    public void setAllowDefaultCodec(boolean allowDefaultCodec) {
+        throw new UnsupportedOperationException("You cannot setAllowDefaultCodec here.");
     }
 
 }

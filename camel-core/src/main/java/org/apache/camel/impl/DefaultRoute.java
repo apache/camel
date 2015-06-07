@@ -76,6 +76,11 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
         return properties;
     }
 
+    public String getDescription() {
+        Object value = properties.get(Route.DESCRIPTION_PROPERTY);
+        return value != null ? value.toString() : null;
+    }
+
     public void onStartingServices(List<Service> services) throws Exception {
         addServices(services);
     }

@@ -24,7 +24,6 @@ import com.amazonaws.services.simpleworkflow.flow.DataConverterException;
 import com.amazonaws.services.simpleworkflow.flow.DecisionContext;
 import com.amazonaws.services.simpleworkflow.flow.DecisionContextProvider;
 import com.amazonaws.services.simpleworkflow.flow.DecisionContextProviderImpl;
-import com.amazonaws.services.simpleworkflow.flow.JsonDataConverter;
 import com.amazonaws.services.simpleworkflow.flow.WorkflowClock;
 import com.amazonaws.services.simpleworkflow.flow.WorkflowException;
 import com.amazonaws.services.simpleworkflow.flow.common.WorkflowExecutionUtils;
@@ -40,12 +39,12 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
 
     private SWFWorkflowConsumer swfWorkflowConsumer;
     private DecisionContext decisionContext;
-    private JsonDataConverter dataConverter;
+    private DataConverter dataConverter;
 
     private final DecisionContextProvider contextProvider = new DecisionContextProviderImpl();
     private final WorkflowClock workflowClock = contextProvider.getDecisionContext().getWorkflowClock();
 
-    public CamelWorkflowDefinition(SWFWorkflowConsumer swfWorkflowConsumer, DecisionContext decisionContext, JsonDataConverter dataConverter) {
+    public CamelWorkflowDefinition(SWFWorkflowConsumer swfWorkflowConsumer, DecisionContext decisionContext, DataConverter dataConverter) {
         this.swfWorkflowConsumer = swfWorkflowConsumer;
         this.decisionContext = decisionContext;
         this.dataConverter = dataConverter;
@@ -54,7 +53,7 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
     @Override
     public Promise<String> execute(final String input) throws WorkflowException {
         final Settable<String> result = new Settable<String>();
-        final AtomicReference<Promise> methodResult = new AtomicReference<Promise>();
+        final AtomicReference<Promise<?>> methodResult = new AtomicReference<Promise<?>>();
         new TryCatchFinally() {
 
             @Override
@@ -66,9 +65,9 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
 
                 Object r = swfWorkflowConsumer.processWorkflow(parameters, startTime, replaying);
                 if (r instanceof Promise) {
-                    methodResult.set((Promise) r);
+                    methodResult.set((Promise<?>) r);
                 } else if (r != null) {
-                    methodResult.set(new Settable(r));
+                    methodResult.set(new Settable<Object>(r));
                 }
             }
 
@@ -81,7 +80,7 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
 
             @Override
             protected void doFinally() throws Throwable {
-                Promise r = methodResult.get();
+                Promise<?> r = methodResult.get();
                 if (r == null || r.isReady()) {
                     Object workflowResult = r == null ? null : r.get();
                     String convertedResult = dataConverter.toData(workflowResult);

@@ -24,7 +24,7 @@
     <route>
       <from uri="direct:start" />
       <marshal>
-        <csv delimiter="|" />
+          <csv delimiter="|" skipHeaderRecord="true"/>
       </marshal>
       <convertBodyTo type="java.lang.String" />
       <to uri="mock:result" />

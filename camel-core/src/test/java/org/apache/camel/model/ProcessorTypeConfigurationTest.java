@@ -29,7 +29,7 @@ public class ProcessorTypeConfigurationTest extends ContextTestSupport {
         try {
             context.addRoutes(new RouteBuilder() {
                 public void configure() throws Exception {
-                    from("direct:in").processRef("hello");
+                    from("direct:in").process("hello");
                 }
             });
             fail("Should have thrown IllegalArgumentException");

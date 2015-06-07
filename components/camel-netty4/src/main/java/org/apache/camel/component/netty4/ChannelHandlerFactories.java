@@ -20,13 +20,14 @@ import java.nio.charset.Charset;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.codec.serialization.ClassResolvers;
-import io.netty.handler.codec.serialization.ObjectDecoder;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketByteArrayDecoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketByteArrayEncoder;
 import org.apache.camel.component.netty4.codec.DatagramPacketDecoder;
 import org.apache.camel.component.netty4.codec.DatagramPacketDelimiterDecoder;
 import org.apache.camel.component.netty4.codec.DatagramPacketEncoder;
@@ -34,7 +35,9 @@ import org.apache.camel.component.netty4.codec.DatagramPacketObjectDecoder;
 import org.apache.camel.component.netty4.codec.DatagramPacketObjectEncoder;
 import org.apache.camel.component.netty4.codec.DatagramPacketStringDecoder;
 import org.apache.camel.component.netty4.codec.DatagramPacketStringEncoder;
-
+import org.apache.camel.component.netty4.codec.DelimiterBasedFrameDecoder;
+import org.apache.camel.component.netty4.codec.ObjectDecoder;
+import org.apache.camel.component.netty4.codec.ObjectEncoder;
 
 
 /**
@@ -89,18 +92,22 @@ public final class ChannelHandlerFactories {
     }
    
     public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ByteBuf[] delimiters, String protocol) {
+        return newDelimiterBasedFrameDecoder(maxFrameLength, delimiters, true, protocol);
+    }
+    
+    public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ByteBuf[] delimiters, final boolean stripDelimiter, String protocol) {
         if ("udp".equals(protocol)) {
             return new DefaultChannelHandlerFactory() {
                 @Override
                 public ChannelHandler newChannelHandler() {
-                    return new DatagramPacketDelimiterDecoder(maxFrameLength, delimiters);
+                    return new DatagramPacketDelimiterDecoder(maxFrameLength, stripDelimiter, delimiters);
                 }
             };
         } else {
             return new DefaultChannelHandlerFactory() {
                 @Override
                 public ChannelHandler newChannelHandler() {
-                    return new DelimiterBasedFrameDecoder(maxFrameLength, true, delimiters);
+                    return new DelimiterBasedFrameDecoder(maxFrameLength, stripDelimiter, delimiters);
                 }
             };
         }
@@ -123,6 +130,22 @@ public final class ChannelHandlerFactories {
                 return new LengthFieldBasedFrameDecoder(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, initialBytesToStrip);
             }
         };
+    }
+
+    public static ChannelHandlerFactory newByteArrayDecoder(String protocol) {
+        if ("udp".equals(protocol)) {
+            return new ShareableChannelHandlerFactory(new DatagramPacketByteArrayDecoder());
+        } else {
+            return new ShareableChannelHandlerFactory(new ByteArrayDecoder());
+        }
+    }
+
+    public static ChannelHandlerFactory newByteArrayEncoder(String protocol) {
+        if ("udp".equals(protocol)) {
+            return new ShareableChannelHandlerFactory(new DatagramPacketByteArrayEncoder());
+        } else {
+            return new ShareableChannelHandlerFactory(new ByteArrayEncoder());
+        }
     }
 
 }

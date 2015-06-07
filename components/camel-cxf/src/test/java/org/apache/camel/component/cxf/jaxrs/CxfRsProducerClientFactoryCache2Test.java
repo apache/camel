@@ -71,7 +71,8 @@ public class CxfRsProducerClientFactoryCache2Test extends Assert {
     }
 
     private void doRunTest(ProducerTemplate template, final int clientPort) {
-        Exchange exchange = template.send("direct://http", new Processor() {
+        // use request as we want InOut
+        Exchange exchange = template.request("direct://http", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();

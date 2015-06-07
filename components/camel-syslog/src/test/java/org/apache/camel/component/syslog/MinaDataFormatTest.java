@@ -79,7 +79,7 @@ public class MinaDataFormatTest extends CamelTestSupport {
                 DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
-                from("mina:udp://127.0.0.1:" + serverPort).unmarshal(syslogDataFormat).process(new Processor() {
+                from("mina2:udp://127.0.0.1:" + serverPort).unmarshal(syslogDataFormat).process(new Processor() {
                     public void process(Exchange ex) {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }

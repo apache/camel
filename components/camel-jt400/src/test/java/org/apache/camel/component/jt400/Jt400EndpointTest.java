@@ -16,53 +16,37 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test case for {@link Jt400Endpoint}
+ */
 public class Jt400EndpointTest extends Jt400TestSupport {
 
-    private Jt400Endpoint jt400Endpoint;
+    private Jt400Endpoint endpoint;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        jt400Endpoint = new Jt400Endpoint("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
+        endpoint = (Jt400Endpoint) resolveMandatoryEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary&guiAvailable=true&connectionPool=#mockPool");
+    }
+
+    /**
+     * Check that the AS/400 connection is correctly configured for the URL
+     */
+    @Test
+    public void testSystemConfiguration() {
+        assertEquals("USER", endpoint.getSystem().getUserId());
+        assertEquals("host", endpoint.getSystem().getSystemName());
+        assertEquals(500, endpoint.getSystem().getCcsid());
+        assertEquals(Jt400Configuration.Format.binary, endpoint.getFormat());
+        assertTrue(endpoint.getSystem().isGuiAvailable());
     }
 
     @Test
-    public void testSystemName() {
-        assertEquals("host", jt400Endpoint.getSystemName());
+    public void testToString() {
+        assertEquals("Endpoint[jt400://user:xxxxxx@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&connectionPool=%23mockPool&format=binary&guiAvailable=true]", endpoint.toString());
     }
-
-    @Test
-    public void testUserID() {
-        assertEquals("USER", jt400Endpoint.getUserID());
-    }
-
-    @Test
-    public void testPassword() {
-        assertEquals("password", jt400Endpoint.getPassword());
-    }
-
-    @Test
-    public void testObjectPath() {
-        assertEquals("/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", jt400Endpoint.getObjectPath());
-    }
-
-    @Test
-    public void testDefaultCcsid() {
-        assertEquals(-1, jt400Endpoint.getCssid());
-    }
-
-    @Test
-    public void testDefaultFormat() {
-        assertEquals(Format.text, jt400Endpoint.getFormat());
-    }
-
-    @Test
-    public void testDefaultGuiAvailable() {
-        assertEquals(false, jt400Endpoint.isGuiAvailable());
-    }
-
 }

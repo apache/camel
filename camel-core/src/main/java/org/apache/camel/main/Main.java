@@ -18,14 +18,13 @@ package org.apache.camel.main;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.view.ModelFileGenerator;
 
 /**
  * A command line tool for booting up a CamelContext
@@ -97,7 +96,24 @@ public class Main extends MainSupport {
      */
     public <T> Map<String, T> lookupByType(Class<T> type) {
         return registry.findByTypeWithName(type);
-    }    
+    }
+
+    /**
+     * 
+     * Gets or creates the {@link org.apache.camel.CamelContext} this main class is using.
+     * 
+     * It just create a new CamelContextMap per call, please don't use it to access the camel context that will be ran by main.
+     * If you want to setup the CamelContext please use MainListener to get the new created camel context.
+     */
+    public CamelContext getOrCreateCamelContext() {
+        // force init
+        Map<String, CamelContext> map = getCamelContextMap();
+        if (map.size() >= 1) {
+            return map.values().iterator().next();
+        } else {
+            throw new IllegalStateException("Error creating CamelContext");
+        }
+    }
     
     // Implementation methods
     // -------------------------------------------------------------------------
@@ -133,7 +149,12 @@ public class Main extends MainSupport {
         if (registry.size() > 0) {
             // set the registry through which we've already bound some beans
             if (DefaultCamelContext.class.isAssignableFrom(camelContext.getClass())) {
-                ((DefaultCamelContext) camelContext).setRegistry(registry);
+                CompositeRegistry compositeRegistry = new CompositeRegistry();
+                // make sure camel look up the Object from the registry first
+                compositeRegistry.addRegistry(registry);
+                // use the camel old registry as a fallback
+                compositeRegistry.addRegistry(((DefaultCamelContext) camelContext).getRegistry());
+                ((DefaultCamelContext) camelContext).setRegistry(compositeRegistry);
             }
         }
 
@@ -145,7 +166,4 @@ public class Main extends MainSupport {
         return new DefaultCamelContext();
     }
 
-    protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return null;
-    }
 }

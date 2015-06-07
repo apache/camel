@@ -17,14 +17,14 @@
 package org.apache.camel.component.olingo2;
 
 import java.util.Map;
-import javax.net.ssl.SSLContext;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.http.HttpHost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.olingo.odata2.core.commons.ContentType;
 
 /**
  * Component configuration for Olingo2 component.
@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 @UriParams
 public class Olingo2Configuration {
 
-    private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON_CS_UTF_8.toString();
+    private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON.toString();
     private static final int DEFAULT_TIMEOUT = 30 * 1000;
 
     @UriParam
@@ -55,7 +55,7 @@ public class Olingo2Configuration {
     private HttpHost proxy;
 
     @UriParam
-    private SSLContext sslContext;
+    private SSLContextParameters sslContextParameters;
 
     // for more complex configuration, use a client builder
     @UriParam
@@ -109,12 +109,12 @@ public class Olingo2Configuration {
         this.proxy = proxy;
     }
 
-    public SSLContext getSslContext() {
-        return sslContext;
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
     }
 
-    public void setSslContext(SSLContext sslContext) {
-        this.sslContext = sslContext;
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public HttpAsyncClientBuilder getHttpAsyncClientBuilder() {
@@ -134,7 +134,7 @@ public class Olingo2Configuration {
             .append(connectTimeout)
             .append(socketTimeout)
             .append(proxy)
-            .append(sslContext)
+            .append(sslContextParameters)
             .append(httpAsyncClientBuilder)
             .hashCode();
     }
@@ -149,7 +149,7 @@ public class Olingo2Configuration {
                 && connectTimeout == other.connectTimeout
                 && socketTimeout == other.socketTimeout
                 && proxy == null ? other.proxy == null : proxy.equals(other.proxy)
-                && sslContext == null ? other.sslContext == null : sslContext.equals(other.sslContext)
+                && sslContextParameters == null ? other.sslContextParameters == null : sslContextParameters.equals(other.sslContextParameters)
                 && httpAsyncClientBuilder == null ? other.httpAsyncClientBuilder == null
                 : httpAsyncClientBuilder.equals(other.httpAsyncClientBuilder);
         }

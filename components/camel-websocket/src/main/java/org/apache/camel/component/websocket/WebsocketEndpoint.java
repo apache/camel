@@ -25,46 +25,64 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
 
+@UriEndpoint(scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "http,websocket")
 public class WebsocketEndpoint extends DefaultEndpoint {
 
     private NodeSynchronization sync;
     private WebsocketStore memoryStore;
     private WebsocketComponent component;
-    private SSLContextParameters sslContextParameters;
     private URI uri;
     private List<Handler> handlers;
 
-    private Boolean sendToAll;
-    private boolean enableJmx;
-    private boolean sessionSupport;
-    private boolean crossOriginFilterOn;
-
-    private String remaining;
+    @UriPath @Metadata(required = "true")
     private String host;
+    @UriPath @Metadata(required = "true")
+    private Integer port;
+    @UriPath @Metadata(required = "true")
+    private String resourceUri;
+
+    @UriParam
+    private Boolean sendToAll;
+    @UriParam
+    private boolean enableJmx;
+    @UriParam
+    private boolean sessionSupport;
+    @UriParam
+    private boolean crossOriginFilterOn;
+    @UriParam
+    private SSLContextParameters sslContextParameters;
+    @UriParam
     private String allowedOrigins;
     // Used to filter CORS
+    @UriParam
     private String filterPath;
-
     // Base Resource for the ServletContextHandler
+    @UriParam
     private String staticResources;
-
-    private Integer port;
     // Here are the configuration on the WebSocketComponentServlet
+    @UriParam
     private Integer bufferSize;
+    @UriParam
     private Integer maxIdleTime;
+    @UriParam
     private Integer maxTextMessageSize;
+    @UriParam
     private Integer maxBinaryMessageSize;
+    @UriParam
     private Integer minVersion;
-    
 
-    public WebsocketEndpoint(WebsocketComponent component, String uri, String remaining, Map<String, Object> parameters) {
+    public WebsocketEndpoint(WebsocketComponent component, String uri, String resourceUri, Map<String, Object> parameters) {
         super(uri, component);
-        this.remaining = remaining;
+        this.resourceUri = resourceUri;
         this.memoryStore = new MemoryWebsocketStore();
         this.sync = new DefaultNodeSynchronization(memoryStore);
         this.component = component;
@@ -96,7 +114,7 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     public void connect(WebsocketConsumer consumer) throws Exception {
         component.connect(consumer);
-        component.addServlet(sync, consumer, remaining);
+        component.addServlet(sync, consumer, resourceUri);
     }
 
     public void disconnect(WebsocketConsumer consumer) throws Exception {
@@ -106,7 +124,7 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     public void connect(WebsocketProducer producer) throws Exception {
         component.connect(producer);
-        component.addServlet(sync, producer, remaining);
+        component.addServlet(sync, producer, resourceUri);
     }
 
     public void disconnect(WebsocketProducer producer) throws Exception {
@@ -260,6 +278,17 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         this.filterPath = filterPath;
     }
 
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public String getResourceUri() {
+        return resourceUri;
+    }
+
+    public void setResourceUri(String resourceUri) {
+        this.resourceUri = resourceUri;
+    }
 
     @Override
     protected void doStart() throws Exception {

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.linkedin;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.linkedin.api.LinkedInOAuthRequestFilter;
@@ -23,15 +27,15 @@ import org.apache.camel.component.linkedin.api.OAuthParams;
 import org.apache.camel.component.linkedin.internal.CachingOAuthSecureStorage;
 import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
-import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link LinkedInEndpoint}.
  */
-@UriEndpoint(scheme = "linkedin", consumerClass = LinkedInConsumer.class, consumerPrefix = "consumer")
 public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, LinkedInConfiguration, LinkedInApiCollection> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LinkedInComponent.class);
@@ -51,9 +55,19 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
         return LinkedInApiName.fromValue(apiNameStr);
     }
 
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public void setConfiguration(LinkedInConfiguration configuration) {
+        super.setConfiguration(configuration);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, LinkedInApiName apiName,
                                       LinkedInConfiguration endpointConfiguration) {
+        endpointConfiguration.setApiName(apiName);
+        endpointConfiguration.setMethodName(methodName);
         return new LinkedInEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
@@ -72,8 +86,18 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
         // validate configuration
         configuration.validate();
 
+        final String[] enabledProtocols;
+        try {
+            // use default SSP to create supported non-SSL protocols list
+            final SSLContext sslContext = new SSLContextParameters().createSSLContext();
+            enabledProtocols = sslContext.createSSLEngine().getEnabledProtocols();
+        } catch (GeneralSecurityException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } catch (IOException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         return new LinkedInOAuthRequestFilter(getOAuthParams(configuration),
-            configuration.getHttpParams(), configuration.isLazyAuth());
+            configuration.getHttpParams(), configuration.isLazyAuth(), enabledProtocols);
     }
 
     private static OAuthParams getOAuthParams(LinkedInConfiguration configuration) {

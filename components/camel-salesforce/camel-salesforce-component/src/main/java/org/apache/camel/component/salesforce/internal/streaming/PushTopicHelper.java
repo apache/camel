@@ -41,11 +41,28 @@ public class PushTopicHelper {
     private final SalesforceEndpointConfig config;
     private final String topicName;
     private final RestClient restClient;
+    private final boolean preApi29;
 
     public PushTopicHelper(SalesforceEndpointConfig config, String topicName, RestClient restClient) {
         this.config = config;
         this.topicName = topicName;
         this.restClient = restClient;
+        this.preApi29 = Double.valueOf(config.getApiVersion()) < 29.0;
+
+        // validate notify fields right away
+        if (preApi29 && (config.getNotifyForOperationCreate() != null
+                || config.getNotifyForOperationDelete() != null
+                || config.getNotifyForOperationUndelete() != null
+                || config.getNotifyForOperationUpdate() != null)) {
+            throw new IllegalArgumentException("NotifyForOperationCreate, NotifyForOperationDelete"
+                + ", NotifyForOperationUndelete, and NotifyForOperationUpdate"
+                + " are only supported since API version 29.0"
+                + ", instead use NotifyForOperations");
+        } else if (!preApi29 && config.getNotifyForOperations() != null) {
+            throw new IllegalArgumentException("NotifyForOperations is readonly since API version 29.0"
+                + ", instead use NotifyForOperationCreate, NotifyForOperationDelete"
+                + ", NotifyForOperationUndelete, and NotifyForOperationUpdate");
+        }
     }
 
     public void createOrUpdateTopic() throws CamelException {
@@ -63,8 +80,9 @@ public class PushTopicHelper {
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
             }
-            if (callback.getException() != null) {
-                throw callback.getException();
+            final SalesforceException callbackException = callback.getException();
+            if (callbackException != null) {
+                throw callbackException;
             }
             QueryRecordsPushTopic records = OBJECT_MAPPER.readValue(callback.getResponse(),
                     QueryRecordsPushTopic.class);
@@ -73,13 +91,21 @@ public class PushTopicHelper {
                 PushTopic topic = records.getRecords().get(0);
                 LOG.info("Found existing topic {}: {}", topicName, topic);
 
-                // check if we need to update topic query, notifyForFields or notifyForOperations
+                // check if we need to update topic
+                final boolean notifyOperationsChanged;
+                if (preApi29) {
+                    notifyOperationsChanged =
+                        notEquals(config.getNotifyForOperations(), topic.getNotifyForOperations());
+                } else {
+                    notifyOperationsChanged =
+                        notEquals(config.getNotifyForOperationCreate(), topic.getNotifyForOperationCreate())
+                        || notEquals(config.getNotifyForOperationDelete(), topic.getNotifyForOperationDelete())
+                        || notEquals(config.getNotifyForOperationUndelete(), topic.getNotifyForOperationUndelete())
+                        || notEquals(config.getNotifyForOperationUpdate(), topic.getNotifyForOperationUpdate());
+                }
                 if (!query.equals(topic.getQuery())
-                        || (config.getNotifyForFields() != null
-                                && !config.getNotifyForFields().equals(topic.getNotifyForFields()))
-                        || (config.getNotifyForOperations() != null
-                                && !config.getNotifyForOperations().equals(topic.getNotifyForOperations()))
-                ) {
+                    || notEquals(config.getNotifyForFields(), topic.getNotifyForFields())
+                    || notifyOperationsChanged) {
 
                     if (!config.isUpdateTopic()) {
                         String msg = "Query doesn't match existing Topic and updateTopic is set to false";
@@ -126,7 +152,14 @@ public class PushTopicHelper {
         topic.setQuery(config.getSObjectQuery());
         topic.setDescription("Topic created by Camel Salesforce component");
         topic.setNotifyForFields(config.getNotifyForFields());
-        topic.setNotifyForOperations(config.getNotifyForOperations());
+        if (preApi29) {
+            topic.setNotifyForOperations(config.getNotifyForOperations());
+        } else {
+            topic.setNotifyForOperationCreate(config.getNotifyForOperationCreate());
+            topic.setNotifyForOperationDelete(config.getNotifyForOperationDelete());
+            topic.setNotifyForOperationUndelete(config.getNotifyForOperationUndelete());
+            topic.setNotifyForOperationUpdate(config.getNotifyForOperationUpdate());
+        }
 
         LOG.info("Creating Topic {}: {}", topicName, topic);
         final SyncResponseCallback callback = new SyncResponseCallback();
@@ -137,8 +170,9 @@ public class PushTopicHelper {
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
             }
-            if (callback.getException() != null) {
-                throw callback.getException();
+            final SalesforceException callbackException = callback.getException();
+            if (callbackException != null) {
+                throw callbackException;
             }
 
             CreateSObjectResult result = OBJECT_MAPPER.readValue(callback.getResponse(), CreateSObjectResult.class);
@@ -182,7 +216,14 @@ public class PushTopicHelper {
             final PushTopic topic = new PushTopic();
             topic.setQuery(query);
             topic.setNotifyForFields(config.getNotifyForFields());
-            topic.setNotifyForOperations(config.getNotifyForOperations());
+            if (preApi29) {
+                topic.setNotifyForOperations(config.getNotifyForOperations());
+            } else {
+                topic.setNotifyForOperationCreate(config.getNotifyForOperationCreate());
+                topic.setNotifyForOperationDelete(config.getNotifyForOperationDelete());
+                topic.setNotifyForOperationUndelete(config.getNotifyForOperationUndelete());
+                topic.setNotifyForOperationUpdate(config.getNotifyForOperationUpdate());
+            }
 
             restClient.updateSObject("PushTopic", topicId,
                     new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)),
@@ -191,8 +232,9 @@ public class PushTopicHelper {
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
             }
-            if (callback.getException() != null) {
-                throw callback.getException();
+            final SalesforceException callbackException = callback.getException();
+            if (callbackException != null) {
+                throw callbackException;
             }
 
         } catch (SalesforceException e) {
@@ -217,6 +259,10 @@ public class PushTopicHelper {
                 }
             }
         }
+    }
+
+    private static <T> boolean notEquals(T o1, T o2) {
+        return o1 != null && !o1.equals(o2);
     }
 
 }

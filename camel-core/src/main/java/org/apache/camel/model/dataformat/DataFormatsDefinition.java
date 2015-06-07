@@ -19,7 +19,6 @@ package org.apache.camel.model.dataformat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,10 +26,12 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the XML type for a collection of DataFormats.
+ * To configure data formats
  */
+@Metadata(label = "dataformat,transformation", title = "Data formats")
 @XmlRootElement(name = "dataFormats")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatsDefinition {
@@ -42,6 +43,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "base64", type = Base64DataFormat.class),
         @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
+        @XmlElement(required = false, name = "boon", type = BoonDataFormat.class),
         @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
@@ -49,6 +51,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
         @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
         @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
+        @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),
         @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
         @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
         @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
@@ -60,6 +63,9 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "string", type = StringDataFormat.class),
         @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
         @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
+        @XmlElement(required = false, name = "univocity-csv", type = UniVocityCsvDataFormat.class),
+        @XmlElement(required = false, name = "univocity-fixed", type = UniVocityFixedWidthDataFormat.class),
+        @XmlElement(required = false, name = "univocity-tsv", type = UniVocityTsvDataFormat.class),
         @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
         @XmlElement(required = false, name = "xmljson", type = XmlJsonDataFormat.class),
         @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
@@ -70,7 +76,9 @@ public class DataFormatsDefinition {
         )
     private List<DataFormatDefinition> dataFormats;
 
-
+    /**
+     * A list holding the configured data formats
+     */
     public void setDataFormats(List<DataFormatDefinition> dataFormats) {
         this.dataFormats = dataFormats;
     }

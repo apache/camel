@@ -29,6 +29,9 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
     @ManagedAttribute(description = "Number of failed exchanges")
     long getExchangesFailed() throws Exception;
 
+    @ManagedAttribute(description = "Number of inflight exchanges")
+    long getExchangesInflight() throws Exception;
+
     @ManagedAttribute(description = "Number of failures handled")
     long getFailuresHandled() throws Exception;
 

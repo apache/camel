@@ -17,9 +17,11 @@
 package org.apache.camel.util;
 
 import java.util.concurrent.CountDownLatch;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,12 +103,13 @@ public final class AsyncProcessorHelper {
      * @throws Exception can be thrown if waiting is interrupted
      */
     public static void process(final AsyncProcessor processor, final Exchange exchange) throws Exception {
+        final AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
+
         final CountDownLatch latch = new CountDownLatch(1);
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (!doneSync) {
-                    LOG.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
-                    latch.countDown();
+                    awaitManager.countDown(exchange, latch);
                 }
             }
 
@@ -116,11 +119,7 @@ public final class AsyncProcessorHelper {
             }
         });
         if (!sync) {
-            LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
-                    exchange.getExchangeId(), exchange);
-            latch.await();
-            LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
-                    exchange.getExchangeId(), exchange);
+            awaitManager.await(exchange, latch);
         }
     }
 

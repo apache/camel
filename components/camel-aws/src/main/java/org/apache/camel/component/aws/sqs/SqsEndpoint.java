@@ -38,26 +38,32 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
- *
  */
+@UriEndpoint(scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueName", consumerClass = SqsConsumer.class, label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
     
     private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
-    
+
     private AmazonSQS client;
     private String queueUrl;
+
+    @UriParam
     private SqsConfiguration configuration;
+    @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
+    @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
 
     public SqsEndpoint(String uri, SqsComponent component, SqsConfiguration configuration) {
@@ -69,6 +75,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to map headers to/from Camel.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
@@ -81,6 +90,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         SqsConsumer sqsConsumer = new SqsConsumer(this, processor);
         configureConsumer(sqsConsumer);
         sqsConsumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
+        DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler();
+        scheduler.setConcurrentTasks(configuration.getConcurrentConsumers());
+        sqsConsumer.setScheduler(scheduler);
         return sqsConsumer;
     }
 
@@ -153,6 +165,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
             request.getAttributes().put(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
         }
+        if (getConfiguration().getRedrivePolicy() != null) {
+            request.getAttributes().put(QueueAttributeName.RedrivePolicy.name(), getConfiguration().getRedrivePolicy());
+        }
         LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
         
         CreateQueueResult queueResult = client.createQueue(request);
@@ -178,6 +193,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         }
         if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
             request.getAttributes().put(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
+        }
+        if (getConfiguration().getRedrivePolicy() != null) {
+            request.getAttributes().put(QueueAttributeName.RedrivePolicy.name(), getConfiguration().getRedrivePolicy());
         }
         if (!request.getAttributes().isEmpty()) {
             LOG.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
@@ -257,6 +275,11 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         return maxMessagesPerPoll;
     }
 
+    /**
+     * Gets the maximum number of messages as a limit to poll at each polling.
+     * <p/>
+     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }

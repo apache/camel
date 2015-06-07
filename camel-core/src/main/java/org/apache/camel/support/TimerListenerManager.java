@@ -36,11 +36,9 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Also ensure when adding and remove listeners, that they are correctly removed to avoid
  * leaking memory.
- * <p/>
- * From Camel 2.13 onwards the {@link TimerListenerManager} is only enabled if
- * {@link org.apache.camel.spi.ManagementStrategy#isLoadStatisticsEnabled()} is enabled.
  *
  * @see TimerListener
+ * @see org.apache.camel.management.ManagedLoadTimer
  */
 public class TimerListenerManager extends ServiceSupport implements Runnable, CamelContextAware, StaticService {
 

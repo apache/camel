@@ -19,12 +19,16 @@ package org.apache.camel.component.stomp;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.fusesource.hawtbuf.AsciiBuffer;
 import org.fusesource.hawtdispatch.Task;
 import org.fusesource.stomp.client.Callback;
@@ -41,11 +45,14 @@ import static org.fusesource.stomp.client.Constants.SEND;
 import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 
+@UriEndpoint(scheme = "stomp", title = "Stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
 public class StompEndpoint extends DefaultEndpoint {
 
-    private CallbackConnection connection;
-    private StompConfiguration configuration;
+    @UriPath(description = "Name of the queue") @Metadata(required = "true")
     private String destination;
+    @UriParam
+    private StompConfiguration configuration;
+    private CallbackConnection connection;
     private Stomp stomp;
 
     private final List<StompConsumer> consumers = new CopyOnWriteArrayList<StompConsumer>();
@@ -76,6 +83,9 @@ public class StompEndpoint extends DefaultEndpoint {
         stomp.setLogin(configuration.getLogin());
         stomp.setPasscode(configuration.getPasscode());
         stomp.connectCallback(promise);
+        if (configuration.getHost() != null && !configuration.getHost().isEmpty()) {
+            stomp.setHost(configuration.getHost());
+        }
 
         connection = promise.await();
 
@@ -118,14 +128,26 @@ public class StompEndpoint extends DefaultEndpoint {
         connection.close(null);
     }
 
-    protected void send(Message message) {
+    protected void send(final Exchange exchange, final AsyncCallback callback) {
         final StompFrame frame = new StompFrame(SEND);
         frame.addHeader(DESTINATION, StompFrame.encodeHeader(destination));
-        frame.content(utf8(message.getBody().toString()));
+        frame.content(utf8(exchange.getIn().getBody().toString()));
+
         connection.getDispatchQueue().execute(new Task() {
             @Override
             public void run() {
-                connection.send(frame, null);
+                connection.send(frame, new Callback<Void>() {
+                    @Override
+                    public void onFailure(Throwable e) {
+                        exchange.setException(e);
+                        callback.done(false);
+                    }
+
+                    @Override
+                    public void onSuccess(Void v) {
+                        callback.done(false);
+                    }
+                });
             }
         });
     }

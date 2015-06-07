@@ -28,6 +28,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
@@ -116,6 +118,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
             openConnection();
             startConsumers();
         } catch (Exception e) {
+            log.info("Connection failed, will start background thread to retry!", e);
             // Open connection, and start message listener in background
             Integer networkRecoveryInterval = getEndpoint().getNetworkRecoveryInterval();
             final long connectionRetryInterval = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
@@ -181,6 +184,11 @@ public class RabbitMQConsumer extends DefaultConsumer {
             Exchange exchange = consumer.endpoint.createRabbitExchange(envelope, properties, body);
             mergeAmqpProperties(exchange, properties);
 
+            boolean sendReply = properties.getReplyTo() != null;
+            if (sendReply && !exchange.getPattern().isOutCapable()) {
+                exchange.setPattern(ExchangePattern.InOut);
+            }
+
             log.trace("Created exchange [exchange={}]", exchange);
             long deliveryTag = envelope.getDeliveryTag();
             try {
@@ -189,16 +197,37 @@ public class RabbitMQConsumer extends DefaultConsumer {
                 exchange.setException(e);
             }
 
+            // obtain the message after processing
+            Message msg;
+            if (exchange.hasOut()) {
+                msg = exchange.getOut();
+            } else {
+                msg = exchange.getIn();
+            }
+
             if (!exchange.isFailed()) {
                 // processing success
+                if (sendReply && exchange.getPattern().isOutCapable()) {
+                    AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()
+                            .headers(msg.getHeaders())
+                            .correlationId(properties.getCorrelationId())
+                            .build();
+                    channel.basicPublish("", properties.getReplyTo(), replyProps, msg.getBody(byte[].class));
+                }
                 if (!consumer.endpoint.isAutoAck()) {
                     log.trace("Acknowledging receipt [delivery_tag={}]", deliveryTag);
                     channel.basicAck(deliveryTag, false);
                 }
             } else {
+                boolean isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE, false, boolean.class);
                 // processing failed, then reject and handle the exception
                 if (deliveryTag != 0 && !consumer.endpoint.isAutoAck()) {
-                    channel.basicReject(deliveryTag, false);
+                    log.trace("Rejecting receipt [delivery_tag={}] with requeue={}", deliveryTag, isRequeueHeaderSet);
+                    if (isRequeueHeaderSet) {
+                        channel.basicReject(deliveryTag, true);
+                    } else {
+                        channel.basicReject(deliveryTag, false);
+                    }
                 }
                 if (exchange.getException() != null) {
                     getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
@@ -293,7 +322,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
                     openConnection();
                     connectionFailed = false;
                 } catch (Exception e) {
-                    log.debug("Connection failed, will retry in {}" + connectionRetryInterval + "ms", e);
+                    log.info("Connection failed, will retry in {}" + connectionRetryInterval + "ms", e);
                     Thread.sleep(connectionRetryInterval);
                 }
             }

@@ -26,7 +26,6 @@ import org.junit.Test;
 
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>
- * @version 
  */
 public class CsvUnmarshalPipeDelimiterTest extends CamelTestSupport {
 
@@ -49,7 +48,7 @@ public class CsvUnmarshalPipeDelimiterTest extends CamelTestSupport {
         assertEquals("1", body.get(0).get(2));
         assertEquals("124", body.get(1).get(0));
         assertEquals("ActiveMQ in Action", body.get(1).get(1));
-        assertEquals("2", body.get(1).get(2));        
+        assertEquals("2", body.get(1).get(2));
     }
 
     @SuppressWarnings("unchecked")
@@ -67,17 +66,16 @@ public class CsvUnmarshalPipeDelimiterTest extends CamelTestSupport {
         assertEquals("Camel in Action", body.get(0).get(1));
         assertEquals("1", body.get(0).get(2));
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                CsvDataFormat csv = new CsvDataFormat();
-                csv.setDelimiter("|");
+                CsvDataFormat csv = new CsvDataFormat().setDelimiter('|');
 
                 from("direct:start").unmarshal(csv)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

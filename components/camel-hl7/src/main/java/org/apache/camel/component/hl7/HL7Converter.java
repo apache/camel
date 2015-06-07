@@ -42,8 +42,18 @@ public final class HL7Converter {
     }
 
     @Converter
+    public static byte[] toByteArray(Message message) throws HL7Exception {
+        return message.encode().getBytes();
+    }
+
+    @Converter
     public static Message toMessage(String body) throws HL7Exception {
         return parse(body, DEFAULT_CONTEXT.getGenericParser());
+    }
+
+    @Converter
+    public static Message toMessage(byte[] body) throws HL7Exception {
+        return parse(new String(body), DEFAULT_CONTEXT.getGenericParser());
     }
 
     static Message parse(String body, Parser parser) throws HL7Exception {

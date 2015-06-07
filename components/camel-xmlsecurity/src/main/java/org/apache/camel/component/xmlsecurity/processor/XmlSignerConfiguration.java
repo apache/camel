@@ -32,9 +32,13 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureTransform;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
+@UriParams
 public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
+    @UriParam
     private KeyAccessor keyAccessor;
 
     /**
@@ -42,6 +46,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * {@link CanonicalizationMethod#INCLUSIVE}.
      * 
      */
+    @UriParam
     private AlgorithmMethod canonicalizationMethod = new XmlSignatureTransform(CanonicalizationMethod.INCLUSIVE);
 
     /**
@@ -51,6 +56,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     private List<AlgorithmMethod> transformMethods = Collections.singletonList(XmlSignatureHelper
             .getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
 
+    @UriParam
     private String signatureAlgorithm = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
 
     /**
@@ -59,15 +65,20 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * is not specified then the digest algorithm is calculated from the
      * signature algorithm. Example: "http://www.w3.org/2001/04/xmlenc#sha256"
      */
+    @UriParam
     private String digestAlgorithm;
 
+    @UriParam(defaultValue = "true")
     private Boolean addKeyInfoReference = Boolean.TRUE;
 
+    @UriParam(defaultValue = "ds")
     private String prefixForXmlSignatureNamespace = "ds";
 
+    @UriParam
     private String contentObjectId;
 
     // default value is null so that a unique ID is generated.
+    @UriParam
     private String signatureId;
 
     /**
@@ -77,6 +88,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * schema (see {@link #setSchemaResourceUri(String)}. Will be ignored in the
      * enveloping and detached case.
      */
+    @UriParam
     private String contentReferenceUri;
 
     /**
@@ -84,10 +96,13 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * This value can be overwritten by the header
      * {@link XmlSignatureConstants#HEADER_CONTENT_REFERENCE_TYPE}.
      */
+    @UriParam
     private String contentReferenceType;
 
+    @UriParam
     private String parentLocalName;
 
+    @UriParam
     private String parentNamespace;
 
     /**
@@ -96,6 +111,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * value can be overwritten by the header
      * {@link XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT}.
      */
+    @UriParam(defaultValue = "false")
     private Boolean plainText = Boolean.FALSE;
 
     /**
@@ -103,6 +119,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * text (see parameter {@link #plainText}. Default value is "UTF-8".
      * 
      */
+    @UriParam
     private String plainTextEncoding = "UTF-8";
 
     private XmlSignatureProperties properties;
@@ -112,9 +129,13 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     private XPathFilterParameterSpec parentXpath;
 
     /* references that should be resolved when the context changes */
+    @UriParam
     private String keyAccessorName;
+    @UriParam
     private String canonicalizationMethodName;
+    @UriParam
     private String transformMethodsName;
+    @UriParam
     private String propertiesName;
 
     public XmlSignerConfiguration() {

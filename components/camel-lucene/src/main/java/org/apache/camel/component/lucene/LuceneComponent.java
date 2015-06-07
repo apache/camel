@@ -21,17 +21,18 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-public class LuceneComponent extends DefaultComponent {
-    LuceneConfiguration config;
+public class LuceneComponent extends UriEndpointComponent {
+    private LuceneConfiguration config;
     
     public LuceneComponent() {
+        super(LuceneEndpoint.class);
         config = new LuceneConfiguration();
     }
 
     public LuceneComponent(CamelContext context) {
-        super(context);
+        super(context, LuceneEndpoint.class);
         config = new LuceneConfiguration();
     }
     
@@ -44,4 +45,14 @@ public class LuceneComponent extends DefaultComponent {
         return luceneEndpoint;
     }
 
+    public LuceneConfiguration getConfig() {
+        return config;
+    }
+
+    /**
+     * To use a shared lucene configuration
+     */
+    public void setConfig(LuceneConfiguration config) {
+        this.config = config;
+    }
 }

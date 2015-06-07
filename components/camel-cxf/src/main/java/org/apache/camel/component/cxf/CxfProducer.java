@@ -75,6 +75,10 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         if (client == null) {
             client = endpoint.createClient();
         }
+        // Apply the server configurer if it is possible 
+        if (endpoint.getCxfEndpointConfigurer() != null) {
+            endpoint.getCxfEndpointConfigurer().configureClient(client);
+        }
     }
     
     @Override
@@ -324,19 +328,25 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     }
 
     /**
-     * Get operation name from header and use it to lookup and return a 
-     * {@link BindingOperationInfo}.
+     * <p>Get operation name from header and use it to lookup and return a 
+     * {@link BindingOperationInfo}.</p>
+     * <p>CxfProducer lookups the operation name lookup with below order, and it uses the first found one which is not null:</p>
+     *  <ul>
+     *    <li> Using the in message header "operationName". </li>
+     *    <li> Using the defaultOperationName option value from the CxfEndpoint. </li>
+     *    <li> Using the first operation which is find from the CxfEndpoint Operations list. </li>
+     *  <ul>
      */
     private BindingOperationInfo getBindingOperationInfo(Exchange ex) {
         CxfEndpoint endpoint = (CxfEndpoint)this.getEndpoint();
         BindingOperationInfo answer = null;
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
         if (lp == null) {
-            LOG.info("CxfProducer cannot find the {} from message header, try to use the defaultOperationName", CxfConstants.OPERATION_NAME);
+            LOG.debug("CxfProducer cannot find the {} from message header, trying with defaultOperationName", CxfConstants.OPERATION_NAME);
             lp = endpoint.getDefaultOperationName();
         }
         if (lp == null) {
-            LOG.info("CxfProducer cannot find the {} from message header and there is no DefaultOperationName setting, CxfProducer will pick up the first available operation.",
+            LOG.debug("CxfProducer cannot find the {} from message header and there is no DefaultOperationName setting, CxfProducer will pick up the first available operation.",
                      CxfConstants.OPERATION_NAME);
             Collection<BindingOperationInfo> bois = 
                 client.getEndpoint().getEndpointInfo().getBinding().getOperations();

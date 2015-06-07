@@ -736,6 +736,12 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
             producerCache.setEventNotifierEnabled(isEventNotifierEnabled());
         }
+
+        // need to lookup default endpoint as it may have been intercepted
+        if (defaultEndpoint != null) {
+            defaultEndpoint = camelContext.getEndpoint(defaultEndpoint.getEndpointUri());
+        }
+
         ServiceHelper.startService(producerCache);
     }
 

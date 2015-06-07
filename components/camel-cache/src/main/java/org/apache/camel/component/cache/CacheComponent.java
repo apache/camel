@@ -22,22 +22,23 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.ServiceHelper;
 
-public class CacheComponent extends DefaultComponent {
+public class CacheComponent extends UriEndpointComponent {
     private CacheConfiguration configuration;
     private CacheManagerFactory cacheManagerFactory;
     private String configurationFile;
     
     public CacheComponent() {
+        super(CacheEndpoint.class);
         configuration = new CacheConfiguration();
     }
 
     public CacheComponent(CamelContext context) {
-        super(context);
+        super(context, CacheEndpoint.class);
         configuration = new CacheConfiguration();
     }
 
@@ -46,14 +47,14 @@ public class CacheComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         // must use copy as each endpoint can have different options
         ObjectHelper.notNull(configuration, "configuration");
+
         CacheConfiguration config = configuration.copy();
-
-        config.parseURI(new URI(uri));
-
         setProperties(this, parameters);
         setProperties(config, parameters);
+        config.setCacheName(remaining);
 
         CacheEndpoint cacheEndpoint = new CacheEndpoint(uri, this, config, cacheManagerFactory);
+        setProperties(cacheEndpoint, parameters);
         return cacheEndpoint;
     }
 
@@ -61,6 +62,11 @@ public class CacheComponent extends DefaultComponent {
         return cacheManagerFactory;
     }
 
+    /**
+     * To use the given CacheManagerFactory for creating the CacheManager.
+     * <p/>
+     * By default the DefaultCacheManagerFactory is used.
+     */
     public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
         this.cacheManagerFactory = cacheManagerFactory;
     }

@@ -51,6 +51,9 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
         Long keepAlive = (Long) mbeanServer.getAttribute(on, "KeepAliveTime");
         assertEquals(60, keepAlive.intValue());
 
+        Boolean allow = (Boolean) mbeanServer.getAttribute(on, "AllowCoreThreadTimeout");
+        assertEquals(false, allow.booleanValue());
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();

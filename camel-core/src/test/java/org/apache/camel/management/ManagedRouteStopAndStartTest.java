@@ -56,6 +56,12 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
+        String id = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("foo", id);
+
+        String description = (String) mbeanServer.getAttribute(on, "Description");
+        assertEquals("This is the foo route", description);
+
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
@@ -98,7 +104,7 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/managed")
+                from("file://target/managed").routeId("foo").routeDescription("This is the foo route")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }

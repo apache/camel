@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(BeanProcessor.class);
 
+    private Processor processor;
     private boolean multiParameterArray;
     private String method;
     private BeanHolder beanHolder;
@@ -90,8 +91,11 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         // do we have a custom adapter for this POJO to a Processor
         // but only do this if allowed
         if (allowProcessor(explicitMethodName, beanInfo)) {
-            // so if there is a custom type converter for the bean to processor
-            Processor processor = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
+            Processor processor = getProcessor();
+            if (processor == null) {
+                // so if there is a custom type converter for the bean to processor
+                processor = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
+            }
             if (processor != null) {
                 LOG.trace("Using a custom adapter as bean invocation: {}", processor);
                 try {
@@ -127,9 +131,15 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
                 LOG.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", new Object[]{bean.getClass(), clazz, sameBean});
             }
             if (sameBean) {
-                beanInvoke.invoke(bean, exchange);
-                // propagate headers
-                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                try {
+                    beanInvoke.invoke(bean, exchange);
+                    if (exchange.hasOut()) {
+                        // propagate headers
+                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                    }
+                } catch (Throwable e) {
+                    exchange.setException(e);
+                }
                 callback.done(true);
                 return true;
             }
@@ -168,7 +178,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     }
 
     protected Processor getProcessor() {
-        return beanHolder.getProcessor();
+        return processor;
     }
 
     public Object getBean() {
@@ -214,11 +224,15 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void doStart() throws Exception {
-        ServiceHelper.startService(getProcessor());
+        // optimize to only get (create) a processor if really needed
+        if (beanHolder.supportProcessor() && allowProcessor(method, beanHolder.getBeanInfo())) {
+            processor = beanHolder.getProcessor();
+            ServiceHelper.startService(processor);
+        }
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(getProcessor());
+        ServiceHelper.stopService(processor);
     }
 
     private boolean allowProcessor(String explicitMethodName, BeanInfo info) {

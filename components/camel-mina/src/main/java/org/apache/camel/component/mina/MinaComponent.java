@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IoAcceptor;
@@ -60,15 +60,16 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class MinaComponent extends DefaultComponent {
+public class MinaComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(MinaComponent.class);
     private MinaConfiguration configuration;
 
     public MinaComponent() {
+        super(MinaEndpoint.class);
     }
 
     public MinaComponent(CamelContext context) {
-        super(context);
+        super(context, MinaEndpoint.class);
     }
 
     @Override
@@ -395,6 +396,9 @@ public class MinaComponent extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared mina configuration.
+     */
     public void setConfiguration(MinaConfiguration configuration) {
         this.configuration = configuration;
     }

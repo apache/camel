@@ -22,7 +22,7 @@ import org.apache.camel.RuntimeCamelException;
  * SchematronValidationException is thrown if option is set to true.
  */
 public class SchematronValidationException extends RuntimeCamelException {
-
+    private static final long serialVersionUID = 1L;
 
     public SchematronValidationException(final String message, Throwable e) {
         super(message, e);

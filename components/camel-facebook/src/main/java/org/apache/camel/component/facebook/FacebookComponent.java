@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -32,7 +31,6 @@ import org.apache.camel.util.IntrospectionSupport;
  */
 public class FacebookComponent extends UriEndpointComponent {
 
-    @UriParam
     private FacebookConfiguration configuration;
 
     public FacebookComponent() {
@@ -74,6 +72,9 @@ public class FacebookComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared configuration
+     */
     public void setConfiguration(FacebookConfiguration configuration) {
         this.configuration = configuration;
     }

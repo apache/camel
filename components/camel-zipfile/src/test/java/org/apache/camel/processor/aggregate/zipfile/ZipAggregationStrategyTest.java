@@ -41,12 +41,14 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
     public void testSplitter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregateToZipEntry");
         mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("foo", "bar");
 
         assertMockEndpointsSatisfied();
 
         Thread.sleep(500);
 
         File[] files = new File("target/out").listFiles();
+        assertTrue(files != null);
         assertTrue("Should be a file in target/out directory", files.length > 0);
 
         File resultFile = files[0];
@@ -55,10 +57,9 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
         try {
             int fileCount = 0;
             for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
-                fileCount++;
+                fileCount = fileCount + 1;
             }
-            assertTrue("Zip file should contains " + ZipAggregationStrategyTest.EXPECTED_NO_FILES + " files",
-                       fileCount == ZipAggregationStrategyTest.EXPECTED_NO_FILES);
+            assertEquals("Zip file should contains " + ZipAggregationStrategyTest.EXPECTED_NO_FILES + " files", ZipAggregationStrategyTest.EXPECTED_NO_FILES, fileCount);
         } finally {
             IOHelper.close(zin);
         }
@@ -71,6 +72,7 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?consumer.delay=1000&noop=true")
+                    .setHeader("foo", constant("bar"))
                     .aggregate(new ZipAggregationStrategy())
                         .constant(true)
                         .completionFromBatchConsumer()

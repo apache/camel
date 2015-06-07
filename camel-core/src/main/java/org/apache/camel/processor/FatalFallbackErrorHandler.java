@@ -32,8 +32,15 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
 
     private static final Logger LOG = LoggerFactory.getLogger(FatalFallbackErrorHandler.class);
 
+    private boolean deadLetterChannel;
+
     public FatalFallbackErrorHandler(Processor processor) {
+        this(processor, false);
+    }
+
+    public FatalFallbackErrorHandler(Processor processor, boolean isDeadLetterChannel) {
         super(processor);
+        this.deadLetterChannel = isDeadLetterChannel;
     }
 
     @Override
@@ -50,12 +57,12 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                             + exchange.getExchangeId() + " using: [" + processor + "].";
                     if (previous != null) {
                         msg += " The previous and the new exception will be logged in the following.";
-                        LOG.error(msg);
-                        LOG.error("\\--> Previous exception on exchangeId: " + exchange.getExchangeId() , previous);
-                        LOG.error("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
+                        log(msg);
+                        log("\\--> Previous exception on exchangeId: " + exchange.getExchangeId(), previous);
+                        log("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
                     } else {
-                        LOG.error(msg);
-                        LOG.error("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
+                        log(msg);
+                        log("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
                     }
 
                     // we can propagated that exception to the caught property on the exchange
@@ -63,16 +70,43 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                     // to be visible in the error handler
                     exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
 
-                    // mark this exchange as already been error handler handled (just by having this property)
-                    // the false value mean the caught exception will be kept on the exchange, causing the
-                    // exception to be propagated back to the caller, and to break out routing
-                    exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, false);
+                    if (deadLetterChannel) {
+                        // special for dead letter channel as we want to let it determine what to do, depending how
+                        // it has been configured
+                        exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
+                    } else {
+                        // mark this exchange as already been error handler handled (just by having this property)
+                        // the false value mean the caught exception will be kept on the exchange, causing the
+                        // exception to be propagated back to the caller, and to break out routing
+                        exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, false);
+                    }
                 }
                 callback.done(doneSync);
             }
         });
 
         return sync;
+    }
+
+    private void log(String message) {
+        log(message, null);
+    }
+
+    private void log(String message, Throwable t) {
+        // when using dead letter channel we only want to log at WARN level
+        if (deadLetterChannel) {
+            if (t != null) {
+                LOG.warn(message, t);
+            } else {
+                LOG.warn(message);
+            }
+        } else {
+            if (t != null) {
+                LOG.error(message, t);
+            } else {
+                LOG.error(message);
+            }
+        }
     }
 
     @Override

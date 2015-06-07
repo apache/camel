@@ -23,6 +23,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
@@ -32,9 +34,11 @@ import org.jsmpp.bean.DeliverSm;
  * 
  * @version 
  */
+@UriEndpoint(scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port", consumerClass = SmppConsumer.class, label = "mobile,messaging")
 public class SmppEndpoint extends DefaultEndpoint {
 
     private SmppBinding binding;
+    @UriParam
     private SmppConfiguration configuration;
 
     public SmppEndpoint(String endpointUri, Component component, SmppConfiguration configuration) {

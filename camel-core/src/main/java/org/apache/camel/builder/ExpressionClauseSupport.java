@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ELExpression;
+import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
@@ -34,13 +35,13 @@ import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.PhpExpression;
-import org.apache.camel.model.language.PropertyExpression;
 import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.RubyExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.SqlExpression;
+import org.apache.camel.model.language.TerserExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.VtdXmlExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
@@ -114,7 +115,8 @@ public class ExpressionClauseSupport<T> {
      * An expression of an inbound message body
      */
     public T body() {
-        return expression(ExpressionBuilder.bodyExpression());
+        // reuse simple as this allows the model to represent this as a known JAXB type
+        return expression(new SimpleExpression("body"));
     }
 
     /**
@@ -182,9 +184,19 @@ public class ExpressionClauseSupport<T> {
 
     /**
      * An expression of an exchange property of the given name
+     *
+     * @deprecated use {@link #exchangeProperty(String)} instead
      */
+    @Deprecated
     public T property(String name) {
-        return expression(new PropertyExpression(name));
+        return expression(new ExchangePropertyExpression(name));
+    }
+
+    /**
+     * An expression of an exchange property of the given name
+     */
+    public T exchangeProperty(String name) {
+        return expression(new ExchangePropertyExpression(name));
     }
 
     /**
@@ -321,7 +333,21 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T jsonpath(String text) {
-        return expression(new JsonPathExpression(text));
+        return jsonpath(text, false);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, boolean suppressExceptions) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setSuppressExceptions(suppressExceptions);
+        return expression(expression);
     }
 
     /**
@@ -334,6 +360,23 @@ public class ExpressionClauseSupport<T> {
      */
     public T jsonpath(String text, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setResultType(resultType);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param resultType the return type expected by the expression
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, boolean suppressExceptions, Class<?> resultType) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setSuppressExceptions(suppressExceptions);
         expression.setResultType(resultType);
         setExpressionType(expression);
         return result;
@@ -474,6 +517,17 @@ public class ExpressionClauseSupport<T> {
         expression.setResultType(resultType);
         setExpressionType(expression);
         return result;
+    }
+
+    /**
+     * Evaluates an <a href="http://camel.apache.org/hl7.html">HL7 Terser
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @return the builder to continue processing the DSL
+     */
+    public T terser(String text) {
+        return expression(new TerserExpression(text));
     }
 
     /**

@@ -43,17 +43,20 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
 
     public JmsQueueEndpoint(Queue destination) throws JMSException {
         this("jms:queue:" + destination.getQueueName(), null);
+        setDestinationType("queue");
         setDestination(destination);
     }
     
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
             JmsConfiguration configuration) {
         this(uri, component, destination, configuration, null);
+        setDestinationType("queue");
     }
 
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
             JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, false, configuration);
+        setDestinationType("queue");
         if (queueBrowseStrategy == null) {
             this.queueBrowseStrategy = createQueueBrowseStrategy();
         } else {
@@ -63,6 +66,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
 
     public JmsQueueEndpoint(String endpointUri, String destination, QueueBrowseStrategy queueBrowseStrategy) {
         super(endpointUri, destination, false);
+        setDestinationType("queue");
         if (queueBrowseStrategy == null) {
             this.queueBrowseStrategy = createQueueBrowseStrategy();
         } else {
@@ -72,6 +76,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
 
     public JmsQueueEndpoint(String endpointUri, String destination) {
         super(endpointUri, destination, false);
+        setDestinationType("queue");
         queueBrowseStrategy = createQueueBrowseStrategy();
     }
 

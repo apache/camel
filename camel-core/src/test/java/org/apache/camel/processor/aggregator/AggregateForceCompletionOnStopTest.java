@@ -110,12 +110,12 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
                 from("direct:forceCompletionTrue").routeId("foo")
                     .aggregate(header("id"), new BodyInAggregatingStrategy()).forceCompletionOnStop().completionSize(10)
                     .delay(100)
-                    .processRef("myCompletionProcessor");
+                    .process("myCompletionProcessor");
 
                 from("direct:forceCompletionFalse").routeId("bar")
                     .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(10)
                     .delay(100)
-                    .processRef("myCompletionProcessor");
+                    .process("myCompletionProcessor");
             }
         };
     }

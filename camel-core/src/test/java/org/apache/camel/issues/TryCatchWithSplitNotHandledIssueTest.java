@@ -30,7 +30,7 @@ public class TryCatchWithSplitNotHandledIssueTest extends ContextTestSupport {
     public void testSplitWithErrorIsNotHandled() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("James");
-        error.message(0).property(Exchange.EXCEPTION_CAUGHT).isNotNull();
+        error.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isNotNull();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hi Claus", "Hi Willem");

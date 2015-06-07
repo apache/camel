@@ -41,10 +41,20 @@ public abstract class ApiMethodPropertiesHelper<C> {
     protected final Class<?> componentConfigClass;
     protected final String propertyPrefix;
 
+    private final int prefixLength;
+    private final String camelCasePrefix;
+
     protected ApiMethodPropertiesHelper(Class<C> componentConfiguration, String propertyPrefix) {
 
         this.componentConfigClass = componentConfiguration;
         this.propertyPrefix = propertyPrefix;
+
+        this.prefixLength = propertyPrefix.length();
+        if (!Character.isLetterOrDigit(propertyPrefix.charAt(prefixLength - 1))) {
+            this.camelCasePrefix = propertyPrefix.substring(0, prefixLength - 1);
+        } else {
+            this.camelCasePrefix = null;
+        }
 
         for (Field field : componentConfiguration.getDeclaredFields()) {
             componentConfigFields.add(field.getName());
@@ -58,12 +68,19 @@ public abstract class ApiMethodPropertiesHelper<C> {
      * @param properties map to collect properties with required prefix
      */
     public Map<String, Object> getExchangeProperties(Exchange exchange, Map<String, Object> properties) {
-        final int prefixLength = propertyPrefix.length();
+
         int nProperties = 0;
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-            if (entry.getKey().startsWith(propertyPrefix)) {
-                properties.put(entry.getKey().substring(prefixLength),
+            final String key = entry.getKey();
+            if (key.startsWith(propertyPrefix)) {
+                properties.put(key.substring(prefixLength),
                     entry.getValue());
+                nProperties++;
+            } else if (camelCasePrefix != null && key.startsWith(camelCasePrefix)) {
+                // assuming all property names start with a lowercase character
+                final String propertyName = String.valueOf(Character.toLowerCase(key.charAt(prefixLength - 1)))
+                    + key.substring(prefixLength);
+                properties.put(propertyName, entry.getValue());
                 nProperties++;
             }
         }

@@ -21,19 +21,31 @@ import java.net.URI;
 import com.googlecode.jsendnsca.core.Encryption;
 import com.googlecode.jsendnsca.core.NagiosSettings;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
  */
+@UriParams
 public class NagiosConfiguration implements Cloneable {
 
-    private NagiosSettings nagiosSettings;
+    private transient NagiosSettings nagiosSettings;
+
+    @UriPath @Metadata(required = "true")
     private String host;
+    @UriPath @Metadata(required = "true")
     private int port;
+    @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;
+    @UriParam(defaultValue = "5000")
     private int timeout = 5000;
+    @UriParam
     private String password;
+    @UriParam
     private NagiosEncryptionMethod encryptionMethod;
 
     /**
@@ -100,6 +112,9 @@ public class NagiosConfiguration implements Cloneable {
         return host;
     }
 
+    /**
+     * This is the address of the Nagios host where checks should be send.
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -108,6 +123,9 @@ public class NagiosConfiguration implements Cloneable {
         return port;
     }
 
+    /**
+     * The port number of the host.
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -116,6 +134,9 @@ public class NagiosConfiguration implements Cloneable {
         return connectionTimeout;
     }
 
+    /**
+     * Connection timeout in millis.
+     */
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
@@ -124,6 +145,9 @@ public class NagiosConfiguration implements Cloneable {
         return timeout;
     }
 
+    /**
+     * Sending timeout in millis.
+     */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
@@ -132,6 +156,9 @@ public class NagiosConfiguration implements Cloneable {
         return password;
     }
 
+    /**
+     * Password to be authenticated when sending checks to Nagios.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -140,6 +167,9 @@ public class NagiosConfiguration implements Cloneable {
         return encryptionMethod;
     }
 
+    /**
+     * To specify an encryption method.
+     */
     public void setEncryptionMethod(NagiosEncryptionMethod encryptionMethod) {
         this.encryptionMethod = encryptionMethod;
     }

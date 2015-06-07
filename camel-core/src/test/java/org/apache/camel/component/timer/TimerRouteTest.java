@@ -46,13 +46,12 @@ public class TimerRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=500")
+                from("timer://foo?fixedRate=true&delay=0&period=100")
                     .log("Fired timer")
                     .to("bean:myBean", "mock:result");
             }
         };
     }
-
 
     @Override
     protected Context createJndiContext() throws Exception {

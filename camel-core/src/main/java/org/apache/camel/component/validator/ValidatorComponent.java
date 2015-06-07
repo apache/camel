@@ -16,60 +16,30 @@
  */
 package org.apache.camel.component.validator;
 
-import java.io.InputStream;
 import java.util.Map;
 
-import org.w3c.dom.ls.LSResourceResolver;
-
 import org.apache.camel.Endpoint;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.processor.validation.ValidatingProcessor;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ResourceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * The <a href="http://camel.apache.org/validation.html">Validator Component</a>
- * for validating XML against some schema
+ * The <a href="http://camel.apache.org/validation.html">Validator Component</a> is for validating XML against a schema
+ *
+ * @version
  */
-public class ValidatorComponent extends DefaultComponent {
+public class ValidatorComponent extends UriEndpointComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ValidatorComponent.class);
+    public ValidatorComponent() {
+        this(ValidatorEndpoint.class);
+    }
+
+    public ValidatorComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        final String resourceUri = remaining;
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
-        byte[] bytes = null;
-        try {
-            bytes = IOConverter.toBytes(is);
-        } finally {
-            // and make sure to close the input stream after the schema has been loaded
-            IOHelper.close(is);
-        }
-
-        ValidatingProcessor validator = new ValidatingProcessor();
-        validator.setSchemaAsByteArray(bytes);
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
-        configureValidator(validator, uri, remaining, parameters);
-
-        // force loading of schema at create time otherwise concurrent
-        // processing could cause thread safe issues for the javax.xml.validation.SchemaFactory
-        validator.loadSchema();
-
-        return new ProcessorEndpoint(uri, this, validator);
+        ValidatorEndpoint endpoint = new ValidatorEndpoint(uri, this, remaining);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
-    protected void configureValidator(ValidatingProcessor validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        LSResourceResolver resourceResolver = resolveAndRemoveReferenceParameter(parameters, "resourceResolver", LSResourceResolver.class);
-        if (resourceResolver != null) {
-            validator.setResourceResolver(resourceResolver);
-        } else {
-            validator.setResourceResolver(new DefaultLSResourceResolver(getCamelContext(), remaining));
-        }
-
-        setProperties(validator, parameters);
-    }
 }

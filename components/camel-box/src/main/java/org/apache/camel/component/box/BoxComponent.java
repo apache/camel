@@ -22,13 +22,11 @@ import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.component.box.internal.BoxClientHelper;
 import org.apache.camel.component.box.internal.CachedBoxClient;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
  * Represents the component that manages {@link BoxEndpoint}.
  */
-@UriEndpoint(scheme = "box", consumerClass = BoxConsumer.class, consumerPrefix = "consumer")
 public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfiguration, BoxApiCollection> {
 
     private CachedBoxClient cachedBoxClient;
@@ -49,11 +47,27 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, BoxApiName apiName,
                                       BoxConfiguration endpointConfiguration) {
+        endpointConfiguration.setApiName(apiName);
+        endpointConfiguration.setMethodName(methodName);
         return new BoxEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
-    // get the component's singleton BoxClient
-    protected synchronized CachedBoxClient getBoxClient() {
+    public CachedBoxClient getBoxClient() {
+        return cachedBoxClient;
+    }
+
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public void setConfiguration(BoxConfiguration configuration) {
+        super.setConfiguration(configuration);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
         if (cachedBoxClient == null) {
             if (configuration != null) {
                 cachedBoxClient = BoxClientHelper.createBoxClient(configuration);
@@ -61,7 +75,6 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
                 throw new IllegalArgumentException("Unable to connect, Box component configuration is missing");
             }
         }
-        return cachedBoxClient;
     }
 
     @Override

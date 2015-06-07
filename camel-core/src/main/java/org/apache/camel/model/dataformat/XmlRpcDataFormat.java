@@ -24,10 +24,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the XmlRpc XML {@link org.apache.camel.spi.DataFormat}
+ * xml-rpc data format
  */
+@Metadata(label = "dataformat,transformation", title = "XML RPC")
 @XmlRootElement(name = "xmlrpc")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlRpcDataFormat extends DataFormatDefinition {
@@ -49,6 +51,11 @@ public class XmlRpcDataFormat extends DataFormatDefinition {
         return request;
     }
 
+    /**
+     * Whether to unmarshal request or response
+     * <p/>
+     * Is by default false
+     */
     public void setRequest(Boolean request) {
         this.request = request;
     }

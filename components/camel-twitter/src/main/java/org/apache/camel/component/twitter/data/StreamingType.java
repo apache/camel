@@ -17,7 +17,7 @@
 package org.apache.camel.component.twitter.data;
 
 public enum StreamingType {
-    SAMPLE, FILTER, UNKNOWN;
+    SAMPLE, FILTER, USER, UNKNOWN;
 
     public static StreamingType fromUri(String uri) {
         for (StreamingType streamType : StreamingType.values()) {

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -32,6 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
+@Metadata(label = "language", title = "XQuery")
 @XmlRootElement(name = "xquery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XQueryExpression extends NamespaceAwareExpression {
@@ -57,6 +59,11 @@ public class XQueryExpression extends NamespaceAwareExpression {
         return type;
     }
 
+    /**
+     * Sets the class name of the result type (type from output)
+     * <p/>
+     * The default result type is NodeSet
+     */
     public void setType(String type) {
         this.type = type;
     }
@@ -65,6 +72,11 @@ public class XQueryExpression extends NamespaceAwareExpression {
         return resultType;
     }
 
+    /**
+     * Sets the class of the result type (type from output).
+     * <p/>
+     * The default result type is NodeSet
+     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }
@@ -73,6 +85,9 @@ public class XQueryExpression extends NamespaceAwareExpression {
         return headerName;
     }
 
+    /**
+     * Name of header to use as input, instead of the message body
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
@@ -92,24 +107,24 @@ public class XQueryExpression extends NamespaceAwareExpression {
 
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
-        super.configureExpression(camelContext, expression);
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
             setProperty(expression, "headerName", getHeaderName());
         }
+        super.configureExpression(camelContext, expression);
     }
 
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        super.configurePredicate(camelContext, predicate);
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
             setProperty(predicate, "headerName", getHeaderName());
         }
+        super.configurePredicate(camelContext, predicate);
     }
 
 }

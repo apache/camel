@@ -19,6 +19,7 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns:camel="http://camel.apache.org/schema/blueprint"
            xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf"
+           xmlns:cxf-cluster="http://cxf.apache.org/clustering"
            xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
            xmlns:s="http://cxf.apache.org/hello_world_soap_http"
@@ -27,6 +28,7 @@
              http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
              http://camel.apache.org/schema/blueprint/cxf http://camel.apache.org/schema/blueprint/cxf/camel-cxf.xsd
              http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+             http://cxf.apache.org/clustering http://cxf.apache.org/schemas/clustering.xsd
              http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
              http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
    
@@ -42,6 +44,7 @@
       <cm:property name="transportId" value="http://cxf.apache.org/transports/http" />
       <cm:property name="serviceName" value="{http://org.apache.camel.component.cxf}myService" />
       <cm:property name="endpointName" value="{http://org.apache.camel.component.cxf}myEndpoint" />
+      <cm:property name="receiveTimeout" value="200" />
       <cm:property name="wsdlURL" value="wsdl/test.wsdl" />
     </cm:default-properties>
   </cm:property-placeholder>
@@ -56,9 +59,28 @@
             </property>
        </enc:encryptor>
   </enc:property-placeholder>
+  
+  <bean id="SequentialAddresses" class="org.apache.cxf.clustering.SequentialStrategy">
+		<property name="alternateAddresses">
+			<list>
+				<value>
+					http://localhost:8181/cxf/report
+				</value>
+			</list>
+		</property>
+		<property name="delayBetweenRetries" value="10" />
+	</bean>
 
   <cxf:cxfEndpoint id="routerEndpoint" address="{{router.address}}"
-    serviceClass="org.apache.camel.component.cxf.HelloService"/>
+    serviceClass="org.apache.camel.component.cxf.HelloService">
+    <cxf:features>
+		<cxf-cluster:failover>
+			<cxf-cluster:strategy>
+				<ref bean="SequentialAddresses" />
+			</cxf-cluster:strategy>
+		</cxf-cluster:failover>
+     </cxf:features>
+  </cxf:cxfEndpoint>
 
   <cxf:cxfEndpoint id="serviceEndpoint" address="{{service.address}}"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
@@ -71,7 +93,7 @@
 
   <!-- Setting the http conduit policy -->
   <http-conf:conduit name="{http://cxf.component.camel.apache.org/}HelloServicePort.http-conduit">
-    <http-conf:client ReceiveTimeout="500"
+    <http-conf:client ReceiveTimeout="${receiveTimeout}"
                       MaxRetransmits="1"
                       AllowChunking="false" />
   </http-conf:conduit>

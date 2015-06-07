@@ -20,15 +20,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.camel.component.linkedin</groupId>
+    <groupId>org.apache.camel</groupId>
     <artifactId>camel-linkedin-parent</artifactId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.16-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-linkedin</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: LinkedIn Component</name>
-  <description>Camel Component for LinkedIn</description>
+  <name>Camel :: LinkedIn :: Component</name>
+  <description>Camel LinkedIn component</description>
 
   <properties>
     <schemeName>linkedin</schemeName>
@@ -46,9 +46,8 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel.component.linkedin</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- Camel annotations in runtime scope to avoid compile errors in IDEs -->
@@ -61,7 +60,7 @@
 
     <!-- Component API javadoc in provided scope to read API signatures -->
     <dependency>
-      <groupId>org.apache.camel.component.linkedin</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin-api</artifactId>
       <version>${project.version}</version>
       <classifier>javadoc</classifier>
@@ -130,13 +129,29 @@
                     <nullableOption>seniorities</nullableOption>
                     <nullableOption>start</nullableOption>
                     <nullableOption>start_timestamp</nullableOption>
+                    <nullableOption>statistics_update_key</nullableOption>
                     <nullableOption>time_granularity</nullableOption>
                   </nullableOptions>
+                  <substitutions>
+                    <substitution>
+                      <method>^getHistoricalStatusUpdateStatistics$</method>
+                       <argName>update_key</argName>
+                       <argType>java.lang.String</argType>
+                       <replacement>statistics_update_key</replacement>
+                    </substitution>
+                  </substitutions>
                 </api>
                 <api>
                   <apiName>groups</apiName>
                   <proxyClass>org.apache.camel.component.linkedin.api.GroupsResource</proxyClass>
                   <fromJavadoc />
+                  <nullableOptions>
+                    <nullableOption>category</nullableOption>
+                    <nullableOption>count</nullableOption>
+                    <nullableOption>modified_since</nullableOption>
+                    <nullableOption>order</nullableOption>
+                    <nullableOption>start</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>jobs</apiName>

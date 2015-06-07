@@ -17,12 +17,9 @@
 ## ------------------------------------------------------------------------
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:camel="http://camel.apache.org/schema/spring"
     xsi:schemaLocation="
-       http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring
-       http://camel.apache.org/schema/spring/camel-spring.xsd">
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <!--
         Simple camel route which send every one minute a message on the console.
@@ -31,7 +28,7 @@
         <route id="timer-to-console">
             <from uri="timer://foo?fixedRate=true&amp;period=10s"/>
             <transform>
-               <simple>Hello Web Application, how are you?</simple>
+               <simple>I am ${sysenv.HOSTNAME} and I have run ${header.CamelTimerCounter} times</simple>
             </transform>
             <to uri="stream:out"/>
         </route>

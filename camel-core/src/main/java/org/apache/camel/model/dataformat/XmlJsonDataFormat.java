@@ -19,7 +19,6 @@ package org.apache.camel.model.dataformat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,12 +28,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a <a href="http://camel.apache.org/xmljson.html">XML-JSON</a> {@link org.apache.camel.spi.DataFormat}.
+ * xml-json data format
  *
  * @version 
  */
+@Metadata(label = "dataformat,transformation", title = "XML JSon")
 @XmlRootElement(name = "xmljson")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlJsonDataFormat extends DataFormatDefinition {
@@ -169,7 +170,7 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
 
         // will end up calling the setTypeHints(String s) which does the parsing from the Enum String key to the Enum value
         if (typeHints != null) {
-            setProperty(camelContext, typeHints, TYPE_HINTS, typeHints);
+            setProperty(camelContext, dataFormat, TYPE_HINTS, typeHints);
         }
 
         //TODO: xmljson: element-namespace mapping is not implemented in the XML DSL
@@ -182,6 +183,10 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return encoding;
     }
 
+    /**
+     * Sets the encoding.
+     * Used for unmarshalling (JSON to XML conversion).
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -190,6 +195,10 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return elementName;
     }
 
+    /**
+     * Specifies the name of the XML elements representing each array element.
+     * Used for unmarshalling (JSON to XML conversion).
+     */
     public void setElementName(String elementName) {
         this.elementName = elementName;
     }
@@ -198,6 +207,13 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return arrayName;
     }
 
+    /**
+     * Specifies the name of the top-level XML element.
+     * Used for unmarshalling (JSON to XML conversion).
+     *
+     * For example, when converting [1, 2, 3], it will be output by default as <a><e>1</e><e>2</e><e>3</e></a>.
+     * By setting this option or rootName, you can alter the name of element 'a'.
+     */
     public void setArrayName(String arrayName) {
         this.arrayName = arrayName;
     }
@@ -206,6 +222,13 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return forceTopLevelObject;
     }
 
+    /**
+     * Determines whether the resulting JSON will start off with a top-most element whose name matches the XML root element.
+     * Used for marshalling (XML to JSon conversion).
+     *
+     * If disabled, XML string <a><x>1</x><y>2</y></a> turns into { 'x: '1', 'y': '2' }.
+     * Otherwise, it turns into { 'a': { 'x: '1', 'y': '2' }}.
+     */
     public void setForceTopLevelObject(Boolean forceTopLevelObject) {
         this.forceTopLevelObject = forceTopLevelObject;
     }
@@ -214,6 +237,11 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return namespaceLenient;
     }
 
+    /**
+     * Flag to be tolerant to incomplete namespace prefixes.
+     * Used for unmarshalling (JSON to XML conversion).
+     * In most cases, json-lib automatically changes this flag at runtime to match the processing.
+     */
     public void setNamespaceLenient(Boolean namespaceLenient) {
         this.namespaceLenient = namespaceLenient;
     }
@@ -222,6 +250,14 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return rootName;
     }
 
+    /**
+     * Specifies the name of the top-level element.
+     * Used for unmarshalling (JSON to XML conversion).
+     *
+     * If not set, json-lib will use arrayName or objectName (default value: 'o', at the current time it is not configurable in this data format).
+     * If set to 'root', the JSON string { 'x': 'value1', 'y' : 'value2' } would turn
+     * into <root><x>value1</x><y>value2</y></root>, otherwise the 'root' element would be named 'o'.
+     */
     public void setRootName(String rootName) {
         this.rootName = rootName;
     }
@@ -230,6 +266,10 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return skipWhitespace;
     }
 
+    /**
+     * Determines whether white spaces between XML elements will be regarded as text values or disregarded.
+     * Used for marshalling (XML to JSon conversion).
+     */
     public void setSkipWhitespace(Boolean skipWhitespace) {
         this.skipWhitespace = skipWhitespace;
     }
@@ -238,6 +278,10 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return trimSpaces;
     }
 
+    /**
+     * Determines whether leading and trailing white spaces will be omitted from String values.
+     * Used for marshalling (XML to JSon conversion).
+     */
     public void setTrimSpaces(Boolean trimSpaces) {
         this.trimSpaces = trimSpaces;
     }
@@ -246,6 +290,10 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return skipNamespaces;
     }
 
+    /**
+     * Signals whether namespaces should be ignored. By default they will be added to the JSON output using @xmlns elements.
+     * Used for marshalling (XML to JSon conversion).
+     */
     public void setSkipNamespaces(Boolean skipNamespaces) {
         this.skipNamespaces = skipNamespaces;
     }
@@ -254,6 +302,10 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return removeNamespacePrefixes;
     }
 
+    /**
+     * Removes the namespace prefixes from XML qualified elements, so that the resulting JSON string does not contain them.
+     * Used for marshalling (XML to JSon conversion).
+     */
     public void setRemoveNamespacePrefixes(Boolean removeNamespacePrefixes) {
         this.removeNamespacePrefixes = removeNamespacePrefixes;
     }
@@ -262,6 +314,13 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return expandableProperties;
     }
 
+    /**
+     * With expandable properties, JSON array elements are converted to XML as a sequence of repetitive XML elements
+     * with the local name equal to the JSON key, for example: { number: 1,2,3 }, normally converted to:
+     * <number><e>1</e><e>2</e><e>3</e></number> (where e can be modified by setting elementName), would instead
+     * translate to <number>1</number><number>2</number><number>3</number>, if "number" is set as an expandable property
+     * Used for unmarshalling (JSON to XML conversion).
+     */
     public void setExpandableProperties(List<String> expandableProperties) {
         this.expandableProperties = expandableProperties;
     }
@@ -270,6 +329,10 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
         return typeHints;
     }
 
+    /**
+     * Adds type hints to the resulting XML to aid conversion back to JSON.
+     * Used for unmarshalling (JSON to XML conversion).
+     */
     public void setTypeHints(String typeHints) {
         this.typeHints = typeHints;
     }

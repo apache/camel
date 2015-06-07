@@ -19,13 +19,13 @@ package org.apache.camel.component.mail;
 import javax.mail.Message;
 import javax.mail.search.SearchTerm;
 
+import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.UriEndpoint;
@@ -33,19 +33,25 @@ import org.apache.camel.spi.UriParam;
 
 /**
  * Endpoint for Camel Mail.
- *
- * @version 
  */
-@UriEndpoint(scheme = "mail", consumerClass = MailConsumer.class)
+@UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS", syntax = "imap:host:port", consumerClass = MailConsumer.class, label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {
-    private MailBinding binding;
     @UriParam
     private MailConfiguration configuration;
-    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    @UriParam
+    private MailBinding binding;
+    @UriParam
+    private HeaderFilterStrategy headerFilterStrategy = new MailHeaderFilterStrategy();
+    @UriParam
     private ContentTypeResolver contentTypeResolver;
     @UriParam
     private int maxMessagesPerPoll;
+    @UriParam
     private SearchTerm searchTerm;
+    @UriParam
+    private SortTerm[] sortTerm;
+    @UriParam
+    private MailBoxPostProcessAction postProcessAction;
 
     public MailEndpoint() {
     }
@@ -84,7 +90,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.getProtocol().startsWith("smtp")) {
             throw new IllegalArgumentException("Protocol " + configuration.getProtocol()
-                + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
+                    + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
         }
 
         // must use java mail sender impl as we need to get hold of a mail session
@@ -97,6 +103,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
      */
     public Consumer createConsumer(Processor processor, JavaMailSender sender) throws Exception {
         MailConsumer answer = new MailConsumer(this, processor, sender);
+
+        answer.setHandleFailedMessage(configuration.isHandleFailedMessage());
+        answer.setSkipFailedMessage(configuration.isSkipFailedMessage());
 
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
         // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
@@ -111,7 +120,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     public boolean isSingleton() {
         return false;
     }
-    
+
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
         return createExchange(pattern, null);
@@ -149,6 +158,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return configuration;
     }
 
+    /**
+     * Sets the Mail configuration
+     */
     public void setConfiguration(MailConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -157,6 +169,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter headers.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -165,6 +180,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return contentTypeResolver;
     }
 
+    /**
+     * Resolver to determine Content-Type for file attachments.
+     */
     public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
     }
@@ -173,6 +191,11 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return maxMessagesPerPoll;
     }
 
+    /**
+     * Specifies the maximum number of messages to gather per poll. By default, no maximum is set.
+     * Can be used to set a limit of e.g. 1000 to avoid downloading thousands of files when the server starts up.
+     * Set a value of 0 or negative to disable this option.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
@@ -181,8 +204,33 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return searchTerm;
     }
 
+    /**
+     * Refers to a {@link javax.mail.search.SearchTerm} which allows to filter mails based on search criteria such as subject, body, from, sent after a certain date etc.
+     */
     public void setSearchTerm(SearchTerm searchTerm) {
         this.searchTerm = searchTerm;
     }
 
+    public SortTerm[] getSortTerm() {
+        return sortTerm == null ? null : sortTerm.clone();
+    }
+
+    /**
+     * Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3
+     * or when IMAP server does not have the SORT capability.
+     */
+    public void setSortTerm(SortTerm[] sortTerm) {
+        this.sortTerm = sortTerm == null ? null : sortTerm.clone();
+    }
+
+    public MailBoxPostProcessAction getPostProcessAction() {
+        return postProcessAction;
+    }
+
+    /**
+     * Refers to an {@link MailBoxPostProcessAction} for doing post processing tasks on the mailbox once the normal processing ended.
+     */
+    public void setPostProcessAction(MailBoxPostProcessAction postProcessAction) {
+        this.postProcessAction = postProcessAction;
+    }
 }

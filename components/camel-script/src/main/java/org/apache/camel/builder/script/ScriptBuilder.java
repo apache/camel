@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * A builder class for creating {@link Processor}, {@link Expression} and
  * {@link Predicate} objects using the JSR 223 scripting engine.
  *
- * @version 
+ * @version
  */
 public class ScriptBuilder implements Expression, Predicate, Processor {
 
@@ -64,6 +64,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     private Map<String, Object> attributes;
     private final CamelContext camelContext;
     private final ScriptEngineFactory scriptEngineFactory;
+    private final ScriptEngine scriptEngine;
     private final String scriptLanguage;
     private final String scriptResource;
     private final String scriptText;
@@ -107,9 +108,11 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             this.scriptText = scriptText;
         }
         if (scriptEngineFactory == null) {
+            this.scriptEngine = createScriptEngine(scriptLanguage);
             this.scriptEngineFactory = lookupScriptEngineFactory(scriptLanguage);
         } else {
             this.scriptEngineFactory = scriptEngineFactory;
+            this.scriptEngine = scriptEngineFactory.getScriptEngine();
         }
 
         if (this.scriptEngineFactory == null) {
@@ -133,10 +136,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
 
             // pre-compile script if we have it as text
             if (reader != null) {
-                ScriptEngine engine = this.scriptEngineFactory.getScriptEngine();
-                if (engine instanceof Compilable) {
-                    Compilable compilable = (Compilable) engine;
-                    this.compiledScript = compilable.compile(scriptText);
+                if (compileScripte(camelContext) && scriptEngine instanceof Compilable) {
+                    Compilable compilable = (Compilable) scriptEngine;
+                    this.compiledScript = compilable.compile(reader);
                     LOG.debug("Using compiled script: {}", this.compiledScript);
                 }
             }
@@ -324,7 +326,23 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     protected static ScriptEngine createScriptEngine(String language) {
-        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = tryCreateScriptEngine(language, ScriptBuilder.class.getClassLoader());
+        if (engine == null) {
+            engine = tryCreateScriptEngine(language, Thread.currentThread().getContextClassLoader());
+        }
+        if (engine == null) {
+            throw new IllegalArgumentException("No script engine could be created for: " + language);
+        }
+        return engine;
+    }
+
+    /**
+     * Attemps to create the script engine for the given langauge using the classloader
+     *
+     * @return the engine, or <tt>null</tt> if not able to create
+     */
+    private static ScriptEngine tryCreateScriptEngine(String language, ClassLoader classLoader) {
+        ScriptEngineManager manager = new ScriptEngineManager(classLoader);
         ScriptEngine engine = null;
 
         // some script names has alias
@@ -336,17 +354,15 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
                     break;
                 }
             } catch (NoClassDefFoundError ex) {
-                LOG.error("Cannot load the scriptEngine for " + name + ", the exception is " + ex
-                          + ", please ensure correct JARs is provided on classpath.");
+                LOG.warn("Cannot load ScriptEngine for " + name + ". Please ensure correct JARs is provided on classpath (stacktrace in DEBUG logging).");
+                // include stacktrace in debug logging
+                LOG.debug("Cannot load ScriptEngine for " + name + ". Please ensure correct JARs is provided on classpath.", ex);
             }
         }
         if (engine == null) {
             engine = checkForOSGiEngine(language);
         }
-        if (engine == null) {
-            throw new IllegalArgumentException("No script engine could be created for: " + language);
-        }
-        if (isPython(language)) {
+        if (engine != null && isPython(language)) {
             ScriptContext context = engine.getContext();
             context.setAttribute("com.sun.script.jython.comp.mode", "eval", ScriptContext.ENGINE_SCOPE);
         }
@@ -354,36 +370,41 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     private static ScriptEngine checkForOSGiEngine(String language) {
-        LOG.debug("No script engine found for " + language + " using standard javax.script auto-registration. Checking OSGi registry...");
+        LOG.debug("No script engine found for {} using standard javax.script auto-registration. Checking OSGi registry.", language);
         try {
             // Test the OSGi environment with the Activator
             Class<?> c = Class.forName("org.apache.camel.script.osgi.Activator");
             Method mth = c.getDeclaredMethod("getBundleContext");
             Object ctx = mth.invoke(null);
-            LOG.debug("Found OSGi BundleContext " + ctx);
+            LOG.debug("Found OSGi BundleContext: {}", ctx);
             if (ctx != null) {
                 Method resolveScriptEngine = c.getDeclaredMethod("resolveScriptEngine", String.class);
                 return (ScriptEngine)resolveScriptEngine.invoke(null, language);
             }
         } catch (Throwable t) {
-            LOG.debug("Unable to load OSGi, script engine cannot be found", t);
+            LOG.debug("Unable to detect OSGi. ScriptEngine for " + language + " cannot be resolved.", t);
         }
         return null;
     }
 
     protected Object evaluateScript(Exchange exchange) {
         try {
-            // get a new engine which we must for each exchange
-            ScriptEngine engine = scriptEngineFactory.getScriptEngine();
-            ScriptContext context = populateBindings(engine, exchange, attributes);
-            addScriptEngineArguments(engine, exchange);
-            Object result = runScript(engine, exchange, context);
-            LOG.debug("The script evaluation result is: {}", result);
-            return result;
+            if (reuseScriptEngine(exchange)) {
+                // It's not safe to do the evaluation with a single scriptEngine
+                synchronized (this) {
+                    LOG.debug("Calling doEvaluateScript without creating a new scriptEngine");
+                    return doEvaluateScript(exchange, scriptEngine);
+                }
+            } else {
+                LOG.debug("Calling doEvaluateScript with a new scriptEngine");
+                // get a new engine which we must for each exchange
+                ScriptEngine engine = scriptEngineFactory.getScriptEngine();
+                return doEvaluateScript(exchange, engine);
+            }
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Script evaluation failed: " + e.getMessage(), e);
-            } 
+            }
             if (e.getCause() != null) {
                 throw createScriptEvaluationException(e.getCause());
             } else {
@@ -391,6 +412,42 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             }
         } catch (IOException e) {
             throw createScriptEvaluationException(e);
+        }
+    }
+
+    protected Object doEvaluateScript(Exchange exchange, ScriptEngine scriptEngine) throws ScriptException, IOException {
+        ScriptContext context = populateBindings(scriptEngine, exchange, attributes);
+        addScriptEngineArguments(scriptEngine, exchange);
+        Object result = runScript(scriptEngine, exchange, context);
+        LOG.debug("The script evaluation result is: {}", result);
+        return result;
+    }
+
+    // To check the camel context property to decide if we need to reuse the ScriptEngine
+    private boolean reuseScriptEngine(Exchange exchange) {
+        CamelContext camelContext = exchange.getContext();
+        if (camelContext != null) {
+            return getCamelContextProperty(camelContext, Exchange.REUSE_SCRIPT_ENGINE);
+        } else {
+            // default value is false
+            return false;
+        }
+    }
+
+    private boolean compileScripte(CamelContext camelContext) {
+        if (camelContext != null) {
+            return getCamelContextProperty(camelContext, Exchange.COMPILE_SCRIPT);
+        } else {
+            return false;
+        }
+    }
+
+    private boolean getCamelContextProperty(CamelContext camelContext, String propertyKey) {
+        String propertyValue =  camelContext.getProperty(propertyKey);
+        if (propertyValue != null) {
+            return camelContext.getTypeConverter().convertTo(boolean.class, propertyValue);
+        } else {
+            return false;
         }
     }
 

@@ -61,6 +61,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         return  !attributeName.equals("type")
                 && !attributeName.equals("onRedeliveryRef")
                 && !attributeName.equals("onRetryWhileRef")
+                && !attributeName.equals("onPrepareFailureRef")
                 && !attributeName.equals("redeliveryPolicyRef")
                 && !attributeName.equals("transactionTemplateRef")
                 && !attributeName.equals("transactionManagerRef");
@@ -100,6 +101,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             }
             parserRefAttribute(element, "onRedeliveryRef", "onRedelivery", builder);
             parserRefAttribute(element, "onRetryWhileRef", "onRetryWhile", builder);
+            parserRefAttribute(element, "onPrepareFailureRef", "onPrepareFailure", builder);
             parserRefAttribute(element, "redeliveryPolicyRef", "redeliveryPolicy", builder);
             if (type.equals(ErrorHandlerType.TransactionErrorHandler)) {
                 parserRefAttribute(element, "transactionTemplateRef", "transactionTemplate", builder);
@@ -112,6 +114,11 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         String deadLetterUri = element.getAttribute("deadLetterUri");
         if (ObjectHelper.isNotEmpty(deadLetterUri) && !type.equals(ErrorHandlerType.DeadLetterChannel)) {
             throw new IllegalArgumentException("Attribute deadLetterUri can only be used if type is "
+                    + ErrorHandlerType.DeadLetterChannel.name() + ", in error handler with id: " + id);
+        }
+        String deadLetterHandleNewException = element.getAttribute("deadLetterHandleNewException");
+        if (ObjectHelper.isNotEmpty(deadLetterHandleNewException) && !type.equals(ErrorHandlerType.DeadLetterChannel)) {
+            throw new IllegalArgumentException("Attribute deadLetterHandleNewException can only be used if type is "
                     + ErrorHandlerType.DeadLetterChannel.name() + ", in error handler with id: " + id);
         }
         String transactionTemplateRef = element.getAttribute("transactionTemplateRef");
@@ -137,6 +144,12 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         String onRedeliveryRef = element.getAttribute("onRedeliveryRef");
         if (ObjectHelper.isNotEmpty(onRedeliveryRef) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
             throw new IllegalArgumentException("Attribute onRedeliveryRef is not supported by error handler type: "
+                    + type.name() + ", in error handler with id: " + id);
+        }
+        String onPrepareFailureRef = element.getAttribute("onPrepareFailureRef");
+        if (ObjectHelper.isNotEmpty(onPrepareFailureRef) && (type.equals(ErrorHandlerType.TransactionErrorHandler) || type.equals(ErrorHandlerType.LoggingErrorHandler) 
+            || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            throw new IllegalArgumentException("Attribute onPrepareFailureRef is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
         String retryWhileRef = element.getAttribute("retryWhileRef");

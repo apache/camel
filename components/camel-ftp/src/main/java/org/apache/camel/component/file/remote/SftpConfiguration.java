@@ -19,28 +19,45 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 import java.security.KeyPair;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+
 /**
  * Secure FTP configuration
  */
+@UriParams
 public class SftpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
+
+    @UriParam
     private String knownHostsFile;
+    @UriParam
     private String knownHostsUri;
     private byte[] knownHosts;
+    @UriParam
     private String privateKeyFile;
+    @UriParam
     private String privateKeyUri;
     private byte[] privateKey;
+    @UriParam
     private String privateKeyPassphrase;
     private KeyPair keyPair;
+    @UriParam(defaultValue = "no")
     private String strictHostKeyChecking = "no";
+    @UriParam
     private int serverAliveInterval;
+    @UriParam(defaultValue = "1")
     private int serverAliveCountMax = 1;
+    @UriParam
     private String chmod;
     // comma separated list of ciphers. 
     // null means default jsch list will be used
+    @UriParam
     private String ciphers;
+    @UriParam
     private int compression;
+    @UriParam
     private String preferredAuthentications;
 
     public SftpConfiguration() {

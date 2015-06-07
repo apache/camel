@@ -43,11 +43,14 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
      * @param exceptionPolicyStrategy   strategy for onException handling
      * @param retryWhile                retry while
      * @param executorService           the {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
+     * @param onPrepare                 a custom {@link org.apache.camel.Processor} to prepare the {@link org.apache.camel.Exchange} before
+     *                                  handled by the failure processor / dead letter channel.
      */
     public DefaultErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
-            RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy, Predicate retryWhile, ScheduledExecutorService executorService) {
+            RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy, Predicate retryWhile,
+            ScheduledExecutorService executorService, Processor onPrepare) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, retryWhile, executorService);
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, true, false, retryWhile, executorService, onPrepare);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 

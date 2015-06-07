@@ -22,12 +22,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents an XML &lt;inOnly/&gt; element
+ * Marks the exchange pattern for the route to one way
  *
  * @version 
  */
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "inOnly")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {
@@ -50,11 +52,6 @@ public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {
     
     @Override
     public String getLabel() {
-        return "inOnly";
-    }
-
-    @Override
-    public String getShortName() {
         return "inOnly";
     }
 

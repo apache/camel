@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -30,8 +31,9 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.EndpointHelper.isReferenceParameter;
 
 /**
- * Represents the base XML type for DataFormat.
+ * Represents a Camel data format
  */
+@Metadata(label = "dataformat,transformation")
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatDefinition extends IdentifiedType {
@@ -83,21 +85,25 @@ public class DataFormatDefinition extends IdentifiedType {
 
     public DataFormat getDataFormat(RouteContext routeContext) {
         if (dataFormat == null) {
+            Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
 
             // resolve properties before we create the data format
             try {
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, this);
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), this);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Error resolving property placeholders on data format: " + this, e);
             }
-
-            dataFormat = createDataFormat(routeContext);
-            if (dataFormat != null) {
-                configureDataFormat(dataFormat, routeContext.getCamelContext());
-            } else {
-                throw new IllegalArgumentException(
-                        "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
-                                + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
+            try {
+                dataFormat = createDataFormat(routeContext);
+                if (dataFormat != null) {
+                    configureDataFormat(dataFormat, routeContext.getCamelContext());
+                } else {
+                    throw new IllegalArgumentException(
+                            "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
+                                    + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
+                }
+            } finally {
+                propertyPlaceholdersChangeReverter.run();
             }
         }
         return dataFormat;
@@ -107,8 +113,9 @@ public class DataFormatDefinition extends IdentifiedType {
      * Factory method to create the data format instance
      */
     protected DataFormat createDataFormat(RouteContext routeContext) {
-        if (dataFormatName != null) {
-            return routeContext.getCamelContext().resolveDataFormat(dataFormatName);
+        // must use getDataFormatName() as we need special logic in json dataformat
+        if (getDataFormatName() != null) {
+            return routeContext.getCamelContext().resolveDataFormat(getDataFormatName());
         }
         return null;
     }

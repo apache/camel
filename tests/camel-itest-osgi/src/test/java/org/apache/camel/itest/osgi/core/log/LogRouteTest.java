@@ -43,9 +43,9 @@ public class LogRouteTest extends OSGiIntegrationTestSupport {
     public void testSendMessageToBadLevel() throws Exception {
         try {
             template.sendBody("log:org.apache.camel.TEST?level=noSuchLevel", "<level>noSuchLevel</level>");
-            fail("Shoudl have failed!");
+            fail("Should have failed!");
         } catch (Exception e) {
-            LOG.debug("Caught expected exception: " + e, e);
+            LOG.debug("Caught the expected exception: {}", e);
         }
     }
 

@@ -18,7 +18,6 @@ package org.apache.camel.component.jcr;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
@@ -28,20 +27,29 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A JCR endpoint
  */
-@UriEndpoint(scheme = "jcr", consumerClass = JcrConsumer.class)
+@UriEndpoint(scheme = "jcr", title = "JCR", syntax = "jcr:host/base", consumerClass = JcrConsumer.class, label = "cms,database")
 public class JcrEndpoint extends DefaultEndpoint {
 
     private Credentials credentials;
     private Repository repository;
-    private String base;
 
+    @UriPath @Metadata(required = "true")
+    private String host;
+    @UriPath @Metadata(required = "true")
+    private String base;
+    @UriParam
+    private String username;
+    @UriParam
+    private String password;
     @UriParam
     private int eventTypes;
     @UriParam
@@ -52,9 +60,9 @@ public class JcrEndpoint extends DefaultEndpoint {
     private String nodeTypeNames;
     @UriParam
     private boolean noLocal;
-    @UriParam
+    @UriParam(defaultValue = "3000")
     private long sessionLiveCheckIntervalOnStart = 3000L;
-    @UriParam
+    @UriParam(defaultValue = "60000")
     private long sessionLiveCheckInterval = 60000L;
 
     protected JcrEndpoint(String endpointUri, JcrComponent component) {
@@ -63,16 +71,10 @@ public class JcrEndpoint extends DefaultEndpoint {
             URI uri = new URI(endpointUri);
             if (uri.getUserInfo() != null) {
                 String[] creds = uri.getUserInfo().split(":");
-                if (creds != null) {
-                    String username = creds[0];
-                    String password = creds.length > 1 ? creds[1] : "";
-                    this.credentials = new SimpleCredentials(username, password.toCharArray());
-                }
+                this.username = creds[0];
+                this.password = creds.length > 1 ? creds[1] : "";
             }
-            this.repository = component.getCamelContext().getRegistry().lookupByNameAndType(uri.getHost(), Repository.class);
-            if (repository == null) {
-                throw new RuntimeCamelException("No JCR repository defined under '" + uri.getHost() + "'");
-            }
+            this.host = uri.getHost();
             this.base = uri.getPath().replaceAll("^/", "");
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Invalid URI: " + endpointUri, e);
@@ -91,6 +93,31 @@ public class JcrEndpoint extends DefaultEndpoint {
 
     public boolean isSingleton() {
         return true;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ObjectHelper.notEmpty(host, "host", this);
+
+        this.repository = getCamelContext().getRegistry().lookupByNameAndType(host, Repository.class);
+        if (repository == null) {
+            throw new RuntimeCamelException("No JCR repository defined under '" + host + "'");
+        }
+        if (username != null && password != null) {
+            this.credentials = new SimpleCredentials(username, password.toCharArray());
+        }
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * Name of the {@link javax.jcr.Repository} to lookup from the Camel registry to be used.
+     */
+    public void setHost(String host) {
+        this.host = host;
     }
 
     /**
@@ -112,12 +139,38 @@ public class JcrEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Get the base node when accessing the reposititory
+     * Get the base node when accessing the repository
      * 
      * @return the base node
      */
     protected String getBase() {
         return base;
+    }
+
+    public void setBase(String base) {
+        this.base = base;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Username for login
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Password for login
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
@@ -166,7 +219,6 @@ public class JcrEndpoint extends DefaultEndpoint {
      * When a comma separated <code>nodeTypeName</code> list string is set, only events whose associated parent node has
      * one of the node types (or a subtype of one of the node types) in this
      * list will be received.
-     * @return
      */
     public String getNodeTypeNames() {
         return nodeTypeNames;
@@ -211,8 +263,6 @@ public class JcrEndpoint extends DefaultEndpoint {
     /**
      * Interval in milliseconds to wait before each session live checking
      * The default value is 60000 ms.
-     * 
-     * @return
      */
     public long getSessionLiveCheckInterval() {
         return sessionLiveCheckInterval;

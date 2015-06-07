@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
+import java.util.List;
+
 public class ChildRelationShip extends AbstractDTOBase {
 
     private String field;
@@ -24,6 +26,8 @@ public class ChildRelationShip extends AbstractDTOBase {
     private Boolean cascadeDelete;
     private Boolean restrictedDelete;
     private String childSObject;
+    private String junctionIdListName;
+    private List<String> junctionReferenceTo;
 
     public String getField() {
         return field;
@@ -71,5 +75,21 @@ public class ChildRelationShip extends AbstractDTOBase {
 
     public void setChildSObject(String childSObject) {
         this.childSObject = childSObject;
+    }
+
+    public String getJunctionIdListName() {
+        return junctionIdListName;
+    }
+
+    public void setJunctionIdListName(String junctionIdListName) {
+        this.junctionIdListName = junctionIdListName;
+    }
+
+    public List<String> getJunctionReferenceTo() {
+        return junctionReferenceTo;
+    }
+
+    public void setJunctionReferenceTo(List<String> junctionReferenceTo) {
+        this.junctionReferenceTo = junctionReferenceTo;
     }
 }

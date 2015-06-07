@@ -177,6 +177,10 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(false);
             engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
+            if (consumer.getConfiguration().getSslContextParameters() == null) {
+                // just set the enabledProtocols if the SslContextParameter doesn't set
+                engine.setEnabledProtocols(consumer.getConfiguration().getEnabledProtocols().split(","));
+            }
             return new SslHandler(engine);
         }
 

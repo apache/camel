@@ -22,13 +22,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.FinallyProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;finally/&gt; element
+ * Path traversed when a try, catch, finally block exits
  *
  * @version 
  */
+@Metadata(label = "error")
 @XmlRootElement(name = "doFinally")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
@@ -43,11 +45,6 @@ public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
         return "doFinally";
     }
 
-    @Override
-    public String getShortName() {
-        return "doFinally";
-    }
-     
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // parent must be a try

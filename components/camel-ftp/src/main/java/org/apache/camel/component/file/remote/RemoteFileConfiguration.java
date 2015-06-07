@@ -19,6 +19,9 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 
 import org.apache.camel.component.file.GenericFileConfiguration;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -35,23 +38,46 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public enum PathSeparator { UNIX, Windows, Auto }
 
+    // component name is implied as the protocol, eg ftp/ftps etc
     private String protocol;
-    private String username;
+    @UriPath @Metadata(required = "true")
     private String host;
+    @UriPath
     private int port;
+    @UriPath(name = "directoryName")
+    private String directoryName;
+    @UriParam
+    private String username;
+    @UriParam
     private String password;
+    @UriParam
     private boolean binary;
+    @UriParam
     private boolean passiveMode;
+    @UriParam(defaultValue = "10000")
     private int connectTimeout = 10000;
+    @UriParam(defaultValue = "30000")
     private int timeout = 30000;
+    @UriParam
     private int soTimeout;
+    @UriParam(defaultValue = "32768")
+    private int receiveBufferSize = 32 * 1024;
+    @UriParam
     private boolean throwExceptionOnConnectFailed;
+    @UriParam
     private String siteCommand;
+    @UriParam(defaultValue = "true")
     private boolean stepwise = true;
-    private PathSeparator separator = PathSeparator.Auto;
+    @UriParam(defaultValue = "UNIX")
+    private PathSeparator separator = PathSeparator.UNIX;
+    @UriParam
     private boolean streamDownload;
+    @UriParam(defaultValue = "true")
     private boolean useList = true;
+    @UriParam
     private boolean ignoreFileNotFoundOrPermissionError;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean sendNoop = true;
 
     public RemoteFileConfiguration() {
     }
@@ -68,6 +94,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     @Override
     public void configure(URI uri) {
         super.configure(uri);
+        // after configure the directory has been resolved, so we can use it for directoryName
+        // (directoryName is the name we use in the other file components, to use consistent name)
+        setDirectoryName(getDirectory());
         setProtocol(uri.getScheme());
         setDefaultPort();
 
@@ -103,6 +132,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return host;
     }
 
+    /**
+     * Hostname of the FTP server
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -111,6 +143,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return port;
     }
 
+    /**
+     * Port of the FTP server
+     */
     public void setPort(int port) {
         // only set port if provided with a positive number
         if (port > 0) {
@@ -122,6 +157,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return password;
     }
 
+    /**
+     * Password to use for login
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -130,6 +168,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return protocol;
     }
 
+    /**
+     * The ftp protocol to use
+     */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
@@ -138,8 +179,22 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return username;
     }
 
+    /**
+     * Username to use for login
+     */
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getDirectoryName() {
+        return directoryName;
+    }
+
+    /**
+     * The starting directory
+     */
+    public void setDirectoryName(String directoryName) {
+        this.directoryName = directoryName;
     }
 
     public boolean isBinary() {
@@ -202,6 +257,19 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         this.soTimeout = soTimeout;
     }
 
+    public int getReceiveBufferSize() {
+        return receiveBufferSize;
+    }
+
+    /**
+     * The receive (download) buffer size
+     * <p/>
+     * Used only by FTPClient
+     */
+    public void setReceiveBufferSize(int receiveBufferSize) {
+        this.receiveBufferSize = receiveBufferSize;
+    }
+
     public boolean isThrowExceptionOnConnectFailed() {
         return throwExceptionOnConnectFailed;
     }
@@ -256,8 +324,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Sets the path separator to be used.
      * <p/>
-     * UNIX = Path separator / is used
-     * Windows = Path separator \ is used
+     * UNIX = Uses unix style path separator
+     * Windows = Uses windows style path separator
      * Auto = (is default) Use existing path separator in file name
      */
     public void setSeparator(PathSeparator separator) {
@@ -304,6 +372,20 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public void setIgnoreFileNotFoundOrPermissionError(boolean ignoreFileNotFoundOrPermissionError) {
         this.ignoreFileNotFoundOrPermissionError = ignoreFileNotFoundOrPermissionError;
+    }
+
+    public boolean isSendNoop() {
+        return sendNoop;
+    }
+
+    /**
+     * Whether to send a noop command as a pre-write check before uploading files to the FTP server.
+     * <p/>
+     * This is enabled by default as a validation of the connection is still valid, which allows to silently
+     * re-connect to be able to upload the file. However if this causes problems, you can turn this option off.
+     */
+    public void setSendNoop(boolean sendNoop) {
+        this.sendNoop = sendNoop;
     }
 
     /**

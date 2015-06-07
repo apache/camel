@@ -283,6 +283,15 @@
         </route>
         <!-- END SNIPPET: enveloped XML signature with parent XPath -->
 
+        <!-- START SNIPPET: xades -->
+        <route>
+            <from uri="direct:xades" />
+            <to
+                uri="xmlsecurity:sign://xades?keyAccessor=#accessorRsa&amp;properties=#xadesProperties" />
+            <to uri="mock:result" />
+        </route>
+        <!-- END SNIPPET: xades -->
+
     </camelContext>
 
     <bean id="accessorDsa"
@@ -452,4 +461,28 @@
     <bean id="parentXpathBean"
         class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
         factory-method="getParentXPathBean" />
+
+    <bean id="xadesProperties"
+        class="org.apache.camel.component.xmlsecurity.api.XAdESSignatureProperties">
+        <property name="signaturePolicy" value="ExplicitId" />
+        <property name="sigPolicyId" value="http://www.test.com/policy.pdf" />
+        <property name="sigPolicyIdDescription" value="factura" />
+        <property name="signaturePolicyDigestAlgorithm" value="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <property name="signaturePolicyDigestValue" value="Ohixl6upD6av8N7pEvDABhEL1hM=" />
+        <property name="signerClaimedRoles" ref="signerClaimedRoles_XMLSigner" />
+        <property name="dataObjectFormatDescription" value="Factura electrónica" />
+        <property name="dataObjectFormatMimeType" value="text/xml" />
+    </bean>
+
+    <bean class="java.util.ArrayList" id="signerClaimedRoles_XMLSigner">
+        <constructor-arg>
+            <list>
+                <value>Emisor</value>
+                <value>&lt;ClaimedRole
+                    xmlns=&quot;http://uri.etsi.org/01903/v1.3.2#&quot;&gt;&lt;test
+                    xmlns=&quot;http://test.com/&quot;&gt;test&lt;/test&gt;&lt;/ClaimedRole&gt;</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
 </beans>

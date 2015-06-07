@@ -41,14 +41,14 @@ public class BrowseComponentConfigurationAndDocumentationTest extends ContextTes
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("browse");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

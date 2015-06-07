@@ -21,31 +21,51 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://jackson.codehaus.org/">Jackson</a> to marshal to and from JSON.
  */
-public class JacksonDataFormat extends ServiceSupport implements DataFormat {
+public class JacksonDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
 
     private final ObjectMapper objectMapper;
+    private CamelContext camelContext;
     private Class<? extends Collection> collectionType;
+    private List<Module> modules;
+    private String moduleClassNames;
+    private String moduleRefs;
     private Class<?> unmarshalType;
     private Class<?> jsonView;
     private String include;
     private boolean prettyPrint;
     private boolean allowJmsType;
     private boolean useList;
+    private boolean enableJaxbAnnotationModule;
+    private String enableFeatures;
+    private String disableFeatures;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -73,13 +93,23 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
      *                 See also http://wiki.fasterxml.com/JacksonJsonViews
      */
     public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
+        this(unmarshalType, jsonView, true);
+    }
+    
+    /**
+     * Use the default Jackson {@link ObjectMapper} and with a custom
+     * unmarshal type and JSON view
+     *
+     * @param unmarshalType the custom unmarshal type
+     * @param jsonView marker class to specify properties to be included during marshalling.
+     *                 See also http://wiki.fasterxml.com/JacksonJsonViews
+     * @param enableJaxbAnnotationModule if it is true, will enable the JaxbAnnotationModule.
+     */
+    public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
         this.objectMapper = new ObjectMapper();
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
-
-        // Enables JAXB processing
-        JaxbAnnotationModule module = new JaxbAnnotationModule();
-        this.objectMapper.registerModule(module);
+        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }
 
     /**
@@ -104,6 +134,14 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         this.objectMapper = mapper;
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -188,6 +226,59 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         this.useList = useList;
     }
 
+    public boolean isEnableJaxbAnnotationModule() {
+        return enableJaxbAnnotationModule;
+    }
+
+    public void setEnableJaxbAnnotationModule(boolean enableJaxbAnnotationModule) {
+        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
+    }
+
+    public List<Module> getModules() {
+        return modules;
+    }
+
+    /**
+     * To use custom Jackson {@link Module}s
+     */
+    public void setModules(List<Module> modules) {
+        this.modules = modules;
+    }
+
+    public String getModuleClassNames() {
+        return moduleClassNames;
+    }
+
+    /**
+     * To use the custom Jackson module
+     */
+    public void addModule(Module module) {
+        if (this.modules == null) {
+            this.modules = new ArrayList<Module>();
+        }
+        this.modules.add(module);
+    }
+
+    /**
+     * To use custom Jackson {@link Module}s specified as a String with FQN class names.
+     * Multiple classes can be separated by comma.
+     */
+    public void setModuleClassNames(String moduleClassNames) {
+        this.moduleClassNames = moduleClassNames;
+    }
+
+    public String getModuleRefs() {
+        return moduleRefs;
+    }
+
+    /**
+     * To use custom Jackson modules referred from the Camel registry.
+     * Multiple modules can be separated by comma.
+     */
+    public void setModuleRefs(String moduleRefs) {
+        this.moduleRefs = moduleRefs;
+    }
+
     /**
      * Uses {@link java.util.ArrayList} when unmarshalling.
      */
@@ -212,17 +303,173 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         this.allowJmsType = allowJmsType;
     }
 
+    public String getEnableFeatures() {
+        return enableFeatures;
+    }
+
+    /**
+     * Set of features to enable on the Jackson {@link ObjectMapper}.
+     * The features should be a name that matches a enum from {@link SerializationFeature}, {@link DeserializationFeature}, or {@link MapperFeature}.
+     */
+    public void setEnableFeatures(String enableFeatures) {
+        this.enableFeatures = enableFeatures;
+    }
+
+    public String getDisableFeatures() {
+        return disableFeatures;
+    }
+
+    /**
+     * Set of features to disable on the Jackson {@link ObjectMapper}.
+     * The features should be a name that matches a enum from {@link SerializationFeature}, {@link DeserializationFeature}, or {@link MapperFeature}.
+     */
+    public void setDisableFeatures(String disableFeatures) {
+        this.disableFeatures = disableFeatures;
+    }
+
+    public void enableFeature(SerializationFeature feature) {
+        if (enableFeatures == null) {
+            enableFeatures = feature.name();
+        } else {
+            enableFeatures += "," + feature.name();
+        }
+    }
+
+    public void enableFeature(DeserializationFeature feature) {
+        if (enableFeatures == null) {
+            enableFeatures = feature.name();
+        } else {
+            enableFeatures += "," + feature.name();
+        }
+    }
+
+    public void enableFeature(MapperFeature feature) {
+        if (enableFeatures == null) {
+            enableFeatures = feature.name();
+        } else {
+            enableFeatures += "," + feature.name();
+        }
+    }
+
+    public void disableFeature(SerializationFeature feature) {
+        if (disableFeatures == null) {
+            disableFeatures = feature.name();
+        } else {
+            disableFeatures += "," + feature.name();
+        }
+    }
+
+    public void disableFeature(DeserializationFeature feature) {
+        if (disableFeatures == null) {
+            disableFeatures = feature.name();
+        } else {
+            disableFeatures += "," + feature.name();
+        }
+    }
+
+    public void disableFeature(MapperFeature feature) {
+        if (disableFeatures == null) {
+            disableFeatures = feature.name();
+        } else {
+            disableFeatures += "," + feature.name();
+        }
+    }
+
     @Override
     protected void doStart() throws Exception {
+        
+        if (enableJaxbAnnotationModule) {
+            // Enables JAXB processing
+            JaxbAnnotationModule module = new JaxbAnnotationModule();
+            LOG.info("Registering module: {}", module);
+            objectMapper.registerModule(module);
+        }
+
         if (useList) {
             setCollectionType(ArrayList.class);
         }
         if (include != null) {
-            JsonInclude.Include inc = JsonInclude.Include.valueOf(include);
+            JsonInclude.Include inc = getCamelContext().getTypeConverter().mandatoryConvertTo(JsonInclude.Include.class, include);
             objectMapper.setSerializationInclusion(inc);
         }
         if (prettyPrint) {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        }
+
+        if (enableFeatures != null) {
+            Iterator<Object> it = ObjectHelper.createIterator(enableFeatures);
+            while (it.hasNext()) {
+                String enable = it.next().toString();
+                // it can be different kind
+                SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
+                if (sf != null) {
+                    objectMapper.enable(sf);
+                    continue;
+                }
+                DeserializationFeature df = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
+                if (df != null) {
+                    objectMapper.enable(df);
+                    continue;
+                }
+                MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, enable);
+                if (mf != null) {
+                    objectMapper.enable(mf);
+                    continue;
+                }
+                throw new IllegalArgumentException("Enable feature: " + enable + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+            }
+        }
+        if (disableFeatures != null) {
+            Iterator<Object> it = ObjectHelper.createIterator(disableFeatures);
+            while (it.hasNext()) {
+                String disable = it.next().toString();
+                // it can be different kind
+                SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
+                if (sf != null) {
+                    objectMapper.disable(sf);
+                    continue;
+                }
+                DeserializationFeature df = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
+                if (df != null) {
+                    objectMapper.disable(df);
+                    continue;
+                }
+                MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, disable);
+                if (mf != null) {
+                    objectMapper.disable(mf);
+                    continue;
+                }
+                throw new IllegalArgumentException("Disable feature: " + disable + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+            }
+        }
+
+        if (modules != null) {
+            for (Module module : modules) {
+                LOG.info("Registering module: {}", module);
+                objectMapper.registerModules(module);
+            }
+        }
+        if (moduleClassNames != null) {
+            Iterable<Object> it = ObjectHelper.createIterable(moduleClassNames);
+            for (Object o : it) {
+                String name = o.toString();
+                Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
+                Module module = camelContext.getInjector().newInstance(clazz);
+                LOG.info("Registering module: {} -> {}", name, module);
+                objectMapper.registerModule(module);
+            }
+        }
+        if (moduleRefs != null) {
+            Iterable<Object> it = ObjectHelper.createIterable(moduleRefs);
+            for (Object o : it) {
+                String name = o.toString();
+                if (name.startsWith("#")) {
+                    name = name.substring(1);
+                }
+                Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
+                LOG.info("Registering module: {} -> {}", name, module);
+                objectMapper.registerModule(module);
+            }
         }
     }
 

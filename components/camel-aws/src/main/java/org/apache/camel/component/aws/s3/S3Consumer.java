@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 public class S3Consumer extends ScheduledBatchPollingConsumer {
     
     private static final Logger LOG = LoggerFactory.getLogger(S3Consumer.class);
+    private String marker;
 
     public S3Consumer(S3Endpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
@@ -61,7 +62,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         
         String fileName = getConfiguration().getFileName();
         String bucketName = getConfiguration().getBucketName();
-        Queue<Exchange> exchanges = null;
+        Queue<Exchange> exchanges;
 
         if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
@@ -74,10 +75,19 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
             ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
             listObjectsRequest.setBucketName(bucketName);
             listObjectsRequest.setPrefix(getConfiguration().getPrefix());
-            listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
+            if (maxMessagesPerPoll > 0) {
+                listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
+            }
+            if (marker != null && !getConfiguration().isDeleteAfterRead()) {
+                listObjectsRequest.setMarker(marker);
+            }
         
             ObjectListing listObjects = getAmazonS3Client().listObjects(listObjectsRequest);
-
+            // we only setup the marker if the file is not deleted
+            if (!getConfiguration().isDeleteAfterRead()) {
+                // where marker is track
+                marker = listObjects.getMarker();
+            }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
             }

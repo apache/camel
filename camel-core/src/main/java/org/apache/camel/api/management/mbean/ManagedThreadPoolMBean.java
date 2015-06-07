@@ -78,6 +78,12 @@ public interface ManagedThreadPoolMBean {
     @ManagedAttribute(description = "Keep alive time in seconds")
     void setKeepAliveTime(long keepAliveTimeInSeconds);
 
+    @ManagedAttribute(description = "Whether core threads is allowed to timeout if no tasks in queue to process")
+    boolean isAllowCoreThreadTimeout();
+
+    @ManagedAttribute(description = "Whether core threads is allowed to timeout if no tasks in queue to process")
+    void setAllowCoreThreadTimeout(boolean allowCoreThreadTimeout);
+
     @ManagedAttribute(description = "Is shutdown")
     boolean isShutdown();
 

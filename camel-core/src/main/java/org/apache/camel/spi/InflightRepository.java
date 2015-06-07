@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Collection;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.StaticService;
@@ -26,6 +28,42 @@ import org.apache.camel.StaticService;
  * @version 
  */
 public interface InflightRepository extends StaticService {
+
+    /**
+     * Information about the inflight exchange.
+     */
+    interface InflightExchange {
+
+        /**
+         * The exchange being inflight
+         */
+        Exchange getExchange();
+
+        /**
+         * The duration in millis the exchange has been inflight
+         */
+        long getDuration();
+
+        /**
+         * The elapsed time in millis processing the exchange at the current node
+         */
+        long getElapsed();
+
+        /**
+         * The id of the node from the route where the exchange currently is being processed
+         * <p/>
+         * Is <tt>null</tt> if message history is disabled.
+         */
+        String getNodeId();
+
+        /**
+         * The id of the route where the exchange currently is being processed
+         * <p/>
+         * Is <tt>null</tt> if message history is disabled.
+         */
+        String getRouteId();
+
+    }
 
     /**
      * Adds the exchange to the inflight registry to the total counter
@@ -91,5 +129,19 @@ public interface InflightRepository extends StaticService {
      * @return number of exchanges currently in flight.
      */
     int size(String routeId);
+
+    /**
+     * A <i>read-only</i> browser of the {@link InflightExchange}s that are currently inflight.
+     */
+    Collection<InflightExchange> browse();
+
+    /**
+     * A <i>read-only</i> browser of the {@link InflightExchange}s that are currently inflight.
+     *
+     * @param limit maximum number of entries to return
+     * @param sortByLongestDuration to sort by the longest duration. Set to <tt>true</tt> to include the exchanges that has been inflight the longest time,
+     *                              set to <tt>false</tt> to sort by exchange id
+     */
+    Collection<InflightExchange> browse(int limit, boolean sortByLongestDuration);
 
 }

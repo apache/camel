@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.15-SNAPSHOT</version>
+        <version>2.16-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jclouds</artifactId>
@@ -32,6 +32,10 @@
     <description>Camel JClouds support</description>
 
     <properties>
+        <camel.osgi.import.before.defaults>
+            com.google.common.*;version="${jclouds-google-guava-version-range}",
+        </camel.osgi.import.before.defaults>
+
         <camel.osgi.export.pkg>org.apache.camel.component.jclouds.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jclouds</camel.osgi.export.service>
         <google-guava-version>${jclouds-google-guava-version}</google-guava-version>

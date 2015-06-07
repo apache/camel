@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.15-SNAPSHOT</version>
+        <version>2.16-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-elasticsearch</artifactId>
@@ -33,20 +33,6 @@
         <camel.osgi.export.pkg>org.apache.camel.component.elasticsearch.*;${camel.osgi.version}</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=elasticsearch</camel.osgi.export.service>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>sonatype-oss</id>
-            <name>Sonatype OSS</name>
-            <url>http://oss.sonatype.org/content/repositories/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>

@@ -29,15 +29,17 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;choice/&gt; element
+ * Routes messages based on a series of predicates
  *
  * @version
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
@@ -45,6 +47,8 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     private List<WhenDefinition> whenClauses = new ArrayList<WhenDefinition>();
     @XmlElement
     private OtherwiseDefinition otherwise;
+
+    private transient boolean onlyWhenOrOtherwise = true;
 
     public ChoiceDefinition() {
     }
@@ -124,11 +128,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "choice";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         List<Processor> filters = new ArrayList<Processor>();
         for (WhenDefinition whenClause : whenClauses) {
@@ -139,6 +138,34 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
             otherwiseProcessor = createProcessor(routeContext, otherwise);
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
+    }
+
+    @Override
+    public void addOutput(ProcessorDefinition<?> output) {
+        if (onlyWhenOrOtherwise) {
+            if (output instanceof WhenDefinition || output instanceof OtherwiseDefinition) {
+                // okay we are adding a when or otherwise so allow any kind of output after this again
+                onlyWhenOrOtherwise = false;
+            } else {
+                throw new IllegalArgumentException("A new choice clause should start with a when() or otherwise(). "
+                    + "If you intend to end the entire choice and are using endChoice() then use end() instead.");
+            }
+        }
+        super.addOutput(output);
+    }
+
+    @Override
+    public ProcessorDefinition<?> end() {
+        // we end a block so only when or otherwise is supported
+        onlyWhenOrOtherwise = true;
+        return super.end();
+    }
+
+    @Override
+    public ChoiceDefinition endChoice() {
+        // we end a block so only when or otherwise is supported
+        onlyWhenOrOtherwise = true;
+        return super.endChoice();
     }
 
     // Fluent API
@@ -167,6 +194,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     }
     
     private void addClause(ProcessorDefinition<?> when) {
+        onlyWhenOrOtherwise = true;
         popBlock();
         addOutput(when);
         pushBlock(when);
@@ -214,6 +242,9 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         return whenClauses;
     }
 
+    /**
+     * Sets the when clauses
+     */
     public void setWhenClauses(List<WhenDefinition> whenClauses) {
         this.whenClauses = whenClauses;
     }

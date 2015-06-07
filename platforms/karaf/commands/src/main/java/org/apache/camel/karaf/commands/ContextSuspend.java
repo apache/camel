@@ -16,18 +16,20 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.commands.ContextSuspendCommand;
+import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to suspend a Camel context.
- */
 @Command(scope = "camel", name = "context-suspend", description = "Suspends a Camel context.")
-public class ContextSuspend extends AbstractContextCommand {
+public class ContextSuspend extends CamelCommandSupport {
+
+    @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
+    String context;
 
     @Override
-    protected void performContextCommand(CamelContext camelContext) throws Exception {
-        camelContext.suspend();
+    protected Object doExecute() throws Exception {
+        ContextSuspendCommand command = new ContextSuspendCommand(context);
+        return command.execute(camelController, System.out, System.err);
     }
 
 }

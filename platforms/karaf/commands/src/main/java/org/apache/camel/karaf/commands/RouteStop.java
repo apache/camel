@@ -16,19 +16,16 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
+import org.apache.camel.commands.RouteStopCommand;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to stop a route.
- */
-@Command(scope = "camel", name = " route-stop", description = "Stop a Camel route or a group of routes.")
+@Command(scope = "camel", name = " route-stop", description = "Stop a Camel route")
 public class RouteStop extends AbstractRouteCommand {
 
     @Override
-    public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
-        camelContext.stopRoute(camelRoute.getId());
+    protected Object doExecute() throws Exception {
+        RouteStopCommand command = new RouteStopCommand(route, context);
+        return command.execute(camelController, System.out, System.err);
     }
 
 }

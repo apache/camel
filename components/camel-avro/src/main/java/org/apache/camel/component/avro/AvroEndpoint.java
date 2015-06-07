@@ -25,9 +25,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
+@UriEndpoint(scheme = "avro", title = "Avro", syntax = "avro:transport:host:port/messageName", consumerClass = AvroConsumer.class, label = "messaging,transformation")
 public abstract class AvroEndpoint extends DefaultEndpoint {
 
+    @UriParam
     private AvroConfiguration configuration;
 
     /**

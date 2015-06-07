@@ -17,6 +17,7 @@
 package org.apache.camel.component.metrics.routepolicy;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 
 import com.codahale.metrics.JmxReporter;
@@ -29,7 +30,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.metrics.MetricsComponent;
 import org.apache.camel.spi.ManagementAgent;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -105,11 +108,18 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
     public void setDurationUnit(TimeUnit durationUnit) {
         this.durationUnit = durationUnit;
     }
+    
+    
 
     @Override
     protected void doStart() throws Exception {
         if (metricsRegistry == null) {
-            metricsRegistry = new MetricRegistry();
+            Registry camelRegistry = getCamelContext().getRegistry();
+            metricsRegistry = camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class);
+            // create a new metricsRegistry by default
+            if (metricsRegistry == null) {
+                metricsRegistry = new MetricRegistry();
+            }
         }
 
         if (useJmx) {
@@ -167,4 +177,6 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
+    
+   
 }

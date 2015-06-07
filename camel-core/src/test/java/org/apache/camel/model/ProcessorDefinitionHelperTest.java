@@ -29,7 +29,10 @@ public class ProcessorDefinitionHelperTest extends ContextTestSupport {
         Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
         assertNotNull(it);
 
+        assertEquals("choice1", it.next().getId());
+        assertEquals("whenfoo", it.next().getId());
         assertEquals("foo", it.next().getId());
+        assertEquals("whenbar", it.next().getId());
         assertEquals("bar", it.next().getId());
         assertEquals("baz", it.next().getId());
         assertFalse(it.hasNext());
@@ -42,8 +45,8 @@ public class ProcessorDefinitionHelperTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .choice()
-                        .when(header("foo")).to("mock:foo").id("foo")
-                        .when(header("bar")).to("mock:bar").id("bar")
+                        .when(header("foo")).id("whenfoo").to("mock:foo").id("foo")
+                        .when(header("bar")).id("whenbar").to("mock:bar").id("bar")
                     .otherwise()
                         .to("mock:baz").id("baz");
             }

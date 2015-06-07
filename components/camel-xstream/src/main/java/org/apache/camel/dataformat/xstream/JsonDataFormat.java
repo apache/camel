@@ -18,6 +18,8 @@ package org.apache.camel.dataformat.xstream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.json.JsonWriter;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
@@ -39,31 +42,53 @@ import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using XStream and Jettison to marshal to and from JSON
  *
- * @version 
+ * @version
  */
 
 public class JsonDataFormat extends AbstractXStreamWrapper {
     private final MappedXMLOutputFactory mof;
     private final MappedXMLInputFactory mif;
-    
+    private boolean prettyPrint;
+
     public JsonDataFormat() {
         final Map<?, ?> nstjsons = new HashMap<Object, Object>();
         mof = new MappedXMLOutputFactory(nstjsons);
         mif = new MappedXMLInputFactory(nstjsons);
     }
 
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
+
     @Override
-    protected XStream createXStream(ClassResolver resolver) {
-        XStream xs = super.createXStream(resolver);
-        xs.setMode(XStream.NO_REFERENCES);
+    protected XStream createXStream(ClassResolver resolver, ClassLoader classLoader) {
+        XStream xs = super.createXStream(resolver, classLoader);
+        if (getMode() != null) {
+            xs.setMode(getModeFromString(getMode()));
+        } else {
+            xs.setMode(XStream.NO_REFERENCES);
+        }
         return xs;
     }
 
-    protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {        
+    protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {
+        if (isPrettyPrint()) {
+            try {
+                // the json spec. expects UTF-8 as the default encoding
+                return new JsonWriter(new OutputStreamWriter(stream, "UTF-8"));
+            } catch (UnsupportedEncodingException uee) {
+                throw new XMLStreamException(uee);
+            }
+        }
+
         return new StaxWriter(new QNameMap(), mof.createXMLStreamWriter(stream));
     }
 
-    protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {        
+    protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {
         return new StaxReader(new QNameMap(), mif.createXMLStreamReader(stream));
     }
 }

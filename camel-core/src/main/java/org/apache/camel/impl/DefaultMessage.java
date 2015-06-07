@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -141,6 +142,9 @@ public class DefaultMessage extends MessageSupport {
         }
 
         boolean matches = false;
+        // must use a set to store the keys to remove as we cannot walk using entrySet and remove at the same time
+        // due concurrent modification error
+        Set<String> toRemove = new HashSet<String>();
         for (Map.Entry<String, Object> entry : headers.entrySet()) {
             String key = entry.getKey();
             if (EndpointHelper.matchPattern(key, pattern)) {
@@ -148,10 +152,13 @@ public class DefaultMessage extends MessageSupport {
                     continue;
                 }
                 matches = true;
-                headers.remove(entry.getKey());
+                toRemove.add(entry.getKey());
             }
-
         }
+        for (String key : toRemove) {
+            headers.remove(key);
+        }
+
         return matches;
     }
 

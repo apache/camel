@@ -31,10 +31,36 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE})
 public @interface UriEndpoint {
+
     /**
-     * Represents the URI scheme name of this endpoint
+     * Represents the URI scheme name of this endpoint.
+     * <p/>
+     * Multiple scheme names can be defined as a comma separated value.
+     * For example to associate <tt>http</tt> and <tt>https</tt> to the same endpoint implementation.
      */
     String scheme();
+
+    /**
+     * Represent the URI syntax the endpoint must use.
+     * <p/>
+     * The syntax follows the patterns such as:
+     * <ul>
+     *     <li>scheme:host:port</li>
+     *     <li>scheme:host:port/path</li>
+     *     <li>scheme:path</li>
+     *     <li>scheme:path/path2</li>
+     * </ul>
+     * Where each path maps to the name of the endpoint {@link org.apache.camel.spi.UriPath} option.
+     * The query parameters is implied and should not be included in the syntax.
+     * <p/>
+     * Some examples:
+     * <ul>
+     *     <li>file:directoryName</li>
+     *     <li>ftp:host:port/directoryName</li>
+     *     <li>jms:destinationType:destinationName</li>
+     * </ul>
+     */
+    String syntax();
 
     /**
      * Represents the consumer class which is injected and created by consumers
@@ -46,4 +72,35 @@ public @interface UriEndpoint {
      * properties from the consumer properties
      */
     String consumerPrefix() default "";
+
+    /**
+     * A human readable title of this entity, such as the component name of the this endpoint.
+     * <p/>
+     * For example: JMS, MQTT, Netty HTTP, SAP NetWeaver
+     */
+    String title();
+
+    /**
+     * To associate this endpoint with label(s).
+     * <p/>
+     * Multiple labels can be defined as a comma separated value.
+     * <p/>
+     * The labels is intended for grouping the endpoints, such as <tt>core</tt>, <tt>file</tt>, <tt>messaging</tt>, <tt>database</tt>, etc.
+     */
+    String label() default "";
+
+    /**
+     * Whether this endpoint can only be used as a producer.
+     * <p/>
+     * By default its assumed the endpoint can be used as both consumer and producer.
+     */
+    boolean producerOnly() default false;
+
+    /**
+     * Whether this endpoint can only be used as a consumer.
+     * <p/>
+     * By default its assumed the endpoint can be used as both consumer and producer.
+     */
+    boolean consumerOnly() default false;
+
 }

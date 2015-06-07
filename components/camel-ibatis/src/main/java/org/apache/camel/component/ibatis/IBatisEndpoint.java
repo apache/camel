@@ -17,6 +17,7 @@
 package org.apache.camel.component.ibatis;
 
 import java.io.IOException;
+
 import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,18 +25,31 @@ import org.apache.camel.component.ibatis.strategy.DefaultIBatisProcessingStategy
 import org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy;
 import org.apache.camel.component.ibatis.strategy.TransactionIsolationLevel;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * An <a href="http://camel.apache.org/ibatis.html>iBatis Endpoint</a>
  * for performing SQL operations using an XML mapping file to abstract away the SQL
  */
+@UriEndpoint(scheme = "ibatis", title = "iBatis", syntax = "ibatis:statement", consumerClass = IBatisConsumer.class, label = "database,sql")
 public class IBatisEndpoint extends DefaultPollingEndpoint {
-    private IBatisProcessingStrategy strategy;
-    private boolean useTransactions;
+    @UriPath @Metadata(required = "true")
     private String statement;
+    @UriParam(defaultValue = "true")
+    private boolean useTransactions = true;
+    @UriParam(label = "producer")
     private StatementType statementType;
+    @UriParam(label = "consumer", defaultValue = "0")
     private int maxMessagesPerPoll;
+    @UriParam(label = "consumer")
+    private IBatisProcessingStrategy strategy;
+    @UriParam(defaultValue = "TRANSACTION_REPEATABLE_READ",
+              enums = "TRANSACTION_NONE,TRANSACTION_READ_UNCOMMITTED,TRANSACTION_READ_COMMITTED,TRANSACTION_REPEATABLE_READ,TRANSACTION_SERIALIZABLE")
+    private String isolation;
 
     public IBatisEndpoint() {
     }
@@ -68,51 +82,40 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
         return consumer;
     }
 
-    /**
-     * Gets the iBatis SqlMapClient
-     */
     public SqlMapClient getSqlMapClient() throws IOException {
         return getComponent().getSqlMapClient();
     }
 
-    /**
-     * Gets the IbatisProcessingStrategy to to use when consuming messages from the database
-     */
     public IBatisProcessingStrategy getProcessingStrategy() throws Exception {
-        if (strategy == null) {
-            strategy = new DefaultIBatisProcessingStategy();
-        }
         return strategy;
     }
 
+    /**
+     * Allows to plugin a custom {@link IBatisProcessingStrategy} to use by the consumer.
+     */
     public void setStrategy(IBatisProcessingStrategy strategy) {
         this.strategy = strategy;
     }
 
-    /**
-     * Statement to run when polling or processing
-     */
     public String getStatement() {
         return statement;
     }
 
     /**
-     * Statement to run when polling or processing
+     * The statement name in the iBatis XML mapping file which maps to the query, insert, update or delete operation you wish to evaluate.
      */
     public void setStatement(String statement) {
         this.statement = statement;
     }
 
-    /**
-     * Indicates if transactions should be used when calling statements.  Useful if using a comma separated list when
-     * consuming records.
-     */
     public boolean isUseTransactions() {
         return useTransactions;
     }
 
     /**
-     * Sets indicator to use transactions for consuming and error handling statements.
+     * Whether to use transactions.
+     * <p/>
+     * This option is by default true.
      */
     public void setUseTransactions(boolean useTransactions) {
         this.useTransactions = useTransactions;
@@ -122,6 +125,9 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
         return statementType;
     }
 
+    /**
+     * Mandatory to specify for the producer to control which kind of operation to invoke.
+     */
     public void setStatementType(StatementType statementType) {
         this.statementType = statementType;
     }
@@ -130,16 +136,36 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
         return maxMessagesPerPoll;
     }
 
+    /**
+     * This option is intended to split results returned by the database pool into the batches and deliver them in multiple exchanges.
+     * This integer defines the maximum messages to deliver in single exchange. By default, no maximum is set.
+     * Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
+     * Set a value of 0 or negative to disable it.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-
     public String getIsolation() throws Exception {
-        return TransactionIsolationLevel.nameOf(strategy.getIsolation());
+        return isolation;
     }
 
+    /**
+     * Transaction isolation level
+     */
     public void setIsolation(String isolation) throws Exception {
-        strategy.setIsolation(TransactionIsolationLevel.intValueOf(isolation));
+        this.isolation = isolation;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (strategy == null) {
+            strategy = new DefaultIBatisProcessingStategy();
+        }
+        if (isolation != null) {
+            strategy.setIsolation(TransactionIsolationLevel.intValueOf(isolation));
+        }
     }
 }

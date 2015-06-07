@@ -22,17 +22,27 @@ import org.w3c.dom.Document;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 
 /**
  * Test the Spring DSL
  */
 public class SpringXmlJsonDataFormatTest extends CamelSpringTestSupport {
 
+    @BeforeClass
+    public static void checkXomInClasspath() {
+        AbstractJsonTestSupport.checkXomInClasspath();
+    }
+    
     @Test
     public void testMarshalAndUnmarshal() throws Exception {
         InputStream inStream = getClass().getResourceAsStream("testMessage1.xml");

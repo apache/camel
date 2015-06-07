@@ -47,10 +47,104 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listRestServicesCompositeType() throws OpenDataException {
-        return new CompositeType("rests", "Rest Services", new String[]{"url", "baseUrl", "basePath", "uriTemplate", "method", "consumes", "produces", "inType", "outType", "state"},
-                new String[]{"Url", "Base Url", "Base Path", "Uri Template", "Method", "Consumes", "Produces", "Input Type", "Output Type", "State"},
+        return new CompositeType("rests", "Rest Services", new String[]{"url", "baseUrl", "basePath", "uriTemplate", "method", "consumes",
+            "produces", "inType", "outType", "state", "routeId", "description"},
+                new String[]{"Url", "Base Url", "Base Path", "Uri Template", "Method", "Consumes",
+                    "Produces", "Input Type", "Output Type", "State", "Route Id", "Description"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType listEndpointsTabularType() throws OpenDataException {
+        CompositeType ct = listEndpointsCompositeType();
+        return new TabularType("listEndpoints", "Lists all the endpoints in the registry", ct, new String[]{"url"});
+    }
+
+    public static CompositeType listEndpointsCompositeType() throws OpenDataException {
+        return new CompositeType("endpoints", "Endpoints", new String[]{"url", "static", "dynamic"},
+                new String[]{"Url", "Static", "Dynamic"},
+                new OpenType[]{SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN});
+    }
+
+    public static TabularType explainComponentTabularType() throws OpenDataException {
+        CompositeType ct = explainComponentCompositeType();
+        return new TabularType("explainComponent", "Explain how this component is configured", ct, new String[]{"option"});
+    }
+
+    public static CompositeType explainComponentCompositeType() throws OpenDataException {
+        return new CompositeType("components", "Components", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+                new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType explainEndpointTabularType() throws OpenDataException {
+        CompositeType ct = explainEndpointsCompositeType();
+        return new TabularType("explainEndpoint", "Explain how this endpoint is configured", ct, new String[]{"option"});
+    }
+
+    public static CompositeType explainEndpointsCompositeType() throws OpenDataException {
+        return new CompositeType("endpoints", "Endpoints", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+                new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType explainEipTabularType() throws OpenDataException {
+        CompositeType ct = explainEipsCompositeType();
+        return new TabularType("explainEip", "Explain how this EIP is configured", ct, new String[]{"option"});
+    }
+
+    public static CompositeType explainEipsCompositeType() throws OpenDataException {
+        return new CompositeType("eips", "EIPs", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+                new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType listComponentsTabularType() throws OpenDataException {
+        CompositeType ct = listComponentsCompositeType();
+        return new TabularType("listComponents", "Lists all the components", ct, new String[]{"name"});
+    }
+
+    public static CompositeType listComponentsCompositeType() throws OpenDataException {
+        return new CompositeType("components", "Components", new String[]{"name", "title", "description", "label", "status", "type", "groupId", "artifactId", "version"},
+                new String[]{"Name", "Title", "Description", "Label", "Status", "Type", "GroupId", "ArtifactId", "Version"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType listAwaitThreadsTabularType() throws OpenDataException {
+        CompositeType ct = listAwaitThreadsCompositeType();
+        return new TabularType("listAwaitThreads", "Lists blocked threads by the routing engine", ct, new String[]{"id"});
+    }
+
+    public static CompositeType listAwaitThreadsCompositeType() throws OpenDataException {
+        return new CompositeType("threads", "Threads", new String[]{"id", "name", "exchangeId", "routeId", "nodeId", "duration"},
+                new String[]{"Thread Id", "Thread name", "ExchangeId", "RouteId", "NodeId", "Duration"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType listEipsTabularType() throws OpenDataException {
+        CompositeType ct = listEipsCompositeType();
+        return new TabularType("listEips", "Lists all the EIPs", ct, new String[]{"name"});
+    }
+
+    public static CompositeType listEipsCompositeType() throws OpenDataException {
+        return new CompositeType("eips", "EIPs", new String[]{"name", "title", "description", "label", "status", "type"},
+                new String[]{"Name", "Title", "Description", "Label", "Status", "Type"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType listInflightExchangesTabularType() throws OpenDataException {
+        CompositeType ct = listInflightExchangesCompositeType();
+        return new TabularType("listInflightExchanges", "Lists inflight exchanges", ct, new String[]{"exchangeId"});
+    }
+
+    public static CompositeType listInflightExchangesCompositeType() throws OpenDataException {
+        return new CompositeType("exchanges", "Exchanges", new String[]{"exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration"},
+                new String[]{"Exchange Id", "From RouteId", "RouteId", "NodeId", "Elapsed", "Duration"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
 }

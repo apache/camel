@@ -93,15 +93,33 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
         return entry.getValue();
     }
-
-    public void put(K key, V value, long timeoutMillis) {
+    
+    public V put(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<K, V>(key, value, timeoutMillis);
         if (useLock) {
             lock.lock();
         }
         try {
-            map.put(key, entry);
             updateExpireTime(entry);
+            TimeoutMapEntry<K, V> result = map.put(key, entry);
+            return result != null ? result.getValue() : null;
+        } finally {
+            if (useLock) {
+                lock.unlock();
+            }
+        }
+    }
+    
+    public V putIfAbsent(K key, V value, long timeoutMillis) {
+        TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<K, V>(key, value, timeoutMillis);
+        if (useLock) {
+            lock.lock();
+        }
+        try {
+            updateExpireTime(entry);
+            //Just make sure we don't override the old entry
+            TimeoutMapEntry<K, V> result = map.putIfAbsent(key, entry);
+            return result != null ? result.getValue() : null;
         } finally {
             if (useLock) {
                 lock.unlock();

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,6 +36,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.slf4j.Logger;
@@ -53,6 +59,8 @@ public final class CamelContextHelper {
     public static final String COMPONENT_BASE = "META-INF/services/org/apache/camel/component/";
     public static final String COMPONENT_DESCRIPTOR = "META-INF/services/org/apache/camel/component.properties";
     public static final String COMPONENT_DOCUMENTATION_PREFIX = "org/apache/camel/component/";
+    public static final String MODEL_DESCRIPTOR = "META-INF/services/org/apache/camel/model.properties";
+    public static final String MODEL_DOCUMENTATION_PREFIX = "org/apache/camel/model/";
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextHelper.class);
 
@@ -436,6 +444,7 @@ public final class CamelContextHelper {
                     properties.put("component", component);
                     properties.put("class", component.getClass().getName());
                     properties.put("name", name);
+                    // override default component if name clash
                     map.put(name, properties);
                 }
             }
@@ -450,7 +459,7 @@ public final class CamelContextHelper {
                 Component component = entry.getValue();
                 if (component != null) {
                     Properties properties = new Properties();
-                    properties.put("component", name);
+                    properties.put("component", component);
                     properties.put("class", component.getClass().getName());
                     properties.put("name", name);
                     map.put(name, properties);
@@ -458,6 +467,80 @@ public final class CamelContextHelper {
             }
         }
         return map;
+    }
+
+    /**
+     * Find information about all the EIPs from camel-core.
+     */
+    public static SortedMap<String, Properties> findEips(CamelContext camelContext) throws LoadPropertiesException {
+        SortedMap<String, Properties> answer = new TreeMap<String, Properties>();
+
+        ClassResolver resolver = camelContext.getClassResolver();
+        LOG.debug("Finding all EIPs using class resolver: {} -> {}", new Object[]{resolver});
+        URL url = resolver.loadResourceAsURL(MODEL_DESCRIPTOR);
+        if (url != null) {
+            InputStream is = null;
+            try {
+                is = url.openStream();
+                String all = IOHelper.loadText(is);
+                String[] lines = all.split("\n");
+                for (String line : lines) {
+                    if (line.startsWith("#")) {
+                        continue;
+                    }
+
+                    Properties prop = new Properties();
+                    prop.put("name", line);
+
+                    String description = null;
+                    String label = null;
+                    String javaType = null;
+                    String title = null;
+
+                    // enrich with more meta-data
+                    String json = camelContext.explainEipJson(line, false);
+                    if (json != null) {
+                        List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("model", json, false);
+
+                        for (Map<String, String> row : rows) {
+                            if (row.get("title") != null) {
+                                title = row.get("title");
+                            }
+                            if (row.get("description") != null) {
+                                description = row.get("description");
+                            }
+                            if (row.get("label") != null) {
+                                label = row.get("label");
+                            }
+                            if (row.get("javaType") != null) {
+                                javaType = row.get("javaType");
+                            }
+                        }
+                    }
+
+                    if (title != null) {
+                        prop.put("title", title);
+                    }
+                    if (description != null) {
+                        prop.put("description", description);
+                    }
+                    if (label != null) {
+                        prop.put("label", label);
+                    }
+                    if (javaType != null) {
+                        prop.put("class", javaType);
+                    }
+
+                    answer.put(line, prop);
+                }
+            } catch (IOException e) {
+                throw new LoadPropertiesException(url, e);
+            } finally {
+                IOHelper.close(is);
+            }
+        }
+
+        return answer;
     }
 
     /**
@@ -474,6 +557,60 @@ public final class CamelContextHelper {
             }
         }
         return 0;
+    }
+
+    /**
+     * Lookup the {@link org.apache.camel.component.properties.PropertiesComponent} from the {@link org.apache.camel.CamelContext}.
+     * <p/>
+     * @param camelContext the camel context
+     * @param autoCreate whether to automatic create a new default {@link org.apache.camel.component.properties.PropertiesComponent} if no custom component
+     *                   has been configured.
+     * @return the properties component, or <tt>null</tt> if none has been defined, and auto create is <tt>false</tt>.
+     */
+    public static Component lookupPropertiesComponent(CamelContext camelContext, boolean autoCreate) {
+        // no existing properties component so lookup and add as component if possible
+        PropertiesComponent answer = (PropertiesComponent) camelContext.hasComponent("properties");
+        if (answer == null) {
+            // lookup what is stored under properties, as it may not be the Camel properties component
+            Object found = camelContext.getRegistry().lookupByName("properties");
+            if (found != null && found instanceof PropertiesComponent) {
+                answer = (PropertiesComponent) found;
+                camelContext.addComponent("properties", answer);
+            }
+        }
+        if (answer == null && autoCreate) {
+            // create a default properties component to be used as there may be default values we can use
+            LOG.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
+            // do not auto create using getComponent as spring auto-wire by constructor causes a side effect
+            answer = new PropertiesComponent();
+            camelContext.addComponent("properties", answer);
+        }
+        return answer;
+    }
+
+    /**
+     * Checks if any of the Camel routes is using an EIP with the given name
+     *
+     * @param camelContext  the Camel context
+     * @param name          the name of the EIP
+     * @return <tt>true</tt> if in use, <tt>false</tt> if not
+     */
+    public static boolean isEipInUse(CamelContext camelContext, String name) {
+        for (RouteDefinition route : camelContext.getRouteDefinitions()) {
+            for (FromDefinition from : route.getInputs()) {
+                if (name.equals(from.getShortName())) {
+                    return true;
+                }
+            }
+            Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+            while (it.hasNext()) {
+                ProcessorDefinition def = it.next();
+                if (name.equals(def.getShortName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

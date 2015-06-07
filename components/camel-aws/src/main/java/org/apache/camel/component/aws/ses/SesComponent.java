@@ -20,18 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Defines the <a href="http://aws.amazon.com/ses/">AWS SES component</a> 
  */
-public class SesComponent extends DefaultComponent {
+public class SesComponent extends UriEndpointComponent {
 
     public SesComponent() {
+        super(SesEndpoint.class);
     }
 
     public SesComponent(CamelContext context) {
-        super(context);
+        super(context, SesEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

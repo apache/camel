@@ -24,12 +24,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;
+import org.apache.camel.spi.UriEndpoint;
 
 /**
- * An <a href="http://camel.apache.org/atom.html">Atom Endpoint</a>.
+ * Atom is used for polling atom feeds
  *
  * @version 
  */
+@UriEndpoint(scheme = "atom", title = "Atom", syntax = "atom:feedUri", consumerOnly = true, consumerClass = FeedPollingConsumer.class, label = "feeds")
 public class AtomEndpoint extends FeedEndpoint {
 
     public AtomEndpoint() {

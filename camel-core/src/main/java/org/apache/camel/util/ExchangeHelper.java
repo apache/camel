@@ -43,6 +43,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.MessageSupport;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
@@ -214,11 +215,34 @@ public final class ExchangeHelper {
      * @param handover whether the on completion callbacks should be handed over to the new copy.
      */
     public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover) {
+        return createCorrelatedCopy(exchange, handover, false);
+    }
+
+    /**
+     * Creates a new instance and copies from the current message exchange so that it can be
+     * forwarded to another destination as a new instance. Unlike regular copy this operation
+     * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
+     * for async messaging, where the original and copied exchange are independent.
+     *
+     * @param exchange original copy of the exchange
+     * @param handover whether the on completion callbacks should be handed over to the new copy.
+     * @param useSameMessageId whether to use same message id on the copy message.
+     */
+    public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId) {
         String id = exchange.getExchangeId();
 
-        Exchange copy = exchange.copy();
+        // make sure to do a safe copy as the correlated copy can be routed independently of the source.
+        Exchange copy = exchange.copy(true);
+        // do not reuse message id on copy
+        if (!useSameMessageId) {
+            if (copy.hasOut()) {
+                copy.getOut().setMessageId(null);
+            }
+            copy.getIn().setMessageId(null);
+        }
         // do not share the unit of work
         copy.setUnitOfWork(null);
+        // do not reuse the message id
         // hand over on completion to the copy if we got any
         UnitOfWork uow = exchange.getUnitOfWork();
         if (handover && uow != null) {
@@ -624,7 +648,9 @@ public final class ExchangeHelper {
 
             // result could have a fault message
             if (hasFaultMessage(exchange)) {
-                return exchange.getOut().getBody();
+                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                answer = msg.getBody();
+                return answer;
             }
 
             // okay no fault then return the response according to the pattern
@@ -653,7 +679,8 @@ public final class ExchangeHelper {
      * @return <tt>true</tt> if fault message exists
      */
     public static boolean hasFaultMessage(Exchange exchange) {
-        return exchange.hasOut() && exchange.getOut().isFault() && exchange.getOut().getBody() != null;
+        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        return msg.isFault() && msg.getBody() != null;
     }
 
     /**
@@ -814,6 +841,27 @@ public final class ExchangeHelper {
         }
         answer.setException(exchange.getException());
         return answer;
+    }
+
+    /**
+     * Replaces the existing message with the new message
+     *
+     * @param exchange  the exchange
+     * @param newMessage the new message
+     * @param outOnly    whether to replace the message as OUT message
+     */
+    public static void replaceMessage(Exchange exchange, Message newMessage, boolean outOnly) {
+        Message old = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        if (outOnly || exchange.hasOut()) {
+            exchange.setOut(newMessage);
+        } else {
+            exchange.setIn(newMessage);
+        }
+
+        // need to de-reference old from the exchange so it can be GC
+        if (old instanceof MessageSupport) {
+            ((MessageSupport) old).setExchange(null);
+        }
     }
 
     @SuppressWarnings("unchecked")

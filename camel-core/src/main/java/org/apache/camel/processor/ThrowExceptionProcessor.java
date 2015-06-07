@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -27,7 +28,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The processor which sets an {@link Exception} on the {@link Exchange}
  */
-public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+    private String id;
     private final Exception exception;
 
     public ThrowExceptionProcessor(Exception exception) {
@@ -47,6 +49,18 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
 
     public String getTraceLabel() {
         return "throwException[" + exception.getClass().getSimpleName() + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Exception getException() {
+        return exception;
     }
 
     public String toString() {

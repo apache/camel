@@ -144,7 +144,7 @@ public class LuceneIndexer {
     private void openIndexWriter() throws IOException {
         IndexWriterConfig indexWriterConfig;
         // use create or append so we can reuse existing index if already exists
-        indexWriterConfig = new IndexWriterConfig(Version.LUCENE_46, getAnalyzer()).setOpenMode(OpenMode.CREATE_OR_APPEND);
+        indexWriterConfig = new IndexWriterConfig(Version.LUCENE_4_10_3, getAnalyzer()).setOpenMode(OpenMode.CREATE_OR_APPEND);
         indexWriter = new IndexWriter(niofsDirectory, indexWriterConfig);
     }
 

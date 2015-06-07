@@ -24,77 +24,92 @@ import javax.mail.Message;
 import javax.mail.Session;
 import javax.net.ssl.SSLContext;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Represents the configuration data for communicating over email
  *
- * @version 
+ * @version
  */
 @UriParams
-public class MailConfiguration implements Cloneable {   
+public class MailConfiguration implements Cloneable {
 
-    private JavaMailSender javaMailSender;
+    private Session session;
     private Properties javaMailProperties;
     private Properties additionalJavaMailProperties;
-    @UriParam
+
+    // protocol is implied by component name so it should not be in UriPath
     private String protocol;
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriParam
+    @UriPath
     private int port = -1;
     @UriParam
     private String username;
     @UriParam
     private String password;
-    @UriParam
+    @UriParam @Metadata(label = "producer")
     private String subject;
-    private Session session;
-    @UriParam
+    @UriParam @Metadata(label = "producer")
+    private JavaMailSender javaMailSender;
+    @UriParam(defaultValue = "true")
     private boolean mapMailMessage = true;
-    @UriParam
+    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FROM) @Metadata(label = "producer")
     private String from = MailConstants.MAIL_DEFAULT_FROM;
-    @UriParam
+    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FOLDER) @Metadata(label = "consumer")
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
-    @UriParam
+    @UriParam @Metadata(label = "consumer")
     private boolean delete;
-    @UriParam
+    @UriParam @Metadata(label = "consumer")
     private String copyTo;
-    @UriParam
+    @UriParam(defaultValue = "true") @Metadata(label = "consumer")
     private boolean unseen = true;
     @UriParam
     private boolean ignoreUriScheme;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
-    @UriParam
+    @UriParam @Metadata(label = "producer")
     private String replyTo;
-    @UriParam
+    @UriParam(defaultValue = "-1") @Metadata(label = "consumer")
     private int fetchSize = -1;
     @UriParam
     private boolean debugMode;
-    @UriParam
+    @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
     @UriParam
     private boolean dummyTrustManager;
-    @UriParam
+    @UriParam(defaultValue = "text/plain")
     private String contentType = "text/plain";
-    @UriParam
+    @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY)
     private String alternativeBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
     @UriParam
     private boolean useInlineAttachments;
     @UriParam
     private boolean ignoreUnsupportedCharset;
-    @UriParam
+    @UriParam @Metadata(label = "consumer")
     private boolean disconnect;
-    @UriParam
+    @UriParam(defaultValue = "true") @Metadata(label = "consumer")
     private boolean closeFolder = true;
-    @UriParam
+    @UriParam(defaultValue = "true") @Metadata(label = "consumer")
     private boolean peek = true;
+    @UriParam @Metadata(label = "consumer")
+    private boolean skipFailedMessage;
+    @UriParam @Metadata(label = "consumer")
+    private boolean handleFailedMessage;
+    @UriParam
     private SSLContextParameters sslContextParameters;
+    private ClassLoader applicationClassLoader;
 
     public MailConfiguration() {
+    }
+    
+    public MailConfiguration(CamelContext context) {
+        this.applicationClassLoader = context.getApplicationContextClassLoader();
     }
 
     /**
@@ -171,11 +186,19 @@ public class MailConfiguration implements Cloneable {
         if (session != null) {
             answer.setSession(session);
         } else {
-            // use our authenticator that does no live user interaction but returns the already configured username and password
-            Session session = Session.getInstance(answer.getJavaMailProperties(), new DefaultAuthenticator(getUsername(), getPassword()));
-            // sets the debug mode of the underlying mail framework
-            session.setDebug(debugMode);
-            answer.setSession(session);
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            try {
+                if (applicationClassLoader != null) {
+                    Thread.currentThread().setContextClassLoader(applicationClassLoader);
+                }
+                // use our authenticator that does no live user interaction but returns the already configured username and password
+                Session session = Session.getInstance(answer.getJavaMailProperties(), new DefaultAuthenticator(getUsername(), getPassword()));
+                // sets the debug mode of the underlying mail framework
+                session.setDebug(debugMode);
+                answer.setSession(session);
+            } finally {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
         }
 
         return answer;
@@ -249,6 +272,9 @@ public class MailConfiguration implements Cloneable {
         return javaMailSender;
     }
 
+    /**
+     * To use a custom {@link org.apache.camel.component.mail.JavaMailSender} for sending emails.
+     */
     public void setJavaMailSender(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
@@ -257,6 +283,9 @@ public class MailConfiguration implements Cloneable {
         return host;
     }
 
+    /**
+     * The mail server host name
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -293,6 +322,9 @@ public class MailConfiguration implements Cloneable {
         return password;
     }
 
+    /**
+     * The password for login
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -301,6 +333,9 @@ public class MailConfiguration implements Cloneable {
         return subject;
     }
 
+    /**
+     * The Subject of the message being sent. Note: Setting the subject in the header takes precedence over this option.
+     */
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -309,6 +344,9 @@ public class MailConfiguration implements Cloneable {
         return port;
     }
 
+    /**
+     * The port number of the mail server
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -317,6 +355,9 @@ public class MailConfiguration implements Cloneable {
         return protocol;
     }
 
+    /**
+     * The protocol for communicating with the mail server
+     */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
@@ -333,6 +374,9 @@ public class MailConfiguration implements Cloneable {
         return username;
     }
 
+    /**
+     * The username for login
+     */
     public void setUsername(String username) {
         this.username = username;
         if (getRecipients().size() == 0) {
@@ -350,6 +394,9 @@ public class MailConfiguration implements Cloneable {
         return from;
     }
 
+    /**
+     * The from email address
+     */
     public void setFrom(String from) {
         this.from = from;
     }
@@ -358,6 +405,11 @@ public class MailConfiguration implements Cloneable {
         return delete;
     }
 
+    /**
+     * Deletes the messages after they have been processed. This is done by setting the DELETED flag on the mail message.
+     * If false, the SEEN flag is set instead. As of Camel 2.10 you can override this configuration option by setting a
+     * header with the key delete to determine if the mail should be deleted or not.
+     */
     public void setDelete(boolean delete) {
         this.delete = delete;
     }
@@ -366,6 +418,12 @@ public class MailConfiguration implements Cloneable {
         return mapMailMessage;
     }
 
+    /**
+     * Specifies whether Camel should map the received mail message to Camel body/headers.
+     * If set to true, the body of the mail message is mapped to the body of the Camel IN message and the mail headers are mapped to IN headers.
+     * If this option is set to false then the IN message contains a raw javax.mail.Message.
+     * You can retrieve this raw message by calling exchange.getIn().getBody(javax.mail.Message.class).
+     */
     public void setMapMailMessage(boolean mapMailMessage) {
         this.mapMailMessage = mapMailMessage;
     }
@@ -374,6 +432,9 @@ public class MailConfiguration implements Cloneable {
         return folderName;
     }
 
+    /**
+     * The folder to poll.
+     */
     public void setFolderName(String folderName) {
         this.folderName = folderName;
     }
@@ -382,6 +443,10 @@ public class MailConfiguration implements Cloneable {
         return ignoreUriScheme;
     }
 
+    /**
+     * Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the charset is unsupported
+     * then charset=XXX (where XXX represents the unsupported charset) is removed from the content-type and it relies on the platform default instead.
+     */
     public void setIgnoreUriScheme(boolean ignoreUriScheme) {
         this.ignoreUriScheme = ignoreUriScheme;
     }
@@ -390,6 +455,9 @@ public class MailConfiguration implements Cloneable {
         return unseen;
     }
 
+    /**
+     * Whether to limit by unseen mails only.
+     */
     public void setUnseen(boolean unseen) {
         this.unseen = unseen;
     }
@@ -418,11 +486,14 @@ public class MailConfiguration implements Cloneable {
     public Map<Message.RecipientType, String> getRecipients() {
         return recipients;
     }
-    
+
     public String getReplyTo() {
         return replyTo;
     }
 
+    /**
+     * The Reply-To recipients (the receivers of the response mail). Separate multiple email addresses with a comma.
+     */
     public void setReplyTo(String replyTo) {
         this.replyTo = replyTo;
     }
@@ -431,6 +502,11 @@ public class MailConfiguration implements Cloneable {
         return fetchSize;
     }
 
+    /**
+     * Sets the maximum number of messages to consume during a poll. This can be used to avoid overloading a mail server,
+     * if a mailbox folder contains a lot of messages. Default value of -1 means no fetch size and all messages will be consumed.
+     * Setting the value to 0 is a special corner case, where Camel will not consume any messages at all.
+     */
     public void setFetchSize(int fetchSize) {
         this.fetchSize = fetchSize;
     }
@@ -439,6 +515,9 @@ public class MailConfiguration implements Cloneable {
         return debugMode;
     }
 
+    /**
+     * Enable debug mode on the underlying mail framework. The SUN Mail framework logs the debug messages to System.out by default.
+     */
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
     }
@@ -447,6 +526,9 @@ public class MailConfiguration implements Cloneable {
         return connectionTimeout;
     }
 
+    /**
+     * The connection timeout in milliseconds.
+     */
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
@@ -455,6 +537,9 @@ public class MailConfiguration implements Cloneable {
         return dummyTrustManager;
     }
 
+    /**
+     * To use a dummy security setting for trusting all certificates. Should only be used for development mode, and not production.
+     */
     public void setDummyTrustManager(boolean dummyTrustManager) {
         this.dummyTrustManager = dummyTrustManager;
     }
@@ -463,6 +548,9 @@ public class MailConfiguration implements Cloneable {
         return contentType;
     }
 
+    /**
+     * The mail message content type. Use text/html for HTML mails.
+     */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
@@ -471,6 +559,11 @@ public class MailConfiguration implements Cloneable {
         return alternativeBodyHeader;
     }
 
+    /**
+     * Specifies the key to an IN message header that contains an alternative email body.
+     * For example, if you send emails in text/html format and want to provide an alternative mail body for
+     * non-HTML email clients, set the alternative mail body with this key as a header.
+     */
     public void setAlternativeBodyHeader(String alternativeBodyHeader) {
         this.alternativeBodyHeader = alternativeBodyHeader;
     }
@@ -479,6 +572,9 @@ public class MailConfiguration implements Cloneable {
         return useInlineAttachments;
     }
 
+    /**
+     * Whether to use disposition inline or attachment.
+     */
     public void setUseInlineAttachments(boolean useInlineAttachments) {
         this.useInlineAttachments = useInlineAttachments;
     }
@@ -487,6 +583,11 @@ public class MailConfiguration implements Cloneable {
         return ignoreUnsupportedCharset;
     }
 
+    /**
+     * Option to let Camel ignore unsupported charset in the local JVM when sending mails.
+     * If the charset is unsupported then charset=XXX (where XXX represents the unsupported charset)
+     * is removed from the content-type and it relies on the platform default instead.
+     */
     public void setIgnoreUnsupportedCharset(boolean ignoreUnsupportedCharset) {
         this.ignoreUnsupportedCharset = ignoreUnsupportedCharset;
     }
@@ -495,6 +596,9 @@ public class MailConfiguration implements Cloneable {
         return disconnect;
     }
 
+    /**
+     * Whether the consumer should disconnect after polling. If enabled this forces Camel to connect on each poll.
+     */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
     }
@@ -503,6 +607,10 @@ public class MailConfiguration implements Cloneable {
         return closeFolder;
     }
 
+    /**
+     * Whether the consumer should close the folder after polling. Setting this option to false and having disconnect=false as well,
+     * then the consumer keep the folder open between polls.
+     */
     public void setCloseFolder(boolean closeFolder) {
         this.closeFolder = closeFolder;
     }
@@ -511,6 +619,9 @@ public class MailConfiguration implements Cloneable {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters.
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -519,6 +630,11 @@ public class MailConfiguration implements Cloneable {
         return copyTo;
     }
 
+    /**
+     * After processing a mail message, it can be copied to a mail folder with the given name.
+     * You can override this configuration value, with a header with the key copyTo, allowing you to copy messages
+     * to folder names configured at runtime.
+     */
     public void setCopyTo(String copyTo) {
         this.copyTo = copyTo;
     }
@@ -527,7 +643,41 @@ public class MailConfiguration implements Cloneable {
         return peek;
     }
 
+    /**
+     * Will mark the javax.mail.Message as peeked before processing the mail message.
+     * This applies to IMAPMessage messages types only. By using peek the mail will not be eager marked as SEEN on
+     * the mail server, which allows us to rollback the mail message if there is an error processing in Camel.
+     */
     public void setPeek(boolean peek) {
         this.peek = peek;
+    }
+
+    public boolean isSkipFailedMessage() {
+        return skipFailedMessage;
+    }
+
+    /**
+     * If the mail consumer cannot retrieve a given mail message, then this option allows to skip
+     * the message and move on to retrieve the next mail message.
+     * <p/>
+     * The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel.
+     */
+    public void setSkipFailedMessage(boolean skipFailedMessage) {
+        this.skipFailedMessage = skipFailedMessage;
+    }
+
+    public boolean isHandleFailedMessage() {
+        return handleFailedMessage;
+    }
+
+    /**
+     * If the mail consumer cannot retrieve a given mail message, then this option allows to handle
+     * the caused exception by the consumer's error handler. By enable the bridge error handler on the consumer,
+     * then the Camel routing error handler can handle the exception instead.
+     * <p/>
+     * The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel.
+     */
+    public void setHandleFailedMessage(boolean handleFailedMessage) {
+        this.handleFailedMessage = handleFailedMessage;
     }
 }

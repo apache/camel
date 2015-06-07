@@ -41,15 +41,15 @@ public class XsltComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"resourceUri\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"contentCache\": { \"kind\": \"parameter\", \"type\": \"boolean\", \"javaType\": \"boolean\", \"deprecated\": \"false\", \"defaultValue\": \"true\""));
+        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("xslt");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

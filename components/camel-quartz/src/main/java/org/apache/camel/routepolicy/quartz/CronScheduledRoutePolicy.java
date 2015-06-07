@@ -16,6 +16,7 @@
  */
 package org.apache.camel.routepolicy.quartz;
 
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
@@ -29,6 +30,8 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
     private String routeStopTime;
     private String routeSuspendTime;
     private String routeResumeTime;
+    private String timeZoneString;
+    private TimeZone timeZone;
     
     public void onInit(Route route) {
         try {
@@ -87,7 +90,10 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
         } else if (action == Action.RESUME) {
             trigger = new CronTrigger(TRIGGER_RESUME + route.getId(), TRIGGER_GROUP + route.getId(), getRouteResumeTime());
         }
-        
+        // Just reset the time zone once the timeZone parameter is set
+        if (timeZone != null) {
+            trigger.setTimeZone(timeZone);
+        }
         return trigger;
     }
     
@@ -121,6 +127,15 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
 
     public String getRouteResumeTime() {
         return routeResumeTime;
+    }
+
+    public String getTimeZone() {
+        return timeZoneString;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZoneString = timeZone;
+        this.timeZone = TimeZone.getTimeZone(timeZone);
     }    
 
 }

@@ -478,8 +478,8 @@ public final class EventHelper {
         }
     }
 
-    public static void notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
-                                                    boolean deadLetterChannel) {
+    public static void notifyExchangeFailureHandling(CamelContext context, Exchange exchange, Processor failureHandler,
+                                                     boolean deadLetterChannel, String deadLetterUri) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event
             return;
@@ -504,7 +504,41 @@ public final class EventHelper {
             if (factory == null) {
                 return;
             }
-            EventObject event = factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel);
+            EventObject event = factory.createExchangeFailureHandlingEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
+            if (event == null) {
+                return;
+            }
+            doNotifyEvent(notifier, event);
+        }
+    }
+
+    public static void notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
+                                                    boolean deadLetterChannel, String deadLetterUri) {
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
+            return;
+        }
+
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return;
+        }
+
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
+                continue;
+            }
+
+            EventFactory factory = management.getEventFactory();
+            if (factory == null) {
+                return;
+            }
+            EventObject event = factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
             if (event == null) {
                 return;
             }
@@ -763,7 +797,7 @@ public final class EventHelper {
         }
 
         if (!notifier.isEnabled(event)) {
-            LOG.trace("Notification of event is disabled: {}", event);
+            LOG.trace("Notifier: {} is not enabled for the event: {}", notifier, event);
             return;
         }
 

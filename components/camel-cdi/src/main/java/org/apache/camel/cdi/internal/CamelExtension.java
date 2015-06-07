@@ -64,7 +64,7 @@ import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
  */
 public class CamelExtension implements Extension {
 
-    private static class InjectLiteral extends AnnotationLiteral<Inject> implements Inject {
+    private static class InjectLiteral extends AnnotationLiteral<Inject> {
         private static final long serialVersionUID = 1L;
     }
 
@@ -96,11 +96,11 @@ public class CamelExtension implements Extension {
      * @param process Annotated type.
      * @throws Exception In case of exceptions.
      */
-    protected void contextAwareness(@Observes ProcessAnnotatedType<? extends CamelContextAware> process) throws Exception {
-        AnnotatedType at = process.getAnnotatedType();
+    protected void contextAwareness(@Observes ProcessAnnotatedType<CamelContextAware> process) throws Exception {
+        AnnotatedType<CamelContextAware> at = process.getAnnotatedType();
 
         Method method = at.getJavaClass().getMethod("setCamelContext", CamelContext.class);
-        AnnotatedTypeBuilder builder = new AnnotatedTypeBuilder<CamelContextAware>()
+        AnnotatedTypeBuilder<CamelContextAware> builder = new AnnotatedTypeBuilder<CamelContextAware>()
                 .readFromType(at)
                 .addToMethod(method, new InjectLiteral());
         process.setAnnotatedType(builder.create());
@@ -108,15 +108,15 @@ public class CamelExtension implements Extension {
     }
 
     protected  void detectRouteBuilders(@Observes ProcessAnnotatedType<?> process) throws Exception {
-        AnnotatedType annotatedType = process.getAnnotatedType();
+        AnnotatedType<?> annotatedType = process.getAnnotatedType();
         ContextName annotation = annotatedType.getAnnotation(ContextName.class);
-        Class javaClass = annotatedType.getJavaClass();
+        Class<?> javaClass = annotatedType.getJavaClass();
         if (annotation != null && isRoutesBean(javaClass)) {
-            addRouteBuilderBean(process, annotation);
+            addRouteBuilderBean(annotatedType, annotation);
         }
     }
 
-    private void addRouteBuilderBean(final ProcessAnnotatedType<?> process, ContextName annotation) {
+    private void addRouteBuilderBean(final AnnotatedType<?> process, ContextName annotation) {
         final CamelContextConfig config = getCamelConfig(annotation.value());
         config.addRouteBuilderBean(process);
     }

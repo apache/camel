@@ -20,14 +20,17 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
  * Weather Endpoint
  */
+@UriEndpoint(scheme = "weather", title = "Weather", syntax = "weather:name", consumerClass = WeatherConsumer.class, label = "api")
 public class WeatherEndpoint extends DefaultPollingEndpoint {
+
     @UriParam
-    private final WeatherConfiguration configuration;
+    private WeatherConfiguration configuration;
 
     public WeatherEndpoint(String uri, WeatherComponent component, WeatherConfiguration properties) {
         super(uri, component);

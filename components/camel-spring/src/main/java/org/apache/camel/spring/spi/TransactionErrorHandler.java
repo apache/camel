@@ -67,7 +67,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             TransactionTemplate transactionTemplate, Predicate retryWhile, ScheduledExecutorService executorService,
             LoggingLevel rollbackLoggingLevel) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, retryWhile, executorService);
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, false, retryWhile, executorService, null);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
         this.rollbackLoggingLevel = rollbackLoggingLevel;
@@ -93,7 +93,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     public void process(Exchange exchange) throws Exception {
         // we have to run this synchronously as Spring Transaction does *not* support
         // using multiple threads to span a transaction
-        if (exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
+        if (transactionTemplate.getPropagationBehavior() != TransactionDefinition.PROPAGATION_REQUIRES_NEW && exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
             // already transacted by this transaction template
             // so lets just let the error handler process it
             processByErrorHandler(exchange);
@@ -225,7 +225,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
             @Override
             public String toString() {
-                return "Done " + this;
+                return "Done " + TransactionErrorHandler.this.toString();
             }
         });
         if (!sync) {

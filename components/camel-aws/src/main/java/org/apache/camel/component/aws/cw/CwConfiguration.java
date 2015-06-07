@@ -16,26 +16,39 @@
  */
 package org.apache.camel.component.aws.cw;
 
-/**
- * The AWS CW component configuration properties
- * 
- */
 import java.util.Date;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
+@UriParams
 public class CwConfiguration implements Cloneable {
 
-    private AmazonCloudWatch amazonCwClient;
-    private String amazonCwEndpoint;
-    private String accessKey;
-    private String secretKey;
-    private String name;
-    private Double value;
-    private String unit;
+    @UriPath @Metadata(required = "true")
     private String namespace;
+    @UriParam
+    private AmazonCloudWatch amazonCwClient;
+    @UriParam
+    private String amazonCwEndpoint;
+    @UriParam
+    private String accessKey;
+    @UriParam
+    private String secretKey;
+    @UriParam
+    private String name;
+    @UriParam
+    private Double value;
+    @UriParam
+    private String unit;
+    @UriParam
     private Date timestamp;
 
+    /**
+     * The region with which the AWS-CW client wants to work with.
+     */
     public void setAmazonCwEndpoint(String amazonCwEndpoint) {
         this.amazonCwEndpoint = amazonCwEndpoint;
     }
@@ -48,6 +61,9 @@ public class CwConfiguration implements Cloneable {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -56,6 +72,9 @@ public class CwConfiguration implements Cloneable {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -64,6 +83,9 @@ public class CwConfiguration implements Cloneable {
         return name;
     }
 
+    /**
+     * The metric name
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -72,6 +94,9 @@ public class CwConfiguration implements Cloneable {
         return value;
     }
 
+    /**
+     * The metric value
+     */
     public void setValue(Double value) {
         this.value = value;
     }
@@ -80,6 +105,9 @@ public class CwConfiguration implements Cloneable {
         return unit;
     }
 
+    /**
+     * The metric unit
+     */
     public void setUnit(String unit) {
         this.unit = unit;
     }
@@ -88,16 +116,33 @@ public class CwConfiguration implements Cloneable {
         return namespace;
     }
 
+    /**
+     * The metric namespace
+     */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
 
+    /**
+     * The metric timestamp
+     */
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    public AmazonCloudWatch getAmazonCwClient() {
+        return amazonCwClient;
+    }
+
+    /**
+     * To use the AmazonCloudWatch as the client
+     */
+    public void setAmazonCwClient(AmazonCloudWatch amazonCwClient) {
+        this.amazonCwClient = amazonCwClient;
     }
 
     @Override
@@ -111,11 +156,4 @@ public class CwConfiguration implements Cloneable {
                 + "]";
     }
 
-    public AmazonCloudWatch getAmazonCwClient() {
-        return amazonCwClient;
-    }
-
-    public void setAmazonCwClient(AmazonCloudWatch amazonCwClient) {
-        this.amazonCwClient = amazonCwClient;
-    }
 }

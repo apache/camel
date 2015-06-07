@@ -20,6 +20,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
+/**
+ * Rest HEAD command
+ */
+@Metadata(label = "rest")
 @XmlRootElement(name = "head")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HeadVerbDefinition extends VerbDefinition {

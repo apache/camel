@@ -23,6 +23,9 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedTypeConverterRegistryMBean extends ManagedServiceMBean {
 
+    @ManagedAttribute(description = "Number of noop attempts (no type conversion was needed)")
+    long getNoopCounter();
+
     @ManagedAttribute(description = "Number of type conversion attempts")
     long getAttemptCounter();
 

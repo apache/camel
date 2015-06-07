@@ -104,6 +104,15 @@
         </route>        
         <!-- END SNIPPET: keystore -->
         
+        <!-- START SNIPPET: keystoreParameters -->
+        <route>
+            <from uri="direct:keystoreParameters"/>
+            <to uri="crypto:sign://keystoreParameters?keyStoreParameters=#signatureParams&amp;alias=bob&amp;password=letmein" />
+            <to uri="crypto:verify://keystoreParameters?keyStoreParameters=#signatureParams&amp;alias=bob" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: keystoreParameters -->
+        
          <!-- START SNIPPET: signature-header -->
         <route>
             <from uri="direct:signature-header"/>
@@ -154,4 +163,7 @@
     <bean id="rsaPublicKey" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="publicRSAKey"/>
     <bean id="someRandom" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="random"/>
 
+    <keyStoreParameters xmlns="http://camel.apache.org/schema/spring" id="signatureParams" 
+           resource="./ks.keystore" password="letmein" />
+           
 </beans>

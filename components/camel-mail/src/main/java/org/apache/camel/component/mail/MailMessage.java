@@ -24,6 +24,7 @@ import javax.mail.MessagingException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with Mail
@@ -51,11 +52,8 @@ public class MailMessage extends DefaultMessage {
 
     @Override
     public String toString() {
-        if (mailMessage != null) {
-            return "MailMessage: " + MailUtils.dumpMessage(mailMessage);
-        } else {
-            return "MailMessage: " + getBody();
-        }
+        // do not dump the mail content, as it requires live connection to the mail server
+        return "MailMessage@" + ObjectHelper.getIdentityHashCode(this);
     }
 
     public MailMessage copy() {
@@ -95,7 +93,7 @@ public class MailMessage extends DefaultMessage {
 
     @Override
     public MailMessage newInstance() {
-        return new MailMessage();
+        return new MailMessage(null, this.mapMailMessage);
     }
 
     @Override
@@ -136,7 +134,15 @@ public class MailMessage extends DefaultMessage {
     }
 
     public void copyFrom(org.apache.camel.Message that) {
-        super.copyFrom(that);
+        // only do a deep copy if we need to (yes when that is not a mail message, or if the mapMailMessage is true)
+        boolean needCopy = !(that instanceof MailMessage) || (((MailMessage) that).mapMailMessage);
+        if (needCopy) {
+            super.copyFrom(that);
+        } else {
+            // no deep copy needed, but copy message id
+            setMessageId(that.getMessageId());
+            setFault(that.isFault());
+        }
         if (that instanceof MailMessage) {
             MailMessage mailMessage = (MailMessage) that;
             this.originalMailMessage = mailMessage.originalMailMessage;

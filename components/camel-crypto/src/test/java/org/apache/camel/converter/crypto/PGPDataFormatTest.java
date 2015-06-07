@@ -59,6 +59,7 @@ import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureGenerator;
 import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBEKeyEncryptionMethodGenerator;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
@@ -86,6 +87,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         encryptor.setKeyUserid("keyflag");
         encryptor.setSignatureKeyUserid("keyflag");
         encryptor.setIntegrity(false);
+        encryptor.setFileName("fileNameABC");
 
         // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for encryption
         decryptor.setKeyFileName("org/apache/camel/component/crypto/secringSubKeys.gpg");
@@ -368,7 +370,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     static PGPSecretKey readSecretKey() throws Exception {
         InputStream input = new ByteArrayInputStream(getSecKeyRing());
-        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(input));
+        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(input),
+                                                                           new BcKeyFingerprintCalculator());
 
         @SuppressWarnings("rawtypes")
         Iterator keyRingIter = pgpSec.getKeyRings();
@@ -391,7 +394,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     static PGPPublicKey readPublicKey(String keyringPath) throws Exception {
         InputStream input = new ByteArrayInputStream(getKeyRing(keyringPath));
-        PGPPublicKeyRingCollection pgpPub = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(input));
+        PGPPublicKeyRingCollection pgpPub = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(input),
+                                                                           new BcKeyFingerprintCalculator());
 
         @SuppressWarnings("rawtypes")
         Iterator keyRingIter = pgpPub.getKeyRings();

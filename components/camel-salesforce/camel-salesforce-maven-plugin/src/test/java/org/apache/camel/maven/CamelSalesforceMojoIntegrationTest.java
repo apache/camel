@@ -16,10 +16,15 @@
  */
 package org.apache.camel.maven;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,29 +35,7 @@ public class CamelSalesforceMojoIntegrationTest {
 
     @Test
     public void testExecute() throws Exception {
-        CamelSalesforceMojo mojo = new CamelSalesforceMojo();
-
-        mojo.setLog(new SystemStreamLog());
-
-        // set login properties
-        setLoginProperties(mojo);
-
-        // set defaults
-        mojo.version = System.getProperty("apiVersion", SalesforceEndpointConfig.DEFAULT_VERSION);
-        mojo.outputDirectory = new File("target/generated-sources/camel-salesforce");
-        mojo.packageName = "org.apache.camel.salesforce.dto";
-
-        // set code generation properties
-        mojo.includePattern = "(.*__c)|(PushTopic)|(Document)";
-
-        // remove generated code directory
-        if (mojo.outputDirectory.exists()) {
-            // remove old files
-            for (File file : mojo.outputDirectory.listFiles()) {
-                file.delete();
-            }
-            mojo.outputDirectory.delete();
-        }
+        CamelSalesforceMojo mojo = createMojo();
 
         // generate code
         mojo.execute();
@@ -62,6 +45,34 @@ public class CamelSalesforceMojoIntegrationTest {
         Assert.assertTrue("Output directory was not created", mojo.outputDirectory.exists());
 
         // TODO check that the generated code compiles
+    }
+
+    protected CamelSalesforceMojo createMojo() throws IOException {
+        CamelSalesforceMojo mojo = new CamelSalesforceMojo();
+
+        mojo.setLog(new SystemStreamLog());
+
+        // set login properties
+        setLoginProperties(mojo);
+
+        // set defaults
+        mojo.version = System.getProperty("apiVersion", SalesforceEndpointConfig.DEFAULT_VERSION);
+        mojo.loginUrl = System.getProperty("loginUrl", SalesforceLoginConfig.DEFAULT_LOGIN_URL);
+        mojo.outputDirectory = new File("target/generated-sources/camel-salesforce");
+        mojo.packageName = "org.apache.camel.salesforce.dto";
+
+        // set code generation properties
+        mojo.includePattern = "(.*__c)|(PushTopic)|(Document)|(Account)";
+
+        // remove generated code directory
+        if (mojo.outputDirectory.exists()) {
+            // remove old files
+            for (File file : mojo.outputDirectory.listFiles()) {
+                file.delete();
+            }
+            mojo.outputDirectory.delete();
+        }
+        return mojo;
     }
 
     private void setLoginProperties(CamelSalesforceMojo mojo) throws IOException {

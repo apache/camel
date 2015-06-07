@@ -119,6 +119,30 @@ public class CxfRsProducer extends DefaultProducer {
         
     }
     
+    protected void setupClientMatrix(WebClient client, Exchange exchange) throws Exception {
+        
+        org.apache.cxf.message.Message cxfMessage = (org.apache.cxf.message.Message) exchange.getIn().getHeader("CamelCxfMessage");
+        if (cxfMessage != null) {
+            String requestURL = (String)cxfMessage.get("org.apache.cxf.request.uri"); 
+            String matrixParam = null;
+            int matrixStart = requestURL.indexOf(";");
+            int matrixEnd = requestURL.indexOf("?") > -1 ? requestURL.indexOf("?") : requestURL.length();
+            Map<String, String> maps = null;
+            if (requestURL != null && matrixStart > 0) {
+                matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
+                if (matrixParam != null) {
+                    maps = getMatrixParametersFromMatrixString(matrixParam, IOHelper.getCharsetName(exchange));
+                }
+            }
+            if (maps != null) {
+                for (Map.Entry<String, String> entry : maps.entrySet()) {
+                    client.matrix(entry.getKey(), entry.getValue());
+                    LOG.debug("Matrix param " + entry.getKey() + " :: " + entry.getValue());
+                }
+            }
+        }
+    }
+    
     protected void setupClientHeaders(Client client, Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
@@ -165,12 +189,18 @@ public class CxfRsProducer extends DefaultProducer {
         // set the body
         Object body = null;
         if (!"GET".equals(httpMethod)) {
-            // need to check the request object.           
-            body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Request body = " + body);
+            // need to check the request object if the http Method is not GET      
+            if ("DELETE".equals(httpMethod) && cxfRsEndpoint.isIgnoreDeleteMethodMessageBody()) {
+                // just ignore the message body if the ignoreDeleteMethodMessageBody is true
+            } else {
+                body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Request body = " + body);
+                }
             }
         }
+        
+        setupClientMatrix(client, exchange); 
 
         setupClientQueryAndHeaders(client, exchange);
         
@@ -210,6 +240,11 @@ public class CxfRsProducer extends DefaultProducer {
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
+        } else {
+            // just close the input stream of the response object
+            if (response instanceof Response) {
+                ((Response)response).close();
+            }
         }
     }
 
@@ -265,6 +300,11 @@ public class CxfRsProducer extends DefaultProducer {
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
+        } else {
+            // just close the input stream of the response object
+            if (response instanceof Response) {
+                ((Response)response).close();
+            }
         }
     }
     
@@ -331,6 +371,21 @@ public class CxfRsProducer extends DefaultProducer {
         return answer;
     }
 
+    private Map<String, String> getMatrixParametersFromMatrixString(String matrixString, String charset) throws UnsupportedEncodingException {
+        Map<String, String> answer  = new LinkedHashMap<String, String>();
+        for (String param : matrixString.split(";")) {
+            String[] pair = param.split("=", 2);
+            if (pair.length == 2) {
+                String name = URLDecoder.decode(pair[0], charset);
+                String value = URLDecoder.decode(pair[1], charset);
+                answer.put(name, value);
+            } else {
+                throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
+            }
+        }
+        return answer;
+    }
+    
     private String arrayToString(Object[] array) {
         StringBuilder buffer = new StringBuilder("[");
         for (Object obj : array) {

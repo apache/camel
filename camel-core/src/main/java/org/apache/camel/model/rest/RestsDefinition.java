@@ -26,10 +26,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a collection of {@link org.apache.camel.model.rest.RestDefinition REST's}
+ * A series of rest services defined using the rest-dsl
  */
+@Metadata(label = "rest")
 @XmlRootElement(name = "rests")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer {
@@ -44,11 +46,6 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     @Override
     public String toString() {
         return "Rests: " + rests;
-    }
-
-    @Override
-    public String getShortName() {
-        return "rests";
     }
 
     public String getLabel() {

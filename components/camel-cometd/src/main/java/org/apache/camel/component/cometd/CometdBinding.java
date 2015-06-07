@@ -78,10 +78,13 @@ public class CometdBinding {
 
         Message message = new DefaultMessage();
         message.setBody(data);
-        message.setHeaders(getHeadersFromMessage(cometdMessage));
+        Map headers = getHeadersFromMessage(cometdMessage);
+        if (headers != null) {
+            message.setHeaders(headers);
+        }
         message.setHeader(COMETD_CLIENT_ID_HEADER_NAME, remote.getId());
 
-        if (cometdMessage.get(COMETD_SUBSCRIPTION_HEADER_NAME) != null) {
+        if (cometdMessage != null && cometdMessage.get(COMETD_SUBSCRIPTION_HEADER_NAME) != null) {
             message.setHeader(COMETD_SUBSCRIPTION_HEADER_NAME, cometdMessage.get(COMETD_SUBSCRIPTION_HEADER_NAME));
         }
         

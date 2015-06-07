@@ -19,12 +19,16 @@ package org.apache.camel.component.cmis;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link CMISComponent}.
  */
-public class CMISComponent extends DefaultComponent {
+public class CMISComponent extends UriEndpointComponent {
+
+    public CMISComponent() {
+        super(CMISEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
         throws Exception {

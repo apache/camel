@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -39,6 +40,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -299,8 +301,6 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
      * Sets whether to use NOWAIT on lock and silently skip the entity. This
      * allows different instances to process entities at the same time but not
      * processing the same entity.
-     * 
-     * @param skipLockedEntity
      */
     public void setSkipLockedEntity(boolean skipLockedEntity) {
         this.skipLockedEntity = skipLockedEntity;
@@ -499,9 +499,15 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-        this.entityManager = entityManagerFactory.createEntityManager();
+        // need to setup entity manager first
+        if (getEndpoint().isSharedEntityManager()) {
+            this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
+        } else {
+            this.entityManager = entityManagerFactory.createEntityManager();
+        }
         LOG.trace("Created EntityManager {} on {}", entityManager, this);
+
+        super.doStart();
     }
 
     @Override
@@ -511,8 +517,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doShutdown() throws Exception {
+        if (entityManager != null) {
+            this.entityManager.close();
+            LOG.trace("Closed EntityManager {} on {}", entityManager, this);
+        }
+
         super.doShutdown();
-        this.entityManager.close();
-        LOG.trace("Closed EntityManager {} on {}", entityManager, this);
     }
 }

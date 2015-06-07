@@ -28,8 +28,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Represents a timer endpoint that can generate periodic inbound exchanges triggered by a timer.
@@ -37,24 +39,24 @@ import org.apache.camel.spi.UriParam;
  * @version 
  */
 @ManagedResource(description = "Managed TimerEndpoint")
-@UriEndpoint(scheme = "timer", consumerClass = TimerConsumer.class)
+@UriEndpoint(scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String timerName;
     @UriParam
     private Date time;
-    @UriParam
+    @UriParam(defaultValue = "1000")
     private long period = 1000;
-    @UriParam
+    @UriParam(defaultValue = "1000")
     private long delay = 1000;
     @UriParam
     private boolean fixedRate;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean daemon = true;
+    @UriParam(defaultValue = "0")
+    private long repeatCount;
     @UriParam
     private Timer timer;
-    @UriParam
-    private long repeatCount;
 
     public TimerEndpoint() {
     }
@@ -62,6 +64,15 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public TimerEndpoint(String uri, Component component, String timerName) {
         super(uri, component);
         this.timerName = timerName;
+    }
+    
+    protected TimerEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
+    }
+
+    @Override
+    public TimerComponent getComponent() {
+        return (TimerComponent) super.getComponent();
     }
 
     public Producer createProducer() throws Exception {
@@ -99,6 +110,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return timerName;
     }
 
+    /**
+     * The name of the timer
+     */
     @ManagedAttribute(description = "Timer Name")
     public void setTimerName(String timerName) {
         this.timerName = timerName;
@@ -109,6 +123,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return daemon;
     }
 
+    /**
+     * Specifies whether or not the thread associated with the timer endpoint runs as a daemon.
+     * <p/>
+     * The default value is true.
+     */
     @ManagedAttribute(description = "Timer Daemon")
     public void setDaemon(boolean daemon) {
         this.daemon = daemon;
@@ -119,6 +138,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return delay;
     }
 
+    /**
+     * The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option.
+     * <p/>
+     * The default value is 1000.
+     */
     @ManagedAttribute(description = "Timer Delay")
     public void setDelay(long delay) {
         this.delay = delay;
@@ -129,6 +153,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return fixedRate;
     }
 
+    /**
+     * Events take place at approximately regular intervals, separated by the specified period.
+     */
     @ManagedAttribute(description = "Timer FixedRate")
     public void setFixedRate(boolean fixedRate) {
         this.fixedRate = fixedRate;
@@ -139,6 +166,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return period;
     }
 
+    /**
+     * If greater than 0, generate periodic events every period milliseconds.
+     * <p/>
+     * The default value is 1000.
+     */
     @ManagedAttribute(description = "Timer Period")
     public void setPeriod(long period) {
         this.period = period;
@@ -149,6 +181,12 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return repeatCount;
     }
 
+    /**
+     * Specifies a maximum limit of number of fires.
+     * So if you set it to 1, the timer will only fire once.
+     * If you set it to 5, it will only fire five times.
+     * A value of zero or negative means fire forever.
+     */
     @ManagedAttribute(description = "Repeat Count")
     public void setRepeatCount(long repeatCount) {
         this.repeatCount = repeatCount;
@@ -158,6 +196,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return time;
     }
 
+    /**
+     * A java.util.Date the first event should be generated. If using the URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.
+     */
     public void setTime(Date time) {
         this.time = time;
     }
@@ -165,18 +206,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @ManagedAttribute(description = "Singleton")
     public boolean isSingleton() {
         return true;
-    }
-
-    public synchronized Timer getTimer() {
-        if (timer == null) {
-            TimerComponent tc = (TimerComponent)getComponent();
-            timer = tc.getTimer(this);
-        }
-        return timer;
-    }
-
-    public synchronized void setTimer(Timer timer) {
-        this.timer = timer;
     }
 
     @ManagedAttribute(description = "Camel id")
@@ -198,4 +227,27 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public String getState() {
         return getStatus().name();
     }
+
+    public Timer getTimer(TimerConsumer consumer) {
+        if (timer != null) {
+            // use custom timer
+            return timer;
+        }
+        return getComponent().getTimer(consumer);
+    }
+
+    /**
+     * To use a custom {@link Timer}
+     */
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
+    public void removeTimer(TimerConsumer consumer) {
+        if (timer == null) {
+            // only remove timer if we are not using a custom timer
+            getComponent().removeTimer(consumer);
+        }
+    }
+
 }

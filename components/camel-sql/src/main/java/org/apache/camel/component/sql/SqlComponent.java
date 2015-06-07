@@ -22,15 +22,19 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
+ * The <a href="http://camel.apache.org/sql-component.html">SQL Component</a> is for working with databases using JDBC queries.
+ *
  * @version 
  */
 public class SqlComponent extends UriEndpointComponent {
     private DataSource dataSource;
+    @Metadata(defaultValue = "true")
     private boolean usePlaceholder = true;
 
     public SqlComponent() {
@@ -43,22 +47,28 @@ public class SqlComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        DataSource target = null;
+
+        // endpoint options overrule component configured datasource
         DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
         if (ds != null) {
-            dataSource = ds;
+            target = ds;
         }
-
-        //TODO cmueller: remove the 'dataSourceRef' lookup in Camel 3.0
-        if (dataSource == null) {
-            String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
-            if (dataSourceRef != null) {
-                dataSource = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
-            }
+        String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
+        if (target == null && dataSourceRef != null) {
+            target = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
+        }
+        if (target == null) {
+            // fallback and use component
+            target = dataSource;
+        }
+        if (target == null) {
+            throw new IllegalArgumentException("DataSource must be configured");
         }
 
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
         
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
         IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
 
         String query = remaining.replaceAll(parameterPlaceholderSubstitute, "?");
@@ -89,19 +99,20 @@ public class SqlComponent extends UriEndpointComponent {
         endpoint.setOnConsume(onConsume);
         endpoint.setOnConsumeFailed(onConsumeFailed);
         endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
+        endpoint.setDataSource(ds);
+        endpoint.setDataSourceRef(dataSourceRef);
         return endpoint;
     }
 
+    /**
+     * Sets the DataSource to use to communicate with the database.
+     */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     public DataSource getDataSource() {
         return dataSource;
-    }
-
-    public boolean isUsePlaceholder() {
-        return usePlaceholder;
     }
 
     /**
@@ -111,5 +122,9 @@ public class SqlComponent extends UriEndpointComponent {
      */
     public void setUsePlaceholder(boolean usePlaceholder) {
         this.usePlaceholder = usePlaceholder;
+    }
+
+    public boolean isUsePlaceholder() {
+        return usePlaceholder;
     }
 }

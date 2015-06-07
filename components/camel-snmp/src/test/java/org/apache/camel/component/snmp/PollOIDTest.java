@@ -45,6 +45,11 @@ public class PollOIDTest extends CamelTestSupport {
             }
         }
     }
+    
+    @Test
+    public void testStartRoute() throws Exception {
+        // do nothing here , just make sure the camel route can started.
+    }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

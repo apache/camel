@@ -25,7 +25,7 @@ import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.CamelLogger;
 
 /**
- * A factory of {@link MockEndpoint} instances
+ * The <a href="http://camel.apache.org/mock.html">Mock Component</a> provides mock endpoints for testing.
  *
  * @version 
  */
@@ -38,6 +38,8 @@ public class MockComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MockEndpoint endpoint = new MockEndpoint(uri, this);
+        endpoint.setName(remaining);
+
         Integer value = getAndRemoveParameter(parameters, "reportGroup", Integer.class);
         if (value != null) {
             Processor reporter = new ThroughputLogger(new CamelLogger("org.apache.camel.component.mock:" + remaining), value);

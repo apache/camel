@@ -118,7 +118,6 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
     private final class MyEndpoint extends DefaultEndpoint {
 
         private MyEndpoint(String endpointUri, CamelContext camelContext) {
-            // FIXME: another endpoint that works without a Component
             setCamelContext(camelContext);
             setEndpointUri(endpointUri);
         }

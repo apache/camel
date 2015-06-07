@@ -125,6 +125,23 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testExchangeExpression() throws Exception {
+        Expression exp = SimpleLanguage.simple("${exchange}");
+        assertNotNull(exp);
+        assertEquals(exchange, exp.evaluate(exchange, Object.class));
+
+        assertExpression("exchange", exchange);
+    }
+
+    public void testExchangeOgnlExpression() throws Exception {
+        Expression exp = SimpleLanguage.simple("${exchange.exchangeId}");
+        assertNotNull(exp);
+        assertEquals(exchange.getExchangeId(), exp.evaluate(exchange, Object.class));
+
+        assertExpression("exchange.exchangeId", exchange.getExchangeId());
+        assertExpression("exchange.class.name", "org.apache.camel.impl.DefaultExchange");
+    }
+
     public void testBodyExpression() throws Exception {
         Expression exp = SimpleLanguage.simple("${body}");
         assertNotNull(exp);
@@ -196,6 +213,11 @@ public class SimpleTest extends LanguageTestSupport {
     public void testSimplePropertyExpressions() throws Exception {
         exchange.setProperty("medal", "gold");
         assertExpression("property.medal", "gold");
+    }
+
+    public void testSimpleExchangePropertyExpressions() throws Exception {
+        exchange.setProperty("medal", "gold");
+        assertExpression("exchangeProperty.medal", "gold");
     }
 
     public void testSimpleSystemPropertyExpressions() throws Exception {
@@ -272,16 +294,16 @@ public class SimpleTest extends LanguageTestSupport {
         lines.add("ActiveMQ in Action");
         exchange.setProperty("wicket", lines);
 
-        assertExpression("${property.wicket[0]}", "Camel in Action");
-        assertExpression("${property.wicket[1]}", "ActiveMQ in Action");
+        assertExpression("${exchangeProperty.wicket[0]}", "Camel in Action");
+        assertExpression("${exchangeProperty.wicket[1]}", "ActiveMQ in Action");
         try {
-            assertExpression("${property.wicket[2]}", "");
+            assertExpression("${exchangeProperty.wicket[2]}", "");
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
             assertEquals("Index: 2, Size: 2", cause.getMessage());
         }
-        assertExpression("${property.unknown[cool]}", null);
+        assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
     
     public void testOGNLPropertyLinesList() throws Exception {
@@ -290,10 +312,10 @@ public class SimpleTest extends LanguageTestSupport {
         lines.add(new OrderLine(456, "ActiveMQ in Action"));
         exchange.setProperty("wicket", lines);
 
-        assertExpression("${property.wicket[0].getId}", 123);
-        assertExpression("${property.wicket[1].getName}", "ActiveMQ in Action");
+        assertExpression("${exchangeProperty.wicket[0].getId}", 123);
+        assertExpression("${exchangeProperty.wicket[1].getName}", "ActiveMQ in Action");
         try {
-            assertExpression("${property.wicket[2]}", "");
+            assertExpression("${exchangeProperty.wicket[2]}", "");
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
@@ -318,17 +340,33 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${property.unknown[cool]}", null);
     }
    
+    public void testOGNLExchangePropertyMap() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("cool", "Camel rocks");
+        map.put("dude", "Hey dude");
+        map.put("code", 4321);
+        exchange.setProperty("wicket", map);
+
+        assertExpression("${exchangeProperty.wicket[cool]}", "Camel rocks");
+        assertExpression("${exchangeProperty.wicket[dude]}", "Hey dude");
+        assertExpression("${exchangeProperty.wicket[unknown]}", null);
+        assertExpression("${exchangeProperty.wicket[code]}", 4321);
+        // no header named unknown
+        assertExpression("${exchangeProperty?.unknown[cool]}", null);
+        assertExpression("${exchangeProperty.unknown[cool]}", null);
+    }
+
     public void testOGNLPropertyMapWithDot() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("this.code", "This code");
         exchange.setProperty("wicket", map);
 
-        assertExpression("${property.wicket[this.code]}", "This code");
+        assertExpression("${exchangeProperty.wicket[this.code]}", "This code");
     }
     
     public void testOGNLPropertyMapNotMap() throws Exception {
         try {
-            assertExpression("${property.foobar[bar]}", null);
+            assertExpression("${exchangeProperty.foobar[bar]}", null);
             fail("Should have thrown an exception");
         } catch (RuntimeBeanExpressionException e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
@@ -341,7 +379,16 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${property.foobar[bar}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Valid syntax: ${property.OGNL} was: property.foobar[bar at location 0"));
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${exchangeProperty.OGNL} was: property.foobar[bar at location 0"));
+        }
+    }
+
+    public void testOGNLExchangePropertyMapIllegalSyntax() throws Exception {
+        try {
+            assertExpression("${exchangeProperty.foobar[bar}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${exchangeProperty.OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -1332,6 +1379,11 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${type:org.apache.camel.ExchangePattern.UNKNOWN}", null);
     }
 
+    public void testTypeConstantInnerClass() throws Exception {
+        assertExpression("${type:org.apache.camel.language.simple.Constants$MyInnerStuff.FOO}", 123);
+        assertExpression("${type:org.apache.camel.language.simple.Constants.BAR}", 456);
+    }
+
     public void testStringArrayLength() throws Exception {
         exchange.getIn().setBody(new String[]{"foo", "bar"});
         assertExpression("${body[0]}", "foo");
@@ -1339,6 +1391,14 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.length}", 2);
 
         exchange.getIn().setBody(new String[]{"foo", "bar", "beer"});
+        assertExpression("${body.length}", 3);
+    }
+
+    public void testByteArrayLength() throws Exception {
+        exchange.getIn().setBody(new byte[]{65, 66, 67});
+        assertExpression("${body[0]}", 65);
+        assertExpression("${body[1]}", 66);
+        assertExpression("${body[2]}", 67);
         assertExpression("${body.length}", 3);
     }
 
@@ -1360,6 +1420,24 @@ public class SimpleTest extends LanguageTestSupport {
         assertPredicate("${body[isCredit]} == false", true);
         assertPredicate("${body['isCredit']} == true", false);
         assertPredicate("${body['isCredit']} == false", true);
+    }
+
+    public void testSimpleRegexp() throws Exception {
+        exchange.getIn().setBody("12345678");
+        assertPredicate("${body} regex '\\d+'", true);
+        assertPredicate("${body} regex '\\w{1,4}'", false);
+
+        exchange.getIn().setBody("tel:+97444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", true);
+
+        exchange.getIn().setBody("97444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", true);
+
+        exchange.getIn().setBody("tel:+87444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", false);
+
+        exchange.getIn().setBody("87444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", false);
     }
 
     protected String getLanguageName() {

@@ -34,8 +34,8 @@ public class TransactionalClientDataSourceTransactedWithLocalOnExceptionTest ext
                         .to("mock:error")
                     .end()
                     .transacted()
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
                     // use local on exception
@@ -44,8 +44,8 @@ public class TransactionalClientDataSourceTransactedWithLocalOnExceptionTest ext
                         .to("mock:error")
                     .end()
                     .transacted()
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

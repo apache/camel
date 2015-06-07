@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -92,6 +94,18 @@ public class CxfRsEndpointTest extends CamelTestSupport {
         assertEquals("Get a wrong proider size", 1, sfb.getProviders().size());
         JAXRSClientFactoryBean cfb = endpoint.createJAXRSClientFactoryBean();
         assertEquals("Get a wrong proider size", 1, cfb.getProviders().size());
+    }
+    
+    @Test
+    public void testCxfRsEndpointCamelContextAware() throws Exception {
+        String endpointUri = "cxfrs://simple";
+        CxfRsEndpoint endpoint = new CxfRsEndpoint();
+        endpoint.setAddress("http://localhost:9000/test");
+        endpoint.setResourceClasses(CustomerService.class);
+        CamelContext context = new DefaultCamelContext();
+        context.addEndpoint(endpointUri, endpoint);
+        
+        assertEquals("Get a wrong camel context.", context, endpoint.getCamelContext());
     }
 
 }

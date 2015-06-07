@@ -27,6 +27,11 @@ public class PropertyInjectTest extends CamelBlueprintTestSupport {
 
     @Test
     public void testPropertyInject() throws Exception {
+        if (isPlatform("windows")) {
+            // need a bit slack
+            Thread.sleep(1000);
+        }
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello");
 
         template.sendBody("seda:start", "Camel");

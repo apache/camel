@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "hdfs", consumerClass = HdfsConsumer.class)
+@UriEndpoint(scheme = "hdfs", title = "HDFS", syntax = "hdfs:hostName:port/path", consumerClass = HdfsConsumer.class, label = "hadoop,file")
 public class HdfsEndpoint extends DefaultEndpoint {
 
     @UriParam

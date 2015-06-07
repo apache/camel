@@ -77,7 +77,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should not have removed id", context.hasEndpoint("mock:bar") == null);
+        assertTrue("Should have removed mock:bar endpoint", context.hasEndpoint("mock:bar") == null);
     }
 
     public void testBefore() throws Exception {

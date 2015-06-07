@@ -29,6 +29,11 @@ public class CdiConfigFile implements PropertyFileConfig {
     @Override
     public String getPropertyFileName() {
         return "META-INF/camel.properties";
-    };
+    }
+
+    @Override
+    public boolean isOptional() {
+        return false;
+    }
 
 }

@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
- * File component.
+ *  * The <a href="http://camel.apache.org/file.html">File Component</a> provides access to file systems.
  */
 public class FileComponent extends GenericFileComponent<File> implements EndpointCompleter {
     /**

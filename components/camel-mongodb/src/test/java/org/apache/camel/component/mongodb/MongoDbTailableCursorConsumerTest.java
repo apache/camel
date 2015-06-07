@@ -36,26 +36,13 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
     private String cappedTestCollectionName;
     
     @Test
-    public void testThousandRecords() throws Exception {
-        assertEquals(0, cappedTestCollection.count());
-        MockEndpoint mock = getMockEndpoint("mock:test");
-        mock.expectedMessageCount(1000);
-       
-        // create a capped collection with max = 1000
-        cappedTestCollection = db.createCollection(cappedTestCollectionName, 
-                BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
-        
-        for (int i = 0; i < 1000; i++) {
-            cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", i).add("string", "value" + i).get(), WriteConcern.SAFE);
-        }
-        assertEquals(1000, cappedTestCollection.count());
+    public void testThousandRecordsWithoutReadPreference() throws Exception {
+        testThousandRecordsWithRouteId("tailableCursorConsumer1");
+    }
 
-        addTestRoutes();
-        context.startRoute("tailableCursorConsumer1");
-        Thread.sleep(1000);
-        mock.assertIsSatisfied();
-        context.stopRoute("tailableCursorConsumer1");
-
+    @Test
+    public void testThousandRecordsWithReadPreference() throws Exception {
+        testThousandRecordsWithRouteId("tailableCursorConsumer1.readPreference");
     }
     
     @Test
@@ -169,7 +156,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         // create a capped collection with max = 1000
         cappedTestCollection = db.createCollection(cappedTestCollectionName, 
                 BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
-        cappedTestCollection.ensureIndex("increasing");
+        cappedTestCollection.createIndex("increasing");
         
         addTestRoutes();
         context.startRoute("tailableCursorConsumer2");
@@ -371,12 +358,33 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         mock.assertIsSatisfied();
         mock.reset();
     }
+
+    private void testThousandRecordsWithRouteId(String routeId) throws Exception {
+        assertEquals(0, cappedTestCollection.count());
+        MockEndpoint mock = getMockEndpoint("mock:test");
+        mock.expectedMessageCount(1000);
+       
+        // create a capped collection with max = 1000
+        cappedTestCollection = db.createCollection(cappedTestCollectionName, 
+                BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
+        
+        for (int i = 0; i < 1000; i++) {
+            cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", i).add("string", "value" + i).get(), WriteConcern.SAFE);
+        }
+        assertEquals(1000, cappedTestCollection.count());
+
+        addTestRoutes();
+        context.startRoute(routeId);
+        Thread.sleep(1000);
+        mock.assertIsSatisfied();
+        context.stopRoute(routeId);
+    }
     
     @Override
     public void doPostSetup() {
         super.doPostSetup();
         // drop the capped collection and let each test create what it needs
-        cappedTestCollectionName = properties.getProperty("mongodb.cappedTestCollection");
+        cappedTestCollectionName = "camelTestCapped";
         cappedTestCollection = db.getCollection(cappedTestCollectionName);
         cappedTestCollection.drop();
     }
@@ -403,6 +411,11 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
                     .autoStartup(false)
                     .to("mock:test");
                 
+                from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing&readPreference=primary")
+                    .id("tailableCursorConsumer1.readPreference")
+                    .autoStartup(false)
+                    .to("mock:test");
+
             }
         });
     }

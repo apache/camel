@@ -17,14 +17,16 @@
 package org.apache.camel.component.websocket;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
+import com.ning.http.client.ws.WebSocket;
+import com.ning.http.client.ws.WebSocketByteListener;
+import com.ning.http.client.ws.WebSocketTextListener;
+import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,8 +37,8 @@ import org.junit.Test;
 
 public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
 
-    private static List<String> received = new ArrayList<String>();
-    private static CountDownLatch latch = new CountDownLatch(1);
+    private static List<Object> received = new ArrayList<Object>();
+    private static CountDownLatch latch;
     protected int port;
 
     @Produce(uri = "direct:shop")
@@ -47,6 +49,8 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable(16200);
         super.setUp();
+        received.clear();
+        latch =  new CountDownLatch(1);
     }
 
     @Test
@@ -63,10 +67,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
                         latch.countDown();
                     }
 
-                    @Override
-                    public void onFragment(String fragment, boolean last) {
-                    }
-
+                    
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }
@@ -87,7 +88,54 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(1, received.size());
-        assertEquals("Beer on stock at Apache Mall", received.get(0));
+        Object r = received.get(0);
+        assertTrue(r instanceof String);
+        assertEquals("Beer on stock at Apache Mall", r);
+
+        websocket.close();
+        c.close();
+    }
+
+    @Test
+    public void testWSBytesHttpCall() throws Exception {
+        AsyncHttpClient c = new AsyncHttpClient();
+
+        WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/shop").execute(
+            new WebSocketUpgradeHandler.Builder()
+                .addWebSocketListener(new WebSocketByteListener() {
+
+                    @Override
+                    public void onMessage(byte[] message) {
+                        received.add(message);
+                        log.info("received --> " + Arrays.toString(message));
+                        latch.countDown();
+                    }
+
+                   
+                    @Override
+                    public void onOpen(WebSocket websocket) {
+                    }
+
+                    @Override
+                    public void onClose(WebSocket websocket) {
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        t.printStackTrace();
+                    }
+                }).build()).get();
+
+        // Send message to the direct endpoint
+        byte[] testmessage = "Beer on stock at Apache Mall".getBytes("utf-8");
+        producer.sendBodyAndHeader(testmessage, WebsocketConstants.SEND_TO_ALL, "true");
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+
+        assertEquals(1, received.size());
+        Object r = received.get(0);
+        assertTrue(r instanceof byte[]);
+        assertArrayEquals(testmessage, (byte[])r);
 
         websocket.close();
         c.close();

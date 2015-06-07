@@ -21,7 +21,6 @@ import ca.uhn.hl7v2.model.v24.message.ADR_A19;
 import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,6 +31,7 @@ import org.junit.Test;
  * Unit test for the HL7MLLP Codec.
  */
 public class HL7MLLPCodecTest extends HL7TestSupport {
+    
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -79,7 +79,7 @@ public class HL7MLLPCodecTest extends HL7TestSupport {
         in.append("\n");
         in.append(line2);
 
-        String out = (String)template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString());
+        String out = template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString(), String.class);
         // END SNIPPET: e2
 
         String[] lines = out.split("\r");

@@ -102,6 +102,12 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
         template.sendBody("direct:removevalue", "foo1");
         verify(list).remove("foo1");
     }
+    
+    @Test
+    public void clearList() {
+        template.sendBody("direct:clear", "");
+        verify(list).clear();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -120,6 +126,8 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
 
                 from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
                         String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                
+                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX);
 
                 from("direct:addWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.LIST_PREFIX, HazelcastConstants.ADD_OPERATION);
                 from("direct:addWithOperationName").toF("hazelcast:%sbar?operation=add", HazelcastConstants.LIST_PREFIX);

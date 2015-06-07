@@ -16,24 +16,19 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
-import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.bulk.BulkItemResponse;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.xcontent.XContentBuilder;
 
 /**
  * Represents an Elasticsearch producer.
@@ -49,159 +44,139 @@ public class ElasticsearchProducer extends DefaultProducer {
         return (ElasticsearchEndpoint) super.getEndpoint();
     }
 
-    public void process(Exchange exchange) throws Exception {
-        String operation = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_OPERATION, String.class);
-        if (operation == null) {
-            operation = getEndpoint().getConfig().getOperation();
+    private String resolveOperation(Exchange exchange) {
+        // 1. Operation can be driven by either (in order of preference):
+        // a. If the body is an ActionRequest the operation is set by the type
+        // of request.
+        // b. If the body is not an ActionRequest, the operation is set by the
+        // header if it exists.
+        // c. If neither the operation can not be derived from the body or
+        // header, the configuration is used.
+        // In the event we can't discover the operation from a, b or c we throw
+        // an error.
+
+        Object request = exchange.getIn().getBody();
+        if (request instanceof IndexRequest) {
+            return ElasticsearchConstants.OPERATION_INDEX;
+        } else if (request instanceof GetRequest) {
+            return ElasticsearchConstants.OPERATION_GET_BY_ID;
+        } else if (request instanceof BulkRequest) {
+            // do we want bulk or bulk_index?
+            if ("BULK_INDEX".equals(getEndpoint().getConfig().getOperation())) {
+                return ElasticsearchConstants.OPERATION_BULK_INDEX;
+            } else {
+                return ElasticsearchConstants.OPERATION_BULK;
+            }
+        } else if (request instanceof DeleteRequest) {
+            return ElasticsearchConstants.OPERATION_DELETE;
+        } else if (request instanceof SearchRequest) {
+            return ElasticsearchConstants.OPERATION_SEARCH;
         }
 
-        if (operation == null) {
-            throw new IllegalArgumentException(ElasticsearchConfiguration.PARAM_OPERATION + " is missing");
+        String operationConfig = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_OPERATION, String.class);
+        if (operationConfig == null) {
+            operationConfig = getEndpoint().getConfig().getOperation();
+        }
+        if (operationConfig == null) {
+            throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operationConfig + "' is not supported");
+        }
+        return operationConfig;
+    }
+
+    public void process(Exchange exchange) throws Exception {
+        // 2. Index and type will be set by:
+        // a. If the incoming body is already an action request
+        // b. If the body is not an action request we will use headers if they
+        // are set.
+        // c. If the body is not an action request and the headers aren't set we
+        // will use the configuration.
+        // No error is thrown by the component in the event none of the above
+        // conditions are met. The java es client
+        // will throw.
+
+        Message message = exchange.getIn();
+        final String operation = resolveOperation(exchange);
+
+        // Set the index/type headers on the exchange if necessary. This is used
+        // for type conversion.
+        boolean configIndexName = false;
+        String indexName = message.getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
+        if (indexName == null) {
+            message.setHeader(ElasticsearchConstants.PARAM_INDEX_NAME, getEndpoint().getConfig().getIndexName());
+            configIndexName = true;
+        }
+
+        boolean configIndexType = false;
+        String indexType = message.getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class);
+        if (indexType == null) {
+            message.setHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, getEndpoint().getConfig().getIndexType());
+            configIndexType = true;
+        }
+
+        boolean configConsistencyLevel = false;
+        String consistencyLevel = message.getHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, String.class);
+        if (consistencyLevel == null) {
+            message.setHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, getEndpoint().getConfig().getConsistencyLevel());
+            configConsistencyLevel = true;
+        }
+
+        boolean configReplicationType = false;
+        String replicationType = message.getHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE, String.class);
+        if (replicationType == null) {
+            message.setHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE, getEndpoint().getConfig().getReplicationType());
+            configReplicationType = true;
         }
 
         Client client = getEndpoint().getClient();
-
-        if (operation.equalsIgnoreCase(ElasticsearchConfiguration.OPERATION_INDEX)) {
-            addToIndex(client, exchange);
-        } else if (operation.equalsIgnoreCase(ElasticsearchConfiguration.OPERATION_GET_BY_ID)) {
-            getById(client, exchange);
-        } else if (operation.equalsIgnoreCase(ElasticsearchConfiguration.OPERATION_DELETE)) {
-            deleteById(client, exchange);
-        } else if (operation.equalsIgnoreCase(ElasticsearchConfiguration.OPERATION_BULK_INDEX)) {
-            addToIndexUsingBulk(client, exchange);
+        if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
+            IndexRequest indexRequest = message.getBody(IndexRequest.class);
+            message.setBody(client.index(indexRequest).actionGet().getId());
+        } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
+            GetRequest getRequest = message.getBody(GetRequest.class);
+            message.setBody(client.get(getRequest));
+        } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
+            BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+            message.setBody(client.bulk(bulkRequest).actionGet());
+        } else if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(operation)) {
+            BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+            List<String> indexedIds = new ArrayList<String>();
+            for (BulkItemResponse response : client.bulk(bulkRequest).actionGet().getItems()) {
+                indexedIds.add(response.getId());
+            }
+            message.setBody(indexedIds);
+        } else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
+            DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
+            message.setBody(client.delete(deleteRequest).actionGet());
+        } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
+            SearchRequest searchRequest = message.getBody(SearchRequest.class);
+            message.setBody(client.search(searchRequest).actionGet());
         } else {
-            throw new IllegalArgumentException(ElasticsearchConfiguration.PARAM_OPERATION + " value '" + operation + "' is not supported");
-        }
-    }
-
-    public void getById(Client client, Exchange exchange) {
-        String indexName = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class);
-        if (indexName == null) {
-            indexName = getEndpoint().getConfig().getIndexName();
+            throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }
 
-        String indexType = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
-        if (indexType == null) {
-            indexType = getEndpoint().getConfig().getIndexType();
+        // If we set params via the configuration on this exchange, remove them
+        // now. This preserves legacy behavior for this component and enables a
+        // use case where one message can be sent to multiple elasticsearch
+        // endpoints where the user is relying on the endpoint configuration
+        // (index/type) rather than header values. If we do not clear this out
+        // sending the same message (index request, for example) to multiple
+        // elasticsearch endpoints would have the effect overriding any
+        // subsequent endpoint index/type with the first endpoint index/type.
+        if (configIndexName) {
+            message.removeHeader(ElasticsearchConstants.PARAM_INDEX_NAME);
         }
 
-        String indexId = exchange.getIn().getBody(String.class);
-
-        GetResponse response = client.prepareGet(indexName, indexType, indexId).execute().actionGet();
-        exchange.getIn().setBody(response);
-    }
-
-    public void deleteById(Client client, Exchange exchange) {
-        String indexName = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class);
-        if (indexName == null) {
-            indexName = getEndpoint().getConfig().getIndexName();
+        if (configIndexType) {
+            message.removeHeader(ElasticsearchConstants.PARAM_INDEX_TYPE);
         }
 
-        String indexType = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
-        if (indexType == null) {
-            indexType = getEndpoint().getConfig().getIndexType();
+        if (configConsistencyLevel) {
+            message.removeHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL);
         }
 
-        String indexId = exchange.getIn().getBody(String.class);
-
-        DeleteResponse response = client.prepareDelete(indexName, indexType, indexId).execute().actionGet();
-        exchange.getIn().setBody(response);
-    }
-
-    public void addToIndex(Client client, Exchange exchange) {
-        String indexName = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class);
-        if (indexName == null) {
-            indexName = getEndpoint().getConfig().getIndexName();
+        if (configReplicationType) {
+            message.removeHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE);
         }
 
-        String indexType = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
-        if (indexType == null) {
-            indexType = getEndpoint().getConfig().getIndexType();
-        }
-
-        IndexRequestBuilder prepareIndex = client.prepareIndex(indexName, indexType);
-
-        Object document = extractDocumentFromMessage(exchange.getIn());
-
-        if (!setIndexRequestSource(document, prepareIndex)) {
-            throw new ExpectedBodyTypeException(exchange, XContentBuilder.class);
-        }
-        ListenableActionFuture<IndexResponse> future = prepareIndex.execute();
-        IndexResponse response = future.actionGet();
-        exchange.getIn().setBody(response.getId());
-    }
-
-    public void addToIndexUsingBulk(Client client, Exchange exchange) {
-        String indexName = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class);
-        if (indexName == null) {
-            indexName = getEndpoint().getConfig().getIndexName();
-        }
-
-        String indexType = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
-        if (indexType == null) {
-            indexType = getEndpoint().getConfig().getIndexType();
-        }
-
-        log.debug("Preparing Bulk Request");
-        BulkRequestBuilder bulkRequest = client.prepareBulk();
-
-        List<?> body = exchange.getIn().getBody(List.class);
-
-        for (Object document : body) {
-            IndexRequestBuilder prepareIndex = client.prepareIndex(indexName, indexType);
-            log.trace("Indexing document : {}", document);
-            if (!setIndexRequestSource(document, prepareIndex)) {
-                throw new ExpectedBodyTypeException(exchange, XContentBuilder.class);
-            }
-            bulkRequest.add(prepareIndex);
-        }
-
-        ListenableActionFuture<BulkResponse> future = bulkRequest.execute();
-        BulkResponse bulkResponse = future.actionGet();
-
-        List<String> indexedIds = new LinkedList<String>();
-        for (BulkItemResponse response : bulkResponse.getItems()) {
-            indexedIds.add(response.getId());
-        }
-        log.debug("List of successfully indexed document ids : {}", indexedIds);
-        exchange.getIn().setBody(indexedIds);
-    }
-
-
-    private Object extractDocumentFromMessage(Message msg) {
-        Object body = null;
-
-        // order is important
-        Class<?>[] types = new Class[] {XContentBuilder.class, Map.class, byte[].class, String.class};
-
-        for (int i = 0; i < types.length && body == null; i++) {
-            Class<?> type = types[i];
-            body = msg.getBody(type);
-        }
-
-        return body;
-
-    }
-
-
-    @SuppressWarnings("unchecked")
-    private boolean setIndexRequestSource(Object document, IndexRequestBuilder builder) {
-        boolean converted = false;
-
-        if (document != null) {
-            converted = true;
-            if (document instanceof byte[]) {
-                builder.setSource((byte[])document);
-            } else if (document instanceof Map) {
-                builder.setSource((Map<String, Object>) document);
-            } else if (document instanceof String) {
-                builder.setSource((String)document);
-            } else if (document instanceof XContentBuilder) {
-                builder.setSource((XContentBuilder)document);
-            } else {
-                converted = false;
-            }
-        }
-        return converted;
     }
 }

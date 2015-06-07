@@ -234,6 +234,12 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public boolean isRunAllowed() {
+        // if we have not yet initialized, then all options is false
+        boolean unused1 = !started.get() && !starting.get() && !stopping.get() && !stopped.get();
+        boolean unused2 = !suspending.get() && !suspended.get() && !shutdown.get() && !shuttingdown.get();
+        if (unused1 && unused2) {
+            return false;
+        }
         return !isStoppingOrStopped();
     }
 

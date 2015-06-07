@@ -20,13 +20,18 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Represents a CMIS endpoint.
  */
+@UriEndpoint(scheme = "cmis", title = "CMIS", syntax = "cmis:url", consumerClass = CMISConsumer.class, label = "cms,database")
 public class CMISEndpoint extends DefaultEndpoint {
 
+    @UriParam
     private CMISSessionFacade sessionFacade;
+    @UriParam(label = "producer")
     private boolean queryMode;
 
     public CMISEndpoint() {
@@ -58,6 +63,13 @@ public class CMISEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    public boolean isQueryMode() {
+        return queryMode;
+    }
+
+    /**
+     * If true, will execute the cmis query from the message body and return result, otherwise will create a node in the cmis repository
+     */
     public void setQueryMode(boolean queryMode) {
         this.queryMode = queryMode;
     }

@@ -16,17 +16,12 @@
  */
 package org.apache.camel.component.mongodb;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Formatter;
-import java.util.Properties;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.WriteConcern;
 import com.mongodb.util.JSON;
 
@@ -37,10 +32,8 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Assume;
-import org.junit.BeforeClass;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
@@ -49,41 +42,20 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected static DBCollection testCollection;
     protected static DBCollection dynamicCollection;
     
-    protected static String dbName;
+    protected static String dbName = "test";
     protected static String testCollectionName;
     protected static String dynamicCollectionName;
 
-    protected static Properties properties;
-    
     protected ApplicationContext applicationContext;
-    
-
-    /**
-     * Checks whether Mongo is running using the connection URI defined in the mongodb.test.properties file
-     * @throws IOException 
-     */
-    @BeforeClass
-    public static void checkMongoRunning() throws IOException {
-        properties = new Properties();
-        InputStream is = MongoDbConversionsTest.class.getResourceAsStream("/mongodb.test.properties");
-        properties.load(is);
-        // ping Mongo and populate db and collection
-        try {
-            mongo = new MongoClient(new MongoClientURI(properties.getProperty("mongodb.connectionURI")));
-            mongo.getDatabaseNames();
-            dbName = properties.getProperty("mongodb.testDb");
-            db = mongo.getDB(dbName);
-        } catch (Exception e) {
-            Assume.assumeNoException(e);
-        }
-        
-    }
 
     @Override
     public void doPostSetup() {
+        mongo = applicationContext.getBean(Mongo.class);
+        db = mongo.getDB(dbName);
+
         // Refresh the test collection - drop it and recreate it. We don't do this for the database because MongoDB would create large
         // store files each time
-        testCollectionName = properties.getProperty("mongodb.testCollection");
+        testCollectionName = "camelTest";
         testCollection = db.getCollection(testCollectionName);
         testCollection.drop();
         testCollection = db.getCollection(testCollectionName);
@@ -105,7 +77,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/mongodb/mongoComponentTest.xml");
+        applicationContext = new AnnotationConfigApplicationContext(EmbedMongoConfiguration.class);
         CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext);
         PropertiesComponent pc = new PropertiesComponent("classpath:mongodb.test.properties");
         ctx.addComponent("properties", pc);

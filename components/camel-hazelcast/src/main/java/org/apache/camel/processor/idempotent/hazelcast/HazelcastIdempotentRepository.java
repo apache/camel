@@ -48,35 +48,41 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
 
     @Override
     public boolean add(String key) {
-
-        Boolean found = this.repo.get(key);
-        if (found == null) {
-            Boolean returned = this.repo.putIfAbsent(key, false);
-            if (returned == null) {
-                return true;
-            }
+        repo.lock(key);
+        try {
+            return repo.putIfAbsent(key, false) == null;
+        } finally {
+            repo.unlock(key);
         }
-        return false;
-
     }
 
     @Override
     public boolean confirm(String key) {
-        return this.repo.replace(key, false, true);
+        repo.lock(key);
+        try {
+            return repo.replace(key, false, true);
+        } finally {
+            repo.unlock(key);
+        }
     }
 
     @Override
     public boolean contains(String key) {
-        return this.repo.containsKey(key);
+        repo.lock(key);
+        try {
+            return this.repo.containsKey(key);
+        } finally {
+            repo.unlock(key);
+        }
     }
 
     @Override
     public boolean remove(String key) {
-        if (this.contains(key)) {
-            this.repo.remove(key);
-            return true;
-        } else {
-            return false;
+        repo.lock(key);
+        try {
+            return repo.remove(key) != null;
+        } finally {
+            repo.unlock(key);
         }
     }
 

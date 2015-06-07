@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,14 +27,17 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,15 +76,18 @@ public class RecipientListProcessor extends MulticastProcessor {
         private Processor prepared;
         private final Exchange exchange;
         private final ProducerCache producerCache;
+        private final ExchangePattern pattern;
+        private volatile ExchangePattern originalPattern;
 
         private RecipientProcessorExchangePair(int index, ProducerCache producerCache, Endpoint endpoint, Producer producer,
-                                               Processor prepared, Exchange exchange) {
+                                               Processor prepared, Exchange exchange, ExchangePattern pattern) {
             this.index = index;
             this.producerCache = producerCache;
             this.endpoint = endpoint;
             this.producer = producer;
             this.prepared = prepared;
             this.exchange = exchange;
+            this.pattern = pattern;
         }
 
         public int getIndex() {
@@ -103,12 +112,22 @@ public class RecipientListProcessor extends MulticastProcessor {
             exchange.setProperty(Exchange.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
             // ensure stream caching is reset
             MessageHelper.resetStreamCache(exchange.getIn());
+            // if the MEP on the endpoint is different then
+            if (pattern != null) {
+                originalPattern = exchange.getPattern();
+                LOG.trace("Using exchangePattern: {} on exchange: {}", pattern, exchange);
+                exchange.setPattern(pattern);
+            }
         }
 
         public void done() {
             LOG.trace("RecipientProcessorExchangePair #{} done: {}", index, exchange);
-            // when we are done we should release back in pool
             try {
+                // preserve original MEP
+                if (originalPattern != null) {
+                    exchange.setPattern(originalPattern);
+                }
+                // when we are done we should release back in pool
                 producerCache.releaseProducer(endpoint, producer);
             } catch (Exception e) {
                 if (LOG.isDebugEnabled()) {
@@ -169,8 +188,10 @@ public class RecipientListProcessor extends MulticastProcessor {
             Object recipient = iter.next();
             Endpoint endpoint;
             Producer producer;
+            ExchangePattern pattern;
             try {
                 endpoint = resolveEndpoint(exchange, recipient);
+                pattern = resolveExchangePattern(recipient);
                 producer = producerCache.acquireProducer(endpoint);
             } catch (Exception e) {
                 if (isIgnoreInvalidEndpoints()) {
@@ -185,7 +206,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             }
 
             // then create the exchange pair
-            result.add(createProcessorExchangePair(index++, endpoint, producer, exchange));
+            result.add(createProcessorExchangePair(index++, endpoint, producer, exchange, pattern));
         }
 
         return result;
@@ -194,7 +215,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     /**
      * This logic is similar to MulticastProcessor but we have to return a RecipientProcessorExchangePair instead
      */
-    protected ProcessorExchangePair createProcessorExchangePair(int index, Endpoint endpoint, Producer producer, Exchange exchange) {
+    protected ProcessorExchangePair createProcessorExchangePair(int index, Endpoint endpoint, Producer producer, Exchange exchange, ExchangePattern pattern) {
         Processor prepared = producer;
 
         // copy exchange, and do not share the unit of work
@@ -222,7 +243,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         }
 
         // and create the pair
-        return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy);
+        return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy, pattern);
     }
 
     protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
@@ -231,6 +252,17 @@ public class RecipientListProcessor extends MulticastProcessor {
             recipient = ((String) recipient).trim();
         }
         return ExchangeHelper.resolveEndpoint(exchange, recipient);
+    }
+
+    protected ExchangePattern resolveExchangePattern(Object recipient) throws UnsupportedEncodingException, URISyntaxException, MalformedURLException {
+        // trim strings as end users might have added spaces between separators
+        if (recipient instanceof String) {
+            String s = ((String) recipient).trim();
+            // see if exchangePattern is a parameter in the url
+            s = URISupport.normalizeUri(s);
+            return EndpointHelper.resolveExchangePatternFromUrl(s);
+        }
+        return null;
     }
 
     protected void doStart() throws Exception {

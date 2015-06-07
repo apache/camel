@@ -28,14 +28,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;enrich/&gt; element
+ * Enriches a message with data from a secondary resource
  *
  * @see Enricher
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> implements EndpointRequiredDefinition {
@@ -43,6 +45,7 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
     private String resourceUri;
     // TODO: For Camel 3.0 we should remove this ref attribute as you can do that in the uri, by prefixing with ref:
     @XmlAttribute(name = "ref")
+    @Deprecated
     private String resourceRef;
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;
@@ -80,11 +83,6 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
     @Override
     public String getLabel() {
         return "enrich[" + description() + "]";
-    }
-
-    @Override
-    public String getShortName() {
-        return "enrich";
     }
 
     @Override
@@ -152,6 +150,9 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
         return resourceUri;
     }
 
+    /**
+     * The endpoint uri for the external service to enrich from. You must use either uri or ref.
+     */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }
@@ -160,6 +161,12 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
         return resourceRef;
     }
 
+    /**
+     * Refers to the endpoint for the external service to enrich from. You must use either uri or ref.
+     *
+     * @deprecated use uri with ref:uri instead
+     */
+    @Deprecated
     public void setResourceRef(String resourceRef) {
         this.resourceRef = resourceRef;
     }
@@ -168,6 +175,10 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
         return aggregationStrategyRef;
     }
 
+    /**
+     * Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message.
+     * By default Camel will use the reply from the external service as outgoing message.
+     */
     public void setAggregationStrategyRef(String aggregationStrategyRef) {
         this.aggregationStrategyRef = aggregationStrategyRef;
     }
@@ -176,6 +187,9 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
         return aggregationStrategyMethodName;
     }
 
+    /**
+     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     */
     public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
@@ -184,6 +198,11 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
         return aggregationStrategyMethodAllowNull;
     }
 
+    /**
+     * If this option is false then the aggregate method is not used if there was no data to enrich.
+     * If this option is true then null values is used as the oldExchange (when no data to enrich),
+     * when using POJOs as the AggregationStrategy.
+     */
     public void setAggregationStrategyMethodAllowNull(Boolean aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
@@ -192,6 +211,10 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
         return aggregationStrategy;
     }
 
+    /**
+     * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message.
+     * By default Camel will use the reply from the external service as outgoing message.
+     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
@@ -200,6 +223,12 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
         return aggregateOnException;
     }
 
+    /**
+     * If this option is false then the aggregate method is not used if there was an exception thrown while trying
+     * to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what
+     * to do if there was an exception in the aggregate method. For example to suppress the exception
+     * or set a custom message body etc.
+     */
     public void setAggregateOnException(Boolean aggregateOnException) {
         this.aggregateOnException = aggregateOnException;
     }

@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,12 +34,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.WireTapProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Represents an XML &lt;wireTap/&gt; element
+ * Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
  */
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<WireTapDefinition<Type>>
@@ -48,6 +49,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
     @XmlAttribute
     protected String uri;
     @XmlAttribute
+    @Deprecated
     protected String ref;
     @XmlTransient
     protected Endpoint endpoint;
@@ -63,7 +65,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean copy;
     @XmlAttribute
     private String onPrepareRef;
@@ -110,8 +112,11 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         CamelInternalProcessor internal = new CamelInternalProcessor(target);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
 
+        // is true bt default
+        boolean isCopy = getCopy() == null || getCopy();
+
         WireTapProcessor answer = new WireTapProcessor(endpoint, internal, getPattern(), threadPool, shutdownThreadPool);
-        answer.setCopy(isCopy());
+        answer.setCopy(isCopy);
         if (newExchangeProcessorRef != null) {
             newExchangeProcessor = routeContext.mandatoryLookup(newExchangeProcessorRef, Processor.class);
         }
@@ -150,11 +155,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return FromDefinition.description(getUri(), getRef(), getEndpoint());
     }
 
-    @Override
-    public String getShortName() {
-        return "wireTap";
-    }
-    
     @Override
     public String getLabel() {
         return "wireTap[" + description() + "]";
@@ -319,6 +319,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return uri;
     }
 
+    /**
+     * Uri of the endpoint to use as wire tap
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -327,6 +330,12 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return ref;
     }
 
+    /**
+     * Reference of the endpoint to use as wire tap
+     *
+     * @deprecated use uri with ref:uri instead
+     */
+    @Deprecated
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -343,6 +352,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return newExchangeProcessor;
     }
 
+    /**
+     * To use a Processor for creating a new body as the message to use for wire tapping
+     */
     public void setNewExchangeProcessor(Processor processor) {
         this.newExchangeProcessor = processor;
     }
@@ -351,6 +363,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return newExchangeProcessorRef;
     }
 
+    /**
+     * Reference to a Processor to use for creating a new body as the message to use for wire tapping
+     */
     public void setNewExchangeProcessorRef(String ref) {
         this.newExchangeProcessorRef = ref;
     }
@@ -359,6 +374,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return newExchangeExpression;
     }
 
+    /**
+     * Expression used for creating a new body as the message to use for wire tapping
+     */
     public void setNewExchangeExpression(ExpressionSubElementDefinition expression) {
         this.newExchangeExpression = expression;
     }
@@ -389,11 +407,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
 
     public void setCopy(Boolean copy) {
         this.copy = copy;
-    }
-
-    public boolean isCopy() {
-        // should default to true if not configured
-        return copy != null ? copy : true;
     }
 
     public String getOnPrepareRef() {

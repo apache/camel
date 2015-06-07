@@ -16,17 +16,8 @@
  */
 package org.apache.camel.component.sjms;
 
-public final class SjmsConstants {
-    public static final String QUEUE_PREFIX = "queue:";
-    public static final String TOPIC_PREFIX = "topic:";
-    public static final String TEMP_QUEUE_PREFIX = "temp:queue:";
-    public static final String TEMP_TOPIC_PREFIX = "temp:topic:";
+public interface SjmsConstants {
 
-    public static final String JMS_MESSAGE_TYPE = "JmsMessageType";
-    public static final String ORIGINAL_MESSAGE = "SjmsOriginalMessage";
-
-    private SjmsConstants() {
-        // Helper class
-    }
+    String JMS_MESSAGE_TYPE = "JmsMessageType";
 
 }

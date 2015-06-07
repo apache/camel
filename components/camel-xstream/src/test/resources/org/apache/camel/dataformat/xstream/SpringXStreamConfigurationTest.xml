@@ -34,7 +34,7 @@
                     <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
                 </converters>
                 <aliases>                     
-					<alias name="purchase-order" class="org.apache.camel.dataformat.xstream.PurchaseOrder" />
+					        <alias name="purchase-order" class="org.apache.camel.dataformat.xstream.PurchaseOrder" />
                 </aliases>
                 <implicitCollections>
                    <class name="org.apache.camel.dataformat.xstream.PurchaseHistory">
@@ -43,12 +43,12 @@
                 </implicitCollections>
             </xstream>
             
-           <xstream id="xstream-json" driver="json" mode="ID_REFERENCES">
+           <xstream id="xstream-json" driver="json">
                 <converters>
                     <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
                 </converters>
                 <aliases>                     
-					<alias name="purchase-order" class="org.apache.camel.dataformat.xstream.PurchaseOrder" />
+					        <alias name="purchase-order" class="org.apache.camel.dataformat.xstream.PurchaseOrder" />
                 </aliases>
                 <implicitCollections>
                    <class name="org.apache.camel.dataformat.xstream.PurchaseHistory">

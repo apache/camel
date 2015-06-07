@@ -26,14 +26,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Crypto data format
+ *
+ * @version
+ */
+@Metadata(label = "dataformat,transformation", title = "Crypto (Java Cryptographic Extension)")
 @XmlRootElement(name = "crypto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CryptoDataFormat extends DataFormatDefinition {
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "DES/CBC/PKCS5Padding")
     private String algorithm;
     @XmlAttribute
     private String cryptoProvider;
@@ -45,7 +52,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     private String algorithmParameterRef;
     @XmlAttribute
     private Integer buffersize;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "HmacSHA1")
     private String macAlgorithm = "HmacSHA1";
     @XmlAttribute
     private Boolean shouldAppendHMAC;
@@ -108,6 +115,11 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return algorithm;
     }
 
+    /**
+     * The JCE algorithm name indicating the cryptographic algorithm that will be used.
+     * <p/>
+     * Is by default DES/CBC/PKCS5Padding.
+     */
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
     }
@@ -116,6 +128,9 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return cryptoProvider;
     }
 
+    /**
+     * The name of the JCE Security Provider that should be used.
+     */
     public void setCryptoProvider(String cryptoProvider) {
         this.cryptoProvider = cryptoProvider;
     }
@@ -124,6 +139,9 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return keyRef;
     }
 
+    /**
+     * Refers to the secret key to lookup from the register to use.
+     */
     public void setKeyRef(String keyRef) {
         this.keyRef = keyRef;
     }
@@ -132,6 +150,9 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return initVectorRef;
     }
 
+    /**
+     * Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.
+     */
     public void setInitVectorRef(String initVectorRef) {
         this.initVectorRef = initVectorRef;
     }
@@ -140,6 +161,11 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return algorithmParameterRef;
     }
 
+    /**
+     * A JCE AlgorithmParameterSpec used to initialize the Cipher.
+     * <p/>
+     * Will lookup the type using the given name as a {@link java.security.spec.AlgorithmParameterSpec} type.
+     */
     public void setAlgorithmParameterRef(String algorithmParameterRef) {
         this.algorithmParameterRef = algorithmParameterRef;
     }
@@ -148,6 +174,9 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return buffersize;
     }
 
+    /**
+     * The size of the buffer used in the signature process.
+     */
     public void setBuffersize(Integer buffersize) {
         this.buffersize = buffersize;
     }
@@ -156,6 +185,9 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return macAlgorithm;
     }
 
+    /**
+     * The JCE algorithm name indicating the Message Authentication algorithm.
+     */
     public void setMacAlgorithm(String macAlgorithm) {
         this.macAlgorithm = macAlgorithm;
     }
@@ -164,6 +196,9 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return shouldAppendHMAC;
     }
 
+    /**
+     * Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.
+     */
     public void setShouldAppendHMAC(Boolean shouldAppendHMAC) {
         this.shouldAppendHMAC = shouldAppendHMAC;
     }
@@ -172,6 +207,11 @@ public class CryptoDataFormat extends DataFormatDefinition {
         return inline;
     }
 
+    /**
+     * Flag indicating that the configured IV should be inlined into the encrypted data stream.
+     * <p/>
+     * Is by default false.
+     */
     public void setInline(Boolean inline) {
         this.inline = inline;
     }

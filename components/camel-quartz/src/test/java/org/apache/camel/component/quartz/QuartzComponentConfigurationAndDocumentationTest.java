@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.quartz;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -33,8 +31,8 @@ public class QuartzComponentConfigurationAndDocumentationTest extends CamelTestS
     @Test
     public void testComponentConfiguration() throws Exception {
         QuartzComponent comp = context.getComponent("quartz", QuartzComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("quartz://myGroup/myName?trigger.repeatCount=3" 
-            + "&stateful=true&deleteJob=false");
+        EndpointConfiguration conf = comp.createConfiguration("quartz://myGroup/myName?trigger.repeatCount=3"
+                + "&stateful=true&deleteJob=false");
 
         assertEquals("true", conf.getParameter("stateful"));
         assertEquals("false", conf.getParameter("deleteJob"));
@@ -42,16 +40,6 @@ public class QuartzComponentConfigurationAndDocumentationTest extends CamelTestS
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"stateful\": { \"type\": \"boolean\" }"));
-        assertTrue(json.contains("\"deleteJob\": { \"type\": \"boolean\" }"));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("quartz");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 
 }

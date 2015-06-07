@@ -90,6 +90,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
         // property
         remainder = ifStartsWithReturnRemainder("property", function);
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("exchangeProperty", function);
+        }
         if (remainder != null) {
             // remove leading character (dot or ?)
             if (remainder.startsWith(".") || remainder.startsWith("?")) {
@@ -103,7 +106,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             // validate syntax
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${property.OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException("Valid syntax: ${exchangeProperty.OGNL} was: " + function, token.getIndex());
             }
 
             if (OgnlHelper.isValidOgnlExpression(remainder)) {
@@ -111,7 +114,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return ExpressionBuilder.propertyOgnlExpression(remainder);
             } else {
                 // regular property
-                return ExpressionBuilder.propertyExpression(remainder);
+                return ExpressionBuilder.exchangePropertyExpression(remainder);
             }
         }
 
@@ -123,6 +126,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("sysenv.", function);
         if (remainder != null) {
             return ExpressionBuilder.systemEnvironmentExpression(remainder);
+        }
+
+        // exchange OGNL
+        remainder = ifStartsWithReturnRemainder("exchange", function);
+        if (remainder != null) {
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${exchange.OGNL} was: " + function, token.getIndex());
+            }
+            return ExpressionBuilder.exchangeOgnlExpression(remainder);
         }
 
         // file: prefix
@@ -157,12 +170,22 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String[] parts = remainder.split(":");
             if (parts.length > 2) {
-                throw new SimpleParserException("Valid syntax: ${properties:[locations]:key} was: " + function, token.getIndex());
+                throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
+            }
+            return ExpressionBuilder.propertiesComponentExpression(remainder, null);
+        }
+
+        // properties-location: prefix
+        remainder = ifStartsWithReturnRemainder("properties-location:", function);
+        if (remainder != null) {
+            String[] parts = remainder.split(":");
+            if (parts.length > 3) {
+                throw new SimpleParserException("Valid syntax: ${properties-location:location:key[:default]} was: " + function, token.getIndex());
             }
 
             String locations = null;
             String key = remainder;
-            if (parts.length == 2) {
+            if (parts.length >= 2) {
                 locations = ObjectHelper.before(remainder, ":");
                 key = ObjectHelper.after(remainder, ":");
             }
@@ -311,6 +334,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.messageIdExpression();
         } else if (ObjectHelper.equal(expression, "exchangeId")) {
             return ExpressionBuilder.exchangeIdExpression();
+        } else if (ObjectHelper.equal(expression, "exchange")) {
+            return ExpressionBuilder.exchangeExpression();
         } else if (ObjectHelper.equal(expression, "exception")) {
             return ExpressionBuilder.exchangeExceptionExpression();
         } else if (ObjectHelper.equal(expression, "exception.message")) {

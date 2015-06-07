@@ -27,12 +27,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Represents an XML &lt;restConfiguration/&gt; element
+ * To configure rest
  */
+@Metadata(label = "rest")
 @XmlRootElement(name = "restConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestConfigurationDefinition {
@@ -55,8 +57,14 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private RestHostNameResolver hostNameResolver;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
+
+    @XmlAttribute
+    private Boolean skipBindingOnErrorCode;
+
+    @XmlAttribute
+    private Boolean enableCORS;
 
     @XmlAttribute
     private String jsonDataFormat;
@@ -76,10 +84,19 @@ public class RestConfigurationDefinition {
     @XmlElement(name = "dataFormatProperty")
     private List<RestPropertyDefinition> dataFormatProperties = new ArrayList<RestPropertyDefinition>();
 
+    @XmlElement(name = "corsHeaders")
+    private List<RestPropertyDefinition> corsHeaders = new ArrayList<RestPropertyDefinition>();
+
     public String getComponent() {
         return component;
     }
 
+    /**
+     * The Camel Rest component to use for the REST transport, such as restlet, spark-rest.
+     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
+     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry.
+     * If either one is found, then that is being used.
+     */
     public void setComponent(String component) {
         this.component = component;
     }
@@ -88,6 +105,11 @@ public class RestConfigurationDefinition {
         return scheme;
     }
 
+    /**
+     * The scheme to use for exposing the REST service. Usually http or https is supported.
+     * <p/>
+     * The default value is http
+     */
     public void setScheme(String scheme) {
         this.scheme = scheme;
     }
@@ -96,6 +118,9 @@ public class RestConfigurationDefinition {
         return host;
     }
 
+    /**
+     * The hostname to use for exposing the REST service.
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -104,6 +129,15 @@ public class RestConfigurationDefinition {
         return port;
     }
 
+    /**
+     * The port number to use for exposing the REST service.
+     * Notice if you use servlet component then the port number configured here does not apply,
+     * as the port number in use is the actual port number the servlet component is using.
+     * eg if using Apache Tomcat its the tomcat http port, if using Apache Karaf its the HTTP service in Karaf
+     * that uses port 8181 by default etc. Though in those situations setting the port number here,
+     * allows tooling and JMX to know the port number, so its recommended to set the port number
+     * to the number that the servlet engine uses.
+     */
     public void setPort(String port) {
         this.port = port;
     }
@@ -112,6 +146,10 @@ public class RestConfigurationDefinition {
         return contextPath;
     }
 
+    /**
+     * Sets a leading context-path the REST services will be using.
+     * This can be used when using components such as SERVLET where the deployed web application is deployed using a context-path.
+     */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
@@ -120,6 +158,9 @@ public class RestConfigurationDefinition {
         return hostNameResolver;
     }
 
+    /**
+     * If no hostname has been explicit configured, then this resolver is used to compute the hostname the REST service will be using.
+     */
     public void setHostNameResolver(RestHostNameResolver hostNameResolver) {
         this.hostNameResolver = hostNameResolver;
     }
@@ -128,14 +169,49 @@ public class RestConfigurationDefinition {
         return bindingMode;
     }
 
+    /**
+     * Sets the binding mode to use.
+     * <p/>
+     * The default value is auto
+     */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
+    }
+
+    public Boolean getSkipBindingOnErrorCode() {
+        return skipBindingOnErrorCode;
+    }
+
+    /**
+     * Whether to skip binding on output if there is a custom HTTP error code header.
+     * This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.
+     */
+    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getEnableCORS() {
+        return enableCORS;
+    }
+
+    /**
+     * Whether to enable CORS headers in the HTTP response.
+     * <p/>
+     * The default value is false.
+     */
+    public void setEnableCORS(Boolean enableCORS) {
+        this.enableCORS = enableCORS;
     }
 
     public String getJsonDataFormat() {
         return jsonDataFormat;
     }
 
+    /**
+     * Name of specific json data format to use.
+     * By default json-jackson will be used.
+     * Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+     */
     public void setJsonDataFormat(String jsonDataFormat) {
         this.jsonDataFormat = jsonDataFormat;
     }
@@ -144,6 +220,11 @@ public class RestConfigurationDefinition {
         return xmlDataFormat;
     }
 
+    /**
+     * Name of specific XML data format to use.
+     * By default jaxb will be used.
+     * Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+     */
     public void setXmlDataFormat(String xmlDataFormat) {
         this.xmlDataFormat = xmlDataFormat;
     }
@@ -152,6 +233,9 @@ public class RestConfigurationDefinition {
         return componentProperties;
     }
 
+    /**
+     * Allows to configure as many additional properties for the rest component in use.
+     */
     public void setComponentProperties(List<RestPropertyDefinition> componentProperties) {
         this.componentProperties = componentProperties;
     }
@@ -160,6 +244,9 @@ public class RestConfigurationDefinition {
         return endpointProperties;
     }
 
+    /**
+     * Allows to configure as many additional properties for the rest endpoint in use.
+     */
     public void setEndpointProperties(List<RestPropertyDefinition> endpointProperties) {
         this.endpointProperties = endpointProperties;
     }
@@ -168,6 +255,9 @@ public class RestConfigurationDefinition {
         return consumerProperties;
     }
 
+    /**
+     * Allows to configure as many additional properties for the rest consumer in use.
+     */
     public void setConsumerProperties(List<RestPropertyDefinition> consumerProperties) {
         this.consumerProperties = consumerProperties;
     }
@@ -176,8 +266,33 @@ public class RestConfigurationDefinition {
         return dataFormatProperties;
     }
 
+    /**
+     * Allows to configure as many additional properties for the data formats in use.
+     * For example set property prettyPrint to true to have json outputted in pretty mode.
+     * The properties can be prefixed to denote the option is only for either JSON or XML and for either the IN or the OUT.
+     * The prefixes are:
+     * <ul>
+     *     <li>json.in.</li>
+     *     <li>json.out.</li>
+     *     <li>xml.in.</li>
+     *     <li>xml.out.</li>
+     * </ul>
+     * For example a key with value "xml.out.mustBeJAXBElement" is only for the XML data format for the outgoing.
+     * A key without a prefix is a common key for all situations.
+     */
     public void setDataFormatProperties(List<RestPropertyDefinition> dataFormatProperties) {
         this.dataFormatProperties = dataFormatProperties;
+    }
+
+    public List<RestPropertyDefinition> getCorsHeaders() {
+        return corsHeaders;
+    }
+
+    /**
+     * Allows to configure custom CORS headers.
+     */
+    public void setCorsHeaders(List<RestPropertyDefinition> corsHeaders) {
+        this.corsHeaders = corsHeaders;
     }
 
     // Fluent API
@@ -251,7 +366,25 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * To specify whether to skip binding output if there is a custom HTTP error code
+     */
+    public RestConfigurationDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
+        setSkipBindingOnErrorCode(skipBindingOnErrorCode);
+        return this;
+    }
+
+    /**
+     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response.
+     */
+    public RestConfigurationDefinition enableCORS(boolean enableCORS) {
+        setEnableCORS(enableCORS);
+        return this;
+    }
+
+    /**
      * To use a specific json data format
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @param name  name of the data format to {@link org.apache.camel.CamelContext#resolveDataFormat(java.lang.String) resolve}
      */
@@ -262,6 +395,8 @@ public class RestConfigurationDefinition {
 
     /**
      * To use a specific XML data format
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @param name  name of the data format to {@link org.apache.camel.CamelContext#resolveDataFormat(java.lang.String) resolve}
      */
@@ -314,6 +449,17 @@ public class RestConfigurationDefinition {
         return this;
     }
 
+    /**
+     * For configuring CORS headers
+     */
+    public RestConfigurationDefinition corsHeaderProperty(String key, String value) {
+        RestPropertyDefinition prop = new RestPropertyDefinition();
+        prop.setKey(key);
+        prop.setValue(value);
+        getCorsHeaders().add(prop);
+        return this;
+    }
+
     // Implementation
     //-------------------------------------------------------------------------
 
@@ -346,6 +492,12 @@ public class RestConfigurationDefinition {
         }
         if (bindingMode != null) {
             answer.setBindingMode(bindingMode.name());
+        }
+        if (skipBindingOnErrorCode != null) {
+            answer.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
+        }
+        if (enableCORS != null) {
+            answer.setEnableCORS(enableCORS);
         }
         if (jsonDataFormat != null) {
             answer.setJsonDataFormat(jsonDataFormat);
@@ -388,6 +540,15 @@ public class RestConfigurationDefinition {
                 props.put(key, value);
             }
             answer.setDataFormatProperties(props);
+        }
+        if (!corsHeaders.isEmpty()) {
+            Map<String, String> props = new HashMap<String, String>();
+            for (RestPropertyDefinition prop : corsHeaders) {
+                String key = prop.getKey();
+                String value = CamelContextHelper.parseText(context, prop.getValue());
+                props.put(key, value);
+            }
+            answer.setCorsHeaders(props);
         }
         return answer;
     }

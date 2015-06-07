@@ -19,12 +19,9 @@ package org.apache.camel.processor.aggregator;
 import junit.framework.TestCase;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 
-/**
- * @version
- */
 public class OptimisticLockRetryPolicyTest extends TestCase {
 
-    private static long precision = 5L; // give or take 5ms
+    private static long precision = 100L; // give or take 100ms
 
     public void testRandomBackOff() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
@@ -33,9 +30,8 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         policy.setMaximumRetryDelay(500L);
 
         for (int i = 0; i < 10; i++) {
-            long start = System.currentTimeMillis();
-            policy.doDelay(i);
-            long elapsed = System.currentTimeMillis() - start;
+            long elapsed = doDelay(policy, i);
+
             assertTrue(elapsed <= policy.getMaximumRetryDelay() + precision && elapsed >= 0);
         }
     }
@@ -47,12 +43,10 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         policy.setMaximumRetryDelay(0L);
         policy.setRetryDelay(50L);
 
-        for (int i = 0; i < 10; i++) {
-            long start = System.currentTimeMillis();
-            policy.doDelay(i);
-            long elapsed = System.currentTimeMillis() - start;
-            assertTrue(elapsed >= (policy.getRetryDelay() << i) - precision);
-            assertTrue(elapsed <= (policy.getRetryDelay() << i) + precision);
+        for (int i = 0; i < 6; i++) {
+            long elapsed = doDelay(policy, i);
+
+            assertDelay(50L << i, elapsed);
         }
     }
 
@@ -64,21 +58,17 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         policy.setRetryDelay(50L);
 
         for (int i = 0; i < 10; i++) {
-            long start = System.currentTimeMillis();
-            policy.doDelay(i);
-            long elapsed = System.currentTimeMillis() - start;
+            long elapsed = doDelay(policy, i);
+
             switch (i) {
             case 0:
-                assertTrue(elapsed <= 50 + precision);
-                assertTrue(elapsed >= 50 - precision);
+                assertDelay(50L, elapsed);
                 break;
             case 1:
-                assertTrue(elapsed <= 100 + precision);
-                assertTrue(elapsed >= 100 - precision);
+                assertDelay(100L, elapsed);
                 break;
             default:
-                assertTrue(elapsed <= 200 + precision);
-                assertTrue(elapsed >= 200 - precision);
+                assertDelay(200L, elapsed);
                 break;
             }
         }
@@ -92,11 +82,9 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         policy.setRetryDelay(50L);
 
         for (int i = 0; i < 10; i++) {
-            long start = System.currentTimeMillis();
-            policy.doDelay(i);
-            long elapsed = System.currentTimeMillis() - start;
-            assertTrue(elapsed <= policy.getRetryDelay() + precision);
-            assertTrue(elapsed >= policy.getRetryDelay() - precision);
+            long elapsed = doDelay(policy, i);
+
+            assertDelay(50L, elapsed);
         }
     }
 
@@ -119,4 +107,20 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
             }
         }
     }
+
+    private long doDelay(OptimisticLockRetryPolicy policy, int i) throws InterruptedException {
+        long start = System.currentTimeMillis();
+        policy.doDelay(i);
+        long elapsed = System.currentTimeMillis() - start;
+        return elapsed;
+    }
+
+    private void assertDelay(long expectedDelay, long actualDelay) {
+        String msg = String.format("%d <= %d", actualDelay, expectedDelay + precision);
+        assertTrue(msg, actualDelay <= expectedDelay + precision);
+
+        msg = String.format("%d >= %d", actualDelay, expectedDelay - precision);
+        assertTrue(msg, actualDelay >= expectedDelay - precision);
+    }
+
 }

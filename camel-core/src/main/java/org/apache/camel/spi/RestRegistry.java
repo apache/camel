@@ -91,6 +91,16 @@ public interface RestRegistry extends Service {
          */
         String getOutType();
 
+        /**
+         * Gets the id of the route this rest service will be using.
+         */
+        String getRouteId();
+
+        /**
+         * Optional description about this rest service.
+         */
+        String getDescription();
+
     }
 
     /**
@@ -106,9 +116,11 @@ public interface RestRegistry extends Service {
      * @param produces    optional details about what media-types the REST service returns
      * @param inType      optional detail input binding to a FQN class name
      * @param outType     optional detail output binding to a FQN class name
+     * @param routeId     the id of the route this rest service will be using
+     * @param description optional description about the the service
      */
     void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method, String consumes, String produces,
-                        String inType, String outType);
+                        String inType, String outType, String routeId, String description);
 
     /**
      * Removes the REST service from the registry

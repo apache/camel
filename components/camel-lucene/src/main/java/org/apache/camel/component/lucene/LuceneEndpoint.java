@@ -22,8 +22,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
+@UriEndpoint(scheme = "lucene", title = "Lucene", syntax = "lucene:host:operation", producerOnly = true, label = "database,search")
 public class LuceneEndpoint extends DefaultEndpoint {
+    @UriParam
     LuceneConfiguration config;
     LuceneIndexer indexer;
     boolean insertFlag;
@@ -48,7 +52,7 @@ public class LuceneEndpoint extends DefaultEndpoint {
     public LuceneEndpoint(String endpointUri, LuceneComponent component, LuceneConfiguration config) throws Exception {
         this(endpointUri, component);
         this.config = config;
-        if (config.getOperation().equalsIgnoreCase("insert")) {
+        if (config.getOperation() == LuceneOperation.insert) {
             this.indexer = new LuceneIndexer(config.getSourceDirectory(), config.getIndexDirectory(), config.getAnalyzer());  
             insertFlag = true;
         }

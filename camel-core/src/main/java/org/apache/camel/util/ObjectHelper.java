@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -426,6 +427,13 @@ public final class ObjectHelper {
         return answer;
     }
 
+    /**
+     * Returns the string after the given token
+     *
+     * @param text  the text
+     * @param after the token
+     * @return the text after the token, or <tt>null</tt> if text does not contain the token
+     */
     public static String after(String text, String after) {
         if (!text.contains(after)) {
             return null;
@@ -433,6 +441,13 @@ public final class ObjectHelper {
         return text.substring(text.indexOf(after) + after.length());
     }
 
+    /**
+     * Returns the string before the given token
+     *
+     * @param text  the text
+     * @param before the token
+     * @return the text before the token, or <tt>null</tt> if text does not contain the token
+     */
     public static String before(String text, String before) {
         if (!text.contains(before)) {
             return null;
@@ -440,12 +455,83 @@ public final class ObjectHelper {
         return text.substring(0, text.indexOf(before));
     }
 
+    /**
+     * Returns the string between the given tokens
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @return the text between the tokens, or <tt>null</tt> if text does not contain the tokens
+     */
     public static String between(String text, String after, String before) {
         text = after(text, after);
         if (text == null) {
             return null;
         }
         return before(text, before);
+    }
+
+    /**
+     * Returns the string between the most outer pair of tokens
+     * <p/>
+     * The number of token pairs must be evenly, eg there must be same number of before and after tokens, otherwise <tt>null</tt> is returned
+     * <p/>
+     * This implementation skips matching when the text is either single or double quoted.
+     * For example:
+     * <tt>${body.matches("foo('bar')")</tt>
+     * Will not match the parenthesis from the quoted text.
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @return the text between the outer most tokens, or <tt>null</tt> if text does not contain the tokens
+     */
+    public static String betweenOuterPair(String text, char before, char after) {
+        if (text == null) {
+            return null;
+        }
+
+        int pos = -1;
+        int pos2 = -1;
+        int count = 0;
+        int count2 = 0;
+
+        boolean singleQuoted = false;
+        boolean doubleQuoted = false;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (!doubleQuoted && ch == '\'') {
+                singleQuoted = !singleQuoted;
+            } else if (!singleQuoted && ch == '\"') {
+                doubleQuoted = !doubleQuoted;
+            }
+            if (singleQuoted || doubleQuoted) {
+                continue;
+            }
+
+            if (ch == before) {
+                count++;
+            } else if (ch == after) {
+                count2++;
+            }
+
+            if (ch == before && pos == -1) {
+                pos = i;
+            } else if (ch == after) {
+                pos2 = i;
+            }
+        }
+
+        if (pos == -1 || pos2 == -1) {
+            return null;
+        }
+
+        // must be even paris
+        if (count != count2) {
+            return null;
+        }
+
+        return text.substring(pos + 1, pos2);
     }
 
     /**
@@ -476,6 +562,38 @@ public final class ObjectHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by comma,
+     * or a primitive type array; otherwise to simplify the caller's code,
+     * we just create a singleton collection iterator over a single value
+     * <p/>
+     * Will default use comma for String separating String values.
+     * This method does <b>not</b> allow empty values
+     *
+     * @param value  the value
+     * @return the iterable
+     */
+    public static Iterable<Object> createIterable(Object value) {
+        return createIterable(value, DEFAULT_DELIMITER);
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     * <p/>
+     * This method does <b>not</b> allow empty values
+     *
+     * @param value      the value
+     * @param delimiter  delimiter for separating String values
+     * @return the iterable
+     */
+    public static Iterable<Object> createIterable(Object value, String delimiter) {
+        return createIterable(value, delimiter, false);
     }
 
     /**
@@ -515,8 +633,28 @@ public final class ObjectHelper {
      * Object[], a String with values separated by the given delimiter,
      * or a primitive type array; otherwise to simplify the caller's
      * code, we just create a singleton collection iterator over a single value
-     * 
+     *
      * </p> In case of primitive type arrays the returned {@code Iterator} iterates
+     * over the corresponding Java primitive wrapper objects of the given elements
+     * inside the {@code value} array. That's we get an autoboxing of the primitive
+     * types here for free as it's also the case in Java language itself.
+     *
+     * @param value             the value
+     * @param delimiter         delimiter for separating String values
+     * @param allowEmptyValues  whether to allow empty values
+     * @return the iterator
+     */
+    public static Iterator<Object> createIterator(Object value, String delimiter, final boolean allowEmptyValues) {
+        return createIterable(value, delimiter, allowEmptyValues).iterator();
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     * 
+     * </p> In case of primitive type arrays the returned {@code Iterable} iterates
      * over the corresponding Java primitive wrapper objects of the given elements
      * inside the {@code value} array. That's we get an autoboxing of the primitive
      * types here for free as it's also the case in Java language itself.
@@ -524,10 +662,11 @@ public final class ObjectHelper {
      * @param value             the value
      * @param delimiter         delimiter for separating String values
      * @param allowEmptyValues  whether to allow empty values
-     * @return the iterator
+     * @return the iterable
+     * @see java.lang.Iterable
      */
     @SuppressWarnings("unchecked")
-    public static Iterator<Object> createIterator(Object value, String delimiter, final boolean allowEmptyValues) {
+    public static Iterable<Object> createIterable(Object value, String delimiter, final boolean allowEmptyValues) {
 
         // if its a message than we want to iterate its body
         if (value instanceof Message) {
@@ -535,58 +674,72 @@ public final class ObjectHelper {
         }
 
         if (value == null) {
-            return Collections.emptyList().iterator();
+            return Collections.emptyList();
         } else if (value instanceof Iterator) {
-            return (Iterator<Object>)value;
+            final Iterator<Object> iterator = (Iterator<Object>)value;
+            return new Iterable<Object>() {
+                @Override
+                public Iterator<Object> iterator() {
+                    return iterator;
+                }
+            };
         } else if (value instanceof Iterable) {
-            return ((Iterable<Object>)value).iterator();
+            return (Iterable<Object>)value;
         } else if (value.getClass().isArray()) {
             if (isPrimitiveArrayType(value.getClass())) {
                 final Object array = value;
-                return new Iterator<Object>() {
-                    private int idx;
+                return new Iterable<Object>() {
+                    @Override
+                    public Iterator<Object> iterator() {
+                        return new Iterator<Object>() {
+                            private int idx;
 
-                    public boolean hasNext() {
-                        return idx < Array.getLength(array);
+                            public boolean hasNext() {
+                                return idx < Array.getLength(array);
+                            }
+
+                            public Object next() {
+                                if (!hasNext()) {
+                                    throw new NoSuchElementException("no more element available for '" + array + "' at the index " + idx);
+                                }
+
+                                return Array.get(array, idx++);
+                            }
+
+                            public void remove() {
+                                throw new UnsupportedOperationException();
+                            }
+                        };
                     }
-
-                    public Object next() {
-                        if (!hasNext()) {
-                            throw new NoSuchElementException("no more element available for '" + array + "' at the index " + idx);
-                        }
-
-                        return Array.get(array, idx++);
-                    }
-
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-
                 };
             } else {
-                List<Object> list = Arrays.asList((Object[]) value);
-                return list.iterator();
+                return Arrays.asList((Object[]) value);
             }
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList) value;
-            return new Iterator<Object>() {
-                private int idx;
+            return new Iterable<Object>() {
+                @Override
+                public Iterator<Object> iterator() {
+                    return new Iterator<Object>() {
+                        private int idx;
 
-                public boolean hasNext() {
-                    return idx < nodeList.getLength();
-                }
+                        public boolean hasNext() {
+                            return idx < nodeList.getLength();
+                        }
 
-                public Object next() {
-                    if (!hasNext()) {
-                        throw new NoSuchElementException("no more element available for '" + nodeList + "' at the index " + idx);
-                    }
+                        public Object next() {
+                            if (!hasNext()) {
+                                throw new NoSuchElementException("no more element available for '" + nodeList + "' at the index " + idx);
+                            }
 
-                    return nodeList.item(idx++);
-                }
+                            return nodeList.item(idx++);
+                        }
 
-                public void remove() {
-                    throw new UnsupportedOperationException();
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+                    };
                 }
             };
         } else if (value instanceof String) {
@@ -596,7 +749,7 @@ public final class ObjectHelper {
 
             if (delimiter != null && s.contains(delimiter)) {
                 // use a scanner if it contains the delimiter
-                Scanner scanner = new Scanner((String)value);
+                final Scanner scanner = new Scanner((String)value);
 
                 if (DEFAULT_DELIMITER.equals(delimiter)) {
                     // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
@@ -611,34 +764,44 @@ public final class ObjectHelper {
                     // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
                     delimiter = ",(?!(?:[^\\(,]|[^\\)],[^\\)])+\\))";
                 }
-
                 scanner.useDelimiter(delimiter);
-                return CastUtils.cast(scanner);
+
+                return new Iterable<Object>() {
+                    @Override
+                    public Iterator<Object> iterator() {
+                        return CastUtils.cast(scanner);
+                    }
+                };
             } else {
-                // use a plain iterator that returns the value as is as there are only a single value
-                return new Iterator<Object>() {
-                    private int idx;
+                return new Iterable<Object>() {
+                    @Override
+                    public Iterator<Object> iterator() {
+                        // use a plain iterator that returns the value as is as there are only a single value
+                        return new Iterator<Object>() {
+                            private int idx;
 
-                    public boolean hasNext() {
-                        return idx == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
-                    }
+                            public boolean hasNext() {
+                                return idx == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
+                            }
 
-                    public Object next() {
-                        if (!hasNext()) {
-                            throw new NoSuchElementException("no more element available for '" + s + "' at the index " + idx);
-                        }
+                            public Object next() {
+                                if (!hasNext()) {
+                                    throw new NoSuchElementException("no more element available for '" + s + "' at the index " + idx);
+                                }
 
-                        idx++;
-                        return s;
-                    }
+                                idx++;
+                                return s;
+                            }
 
-                    public void remove() {
-                        throw new UnsupportedOperationException();
+                            public void remove() {
+                                throw new UnsupportedOperationException();
+                            }
+                        };
                     }
                 };
             }
         } else {
-            return Collections.singletonList(value).iterator();
+            return Collections.singletonList(value);
         }
     }
 
@@ -819,6 +982,7 @@ public final class ObjectHelper {
      * @param name the name of the class to load
      * @return the class or <tt>null</tt> if it could not be loaded
      */
+    //CHECKSTYLE:OFF
     public static Class<?> loadSimpleType(String name) {
         // special for byte[] or Object[] as its common to use
         if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
@@ -860,10 +1024,14 @@ public final class ObjectHelper {
             return Double.class;
         } else if ("double".equals(name)) {
             return double.class;
+        } else if ("java.lang.Character".equals(name) || "Character".equals(name)) {
+            return Character.class;
+        } else if ("char".equals(name)) {
+            return char.class;
         }
-
         return null;
     }
+    //CHECKSTYLE:ON
 
     /**
      * Loads the given class with the provided classloader (may be null).
@@ -899,12 +1067,29 @@ public final class ObjectHelper {
      * @return the stream or null if it could not be loaded
      */
     public static InputStream loadResourceAsStream(String name) {
+        return loadResourceAsStream(name, null);
+    }
+
+    /**
+     * Attempts to load the given resource as a stream using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param name the name of the resource to load
+     * @param loader optional classloader to attempt first
+     * @return the stream or null if it could not be loaded
+     */
+    public static InputStream loadResourceAsStream(String name, ClassLoader loader) {
         InputStream in = null;
 
         String resolvedName = resolveUriPath(name);
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
-            in = contextClassLoader.getResourceAsStream(resolvedName);
+        if (loader != null) {
+            in = loader.getResourceAsStream(resolvedName);
+        }
+        if (in == null) {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                in = contextClassLoader.getResourceAsStream(resolvedName);
+            }
         }
         if (in == null) {
             in = ObjectHelper.class.getClassLoader().getResourceAsStream(resolvedName);
@@ -924,12 +1109,29 @@ public final class ObjectHelper {
      * @return the stream or null if it could not be loaded
      */
     public static URL loadResourceAsURL(String name) {
+        return loadResourceAsURL(name, null);
+    }
+
+    /**
+     * Attempts to load the given resource as a stream using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param name the name of the resource to load
+     * @param loader optional classloader to attempt first
+     * @return the stream or null if it could not be loaded
+     */
+    public static URL loadResourceAsURL(String name, ClassLoader loader) {
         URL url = null;
 
         String resolvedName = resolveUriPath(name);
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
-            url = contextClassLoader.getResource(resolvedName);
+        if (loader != null) {
+            url = loader.getResource(resolvedName);
+        }
+        if (url == null) {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                url = contextClassLoader.getResource(resolvedName);
+            }
         }
         if (url == null) {
             url = ObjectHelper.class.getClassLoader().getResource(resolvedName);
@@ -949,14 +1151,36 @@ public final class ObjectHelper {
      * @return the URLs for the resources or null if it could not be loaded
      */
     public static Enumeration<URL> loadResourcesAsURL(String packageName) {
+        return loadResourcesAsURL(packageName, null);
+    }
+
+    /**
+     * Attempts to load the given resources from the given package name using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param packageName the name of the package to load its resources
+     * @param loader optional classloader to attempt first
+     * @return the URLs for the resources or null if it could not be loaded
+     */
+    public static Enumeration<URL> loadResourcesAsURL(String packageName, ClassLoader loader) {
         Enumeration<URL> url = null;
 
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
+        if (loader != null) {
             try {
-                url = contextClassLoader.getResources(packageName);
+                url = loader.getResources(packageName);
             } catch (IOException e) {
                 // ignore
+            }
+        }
+
+        if (url == null) {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                try {
+                    url = contextClassLoader.getResources(packageName);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
         }
         if (url == null) {
@@ -969,7 +1193,7 @@ public final class ObjectHelper {
 
         return url;
     }
-    
+
     /**
      * Helper operation used to remove relative path notation from 
      * resources.  Most critical for resources on the Classpath
@@ -1012,22 +1236,54 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target) {
-        if (source.getName().equals(target.getName())
-                && source.getReturnType().equals(target.getReturnType()) 
-                && source.getParameterTypes().length == target.getParameterTypes().length) {
+        return isOverridingMethod(source, target, true);
+    }
 
-            // test if parameter types is the same as well
-            for (int i = 0; i < source.getParameterTypes().length; i++) {
+    /**
+     * Tests whether the target method overrides the source method.
+     * <p/>
+     * Tests whether they have the same name, return type, and parameter list.
+     *
+     * @param source  the source method
+     * @param target  the target method
+     * @param exact   <tt>true</tt> if the override must be exact same types, <tt>false</tt> if the types should be assignable
+     * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
+     */
+    public static boolean isOverridingMethod(Method source, Method target, boolean exact) {
+        if (!source.getName().equals(target.getName())) {
+            return false;
+        }
+
+        if (exact) {
+            if (!source.getReturnType().equals(target.getReturnType())) {
+                return false;
+            }
+        } else {
+            if (!source.getReturnType().isAssignableFrom(target.getReturnType())) {
+                return false;
+            }
+        }
+
+        // must have same number of parameter types
+        if (source.getParameterTypes().length != target.getParameterTypes().length) {
+            return false;
+        }
+
+        // test if parameter types is the same as well
+        for (int i = 0; i < source.getParameterTypes().length; i++) {
+            if (exact) {
                 if (!(source.getParameterTypes()[i].equals(target.getParameterTypes()[i]))) {
                     return false;
                 }
+            } else {
+                if (!(source.getParameterTypes()[i].isAssignableFrom(target.getParameterTypes()[i]))) {
+                    return false;
+                }
             }
-
-            // the have same name, return type and parameter list, so its overriding
-            return true;
         }
 
-        return false;
+        // the have same name, return type and parameter list, so its overriding
+        return true;
     }
 
     /**
@@ -1165,6 +1421,8 @@ public final class ObjectHelper {
                 rc = Byte.class;
             } else if (type == boolean.class) {
                 rc = Boolean.class;
+            } else if (type == char.class) {
+                rc = Character.class;
             }
         }
         return rc;
@@ -1399,14 +1657,37 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an iterator to walk the exception from the bottom up
+     * Creates an Iterable to walk the exception from the bottom up
      * (the last caused by going upwards to the root exception).
      *
+     * @see java.lang.Iterable
      * @param exception  the exception
-     * @return the iterator
+     * @return the Iterable
+     */
+    public static Iterable<Throwable> createExceptionIterable(Throwable exception) {
+        List<Throwable> throwables = new ArrayList<Throwable>();
+
+        Throwable current = exception;
+        // spool to the bottom of the caused by tree
+        while (current != null) {
+            throwables.add(current);
+            current = current.getCause();
+        }
+        Collections.reverse(throwables);
+
+        return throwables;
+    }
+
+    /**
+     * Creates an Iterator to walk the exception from the bottom up
+     * (the last caused by going upwards to the root exception).
+     *
+     * @see Iterator
+     * @param exception  the exception
+     * @return the Iterator
      */
     public static Iterator<Throwable> createExceptionIterator(Throwable exception) {
-        return new ExceptionIterator(exception);
+        return createExceptionIterable(exception).iterator();
     }
 
     /**
@@ -1426,13 +1707,18 @@ public final class ObjectHelper {
         if (exception == null) {
             return null;
         }
+        
+        //check the suppressed exception first
+        for (Throwable throwable : exception.getSuppressed()) {
+            if (type.isInstance(throwable)) {
+                return type.cast(throwable);
+            }
+        }
 
         // walk the hierarchy and look for it
-        Iterator<Throwable> it = createExceptionIterator(exception);
-        while (it.hasNext()) {
-            Throwable e = it.next();
-            if (type.isInstance(e)) {
-                return type.cast(e);
+        for (final Throwable throwable : createExceptionIterable(exception)) {
+            if (type.isInstance(throwable)) {
+                return type.cast(throwable);
             }
         }
 
@@ -1537,34 +1823,41 @@ public final class ObjectHelper {
         // value must be a number
         return value.equals(Float.NaN) || value.equals(Double.NaN);
     }
-
-    private static final class ExceptionIterator implements Iterator<Throwable> {
-        private List<Throwable> tree = new ArrayList<Throwable>();
-        private Iterator<Throwable> it;
-
-        public ExceptionIterator(Throwable exception) {
-            Throwable current = exception;
-            // spool to the bottom of the caused by tree
-            while (current != null) {
-                tree.add(current);
-                current = current.getCause();
+    
+    /**
+     * Calling the Callable with the setting of TCCL with the camel context application classloader.
+     * 
+     * @param call the Callable instance
+     * @param exchange the exchange 
+     * @return the result of Callable return  
+     */
+    public static Object callWithTCCL(Callable<?> call, Exchange exchange) throws Exception {
+        ClassLoader apcl = null;
+        if (exchange != null && exchange.getContext() != null) {
+            apcl = exchange.getContext().getApplicationContextClassLoader();
+        }
+        return callWithTCCL(call, apcl);
+    }
+    
+    /**
+     * Calling the Callable with the setting of TCCL with a given classloader.
+     *
+     * @param call        the Callable instance
+     * @param classloader the class loader
+     * @return the result of Callable return  
+     */
+    public static Object callWithTCCL(Callable<?> call, ClassLoader classloader) throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            if (classloader != null) {
+                Thread.currentThread().setContextClassLoader(classloader);
             }
-
-            // reverse tree so we go from bottom to top
-            Collections.reverse(tree);
-            it = tree.iterator();
-        }
-
-        public boolean hasNext() {
-            return it.hasNext();
-        }
-
-        public Throwable next() {
-            return it.next();
-        }
-
-        public void remove() {
-            it.remove();
+            return call.call();
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
         }
     }
+    
 }

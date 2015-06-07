@@ -24,14 +24,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;routeBuilderRef/&gt; element
+ * To refer to a Java {@link org.apache.camel.builder.RouteBuilder} instance to use.
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "routeBuilder")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteBuilderDefinition extends IdentifiedType {
@@ -54,6 +56,9 @@ public class RouteBuilderDefinition extends IdentifiedType {
         return ref;
     }
 
+    /**
+     * Reference to the route builder instance
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }

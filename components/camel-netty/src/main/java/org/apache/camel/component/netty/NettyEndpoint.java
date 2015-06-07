@@ -37,7 +37,7 @@ import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.jboss.netty.util.Timer;
 
-@UriEndpoint(scheme = "netty", consumerClass = NettyConsumer.class)
+@UriEndpoint(scheme = "netty", title = "Netty", syntax = "netty:protocol:host:port", consumerClass = NettyConsumer.class, label = "networking,tcp,udp")
 public class NettyEndpoint extends DefaultEndpoint {
     @UriParam
     private NettyConfiguration configuration;

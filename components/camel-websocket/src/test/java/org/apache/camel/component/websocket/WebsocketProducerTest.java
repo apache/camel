@@ -78,7 +78,7 @@ public class WebsocketProducerTest {
     @Test
     public void testProcessSingleMessage() throws Exception {
         when(exchange.getIn()).thenReturn(inMessage);
-        when(inMessage.getMandatoryBody(String.class)).thenReturn(MESSAGE);
+        when(inMessage.getMandatoryBody()).thenReturn(MESSAGE);
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class)).thenReturn(false);
         when(inMessage.getHeader(WebsocketConstants.CONNECTION_KEY, String.class)).thenReturn(SESSION_KEY);
         when(store.get(SESSION_KEY)).thenReturn(defaultWebsocket1);
@@ -89,7 +89,7 @@ public class WebsocketProducerTest {
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getMandatoryBody(String.class);
+        inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.CONNECTION_KEY, String.class);
         inOrder.verify(store, times(1)).get(SESSION_KEY);
@@ -103,7 +103,7 @@ public class WebsocketProducerTest {
     @Test
     public void testProcessSingleMessageWithException() throws Exception {
         when(exchange.getIn()).thenReturn(inMessage);
-        when(inMessage.getMandatoryBody(String.class)).thenReturn(MESSAGE);
+        when(inMessage.getMandatoryBody()).thenReturn(MESSAGE);
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class)).thenReturn(false);
         when(inMessage.getHeader(WebsocketConstants.CONNECTION_KEY, String.class)).thenReturn(SESSION_KEY);
         when(store.get(SESSION_KEY)).thenReturn(defaultWebsocket1);
@@ -120,7 +120,7 @@ public class WebsocketProducerTest {
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getMandatoryBody(String.class);
+        inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.CONNECTION_KEY, String.class);
         inOrder.verify(store, times(1)).get(SESSION_KEY);
@@ -134,7 +134,7 @@ public class WebsocketProducerTest {
     @Test
     public void testProcessMultipleMessages() throws Exception {
         when(exchange.getIn()).thenReturn(inMessage);
-        when(inMessage.getMandatoryBody(String.class)).thenReturn(MESSAGE);
+        when(inMessage.getMandatoryBody()).thenReturn(MESSAGE);
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class)).thenReturn(true);
         when(store.getAll()).thenReturn(sockets);
         when(defaultWebsocket1.getConnection()).thenReturn(connection);
@@ -145,7 +145,7 @@ public class WebsocketProducerTest {
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getMandatoryBody(String.class);
+        inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
         inOrder.verify(store, times(1)).getAll();
         inOrder.verify(defaultWebsocket1, times(1)).getConnection();
@@ -162,7 +162,7 @@ public class WebsocketProducerTest {
     @Test
     public void testProcessMultipleMessagesWithException() throws Exception {
         when(exchange.getIn()).thenReturn(inMessage);
-        when(inMessage.getMandatoryBody(String.class)).thenReturn(MESSAGE);
+        when(inMessage.getMandatoryBody()).thenReturn(MESSAGE);
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class)).thenReturn(true);
         when(store.getAll()).thenReturn(sockets);
         when(defaultWebsocket1.getConnection()).thenReturn(connection);
@@ -179,7 +179,7 @@ public class WebsocketProducerTest {
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getMandatoryBody(String.class);
+        inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
         inOrder.verify(store, times(1)).getAll();
         inOrder.verify(defaultWebsocket1, times(1)).getConnection();
@@ -211,7 +211,7 @@ public class WebsocketProducerTest {
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getMandatoryBody(String.class);
+        inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.CONNECTION_KEY, String.class);
         inOrder.verifyNoMoreInteractions();

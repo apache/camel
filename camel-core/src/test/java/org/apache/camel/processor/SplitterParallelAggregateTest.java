@@ -81,11 +81,10 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         List<Future<File>> futures = new ArrayList<Future<File>>();
         StopWatch stopWatch = new StopWatch(false);
 
-        for (int endpointIndex = 0; endpointIndex < endpoints.length; endpointIndex++) {
+        for (String endpoint : endpoints) {
             stopWatch.restart();
             for (int requestIndex = 0; requestIndex < numberOfRequests; requestIndex++) {
-                futures.add(template.asyncRequestBody(
-                        endpoints[endpointIndex], null, File.class));
+                futures.add(template.asyncRequestBody(endpoint, null, File.class));
             }
 
             for (int i = 0; i < futures.size(); i++) {
@@ -94,7 +93,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
             }
             stopWatch.stop();
 
-            log.info(String.format("test%d.%s=%d\n", numberOfRequests, endpoints[endpointIndex], stopWatch.taken()));
+            log.info(String.format("test%d.%s=%d\n", numberOfRequests, endpoint, stopWatch.taken()));
         }
     }
 

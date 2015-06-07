@@ -30,7 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -46,30 +45,18 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private ScheduledPollConsumerScheduler scheduler;
     private ScheduledExecutorService scheduledExecutorService;
 
-    // if adding more options then align with ScheduledPollEndpoint#configureScheduledPollConsumerProperties
-    @UriParam
+    // if adding more options then align with org.apache.camel.impl.ScheduledPollEndpoint
     private boolean startScheduler = true;
-    @UriParam
     private long initialDelay = 1000;
-    @UriParam
     private long delay = 500;
-    @UriParam
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-    @UriParam
     private boolean useFixedDelay = true;
-    @UriParam
     private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
-    @UriParam
     private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
-    @UriParam
     private boolean sendEmptyMessageWhenIdle;
-    @UriParam
     private boolean greedy;
-    @UriParam
     private int backoffMultiplier;
-    @UriParam
     private int backoffIdleThreshold;
-    @UriParam
     private int backoffErrorThreshold;
     private Map<String, Object> schedulerProperties;
 
@@ -280,11 +267,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         return scheduler;
     }
 
-    /**
-     * Sets a custom scheduler to use for scheduling running this task (poll).
-     *
-     * @param scheduler the custom scheduler
-     */
     public void setScheduler(ScheduledPollConsumerScheduler scheduler) {
         this.scheduler = scheduler;
     }
@@ -293,9 +275,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         return schedulerProperties;
     }
 
-    /**
-     * Additional properties to configure on the custom scheduler.
-     */
     public void setSchedulerProperties(Map<String, Object> schedulerProperties) {
         this.schedulerProperties = schedulerProperties;
     }
@@ -320,15 +299,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         return timeUnit;
     }
 
-    /**
-     * Sets the time unit to use.
-     * <p/>
-     * Notice that both {@link #getDelay()} and {@link #getInitialDelay()} are using
-     * the same time unit. So if you change this value, then take into account that the
-     * default value of {@link #getInitialDelay()} is 1000. So you may to adjust this value accordingly.
-     *
-     * @param timeUnit the time unit.
-     */
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
     }
@@ -361,13 +331,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         return startScheduler;
     }
 
-    /**
-     * Sets whether the scheduler should be started when this consumer starts.
-     * <p/>
-     * This option is default true.
-     *
-     * @param startScheduler whether to start scheduler
-     */
     public void setStartScheduler(boolean startScheduler) {
         this.startScheduler = startScheduler;
     }
@@ -384,9 +347,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         return greedy;
     }
 
-    /**
-     * If greedy then a poll is executed immediate after a previous poll that polled 1 or more messages.
-     */
     public void setGreedy(boolean greedy) {
         this.greedy = greedy;
     }
@@ -423,26 +383,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         return scheduledExecutorService;
     }
 
-    /**
-     * Whether the scheduler has been started.
-     * <p/>
-     * The scheduler can be started with the {@link #startScheduler()} method.
-     *
-     * @return <tt>true</tt> if started, <tt>false</tt> if not.
-     */
     public boolean isSchedulerStarted() {
         return scheduler.isSchedulerStarted();
     }
 
-    /**
-     * Sets a custom shared {@link ScheduledExecutorService} to use as thread pool
-     * <p/>
-     * <b>Notice: </b> When using a custom thread pool, then the lifecycle of this thread
-     * pool is not controlled by this consumer (eg this consumer will not start/stop the thread pool
-     * when the consumer is started/stopped etc.)
-     *
-     * @param scheduledExecutorService the custom thread pool to use
-     */
     public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
         this.scheduledExecutorService = scheduledExecutorService;
     }
@@ -471,7 +415,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         }
 
         if (scheduler == null) {
-            scheduler = new DefaultScheduledPollConsumerScheduler();
+            scheduler = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
         }
         scheduler.setCamelContext(getEndpoint().getCamelContext());
         scheduler.onInit(this);
@@ -514,7 +458,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(scheduler);
+        if (scheduler != null) {
+            scheduler.unscheduleTask();
+            ServiceHelper.stopAndShutdownServices(scheduler);
+        }
 
         // clear counters
         backoffCounter = 0;

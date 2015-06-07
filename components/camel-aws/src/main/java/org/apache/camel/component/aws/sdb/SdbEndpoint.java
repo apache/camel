@@ -30,19 +30,24 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.s3.S3Endpoint;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SDB Endpoint</a>.  
- *
  */
+@UriEndpoint(scheme = "aws-sdb", title = "AWS SimpleDB", syntax = "aws-sdb:domainName", producerOnly = true, label = "cloud,database,nosql")
 public class SdbEndpoint extends ScheduledPollEndpoint {
     
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
-    private SdbConfiguration configuration;
+
     private AmazonSimpleDB sdbClient;
+
+    @UriParam
+    private SdbConfiguration configuration;
 
     @Deprecated
     public SdbEndpoint(String uri, CamelContext context, SdbConfiguration configuration) {

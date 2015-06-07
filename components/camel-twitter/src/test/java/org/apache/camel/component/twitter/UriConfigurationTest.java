@@ -74,15 +74,15 @@ public class UriConfigurationTest extends Assert {
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"accessToken\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"consumerKey\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"accessToken\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"consumerKey\": { \"kind\": \"parameter\", \"type\": \"string\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("twitter");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

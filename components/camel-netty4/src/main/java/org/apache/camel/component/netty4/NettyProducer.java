@@ -35,8 +35,6 @@ import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.HashedWheelTimer;
-import io.netty.util.Timer;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 
 import org.apache.camel.AsyncCallback;
@@ -93,7 +91,12 @@ public class NettyProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
+        if (configuration.getWorkerGroup() == null) {
+            // create new pool which we should shutdown when stopping as its not shared
+            workerGroup = new NettyWorkerPoolBuilder().withWorkerCount(configuration.getWorkerCount())
+                .withName("NettyClientTCPWorker").build();
+        }
+        
         if (configuration.isProducerPoolEnabled()) {
             // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
             GenericObjectPool.Config config = new GenericObjectPool.Config();
@@ -122,7 +125,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // setup pipeline factory
-        ClientInitializerFactory factory = configuration.getClientPipelineFactory();
+        ClientInitializerFactory factory = configuration.getClientInitializerFactory();
         if (factory != null) {
             pipelineFactory = factory.createPipelineFactory(this);
         } else {
@@ -314,19 +317,12 @@ public class NettyProducer extends DefaultAsyncProducer {
     }
 
     protected EventLoopGroup getWorkerGroup() {
-
         // prefer using explicit configured thread pools
         EventLoopGroup wg = configuration.getWorkerGroup();
-        
         if (wg == null) {
-            // create new pool which we should shutdown when stopping as its not
-            // shared
-            workerGroup = new NettyWorkerPoolBuilder().withWorkerCount(configuration.getWorkerCount())
-                .withName("NettyClientTCPWorker").build();
             wg = workerGroup;
         }
         return wg;
-
     }
 
     protected ChannelFuture openConnection() throws Exception {
@@ -380,12 +376,20 @@ public class NettyProducer extends DefaultAsyncProducer {
 
             // set the pipeline factory, which creates the pipeline for each newly created channels
             connectionlessClientBootstrap.handler(pipelineFactory);
-            // bind and store channel so we can close it when stopping
-            ChannelFuture channelFuture = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
-            channelFuture.awaitUninterruptibly();
-            Channel channel = channelFuture.channel();
-            allChannels.add(channel);
-            answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+           
+            // if udp connectionless sending is true we don't do a connect.
+            // we just send on the channel created with bind which means
+            // really fire and forget. You wont get an PortUnreachableException
+            // if no one is listen on the port
+            if (!configuration.isUdpConnectionlessSending()) {
+                answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            } else {
+                // bind and store channel so we can close it when stopping
+                answer = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
+                answer.awaitUninterruptibly();
+                Channel channel = answer.channel();
+                allChannels.add(channel);
+            }
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Created new UDP client bootstrap connecting to {}:{} with options: {}",
@@ -464,8 +468,11 @@ public class NettyProducer extends DefaultAsyncProducer {
         public void done(boolean doneSync) {
             // put back in pool
             try {
-                LOG.trace("Putting channel back to pool {}", channel);
-                pool.returnObject(channel);
+                // Only put the connected channel back to the pool
+                if (channel.isActive()) {
+                    LOG.trace("Putting channel back to pool {}", channel);
+                    pool.returnObject(channel);
+                }
             } catch (Exception e) {
                 LOG.warn("Error returning channel to pool {}. This exception will be ignored.", channel);
             } finally {
@@ -491,7 +498,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public void destroyObject(Channel channel) throws Exception {
             LOG.trace("Destroying channel: {}", channel);
-            NettyHelper.close(channel);
+            if (channel.isOpen()) {
+                NettyHelper.close(channel);
+            }
             allChannels.remove(channel);
         }
 
@@ -506,11 +515,13 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public void activateObject(Channel channel) throws Exception {
             // noop
+            LOG.trace("activateObject channel: {} -> {}", channel);
         }
 
         @Override
         public void passivateObject(Channel channel) throws Exception {
             // noop
+            LOG.trace("passivateObject channel: {} -> {}", channel);
         }
     }
 

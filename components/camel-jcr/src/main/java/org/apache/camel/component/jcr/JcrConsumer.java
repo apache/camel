@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jcr;
 
+import java.util.Arrays;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -121,7 +122,7 @@ public class JcrConsumer extends DefaultConsumer implements SuspendableService {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding JCR Event Listener, {}, on {}. eventTypes=" + eventTypes + ", isDeep=" + isDeep
-                    + ", uuid=" + uuid + ", nodeTypeName=" + nodeTypeName + ", noLocal=" + noLocal, eventListener,
+                    + ", uuid=" + Arrays.toString(uuid) + ", nodeTypeName=" + Arrays.toString(nodeTypeName) + ", noLocal=" + noLocal, eventListener,
                     absPath);
         }
 

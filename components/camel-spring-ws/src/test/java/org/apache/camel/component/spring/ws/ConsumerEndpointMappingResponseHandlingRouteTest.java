@@ -19,7 +19,7 @@ package org.apache.camel.component.spring.ws;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
-
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -62,20 +62,48 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
 
     @Test
     public void testSoapAction() throws Exception {
-        StreamSource source = new StreamSource(new StringReader(xmlRequestForGoogleStockQuoteNoNamespace));
         StringWriter sw = new StringWriter();
         StreamResult result = new StreamResult(sw);
-        webServiceTemplate.sendSourceAndReceiveToResult(source, new SoapActionCallback("http://www.webserviceX.NET/GetQuote"), result);
+        webServiceTemplate.sendSourceAndReceiveToResult(getDefaultRequestSource(), new SoapActionCallback("http://www.webserviceX.NET/GetQuote"), result);
         assertNotNull(result);
         TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
     }
 
     @Test
     public void testUri() throws Exception {
-        StreamSource source = new StreamSource(new StringReader(xmlRequestForGoogleStockQuoteNoNamespace));
         StringWriter sw = new StringWriter();
         StreamResult result = new StreamResult(sw);
-        webServiceTemplate.sendSourceAndReceiveToResult("http://localhost/stockquote2", source, result);
+        webServiceTemplate.sendSourceAndReceiveToResult("http://localhost/stockquote2", getDefaultRequestSource(), result);
+        assertNotNull(result);
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
+    }
+
+    @Test
+    public void testUriPath() throws Exception {
+        StringWriter sw = new StringWriter();
+        StreamResult result = new StreamResult(sw);
+        webServiceTemplate.sendSourceAndReceiveToResult("http://localhost/stockquote3/service", getDefaultRequestSource(), result);
+        assertNotNull(result);
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
+
+        sw = new StringWriter();
+        result = new StreamResult(sw);
+        webServiceTemplate.sendSourceAndReceiveToResult("http://localhost:8080/stockquote3/service", getDefaultRequestSource(), result);
+        assertNotNull(result);
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
+    }
+
+    @Test
+    public void testUriPathWildcard() throws Exception {
+        StringWriter sw = new StringWriter();
+        StreamResult result = new StreamResult(sw);
+        webServiceTemplate.sendSourceAndReceiveToResult("http://localhost/stockquote4/service/test", getDefaultRequestSource(), result);
+        assertNotNull(result);
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
+
+        sw = new StringWriter();
+        result = new StreamResult(sw);
+        webServiceTemplate.sendSourceAndReceiveToResult("http://localhost:8080/stockquote4/services/test", getDefaultRequestSource(), result);
         assertNotNull(result);
         TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
     }
@@ -92,20 +120,18 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
 
     @Test
     public void testAction() throws Exception {
-        StreamSource source = new StreamSource(new StringReader(xmlRequestForGoogleStockQuoteNoNamespace));
         StringWriter sw = new StringWriter();
         StreamResult result = new StreamResult(sw);
-        webServiceTemplate.sendSourceAndReceiveToResult(source, new ActionCallback("http://www.webserviceX.NET/GetQuote"), result);
+        webServiceTemplate.sendSourceAndReceiveToResult(getDefaultRequestSource(), new ActionCallback("http://www.webserviceX.NET/GetQuote"), result);
         assertNotNull(result);
         TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
     }
 
     @Test
     public void testTo() throws Exception {
-        StreamSource source = new StreamSource(new StringReader(xmlRequestForGoogleStockQuoteNoNamespace));
         StringWriter sw = new StringWriter();
         StreamResult result = new StreamResult(sw);
-        webServiceTemplate.sendSourceAndReceiveToResult(source, new ActionCallback(new URI("http://action-does-not-matter-here"), new Addressing10(), new URI("http://url.to")),
+        webServiceTemplate.sendSourceAndReceiveToResult(getDefaultRequestSource(), new ActionCallback(new URI("http://action-does-not-matter-here"), new Addressing10(), new URI("http://url.to")),
                                                         result);
         assertNotNull(result);
         TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
@@ -114,5 +140,9 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/ws/ConsumerEndpointMappingResponseHandlingRouteTest-context.xml");
+    }
+
+    private Source getDefaultRequestSource() {
+        return new StreamSource(new StringReader(xmlRequestForGoogleStockQuoteNoNamespace));
     }
 }

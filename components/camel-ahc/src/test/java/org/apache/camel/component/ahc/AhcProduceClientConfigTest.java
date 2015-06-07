@@ -28,7 +28,7 @@ public class AhcProduceClientConfigTest extends BaseAhcTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-        AsyncHttpClientConfig config = builder.setFollowRedirects(true).setMaxRequestRetry(3).build();
+        AsyncHttpClientConfig config = builder.setFollowRedirect(true).setMaxRequestRetry(3).build();
 
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myConfig", config);

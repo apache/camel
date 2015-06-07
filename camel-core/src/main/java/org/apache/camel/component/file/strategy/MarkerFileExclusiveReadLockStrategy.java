@@ -76,22 +76,37 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
-                                         GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        doReleaseExclusiveReadLock(operations, file, exchange);
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        doReleaseExclusiveReadLock(operations, file, exchange);
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        doReleaseExclusiveReadLock(operations, file, exchange);
+    }
+
+    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations,
+                                              GenericFile<File> file, Exchange exchange) throws Exception {
         if (!markerFile) {
             // if not using marker file then nothing to release
             return;
         }
 
-        String lockFileName = exchange.getProperty(Exchange.FILE_LOCK_FILE_NAME, getLockFileName(file), String.class);
-        File lock = new File(lockFileName);
         // only release the file if camel get the lock before
         if (exchange.getProperty(Exchange.FILE_LOCK_FILE_ACQUIRED, false, Boolean.class)) {
-            LOG.trace("Unlocking file: {}", lockFileName);
-            boolean deleted = FileUtil.deleteFile(lock);
-            LOG.trace("Lock file: {} was deleted: {}", lockFileName, deleted);
-        } else {
-            LOG.trace("Don't try to delete the Lock file: {} as camel doesn't get to lock before.", lockFileName);
+            String lockFileName = exchange.getProperty(Exchange.FILE_LOCK_FILE_NAME, getLockFileName(file), String.class);
+            File lock = new File(lockFileName);
+
+            if (lock.exists()) {
+                LOG.trace("Unlocking file: {}", lockFileName);
+                boolean deleted = FileUtil.deleteFile(lock);
+                LOG.trace("Lock file: {} was deleted: {}", lockFileName, deleted);
+            }
         }
     }
 

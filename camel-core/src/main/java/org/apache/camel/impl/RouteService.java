@@ -28,6 +28,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
 import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
@@ -92,6 +94,28 @@ public class RouteService extends ChildServiceSupport {
 
     public Collection<Route> getRoutes() {
         return routes;
+    }
+
+    /**
+     * Gather all the endpoints this route service uses
+     * <p/>
+     * This implementation finds the endpoints by searching all the child services
+     * for {@link org.apache.camel.EndpointAware} processors which uses an endpoint.
+     */
+    public Set<Endpoint> gatherEndpoints() {
+        Set<Endpoint> answer = new LinkedHashSet<Endpoint>();
+        for (Route route : routes) {
+            Set<Service> services = gatherChildServices(route, true);
+            for (Service service : services) {
+                if (service instanceof EndpointAware) {
+                    Endpoint endpoint = ((EndpointAware) service).getEndpoint();
+                    if (endpoint != null) {
+                        answer.add(endpoint);
+                    }
+                }
+            }
+        }
+        return answer;
     }
 
     /**
@@ -207,19 +231,10 @@ public class RouteService extends ChildServiceSupport {
             LOG.debug("Stopping services on route: {}", route.getId());
 
             // gather list of services to stop as we need to start child services as well
-            List<Service> services = new ArrayList<Service>();
-            services.addAll(route.getServices());
-            // also get route scoped services
-            doGetRouteScopedServices(services, route);
-            Set<Service> list = new LinkedHashSet<Service>();
-            for (Service service : services) {
-                list.addAll(ServiceHelper.getChildServices(service));
-            }
-            // also get route scoped error handler (which must be done last)
-            doGetRouteScopedErrorHandler(list, route);
+            Set<Service> services = gatherChildServices(route, true);
 
             // stop services
-            stopChildService(route, list, isShutdownCamelContext);
+            stopChildService(route, services, isShutdownCamelContext);
 
             // stop the route itself
             if (isShutdownCamelContext) {
@@ -250,19 +265,10 @@ public class RouteService extends ChildServiceSupport {
             LOG.debug("Shutting down services on route: {}", route.getId());
 
             // gather list of services to stop as we need to start child services as well
-            List<Service> services = new ArrayList<Service>();
-            services.addAll(route.getServices());
-            // also get route scoped services
-            doGetRouteScopedServices(services, route);
-            Set<Service> list = new LinkedHashSet<Service>();
-            for (Service service : services) {
-                list.addAll(ServiceHelper.getChildServices(service));
-            }
-            // also get route scoped error handler (which must be done last)
-            doGetRouteScopedErrorHandler(list, route);
+            Set<Service> services = gatherChildServices(route, true);
 
             // shutdown services
-            stopChildService(route, list, true);
+            stopChildService(route, services, true);
 
             // shutdown the route itself
             ServiceHelper.stopAndShutdownServices(route);
@@ -356,6 +362,28 @@ public class RouteService extends ChildServiceSupport {
             }
             removeChildService(service);
         }
+    }
+
+    /**
+     * Gather all child services
+     */
+    private Set<Service> gatherChildServices(Route route, boolean includeErrorHandler) {
+        // gather list of services to stop as we need to start child services as well
+        List<Service> services = new ArrayList<Service>();
+        services.addAll(route.getServices());
+        // also get route scoped services
+        doGetRouteScopedServices(services, route);
+        Set<Service> list = new LinkedHashSet<Service>();
+        for (Service service : services) {
+            list.addAll(ServiceHelper.getChildServices(service));
+        }
+        if (includeErrorHandler) {
+            // also get route scoped error handler (which must be done last)
+            doGetRouteScopedErrorHandler(list, route);
+        }
+        Set<Service> answer = new LinkedHashSet<Service>();
+        answer.addAll(list);
+        return answer;
     }
 
     /**

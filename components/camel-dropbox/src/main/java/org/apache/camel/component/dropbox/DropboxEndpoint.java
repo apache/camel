@@ -30,15 +30,19 @@ import org.apache.camel.component.dropbox.integration.producer.DropboxSearchProd
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.dropbox.util.DropboxConstants.POLL_CONSUMER_DELAY;
 
+@UriEndpoint(scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", consumerClass = DropboxScheduledPollConsumer.class, label = "api,file")
 public class DropboxEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);
 
+    @UriParam
     private DropboxConfiguration configuration;
 
     public DropboxEndpoint() {
@@ -59,8 +63,8 @@ public class DropboxEndpoint extends DefaultEndpoint {
      * @throws Exception
      */
     public Producer createProducer() throws Exception {
-        LOG.info("resolve producer dropbox endpoint {" + configuration.getOperation().toString() + "}");
-        LOG.info("resolve producer dropbox attached client: " + configuration.getClient());
+        LOG.trace("Resolve producer dropbox endpoint {" + configuration.getOperation().toString() + "}");
+        LOG.trace("Resolve producer dropbox attached client: " + configuration.getClient());
         if (configuration.getOperation() == DropboxOperation.put) {
             return new DropboxPutProducer(this, configuration);
         } else if (this.configuration.getOperation() == DropboxOperation.search) {
@@ -72,7 +76,7 @@ public class DropboxEndpoint extends DefaultEndpoint {
         } else if (this.configuration.getOperation() == DropboxOperation.move) {
             return new DropboxMoveProducer(this, configuration);
         } else {
-            throw new DropboxException("operation specified is not valid for producer!");
+            throw new DropboxException("Operation specified is not valid for producer!");
         }
     }
 
@@ -83,8 +87,8 @@ public class DropboxEndpoint extends DefaultEndpoint {
      * @throws Exception
      */
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.debug("resolve consumer dropbox endpoint {" + configuration.getOperation().toString() + "}");
-        LOG.debug("resolve consumer dropbox attached client:" + configuration.getClient());
+        LOG.trace("Resolve consumer dropbox endpoint {" + configuration.getOperation().toString() + "}");
+        LOG.trace("Resolve consumer dropbox attached client:" + configuration.getClient());
         DropboxScheduledPollConsumer consumer = null;
         if (this.configuration.getOperation() == DropboxOperation.search) {
             consumer = new DropboxScheduledPollSearchConsumer(this, processor, configuration);
@@ -95,7 +99,7 @@ public class DropboxEndpoint extends DefaultEndpoint {
             consumer.setDelay(POLL_CONSUMER_DELAY);
             return consumer;
         } else {
-            throw new DropboxException("operation specified is not valid for consumer!");
+            throw new DropboxException("Operation specified is not valid for consumer!");
         }
     }
 

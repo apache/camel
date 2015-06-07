@@ -19,12 +19,20 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 /**
  * @version 
  */
 public class RestRestletGetTest extends RestletTestSupport {
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myBinding", new DefaultRestletBinding());
+        return jndi;
+    }
 
     @Test
     public void testRestletProducerGet() throws Exception {
@@ -38,7 +46,7 @@ public class RestRestletGetTest extends RestletTestSupport {
             @Override
             public void configure() throws Exception {
                 // configure to use restlet on localhost with the given port
-                restConfiguration().component("restlet").host("localhost").port(portNum);
+                restConfiguration().component("restlet").host("localhost").port(portNum).endpointProperty("restletBinding", "#myBinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")

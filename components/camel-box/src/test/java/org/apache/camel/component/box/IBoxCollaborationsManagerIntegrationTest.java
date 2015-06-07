@@ -29,10 +29,10 @@ import com.box.boxjavalibv2.dao.BoxCollaboration;
 import com.box.boxjavalibv2.dao.BoxCollaborationRole;
 import com.box.boxjavalibv2.requests.requestobjects.BoxCollabRequestObject;
 import com.box.boxjavalibv2.requests.requestobjects.BoxGetAllCollabsRequestObject;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.IBoxCollaborationsManagerApiMethod;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class IBoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSup
                 BoxGetAllCollabsRequestObject.getAllCollaborationsRequestObject(BoxCollaboration.STATUS_PENDING);
 
         List result = requestBody("direct://GETALLCOLLABORATIONS", collabRequest);
-        assertNotNull("getAllCollaborations: " + result);
+        assertNotNull("getAllCollaborations: ", result);
         LOG.debug("getAllCollaborations: " + result);
     }
 
@@ -102,7 +102,6 @@ public class IBoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSup
         }
     }
 
-    @Ignore("BoxClient SDK has a bug in UpdateCollaborationRequest.java, the URI constant should be collaborations")
     @Test
     public void testUpdateCollaboration() throws Exception {
         final BoxCollaboration collaboration = createCollaboration();

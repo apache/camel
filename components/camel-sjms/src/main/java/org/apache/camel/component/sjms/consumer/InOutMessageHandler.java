@@ -29,14 +29,11 @@ import javax.jms.Queue;
 import javax.jms.Topic;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.SjmsEndpoint;
-import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
+import org.apache.camel.component.sjms.jms.JmsConstants;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * cache manager to store and purge unused cashed producers or we will have a
@@ -47,11 +44,11 @@ public class InOutMessageHandler extends AbstractMessageHandler {
     private Map<String, MessageProducer> producerCache = new TreeMap<String, MessageProducer>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public InOutMessageHandler(Endpoint endpoint, ExecutorService executor) {
+    public InOutMessageHandler(SjmsEndpoint endpoint, ExecutorService executor) {
         super(endpoint, executor);
     }
 
-    public InOutMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
+    public InOutMessageHandler(SjmsEndpoint endpoint, ExecutorService executor, Synchronization synchronization) {
         super(endpoint, executor, synchronization);
     }
 
@@ -59,13 +56,13 @@ public class InOutMessageHandler extends AbstractMessageHandler {
     public void handleMessage(final Exchange exchange) {
         try {
             MessageProducer messageProducer = null;
-            Object obj = exchange.getIn().getHeader(JmsMessageHelper.JMS_REPLY_TO);
+            Object obj = exchange.getIn().getHeader(JmsConstants.JMS_REPLY_TO);
             if (obj != null) {
-                Destination replyTo = null;
+                Destination replyTo;
                 if (isDestination(obj)) {
                     replyTo = (Destination) obj;
                 } else if (obj instanceof String) {
-                    replyTo = JmsObjectFactory.createDestination(getSession(), (String) obj, isTopic());
+                    replyTo = getEndpoint().getDestinationCreationStrategy().createDestination(getSession(), (String)obj, isTopic());
                 } else {
                     throw new Exception("The value of JMSReplyTo must be a valid Destination or String.  Value provided: " + obj);
                 }
@@ -90,7 +87,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
                 }
             }
 
-            MessageHanderAsyncCallback callback = new MessageHanderAsyncCallback(exchange, messageProducer);
+            MessageHandlerAsyncCallback callback = new MessageHandlerAsyncCallback(exchange, messageProducer);
             if (exchange.isFailed()) {
                 return;
             } else {
@@ -107,7 +104,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
                     }
                 } else {
                     // process asynchronous using the async routing engine
-                    log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
+                    log.debug("Asynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
                     getProcessor().process(exchange, callback);
                 }
             }
@@ -122,12 +119,11 @@ public class InOutMessageHandler extends AbstractMessageHandler {
 
     @Override
     public void close() {
-        for (String key : producerCache.keySet()) {
-            MessageProducer mp = producerCache.get(key);
+        for (final Map.Entry<String, MessageProducer> entry : producerCache.entrySet()) {
             try {
-                mp.close();
+                entry.getValue().close();
             } catch (JMSException e) {
-                ObjectHelper.wrapRuntimeCamelException(e);
+                log.debug("Cached MessageProducer with key:{} threw an unexpected exception", entry.getKey(), e);
             }
         }
         producerCache.clear();
@@ -148,12 +144,12 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         return answer;
     }
 
-    protected class MessageHanderAsyncCallback implements AsyncCallback {
+    protected class MessageHandlerAsyncCallback implements AsyncCallback {
 
-        private Exchange exchange;
-        private MessageProducer localProducer;
+        private final Exchange exchange;
+        private final MessageProducer localProducer;
 
-        public MessageHanderAsyncCallback(Exchange exchange, MessageProducer localProducer) {
+        public MessageHandlerAsyncCallback(Exchange exchange, MessageProducer localProducer) {
             this.exchange = exchange;
             this.localProducer = localProducer;
         }
@@ -161,8 +157,8 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         @Override
         public void done(boolean sync) {
             try {
-                Message response = SjmsExchangeMessageHelper.createMessage(exchange, getSession(), ((SjmsEndpoint) getEndpoint()).getJmsKeyFormatStrategy());
-                response.setJMSCorrelationID(exchange.getIn().getHeader("JMSCorrelationID", String.class));
+                Message response = JmsMessageHelper.createMessage(exchange, getSession(), getEndpoint());
+                response.setJMSCorrelationID(exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class));
                 localProducer.send(response);
             } catch (Exception e) {
                 exchange.setException(e);

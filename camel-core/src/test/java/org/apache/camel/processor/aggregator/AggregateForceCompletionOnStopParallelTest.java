@@ -32,12 +32,12 @@ public class AggregateForceCompletionOnStopParallelTest extends AggregateForceCo
                 from("direct:forceCompletionTrue").routeId("foo")
                     .aggregate(header("id"), new BodyInAggregatingStrategy()).forceCompletionOnStop().completionSize(10).parallelProcessing()
                     .delay(100)
-                    .processRef("myCompletionProcessor");
+                    .process("myCompletionProcessor");
 
                 from("direct:forceCompletionFalse").routeId("bar")
                     .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(10).parallelProcessing()
                     .delay(100)
-                    .processRef("myCompletionProcessor");
+                    .process("myCompletionProcessor");
             }
         };
     }

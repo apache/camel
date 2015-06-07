@@ -24,13 +24,22 @@ import org.junit.Test;
 public class RestNettyHttpPojoInOutTest extends BaseNettyTest {
 
     @Test
-    public void testJettyPojoInOut() throws Exception {
+    public void testNettyPojoInOut() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         String out = template.requestBody("netty-http:http://localhost:" + getPort() + "/users/lives", body, String.class);
 
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
     }
+    
+    @Test
+    public void testNettyGetRequest() throws Exception {
+        String out = template.requestBody("netty-http:http://localhost:" + getPort() + "/users/lives", null, String.class);
+
+        assertNotNull(out);
+        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -43,9 +52,16 @@ public class RestNettyHttpPojoInOutTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
+                    // just return the default country here
+                    .get("lives").to("direct:start")
                     .post("lives").type(UserPojo.class).outType(CountryPojo.class)
                         .route()
                         .bean(new UserService(), "livesWhere");
+                
+                CountryPojo country = new CountryPojo();
+                country.setIso("EN");
+                country.setCountry("England");
+                from("direct:start").transform().constant(country);
             }
         };
     }

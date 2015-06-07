@@ -81,7 +81,9 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             public void configure() throws Exception {
 
                 // test topic subscription
-                from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&"
+                //from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&"
+                from("salesforce:CamelTestTopic?notifyForFields=ALL&"
+                    + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
                     + "sObjectName=Merchandise__c&"
                     + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").
                     to("mock:CamelTestTopic");

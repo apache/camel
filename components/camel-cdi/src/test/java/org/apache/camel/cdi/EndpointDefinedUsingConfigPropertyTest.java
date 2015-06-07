@@ -71,7 +71,7 @@ public class EndpointDefinedUsingConfigPropertyTest extends CdiContextTestSuppor
             @Override
             public void configure() throws Exception {
                 from(directInjectEndpoint)
-                    .beanRef("shoppingBean", "listAllProducts")
+                    .bean("shoppingBean", "listAllProducts")
                     .to(mockResultEndpoint);
             }
         };

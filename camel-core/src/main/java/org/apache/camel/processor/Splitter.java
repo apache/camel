@@ -139,8 +139,10 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         final Iterator<?> iterator;
         private final Exchange copy;
         private final RouteContext routeContext;
+        private final Exchange original;
 
         private SplitterIterable(Exchange exchange, Object value) {
+            this.original = exchange;
             this.value = value;
             this.iterator = ObjectHelper.createIterator(value);
             this.copy = copyExchangeNoAttachments(exchange, true);
@@ -177,6 +179,14 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                     // create a correlated copy as the new exchange to be routed in the splitter from the copy
                     // and do not share the unit of work
                     Exchange newExchange = ExchangeHelper.createCorrelatedCopy(copy, false);
+                    // If the splitter has an aggregation strategy
+                    // then the StreamCache created by the child routes must not be 
+                    // closed by the unit of work of the child route, but by the unit of 
+                    // work of the parent route or grand parent route or grand grand parent route... (in case of nesting).
+                    // Therefore, set the unit of work of the parent route as stream cache unit of work, if not already set.
+                    if (newExchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
+                        newExchange.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
+                    }
                     // if we share unit of work, we need to prepare the child exchange
                     if (isShareUnitOfWork()) {
                         prepareSharedUnitOfWork(newExchange, copy);
@@ -219,8 +229,14 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         // reuse iterable and add it to the result list
         Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairsIterable(exchange, value);
-        for (ProcessorExchangePair pair : pairs) {
-            result.add(pair);
+        try {
+            for (ProcessorExchangePair pair : pairs) {
+                result.add(pair);
+            }
+        } finally {
+            if (pairs instanceof Closeable) {
+                IOHelper.close((Closeable) pairs, "Splitter:ProcessorExchangePairs");
+            }
         }
 
         return result;

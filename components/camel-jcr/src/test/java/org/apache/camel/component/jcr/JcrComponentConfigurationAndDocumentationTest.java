@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.jcr;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -44,16 +42,5 @@ public class JcrComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = componentConfiguration.createParameterJsonSchema();
 
         assertNotNull(json);
-        assertTrue(json.contains("\"deep\": { \"type\": \"boolean\" }"));
-        assertTrue(json.contains("\"eventTypes\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"noLocal\": { \"type\": \"boolean\" }"));
     }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("jcr");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
-    }
-
 }

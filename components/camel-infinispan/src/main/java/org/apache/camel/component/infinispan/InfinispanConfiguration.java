@@ -20,31 +20,41 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.infinispan.commons.api.BasicCacheContainer;
 
 @UriParams
 public class InfinispanConfiguration {
     private BasicCacheContainer cacheContainer;
-    @UriParam
-    private String cacheName;
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String host;
     @UriParam
+    private String cacheName;
+    @UriParam(label = "producer", defaultValue = "put", enums = "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,get,containsKey,containsValue,remove,removeAsync,"
+           + "replace,replaceAsync,clear,size")
     private String command;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean sync = true;
+    @UriParam(label = "consumer")
     private Set<String> eventTypes;
 
     public String getCommand() {
         return command;
     }
 
+    /**
+     * The operation to perform.
+     */
     public void setCommand(String command) {
         this.command = command;
     }
 
+    /**
+     * Specifies the host of the cache on Infinispan instance
+     */
     public String getHost() {
         return host;
     }
@@ -53,6 +63,9 @@ public class InfinispanConfiguration {
         this.host = host;
     }
 
+    /**
+     * Specifies the cache Container to connect
+     */   
     public BasicCacheContainer getCacheContainer() {
         return cacheContainer;
     }
@@ -61,6 +74,9 @@ public class InfinispanConfiguration {
         this.cacheContainer = cacheContainer;
     }
 
+    /**
+     * Specifies the cache name
+     */  
     public String getCacheName() {
         return cacheName;
     }
@@ -69,6 +85,9 @@ public class InfinispanConfiguration {
         this.cacheName = cacheName;
     }
 
+    /**
+    * If true, the consumer will receive notifications synchronously
+    */
     public boolean isSync() {
         return sync;
     }
@@ -81,10 +100,24 @@ public class InfinispanConfiguration {
         return eventTypes;
     }
 
+    /**
+     * Specifies the set of event types to register by the consumer. Multiple event can be separated by comma.
+     * <p/>
+     * The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
+     * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED,
+     * TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED
+     */
     public void setEventTypes(Set<String> eventTypes) {
         this.eventTypes = eventTypes;
     }
 
+    /**
+     * Specifies the set of event types to register by the consumer. Multiple event can be separated by comma.
+     * <p/>
+     * The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
+     * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED,
+     * TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED
+     */
     public void setEventTypes(String eventTypes) {
         this.eventTypes = new HashSet<String>(Arrays.asList(eventTypes.split(",")));
     }

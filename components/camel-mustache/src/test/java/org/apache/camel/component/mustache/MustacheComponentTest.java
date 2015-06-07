@@ -79,10 +79,8 @@ public class MustacheComponentTest extends CamelTestSupport {
         exchange.getIn().setHeader("someHeader", "Some Header");
         exchange.getIn().setHeader(MustacheConstants.MUSTACHE_RESOURCE_URI, "/another.mustache");
         endSimpleMock.expectedMessageCount(1);
-        endSimpleMock.expectedBodiesReceived("Yet another Mustache with body:\n"
-                + "    'The Body'\n"
-                + "and some header:\n"
-                + "    'Some Header'\n");
+        endSimpleMock.message(0).body().contains("The Body");
+        endSimpleMock.message(0).body().contains("Some Header");
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
@@ -95,11 +93,9 @@ public class MustacheComponentTest extends CamelTestSupport {
         Exchange exchange = createExchangeWithBody("The Body");
         exchange.getIn().setHeader(MustacheConstants.MUSTACHE_RESOURCE_URI, "/child.mustache");
         endSimpleMock.expectedMessageCount(1);
-        endSimpleMock.expectedBodiesReceived("Start\n"
-                + "Content 1: Child 1\n"
-                + "Middle\n"
-                + "Content 2: Child 2\n"
-                + "End");
+        endSimpleMock.message(0).body().contains("Content 1: Child 1");
+        endSimpleMock.message(0).body().contains("Middle");
+        endSimpleMock.message(0).body().contains("Content 2: Child 2");
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
@@ -112,9 +108,9 @@ public class MustacheComponentTest extends CamelTestSupport {
         Exchange exchange = createExchangeWithBody("The Body");
         exchange.getIn().setHeader(MustacheConstants.MUSTACHE_RESOURCE_URI, "/includer.mustache");
         endSimpleMock.expectedMessageCount(1);
-        endSimpleMock.expectedBodiesReceived("Start\n"
-                + "Included\n"
-                + "End");
+        endSimpleMock.message(0).body().contains("Start");
+        endSimpleMock.message(0).body().contains("Included");
+        endSimpleMock.message(0).body().contains("End");
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
@@ -134,7 +130,6 @@ public class MustacheComponentTest extends CamelTestSupport {
         }
         assertMockEndpointsSatisfied();
         LoggerFactory.getLogger(getClass()).info("Mustache performance: " + stopwatch.stop() + "ms for " + messageCount + " messages");
-
     }
 
     @Override

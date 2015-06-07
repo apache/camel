@@ -20,22 +20,37 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.avro.Protocol;
-
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.commons.lang.StringUtils;
-import static org.apache.camel.component.avro.AvroConstants.*;
 
+import static org.apache.camel.component.avro.AvroConstants.AVRO_MESSAGE_NAME_SEPARATOR;
+
+@UriParams
 public class AvroConfiguration implements Cloneable {
 
+    @UriPath @Metadata(required = "true")
+    private AvroTransport transport;
+    @UriPath @Metadata(required = "true")
     private String host;
+    @UriPath @Metadata(required = "true")
     private int port;
-    private Protocol protocol;
-    private String protocolLocation;
-    private String protocolClassName;
-    private String transport;
+    @UriPath
     private String messageName;
+    @UriParam
+    private String protocolLocation;
+    @UriParam
+    private Protocol protocol;
+    @UriParam
+    private String protocolClassName;
+    @UriParam
     private String uriAuthority;
+    @UriParam
     private boolean reflectionProtocol;
+    @UriParam
     private boolean singleParameter;
 
     public AvroConfiguration copy() {
@@ -48,11 +63,7 @@ public class AvroConfiguration implements Cloneable {
     }
 
     public void parseURI(URI uri, Map<String, Object> parameters, AvroComponent component) throws Exception {
-        transport = uri.getScheme();
-
-        if ((!AVRO_HTTP_TRANSPORT.equalsIgnoreCase(transport)) && (!AVRO_NETTY_TRANSPORT.equalsIgnoreCase(transport))) {
-            throw new IllegalArgumentException("Unrecognized Avro IPC transport: " + protocol + " for uri: " + uri);
-        }
+        transport = AvroTransport.valueOf(uri.getScheme());
 
         setHost(uri.getHost());
         setPort(uri.getPort());
@@ -74,6 +85,9 @@ public class AvroConfiguration implements Cloneable {
         return host;
     }
 
+    /**
+     * Hostname to use
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -82,6 +96,9 @@ public class AvroConfiguration implements Cloneable {
         return port;
     }
 
+    /**
+     * Port number to use
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -90,15 +107,25 @@ public class AvroConfiguration implements Cloneable {
         return protocol;
     }
 
+    /**
+     * Avro protocol to use
+     */
     public void setProtocol(Protocol protocol) {
         this.protocol = protocol;
     }
 
-    public String getTransport() {
+    public AvroTransport getTransport() {
         return transport;
     }
 
+    /**
+     * Transport to use
+     */
     public void setTransport(String transport) {
+        this.transport = AvroTransport.valueOf(transport);
+    }
+
+    public void setTransport(AvroTransport transport) {
         this.transport = transport;
     }
 
@@ -106,6 +133,9 @@ public class AvroConfiguration implements Cloneable {
         return protocolLocation;
     }
 
+    /**
+     * Avro protocol location
+     */
     public void setProtocolLocation(String protocolLocation) {
         this.protocolLocation = protocolLocation;
     }
@@ -114,6 +144,9 @@ public class AvroConfiguration implements Cloneable {
         return protocolClassName;
     }
 
+    /**
+     * Avro protocol to use defined by the FQN class name
+     */
     public void setProtocolClassName(String protocolClassName) {
         this.protocolClassName = protocolClassName;
     }
@@ -122,6 +155,9 @@ public class AvroConfiguration implements Cloneable {
         return messageName;
     }
 
+    /**
+     * The name of the message to send.
+     */
     public void setMessageName(String messageName) {
         this.messageName = messageName;
     }
@@ -130,6 +166,9 @@ public class AvroConfiguration implements Cloneable {
         return uriAuthority;
     }
 
+    /**
+     * Authority to use (username and password)
+     */
     public void setUriAuthority(String uriAuthority) {
         this.uriAuthority = uriAuthority;
     }
@@ -138,6 +177,9 @@ public class AvroConfiguration implements Cloneable {
         return reflectionProtocol;
     }
 
+    /**
+     * If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected
+     */
     public void setReflectionProtocol(boolean isReflectionProtocol) {
         this.reflectionProtocol = isReflectionProtocol;
     }
@@ -146,6 +188,9 @@ public class AvroConfiguration implements Cloneable {
         return singleParameter;
     }
 
+    /**
+     * If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message
+     */
     public void setSingleParameter(boolean singleParameter) {
         this.singleParameter = singleParameter;
     }

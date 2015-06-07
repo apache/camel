@@ -53,5 +53,9 @@ public class Animal {
     public String toString() {
         return name;
     }
+    
+    public static String getClassName() {
+        return "Animal";
+    }
 }
 

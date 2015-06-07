@@ -17,30 +17,74 @@
 package org.apache.camel.component.jasypt;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.lang.String.format;
 
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.util.ObjectHelper;
+import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
 /**
  * A {@link org.apache.camel.component.properties.PropertiesParser} which is using
- * <a href="http://www.jasypt.org/">Jasypt</a> to decrypt any encrypted values.
+ * &nbsp;<a href="http://www.jasypt.org/">Jasypt</a> to decrypt encrypted values.
  * <p/>
- * The values must be enclosed in the prefix and suffix token.
- *
- * @version 
+ * The parts of the values which should be decrpted must be enclosed in the prefix and suffix token.
  */
 public class JasyptPropertiesParser extends DefaultPropertiesParser {
 
     public static final String JASYPT_PREFIX_TOKEN = "ENC(";
     public static final String JASYPT_SUFFIX_TOKEN = ")";
 
-    private StandardPBEStringEncryptor encryptor;
+    private StringEncryptor encryptor;
     private String password;
     private String algorithm;
 
-    public String getPassword() {
-        return password;
+    private Pattern pattern;
+
+    public JasyptPropertiesParser() {
+        String regex = JASYPT_PREFIX_TOKEN.replace("(", "\\(") + "(.+?)" + JASYPT_SUFFIX_TOKEN.replace(")", "\\)");
+        pattern = Pattern.compile(regex);
+    }
+
+    @Override
+    public String parseProperty(String key, String value, Properties properties) {
+        log.trace(format("Parsing property '%s=%s'", key, value));
+        if (value != null) {
+            initEncryptor();
+            Matcher matcher = pattern.matcher(value);
+            while (matcher.find()) {
+                log.trace(format("Decrypting part '%s'", matcher.group(0)));
+                String decrypted = encryptor.decrypt(matcher.group(1));
+                value = value.replace(matcher.group(0), decrypted);
+            }
+        }
+        return value;
+    }
+
+    private synchronized void initEncryptor() {
+        if (encryptor == null) {
+            ObjectHelper.notEmpty("password", password);
+            StandardPBEStringEncryptor pbeStringEncryptor = new StandardPBEStringEncryptor();
+            pbeStringEncryptor.setPassword(password);
+            if (algorithm != null) {
+                pbeStringEncryptor.setAlgorithm(algorithm);
+                log.debug(format("Initialized encryptor using %s algorithm and provided password", algorithm));
+            } else {
+                log.debug(format("Initialized encryptor using default algorithm and provided password"));
+            }
+            encryptor = pbeStringEncryptor;
+        }
+    }
+
+    public void setEncryptor(StringEncryptor encryptor) {
+        this.encryptor = encryptor;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
     }
 
     public void setPassword(String password) {
@@ -53,42 +97,4 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         }
         this.password = password;
     }
-
-    public String getAlgorithm() {
-        return algorithm;
-    }
-
-    public void setAlgorithm(String algorithm) {
-        this.algorithm = algorithm;
-    }
-
-    public synchronized StandardPBEStringEncryptor getEncryptor() {
-        if (encryptor == null) {
-            // password is mandatory
-            ObjectHelper.notEmpty("password", getPassword());
-
-            encryptor = new StandardPBEStringEncryptor();
-            encryptor.setPassword(getPassword());
-            if (algorithm != null) {
-                encryptor.setAlgorithm(getAlgorithm());
-            }
-        }
-        return encryptor;
-    }
-
-    @Override
-    public String parseProperty(String key, String value, Properties properties) {
-        // check if the value is using the tokens
-        String text = ObjectHelper.between(value, JASYPT_PREFIX_TOKEN, JASYPT_SUFFIX_TOKEN);
-        if (text == null) {
-            // not encrypted
-            log.trace("Property is not encrypted {}", text);
-            return value;
-        } else {
-            log.trace("Decrypting property {}", text);
-            // do not log the decrypted text as it could be sensitive information such as a password
-            return getEncryptor().decrypt(text);
-        }
-    }
-
 }

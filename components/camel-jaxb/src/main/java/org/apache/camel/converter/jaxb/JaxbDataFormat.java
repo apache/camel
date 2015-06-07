@@ -27,11 +27,11 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
@@ -44,12 +44,13 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-
 import org.xml.sax.SAXException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
@@ -65,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using JAXB2 to marshal to and from XML
  *
- * @version 
+ * @version
  */
 public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
@@ -75,12 +76,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private SchemaFactory schemaFactory;
     private CamelContext camelContext;
     private JAXBContext context;
+    private JAXBIntrospector introspector;
     private String contextPath;
     private String schema;
     private String schemaLocation;
-   
+
     private boolean prettyPrint = true;
     private boolean ignoreJAXBElement = true;
+    private boolean mustBeJAXBElement = true;
     private boolean filterNonXmlChars;
     private String encoding;
     private boolean fragment;
@@ -107,13 +110,13 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException, SAXException {
-        try {            
+        try {
             // must create a new instance of marshaller as its not thread safe
             Marshaller marshaller = createMarshaller();
-            
+
             if (isPrettyPrint()) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            } 
+            }
             // exchange take precedence over encoding option
             String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
             if (charset == null) {
@@ -134,32 +137,42 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
 
             marshal(exchange, graph, stream, marshaller);
 
-        } catch (JAXBException e) {
-            throw new IOException(e);
-        } catch (XMLStreamException e) {
+        } catch (Exception e) {
             throw new IOException(e);
         }
     }
 
     void marshal(Exchange exchange, Object graph, OutputStream stream, Marshaller marshaller)
-        throws XMLStreamException, JAXBException {
+        throws XMLStreamException, JAXBException, NoTypeConversionAvailableException, IOException, InvalidPayloadException {
 
         Object e = graph;
         if (partialClass != null && getPartNamespace() != null) {
             e = new JAXBElement<Object>(getPartNamespace(), partialClass, graph);
         }
 
-        if (asXmlStreamWriter(exchange)) {
-            XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
-            if (needFiltering(exchange)) {
-                writer = new FilteringXmlStreamWriter(writer);
+        // only marshal if its possible
+        if (introspector.isElement(e)) {
+            if (asXmlStreamWriter(exchange)) {
+                XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
+                if (needFiltering(exchange)) {
+                    writer = new FilteringXmlStreamWriter(writer);
+                }
+                if (xmlStreamWriterWrapper != null) {
+                    writer = xmlStreamWriterWrapper.wrapWriter(writer);
+                }
+                marshaller.marshal(e, writer);
+            } else {
+                marshaller.marshal(e, stream);
             }
-            if (xmlStreamWriterWrapper != null) {
-                writer = xmlStreamWriterWrapper.wrapWriter(writer);
+        } else if (!mustBeJAXBElement) {
+            // write the graph as is to the output stream
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Attempt to marshalling non JAXBElement with type {} as InputStream", ObjectHelper.classCanonicalName(graph));
             }
-            marshaller.marshal(e, writer);
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
+            IOHelper.copyAndCloseInput(is, stream);
         } else {
-            marshaller.marshal(e, stream);
+            throw new InvalidPayloadException(exchange, JAXBElement.class);
         }
     }
 
@@ -204,14 +217,22 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     // Properties
     // -------------------------------------------------------------------------
-    public boolean isIgnoreJAXBElement() {        
+    public boolean isIgnoreJAXBElement() {
         return ignoreJAXBElement;
     }
-    
+
     public void setIgnoreJAXBElement(boolean flag) {
         ignoreJAXBElement = flag;
     }
-    
+
+    public boolean isMustBeJAXBElement() {
+        return mustBeJAXBElement;
+    }
+
+    public void setMustBeJAXBElement(boolean mustBeJAXBElement) {
+        this.mustBeJAXBElement = mustBeJAXBElement;
+    }
+
     public JAXBContext getContext() {
         return context;
     }
@@ -254,11 +275,11 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
-    
+
     public boolean isFragment() {
         return fragment;
     }
-    
+
     public void setFragment(boolean fragment) {
         this.fragment = fragment;
     }
@@ -326,7 +347,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     public void setXmlStreamWriterWrapper(JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper) {
         this.xmlStreamWriterWrapper = xmlStreamWriterWrapper;
     }
-    
+
     public String getSchemaLocation() {
         return schemaLocation;
     }
@@ -344,6 +365,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             // if context not injected, create one and resolve partial class up front so they are ready to be used
             context = createContext();
         }
+        introspector = context.createJAXBIntrospector();
+
         if (partClass != null) {
             partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClass, Object.class);
         }
@@ -383,7 +406,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             return JAXBContext.newInstance();
         }
     }
-    
+
     protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException, FileNotFoundException,
         MalformedURLException {
         Unmarshaller unmarshaller = getContext().createUnmarshaller();
@@ -396,7 +419,6 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
                     return event.getSeverity() == ValidationEvent.WARNING;
                 }
             });
-
         }
 
         return unmarshaller;
@@ -413,12 +435,11 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
                     return event.getSeverity() == ValidationEvent.WARNING;
                 }
             });
-
         }
 
         return marshaller;
     }
-    
+
     private Schema createSchema(Source[] sources) throws SAXException {
         SchemaFactory factory = getOrCreateSchemaFactory();
         try {

@@ -23,8 +23,8 @@ import java.util.Locale;
  */
 public class DefaultContextPathMatcher implements ContextPathMatcher {
 
-    private final String path;
-    private final boolean matchOnUriPrefix;
+    protected final String path;
+    protected final boolean matchOnUriPrefix;
 
     public DefaultContextPathMatcher(String path, boolean matchOnUriPrefix) {
         this.path = path.toLowerCase(Locale.US);

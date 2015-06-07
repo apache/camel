@@ -53,11 +53,12 @@ public class JpaProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) {
+        // resolve the entity manager before evaluating the expression
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,
+                getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager());
         final Object values = expression.evaluate(exchange, Object.class);
 
         if (values != null) {
-            final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, getEndpoint().isUsePassedInEntityManager());
-
             transactionTemplate.execute(new TransactionCallback<Object>() {
                 public Object doInTransaction(TransactionStatus status) {
                     if (getEndpoint().isJoinTransaction()) {

@@ -64,7 +64,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         String encodedUri = UnsafeUriCharactersEncoder.encode(uri);
         if (!encodedUri.equals(uri)) {
             // uri supplied is not really valid
-            LOG.warn("Supplied URI '{}' contains unsafe characters, please check encoding", uri);
+            // we just don't want to log the password setting here
+            LOG.warn("Supplied URI '{}' contains unsafe characters, please check encoding", URISupport.sanitizeUri(uri));
         }
         return encodedUri;
     }
@@ -74,22 +75,13 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         // check URI string to the unsafe URI characters
         String encodedUri = preProcessUri(uri);
         URI u = new URI(encodedUri);
-        String path = useRawUri() ? u.getRawSchemeSpecificPart() : u.getSchemeSpecificPart();
-
-        // lets trim off any query arguments
-        if (path.startsWith("//")) {
-            path = path.substring(2);
-        }
-        int idx = path.indexOf('?');
-        if (idx > -1) {
-            path = path.substring(0, idx);
-        }
+        String path = URISupport.extractRemainderPath(u, useRawUri());
 
         Map<String, Object> parameters;
         if (useRawUri()) {
             // when using raw uri then the query is taking from the uri as is
             String query;
-            idx = uri.indexOf('?');
+            int idx = uri.indexOf('?');
             if (idx > -1) {
                 query = uri.substring(idx + 1);
             } else {

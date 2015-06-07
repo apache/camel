@@ -30,7 +30,9 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriPath;
 
 /**
  * An endpoint which maintains a {@link List} of {@link Exchange} instances
@@ -38,8 +40,12 @@ import org.apache.camel.spi.UriEndpoint;
  *
  * @version 
  */
-@UriEndpoint(scheme = "browse")
+@UriEndpoint(scheme = "browse", title = "Browse", syntax = "browse:name", label = "core,monitoring")
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
+
+    @UriPath(description = "A name which can be any string to uniquely identify the endpoint") @Metadata(required = "true")
+    private String name;
+
     private List<Exchange> exchanges;
     private final LoadBalancer loadBalancer = new TopicLoadBalancer();
 
@@ -73,6 +79,14 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
         Consumer answer = new LoadBalancerConsumer(this, processor, loadBalancer);
         configureConsumer(answer);
         return answer;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     protected List<Exchange> createExchangeList() {

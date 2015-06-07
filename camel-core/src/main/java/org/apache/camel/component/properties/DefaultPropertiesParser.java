@@ -22,15 +22,34 @@ import java.util.Set;
 
 import static java.lang.String.format;
 
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * A parser to parse a string which contains property placeholders
+ * A parser to parse a string which contains property placeholders.
  */
 public class DefaultPropertiesParser implements AugmentedPropertyNameAwarePropertiesParser {
+    private static final String GET_OR_ELSE_TOKEN = ":";
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    private PropertiesComponent propertiesComponent;
+
+    public DefaultPropertiesParser() {
+    }
+
+    public DefaultPropertiesParser(PropertiesComponent propertiesComponent) {
+        this.propertiesComponent = propertiesComponent;
+    }
+
+    public PropertiesComponent getPropertiesComponent() {
+        return propertiesComponent;
+    }
+
+    public void setPropertiesComponent(PropertiesComponent propertiesComponent) {
+        this.propertiesComponent = propertiesComponent;
+    }
 
     @Override
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
@@ -86,6 +105,9 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
          * @return Evaluated string
          */
         private String doParse(String input, Set<String> replacedPropertyKeys) {
+            if (input == null) {
+                return null;
+            }
             String answer = input;
             Property property;
             while ((property = readProperty(answer)) != null) {
@@ -189,6 +211,35 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
          * @return Value of the property with the given key
          */
         private String getPropertyValue(String key, String input) {
+
+            // the key may be a function, so lets check this first
+            if (propertiesComponent != null) {
+                for (PropertiesFunction function : propertiesComponent.getFunctions().values()) {
+                    String token = function.getName() + ":";
+                    if (key.startsWith(token)) {
+                        String remainder = key.substring(token.length());
+                        log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
+                        String value = function.apply(remainder);
+                        if (value == null) {
+                            throw new IllegalArgumentException("Property with key [" + key + "] using function [" + function.getName() + "]"
+                                    + " returned null value which is not allowed, from input: " + input);
+                        } else {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Property with key [{}] applied by function [{}] -> {}", new Object[]{key, function.getName(), value});
+                            }
+                            return value;
+                        }
+                    }
+                }
+            }
+
+            // they key may have a get or else expression
+            String defaultValue = null;
+            if (key.contains(GET_OR_ELSE_TOKEN)) {
+                defaultValue = ObjectHelper.after(key, GET_OR_ELSE_TOKEN);
+                key = ObjectHelper.before(key, GET_OR_ELSE_TOKEN);
+            }
+
             String augmentedKey = getAugmentedKey(key);
             boolean shouldFallback = fallbackToUnaugmentedProperty && !key.equals(augmentedKey);
 
@@ -198,8 +249,17 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                 value = doGetPropertyValue(key);
             }
 
+            if (value == null && defaultValue != null) {
+                log.debug("Property with key [{}] not found, using default value: {}", augmentedKey, defaultValue);
+                value = defaultValue;
+            }
+
             if (value == null) {
                 StringBuilder esb = new StringBuilder();
+                if (propertiesComponent.isDefaultCreated()) {
+                    // if the component was auto created then include more information that the end user should define it
+                    esb.append("PropertiesComponent with name properties must be defined in CamelContext to support property placeholders. ");
+                }
                 esb.append("Property with key [").append(augmentedKey).append("] ");
                 if (shouldFallback) {
                     esb.append("(and original key [").append(key).append("]) ");

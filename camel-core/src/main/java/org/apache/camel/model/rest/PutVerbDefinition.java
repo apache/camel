@@ -20,6 +20,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
+/**
+ * Rest PUT command
+ */
+@Metadata(label = "rest")
 @XmlRootElement(name = "put")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PutVerbDefinition extends VerbDefinition {

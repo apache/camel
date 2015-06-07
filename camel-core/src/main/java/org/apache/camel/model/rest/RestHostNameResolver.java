@@ -19,8 +19,14 @@ package org.apache.camel.model.rest;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.camel.spi.Metadata;
+
+/**
+ * To configure the rest hostname resolver
+ */
+@Metadata(label = "rest")
 @XmlType
-@XmlEnum(String.class)
+@XmlEnum
 public enum RestHostNameResolver {
 
     localIp, localHostName

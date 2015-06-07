@@ -33,4 +33,11 @@ case class SRouteDefinition(override val target: RouteDefinition, builder: Route
     target.errorHandler(handler)
     this
   }
+
+  def autoStartup(autoStartup: String) = wrap(target.autoStartup(autoStartup))
+
+  def autoStartup(autoStartup: Boolean) = wrap(target.autoStartup(autoStartup))
+
+  def noAutoStartup() = wrap(target.autoStartup(false))
+
 }

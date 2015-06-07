@@ -70,8 +70,15 @@ public final class ObjectConverter {
     public static Iterator<?> iterator(Object value) {
         return ObjectHelper.createIterator(value);
     }
-    
-    
+
+    /**
+     * Creates an iterable over the value
+     */
+    @Converter
+    public static Iterable<?> iterable(Object value) {
+        return ObjectHelper.createIterable(value);
+    }
+
     /**
      * Returns the converted value, or null if the value is null
      */
@@ -95,9 +102,14 @@ public final class ObjectConverter {
     }
 
     @Converter
+    public static Character toCharacter(String value) {
+        return toChar(value);
+    }
+
+    @Converter
     public static char toChar(String value) {
         // must be string with the length of 1
-        if (value == null || value.length() != 1) {
+        if (value.length() != 1) {
             throw new IllegalArgumentException("String must have exactly a length of 1: " + value);
         }
         return value.charAt(0);

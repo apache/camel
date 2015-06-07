@@ -22,11 +22,14 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -42,12 +45,17 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
  * question marks (that are parameter placeholders), sharp signs should be used.
  * This is because in camel question mark has other meaning.
  */
-@UriEndpoint(scheme = "sql", consumerClass = SqlConsumer.class)
+@UriEndpoint(scheme = "sql", title = "SQL", syntax = "sql:query", consumerClass = SqlConsumer.class, label = "database,sql")
 public class SqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String query;
+    @UriParam
+    @Deprecated
+    private String dataSourceRef;
+    @UriParam
+    private DataSource dataSource;
     @UriParam
     private boolean batch;
     @UriParam
@@ -62,13 +70,13 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private String onConsumeFailed;
     @UriParam
     private String onConsumeBatchComplete;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean allowNamedParameters = true;
     @UriParam
     private boolean alwaysPopulateStatement;
-    @UriParam
+    @UriParam(defaultValue = ",")
     private char separator = ',';
-    @UriParam
+    @UriParam(defaultValue = "SelectList")
     private SqlOutputType outputType = SqlOutputType.SelectList;
     @UriParam
     private String outputClass;
@@ -76,6 +84,8 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private int parametersCount;
     @UriParam
     private boolean noop;
+    @UriParam
+    private String outputHeader;
 
     public SqlEndpoint() {
     }
@@ -154,6 +164,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return processingStrategy;
     }
 
+    /**
+     * Allows to plugin to use a custom org.apache.camel.component.sql.SqlProcessingStrategy to execute queries when the consumer has processed the rows/batch.
+     */
     public void setProcessingStrategy(SqlProcessingStrategy processingStrategy) {
         this.processingStrategy = processingStrategy;
     }
@@ -162,6 +175,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return prepareStatementStrategy;
     }
 
+    /**
+     * Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement.
+     */
     public void setPrepareStatementStrategy(SqlPrepareStatementStrategy prepareStatementStrategy) {
         this.prepareStatementStrategy = prepareStatementStrategy;
     }
@@ -170,6 +186,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return onConsume;
     }
 
+    /**
+     * After processing each row then this query can be executed, if the Exchange was processed successfully, for example to mark the row as processed. The query can have parameter.
+     */
     public void setOnConsume(String onConsume) {
         this.onConsume = onConsume;
     }
@@ -178,6 +197,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return onConsumeFailed;
     }
 
+    /**
+     * After processing each row then this query can be executed, if the Exchange failed, for example to mark the row as failed. The query can have parameter.
+     */
     public void setOnConsumeFailed(String onConsumeFailed) {
         this.onConsumeFailed = onConsumeFailed;
     }
@@ -186,6 +208,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return onConsumeBatchComplete;
     }
 
+    /**
+     * After processing the entire batch, this query can be executed to bulk update rows etc. The query cannot have parameters.
+     */
     public void setOnConsumeBatchComplete(String onConsumeBatchComplete) {
         this.onConsumeBatchComplete = onConsumeBatchComplete;
     }
@@ -194,6 +219,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return allowNamedParameters;
     }
 
+    /**
+     * Whether to allow using named parameters in the queries.
+     */
     public void setAllowNamedParameters(boolean allowNamedParameters) {
         this.allowNamedParameters = allowNamedParameters;
     }
@@ -202,6 +230,11 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return alwaysPopulateStatement;
     }
 
+    /**
+     * If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked,
+     * also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there
+     * is 1 or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters.
+     */
     public void setAlwaysPopulateStatement(boolean alwaysPopulateStatement) {
         this.alwaysPopulateStatement = alwaysPopulateStatement;
     }
@@ -210,6 +243,12 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return separator;
     }
 
+    /**
+     * The separator to use when parameter values is taken from message body (if the body is a String type), to be inserted at # placeholders.
+     * Notice if you use named parameters, then a Map type is used instead.
+     * <p/>
+     * The default value is ,
+     */
     public void setSeparator(char separator) {
         this.separator = separator;
     }
@@ -218,6 +257,14 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return outputType;
     }
 
+    /**
+     * Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way:
+     * a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long object.
+     * b) If the query has more than one column, then it will return a Map of that result.
+     * c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names. 
+     * It will assume your class has a default constructor to create instance with.
+     * d) If the query resulted in more than one rows, it throws an non-unique result exception.
+     */
     public void setOutputType(SqlOutputType outputType) {
         this.outputType = outputType;
     }
@@ -226,6 +273,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return outputClass;
     }
 
+    /**
+     * Specify the full package and class name to use as conversion when outputType=SelectOne.
+     */
     public void setOutputClass(String outputClass) {
         this.outputClass = outputClass;
     }
@@ -234,6 +284,10 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return parametersCount;
     }
 
+    /**
+     * If set greater than zero, then Camel will use this count value of parameters to replace instead of querying via JDBC metadata API.
+     * This is useful if the JDBC vendor could not return correct parameters count, then user may override instead.
+     */
     public void setParametersCount(int parametersCount) {
         this.parametersCount = parametersCount;
     }
@@ -242,8 +296,48 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return noop;
     }
 
+    /**
+     * If set, will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing
+     */
     public void setNoop(boolean noop) {
         this.noop = noop;
+    }
+
+    public String getOutputHeader() {
+        return outputHeader;
+    }
+
+    /**
+     * Store the query result in a header instead of the message body.
+     * By default, outputHeader == null and the query result is stored in the message body,
+     * any existing content in the message body is discarded.
+     * If outputHeader is set, the value is used as the name of the header to store the
+     * query result and the original message body is preserved.
+     */
+    public void setOutputHeader(String outputHeader) {
+        this.outputHeader = outputHeader;
+    }
+
+    public String getDataSourceRef() {
+        return dataSourceRef;
+    }
+
+    /**
+     * Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database.
+     */
+    public void setDataSourceRef(String dataSourceRef) {
+        this.dataSourceRef = dataSourceRef;
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    /**
+     * Sets the DataSource to use to communicate with the database.
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -252,11 +346,20 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return "sql:" + UnsafeUriCharactersEncoder.encode(query);
     }
 
-    protected List<Map<String, Object>> queryForList(ResultSet rs) throws SQLException {
-        ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
-        RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
-        List<Map<String, Object>> data = mapper.extractData(rs);
-        return data;
+    @SuppressWarnings("unchecked")
+    protected List<?> queryForList(ResultSet rs, boolean allowMapToClass) throws SQLException {
+        if (allowMapToClass && outputClass != null) {
+            Class<?> outputClazz = getCamelContext().getClassResolver().resolveClass(outputClass);
+            RowMapper rowMapper = new BeanPropertyRowMapper(outputClazz);
+            RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
+            List<?> data = mapper.extractData(rs);
+            return data;
+        } else {
+            ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
+            RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
+            List<Map<String, Object>> data = mapper.extractData(rs);
+            return data;
+        }
     }
 
     @SuppressWarnings("unchecked")

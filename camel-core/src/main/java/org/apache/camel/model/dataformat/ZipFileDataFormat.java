@@ -24,10 +24,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the ZIP file XML {@link org.apache.camel.spi.DataFormat}.
+ * zip-file data format
  */
+@Metadata(label = "dataformat,transformation", title = "Zip File")
+// TODO: use zipfile as name in Camel 3.0
 @XmlRootElement(name = "zipFile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipFileDataFormat extends DataFormatDefinition {
@@ -49,6 +52,10 @@ public class ZipFileDataFormat extends DataFormatDefinition {
         return usingIterator;
     }
 
+    /**
+     * If the zip file has more then one entry, the setting this option to true, allows to work with the splitter EIP,
+     * to split the data using an iterator in a streaming mode.
+     */
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;
     }

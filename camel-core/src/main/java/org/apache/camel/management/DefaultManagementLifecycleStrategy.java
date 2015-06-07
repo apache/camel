@@ -47,16 +47,18 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.EndpointRegistry;
+import org.apache.camel.impl.DefaultEndpointRegistry;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
+import org.apache.camel.management.mbean.ManagedAsyncProcessorAwaitManager;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEndpointRegistry;
+import org.apache.camel.management.mbean.ManagedInflightRepository;
 import org.apache.camel.management.mbean.ManagedProducerCache;
 import org.apache.camel.management.mbean.ManagedRestRegistry;
 import org.apache.camel.management.mbean.ManagedRoute;
@@ -78,7 +80,9 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementAware;
@@ -114,8 +118,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     private final Map<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>> wrappedProcessors =
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>>();
     private final List<PreRegisterService> preServices = new ArrayList<PreRegisterService>();
-    private final TimerListenerManager timerListenerManager = new TimerListenerManager();
-    private final TimerListenerManagerStartupListener timerManagerStartupListener = new TimerListenerManagerStartupListener();
+    private final TimerListenerManager loadTimer = new ManagedLoadTimer();
+    private final TimerListenerManagerStartupListener loadTimerStartupListener = new TimerListenerManagerStartupListener();
     private volatile CamelContext camelContext;
     private volatile ManagedCamelContext camelContextMBean;
     private volatile boolean initialized;
@@ -460,12 +464,16 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedConsumerCache(context, (ConsumerCache) service);
         } else if (service instanceof ProducerCache) {
             answer = new ManagedProducerCache(context, (ProducerCache) service);
-        } else if (service instanceof EndpointRegistry) {
-            answer = new ManagedEndpointRegistry(context, (EndpointRegistry) service);
+        } else if (service instanceof DefaultEndpointRegistry) {
+            answer = new ManagedEndpointRegistry(context, (DefaultEndpointRegistry) service);
         } else if (service instanceof TypeConverterRegistry) {
             answer = new ManagedTypeConverterRegistry(context, (TypeConverterRegistry) service);
         } else if (service instanceof RestRegistry) {
             answer = new ManagedRestRegistry(context, (RestRegistry) service);
+        } else if (service instanceof InflightRepository) {
+            answer = new ManagedInflightRepository(context, (InflightRepository) service);
+        } else if (service instanceof AsyncProcessorAwaitManager) {
+            answer = new ManagedAsyncProcessorAwaitManager(context, (AsyncProcessorAwaitManager) service);
         } else if (service instanceof RuntimeEndpointRegistry) {
             answer = new ManagedRuntimeEndpointRegistry(context, (RuntimeEndpointRegistry) service);
         } else if (service instanceof StreamCachingStrategy) {
@@ -813,7 +821,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         getManagementStrategy().manageObject(me);
         if (me instanceof TimerListener) {
             TimerListener timer = (TimerListener) me;
-            timerListenerManager.addTimerListener(timer);
+            loadTimer.addTimerListener(timer);
         }
     }
 
@@ -826,7 +834,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     protected void unmanageObject(Object me) throws Exception {
         if (me instanceof TimerListener) {
             TimerListener timer = (TimerListener) me;
-            timerListenerManager.removeTimerListener(timer);
+            loadTimer.removeTimerListener(timer);
         }
         getManagementStrategy().unmanageObject(me);
     }
@@ -892,7 +900,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         ObjectHelper.notNull(camelContext, "CamelContext");
 
         // defer starting the timer manager until CamelContext has been fully started
-        camelContext.addStartupListener(timerManagerStartupListener);
+        camelContext.addStartupListener(loadTimerStartupListener);
     }
 
     private final class TimerListenerManagerStartupListener implements StartupListener {
@@ -906,9 +914,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             LOG.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
             if (!disabled) {
                 // must use 1 sec interval as the load statistics is based on 1 sec calculations
-                timerListenerManager.setInterval(1000);
+                loadTimer.setInterval(1000);
                 // we have to defer enlisting timer lister manager as a service until CamelContext has been started
-                getCamelContext().addService(timerListenerManager);
+                getCamelContext().addService(loadTimer);
             }
         }
     }

@@ -33,8 +33,8 @@ public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
     public void testWithAllValues() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello Claus\n"
-                + "You have id: 123 if an id was assigned to you.");
+        mock.message(0).constant("Hello Claus");
+        mock.message(0).constant("You have id: 123 if an id was assigned to you.");
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("name", "Claus");
@@ -48,8 +48,8 @@ public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
     public void testWithSomeValues() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello Claus\n"
-                + "You have id:  if an id was assigned to you.");
+        mock.message(0).constant("Hello Claus");
+        mock.message(0).constant("You have id:  if an id was assigned to you.");
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("name", "Claus");

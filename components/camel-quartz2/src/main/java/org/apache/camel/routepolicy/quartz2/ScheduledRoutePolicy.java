@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.quartz2.QuartzComponent;
-import org.apache.camel.impl.RoutePolicySupport;
+import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.quartz.JobBuilder;

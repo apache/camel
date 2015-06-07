@@ -73,7 +73,7 @@ public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSuppor
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").beanRef("myBean");
+                from("direct:in").bean("myBean");
             }
         };
     }

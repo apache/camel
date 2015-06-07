@@ -18,6 +18,7 @@ package org.apache.camel.component.xmpp;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -28,12 +29,14 @@ import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
+import org.jivesoftware.smack.filter.MessageTypeFilter;
+import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.filter.ToContainsFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Message.Type;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
@@ -43,8 +46,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which listens to XMPP packets
- *
- * @version 
  */
 public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener, ChatManagerListener {
     private static final Logger LOG = LoggerFactory.getLogger(XmppConsumer.class);
@@ -64,21 +65,29 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
     protected void doStart() throws Exception {
         try {
             connection = endpoint.createConnection();
-        } catch (XMPPException e) {
+        } catch (SmackException e) {
             if (endpoint.isTestConnectionOnStartup()) {
                 throw new RuntimeException("Could not connect to XMPP server.", e);
-            }  else {
-                LOG.warn(XmppEndpoint.getXmppExceptionLogMessage(e));
+            } else {
+                LOG.warn(e.getMessage());
                 if (getExceptionHandler() != null) {
-                    getExceptionHandler().handleException(XmppEndpoint.getXmppExceptionLogMessage(e), e);
+                    getExceptionHandler().handleException(e.getMessage(), e);
                 }
                 scheduleDelayedStart();
                 return;
             }
         }
 
-        chatManager = connection.getChatManager();
+        chatManager = ChatManager.getInstanceFor(connection);
         chatManager.addChatListener(this);
+
+        OrFilter pubsubPacketFilter = new OrFilter();
+        if (endpoint.isPubsub()) {
+            //xep-0060: pubsub#notification_type can be 'headline' or 'normal'
+            pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.headline));
+            pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.normal));
+            connection.addPacketListener(this, pubsubPacketFilter);
+        }
 
         if (endpoint.getRoom() == null) {
             privateChat = chatManager.getThreadChat(endpoint.getChatId());
@@ -88,8 +97,8 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
                     LOG.debug("Adding listener to existing chat opened to " + privateChat.getParticipant());
                 }
                 privateChat.addMessageListener(this);
-            } else {                
-                privateChat = connection.getChatManager().createChat(endpoint.getParticipant(), endpoint.getChatId(), this);
+            } else {
+                privateChat = ChatManager.getInstanceFor(connection).createChat(endpoint.getParticipant(), endpoint.getChatId(), this);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Opening private chat to " + privateChat.getParticipant());
                 }
@@ -97,8 +106,8 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         } else {
             // add the presence packet listener to the connection so we only get packets that concerns us
             // we must add the listener before creating the muc
-            final ToContainsFilter toFilter = new ToContainsFilter(endpoint.getParticipant());
-            final AndFilter packetFilter = new AndFilter(new PacketTypeFilter(Presence.class), toFilter);
+           
+            final AndFilter packetFilter = new AndFilter(new PacketTypeFilter(Presence.class));
             connection.addPacketListener(this, packetFilter);
 
             muc = new MultiUserChat(connection, endpoint.resolveRoom(connection));
@@ -106,7 +115,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             DiscussionHistory history = new DiscussionHistory();
             history.setMaxChars(0); // we do not want any historical messages
 
-            muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
+            muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
             if (LOG.isInfoEnabled()) {
                 LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
             }
@@ -153,11 +162,12 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             LOG.info("Attempting to reconnect to: {}", XmppEndpoint.getConnectionMessage(connection));
             try {
                 connection.connect();
-            } catch (XMPPException e) {
-                LOG.warn(XmppEndpoint.getXmppExceptionLogMessage(e));
+            } catch (SmackException e) {
+                LOG.warn(e.getMessage());
             }
         }
     }
+
     private ScheduledExecutorService getExecutor() {
         if (this.scheduledExecutor == null) {
             scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "connectionPoll");
@@ -199,7 +209,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
 
     public void processPacket(Packet packet) {
         if (packet instanceof Message) {
-            processMessage(null, (Message)packet);
+            processMessage(null, (Message) packet);
         }
     }
 
@@ -209,6 +219,10 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         }
 
         Exchange exchange = endpoint.createExchange(message);
+
+        if (endpoint.isDoc()) {
+            exchange.getIn().setHeader(XmppConstants.DOC_HEADER, message);
+        }
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
@@ -222,4 +236,5 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             }
         }
     }
+
 }

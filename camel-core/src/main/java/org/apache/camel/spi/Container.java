@@ -27,10 +27,18 @@ import org.slf4j.LoggerFactory;
  * The <code>Container</code> interface defines an object that can be used
  * to customize all Camel CONTEXTS created.
  * <p/>
- * A container can be used to globally intercept and customize Camel CONTEXTS,
+ * A container can be used to globally intercept and customize {@link org.apache.camel.CamelContext}s,
  * by registering a <code>LifecycleStrategy</code>, a <code>ProcessorFactory</code>,
  * or any other SPI object.
+ * <p/>
+ * This implementation is <b>not</b> thread-safe. The {@link #manage(org.apache.camel.CamelContext)} method
+ * may be invoked concurrently if multiple Camel applications is being started concurrently, such as from
+ * application servers that may start deployments concurrently.
+ *
+ * @deprecated use {@link CamelContextTracker} and {@link org.apache.camel.impl.CamelContextTrackerRegistry}
  */
+// [TODO] Remove in 3.0
+@Deprecated
 public interface Container {
 
     /**
@@ -107,9 +115,20 @@ public interface Container {
     }
 
     /**
-     * Called by Camel when a <code>CamelContext</code> has been created.
+     * Called by Camel when a <code>CamelContext</code> has been created by its constructor.
+     * <p/>
+     * Notice this method is invoked when the {@link org.apache.camel.CamelContext} has been created by its constructor.
+     * The context is <b>not</b> yet finished being configured. For example the id/name of the {@link org.apache.camel.CamelContext}
+     * has not been resolved yet, and may return <tt>null</tt>.
+     * <p/>
+     * The intention is implementations of {@link org.apache.camel.spi.Container} is able to configure the {@link org.apache.camel.CamelContext}
+     * before its being started.
+     * <p/>
+     * To receive callbacks when the {@link org.apache.camel.CamelContext} has finished being configured and is being started, then
+     * use {@link org.apache.camel.spi.EventNotifier} to listen for the {@link org.apache.camel.management.event.CamelContextStartedEvent}
+     * event.
      *
-     * @param camelContext the newly created CamelContext
+     * @param camelContext the newly created CamelContext by its constructor
      */
     void manage(CamelContext camelContext);
 

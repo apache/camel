@@ -46,6 +46,28 @@ public class SpringGsonJsonDataFormatTest extends CamelSpringTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    public void testMarshalAndUnmarshalPojoWithPrettyPrint() throws Exception {
+        TestPojo in = new TestPojo();
+        in.setName("Camel");
+
+        MockEndpoint mock = getMockEndpoint("mock:reversePojo");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(TestPojo.class);
+        mock.message(0).body().equals(in);
+
+        Object marshalled = template.requestBody("direct:inPretty", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        String expected = "{\n" 
+                         + "  \"name\": \"Camel\""
+                         + "\n}";
+        assertEquals(expected, marshalledAsString);
+
+        template.sendBody("direct:backPretty", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/gson/SpringGsonJsonDataFormatTest.xml");

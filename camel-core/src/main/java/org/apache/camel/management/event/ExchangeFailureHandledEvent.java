@@ -18,21 +18,24 @@ package org.apache.camel.management.event;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.util.URISupport;
 
 /**
  * @version 
  */
 public class ExchangeFailureHandledEvent extends AbstractExchangeEvent {
-    private static final long serialVersionUID = -7554809462006009547L;
+    private static final long serialVersionUID = -7554809462006009548L;
 
-    private final Processor failureHandler;
+    private final transient Processor failureHandler;
     private final boolean deadLetterChannel;
+    private final String deadLetterUri;
     private final boolean handled;
 
-    public ExchangeFailureHandledEvent(Exchange source, Processor failureHandler, boolean deadLetterChannel) {
+    public ExchangeFailureHandledEvent(Exchange source, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
         super(source);
         this.failureHandler = failureHandler;
         this.deadLetterChannel = deadLetterChannel;
+        this.deadLetterUri = deadLetterUri;
         this.handled = source.getProperty(Exchange.ERRORHANDLER_HANDLED, false, Boolean.class);
     }
 
@@ -44,16 +47,23 @@ public class ExchangeFailureHandledEvent extends AbstractExchangeEvent {
         return deadLetterChannel;
     }
 
+    public String getDeadLetterUri() {
+        return deadLetterUri;
+    }
+
     public boolean isHandled() {
         return handled;
     }
 
+    public boolean isContinued() { return !handled; }
+
     @Override
     public String toString() {
         if (isDeadLetterChannel()) {
-            return getExchange().getExchangeId() + " exchange failed: " + getExchange() + " but was handled by dead letter channel: " + failureHandler;
+            String uri = URISupport.sanitizeUri(deadLetterUri);
+            return getExchange().getExchangeId() + " exchange failed: " + getExchange() + " but was handled by dead letter channel: " + uri;
         } else {
-            return getExchange().getExchangeId() + " exchange failed: " + getExchange() + " but was processed by: " + failureHandler;
+            return getExchange().getExchangeId() + " exchange failed: " + getExchange() + " but was processed by failure processor: " + failureHandler;
         }
     }
 }

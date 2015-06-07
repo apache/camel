@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.google.drive;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.api.client.http.FileContent;
@@ -111,37 +113,60 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
     @Test
     public void testList() throws Exception {
         // upload a test file
-        File theTestFile = uploadTestFile();
+        File testFile = uploadTestFile();
         
-        final FileList result = requestBody("direct://LIST", null);
+        FileList result = requestBody("direct://LIST", null);
         assertNotNull("list result", result);
-        LOG.debug("list: " + result);
+        assertTrue(result.getItems().size() >= 1);
+        
+        File testFile2 = uploadTestFile();
+        
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("CamelGoogleDrive.maxResults", 1);
+        
+        result = requestBodyAndHeaders("direct://LIST", null, headers);
+        assertNotNull("list result", result);
+        assertTrue(result.getItems().size() == 1);
+        
+        // test paging the list
+        List<File> resultList = new ArrayList<File>();
+        String pageToken;
+        int i = 0;
+        do {
+            result = requestBodyAndHeaders("direct://LIST", null, headers);
+
+            resultList.addAll(result.getItems());
+            pageToken = result.getNextPageToken();
+            headers.put("CamelGoogleDrive.pageToken", pageToken);
+
+            i++;
+        } while (pageToken != null && pageToken.length() > 0 && i < 2);
+
+        // we should have 2 files in result (one file for each of the 2 pages)
+        assertTrue(resultList.size() == 2);
+        // they should be different files
+        assertFalse(resultList.get(0).getId().equals(resultList.get(1)));
     }
 
-    @Ignore
     @Test
     public void testPatch() throws Exception {
-        // TODO have to support setting patch parameters before calling execute like:
-        /*
-      File file = new File();
-      file.setTitle(newTitle);
+        File file = uploadTestFile();
 
-      // Rename the file using a patch request.
-      Files.Patch patchRequest = service.files().patch(fileId, file);
-      patchRequest.setFields("title");
-
-      File updatedFile = patchRequest.execute();
-         */        
+        // lets update the filename
+        file.setTitle(UPLOAD_FILE.getName() + "PATCHED");
         
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
+        headers.put("CamelGoogleDrive.fileId", file.getId());
+        // parameter type is String
+        headers.put("CamelGoogleDrive.fields", "title");       
         // parameter type is com.google.api.services.drive.model.File
-        headers.put("CamelGoogleDrive.content", null);
+        headers.put("CamelGoogleDrive.content", file);
 
-        final com.google.api.services.drive.Drive.Files.Patch result = requestBodyAndHeaders("direct://PATCH", null, headers);
+        File result = requestBodyAndHeaders("direct://PATCH", null, headers);
 
         assertNotNull("patch result", result);
+        assertEquals(UPLOAD_FILE.getName() + "PATCHED", result.getTitle());
         LOG.debug("patch: " + result);
     }
 

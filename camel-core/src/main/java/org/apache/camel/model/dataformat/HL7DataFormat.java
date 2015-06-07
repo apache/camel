@@ -25,16 +25,18 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a <a href="http://camel.apache.org/hl7.html">HL7</a> {@link org.apache.camel.spi.DataFormat}.
+ * HL7 data format
  *
  * @version 
  */
+@Metadata(label = "dataformat,transformation,hl7", title = "HL7")
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean validate;
     @XmlTransient
     private Object parser;
@@ -52,6 +54,11 @@ public class HL7DataFormat extends DataFormatDefinition {
         return validate;
     }
 
+    /**
+     * Whether to validate the HL7 message
+     * <p/>
+     * Is by default true.
+     */
     public void setValidate(Boolean validate) {
         this.validate = validate;
     }
@@ -60,6 +67,9 @@ public class HL7DataFormat extends DataFormatDefinition {
         return parser;
     }
 
+    /**
+     * To use a custom HL7 parser
+     */
     public void setParser(Object parser) {
         this.parser = parser;
     }

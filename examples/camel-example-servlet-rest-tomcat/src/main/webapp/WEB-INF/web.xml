@@ -50,16 +50,19 @@
   <!-- START SNIPPET: e1 -->
   <!-- to setup Camel Swagger api servlet -->
   <servlet>
-    <!-- we are using spring so use the spring swagger servlet -->
     <servlet-name>ApiDeclarationServlet</servlet-name>
-    <servlet-class>org.apache.camel.component.swagger.spring.SpringRestSwaggerApiDeclarationServlet</servlet-class>
+    <servlet-class>org.apache.camel.component.swagger.DefaultCamelSwaggerServlet</servlet-class>
     <init-param>
+      <!-- we specify the base.path using relative notation, that means the actual path will be calculated at runtime as
+           http://server:port/contextpath/rest -->
       <param-name>base.path</param-name>
-      <param-value>http://localhost:8080/rest</param-value>
+      <param-value>rest</param-value>
     </init-param>
     <init-param>
+      <!-- we specify the api.path using relative notation, that means the actual path will be calculated at runtime as
+           http://server:port/contextpath/api-docs -->
       <param-name>api.path</param-name>
-      <param-value>http://localhost:8080/api-docs</param-value>
+      <param-value>api-docs</param-value>
     </init-param>
     <init-param>
       <param-name>api.version</param-name>
@@ -102,5 +105,9 @@
     <url-pattern>/rest/*</url-pattern>
   </filter-mapping>
   <!-- END SNIPPET: e2 -->
+
+  <welcome-file-list>
+      <welcome-file>home.html</welcome-file>
+  </welcome-file-list>
 
 </web-app>

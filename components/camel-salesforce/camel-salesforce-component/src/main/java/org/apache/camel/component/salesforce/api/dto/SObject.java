@@ -42,6 +42,7 @@ public class SObject extends AbstractDTOBase {
     private String searchLayoutable;
     private Boolean undeletable;
     private Boolean triggerable;
+    private Boolean compactLayoutable;
 
     public String getName() {
         return name;
@@ -235,4 +236,11 @@ public class SObject extends AbstractDTOBase {
         this.triggerable = triggerable;
     }
 
+    public Boolean getCompactLayoutable() {
+        return compactLayoutable;
+    }
+
+    public void setCompactLayoutable(Boolean compactLayoutable) {
+        this.compactLayoutable = compactLayoutable;
+    }
 }

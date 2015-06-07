@@ -21,14 +21,17 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Predicate;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.validation.PredicateValidatingProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;validate/&gt; element
+ * Validates a message based on an expression
  *
  * @version 
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "validate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValidateDefinition extends NoOutputExpressionNode {
@@ -42,11 +45,6 @@ public class ValidateDefinition extends NoOutputExpressionNode {
     }
     
     @Override
-    public String getShortName() {
-        return "validate";
-    }
-    
-    @Override
     public String getLabel() {
         return "validate[" + getExpression() + "]";
     }
@@ -56,5 +54,16 @@ public class ValidateDefinition extends NoOutputExpressionNode {
         Predicate pred = getExpression().createPredicate(routeContext);
         return new PredicateValidatingProcessor(pred);
     }
+
+    /**
+     * Expression to use for validation as a predicate. The expression should return either <tt>true</tt> or <tt>false</tt>.
+     * If returning <tt>false</tt> the message is invalid and an exception is thrown.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
 
 }

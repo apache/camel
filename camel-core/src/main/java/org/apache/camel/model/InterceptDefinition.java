@@ -28,13 +28,15 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;intercept/&gt; element
+ * Intercepts a message at each step in the route
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
@@ -49,11 +51,6 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     @Override
     public String toString() {
         return "Intercept[" + getOutputs() + "]";
-    }
-
-    @Override
-    public String getShortName() {
-        return "intercept";
     }
 
     @Override

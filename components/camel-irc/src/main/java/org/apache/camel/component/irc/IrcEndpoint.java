@@ -21,6 +21,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.schwering.irc.lib.IRCConnection;
@@ -35,11 +37,13 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@UriEndpoint(scheme = "irc", title = "IRC", syntax = "irc:hostname:port", consumerClass = IrcConsumer.class, label = "chat")
 public class IrcEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
-    
-    private IrcBinding binding;
+
+    @UriParam
     private IrcConfiguration configuration;
+    private IrcBinding binding;
     private IrcComponent component;
 
     public IrcEndpoint(String endpointUri, IrcComponent component, IrcConfiguration configuration) {

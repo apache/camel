@@ -21,10 +21,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the <a href="http://camel.apache.org/rss.html">RSS</a> {@link org.apache.camel.spi.DataFormat}.
+ * RSS data format
  */
+@Metadata(label = "dataformat,transformation", title = "RSS")
 @XmlRootElement(name = "rss")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RssDataFormat extends DataFormatDefinition {

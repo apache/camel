@@ -75,12 +75,12 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         context.start();
 
         resultEndpoint.expectedBodiesReceived("one", "two", "one", "two", "one", "three");
-        resultEndpoint.message(0).property(Exchange.DUPLICATE_MESSAGE).isNull();
-        resultEndpoint.message(1).property(Exchange.DUPLICATE_MESSAGE).isNull();
-        resultEndpoint.message(2).property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
-        resultEndpoint.message(3).property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
-        resultEndpoint.message(4).property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
-        resultEndpoint.message(5).property(Exchange.DUPLICATE_MESSAGE).isNull();
+        resultEndpoint.message(0).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isNull();
+        resultEndpoint.message(1).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isNull();
+        resultEndpoint.message(2).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        resultEndpoint.message(3).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        resultEndpoint.message(4).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        resultEndpoint.message(5).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isNull();
 
         sendMessage("1", "one");
         sendMessage("2", "two");
@@ -117,7 +117,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
 
         getMockEndpoint("mock:duplicate").expectedBodiesReceived("one", "two", "one");
-        getMockEndpoint("mock:duplicate").allMessages().property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        getMockEndpoint("mock:duplicate").allMessages().exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
 
         sendMessage("1", "one");
         sendMessage("2", "two");

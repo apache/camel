@@ -41,15 +41,15 @@ public class LanguageComponentConfigurationAndDocumentationTest extends ContextT
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"script\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"cacheScript\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"script\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"cacheScript\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("language");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

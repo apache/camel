@@ -22,12 +22,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the XMLBeans XML {@link org.apache.camel.spi.DataFormat}
+ * XMLBeans data format
  *
  * @version 
  */
+@Metadata(label = "dataformat,transformation", title = "XML Beans")
 @XmlRootElement(name = "xmlBeans")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLBeansDataFormat extends DataFormatDefinition {
@@ -42,6 +44,11 @@ public class XMLBeansDataFormat extends DataFormatDefinition {
         return prettyPrint;
     }
 
+    /**
+     * To enable pretty printing output nicely formatted.
+     * <p/>
+     * Is by default false.
+     */
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }

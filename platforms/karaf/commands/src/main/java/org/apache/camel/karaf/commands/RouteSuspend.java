@@ -16,19 +16,16 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
+import org.apache.camel.commands.RouteSuspendCommand;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to suspend a route.
- */
-@Command(scope = "camel", name = " route-suspend", description = "Suspend a Camel route or a group of routes.")
+@Command(scope = "camel", name = " route-suspend", description = "Suspend a Camel route")
 public class RouteSuspend extends AbstractRouteCommand {
 
     @Override
-    public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
-        camelContext.suspendRoute(camelRoute.getId());
+    protected Object doExecute() throws Exception {
+        RouteSuspendCommand command = new RouteSuspendCommand(route, context);
+        return command.execute(camelController, System.out, System.err);
     }
 
 }

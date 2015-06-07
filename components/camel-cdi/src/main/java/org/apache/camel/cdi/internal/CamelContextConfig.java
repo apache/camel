@@ -19,10 +19,11 @@ package org.apache.camel.cdi.internal;
 import java.lang.reflect.Type;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
@@ -36,15 +37,15 @@ import org.apache.camel.util.ObjectHelper;
 public class CamelContextConfig {
     // use a set to avoid duplicates
     private final Set<Bean<?>> routeBuilderBeans = new LinkedHashSet<Bean<?>>();
-    private final Set<ProcessAnnotatedType<?>> patRouteBuilders = new LinkedHashSet<ProcessAnnotatedType<?>>();
+    private final Set<AnnotatedType<?>> patRouteBuilders = new LinkedHashSet<AnnotatedType<?>>();
 
     public void addRouteBuilderBean(Bean<?> bean) {
         routeBuilderBeans.add(bean);
     }
 
     public void configure(CdiCamelContext camelContext, BeanManager beanManager) {
-        for (ProcessAnnotatedType<?> pat : patRouteBuilders) {
-            final Set<Bean<?>> beans = beanManager.getBeans(pat.getAnnotatedType().getJavaClass());
+        for (AnnotatedType<?> pat : patRouteBuilders) {
+            final Set<Bean<?>> beans = beanManager.getBeans(pat.getJavaClass());
             final Bean<?> bean = beanManager.resolve(beans);
             routeBuilderBeans.add(bean);
         }
@@ -83,7 +84,7 @@ public class CamelContextConfig {
         }
     }
 
-    public void addRouteBuilderBean(final ProcessAnnotatedType<?> process) {
+    public void addRouteBuilderBean(final AnnotatedType<?> process) {
         patRouteBuilders.add(process);
     }
 }

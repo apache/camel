@@ -28,6 +28,7 @@ import javax.xml.bind.JAXBException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -49,13 +50,13 @@ import org.apache.camel.spring.CamelRedeliveryPolicyFactoryBean;
 import org.apache.camel.spring.CamelRestContextFactoryBean;
 import org.apache.camel.spring.CamelRouteContextFactoryBean;
 import org.apache.camel.spring.CamelThreadPoolFactoryBean;
+import org.apache.camel.spring.SpringModelJAXBContextFactory;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.spring.KeyStoreParametersFactoryBean;
 import org.apache.camel.util.spring.SSLContextParametersFactoryBean;
 import org.apache.camel.util.spring.SecureRandomParametersFactoryBean;
-import org.apache.camel.view.ModelFileGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -73,7 +74,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
-    protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class, false);
+    protected BeanDefinitionParser endpointParser = new EndpointDefinitionParser();
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class, false);
     protected Set<String> parserElementNames = new HashSet<String>();
     protected Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
@@ -81,21 +82,41 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinition> autoRegisterMap = new HashMap<String, BeanDefinition>();
 
-    public static void renameNamespaceRecursive(Node node) {
+    /**
+     * Prepares the nodes before parsing.
+     */
+    public static void doBeforeParse(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
+
+            // ensure namespace with versions etc is renamed to be same namespace so we can parse using this handler
             Document doc = node.getOwnerDocument();
             if (node.getNamespaceURI().startsWith(SPRING_NS + "/v")) {
                 doc.renameNode(node, SPRING_NS, node.getNodeName());
             }
+
+            // remove whitespace noise from uri, xxxUri attributes, eg new lines, and tabs etc, which allows end users to format
+            // their Camel routes in more human readable format, but at runtime those attributes must be trimmed
+            // the parser removes most of the noise, but keeps double spaces in the attribute values
+            NamedNodeMap map = node.getAttributes();
+            for (int i = 0; i < map.getLength(); i++) {
+                Node att = map.item(i);
+                if (att.getNodeName().equals("uri") || att.getNodeName().endsWith("Uri")) {
+
+                    String value = att.getNodeValue();
+                    // remove all double spaces
+                    String changed = value.replaceAll("\\s{2,}", "");
+
+                    if (!value.equals(changed)) {
+                        LOG.debug("Removed whitespace noise from attribute {} -> {}", value, changed);
+                        att.setNodeValue(changed);
+                    }
+                }
+            }
         }
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); ++i) {
-            renameNamespaceRecursive(list.item(i));
+            doBeforeParse(list.item(i));
         }
-    }
-
-    public ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(getJaxbContext());
     }
 
     public void init() {
@@ -103,6 +124,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerParser("restContext", new RestContextDefinitionParser());
         // register routeContext parser
         registerParser("routeContext", new RouteContextDefinitionParser());
+        // register endpoint parser
+        registerParser("endpoint", endpointParser);
 
         addBeanDefinitionParser("keyStoreParameters", KeyStoreParametersFactoryBean.class, true, true);
         addBeanDefinitionParser("secureRandomParameters", SecureRandomParametersFactoryBean.class, true, true);
@@ -112,7 +135,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true, false);
         addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, true, false);
         addBeanDefinitionParser("export", CamelServiceExporter.class, true, false);
-        addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class, true, false);
         addBeanDefinitionParser("threadPool", CamelThreadPoolFactoryBean.class, true, true);
         addBeanDefinitionParser("redeliveryPolicyProfile", CamelRedeliveryPolicyFactoryBean.class, true, true);
 
@@ -175,36 +197,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     public JAXBContext getJaxbContext() throws JAXBException {
         if (jaxbContext == null) {
-            jaxbContext = createJaxbContext();
+            jaxbContext = new SpringModelJAXBContextFactory().newJAXBContext();
         }
         return jaxbContext;
-    }
-
-    protected JAXBContext createJaxbContext() throws JAXBException {
-        StringBuilder packages = new StringBuilder();
-        for (Class<?> cl : getJaxbPackages()) {
-            if (packages.length() > 0) {
-                packages.append(":");
-            }
-            packages.append(cl.getName().substring(0, cl.getName().lastIndexOf('.')));
-        }
-        return JAXBContext.newInstance(packages.toString(), getClass().getClassLoader());
-    }
-
-    protected Set<Class<?>> getJaxbPackages() {
-        // we nedd to have a class from each different package with jaxb models
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
-        classes.add(CamelJMXAgentDefinition.class);
-        classes.add(org.apache.camel.ExchangePattern.class);
-        classes.add(org.apache.camel.model.RouteDefinition.class);
-        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
-        classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
-        classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
-        classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
-        classes.add(org.apache.camel.model.rest.RestDefinition.class);
-        classes.add(org.apache.camel.util.spring.SSLContextParametersFactoryBean.class);
-        return classes;
     }
     
     protected class SSLContextParametersFactoryBeanBeanDefinitionParser extends BeanDefinitionParser {
@@ -215,6 +210,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            doBeforeParse(element);
             super.doParse(element, builder);
             
             // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires 
@@ -257,7 +253,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-            renameNamespaceRecursive(element);
+            doBeforeParse(element);
             super.doParse(element, parserContext, builder);
 
             // now lets parse the routes with JAXB
@@ -279,6 +275,33 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
     }
 
+    protected class EndpointDefinitionParser extends BeanDefinitionParser {
+
+        public EndpointDefinitionParser() {
+            super(CamelEndpointFactoryBean.class, false);
+        }
+
+        @Override
+        protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            doBeforeParse(element);
+            super.doParse(element, parserContext, builder);
+
+            // now lets parse the routes with JAXB
+            Binder<Node> binder;
+            try {
+                binder = getJaxbContext().createBinder();
+            } catch (JAXBException e) {
+                throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
+            }
+            Object value = parseUsingJaxb(element, parserContext, binder);
+
+            if (value instanceof CamelEndpointFactoryBean) {
+                CamelEndpointFactoryBean factoryBean = (CamelEndpointFactoryBean) value;
+                builder.addPropertyValue("properties", factoryBean.getProperties());
+            }
+        }
+    }
+
     protected class RestContextDefinitionParser extends BeanDefinitionParser {
 
         public RestContextDefinitionParser() {
@@ -287,7 +310,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-            renameNamespaceRecursive(element);
+            doBeforeParse(element);
             super.doParse(element, parserContext, builder);
 
             // now lets parse the routes with JAXB
@@ -317,7 +340,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-            renameNamespaceRecursive(element);
+            doBeforeParse(element);
             super.doParse(element, parserContext, builder);
 
             String contextId = element.getAttribute("id");

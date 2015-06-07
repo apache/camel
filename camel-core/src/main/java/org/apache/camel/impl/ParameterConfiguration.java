@@ -73,19 +73,17 @@ public class ParameterConfiguration {
             for (Object value : parameterType.getEnumConstants()) {
                 sb.append(doubleQuote(value.toString()));
             }
-            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName) + ", \"enum\": [ " + sb.toString() + " ] }";
+            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName)
+                    + ", \"javaType\": \"" + parameterType.getCanonicalName() + "\""
+                    + ", \"enum\": [ " + sb.toString() + " ] }";
         } else if (parameterType.isArray()) {
             String typeName = "array";
-            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName) + " }";
+            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName)
+                    + ", \"javaType\": \"" + parameterType.getCanonicalName() + "\" }";
         } else {
             String typeName = JsonSchemaHelper.getType(parameterType);
-            if ("object".equals(typeName)) {
-                // for object then include the javaType as a description so we know that
-                return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName)
-                    + ", \"properties\": { \"javaType\": { \"description\": \"" + parameterType.getCanonicalName() + "\", \"type\": \"string\" } } }";
-            } else {
-                return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName) + " }";
-            }
+            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName)
+                    + ", \"javaType\": \"" + parameterType.getCanonicalName() + "\" }";
         }
     }
 }

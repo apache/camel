@@ -17,6 +17,8 @@
 package org.apache.camel.component.solr;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -49,7 +51,7 @@ public class SolrProducer extends DefaultProducer {
     private SolrServer getBestSolrServer(String operation) {
         if (this.cloudSolrServer != null) {
             return this.cloudSolrServer;
-        } else if (operation == SolrConstants.OPERATION_INSERT_STREAMING) {
+        } else if (SolrConstants.OPERATION_INSERT_STREAMING.equals(operation)) {
             return this.concSolrServer;
         } else {
             return this.httpServer;
@@ -77,6 +79,8 @@ public class SolrProducer extends DefaultProducer {
             serverToUse.deleteByQuery(exchange.getIn().getBody(String.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEAN)) {
             serverToUse.addBean(exchange.getIn().getBody());
+        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEANS)) {
+            serverToUse.addBeans(exchange.getIn().getBody(Collection.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_COMMIT)) {
             serverToUse.commit();
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ROLLBACK)) {
@@ -90,6 +94,7 @@ public class SolrProducer extends DefaultProducer {
 
     private void insert(Exchange exchange, SolrServer solrServer) throws Exception {
         Object body = exchange.getIn().getBody();
+        boolean invalid = false;
         if (body instanceof WrappedFile) {
             body = ((WrappedFile<?>)body).getFile();
         }
@@ -115,6 +120,18 @@ public class SolrProducer extends DefaultProducer {
             updateRequest.add((SolrInputDocument) body);
 
             updateRequest.process(solrServer);
+
+        } else if (body instanceof List<?>) {
+            List<?> list = (List<?>) body;
+
+            if (list.size() > 0 && list.get(0) instanceof SolrInputDocument) {
+                UpdateRequest updateRequest = new UpdateRequest(getRequestHandler());
+                updateRequest.add((List<SolrInputDocument>) list);
+
+                updateRequest.process(solrServer);
+            } else {
+                invalid = true;
+            }
 
         } else {
 
@@ -150,10 +167,14 @@ public class SolrProducer extends DefaultProducer {
 
                 DirectXmlRequest xmlRequest = new DirectXmlRequest(getRequestHandler(), bodyAsString);
 
-                solrServer.request(xmlRequest);                
+                solrServer.request(xmlRequest);
             } else {
-                throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "unable to find data in Exchange to update Solr");
+                invalid = true;
             }
+        }
+
+        if (invalid) {
+            throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "unable to find data in Exchange to update Solr");
         }
     }
 

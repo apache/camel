@@ -161,14 +161,35 @@ public interface EventFactory {
 
     /**
      * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has failed
-     * but was handled by the Camel error handlers such as an dead letter channel.
+     * but is being handled by the Camel error handlers such as an dead letter channel, or a doTry .. doCatch block.
+     * <p/>
+     * This event is triggered <b>before</b> sending the the failure handler, where as
+     * <tt>createExchangeFailureHandledEvent</tt> if the event <b>after</b>.
      *
      * @param exchange          the exchange
      * @param failureHandler    the failure handler such as moving the message to a dead letter queue
      * @param deadLetterChannel whether it was a dead letter channel or not handling the failure
+     * @param deadLetterUri     the dead letter uri, if its a dead letter channel
      * @return the created event
      */
-    EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel);
+    EventObject createExchangeFailureHandlingEvent(Exchange exchange, Processor failureHandler,
+                                                   boolean deadLetterChannel, String deadLetterUri);
+
+    /**
+     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has failed
+     * but was handled by the Camel error handlers such as an dead letter channel, or a doTry .. doCatch block.
+     * <p/>
+     * This event is triggered <b>after</b> the exchange was sent to failure handler, where as
+     * <tt>createExchangeFailureHandlingEvent</tt> if the event <b>before</b>.
+     *
+     * @param exchange          the exchange
+     * @param failureHandler    the failure handler such as moving the message to a dead letter queue
+     * @param deadLetterChannel whether it was a dead letter channel or not handling the failure
+     * @param deadLetterUri     the dead letter uri, if its a dead letter channel
+     * @return the created event
+     */
+    EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler,
+                                                  boolean deadLetterChannel, String deadLetterUri);
 
     /**
      * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} is about to be redelivered

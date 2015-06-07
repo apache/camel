@@ -18,11 +18,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
-
+       xmlns:httpj="http://cxf.apache.org/transports/http-jetty/configuration"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://cxf.apache.org/transports/http-jetty/configuration http://cxf.apache.org/schemas/configuration/http-jetty.xsd
+       
     ">
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
    <!-- Added the import for testing the CAMEL-329 -->
@@ -50,7 +52,14 @@
     		endpointName="s:SoapPort"
     		serviceName="s:SOAPService"
     	xmlns:s="http://apache.org/hello_world_soap_http" />
-
+    	
+   
+   <httpj:engine-factory>
+        <httpj:engine port="${CXFTestSupport.port1}">
+            <httpj:threadingParameters minThreads="20" maxThreads="20"/>
+        </httpj:engine>
+    </httpj:engine-factory>
+   
    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route errorHandlerRef="noErrorHandler">
       <from uri="cxf:bean:routerEndpoint" />

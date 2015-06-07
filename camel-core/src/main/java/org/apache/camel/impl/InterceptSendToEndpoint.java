@@ -132,8 +132,6 @@ public class InterceptSendToEndpoint implements Endpoint {
                     detour.process(exchange);
                 } catch (Exception e) {
                     exchange.setException(e);
-                    callback.done(true);
-                    return true;
                 }
 
                 // Decide whether to continue or not; similar logic to the Pipeline

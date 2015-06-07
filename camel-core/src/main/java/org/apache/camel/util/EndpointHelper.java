@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,8 +28,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -314,7 +318,7 @@ public final class EndpointHelper {
      *                                  <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
-        String valueNoHash = value.replaceAll("#", "");
+        String valueNoHash = StringHelper.replaceAll(value, "#", "");
         if (mandatory) {
             return CamelContextHelper.mandatoryLookup(context, valueNoHash, type);
         } else {
@@ -430,9 +434,15 @@ public final class EndpointHelper {
             return null;
         }
 
+        // it may be a delegate endpoint, which we need to match as well
+        Endpoint delegate = null;
+        if (endpoint instanceof DelegateEndpoint) {
+            delegate = ((DelegateEndpoint) endpoint).getEndpoint();
+        }
+
         Map<String, Endpoint> map = endpoint.getCamelContext().getRegistry().findByTypeWithName(Endpoint.class);
         for (Map.Entry<String, Endpoint> entry : map.entrySet()) {
-            if (entry.getValue().equals(endpoint)) {
+            if (entry.getValue().equals(endpoint) || entry.getValue().equals(delegate)) {
                 return entry.getKey();
             }
         }
@@ -479,5 +489,22 @@ public final class EndpointHelper {
         sb.append("\n</messages>");
         return sb.toString();
     }
-    
+
+    /**
+     * Attempts to resolve if the url has an <tt>exchangePattern</tt> option configured
+     *
+     * @param url the url
+     * @return the exchange pattern, or <tt>null</tt> if the url has no <tt>exchangePattern</tt> configured.
+     * @throws URISyntaxException is thrown if uri is invalid
+     */
+    public static ExchangePattern resolveExchangePatternFromUrl(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        String pattern = (String) parameters.get("exchangePattern");
+        if (pattern != null) {
+            return ExchangePattern.asEnum(pattern);
+        }
+        return null;
+    }
+
 }

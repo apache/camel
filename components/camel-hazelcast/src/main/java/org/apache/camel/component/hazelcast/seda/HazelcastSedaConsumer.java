@@ -87,7 +87,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 }
             }
             try {
-                final Object body = queue.poll(endpoint.getConfiguration().getPollInterval(), TimeUnit.MILLISECONDS);
+                final Object body = queue.poll(endpoint.getConfiguration().getPollTimeout(), TimeUnit.MILLISECONDS);
 
                 if (body != null) {
                     if (body instanceof DefaultExchangeHolder) {

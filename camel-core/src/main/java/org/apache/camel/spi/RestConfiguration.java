@@ -24,6 +24,11 @@ import java.util.Map;
  */
 public class RestConfiguration {
 
+    public static final String CORS_ACCESS_CONTROL_ALLOW_ORIGIN = "*";
+    public static final String CORS_ACCESS_CONTROL_ALLOW_METHODS = "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH";
+    public static final String CORS_ACCESS_CONTROL_MAX_AGE = "3600";
+    public static final String CORS_ACCESS_CONTROL_ALLOW_HEADERS = "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers";
+
     public enum RestBindingMode {
         auto, off, json, xml, json_xml
     }
@@ -39,12 +44,15 @@ public class RestConfiguration {
     private String contextPath;
     private RestHostNameResolver restHostNameResolver = RestHostNameResolver.localHostName;
     private RestBindingMode bindingMode = RestBindingMode.off;
+    private boolean skipBindingOnErrorCode = true;
+    private boolean enableCORS;
     private String jsonDataFormat;
     private String xmlDataFormat;
     private Map<String, Object> componentProperties;
     private Map<String, Object> endpointProperties;
     private Map<String, Object> consumerProperties;
     private Map<String, Object> dataFormatProperties;
+    private Map<String, String> corsHeaders;
 
     /**
      * Gets the name of the Camel component to use as the REST consumer
@@ -194,7 +202,53 @@ public class RestConfiguration {
     }
 
     /**
+     * Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     *
+     * @return whether to skip binding on error code
+     */
+    public boolean isSkipBindingOnErrorCode() {
+        return skipBindingOnErrorCode;
+    }
+
+    /**
+     * Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     *
+     * @param skipBindingOnErrorCode whether to skip binding on error code
+     */
+    public void setSkipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    /**
+     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response.
+     * <p/>
+     * This option is default <tt>false</tt>
+     *
+     * @return whether CORS is enabled or not
+     */
+    public boolean isEnableCORS() {
+        return enableCORS;
+    }
+
+    /**
+     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response.
+     * <p/>
+     * This option is default <tt>false</tt>
+     *
+     * @param enableCORS <tt>true</tt> to enable CORS
+     */
+    public void setEnableCORS(boolean enableCORS) {
+        this.enableCORS = enableCORS;
+    }
+
+    /**
      * Gets the name of the json data format.
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @return the name, or <tt>null</tt> to use default
      */
@@ -204,6 +258,8 @@ public class RestConfiguration {
 
     /**
      * Sets a custom json data format to be used
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @param name name of the data format
      */
@@ -213,6 +269,8 @@ public class RestConfiguration {
 
     /**
      * Gets the name of the xml data format.
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @return the name, or <tt>null</tt> to use default
      */
@@ -221,7 +279,9 @@ public class RestConfiguration {
     }
 
     /**
-     * Sets a custom xml data format to be used
+     * Sets a custom xml data format to be used.
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @param name name of the data format
      */
@@ -299,5 +359,23 @@ public class RestConfiguration {
      */
     public void setDataFormatProperties(Map<String, Object> dataFormatProperties) {
         this.dataFormatProperties = dataFormatProperties;
+    }
+
+    /**
+     * Gets the CORS headers to use if CORS has been enabled.
+     *
+     * @return the CORS headers
+     */
+    public Map<String, String> getCorsHeaders() {
+        return corsHeaders;
+    }
+
+    /**
+     * Sets the CORS headers to use if CORS has been enabled.
+     *
+     * @param corsHeaders the CORS headers
+     */
+    public void setCorsHeaders(Map<String, String> corsHeaders) {
+        this.corsHeaders = corsHeaders;
     }
 }

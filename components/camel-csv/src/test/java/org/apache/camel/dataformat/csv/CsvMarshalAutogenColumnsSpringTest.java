@@ -24,9 +24,7 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-
 import org.junit.Test;
-
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -50,10 +48,10 @@ public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
         result.assertIsSatisfied();
 
         String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        String[] lines = body.split("\n");
+        String[] lines = body.split(LS);
         assertEquals(2, lines.length);
-        assertEquals("Camel in Action", lines[0]);
-        assertEquals("ActiveMQ in Action", lines[1]);
+        assertEquals("Camel in Action", lines[0].trim());
+        assertEquals("ActiveMQ in Action", lines[1].trim());
     }
 
     @Test
@@ -65,10 +63,10 @@ public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
         result2.assertIsSatisfied();
 
         String body = result2.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        String[] lines = body.split("\n");
+        String[] lines = body.split(LS);
         assertEquals(2, lines.length);
-        assertEquals("123|1", lines[0]);
-        assertEquals("124|2", lines[1]);
+        assertEquals("123|1", lines[0].trim());
+        assertEquals("124|2", lines[1].trim());
     }
 
     private static List<Map<String, Object>> createBody() {

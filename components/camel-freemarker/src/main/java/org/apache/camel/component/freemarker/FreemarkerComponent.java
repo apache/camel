@@ -23,17 +23,21 @@ import freemarker.cache.NullCacheStorage;
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
 /**
  * Freemarker component.
  */
-public class FreemarkerComponent extends DefaultComponent {
+public class FreemarkerComponent extends UriEndpointComponent {
 
     private Configuration configuration;
     private Configuration noCacheConfiguration;
+
+    public FreemarkerComponent() {
+        super(FreemarkerEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // should we use regular configuration or no cache (content cache is default true)
@@ -67,7 +71,7 @@ public class FreemarkerComponent extends DefaultComponent {
 
     public synchronized Configuration getConfiguration() {
         if (configuration == null) {
-            configuration = new Configuration();
+            configuration = new Configuration(Configuration.VERSION_2_3_21);
             configuration.setTemplateLoader(new URLTemplateLoader() {
                 @Override
                 protected URL getURL(String name) {
@@ -84,6 +88,9 @@ public class FreemarkerComponent extends DefaultComponent {
         return (Configuration) configuration.clone();
     }
 
+    /**
+     * To use an existing {@link freemarker.template.Configuration} instance as the configuration.
+     */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }

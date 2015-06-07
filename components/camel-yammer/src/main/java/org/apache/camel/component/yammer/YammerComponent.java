@@ -43,6 +43,7 @@ public class YammerComponent extends DefaultComponent {
         endpointConfig.setConsumerSecret(consumerSecret);
         endpointConfig.setAccessToken(accessToken);
         endpointConfig.setFunction(remaining);
+        endpointConfig.setFunctionType(YammerFunctionType.fromUri(remaining));
         
         // and then override from parameters
         setProperties(endpointConfig, parameters);
@@ -56,6 +57,9 @@ public class YammerComponent extends DefaultComponent {
         return consumerKey;
     }
 
+    /**
+     * The consumer key
+     */
     public void setConsumerKey(String consumerKey) {
         this.consumerKey = consumerKey;
     }
@@ -64,6 +68,9 @@ public class YammerComponent extends DefaultComponent {
         return consumerSecret;
     }
 
+    /**
+     * The consumer secret
+     */
     public void setConsumerSecret(String consumerSecret) {
         this.consumerSecret = consumerSecret;
     }
@@ -72,6 +79,9 @@ public class YammerComponent extends DefaultComponent {
         return accessToken;
     }
 
+    /**
+     * The access token
+     */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
@@ -80,6 +90,9 @@ public class YammerComponent extends DefaultComponent {
         return config;
     }
 
+    /**
+     * To use a shared yammer configuration
+     */
     public void setConfig(YammerConfiguration config) {
         this.config = config;
     }

@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
@@ -32,6 +33,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  *
  * @see TokenizeLanguage
  */
+@Metadata(label = "language", title = "Tokenize")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerExpression extends ExpressionDefinition {
@@ -64,6 +66,9 @@ public class TokenizerExpression extends ExpressionDefinition {
         return token;
     }
 
+    /**
+     * The (start) token to use as tokenizer, for example \n for a new line token
+     */
     public void setToken(String token) {
         this.token = token;
     }
@@ -72,6 +77,9 @@ public class TokenizerExpression extends ExpressionDefinition {
         return endToken;
     }
 
+    /**
+     * The end token to use as tokenizer if using start/end token pairs.
+     */
     public void setEndToken(String endToken) {
         this.endToken = endToken;
     }
@@ -80,10 +88,18 @@ public class TokenizerExpression extends ExpressionDefinition {
         return headerName;
     }
 
+    /**
+     * Name of header to tokenize instead of using the message body.
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
 
+    /**
+     * If the token is a regular expression pattern.
+     * <p/>
+     * The default value is false
+     */
     public void setRegex(boolean regex) {
         this.regex = regex;
     }
@@ -96,6 +112,9 @@ public class TokenizerExpression extends ExpressionDefinition {
         return inheritNamespaceTagName;
     }
 
+    /**
+     * To inherit namepaces from a root/parent tag name
+     */
     public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
         this.inheritNamespaceTagName = inheritNamespaceTagName;
     }
@@ -104,6 +123,10 @@ public class TokenizerExpression extends ExpressionDefinition {
         return xml;
     }
 
+    /**
+     * Whether the input is XML messages.
+     * This option must be set to true if working with XML payloads.
+     */
     public void setXml(Boolean xml) {
         this.xml = xml;
     }
@@ -112,6 +135,11 @@ public class TokenizerExpression extends ExpressionDefinition {
         return includeTokens;
     }
 
+    /**
+     * Whether to include the tokens in the parts
+     * <p/>
+     * The default value is false
+     */
     public void setIncludeTokens(Boolean includeTokens) {
         this.includeTokens = includeTokens;
     }
@@ -120,6 +148,9 @@ public class TokenizerExpression extends ExpressionDefinition {
         return group;
     }
 
+    /**
+     * To group N parts together, for example to split big files into chunks of 1000 lines.
+     */
     public void setGroup(Integer group) {
         this.group = group;
     }

@@ -19,16 +19,13 @@ package org.apache.camel.component.bean;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.LRUSoftCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The <a href="http://camel.apache.org/bean.html">Bean Component</a>
- * will look up the URI in the {@link org.apache.camel.spi.Registry} and use that to handle message dispatching.
+ * The <a href="http://camel.apache.org/bean.html">Bean Component</a> is for invoking Java beans from Camel.
  *
  * @version 
  */
@@ -43,22 +40,8 @@ public class BeanComponent extends UriEndpointComponent {
         super(BeanEndpoint.class);
     }
     
-    /**
-     * A helper method to create a new endpoint from a bean with a generated URI
-     */
-    public ProcessorEndpoint createEndpoint(Object bean) {
-        // used by servicemix-camel
-        String uri = "bean:generated:" + bean;
-        return createEndpoint(bean, uri);
-    }
-
-    /**
-     * A helper method to create a new endpoint from a bean with a given URI
-     */
-    public ProcessorEndpoint createEndpoint(Object bean, String uri) {
-        // used by servicemix-camel
-        BeanProcessor processor = new BeanProcessor(bean, getCamelContext());
-        return createEndpoint(uri, processor);
+    public BeanComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
     }
 
     // Implementation methods
@@ -66,17 +49,12 @@ public class BeanComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanEndpoint endpoint = new BeanEndpoint(uri, this);
         endpoint.setBeanName(remaining);
-        Boolean cache = getAndRemoveParameter(parameters, "cache", Boolean.class, Boolean.FALSE);
-        endpoint.setCache(cache);
-        Processor processor = endpoint.getProcessor();
-        setProperties(processor, parameters);
+        setProperties(endpoint, parameters);
+        // any remaining parameters are parameters for the bean
+        endpoint.setParameters(parameters);
         return endpoint;
     }
     
-    protected BeanEndpoint createEndpoint(String uri, BeanProcessor processor) {
-        return new BeanEndpoint(uri, this, processor);
-    }
-
     BeanInfo getBeanInfoFromCache(BeanInfoCacheKey key) {
         return cache.get(key);
     }

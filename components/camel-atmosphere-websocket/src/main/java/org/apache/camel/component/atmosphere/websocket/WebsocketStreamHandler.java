@@ -31,19 +31,19 @@ public class WebsocketStreamHandler extends WebsocketHandler implements WebSocke
 
     @Override
     public List<AtmosphereRequest> onTextStream(WebSocket webSocket, Reader data) {
-        LOG.info("processing reader message {}", data);
+        LOG.debug("processing reader message {}", data);
         String connectionKey = store.getConnectionKey(webSocket);
         consumer.sendMessage(connectionKey, data);
-        LOG.info("reader message sent");
+        LOG.debug("reader message sent");
         return null;
     }
 
     @Override
     public List<AtmosphereRequest> onBinaryStream(WebSocket webSocket, InputStream data) {
-        LOG.info("processing inputstream message {}", data);
+        LOG.debug("processing inputstream message {}", data);
         String connectionKey = store.getConnectionKey(webSocket);
         consumer.sendMessage(connectionKey, data);
-        LOG.info("reader message sent");
+        LOG.debug("reader message sent");
         return null;
     }
 }

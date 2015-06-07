@@ -21,23 +21,33 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.seda.QueueReference;
 import org.apache.camel.component.seda.SedaComponent;
-import org.apache.camel.component.seda.SedaEndpoint;
 
 /**
- * An implementation of the <a href="http://camel.apache.org/vm.html">VM components</a>
- * for asynchronous SEDA exchanges on a {@link BlockingQueue} within the classloader tree containing
- * the camel-core.jar. i.e. to handle communicating across CamelContext instances and possibly across
- * web application contexts, providing that camel-core.jar is on the system classpath.
+ * The <a href="http://camel.apache.org/vm.html">VM component</a> is for asynchronous SEDA exchanges on a {@link BlockingQueue} 
+ * within the classloader tree containing the camel-core.jar.
  *
- * @version 
+ * i.e. to handle communicating across CamelContext instances and possibly across web application contexts, providing that camel-core.jar is on the system classpath.
+ * 
+ * @version
  */
 public class VmComponent extends SedaComponent {
     protected static final Map<String, QueueReference> QUEUES = new HashMap<String, QueueReference>();
-    protected static final Map<String, SedaEndpoint> ENDPOINTS = new HashMap<String, SedaEndpoint>();
+    protected static final Map<String, VmEndpoint> ENDPOINTS = new HashMap<String, VmEndpoint>();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
+
+    public VmComponent() {
+        super(VmEndpoint.class);
+    }
+
+    public VmComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
+    }
 
     @Override
     public Map<String, QueueReference> getQueues() {
@@ -71,9 +81,19 @@ public class VmComponent extends SedaComponent {
             return ENDPOINTS.get(uri);
         }
 
-        SedaEndpoint answer = (SedaEndpoint) super.createEndpoint(uri, remaining, parameters);
+        VmEndpoint answer = (VmEndpoint) super.createEndpoint(uri, remaining, parameters);
 
         ENDPOINTS.put(uri, answer);
         return answer;
+    }
+
+    @Override
+    protected VmEndpoint createEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+        return new VmEndpoint(endpointUri, component, queueFactory, concurrentConsumers);
+    }
+
+    @Override
+    protected VmEndpoint createEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
+        return new VmEndpoint(endpointUri, component, queue, concurrentConsumers);
     }
 }

@@ -18,11 +18,11 @@ package org.apache.camel.component.cmis;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
@@ -39,17 +39,28 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriParams
 public class CMISSessionFacade {
     private static final Logger LOG = LoggerFactory.getLogger(CMISSessionFacade.class);
+
+    private transient Session session;
+
+    @UriPath(description = "URL to CMIS server")
     private final String url;
+    @UriParam(defaultValue = "100")
     private int pageSize = 100;
+    @UriParam
     private int readCount;
+    @UriParam
     private boolean readContent;
+    @UriParam
     private String username;
+    @UriParam
     private String password;
+    @UriParam
     private String repositoryId;
+    @UriParam(label = "consumer")
     private String query;
-    private Session session;
 
     public CMISSessionFacade(String url) {
         this.url = url;
@@ -176,7 +187,7 @@ public class CMISSessionFacade {
     }
 
     public boolean isObjectTypeVersionable(String objectType) {
-        if (CamelCMISConstants.CMIS_DOCUMENT.equals(objectType)) {
+        if (CamelCMISConstants.CMIS_DOCUMENT.equals(getCMISTypeFor(objectType))) {
             ObjectType typeDefinition = session.getTypeDefinition(objectType);
             return ((DocumentType)typeDefinition).isVersionable();
         }
@@ -187,35 +198,66 @@ public class CMISSessionFacade {
         return buf != null ? session.getObjectFactory()
                 .createContentStream(fileName, buf.length, mimeType, new ByteArrayInputStream(buf)) : null;
     }
-    
+
+    public String getCMISTypeFor(String customOrCMISType) {
+        ObjectType objectBaseType = session.getTypeDefinition(customOrCMISType).getBaseType();
+        return objectBaseType == null ? customOrCMISType : objectBaseType.getId();
+    }
+
+    public Set<String> getPropertiesFor(String objectType) {
+        return session.getTypeDefinition(objectType).getPropertyDefinitions().keySet();
+    }
+
     public OperationContext createOperationContext() {
         return session.createOperationContext();
     }
 
+    /**
+     * Username for the cmis repository
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Password for the cmis repository
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * The Id of the repository to use. If not specified the first available repository is used
+     */
     public void setRepositoryId(String repositoryId) {
         this.repositoryId = repositoryId;
     }
 
+    /**
+     * If set to true, the content of document node will be retrieved in addition to the properties
+     */
     public void setReadContent(boolean readContent) {
         this.readContent = readContent;
     }
 
+    /**
+     * Max number of nodes to read
+     */
     public void setReadCount(int readCount) {
         this.readCount = readCount;
     }
 
+    /**
+     * The cmis query to execute against the repository.
+     * If not specified, the consumer will retrieve every node from the content repository by iterating the content tree recursively
+     */
     public void setQuery(String query) {
         this.query = query;
     }
 
+    /**
+     * Number of nodes to retrieve per page
+     */
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }

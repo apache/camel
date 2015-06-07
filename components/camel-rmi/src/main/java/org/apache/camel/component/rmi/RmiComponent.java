@@ -21,20 +21,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * @version 
  */
-public class RmiComponent extends DefaultComponent {
+public class RmiComponent extends UriEndpointComponent {
 
     public RmiComponent() {
-    }
-
-    public RmiComponent(CamelContext context) {
-        super(context);
+        super(RmiEndpoint.class);
     }
 
     @Override

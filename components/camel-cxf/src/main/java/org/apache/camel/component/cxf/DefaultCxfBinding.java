@@ -735,10 +735,15 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     protected static void addNamespace(Element element, Map<String, String> nsMap) {
         for (String ns : nsMap.keySet()) {
+            // We should not override the namespace setting of the element
             if (XMLConstants.XMLNS_ATTRIBUTE.equals(ns)) {
-                element.setAttribute(ns, nsMap.get(ns));
+                if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE))) {
+                    element.setAttribute(ns, nsMap.get(ns));
+                }
             } else {
-                element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+                if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns))) {
+                    element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+                }
             }
         }
                      
@@ -746,14 +751,20 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     protected static List<Source> getPayloadBodyElements(Message message, Map<String, String> nsMap) {
         // take the namespace attribute from soap envelop
-        Document soapEnv = (Document) message.getContent(Node.class);
-        if (soapEnv != null) {
-            NamedNodeMap attrs = soapEnv.getFirstChild().getAttributes();
-            for (int i = 0; i < attrs.getLength(); i++) {
-                Node node = attrs.item(i);
-                if (!node.getNodeValue().equals(Soap11.SOAP_NAMESPACE)
-                      && !node.getNodeValue().equals(Soap12.SOAP_NAMESPACE)) {
-                    nsMap.put(node.getLocalName(), node.getNodeValue());
+        Map<String, String> bodyNC = CastUtils.cast((Map<?, ?>)message.get("soap.body.ns.context"));
+        if (bodyNC != null) {
+            // if there is no Node and the addNamespaceContext option is enabled, this map is available
+            nsMap.putAll(bodyNC);
+        } else {
+            Document soapEnv = (Document) message.getContent(Node.class);
+            if (soapEnv != null) {
+                NamedNodeMap attrs = soapEnv.getFirstChild().getAttributes();
+                for (int i = 0; i < attrs.getLength(); i++) {
+                    Node node = attrs.item(i);
+                    if (!node.getNodeValue().equals(Soap11.SOAP_NAMESPACE)
+                        && !node.getNodeValue().equals(Soap12.SOAP_NAMESPACE)) {
+                        nsMap.put(node.getLocalName(), node.getNodeValue());
+                    }
                 }
             }
         }

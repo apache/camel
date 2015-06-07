@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -38,13 +40,21 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
     private Consumer consumer;
     private ScheduledExecutorService scheduledExecutorService;
     private boolean shutdownExecutor;
-    private volatile ScheduledFuture<?> future;
+    private volatile List<ScheduledFuture<?>> futures = new ArrayList<ScheduledFuture<?>>();
     private Runnable task;
+    private int concurrentTasks = 1;
 
     private long initialDelay = 1000;
     private long delay = 500;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay = true;
+
+    public DefaultScheduledPollConsumerScheduler() {
+    }
+
+    public DefaultScheduledPollConsumerScheduler(ScheduledExecutorService scheduledExecutorService) {
+        this.scheduledExecutorService = scheduledExecutorService;
+    }
 
     public CamelContext getCamelContext() {
         return camelContext;
@@ -94,6 +104,14 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
         this.scheduledExecutorService = scheduledExecutorService;
     }
 
+    public int getConcurrentTasks() {
+        return concurrentTasks;
+    }
+
+    public void setConcurrentTasks(int concurrentTasks) {
+        this.concurrentTasks = concurrentTasks;
+    }
+
     @Override
     public void onInit(Consumer consumer) {
         this.consumer = consumer;
@@ -106,34 +124,41 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
 
     @Override
     public void unscheduleTask() {
-        if (future != null) {
-            future.cancel(false);
+        if (isSchedulerStarted()) {
+            for (ScheduledFuture<?> future : futures) {
+                future.cancel(true);
+            }
+            futures.clear();
         }
     }
 
     @Override
     public void startScheduler() {
         // only schedule task if we have not already done that
-        if (future == null) {
+        if (futures.size() == 0) {
             if (isUseFixedDelay()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
                             new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), consumer.getEndpoint()});
                 }
-                future = scheduledExecutorService.scheduleWithFixedDelay(task, getInitialDelay(), getDelay(), getTimeUnit());
+                for (int i = 0; i < concurrentTasks; i++) {
+                    futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, getInitialDelay(), getDelay(), getTimeUnit()));
+                }
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
                             new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), consumer.getEndpoint()});
                 }
-                future = scheduledExecutorService.scheduleAtFixedRate(task, getInitialDelay(), getDelay(), getTimeUnit());
+                for (int i = 0; i < concurrentTasks; i++) {
+                    futures.add(scheduledExecutorService.scheduleAtFixedRate(task, getInitialDelay(), getDelay(), getTimeUnit()));
+                }
             }
         }
     }
 
     @Override
     public boolean isSchedulerStarted() {
-        return future != null;
+        return futures != null && futures.size() > 0;
     }
 
     @Override
@@ -146,7 +171,7 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
         if (scheduledExecutorService == null) {
             // we only need one thread in the pool to schedule this task
             this.scheduledExecutorService = getCamelContext().getExecutorServiceManager()
-                    .newSingleThreadScheduledExecutor(consumer, consumer.getEndpoint().getEndpointUri());
+                    .newScheduledThreadPool(consumer, consumer.getEndpoint().getEndpointUri(), concurrentTasks);
             // and we should shutdown the thread pool when no longer needed
             this.shutdownExecutor = true;
         }
@@ -154,19 +179,19 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
 
     @Override
     protected void doStop() throws Exception {
-        if (future != null) {
-            LOG.debug("This consumer is stopping, so cancelling scheduled task: " + future);
-            future.cancel(false);
-            future = null;
+        if (isSchedulerStarted()) {
+            LOG.debug("This consumer is stopping, so cancelling scheduled task: " + futures);
+            for (ScheduledFuture<?> future : futures) {
+                future.cancel(true);
+            }
+            futures.clear();
         }
-    }
 
-    @Override
-    protected void doShutdown() throws Exception {
         if (shutdownExecutor && scheduledExecutorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutorService);
             scheduledExecutorService = null;
-            future = null;
+            futures.clear();
         }
     }
+
 }

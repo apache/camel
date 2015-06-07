@@ -35,13 +35,13 @@ public class CamelSWFActivityClient {
         activity.setName(eventName);
         activity.setVersion(version);
 
-        Promise[] promises = asPromiseArray(input);
+        Promise<?>[] promises = asPromiseArray(input);
         Promise<?> promise = dynamicActivitiesClient.scheduleActivity(activity, promises, configuration.getActivitySchedulingOptions(), Object.class, null);
         return promise;
     }
 
-    protected Promise[] asPromiseArray(Object input) {
-        Promise[] promises;
+    protected Promise<?>[] asPromiseArray(Object input) {
+        Promise<?>[] promises;
         if (input instanceof Object[]) {
             Object[] inputArray = (Object[])input;
             promises = new Promise[inputArray.length];
@@ -51,7 +51,7 @@ public class CamelSWFActivityClient {
         } else {
             promises = new Promise[1];
             if (input instanceof Promise) {
-                promises[0] = (Promise) input;
+                promises[0] = (Promise<?>) input;
             } else {
                 promises[0] = Promise.asPromise(input);
             }
@@ -60,7 +60,7 @@ public class CamelSWFActivityClient {
     }
 
     DynamicActivitiesClient getDynamicActivitiesClient() {
-        return new DynamicActivitiesClientImpl();
+        return new DynamicActivitiesClientImpl(null, configuration.getDataConverter());
     }
 
 }

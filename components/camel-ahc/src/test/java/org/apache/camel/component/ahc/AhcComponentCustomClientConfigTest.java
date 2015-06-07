@@ -30,7 +30,7 @@ public class AhcComponentCustomClientConfigTest extends BaseAhcTest {
         CamelContext context = super.createCamelContext();
 
         AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-        AsyncHttpClientConfig config = builder.setFollowRedirects(true).setMaxRequestRetry(3).build();
+        AsyncHttpClientConfig config = builder.setFollowRedirect(true).setMaxRequestRetry(3).build();
 
         AhcComponent ahc = context.getComponent("ahc", AhcComponent.class);
         ahc.setClientConfig(config);

@@ -20,16 +20,26 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import com.openshift.client.ApplicationScale;
 import com.openshift.client.IApplication;
 import com.openshift.client.IDomain;
+import com.openshift.client.IEnvironmentVariable;
 import com.openshift.client.IGear;
 import com.openshift.client.IGearGroup;
+import com.openshift.client.IGearProfile;
+import com.openshift.client.OpenShiftException;
+import com.openshift.client.cartridge.IDeployedStandaloneCartridge;
+import com.openshift.client.cartridge.IEmbeddableCartridge;
 import com.openshift.client.cartridge.IEmbeddedCartridge;
+import com.openshift.client.cartridge.query.LatestEmbeddableCartridge;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 public class OpenShiftProducer extends DefaultProducer {
 
@@ -67,6 +77,63 @@ public class OpenShiftProducer extends DefaultProducer {
         case state:
             doState(exchange, domain);
             break;
+        case getStandaloneCartridge:
+            doGetStandaloneCartridge(exchange, domain);
+            break;
+        case getEmbeddedCartridges:
+            doGetEmbeddedCartridges(exchange, domain);
+            break;
+        case getGitUrl:
+            doGetGitUrl(exchange, domain);
+            break;
+        case addEmbeddedCartridge:
+            doAddEmbeddedCartridge(exchange, domain);
+            break;
+        case removeEmbeddedCartridge:
+            doRemoveEmbeddedCartridge(exchange, domain);
+            break;
+        case scaleUp:
+            doScaleUp(exchange, domain);
+            break;
+        case scaleDown:
+            doScaleDown(exchange, domain);
+            break;
+        case getDeploymentType:
+            doGetDeploymentType(exchange, domain);
+            break;
+        case setDeploymentType:
+            doSetDeploymentType(exchange, domain);
+            break;
+        case addEnvironmentVariable:
+            doAddEnvironmentVariable(exchange, domain);
+            break;
+        case addMultipleEnvironmentVariables:
+            doAddMultipleEnvironmentVariables(exchange, domain);
+            break;
+        case updateEnvironmentVariable:
+            doUpdateEnvironmentVariable(exchange, domain);
+            break;
+        case getAllEnvironmentVariables:
+            doGetAllEnvironmentVariables(exchange, domain);
+            break;
+        case getEnvironmentVariableValue:
+            doGetEnvironmentVariableValue(exchange, domain);
+            break;
+        case removeEnvironmentVariable:
+            doRemoveEnvironmentVariable(exchange, domain);
+            break;
+        case getGearProfile:
+            doGetGearProfile(exchange, domain);
+            break;
+        case addAlias:
+            doAddAlias(exchange, domain);
+            break;
+        case removeAlias:
+            doRemoveAlias(exchange, domain);
+            break;
+        case getAliases:
+            doGetAliases(exchange, domain);
+            break; 
         case list:
         default:
             // and do list by default
@@ -140,7 +207,7 @@ public class OpenShiftProducer extends DefaultProducer {
                     sb.append("\n        {");
                     sb.append("\n         \"id\": \"" + gear.getId() + "\",");
                     sb.append("\n         \"sshUrl\": \"" + gear.getSshUrl() + "\",");
-                    sb.append("\n         \"state\": \"" + gear.getState().name().toLowerCase(Locale.ENGLISH) + "\"");
+                    sb.append("\n         \"state\": \"" + gear.getState().getState().toLowerCase(Locale.ENGLISH) + "\"");
                     sb.append("\n        }");
                 }
             }
@@ -213,5 +280,378 @@ public class OpenShiftProducer extends DefaultProducer {
             exchange.getIn().setBody(state);
         }
     }
+    
+    protected void doGetStandaloneCartridge(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
 
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            IDeployedStandaloneCartridge p = app.getCartridge();
+            exchange.getIn().setBody(p.getDisplayName());
+        }
+    }
+
+    protected void doGetEmbeddedCartridges(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            List<IEmbeddedCartridge> p = app.getEmbeddedCartridges();
+            exchange.getIn().setBody(p);
+        }
+    }
+    
+    protected void doAddEmbeddedCartridge(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String embeddedCartridgeName = exchange.getIn().getHeader(OpenShiftConstants.EMBEDDED_CARTRIDGE_NAME, getEndpoint().getApplication(), String.class);
+            if (ObjectHelper.isNotEmpty(embeddedCartridgeName)) {
+                IEmbeddedCartridge p = app.addEmbeddableCartridge((new LatestEmbeddableCartridge(embeddedCartridgeName)).get(app));
+                exchange.getIn().setBody(p.getDisplayName());
+            } else {
+                throw new CamelExchangeException("Cartridge not specified", exchange);
+            }
+        }
+    }
+    
+    protected void doRemoveEmbeddedCartridge(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String embeddedCartridgeName = exchange.getIn().getHeader(OpenShiftConstants.EMBEDDED_CARTRIDGE_NAME, getEndpoint().getApplication(), String.class);
+            if (ObjectHelper.isNotEmpty(embeddedCartridgeName)) {
+                IEmbeddableCartridge removingCartridge = (new LatestEmbeddableCartridge(embeddedCartridgeName)).get(app);
+                for (IEmbeddedCartridge cartridge : app.getEmbeddedCartridges()) {
+                    if (cartridge.equals(removingCartridge)) {
+                        cartridge.destroy();
+                        exchange.getIn().setBody(cartridge.getDisplayName());
+                    }
+                }
+            } else {
+                throw new CamelExchangeException("Cartridge not specified", exchange);
+            }
+        }
+    }
+    
+    protected void doScaleUp(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            try {
+                app.scaleUp();
+                ApplicationScale result = app.getApplicationScale();
+                exchange.getIn().setBody(result.getValue());
+            } catch (OpenShiftException e) {
+                throw new CamelExchangeException("Application with id " + name + " is not scalable", exchange);
+            }
+        }
+    }
+    
+    protected void doScaleDown(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            ApplicationScale scale = app.getApplicationScale();
+            if (scale.getValue().equals(ApplicationScale.NO_SCALE.getValue())) {
+                log.info("Scaling on application with id " + name + " is not enabled");
+            } else {
+                app.scaleDown();
+                ApplicationScale result = app.getApplicationScale();
+                exchange.getIn().setBody(result.getValue());
+            }
+        }
+    }
+    
+    protected void doGetGitUrl(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String gitUrl = app.getGitUrl();
+            exchange.getIn().setBody(gitUrl);
+        }
+    }
+    
+    protected void doGetDeploymentType(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String deploymentType = app.getDeploymentType();
+            exchange.getIn().setBody(deploymentType);
+        }
+    }
+    
+    protected void doSetDeploymentType(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String deploymentType = exchange.getIn().getHeader(OpenShiftConstants.DEPLOYMENT_TYPE, getEndpoint().getApplication(), String.class);
+            if (ObjectHelper.isNotEmpty(deploymentType)) {
+                String result = app.setDeploymentType(deploymentType);
+                exchange.getIn().setBody(result);
+            } else {
+                throw new CamelExchangeException("Deployment Type not specified", exchange);
+            }
+        }
+    }
+    
+    protected void doAddEnvironmentVariable(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String variableName = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_NAME, getEndpoint().getApplication(), String.class);
+            String variableValue = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_VALUE, getEndpoint().getApplication(), String.class);
+            if (!app.canUpdateEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't update Environment Variables", exchange);
+            }
+            if (ObjectHelper.isNotEmpty(variableName) && ObjectHelper.isNotEmpty(variableValue)) {
+                IEnvironmentVariable result = app.addEnvironmentVariable(variableName, variableValue);
+                exchange.getIn().setBody(result.getName());
+            } else {
+                throw new CamelExchangeException("Environment variable not correctly specified", exchange);
+            }
+        }
+    }
+    
+    protected void doAddMultipleEnvironmentVariables(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            Map environmentVariables = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_MAP, getEndpoint().getApplication(), Map.class);
+            if (!app.canUpdateEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't update Environment Variables", exchange);
+            }
+            if (ObjectHelper.isNotEmpty(environmentVariables)) {
+                Map<String, IEnvironmentVariable> result = app.addEnvironmentVariables(environmentVariables);
+                exchange.getIn().setBody(result);
+            } else {
+                throw new CamelExchangeException("Environment variables not correctly specified", exchange);
+            }
+        }
+    }
+    
+    protected void doUpdateEnvironmentVariable(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String variableName = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_NAME, getEndpoint().getApplication(), String.class);
+            String variableValue = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_VALUE, getEndpoint().getApplication(), String.class);
+            if (!app.canUpdateEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't update Environment Variables", exchange);
+            }
+            if (ObjectHelper.isNotEmpty(variableName) && ObjectHelper.isNotEmpty(variableValue)) {
+                IEnvironmentVariable result = app.updateEnvironmentVariable(variableName, variableValue);
+                exchange.getIn().setBody(result.getName());
+            } else {
+                throw new CamelExchangeException("Environment variable not correctly specified", exchange);
+            }
+        }
+    }
+    
+    protected void doGetEnvironmentVariableValue(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String variableName = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_NAME, getEndpoint().getApplication(), String.class);
+            if (!app.canGetEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't get Environment Variables", exchange);
+            }
+            if (ObjectHelper.isNotEmpty(variableName)) {
+                IEnvironmentVariable result = app.getEnvironmentVariable(variableName);
+                exchange.getIn().setBody(result.getValue());
+            } else {
+                throw new CamelExchangeException("Environment variable name not specified", exchange);
+            }
+        }
+    }
+    
+    protected void doGetAllEnvironmentVariables(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            Map<String, IEnvironmentVariable> result = app.getEnvironmentVariables();
+            exchange.getIn().setBody(result);
+        }
+    }
+    
+    protected void doRemoveEnvironmentVariable(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String variableName = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_NAME, getEndpoint().getApplication(), String.class);
+            if (!app.canGetEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't get Environment Variables", exchange);
+            }
+            if (ObjectHelper.isNotEmpty(variableName)) {
+                app.removeEnvironmentVariable(variableName);
+                exchange.getIn().setBody(variableName);
+            } else {
+                throw new CamelExchangeException("Environment variable name not specified", exchange);
+            }
+        }
+    }
+    
+    protected void doGetGearProfile(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            IGearProfile result = app.getGearProfile();
+            exchange.getIn().setBody(result.getName());
+        }
+    }
+    
+    protected void doAddAlias(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String alias = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION_ALIAS, getEndpoint().getApplication(), String.class);
+            if (!app.canGetEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't get Environment Variables", exchange);
+            }
+            if (ObjectHelper.isNotEmpty(alias)) {
+                app.addAlias(alias);
+                exchange.getIn().setBody(alias);
+            } else {
+                throw new CamelExchangeException("Application Alias name not specified", exchange);
+            }
+        }
+    }
+    
+    protected void doRemoveAlias(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String alias = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION_ALIAS, getEndpoint().getApplication(), String.class);
+            if (!app.canGetEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't get Environment Variables", exchange);
+            }
+            if (ObjectHelper.isNotEmpty(alias)) {
+                app.removeAlias(alias);
+                exchange.getIn().setBody(alias);
+            } else {
+                throw new CamelExchangeException("Application Alias not specified", exchange);
+            }
+        }
+    }
+    
+    protected void doGetAliases(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            List<String> aliases = app.getAliases();
+            exchange.getIn().setBody(aliases);
+        }
+    }
 }

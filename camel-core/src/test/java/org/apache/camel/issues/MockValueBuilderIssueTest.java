@@ -25,7 +25,7 @@ public class MockValueBuilderIssueTest extends ContextTestSupport {
     public void testMockValueBuilder() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).property("foo").convertTo(String.class).contains("2");
+        mock.message(0).exchangeProperty("foo").convertTo(String.class).contains("2");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -35,7 +35,7 @@ public class MockValueBuilderIssueTest extends ContextTestSupport {
     public void testMockValueBuilderFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).property("foo").convertTo(String.class).contains("4");
+        mock.message(0).exchangeProperty("foo").convertTo(String.class).contains("4");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -43,7 +43,7 @@ public class MockValueBuilderIssueTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should fail");
         } catch (Throwable e) {
-            assertEquals("Assertion error at index 0 on mock mock://result with predicate: property(foo) contains 4"
+            assertEquals("Assertion error at index 0 on mock mock://result with predicate: exchangeProperty(foo) contains 4"
                     + " evaluated as: 123 contains 4 on Exchange[Message: Hello World]", e.getMessage());
         }
     }
@@ -51,7 +51,7 @@ public class MockValueBuilderIssueTest extends ContextTestSupport {
     public void testMockValueBuilderNotSatisfied() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).property("foo").convertTo(String.class).contains("4");
+        mock.message(0).exchangeProperty("foo").convertTo(String.class).contains("4");
 
         template.sendBody("direct:start", "Hello World");
 

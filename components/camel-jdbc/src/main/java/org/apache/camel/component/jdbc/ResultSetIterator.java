@@ -43,10 +43,10 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
     private final Column[] columns;
     private final AtomicBoolean closed = new AtomicBoolean();
 
-    public ResultSetIterator(ResultSet resultSet, boolean isJDBC4) throws SQLException {
+    public ResultSetIterator(Connection conn, ResultSet resultSet, boolean isJDBC4) throws SQLException {
         this.resultSet = resultSet;
         this.statement = this.resultSet.getStatement();
-        this.connection = this.statement.getConnection();
+        this.connection = conn;
 
         ResultSetMetaData metaData = resultSet.getMetaData();
         columns = new Column[metaData.getColumnCount()];

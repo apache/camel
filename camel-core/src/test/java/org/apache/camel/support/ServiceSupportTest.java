@@ -49,6 +49,26 @@ public class ServiceSupportTest extends TestSupport {
         assertEquals(false, service.isStarting());
     }
 
+    public void testServiceSupportIsRunAllowed() throws Exception {
+        MyService service = new MyService();
+        assertEquals(false, service.isRunAllowed());
+
+        service.start();
+        assertEquals(true, service.isRunAllowed());
+
+        // we are allowed to run while suspending/suspended
+        service.suspend();
+        assertEquals(true, service.isRunAllowed());
+        service.resume();
+        assertEquals(true, service.isRunAllowed());
+
+        // but if we are stopped then we are not
+        service.stop();
+        assertEquals(false, service.isRunAllowed());
+        service.shutdown();
+        assertEquals(false, service.isRunAllowed());
+    }
+
     private static class MyShutdownService extends ServiceSupport {
 
         private boolean shutdown;

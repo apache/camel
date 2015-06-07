@@ -24,15 +24,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
-@UriEndpoint(scheme = "servlet", consumerClass = ServletConsumer.class)
+@UriEndpoint(scheme = "servlet", title = "Servlet", syntax = "servlet:servletName", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
 public class ServletEndpoint extends HttpEndpoint {
 
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String servletName;
 
     public ServletEndpoint() {
@@ -43,6 +44,9 @@ public class ServletEndpoint extends HttpEndpoint {
         super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
     }
 
+    /**
+     * Name of the servlet to use
+     */
     public void setServletName(String name) {
         servletName = name;
     }

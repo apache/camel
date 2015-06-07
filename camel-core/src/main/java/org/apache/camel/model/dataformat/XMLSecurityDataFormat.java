@@ -18,7 +18,6 @@ package org.apache.camel.model.dataformat;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,19 +27,21 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
- * Represents as XML Security Encrypter/Decrypter {@link DataFormat}
+ * xml-security data format
  */
+@Metadata(label = "dataformat,transformation", title = "XML Security")
 @XmlRootElement(name = "secureXML")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {
 
     private static final String TRIPLEDES = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "TRIPLEDES")
     private String xmlCipherAlgorithm;
     @XmlAttribute
     private String passPhrase;
@@ -48,36 +49,40 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private String secureTag;
     @XmlAttribute
     private Boolean secureTagContents;
-    @XmlAttribute
+    @XmlAttribute  @Metadata(defaultValue = "RSA_OAEP")
     private String keyCipherAlgorithm;
     @XmlAttribute
     private String recipientKeyAlias;
     @XmlAttribute
+    // TODO: rename to keyOrTrustStoreParametersRef
     private String keyOrTrustStoreParametersId;
     @XmlAttribute
     private String keyPassword;
-    @XmlAttribute
+    @XmlAttribute  @Metadata(defaultValue = "SHA1")
     private String digestAlgorithm;
-    @XmlAttribute
+    @XmlAttribute  @Metadata(defaultValue = "MGF1_SHA1")
     private String mgfAlgorithm;
-
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean addKeyValueForEncryptedKey;
     @XmlTransient
     private KeyStoreParameters keyOrTrustStoreParameters;
-    
     @XmlTransient
     private Map<String, String> namespaces;
-    
-    
+
     public XMLSecurityDataFormat() {
         super("secureXML");
     }
 
+    // all the parameter constructors is deprecated as people should use getter/setter to configure
+
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents) {
         this();
         this.setSecureTag(secureTag);
         this.setSecureTagContents(secureTagContents);
     }
-    
+
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents) {
         this();
         this.setSecureTag(secureTag);
@@ -85,24 +90,28 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setNamespaces(namespaces);
     }
 
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String passPhrase) {
         this(secureTag, secureTagContents);
         this.setPassPhrase(passPhrase);
     }
-    
-    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, 
+
+    @Deprecated
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents,
                                  String passPhrase) {
         this(secureTag, secureTagContents);
         this.setPassPhrase(passPhrase);
         this.setNamespaces(namespaces);
     }
-    
+
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String passPhrase,
                                  String xmlCipherAlgorithm) {
         this(secureTag, secureTagContents, passPhrase);
         this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
     }
-    
+
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String passPhrase,
                                  String xmlCipherAlgorithm) {
         this(secureTag, secureTagContents, passPhrase);
@@ -123,6 +132,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setKeyCipherAlgorithm(keyCipherAlgorithm);
     }
 
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
                                  String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
         this(secureTag, secureTagContents);
@@ -131,7 +141,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setKeyCipherAlgorithm(keyCipherAlgorithm);
         this.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
     }
-    
+
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
         this(secureTag, secureTagContents);
@@ -141,6 +152,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
     }
 
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId, String keyPassword) {
         this(secureTag, secureTagContents);
@@ -151,6 +163,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setKeyPassword(keyPassword);
     }
 
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
         String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
         this(secureTag, secureTagContents);
@@ -174,7 +187,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setKeyCipherAlgorithm(keyCipherAlgorithm);
         this.setNamespaces(namespaces);
     }
-    
+
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
         this(secureTag, secureTagContents);
@@ -185,6 +199,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
     }
 
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
         this(secureTag, secureTagContents);
@@ -194,7 +209,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setNamespaces(namespaces);
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
     }
-    
+
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId, String keyPassword) {
         this(secureTag, secureTagContents);
@@ -206,6 +222,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setKeyPassword(keyPassword);
     }
 
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
         this(secureTag, secureTagContents);
@@ -216,7 +233,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
         this.setKeyPassword(keyPassword);
     }
-    
+
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
              String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword,
              String digestAlgorithm) {
@@ -238,7 +256,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
             setProperty(camelContext, dataFormat, "secureTag", "");
         }
 
-        setProperty(camelContext, dataFormat, "secureTagContents", isSecureTagContents());
+        boolean isSecureTagContents = getSecureTagContents() != null && getSecureTagContents();
+        setProperty(camelContext, dataFormat, "secureTagContents", isSecureTagContents);
 
         if (passPhrase != null) {
             setProperty(camelContext, dataFormat, "passPhrase", getPassPhrase().getBytes());
@@ -274,12 +293,32 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         if (mgfAlgorithm != null) {
             setProperty(camelContext, dataFormat, "mgfAlgorithm", this.getMgfAlgorithm());
         }
+        // should be true by default
+        boolean isAddKeyValueForEncryptedKey = getAddKeyValueForEncryptedKey() == null || getAddKeyValueForEncryptedKey();
+        setProperty(camelContext, dataFormat, "addKeyValueForEncryptedKey", isAddKeyValueForEncryptedKey);
     }
 
     public String getXmlCipherAlgorithm() {
         return xmlCipherAlgorithm;
     }
 
+    /**
+     * The cipher algorithm to be used for encryption/decryption of the XML message content. The available choices are:
+     * <ul>
+     *     <li>XMLCipher.TRIPLEDES</li>
+     *     <li>XMLCipher.AES_128</li>
+     *     <li>XMLCipher.AES_128_GCM</li>
+     *     <li>XMLCipher.AES_192</li>
+     *     <li>XMLCipher.AES_192_GCM</li>
+     *     <li>XMLCipher.AES_256</li>
+     *     <li>XMLCipher.AES_256_GCM</li>
+     *     <li>XMLCipher.SEED_128</li>
+     *     <li>XMLCipher.CAMELLIA_128</li>
+     *     <li>XMLCipher.CAMELLIA_192</li>
+     *     <li>XMLCipher.CAMELLIA_256</li>
+     * </ul>
+     * The default value is MLCipher.TRIPLEDES
+     */
     public void setXmlCipherAlgorithm(String xmlCipherAlgorithm) {
         this.xmlCipherAlgorithm = xmlCipherAlgorithm;
     }
@@ -288,6 +327,12 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return passPhrase;
     }
 
+    /**
+     * A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided.
+     * If no passPhrase is specified, a default passPhrase is used.
+     * The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm.
+     * For example using TRIPLEDES the passPhase can be a "Only another 24 Byte key"
+     */
     public void setPassPhrase(String passPhrase) {
         this.passPhrase = passPhrase;
     }
@@ -296,6 +341,9 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return secureTag;
     }
 
+    /**
+     * The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire payload is encrypted/decrypted.
+     */
     public void setSecureTag(String secureTag) {
         this.secureTag = secureTag;
     }
@@ -304,14 +352,24 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return secureTagContents;
     }
 
+    /**
+     * A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element
+     * false = Element Level
+     * true = Element Content Level
+     */
     public void setSecureTagContents(Boolean secureTagContents) {
         this.secureTagContents = secureTagContents;
     }
 
-    public boolean isSecureTagContents() {
-        return secureTagContents != null && secureTagContents;
-    }
-
+    /**
+     * The cipher algorithm to be used for encryption/decryption of the asymmetric key. The available choices are:
+     * <ul>
+     *     <li>XMLCipher.RSA_v1dot5</li>
+     *     <li>XMLCipher.RSA_OAEP</li>
+     *     <li>XMLCipher.RSA_OAEP_11</li>
+     * </ul>
+     * The default value is XMLCipher.RSA_OAEP
+     */
     public void setKeyCipherAlgorithm(String keyCipherAlgorithm) {
         this.keyCipherAlgorithm = keyCipherAlgorithm;
     }
@@ -320,6 +378,9 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return keyCipherAlgorithm;
     }
 
+    /**
+     * The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.
+     */
     public void setRecipientKeyAlias(String recipientKeyAlias) {
         this.recipientKeyAlias = recipientKeyAlias;
     }
@@ -327,7 +388,11 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     public String getRecipientKeyAlias() {
         return recipientKeyAlias;
     }
-    
+
+    /**
+     * Refers to a KeyStore instance to lookup in the registry, which is used for
+     * configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.
+     */
     public void setKeyOrTrustStoreParametersId(String id) {
         this.keyOrTrustStoreParametersId = id;
     }
@@ -335,7 +400,14 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     public String getKeyOrTrustStoreParametersId() {
         return this.keyOrTrustStoreParametersId;
     }
-    
+
+    public KeyStoreParameters getKeyOrTrustStoreParameters() {
+        return keyOrTrustStoreParameters;
+    }
+
+    /**
+     * Configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.
+     */
     private void setKeyOrTrustStoreParameters(KeyStoreParameters keyOrTrustStoreParameters) {
         this.keyOrTrustStoreParameters = keyOrTrustStoreParameters;
     }
@@ -344,6 +416,9 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return this.keyPassword;
     }
 
+    /**
+     * The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.
+     */
     public void setKeyPassword(String keyPassword) {
         this.keyPassword = keyPassword;
     }
@@ -352,6 +427,15 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return digestAlgorithm;
     }
 
+    /**
+     * The digest algorithm to use with the RSA OAEP algorithm. The available choices are:
+     * <ul>
+     *     <li>XMLCipher.SHA1</li>
+     *     <li>XMLCipher.SHA256</li>
+     *     <li>XMLCipher.SHA512</li>
+     * </ul>
+     * The default value is XMLCipher.SHA1
+     */
     public void setDigestAlgorithm(String digestAlgorithm) {
         this.digestAlgorithm = digestAlgorithm;
     }
@@ -360,8 +444,28 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return mgfAlgorithm;
     }
 
+    /**
+     * The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are:
+     * <ul>
+     *     <li>EncryptionConstants.MGF1_SHA1</li>
+     *     <li>EncryptionConstants.MGF1_SHA256</li>
+     *     <li>EncryptionConstants.MGF1_SHA512</li>
+     * </ul>
+     * The default value is EncryptionConstants.MGF1_SHA1
+     */
     public void setMgfAlgorithm(String mgfAlgorithm) {
         this.mgfAlgorithm = mgfAlgorithm;
+    }
+
+    public Boolean getAddKeyValueForEncryptedKey() {
+        return addKeyValueForEncryptedKey;
+    }
+
+    /**
+     * Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.
+     */
+    public void setAddKeyValueForEncryptedKey(Boolean addKeyValueForEncryptedKey) {
+        this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
     }
 
     @Override

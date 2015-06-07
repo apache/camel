@@ -36,7 +36,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
@@ -60,6 +59,7 @@ import org.bouncycastle.openpgp.PGPSignatureGenerator;
 import org.bouncycastle.openpgp.PGPSignatureList;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketGenerator;
 import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
@@ -158,13 +158,20 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private boolean armored; // for encryption
     private boolean integrity = true; // for encryption
 
-    private int hashAlgorithm = HashAlgorithmTags.SHA1; // for encryption
+    private int hashAlgorithm = HashAlgorithmTags.SHA1; // for signature
 
     private int algorithm = SymmetricKeyAlgorithmTags.CAST5; // for encryption
 
     private int compressionAlgorithm = CompressionAlgorithmTags.ZIP; // for encryption
 
     private String signatureVerificationOption = "optional";
+
+    /*
+     * The default value "_CONSOLE" marks the file as For Your Eyes Only... may
+     * cause problems for the receiver if they use an automated process to
+     * decrypt as the filename is appended with _CONSOLE
+     */
+    private String fileName = PGPLiteralData.CONSOLE;
 
     public PGPKeyAccessDataFormat() {
     }
@@ -199,6 +206,10 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return exchange.getIn().getHeader(SIGNATURE_HASH_ALGORITHM, getHashAlgorithm(), Integer.class);
     }
 
+    protected String findFileName(Exchange exchange) {
+        return exchange.getIn().getHeader(Exchange.FILE_NAME, getFileName(), String.class);
+    }
+
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         List<String> userids = determineEncryptionUserIds(exchange);
         List<PGPPublicKey> keys = publicKeyAccessor.getEncryptionKeys(exchange, userids);
@@ -228,12 +239,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         List<PGPSignatureGenerator> sigGens = createSignatureGenerator(exchange, comOut);
 
         PGPLiteralDataGenerator litData = new PGPLiteralDataGenerator();
-        String fileName = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-        if (ObjectHelper.isEmpty(fileName)) {
-            // This marks the file as For Your Eyes Only... may cause problems for the receiver if they use
-            // an automated process to decrypt as the filename is appended with _CONSOLE
-            fileName = PGPLiteralData.CONSOLE;
-        }
+        String fileName = findFileName(exchange);
         OutputStream litOut = litData.open(comOut, PGPLiteralData.BINARY, fileName, new Date(), new byte[BUFFER_SIZE]);
 
         try {
@@ -356,7 +362,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             in = PGPUtil.getDecoderStream(encryptedStream);
             encData = getDecryptedData(exchange, in);
             uncompressedData = getUncompressedData(encData);
-            PGPObjectFactory pgpFactory = new PGPObjectFactory(uncompressedData);
+            PGPObjectFactory pgpFactory = new PGPObjectFactory(uncompressedData, new BcKeyFingerprintCalculator());
             Object object = pgpFactory.nextObject();
 
             PGPOnePassSignature signature;
@@ -413,7 +419,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     private InputStream getUncompressedData(InputStream encData) throws IOException, PGPException {
-        PGPObjectFactory pgpFactory = new PGPObjectFactory(encData);
+        PGPObjectFactory pgpFactory = new PGPObjectFactory(encData, new BcKeyFingerprintCalculator());
         Object compObj = pgpFactory.nextObject();
         if (!(compObj instanceof PGPCompressedData)) {
             throw getFormatException();
@@ -424,7 +430,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     private InputStream getDecryptedData(Exchange exchange, InputStream encryptedStream) throws Exception, PGPException {
-        PGPObjectFactory pgpFactory = new PGPObjectFactory(encryptedStream);
+        PGPObjectFactory pgpFactory = new PGPObjectFactory(encryptedStream, new BcKeyFingerprintCalculator());
         Object firstObject = pgpFactory.nextObject();
         // the first object might be a PGP marker packet 
         PGPEncryptedDataList enc = getEcryptedDataList(pgpFactory, firstObject);
@@ -723,6 +729,36 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         } else {
             throw new IllegalArgumentException(signatureVerificationOption + " is not a valid signature verification option");
         }
+    }
+
+    /**
+     * Returns the file name for the literal packet. Cannot be <code>null</code>
+     * .
+     * 
+     */
+    public String getFileName() {
+        return fileName;
+    }
+
+    /**
+     * Sets the file name for the literal data packet. Can be overwritten by the
+     * header {@link Exchange#FILE_NAME}. The default value is "_CONSOLE".
+     * "_CONSOLE" indicates that the message is considered to be
+     * "for your eyes only". This advises that the message data is unusually
+     * sensitive, and the receiving program should process it more carefully,
+     * perhaps avoiding storing the received data to disk, for example.
+     * <p>
+     * Only used for marshaling.
+     * 
+     * @param fileName
+     * @throws IllegalArgumentException
+     *             if <tt>fileName</tt> is <code>null</code>
+     */
+    public void setFileName(String fileName) {
+        if (fileName == null) {
+            throw new IllegalArgumentException("Parameter 'fileName' is null");
+        }
+        this.fileName = fileName;
     }
 
     @Override

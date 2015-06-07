@@ -25,31 +25,44 @@ import org.apache.camel.component.xmlsecurity.api.DefaultXmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
 import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker;
+import org.apache.camel.spi.UriParam;
 
 public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
 
+    @UriParam
     private KeySelector keySelector;
 
+    @UriParam
     private String keySelectorName;
 
+    @UriParam
     private XmlSignatureChecker xmlSignatureChecker;
 
+    @UriParam
     private String xmlSignatureCheckerName;
 
+    @UriParam
     private XmlSignature2Message xmlSignature2Message = new DefaultXmlSignature2Message();
 
+    @UriParam
     private String xmlSignature2MessageName;
 
+    @UriParam
     private ValidationFailedHandler validationFailedHandler = new DefaultValidationFailedHandler();
 
+    @UriParam
     private String validationFailedHandlerName;
 
+    @UriParam
     private Object outputNodeSearch;
 
+    @UriParam(defaultValue = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT)
     private String outputNodeSearchType = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT;
 
+    @UriParam(defaultValue = "false")
     private Boolean removeSignatureElements = Boolean.FALSE;
-    
+
+    @UriParam(defaultValue = "true")
     private Boolean secureValidation = Boolean.TRUE;
 
     public XmlVerifierConfiguration() {
@@ -192,7 +205,7 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
     /**
      * Determines the search type for determining the output node which is
      * serialized into the output message bodyF. See
-     * {@link #setOutputNodeSearch(String)}. The supported default search types
+     * {@link #setOutputNodeSearch(Object)}. The supported default search types
      * you can find in {@link DefaultXmlSignature2Message}.
      * 
      * @param outputNodeSearchType

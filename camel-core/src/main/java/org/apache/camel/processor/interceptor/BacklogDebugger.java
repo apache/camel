@@ -353,6 +353,14 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
+    public long getFallbackTimeout() {
+        return fallbackTimeout;
+    }
+
+    public void setFallbackTimeout(long fallbackTimeout) {
+        this.fallbackTimeout = fallbackTimeout;
+    }
+
     public void removeMessageHeaderOnBreakpoint(String nodeId, String headerName) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
@@ -413,6 +421,17 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
 
     public Set<String> getSuspendedBreakpointNodeIds() {
         return new LinkedHashSet<String>(suspendedBreakpoints.keySet());
+    }
+
+    /**
+     * Gets the exchanged suspended at the given breakpoint id or null if there is none at that id.
+     *
+     * @param id - node id for the breakpoint
+     * @return The suspended exchange or null if there isn't one suspended at the given breakpoint.
+     */
+    public Exchange getSuspendedExchange(String id) {
+        SuspendedExchange suspendedExchange = suspendedBreakpoints.get(id);
+        return suspendedExchange != null ? suspendedExchange.getExchange() : null;
     }
 
     public void disableBreakpoint(String nodeId) {

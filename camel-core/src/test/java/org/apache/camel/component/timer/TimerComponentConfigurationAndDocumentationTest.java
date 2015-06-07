@@ -41,15 +41,16 @@ public class TimerComponentConfigurationAndDocumentationTest extends ContextTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timerName\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"delay\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"timerName\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\""
+                + ", \"deprecated\": \"false\", \"description\": \"The name of the timer\" }"));
+        assertTrue(json.contains("\"delay\": { \"kind\": \"parameter\", \"type\": \"integer\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("timer");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -79,6 +79,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         defaultProfile.setKeepAliveTime(60L);
         defaultProfile.setTimeUnit(TimeUnit.SECONDS);
         defaultProfile.setMaxQueueSize(1000);
+        defaultProfile.setAllowCoreThreadTimeOut(false);
         defaultProfile.setRejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns);
 
         registerThreadPoolProfile(defaultProfile);
@@ -200,7 +201,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         ThreadPoolProfile profile = new ThreadPoolProfile(name);
         profile.setPoolSize(poolSize);
         profile.setMaxPoolSize(maxPoolSize);
-        return  newThreadPool(source, name, profile);
+        return newThreadPool(source, name, profile);
     }
 
     @Override

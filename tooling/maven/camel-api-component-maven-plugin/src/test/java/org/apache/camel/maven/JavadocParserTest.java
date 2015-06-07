@@ -28,9 +28,9 @@ import org.junit.Test;
  */
 public class JavadocParserTest extends Assert {
 
-    private static final String JAVA6_STRING = "http://docs.oracle.com/javase/6/docs/api/java/lang/String.html";
-    private static final String JAVA7_STRING = "http://docs.oracle.com/javase/7/docs/api/java/lang/String.html";
-    private static final String JAVA8_STRING = "http://docs.oracle.com/javase/8/docs/api/java/lang/String.html";
+    private static final String JAVA6_STRING = "https://docs.oracle.com/javase/6/docs/api/java/lang/String.html";
+    private static final String JAVA7_STRING = "https://docs.oracle.com/javase/7/docs/api/java/lang/String.html";
+    private static final String JAVA8_STRING = "https://docs.oracle.com/javase/8/docs/api/java/lang/String.html";
 
     @Test
     public void testGetMethods() throws Exception {

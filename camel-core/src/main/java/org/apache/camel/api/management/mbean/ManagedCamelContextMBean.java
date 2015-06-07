@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import javax.management.openmbean.TabularData;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -80,7 +81,11 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Tracing")
     void setTracing(Boolean tracing);
 
+    /**
+     * @deprecated use {@link #getExchangesInflight()}
+     */
     @ManagedAttribute(description = "Current number of inflight Exchanges")
+    @Deprecated
     Integer getInflightExchanges();
 
     @ManagedAttribute(description = "Total number of routes")
@@ -179,8 +184,11 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Adds or updates existing routes from XML")
     void addOrUpdateRoutesFromXml(String xml, boolean urlDecode) throws Exception;
 
-    @ManagedOperation(description = "Dumps the routes stats as XML")
+    @ManagedOperation(description = "Dumps the CamelContext and routes stats as XML")
     String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes coverage as XML")
+    String dumpRoutesCoverageAsXml() throws Exception;
 
     /**
      * Creates the endpoint by the given uri
@@ -213,6 +221,24 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     Map<String, Properties> findComponents() throws Exception;
 
     /**
+     * Find information about all the EIPs from camel-core.
+     *
+     * @return a map with node id, and value with EIP details.
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Find all Camel EIPs from camel-core")
+    Map<String, Properties> findEips() throws Exception;
+
+    /**
+     * Find the names of all the EIPs from camel-core.
+     *
+     * @return a list with the names of the camel EIPs
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Find all Camel EIP names from camel-core")
+    List<String> findEipNames() throws Exception;
+
+    /**
      * Find the names of all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
      *
      * @return a list with the names of the camel components
@@ -221,15 +247,87 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Find all Camel components names available in the classpath")
     List<String> findComponentNames() throws Exception;
 
+    /**
+     * Find information about all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
+     *
+     * @return a list with the data
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "List all Camel components available in the classpath")
+    TabularData listComponents() throws Exception;
 
     /**
-     * Returns the JSON schema representation of the endpoint parameters for the given component name
+     * Find information about all the EIPs from camel-core.
+     *
+     * @return a list with the data
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "List all Camel EIPs from camel-core")
+    TabularData listEips() throws Exception;
+
+    /**
+     * Returns the JSON schema representation with information about the component and the endpoint parameters it supports
      *
      * @param componentName the name of the component to lookup
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the endpoint parameters for the given component name")
     String componentParameterJsonSchema(String componentName) throws Exception;
+
+    /**
+     * Returns the JSON schema representation with information about the data format and the parameters it supports
+     *
+     * @param dataFormatName the name of the data format to lookup
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Returns the JSON schema representation of the data format parameters for the given data format name")
+    String dataFormatParameterJsonSchema(String dataFormatName) throws Exception;
+
+    /**
+     * Returns the JSON schema representation with information about the language and the parameters it supports
+     *
+     * @param languageName the name of the language to lookup
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Returns the JSON schema representation of the language parameters for the given language name")
+    String languageParameterJsonSchema(String languageName) throws Exception;
+
+    /**
+     * Returns the JSON schema representation with information about the EIP and the parameters it supports
+     *
+     * @param eipName the name of the EIP to lookup
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Returns the JSON schema representation of the EIP parameters for the given EIP name")
+    String eipParameterJsonSchema(String eipName) throws Exception;
+
+    /**
+     * Returns a JSON schema representation of the EIP parameters for the given EIP by its id.
+     *
+     * @param nameOrId the name of the EIP ({@link org.apache.camel.NamedNode#getShortName()} or a node id to refer to a specific node from the routes.
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json or <tt>null</tt> if the eipName or the id was not found
+     */
+    @ManagedOperation(description = "Returns a JSON schema representation of the EIP parameters for the given EIP by its id")
+    String explainEipJson(String nameOrId, boolean includeAllOptions);
+
+    /**
+     * Returns a JSON schema representation of the component parameters (not endpoint parameters) for the given component by its id.
+     *
+     * @param componentName the id of the component
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     */
+    @ManagedOperation(description = " Returns a JSON schema representation of the component parameters for the given component by its id")
+    String explainComponentJson(String componentName, boolean includeAllOptions) throws Exception;
+
+    /**
+     * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri
+     *
+     * @param uri the endpoint uri
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     */
+    @ManagedOperation(description = " Returns a JSON schema representation of the endpoint parameters for the given endpoint uri")
+    String explainEndpointJson(String uri, boolean includeAllOptions) throws Exception;
 
     /**
      * Resets all the performance counters.
@@ -239,7 +337,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeRoutes) throws Exception;
-
 
     /**
      * Helper method for tooling which returns the completion list of the endpoint path

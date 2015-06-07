@@ -22,13 +22,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -42,40 +46,46 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "http", consumerClass = HttpConsumer.class)
-public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilterStrategyAware {
+@UriEndpoint(scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri", producerOnly = true, label = "http")
+public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    private HttpBinding binding;
+
     private HttpComponent component;
-    private URI httpUri;
     private HttpClientParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager;
+    private UrlRewrite urlRewrite;
+
+    @UriPath @Metadata(required = "true", label = "producer")
+    private URI httpUri;
+    @UriParam
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    @UriParam
+    private HttpBinding binding;
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean bridgeEndpoint;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean chunked = true;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean disableStreamCache;
-    @UriParam
+    @UriParam(label = "producer")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "producer")
     private int proxyPort;
-    @UriParam
+    @UriParam(label = "producer", enums = "Basic,Digest,NTLM")
     private String authMethodPriority;
     @UriParam
     private boolean transferException;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean traceEnabled;
-    @UriParam
+    @UriParam(label = "consumer")
     private String httpMethodRestrict;
-    private UrlRewrite urlRewrite;
-    @UriParam
+    @UriParam(label = "consumer")
     private Integer responseBufferSize;
 
     public HttpEndpoint() {
@@ -106,6 +116,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public Producer createProducer() throws Exception {
         return new HttpProducer(this);
+    }
+
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        throw new UnsupportedOperationException("Cannot consume from http endpoint");
     }
 
     public PollingConsumer createPollingConsumer() throws Exception {
@@ -216,11 +231,17 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public HttpBinding getBinding() {
         if (binding == null) {
-            binding = new DefaultHttpBinding(this);
+            // create a new binding and use the options from this endpoint
+            binding = new DefaultHttpBinding();
+            binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            binding.setTransferException(isTransferException());
         }
         return binding;
     }
 
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+     */
     public void setBinding(HttpBinding binding) {
         this.binding = binding;
     }
@@ -249,6 +270,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return httpUri;
     }
 
+    /**
+     * The url of the HTTP endpoint to call.
+     */
     public void setHttpUri(URI httpUri) {
         this.httpUri = httpUri;
     }
@@ -257,6 +281,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return httpConnectionManager;
     }
 
+    /**
+     * To use a custom HttpConnectionManager to manage connections
+     */
     public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
         this.httpConnectionManager = httpConnectionManager;
     }
@@ -265,6 +292,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -273,6 +303,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return throwExceptionOnFailure;
     }
 
+    /**
+     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
+     * This allows you to get all responses regardless of the HTTP status code.
+     */
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
@@ -280,7 +314,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public boolean isBridgeEndpoint() {
         return bridgeEndpoint;
     }
-    
+
+    /**
+     * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request.
+     * You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
+     */
     public void setBridgeEndpoint(boolean bridge) {
         this.bridgeEndpoint = bridge;
     }
@@ -288,7 +326,12 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public boolean isMatchOnUriPrefix() {
         return matchOnUriPrefix;
     }
-    
+
+    /**
+     * Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
+     * <p/>
+     * See more details at: http://camel.apache.org/how-do-i-let-jetty-match-wildcards.html
+     */
     public void setMatchOnUriPrefix(boolean match) {
         this.matchOnUriPrefix = match;
     }
@@ -296,7 +339,18 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public boolean isDisableStreamCache() {
         return this.disableStreamCache;
     }
-    
+
+    /**
+     * Determines whether or not the raw input stream from Jetty is cached or not
+     * (Camel will read the stream into a in memory/overflow to file, Stream caching) cache.
+     * By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel
+     * can retrieve all data from the stream. However you can set this option to true when you for example need
+     * to access the raw stream, such as streaming it directly to a file or other persistent store.
+     * DefaultHttpBinding will copy the request input stream into a stream cache and put it into message bod
+     * if this option is false to support reading the stream multiple times.
+     * If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,
+     * in case you do not need to read the message payload multiple times.
+     */
     public void setDisableStreamCache(boolean disable) {
         this.disableStreamCache = disable;
     }
@@ -304,7 +358,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public boolean isChunked() {
         return this.chunked;
     }
-    
+
+    /**
+     * If this option is false Jetty servlet will disable the HTTP streaming and set the content-length header on the response
+     */
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
     }
@@ -313,6 +370,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return proxyHost;
     }
 
+    /**
+     * The proxy host name
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -321,6 +381,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return proxyPort;
     }
 
+    /**
+     * The proxy port number
+     */
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
     }
@@ -329,6 +392,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return authMethodPriority;
     }
 
+    /**
+     * Authentication method for proxy, either as Basic, Digest or NTLM.
+     */
     public void setAuthMethodPriority(String authMethodPriority) {
         this.authMethodPriority = authMethodPriority;
     }
@@ -337,6 +403,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return transferException;
     }
 
+    /**
+     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
+     * This allows you to get all responses regardless of the HTTP status code.
+     */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
@@ -345,6 +415,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return this.traceEnabled;
     }
 
+    /**
+     * Specifies whether to enable HTTP TRACE for this Jetty consumer. By default TRACE is turned off.
+     */
     public void setTraceEnabled(boolean traceEnabled) {
         this.traceEnabled = traceEnabled;
     }
@@ -353,6 +426,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return httpMethodRestrict;
     }
 
+    /**
+     * Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc.
+     * Multiple methods can be specified separated by comma.
+     */
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
     }
@@ -361,6 +438,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return urlRewrite;
     }
 
+    /**
+     * Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints.
+     * See more details at http://camel.apache.org/urlrewrite.html
+     */
     public void setUrlRewrite(UrlRewrite urlRewrite) {
         this.urlRewrite = urlRewrite;
     }
@@ -369,6 +450,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return responseBufferSize;
     }
 
+    /**
+     * To use a custom buffer size on the javax.servlet.ServletResponse.
+     */
     public void setResponseBufferSize(Integer responseBufferSize) {
         this.responseBufferSize = responseBufferSize;
     }

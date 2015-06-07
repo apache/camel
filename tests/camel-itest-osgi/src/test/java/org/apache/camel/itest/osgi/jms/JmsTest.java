@@ -22,8 +22,11 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
+import org.ops4j.pax.exam.options.UrlReference;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 @RunWith(PaxExam.class)
@@ -32,6 +35,16 @@ public class JmsTest extends OSGiIntegrationSpringTestSupport {
     @Override
     protected OsgiBundleXmlApplicationContext createApplicationContext() {
         return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/jms/CamelContext.xml"});
+    }
+
+    public static UrlReference getActiveMQKarafFeatureUrl(String version) {
+        String type = "xml/features";
+        MavenArtifactProvisionOption mavenOption = mavenBundle().groupId("org.apache.activemq").artifactId("activemq-karaf");
+        if (version == null) {
+            return mavenOption.versionAsInProject().type(type);
+        } else {
+            return mavenOption.version(version).type(type);
+        }
     }
 
     @Test
@@ -49,7 +62,7 @@ public class JmsTest extends OSGiIntegrationSpringTestSupport {
             getDefaultCamelKarafOptions(),
                 
             // using the features to install AMQ
-            scanFeatures("mvn:org.apache.activemq/activemq-karaf/5.6.0/xml/features", "activemq"),
+            scanFeatures(getActiveMQKarafFeatureUrl("5.10.1"), "activemq"),
 
             // using the features to install the camel components
             loadCamelFeatures("camel-jms"));

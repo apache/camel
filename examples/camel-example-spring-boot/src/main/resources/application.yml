@@ -1,0 +1,1 @@
+spring.main.sources: org.apache.camel.example.spring.boot.MySpringBootRouter

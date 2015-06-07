@@ -32,6 +32,7 @@ public interface SmppConstants {
     String DEST_ADDR_NPI = "CamelSmppDestAddrNpi";
     String DEST_ADDR_TON = "CamelSmppDestAddrTon";
     String DONE_DATE = "CamelSmppDoneDate";
+    String ENCODING = "CamelSmppEncoding";
     String ERROR = "CamelSmppError";
     String ESME_ADDR = "CamelSmppEsmeAddr";
     String ESME_ADDR_NPI = "CamelSmppEsmeAddrNpi";
@@ -59,6 +60,7 @@ public interface SmppConstants {
     String VALIDITY_PERIOD = "CamelSmppValidityPeriod";
     String OPTIONAL_PARAMETERS = "CamelSmppOptionalParameters";
     String OPTIONAL_PARAMETER = "CamelSmppOptionalParameter";
+    String SPLITTING_POLICY = "CamelSmppSplittingPolicy";
 
     String UCS2_ENCODING = "UTF-16BE";
     byte UNKNOWN_ALPHABET = -1;

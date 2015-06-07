@@ -39,6 +39,9 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Properties;
 
@@ -56,6 +59,7 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public final class IOConverter {
+
     private static final Logger LOG = LoggerFactory.getLogger(IOConverter.class);
 
     /**
@@ -77,17 +81,30 @@ public final class IOConverter {
     public static InputStream toInputStream(File file, String charset) throws IOException {
         if (charset != null) {
             final BufferedReader reader = toReader(file, charset);
+            final Charset defaultStreamCharset = Charset.defaultCharset();
             return new InputStream() {
+                private ByteBuffer bufferBytes;
+                private CharBuffer bufferedChars = CharBuffer.allocate(4096);
+
                 @Override
                 public int read() throws IOException {
-                    return reader.read();
+                    if (bufferBytes == null || bufferBytes.remaining() <= 0) {
+                        bufferedChars.clear();
+                        int len = reader.read(bufferedChars);
+                        bufferedChars.flip();
+                        if (len == -1) {
+                            return -1;
+                        }
+                        bufferBytes = defaultStreamCharset.encode(bufferedChars);
+                    }
+                    return bufferBytes.get();
                 }
-                
+
                 @Override
                 public void close() throws IOException {
                     reader.close();
                 }
-                
+
                 @Override
                 public void reset() throws IOException {
                     reader.reset();
@@ -292,10 +309,6 @@ public final class IOConverter {
 
     @Converter
     public static String toString(BufferedReader reader) throws IOException {
-        if (reader == null) {
-            return null;
-        }
-
         StringBuilder sb = new StringBuilder(1024);
         char[] buf = new char[1024];
         try {
@@ -335,7 +348,7 @@ public final class IOConverter {
 
     @Converter
     public static byte[] toByteArray(String value, Exchange exchange) throws IOException {
-        return value != null ? value.getBytes(IOHelper.getCharsetName(exchange)) : null;
+        return value.getBytes(IOHelper.getCharsetName(exchange));
     }
 
     /**

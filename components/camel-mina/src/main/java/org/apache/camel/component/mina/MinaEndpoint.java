@@ -27,6 +27,8 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoAcceptorConfig;
@@ -39,6 +41,7 @@ import org.apache.mina.common.IoSession;
  *
  * @version 
  */
+@UriEndpoint(scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port", consumerClass = MinaConsumer.class, label = "networking,tcp,udp")
 public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     /** The key of the IoSession which is stored in the message header*/
@@ -56,6 +59,7 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private IoConnector connector;
     private IoAcceptorConfig acceptorConfig;
     private IoConnectorConfig connectorConfig;
+    @UriParam
     private MinaConfiguration configuration;
     private final List<ExecutorService> executors = new ArrayList<ExecutorService>();
 

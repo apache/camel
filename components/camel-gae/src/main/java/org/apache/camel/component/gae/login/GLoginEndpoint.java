@@ -22,19 +22,21 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Represents a <a href="http://camel.apache.org/glogin.html">GLogin
  * Endpoint</a>.
  */
-@UriEndpoint(scheme = "glogin")
+@UriEndpoint(scheme = "glogin", title = "Google Login", syntax = "glogin:hostName", producerOnly = true, label = "cloud")
 public class GLoginEndpoint extends DefaultEndpoint {
 
     private OutboundBinding<GLoginEndpoint, GLoginData, GLoginData> outboundBinding;
 
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String hostName;
     @UriParam
     private String clientName;

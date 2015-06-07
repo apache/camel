@@ -27,15 +27,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateSyncProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;process/&gt; element
+ * Calls a Camel processor.
  *
  * @version 
  */
+@Metadata(label = "eip,endpoint")
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
@@ -52,15 +54,14 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "process";
-    }
-
-    @Override
     public String toString() {
-        return "process["
-                + ((ref != null) ? "ref:" + ref : processor)
-                + "]";
+        if (ref != null) {
+            return "process[ref:" + ref + "]";
+        } else {
+            // do not invoke toString on the processor as we do not know what it would do
+            String id = ObjectHelper.getIdentityHashCode(processor);
+            return "process[Processor@" + id + "]";
+        }
     }
 
     @Override
@@ -68,7 +69,9 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
         if (ref != null) {
             return "ref:" + ref;
         } else if (processor != null) {
-            return processor.toString();
+            // do not invoke toString on the processor as we do not know what it would do
+            String id = ObjectHelper.getIdentityHashCode(processor);
+            return "Processor@" + id;
         } else {
             return "";
         }
@@ -78,6 +81,9 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
         return ref;
     }
 
+    /**
+     * Reference to the {@link Processor} to lookup in the registry to use.
+     */
     @Required
     public void setRef(String ref) {
         this.ref = ref;

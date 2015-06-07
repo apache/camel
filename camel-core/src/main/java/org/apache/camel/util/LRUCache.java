@@ -39,12 +39,13 @@ import org.slf4j.LoggerFactory;
 public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serializable {
     private static final long serialVersionUID = -342098639681884414L;
     private static final Logger LOG = LoggerFactory.getLogger(LRUCache.class);
-    
+
+    protected final AtomicLong hits = new AtomicLong();
+    protected final AtomicLong misses = new AtomicLong();
+    protected final AtomicLong evicted = new AtomicLong();
+
     private int maxCacheSize = 10000;
     private boolean stopOnEviction;
-    private final AtomicLong hits = new AtomicLong();
-    private final AtomicLong misses = new AtomicLong();
-    private final AtomicLong evicted = new AtomicLong();
     private ConcurrentLinkedHashMap<K, V> map;
 
     /**

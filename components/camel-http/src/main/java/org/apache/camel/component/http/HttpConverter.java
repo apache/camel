@@ -19,7 +19,6 @@ package org.apache.camel.component.http;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,11 +84,16 @@ public final class HttpConverter {
         if (request == null) {
             return null;
         }
+        InputStream is = request.getInputStream();
+        if (is != null && is.available() <= 0) {
+            // there is no data, so we cannot uncompress etc.
+            return is;
+        }
         if (exchange == null || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             String contentEncoding = request.getHeader(Exchange.CONTENT_ENCODING);
-            return GZIPHelper.uncompressGzip(contentEncoding, request.getInputStream());
+            return GZIPHelper.uncompressGzip(contentEncoding, is);
         } else {
-            return request.getInputStream();
+            return is;
         }
     }
 

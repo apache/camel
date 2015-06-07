@@ -23,28 +23,28 @@ import kafka.message.MessageAndMetadata;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
-/**
- *
- */
-public class KafkaEndpoint extends DefaultEndpoint {
+@UriEndpoint(scheme = "kafka", title = "Kafka", syntax = "kafka:brokers", consumerClass = KafkaConsumer.class, label = "messaging")
+public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
-    private String brokers;
+    @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
 
     public KafkaEndpoint() {
     }
 
-    public KafkaEndpoint(String endpointUri,
-                         String remaining,
-                         KafkaComponent component) throws URISyntaxException {
+    public KafkaEndpoint(String endpointUri, KafkaComponent component) {
         super(endpointUri, component);
-        this.brokers = remaining.split("\\?")[0];
     }
 
     public KafkaConfiguration getConfiguration() {
@@ -102,6 +102,14 @@ public class KafkaEndpoint extends DefaultEndpoint {
     // Delegated properties from the configuration
     //-------------------------------------------------------------------------
 
+    public String getZookeeperConnect() {
+        return configuration.getZookeeperConnect();
+    }
+
+    public void setZookeeperConnect(String zookeeperConnect) {
+        configuration.setZookeeperConnect(zookeeperConnect);
+    }
+
     public String getZookeeperHost() {
         return configuration.getZookeeperHost();
     }
@@ -143,7 +151,11 @@ public class KafkaEndpoint extends DefaultEndpoint {
     }
 
     public String getBrokers() {
-        return brokers;
+        return configuration.getBrokers();
+    }
+
+    public void setBrokers(String brokers) {
+        configuration.setBrokers(brokers);
     }
 
     public int getConsumerStreams() {
@@ -152,6 +164,30 @@ public class KafkaEndpoint extends DefaultEndpoint {
 
     public void setConsumerStreams(int consumerStreams) {
         configuration.setConsumerStreams(consumerStreams);
+    }
+
+    public int getBatchSize() {
+        return configuration.getBatchSize();
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.configuration.setBatchSize(batchSize);
+    }
+
+    public int getBarrierAwaitTimeoutMs() {
+        return configuration.getBarrierAwaitTimeoutMs();
+    }
+
+    public void setBarrierAwaitTimeoutMs(int barrierAwaitTimeoutMs) {
+        this.configuration.setBarrierAwaitTimeoutMs(barrierAwaitTimeoutMs);
+    }
+
+    public int getConsumersCount() {
+        return this.configuration.getConsumersCount();
+    }
+
+    public void setConsumersCount(int consumersCount) {
+        this.configuration.setConsumersCount(consumersCount);
     }
 
     public void setConsumerTimeoutMs(int consumerTimeoutMs) {
@@ -203,7 +239,7 @@ public class KafkaEndpoint extends DefaultEndpoint {
     }
 
     public int getQueuedMaxMessages() {
-        return configuration.getQueuedMaxMessages();
+        return configuration.getQueuedMaxMessageChunks();
     }
 
     public int getAutoCommitIntervalMs() {
@@ -254,7 +290,7 @@ public class KafkaEndpoint extends DefaultEndpoint {
         configuration.setZookeeperSessionTimeoutMs(zookeeperSessionTimeoutMs);
     }
 
-    public int getConsumerTimeoutMs() {
+    public Integer getConsumerTimeoutMs() {
         return configuration.getConsumerTimeoutMs();
     }
 
@@ -302,7 +338,7 @@ public class KafkaEndpoint extends DefaultEndpoint {
         return configuration.getRebalanceMaxRetries();
     }
 
-    public boolean isAutoCommitEnable() {
+    public Boolean isAutoCommitEnable() {
         return configuration.isAutoCommitEnable();
     }
 
@@ -379,7 +415,7 @@ public class KafkaEndpoint extends DefaultEndpoint {
     }
 
     public void setQueuedMaxMessages(int queuedMaxMessages) {
-        configuration.setQueuedMaxMessages(queuedMaxMessages);
+        configuration.setQueuedMaxMessageChunks(queuedMaxMessages);
     }
 
     public void setRetryBackoffMs(int retryBackoffMs) {
@@ -416,5 +452,10 @@ public class KafkaEndpoint extends DefaultEndpoint {
 
     public int getRequestTimeoutMs() {
         return configuration.getRequestTimeoutMs();
+    }
+
+    @Override
+    public boolean isMultipleConsumersSupported() {
+        return true;
     }
 }

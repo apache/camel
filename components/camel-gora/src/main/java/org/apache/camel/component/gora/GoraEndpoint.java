@@ -21,6 +21,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Gora endpoint
  */
+@UriEndpoint(scheme = "gora", title = "Gora", syntax = "gora:name", consumerClass = GoraConsumer.class, label = "database,hadoop,nosql")
 public class GoraEndpoint extends DefaultEndpoint {
 
     /**
@@ -44,6 +47,7 @@ public class GoraEndpoint extends DefaultEndpoint {
     /**
      * Camel-Gora Endpoint Configuratopn
      */
+    @UriParam
     private GoraConfiguration configuration;
 
     /**

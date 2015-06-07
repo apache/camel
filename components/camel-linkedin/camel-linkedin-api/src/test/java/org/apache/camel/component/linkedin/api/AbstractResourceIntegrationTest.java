@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for resource tests.
  */
-public class AbstractResourceIntegrationTest extends Assert {
+public abstract class AbstractResourceIntegrationTest extends Assert {
 
     protected static final Logger LOG = LoggerFactory.getLogger(PeopleResourceIntegrationTest.class);
     protected static final String DEFAULT_FIELDS = "";
@@ -48,7 +48,7 @@ public class AbstractResourceIntegrationTest extends Assert {
     @BeforeClass
     public static void beforeClass() throws Exception {
         properties = new Properties();
-        properties.load(PeopleResourceIntegrationTest.class.getResourceAsStream("/test-options.properties"));
+        properties.load(AbstractResourceIntegrationTest.class.getResourceAsStream("/test-options.properties"));
 
         requestFilter = createOAuthHelper();
     }
@@ -82,7 +82,7 @@ public class AbstractResourceIntegrationTest extends Assert {
 
         final OAuthParams oAuthParams = new OAuthParams(userName, userPassword, secureStorage,
             clientId, clientSecret, redirectUri, scopes);
-        return new LinkedInOAuthRequestFilter(oAuthParams, null, false);
+        return new LinkedInOAuthRequestFilter(oAuthParams, null, false, null);
     }
 
     @AfterClass
@@ -107,7 +107,7 @@ public class AbstractResourceIntegrationTest extends Assert {
         }
         final T resource = JAXRSClientFactory.create(LinkedInOAuthRequestFilter.BASE_ADDRESS, resourceClass,
 //            Arrays.asList(new Object[] { requestFilter, new LinkedInExceptionResponseFilter() } ));
-            Arrays.asList(new Object[]{requestFilter}));
+            Arrays.asList(new Object[]{requestFilter, new EnumQueryParamConverterProvider()}));
         resourceList.add(resource);
         return resource;
     }

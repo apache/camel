@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
@@ -46,19 +47,42 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
                 from("direct:start").loadBalance()
                     .circuitBreaker(2, 1000L, MyCustomException.class)
                         .to("mock:result");
+                from("direct:start-async").loadBalance()
+                .circuitBreaker(2, 1000L, MyCustomException.class)
+                    .threads(1).to("mock:result");
             }
         };
     }
 
-    public void testClosedCircuitPassesMessages() throws Exception {
+    public void testClosedCircuitPassesMessagesSync() throws Exception {
+        String endpoint = "direct:start";
+        closedCircuitPassesMessages(endpoint);
+    }
+    
+    public void testClosedCircuitPassesMessagesAsync() throws Exception {
+        String endpoint = "direct:start-async";
+        closedCircuitPassesMessages(endpoint);
+    }
+
+    private void closedCircuitPassesMessages(String endpoint) throws InterruptedException, Exception {
         expectsMessageCount(3, result);
-        sendMessage("direct:start", "message one");
-        sendMessage("direct:start", "message two");
-        sendMessage("direct:start", "message three");
+        sendMessage(endpoint, "message one");
+        sendMessage(endpoint, "message two");
+        sendMessage(endpoint, "message three");
         assertMockEndpointsSatisfied();
     }
 
-    public void testFailedMessagesOpenCircuitToPreventMessageThree() throws Exception {
+    public void testFailedMessagesOpenCircuitToPreventMessageThreeSync() throws Exception {
+        String endpoint = "direct:start";
+        failedMessagesOpenCircuitToPreventMessageThree(endpoint);
+    }
+    
+    public void testFailedMessagesOpenCircuitToPreventMessageThreeAsync() throws Exception {
+        String endpoint = "direct:start-async";
+        failedMessagesOpenCircuitToPreventMessageThree(endpoint);
+    }
+
+    private void failedMessagesOpenCircuitToPreventMessageThree(String endpoint) throws InterruptedException, Exception {
         expectsMessageCount(2, result);
 
         result.whenAnyExchangeReceived(new Processor() {
@@ -68,17 +92,113 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
             }
         });
 
-        Exchange exchangeOne = sendMessage("direct:start", "message one");
-        Exchange exchangeTwo = sendMessage("direct:start", "message two");
-        Exchange exchangeThree = sendMessage("direct:start", "message three");
+        Exchange exchangeOne = sendMessage(endpoint, "message one");
+        Exchange exchangeTwo = sendMessage(endpoint, "message two");
+        Exchange exchangeThree = sendMessage(endpoint, "message three");
         assertMockEndpointsSatisfied();
 
         assertTrue(exchangeOne.getException() instanceof MyCustomException);
         assertTrue(exchangeTwo.getException() instanceof MyCustomException);
         assertTrue(exchangeThree.getException() instanceof RejectedExecutionException);
     }
+    
+    public void testHalfOpenAfterTimeoutSync() throws Exception {
+        String endpoint = "direct:start";
+        halfOpenAfterTimeout(endpoint);
+    }
+    
+    public void testHalfOpenAfterTimeoutAsync() throws Exception {
+        String endpoint = "direct:start-async";
+        halfOpenAfterTimeout(endpoint);
+    }
+    
+    private void halfOpenAfterTimeout(String endpoint) throws InterruptedException, Exception {
+        expectsMessageCount(2, result);
 
-    public void testHalfOpenCircuitClosesAfterTimeout() throws Exception {
+        result.whenAnyExchangeReceived(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.setException(new MyCustomException());
+            }
+        });
+
+        Exchange exchangeOne = sendMessage(endpoint, "message one");
+        Exchange exchangeTwo = sendMessage(endpoint, "message two");
+        Exchange exchangeThree = sendMessage(endpoint, "message three");
+        Exchange exchangeFour = sendMessage(endpoint, "message four");
+        assertMockEndpointsSatisfied();
+        Thread.sleep(1000);
+        result.reset();
+        result.whenAnyExchangeReceived(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.setException(new MyCustomException());
+            }
+        });
+        expectsMessageCount(1, result);
+        Exchange exchangeFive = sendMessage(endpoint, "message five");
+        Exchange exchangeSix = sendMessage(endpoint, "message six");
+        assertMockEndpointsSatisfied();
+        
+        assertTrue(exchangeOne.getException() instanceof MyCustomException);
+        assertTrue(exchangeTwo.getException() instanceof MyCustomException);
+        assertTrue(exchangeThree.getException() instanceof RejectedExecutionException);
+        assertTrue(exchangeFour.getException() instanceof RejectedExecutionException);
+        assertTrue(exchangeFive.getException() instanceof MyCustomException);
+        assertTrue(exchangeSix.getException() instanceof RejectedExecutionException);
+    }
+    
+    public void testHalfOpenToCloseTransitionSync() throws Exception {
+        String endpoint = "direct:start";
+        halfOpenToCloseTransition(endpoint);
+    }
+    
+    public void testHalfOpenToCloseTransitionAsync() throws Exception {
+        String endpoint = "direct:start-async";
+        halfOpenToCloseTransition(endpoint);
+    }
+
+    private void halfOpenToCloseTransition(String endpoint) throws Exception {
+        expectsMessageCount(2, result);
+
+        result.whenAnyExchangeReceived(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.setException(new MyCustomException());
+            }
+        });
+
+        Exchange exchangeOne = sendMessage(endpoint, "message one");
+        Exchange exchangeTwo = sendMessage(endpoint, "message two");
+        Exchange exchangeThree = sendMessage(endpoint, "message three");
+        assertMockEndpointsSatisfied();
+        Thread.sleep(1000);
+        result.reset();
+        
+        expectsMessageCount(2, result);
+        Exchange exchangeFour = sendMessage(endpoint, "message four");
+        Exchange exchangeFive = sendMessage(endpoint, "message five");
+        assertMockEndpointsSatisfied();
+        
+        assertTrue(exchangeOne.getException() instanceof MyCustomException);
+        assertTrue(exchangeTwo.getException() instanceof MyCustomException);
+        assertTrue(exchangeThree.getException() instanceof RejectedExecutionException);
+        assertTrue(exchangeFour.getException() == null);
+        assertTrue(exchangeFive.getException() == null);
+        
+    }
+
+    public void testHalfOpenCircuitClosesAfterTimeoutSync() throws Exception {
+        String endpoint = "direct:start";
+        halfOpenCircuitClosesAfterTimeout(endpoint);
+    }
+    
+    public void testHalfOpenCircuitClosesAfterTimeoutAsync() throws Exception {
+        String endpoint = "direct:start-async";
+        halfOpenCircuitClosesAfterTimeout(endpoint);
+    }
+
+    private void halfOpenCircuitClosesAfterTimeout(String endpoint) throws InterruptedException, Exception {
         expectsMessageCount(2, result);
         result.whenAnyExchangeReceived(new Processor() {
             @Override
@@ -87,16 +207,16 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
             }
         });
 
-        sendMessage("direct:start", "message one");
-        sendMessage("direct:start", "message two");
-        sendMessage("direct:start", "message three");
+        sendMessage(endpoint, "message one");
+        sendMessage(endpoint, "message two");
+        sendMessage(endpoint, "message three");
         assertMockEndpointsSatisfied();
 
         result.reset();
         expectsMessageCount(1, result);
 
         Thread.sleep(1000);
-        sendMessage("direct:start", "message four");
+        sendMessage(endpoint, "message four");
         assertMockEndpointsSatisfied();
     }
 

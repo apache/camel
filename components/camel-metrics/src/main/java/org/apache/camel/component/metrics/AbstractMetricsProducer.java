@@ -24,34 +24,37 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public abstract class AbstractMetricsProducer<T extends AbstractMetricsEndpoint> extends DefaultProducer {
+public abstract class AbstractMetricsProducer extends DefaultProducer {
 
     public static final String HEADER_PATTERN = MetricsConstants.HEADER_PERFIX + "*";
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMetricsProducer.class);
 
-    public AbstractMetricsProducer(T endpoint) {
+    public AbstractMetricsProducer(MetricsEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        @SuppressWarnings("unchecked")
-        T endpoint = (T) getEndpoint();
-        Message in = exchange.getIn();
-        String defaultMetricsName = endpoint.getMetricsName();
-        String finalMetricsName = getMetricsName(in, defaultMetricsName);
-        MetricRegistry registry = endpoint.getRegistry();
-        try {
-            doProcess(exchange, endpoint, registry, finalMetricsName);
-        } catch (Exception e) {
-            LOG.warn("Failed to produce metrics for {} in {} - {}", new Object[] {
-                finalMetricsName, getClass().getSimpleName(), e.getMessage() });
-        }
-        clearMetricsHeaders(in);
+    public MetricsEndpoint getEndpoint() {
+        return (MetricsEndpoint) super.getEndpoint();
     }
 
-    protected abstract void doProcess(Exchange exchange, T endpoint, MetricRegistry registry, String metricsName) throws Exception;
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        Message in = exchange.getIn();
+        String defaultMetricsName = getEndpoint().getMetricsName();
+        String finalMetricsName = getMetricsName(in, defaultMetricsName);
+        MetricRegistry registry = getEndpoint().getRegistry();
+
+        try {
+            doProcess(exchange, getEndpoint(), registry, finalMetricsName);
+        } catch (Exception e) {
+            exchange.setException(e);
+        } finally {
+            clearMetricsHeaders(in);
+        }
+    }
+
+    protected abstract void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception;
 
     public String getMetricsName(Message in, String defaultValue) {
         return getStringHeader(in, MetricsConstants.HEADER_METRIC_NAME, defaultValue);

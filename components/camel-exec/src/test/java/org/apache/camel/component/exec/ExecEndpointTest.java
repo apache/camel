@@ -74,7 +74,6 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
 
         assertEquals(NO_TIMEOUT, e.getTimeout());
         assertEquals("test", e.getExecutable());
-        assertNotNull(e.getCommandExecutor());
         assertNotNull(e.getBinding());
     }
 
@@ -107,13 +106,22 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
         ExecEndpoint e = createExecEndpoint("exec:test?args=" + args.replaceAll(" ", "+"));
         assertEquals(args, e.getArgs());
     }
-
+    
     @Test
     @DirtiesContext
     public void testCreateEndpointWithArgs2() throws Exception {
         String args = "arg1 \"arg2 \" arg3";
         ExecEndpoint e = createExecEndpoint("exec:test?args=" + UnsafeUriCharactersEncoder.encode(args));
         assertEquals(args, e.getArgs());
+    }
+    
+    @Test
+    @DirtiesContext
+    public void testCreateEndpointWithArgs3() throws Exception {
+        String args = "RAW(arg1+arg2 arg3)";
+        // Just avoid URI encoding by using the RAW()
+        ExecEndpoint e = createExecEndpoint("exec:test?args=" + args);
+        assertEquals("arg1+arg2 arg3", e.getArgs());
     }
 
     @Test
@@ -150,7 +158,6 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
         ExecEndpoint endpoint = createExecEndpoint(UnsafeUriCharactersEncoder.encode(uri));
         assertEquals(cmd, endpoint.getExecutable());
         assertNull(endpoint.getArgs());
-        assertNotNull(endpoint.getCommandExecutor());
 
         assertEquals(dir, endpoint.getWorkingDir());
     }
@@ -165,7 +172,6 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
 
         assertNull(endpoint.getArgs());
         assertNull(endpoint.getWorkingDir());
-        assertNotNull(endpoint.getCommandExecutor());
 
         assertEquals(executable, endpoint.getExecutable());
     }

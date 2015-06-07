@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,14 +31,16 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Represents an XML &lt;split/&gt; element
+ * Splits a single message into many sub-messages.
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "split")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SplitDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<SplitDefinition> {
@@ -61,7 +62,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     private Boolean streaming;
     @XmlAttribute
     private Boolean stopOnException;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "0")
     private Long timeout;
     @XmlAttribute
     private String onPrepareRef;
@@ -89,11 +90,6 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     @Override
-    public String getShortName() {
-        return "split";
-    }
-
-    @Override
     public String getLabel() {
         return "split[" + getExpression() + "]";
     }
@@ -103,11 +99,15 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         Processor childProcessor = this.createChildProcessor(routeContext, true);
         aggregationStrategy = createAggregationStrategy(routeContext);
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Split", this, isParallelProcessing());
+        boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
+        boolean isStreaming = getStreaming() != null && getStreaming();
+        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
+        boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Split", this, isParallelProcessing);
 
         long timeout = getTimeout() != null ? getTimeout() : 0;
-        if (timeout > 0 && !isParallelProcessing()) {
+        if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
         if (onPrepareRef != null) {
@@ -117,9 +117,9 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         Expression exp = getExpression().createExpression(routeContext);
 
         Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
-                            isParallelProcessing(), threadPool, shutdownThreadPool, isStreaming(), isStopOnException(),
-                            timeout, onPrepare, isShareUnitOfWork(), isParallelAggregate());
-        if (isShareUnitOfWork()) {
+                            isParallelProcessing, threadPool, shutdownThreadPool, isStreaming, isStopOnException(),
+                            timeout, onPrepare, isShareUnitOfWork, isParallelAggregate);
+        if (isShareUnitOfWork) {
             // wrap answer in a sub unit of work, since we share the unit of work
             CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
             internalProcessor.addAdvice(new CamelInternalProcessor.SubUnitOfWorkProcessorAdvice());
@@ -157,20 +157,17 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     // -------------------------------------------------------------------------
 
     /**
-     * Set the aggregationStrategy
-     *
-     * @return the builder
+     * Sets the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single outgoing message from the Splitter.
+     * By default Camel will use the original incoming message to the splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
      */
     public SplitDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
         return this;
     }
-    
+
     /**
-     * Set the aggregationStrategy
-     *
-     * @param aggregationStrategyRef a reference to a strategy to lookup
-     * @return the builder
+     * Sets a reference to the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single outgoing message from the Splitter.
+     * By default Camel will use the original incoming message to the splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
      */
     public SplitDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setStrategyRef(aggregationStrategyRef);
@@ -178,7 +175,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Sets the method name to use when using a POJO as {@link AggregationStrategy}.
+     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
      *
      * @param  methodName the method name to call
      * @return the builder
@@ -189,7 +186,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Sets allowing null when using a POJO as {@link AggregationStrategy}.
+     * If this option is false then the aggregate method is not used if there was no data to enrich.
+     * If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy
      *
      * @return the builder
      */
@@ -199,7 +197,9 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Doing the splitting work in parallel
+     * If enabled then processing each splitted messages occurs concurrently.
+     * Note the caller thread will still wait until all messages has been fully processed, before it continues.
+     * Its only processing the sub messages from the splitter which happens concurrently.
      *
      * @return the builder
      */
@@ -207,12 +207,12 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         setParallelProcessing(true);
         return this;
     }
-    
+
     /**
-     * Doing the aggregate work in parallel
-     * <p/>
-     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
-     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
+     * If enabled then the aggregate method on AggregationStrategy can be called concurrently.
+     * Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe.
+     * By default this is false meaning that Camel synchronizes the call to the aggregate method.
+     * Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.
      *
      * @return the builder
      */
@@ -222,8 +222,17 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Enables streaming. 
-     * See {@link org.apache.camel.model.SplitDefinition#isStreaming()} for more information
+     * When in streaming mode, then the splitter splits the original message on-demand, and each splitted
+     * message is processed one by one. This reduces memory usage as the splitter do not split all the messages first,
+     * but then we do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
+     * <p/>
+     * In non-streaming mode (default) the splitter will split each message first, to know the total size, and then
+     * process each message one by one. This requires to keep all the splitted messages in memory and therefore requires
+     * more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
+     * <p/>
+     * The streaming mode also affects the aggregation behavior.
+     * If enabled then Camel will process replies out-of-order, eg in the order they come back.
+     * If disabled, Camel will process replies in the same order as the messages was splitted.
      *
      * @return the builder
      */
@@ -249,12 +258,20 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         setStopOnException(true);
         return this;
     }
-   
+
+    /**
+     * To use a custom Thread Pool to be used for parallel processing.
+     * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
+     */
     public SplitDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
-    
+
+    /**
+     * Refers to a custom Thread Pool to be used for parallel processing.
+     * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
+     */
     public SplitDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -287,7 +304,12 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Sets a timeout value in millis to use when using parallelProcessing.
+     * Sets a total timeout specified in millis, when using parallel processing.
+     * If the Splitter hasn't been able to split and process all the sub messages within the given timeframe,
+     * then the timeout triggers and the Splitter breaks out and continues.
+     * Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out.
+     * If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel
+     * to shut down in a graceful manner may continue to run. So use this option with a bit of care.
      *
      * @param timeout timeout in millis
      * @return the builder
@@ -299,6 +321,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
     /**
      * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and each of the sub messages.
+     * Splitter will by default not share unit of work between the parent exchange and each splitted exchange.
+     * This means each splitted exchange has its own individual unit of work.
      *
      * @return the builder.
      * @see org.apache.camel.spi.SubUnitOfWork
@@ -311,10 +335,23 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     // Properties
     //-------------------------------------------------------------------------
 
+    /**
+     * Expression of how to split the message body, such as as-is, using a tokenizer, or using an xpath.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
     }
 
+    /**
+     * Sets the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single outgoing message from the Splitter.
+     * By default Camel will use the original incoming message to the splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
+     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
@@ -327,10 +364,6 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         this.parallelProcessing = parallelProcessing;
     }
 
-    public boolean isParallelProcessing() {
-        return parallelProcessing != null && parallelProcessing;
-    }
-
     public Boolean getStreaming() {
         return streaming;
     }
@@ -339,29 +372,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         this.streaming = streaming;
     }
 
-    /**
-     * The splitter should use streaming -- exchanges are being sent as the data for them becomes available.
-     * This improves throughput and memory usage, but it has a drawback:
-     * - the sent exchanges will no longer contain the {@link org.apache.camel.Exchange#SPLIT_SIZE} header property
-     *
-     * @return whether or not streaming should be used
-     */
-    public boolean isStreaming() {
-        return streaming != null && streaming;
-    }
-
     public Boolean getParallelAggregate() {
         return parallelAggregate;
-    }
-
-    /**
-     * Whether to aggregate using a sequential single thread, or allow parallel aggregation.
-     * <p/>
-     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
-     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
-     */
-    public boolean isParallelAggregate() {
-        return parallelAggregate != null && parallelAggregate;
     }
 
     public void setParallelAggregate(Boolean parallelAggregate) {
@@ -392,6 +404,10 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         return strategyRef;
     }
 
+    /**
+     * Sets a reference to the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single outgoing message from the Splitter.
+     * By default Camel will use the original incoming message to the splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
+     */
     public void setStrategyRef(String strategyRef) {
         this.strategyRef = strategyRef;
     }
@@ -400,6 +416,9 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         return strategyMethodName;
     }
 
+    /**
+     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     */
     public void setStrategyMethodName(String strategyMethodName) {
         this.strategyMethodName = strategyMethodName;
     }
@@ -408,6 +427,10 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         return strategyMethodAllowNull;
     }
 
+    /**
+     * If this option is false then the aggregate method is not used if there was no data to enrich.
+     * If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy
+     */
     public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
@@ -452,7 +475,4 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
-    public boolean isShareUnitOfWork() {
-        return shareUnitOfWork != null && shareUnitOfWork;
-    }
 }

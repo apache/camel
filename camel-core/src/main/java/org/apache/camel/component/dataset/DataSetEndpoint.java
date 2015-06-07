@@ -26,8 +26,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -40,27 +42,28 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "dataset", consumerClass = DataSetConsumer.class)
+@UriEndpoint(scheme = "dataset", title = "Dataset", syntax = "dataset:name", consumerClass = DataSetConsumer.class, label = "core,testing")
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
-    private volatile DataSet dataSet;
     private final AtomicInteger receivedCounter = new AtomicInteger();
-    @UriParam
+    @UriPath(name = "name", description = "Name of DataSet to lookup in the registry") @Metadata(required = "true")
+    private volatile DataSet dataSet;
+    @UriParam(defaultValue = "0")
     private int minRate;
-    @UriParam
+    @UriParam(defaultValue = "3")
     private long produceDelay = 3;
-    @UriParam
+    @UriParam(defaultValue = "0")
     private long consumeDelay;
-    @UriParam
+    @UriParam(defaultValue = "0")
     private long preloadSize;
-    @UriParam
+    @UriParam(defaultValue = "1000")
     private long initialDelay = 1000;
 
     @Deprecated
     public DataSetEndpoint() {
         this.log = LoggerFactory.getLogger(DataSetEndpoint.class);
         // optimize as we dont need to copy the exchange
-        copyOnExchange = false;
+        setCopyOnExchange(false);
     }
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
@@ -68,7 +71,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         this.dataSet = dataSet;
         this.log = LoggerFactory.getLogger(endpointUri);
         // optimize as we dont need to copy the exchange
-        copyOnExchange = false;
+        setCopyOnExchange(false);
     }
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
@@ -108,14 +111,6 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         return exchange;
     }
 
-    public int getMinRate() {
-        return minRate;
-    }
-
-    public void setMinRate(int minRate) {
-        this.minRate = minRate;
-    }
-
     @Override
     protected void waitForCompleteLatch(long timeout) throws InterruptedException {
         super.waitForCompleteLatch(timeout);
@@ -139,6 +134,17 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     public void setDataSet(DataSet dataSet) {
         this.dataSet = dataSet;
+    }
+
+    public int getMinRate() {
+        return minRate;
+    }
+
+    /**
+     * Wait until the DataSet contains at least this number of messages
+     */
+    public void setMinRate(int minRate) {
+        this.minRate = minRate;
     }
 
     public long getPreloadSize() {
@@ -178,6 +184,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         return initialDelay;
     }
 
+    /**
+     * Time period in millis to wait before starting sending messages.
+     */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = initialDelay;
     }

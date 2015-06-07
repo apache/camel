@@ -22,22 +22,24 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents an XML &lt;optimisticLockRetryPolicy/&gt; element
+ * To configure optimistic locking
  *
  * @version
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "optimisticLockRetryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OptimisticLockRetryPolicyDefinition {
     @XmlAttribute
     private Integer maximumRetries;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "50")
     private Long retryDelay;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1000")
     private Long maximumRetryDelay;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean exponentialBackOff;
     @XmlAttribute
     private Boolean randomBackOff;
@@ -65,6 +67,9 @@ public class OptimisticLockRetryPolicyDefinition {
         return policy;
     }
 
+    /**
+     * Sets the maximum number of retries
+     */
     public OptimisticLockRetryPolicyDefinition maximumRetries(int maximumRetries) {
         setMaximumRetries(maximumRetries);
         return this;
@@ -78,6 +83,9 @@ public class OptimisticLockRetryPolicyDefinition {
         this.maximumRetries = maximumRetries;
     }
 
+    /**
+     * Sets the delay in millis between retries
+     */
     public OptimisticLockRetryPolicyDefinition retryDelay(long retryDelay) {
         setRetryDelay(retryDelay);
         return this;
@@ -91,6 +99,9 @@ public class OptimisticLockRetryPolicyDefinition {
         this.retryDelay = retryDelay;
     }
 
+    /**
+     * Sets the upper value of retry in millis between retries, when using exponential or random backoff
+     */
     public OptimisticLockRetryPolicyDefinition maximumRetryDelay(long maximumRetryDelay) {
         setMaximumRetryDelay(maximumRetryDelay);
         return this;
@@ -104,6 +115,9 @@ public class OptimisticLockRetryPolicyDefinition {
         this.maximumRetryDelay = maximumRetryDelay;
     }
 
+    /**
+     * Enable exponential backoff
+     */
     public OptimisticLockRetryPolicyDefinition exponentialBackOff() {
         return exponentialBackOff(true);
     }
@@ -125,6 +139,9 @@ public class OptimisticLockRetryPolicyDefinition {
         return randomBackOff(true);
     }
 
+    /**
+     * Enables random backoff
+     */
     public OptimisticLockRetryPolicyDefinition randomBackOff(boolean randomBackOff) {
         setRandomBackOff(randomBackOff);
         return this;

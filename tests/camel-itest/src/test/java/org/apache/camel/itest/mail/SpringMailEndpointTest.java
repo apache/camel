@@ -19,6 +19,7 @@ package org.apache.camel.itest.mail;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * Unit testing Mail configured using spring bean
  */
 @ContextConfiguration
+@Ignore
 public class SpringMailEndpointTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired

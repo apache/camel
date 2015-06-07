@@ -31,8 +31,6 @@
 
    <cxf:cxfEndpoint id="serviceEndpoint" xmlns:s="http://apache.org/hello_world_soap_http"
 		   address="http://localhost:${CXFTestSupport.port1}/CxfDispatchPayloadTest/SoapContext/GreeterPort"
-		   endpointName="s:GreeterPort" 
-		   serviceName="s:GreeterService"
 		   bus="#cxf">
 
       <cxf:properties>

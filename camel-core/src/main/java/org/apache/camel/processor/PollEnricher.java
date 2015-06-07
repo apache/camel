@@ -19,9 +19,12 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -43,9 +46,10 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  *
  * @see Enricher
  */
-public class PollEnricher extends ServiceSupport implements AsyncProcessor {
+public class PollEnricher extends ServiceSupport implements AsyncProcessor, EndpointAware, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
+    private String id;
     private AggregationStrategy aggregationStrategy;
     private PollingConsumer consumer;
     private long timeout;
@@ -74,6 +78,18 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
         this.aggregationStrategy = aggregationStrategy;
         this.consumer = consumer;
         this.timeout = timeout;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Endpoint getEndpoint() {
+        return consumer.getEndpoint();
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -147,30 +163,36 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
         }
 
         Exchange resourceExchange;
-        if (timeout < 0) {
-            LOG.debug("Consumer receive: {}", consumer);
-            resourceExchange = consumer.receive();
-        } else if (timeout == 0) {
-            LOG.debug("Consumer receiveNoWait: {}", consumer);
-            resourceExchange = consumer.receiveNoWait();
-        } else {
-            LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
-            resourceExchange = consumer.receive(timeout);
+        try {
+            if (timeout < 0) {
+                LOG.debug("Consumer receive: {}", consumer);
+                resourceExchange = consumer.receive();
+            } else if (timeout == 0) {
+                LOG.debug("Consumer receiveNoWait: {}", consumer);
+                resourceExchange = consumer.receiveNoWait();
+            } else {
+                LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
+                resourceExchange = consumer.receive(timeout);
+            }
+
+            if (resourceExchange == null) {
+                LOG.debug("Consumer received no exchange");
+            } else {
+                LOG.debug("Consumer received: {}", resourceExchange);
+            }
+        } catch (Exception e) {
+            exchange.setException(new CamelExchangeException("Error during poll", exchange, e));
+            callback.done(true);
+            return true;
         }
 
-        if (resourceExchange == null) {
-            LOG.debug("Consumer received no exchange");
-        } else {
-            LOG.debug("Consumer received: {}", resourceExchange);
-        }
+        try {
+            if (!isAggregateOnException() && (resourceExchange != null && resourceExchange.isFailed())) {
+                // copy resource exchange onto original exchange (preserving pattern)
+                copyResultsPreservePattern(exchange, resourceExchange);
+            } else {
+                prepareResult(exchange);
 
-        if (!isAggregateOnException() && (resourceExchange != null && resourceExchange.isFailed())) {
-            // copy resource exchange onto original exchange (preserving pattern)
-            copyResultsPreservePattern(exchange, resourceExchange);
-        } else {
-            prepareResult(exchange);
-
-            try {
                 // prepare the exchanges for aggregation
                 ExchangeHelper.prepareAggregation(exchange, resourceExchange);
                 // must catch any exception from aggregation
@@ -183,18 +205,18 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
                         resourceExchange.handoverCompletions(exchange);
                     }
                 }
-            } catch (Throwable e) {
-                exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
-                callback.done(true);
-                return true;
             }
-        }
 
-        // set header with the uri of the endpoint enriched so we can use that for tracing etc
-        if (exchange.hasOut()) {
-            exchange.getOut().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
-        } else {
-            exchange.getIn().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
+            // set header with the uri of the endpoint enriched so we can use that for tracing etc
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
+            } else {
+                exchange.getIn().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
+            }
+        } catch (Throwable e) {
+            exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
+            callback.done(true);
+            return true;
         }
 
         callback.done(true);

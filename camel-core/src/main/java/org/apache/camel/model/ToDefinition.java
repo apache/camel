@@ -23,12 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents an XML &lt;to/&gt; element
+ * Sends the message to an endpoint
  *
  * @version 
  */
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {
@@ -59,11 +61,6 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     @Override
     public String toString() {
         return "To[" + getLabel() + "]";
-    }
-
-    @Override
-    public String getShortName() {
-        return "to";
     }
 
     @Override

@@ -16,14 +16,16 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.io.IOException;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.component.AbstractApiConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +45,14 @@ public class GoogleDriveConsumer extends AbstractApiConsumer<GoogleDriveApiName,
     protected Object doInvokeMethod(Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(properties);
         try {
+            TypeConverter typeConverter = getEndpoint().getCamelContext().getTypeConverter();
+            for (Entry<String, Object> p : properties.entrySet()) {
+                IntrospectionSupport.setProperty(typeConverter, request, p.getKey(), p.getValue());
+            }
             return request.execute();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
-    }    
+    }      
+
 }

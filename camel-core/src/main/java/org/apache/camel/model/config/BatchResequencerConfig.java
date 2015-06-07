@@ -21,16 +21,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
 /**
- * Defines the configuration parameters for the batch-processing
- * {@link org.apache.camel.processor.Resequencer}. Usage example:
+ * Configures batch-processing resequence eip.
  */
-@XmlRootElement
+@Metadata(label = "configuration,resequence")
+@XmlRootElement(name = "batch-config")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BatchResequencerConfig extends ResequencerConfig {
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "100")
     private Integer batchSize;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1000")
     private Long batchTimeout;
     @XmlAttribute
     private Boolean allowDuplicates;
@@ -75,6 +77,9 @@ public class BatchResequencerConfig extends ResequencerConfig {
         return batchSize;
     }
 
+    /**
+     * Sets the size of the batch to be re-ordered. The default size is 100.
+     */
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
     }
@@ -83,30 +88,31 @@ public class BatchResequencerConfig extends ResequencerConfig {
         return batchTimeout;
     }
 
+    /**
+     * Sets the timeout for collecting elements to be re-ordered. The default timeout is 1000 msec.
+     */
     public void setBatchTimeout(long batchTimeout) {
         this.batchTimeout = batchTimeout;
-    }
-
-    public boolean isAllowDuplicates() {
-        return allowDuplicates != null && allowDuplicates;
     }
 
     public Boolean getAllowDuplicates() {
         return allowDuplicates;
     }
 
+    /**
+     * Whether to allow duplicates.
+     */
     public void setAllowDuplicates(Boolean allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
-    }
-
-    public boolean isReverse() {
-        return reverse != null && reverse;
     }
 
     public Boolean getReverse() {
         return reverse;
     }
 
+    /**
+     * Whether to reverse the ordering.
+     */
     public void setReverse(Boolean reverse) {
         this.reverse = reverse;
     }
@@ -115,6 +121,9 @@ public class BatchResequencerConfig extends ResequencerConfig {
         return ignoreInvalidExchanges;
     }
 
+    /**
+     * Whether to ignore invalid exchanges
+     */
     public void setIgnoreInvalidExchanges(Boolean ignoreInvalidExchanges) {
         this.ignoreInvalidExchanges = ignoreInvalidExchanges;
     }

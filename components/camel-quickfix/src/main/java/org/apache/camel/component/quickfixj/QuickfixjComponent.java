@@ -23,16 +23,15 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.LogFactory;
 import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
 import quickfix.SessionSettings;
 
-public class QuickfixjComponent extends DefaultComponent implements StartupListener {
+public class QuickfixjComponent extends UriEndpointComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
     private static final String PARAMETER_LAZY_CREATE_ENGINE = "lazyCreateEngine";
 
@@ -46,6 +45,10 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     private MessageFactory messageFactory;
     private Map<String, QuickfixjConfiguration> configurations = new HashMap<String, QuickfixjConfiguration>();
     private boolean lazyCreateEngines;
+
+    public QuickfixjComponent() {
+        super(QuickfixjEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -61,7 +64,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                 }
                 if (engine == null) {
                     QuickfixjConfiguration configuration = configurations.get(remaining);
-                    SessionSettings settings = null;
+                    SessionSettings settings;
                     if (configuration != null) {
                         settings = configuration.createSessionSettings();
                     } else {
@@ -86,6 +89,8 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                 }
 
                 endpoint = new QuickfixjEndpoint(engine, uri, this);
+                endpoint.setConfigurationName(remaining);
+                endpoint.setLazyCreateEngine(engine.isLazy());
                 engine.addEventListener(endpoint);
                 endpoints.put(uri, endpoint);
             }
@@ -139,29 +144,34 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
         return Collections.unmodifiableMap(provisionalEngines);
     }
 
+    /**
+     * To use the given MessageFactory
+     */
     public void setMessageFactory(MessageFactory messageFactory) {
         this.messageFactory = messageFactory;
     }
 
+    /**
+     * To use the given LogFactory
+     */
     public void setLogFactory(LogFactory logFactory) {
         this.logFactory = logFactory;
     }
 
+    /**
+     * To use the given MessageStoreFactory
+     */
     public void setMessageStoreFactory(MessageStoreFactory messageStoreFactory) {
         this.messageStoreFactory = messageStoreFactory;
-    }
-
-    /**
-     * @deprecated Don't use as setting the {@code forcedShutdown} property had/has no effect.
-     */
-    @Deprecated
-    public void setForcedShutdown(boolean forcedShutdown) {
     }
 
     public Map<String, QuickfixjConfiguration> getConfigurations() {
         return configurations;
     }
 
+    /**
+     * To use the given map of pre configured QuickFix configurations mapped to the key
+     */
     public void setConfigurations(Map<String, QuickfixjConfiguration> configurations) {
         this.configurations = configurations;
     }
@@ -173,8 +183,6 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     /**
      * If set to <code>true</code>, the engines will be created and started when needed (when first message
      * is send)
-     *
-     * @param lazyCreateEngines
      */
     public void setLazyCreateEngines(boolean lazyCreateEngines) {
         this.lazyCreateEngines = lazyCreateEngines;

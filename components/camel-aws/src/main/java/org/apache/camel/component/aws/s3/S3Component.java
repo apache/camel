@@ -20,18 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Defines the <a href="http://aws.amazon.com/s3/">AWS S3 Component</a> 
  */
-public class S3Component extends DefaultComponent {
+public class S3Component extends UriEndpointComponent {
     
     public S3Component() {
+        super(S3Endpoint.class);
     }
 
     public S3Component(CamelContext context) {
-        super(context);
+        super(context, S3Endpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

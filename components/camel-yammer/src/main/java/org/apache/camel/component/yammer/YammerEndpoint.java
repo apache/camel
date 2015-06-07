@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Represents a Yammer endpoint.
  */
-@UriEndpoint(scheme = "yammer", consumerClass = YammerMessagePollingConsumer.class)
+@UriEndpoint(scheme = "yammer", title = "Yammer", syntax = "yammer:function", consumerClass = YammerMessagePollingConsumer.class, label = "social")
 public class YammerEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -48,7 +48,7 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        switch (YammerFunctionType.fromUri(config.getFunction())) {
+        switch (config.getFunctionType()) {
         case MESSAGES:
         case ALGO:
         case FOLLOWING:

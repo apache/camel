@@ -33,6 +33,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
 
     private Statistic exchangesCompleted;
     private Statistic exchangesFailed;
+    private Statistic exchangesInflight;
     private Statistic failuresHandled;
     private Statistic redeliveries;
     private Statistic externalRedeliveries;
@@ -56,6 +57,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         super.init(strategy);
         this.exchangesCompleted = new Statistic("org.apache.camel.exchangesCompleted", this, Statistic.UpdateMode.COUNTER);
         this.exchangesFailed = new Statistic("org.apache.camel.exchangesFailed", this, Statistic.UpdateMode.COUNTER);
+        this.exchangesInflight = new Statistic("org.apache.camel.exchangesInflight", this, Statistic.UpdateMode.COUNTER);
 
         this.failuresHandled = new Statistic("org.apache.camel.failuresHandled", this, Statistic.UpdateMode.COUNTER);
         this.redeliveries = new Statistic("org.apache.camel.redeliveries", this, Statistic.UpdateMode.COUNTER);
@@ -79,6 +81,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         super.reset();
         exchangesCompleted.reset();
         exchangesFailed.reset();
+        exchangesInflight.reset();
         failuresHandled.reset();
         redeliveries.reset();
         externalRedeliveries.reset();
@@ -105,6 +108,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     public long getExchangesFailed() throws Exception {
         return exchangesFailed.getValue();
     }
+
+    public long getExchangesInflight() { return exchangesInflight.getValue(); }
 
     public long getFailuresHandled() throws Exception {
         return failuresHandled.getValue();
@@ -186,9 +191,14 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         this.statisticsEnabled = statisticsEnabled;
     }
 
+    public synchronized void processExchange(Exchange exchange) {
+        exchangesInflight.increment();
+    }
+
     public synchronized void completedExchange(Exchange exchange, long time) {
         increment();
         exchangesCompleted.increment();
+        exchangesInflight.decrement();
 
         if (ExchangeHelper.isFailureHandled(exchange)) {
             failuresHandled.increment();
@@ -224,6 +234,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     public synchronized void failedExchange(Exchange exchange) {
         increment();
         exchangesFailed.increment();
+        exchangesInflight.decrement();
 
         if (ExchangeHelper.isRedelivered(exchange)) {
             redeliveries.increment();
@@ -261,6 +272,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
 
         if (fullStats) {
+            sb.append(String.format(" startTimestamp=\"%s\"", dateAsString(startTimestamp.getValue())));
             sb.append(String.format(" resetTimestamp=\"%s\"", dateAsString(resetTimestamp.getValue())));
             sb.append(String.format(" firstExchangeCompletedTimestamp=\"%s\"", dateAsString(firstExchangeCompletedTimestamp.getValue())));
             sb.append(String.format(" firstExchangeCompletedExchangeId=\"%s\"", nullSafe(firstExchangeCompletedExchangeId)));

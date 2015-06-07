@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +27,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.LogProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
@@ -36,10 +36,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents an XML &lt;log/&gt; element
+ * Logs the defined message to the logger
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {
@@ -47,7 +48,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     private static final Logger LOG = LoggerFactory.getLogger(LogDefinition.class);
     @XmlAttribute(required = true)
     private String message;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "INFO")
     private LoggingLevel loggingLevel;
     @XmlAttribute
     private String logName;
@@ -72,11 +73,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     
     @Override
     public String getLabel() {
-        return "log";
-    }
-
-    @Override
-    public String getShortName() {
         return "log";
     }
 
@@ -133,6 +129,11 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return loggingLevel;
     }
 
+    /**
+     * Sets the logging level.
+     * <p/>
+     * The default value is INFO
+     */
     public void setLoggingLevel(LoggingLevel loggingLevel) {
         this.loggingLevel = loggingLevel;
     }
@@ -141,6 +142,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return message;
     }
 
+    /**
+     * Sets the log message (uses simple language)
+     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -149,6 +153,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return logName;
     }
 
+    /**
+     * Sets the name of the logger
+     */
     public void setLogName(String logName) {
         this.logName = logName;
     }
@@ -157,6 +164,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return marker;
     }
 
+    /**
+     * To use slf4j marker
+     */
     public void setMarker(String marker) {
         this.marker = marker;
     }
@@ -165,6 +175,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return loggerRef;
     }
 
+    /**
+     * To refer to a custom logger instance to lookup from the registry.
+     */
     public void setLoggerRef(String loggerRef) {
         this.loggerRef = loggerRef;
     }
@@ -173,6 +186,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return logger;
     }
 
+    /**
+     * To use a custom logger instance
+     */
     public void setLogger(Logger logger) {
         this.logger = logger;
     }

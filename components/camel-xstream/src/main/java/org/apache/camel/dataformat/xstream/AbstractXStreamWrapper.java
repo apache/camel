@@ -28,9 +28,12 @@ import javax.xml.stream.XMLStreamException;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.core.util.CompositeClassLoader;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.ClassResolver;
@@ -42,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
  * ({@link DataFormat}) interface which leverage the XStream library for XML or JSON's marshaling and unmarshaling
  */
 public abstract class AbstractXStreamWrapper implements DataFormat {
-    
+
     private XStream xstream;
     private HierarchicalStreamDriver xstreamDriver;
     private StaxConverter staxConverter;
@@ -54,7 +57,7 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
     public AbstractXStreamWrapper() {
     }
-    
+
     public AbstractXStreamWrapper(XStream xstream) {
         this.xstream = xstream;
     }
@@ -73,15 +76,46 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
         return xstream;
     }
 
+    /**
+     * Resolves the XStream instance to be used by this data format. If XStream is not explicitly set, new instance will
+     * be created and cached.
+     *
+     * @param context to be used during a configuration of the XStream instance
+     * @return XStream instance used by this data format.
+     */
+    public XStream getXStream(CamelContext context) {
+        if (xstream == null) {
+            xstream = createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+        }
+        return xstream;
+    }
+
     public void setXStream(XStream xstream) {
         this.xstream = xstream;
     }
 
+    /**
+     * @deprecated Use {@link #createXStream(ClassResolver, ClassLoader)}
+     */
+    @Deprecated
     protected XStream createXStream(ClassResolver resolver) {
+        return createXStream(resolver, null);
+    }
+
+    protected XStream createXStream(ClassResolver resolver, ClassLoader classLoader) {
         if (xstreamDriver != null) {
             xstream = new XStream(xstreamDriver);
         } else {
             xstream = new XStream();
+        }
+
+        if (mode != null) {
+            xstream.setMode(getModeFromString(mode));
+        }
+
+        ClassLoader xstreamLoader = xstream.getClassLoader();
+        if (classLoader != null && xstreamLoader instanceof CompositeClassLoader) {
+            ((CompositeClassLoader) xstreamLoader).add(classLoader);
         }
 
         try {
@@ -116,16 +150,16 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
                     Constructor<Converter> con = null;
                     try {
-                        con = converterClass.getDeclaredConstructor(new Class[] {XStream.class});
+                        con = converterClass.getDeclaredConstructor(new Class[]{XStream.class});
                     } catch (Exception e) {
-                         //swallow as we null check in a moment.
+                        //swallow as we null check in a moment.
                     }
                     if (con != null) {
                         converter = con.newInstance(xstream);
                     } else {
                         converter = converterClass.newInstance();
-                        try { 
-                            Method method = converterClass.getMethod("setXStream", new Class[] {XStream.class});
+                        try {
+                            Method method = converterClass.getMethod("setXStream", new Class[]{XStream.class});
                             if (method != null) {
                                 ObjectHelper.invokeMethod(method, converter, xstream);
                             }
@@ -136,18 +170,15 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
                     xstream.registerConverter(converter);
                 }
-                
-                if (mode != null) {
-                    xstream.setMode(getModeFromString(mode));
-                }
             }
+
         } catch (Exception e) {
             throw new RuntimeException("Unable to build XStream instance", e);
         }
 
         return xstream;
-    } 
-    
+    }
+
     protected int getModeFromString(String modeString) {
         int result;
         if ("NO_REFERENCES".equalsIgnoreCase(modeString)) {
@@ -218,11 +249,11 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     public void setXstreamDriver(HierarchicalStreamDriver xstreamDriver) {
         this.xstreamDriver = xstreamDriver;
     }
-    
+
     public String getMode() {
         return mode;
     }
-    
+
     public void setMode(String mode) {
         this.mode = mode;
     }
@@ -238,7 +269,7 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         HierarchicalStreamWriter writer = createHierarchicalStreamWriter(exchange, body, stream);
         try {
-            getXStream(exchange.getContext().getClassResolver()).marshal(body, writer);
+            getXStream(exchange.getContext()).marshal(body, writer);
         } finally {
             writer.close();
         }
@@ -247,7 +278,7 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         HierarchicalStreamReader reader = createHierarchicalStreamReader(exchange, stream);
         try {
-            return getXStream(exchange.getContext().getClassResolver()).unmarshal(reader);
+            return getXStream(exchange.getContext()).unmarshal(reader);
         } finally {
             reader.close();
         }

@@ -19,8 +19,7 @@ package org.apache.camel.component.validator.jing;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * A component for validating XML payloads using the
@@ -28,16 +27,17 @@ import org.apache.camel.impl.ProcessorEndpoint;
  *
  * @version 
  */
-public class JingComponent extends DefaultComponent {
+public class JingComponent extends UriEndpointComponent {
+
+    public JingComponent() {
+        super(JingEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        JingValidator validator = new JingValidator(getCamelContext());
-        validator.setResourceUri(remaining);
-        configureValidator(validator, uri, remaining, parameters);
-        return new ProcessorEndpoint(uri, this, validator);
+        JingEndpoint answer = new JingEndpoint(uri, this);
+        answer.setResourceUri(remaining);
+        setProperties(answer, parameters);
+        return answer;
     }
 
-    protected void configureValidator(JingValidator validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        setProperties(validator, parameters);
-    }
 }

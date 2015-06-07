@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
@@ -24,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
+import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -34,9 +35,10 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class CatchProcessor extends DelegateAsyncProcessor implements Traceable {
+public class CatchProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
 
+    private String id;
     private final List<Class<? extends Throwable>> exceptions;
     private final Predicate onWhen;
     private final Predicate handled;
@@ -51,6 +53,14 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable 
     @Override
     public String toString() {
         return "Catch[" + exceptions + " -> " + getProcessor() + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTraceLabel() {
@@ -89,9 +99,17 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable 
                     new Object[]{handled, e.getClass().getName(), e.getMessage()});
         }
 
+        if (handled) {
+            // emit event that the failure is being handled
+            EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, false, null);
+        }
+
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                if (!handled) {
+                if (handled) {
+                    // emit event that the failure was handled
+                    EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
+                } else {
                     if (exchange.getException() == null) {
                         exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
                     }
@@ -124,11 +142,9 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable 
      */
     protected Throwable catches(Exchange exchange, Throwable exception) {
         // use the exception iterator to walk the caused by hierarchy
-        Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exception);
-        while (it.hasNext()) {
-            Throwable e = it.next();
+        for (final Throwable e : ObjectHelper.createExceptionIterable(exception)) {
             // see if we catch this type
-            for (Class<?> type : exceptions) {
+            for (final Class<?> type : exceptions) {
                 if (type.isInstance(e) && matchesWhen(exchange)) {
                     return e;
                 }

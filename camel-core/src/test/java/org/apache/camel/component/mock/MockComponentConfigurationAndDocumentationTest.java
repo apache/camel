@@ -41,15 +41,27 @@ public class MockComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"expectedCount\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"retainFirst\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\""));
+        assertTrue(json.contains("\"expectedCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+    }
+
+    @Test
+    public void testEndpointExplain() throws Exception {
+        String json = context.explainEndpointJson("mock:foo?retainFirst=10", true);
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
+                + " \"deprecated\": \"false\", \"value\": \"foo\", \"description\": \"Name of mock endpoint\""));
+        assertTrue(json.contains("\"expectedCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"type\": \"integer\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("mock");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

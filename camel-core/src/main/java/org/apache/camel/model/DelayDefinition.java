@@ -29,13 +29,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Delayer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;delay/&gt; element
+ * Delays processing for a specified length of time
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DelayDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
@@ -46,9 +48,9 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private Boolean asyncDelayed;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean callerRunsWhenRejected;
 
     public DelayDefinition() {
@@ -64,11 +66,6 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     @Override
-    public String getShortName() {
-        return "delay";
-    }
-
-    @Override
     public String toString() {
         return "Delay[" + getExpression() + " -> " + getOutputs() + "]";
     }
@@ -78,8 +75,9 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         Processor childProcessor = this.createChildProcessor(routeContext, false);
         Expression delay = createAbsoluteTimeDelayExpression(routeContext);
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isAsyncDelayed());
-        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", this, isAsyncDelayed());
+        boolean async = getAsyncDelayed() != null && getAsyncDelayed();
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, async);
+        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", this, async);
 
         Delayer answer = new Delayer(routeContext.getCamelContext(), childProcessor, delay, threadPool, shutdownThreadPool);
         if (getAsyncDelayed() != null) {
@@ -131,19 +129,23 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
     /**
      * Enables asynchronous delay which means the thread will <b>noy</b> block while delaying.
-     *
-     * @return the builder
      */
     public DelayDefinition asyncDelayed() {
         setAsyncDelayed(true);
         return this;
     }
 
+    /**
+     * To use a custom Thread Pool if asyncDelay has been enabled.
+     */
     public DelayDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
+    /**
+     * Refers to a custom Thread Pool if asyncDelay has been enabled.
+     */
     public DelayDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -152,16 +154,21 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     // Properties
     // -------------------------------------------------------------------------
 
+    /**
+     * Expression to define how long time to wait (in millis)
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
     public Boolean getAsyncDelayed() {
         return asyncDelayed;
     }
 
     public void setAsyncDelayed(Boolean asyncDelayed) {
         this.asyncDelayed = asyncDelayed;
-    }
-
-    public boolean isAsyncDelayed() {
-        return asyncDelayed != null && asyncDelayed;
     }
 
     public Boolean getCallerRunsWhenRejected() {

@@ -16,249 +16,234 @@
  */
 package org.apache.camel.component.jt400;
 
-import java.beans.PropertyVetoException;
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import javax.naming.OperationNotSupportedException;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
-import com.ibm.as400.access.ConnectionPoolException;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
+import org.apache.camel.CamelException;
+import org.apache.camel.Consumer;
+import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.URISupport;
 
-/**
- * Pseudo-abstract base JT400 endpoint. This class provides the options that
- * supported by both the {@link Jt400DataQueueEndpoint} and
- * {@link Jt400PgmEndpoint}, and also serves as a factory of connections to the
- * system.
- */
-class Jt400Endpoint {
-    
-    /**
-     * Logging tool.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(Jt400Endpoint.class);
+@UriEndpoint(scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", consumerClass = Jt400DataQueueConsumer.class, label = "messaging")
+public class Jt400Endpoint extends DefaultPollingEndpoint {
+
+    public static final String KEY = "KEY";
+    public static final String SENDER_INFORMATION = "SENDER_INFORMATION";
+
+    @UriParam
+    private final Jt400Configuration configuration;
 
     /**
-     * Constant used to specify that the default system CCSID be used (a
-     * negative CCSID is otherwise invalid).
-     */
-    private static final int DEFAULT_SYSTEM_CCSID = -1;
-    
-    /**
-     * Name of the AS/400 system.
-     */
-    private final String systemName;
-    
-    /**
-     * ID of the AS/400 user.
-     */
-    private final String userID;
-    
-    /**
-     * Password of the AS/400 user.
-     */
-    private final String password;
-    
-    /**
-     * Fully qualified integrated file system path name of the target object of
-     * this endpoint (either data queue or program).
-     */
-    private final String objectPath;
-    
-    /**
-     * Pool from which physical connections to the system are obtained.
-     */
-    private final AS400ConnectionPool connectionPool;
-    
-    /**
-     * CCSID to use for the connection with the AS/400 system.
-     */
-    private int ccsid = DEFAULT_SYSTEM_CCSID;
-    
-    /**
-     * Data format for sending messages.
-     */
-    private Format format = Format.text;
-    
-    /**
-     * Whether AS/400 prompting is enabled in the environment running Camel.
-     */
-    private boolean guiAvailable;
-    
-    /**
-     * Creates a new endpoint instance for the specified URI, which will use the
-     * specified pool for obtaining physical connections to the system.
+     * Creates a new AS/400 data queue endpoint using a default connection pool
+     * provided by the component.
      * 
-     * @param endpointUri URI of the endpoint
-     * @param connectionPool pool for obtaining physical connections to the
-     *            system
-     * @throws URISyntaxException if unable to parse {@code endpointUri}
-     * @throws IllegalArgumentException if either {@code endpointUri} or
-     *             {@code connectionPool} are null
+     * @throws NullPointerException if {@code component} is null
      */
-    Jt400Endpoint(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
-        ObjectHelper.notNull(endpointUri, "endpointUri", this);
-        ObjectHelper.notNull(connectionPool, "connectionPool", this);
-        
-        URI uri = new URI(endpointUri);
-        String[] credentials = uri.getUserInfo().split(":");
-        systemName = uri.getHost();
-        userID = credentials[0];
-        password = credentials[1];
-        objectPath = uri.getPath();
-        
-        this.connectionPool = connectionPool;
+    protected Jt400Endpoint(String endpointUri, Jt400Component component) throws CamelException {
+        this(endpointUri, component, component.getConnectionPool());
     }
-    
+
     /**
-     * Returns the name of the AS/400 system.
-     * 
-     * @return the name of the AS/400 system
+     * Creates a new AS/400 data queue endpoint using the specified connection
+     * pool.
      */
-    public String getSystemName() {
-        return systemName;
+    protected Jt400Endpoint(String endpointUri, Jt400Component component, AS400ConnectionPool connectionPool) throws CamelException {
+        super(endpointUri, component);
+        ObjectHelper.notNull(connectionPool, "connectionPool");
+        try {
+            configuration = new Jt400Configuration(endpointUri, connectionPool);
+        } catch (URISyntaxException e) {
+            throw new CamelException("Unable to parse URI for " + URISupport.sanitizeUri(endpointUri), e);
+        }
     }
-    
-    /**
-     * Returns the ID of the AS/400 user.
-     * 
-     * @return the ID of the AS/400 user
-     */
-    public String getUserID() {
-        return userID;
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        Jt400DataQueueConsumer answer = new Jt400DataQueueConsumer(this);
+        configurePollingConsumer(answer);
+        return answer;
     }
-    
-    /**
-     * Returns the password of the AS/400 user.
-     * 
-     * @return the password of the AS/400 user
-     */
-    public String getPassword() {
-        return password;
+
+    @Override
+    public Producer createProducer() throws Exception {
+        if (Jt400Type.DTAQ == configuration.getType()) {
+            return new Jt400DataQueueProducer(this);
+        } else {
+            return new Jt400PgmProducer(this);
+        }
     }
-    
-    /**
-     * Returns the fully qualified integrated file system path name of the
-     * target object of this endpoint.
-     * 
-     * @return the fully qualified integrated file system path name of the
-     *         target object of this endpoint
-     */
-    public String getObjectPath() {
-        return objectPath;
+
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        if (Jt400Type.DTAQ == configuration.getType()) {
+            return new Jt400DataQueueConsumer(this);
+        } else {
+            throw new OperationNotSupportedException();
+        }
     }
-    
-    
-    // Options
-    
-    /**
-     * Returns the CCSID to use for the connection with the AS/400 system.
-     * Returns -1 if the CCSID to use is the default system CCSID.
-     * 
-     * @return the CCSID to use for the connection with the AS/400 system, or -1
-     *         if that is the default system CCSID
-     */
-    public int getCssid() {
-        return ccsid;
+
+    public boolean isSingleton() {
+        // cannot be singleton as we store an AS400 instance on the configuration
+        return false;
     }
-    
-    /**
-     * Sets the CCSID to use for the connection with the AS/400 system.
-     * 
-     * @param ccsid the CCSID to use for the connection with the AS/400 system
-     */
-    public void setCcsid(int ccsid) {
-        this.ccsid = (ccsid < 0) ? DEFAULT_SYSTEM_CCSID : ccsid;
-    }
-    
-    /**
-     * Returns the data format for sending messages.
-     * 
-     * @return the data format for sending messages
-     */
-    public Format getFormat() {
-        return format;
-    }
-    
-    /**
-     * Sets the data format for sending messages.
-     * 
-     * @param format the data format for sending messages
-     * @throws IllegalArgumentException if {@code format} is null
-     */
-    public void setFormat(Format format) {
-        ObjectHelper.notNull(format, "format", this);
-        this.format = format;
-    }
-    
-    /**
-     * Returns whether AS/400 prompting is enabled in the environment running
-     * Camel.
-     * 
-     * @return whether AS/400 prompting is enabled in the environment running
-     *         Camel
-     */
-    public boolean isGuiAvailable() {
-        return guiAvailable;
-    }
-    
-    /**
-     * Sets whether AS/400 prompting is enabled in the environment running
-     * Camel.
-     * 
-     * @param guiAvailable whether AS/400 prompting is enabled in the
-     *            environment running Camel
-     */
-    public void setGuiAvailable(boolean guiAvailable) {
-        this.guiAvailable = guiAvailable;
-    }
-    
-    
-    // AS400 connections
-    
+
     /**
      * Obtains an {@code AS400} object that connects to this endpoint. Since
      * these objects represent limited resources, clients have the
-     * responsibility of {@link #releaseConnection(AS400) releasing them} when
-     * done.
+     * responsibility of {@link #releaseSystem(AS400) releasing them} when done.
      * 
      * @return an {@code AS400} object that connects to this endpoint
      */
-    public AS400 getConnection() {
-        AS400 system = null;
-        try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Getting an AS400 object for '{}' from {}.", systemName + '/' + userID, connectionPool);
-            }
-            system = connectionPool.getConnection(systemName, userID, password);
-            if (ccsid != DEFAULT_SYSTEM_CCSID) {
-                system.setCcsid(ccsid);
-            }
-            try {
-                system.setGuiAvailable(guiAvailable);
-            } catch (PropertyVetoException e) {
-                LOG.warn("Failed to disable AS/400 prompting in the environment running Camel. This exception will be ignored.", e);
-            }
-            return system; // Not null here.
-        } catch (ConnectionPoolException e) {
-            throw new RuntimeCamelException(String.format("Unable to obtain an AS/400 connection for system name '%s' and user ID '%s'", systemName, userID), e);
-        } catch (PropertyVetoException e) {
-            throw new RuntimeCamelException("Unable to set the CSSID to use with " + system, e);
-        }
+    protected AS400 getSystem() {
+        return configuration.getConnection();
     }
     
     /**
      * Releases a previously obtained {@code AS400} object from use.
      * 
-     * @param connection a previously obtained {@code AS400} object to release
+     * @param system a previously obtained {@code AS400} object
      */
-    public void releaseConnection(AS400 connection) {
-        ObjectHelper.notNull(connection, "connection", this);
-        connectionPool.returnConnectionToPool(connection);
+    protected void releaseSystem(AS400 system) {
+        configuration.releaseConnection(system);
     }
 
+    /**
+     * Returns the fully qualified integrated file system path name of the data
+     * queue of this endpoint.
+     * 
+     * @return the fully qualified integrated file system path name of the data
+     *         queue of this endpoint
+     */
+    protected String getObjectPath() {
+        return configuration.getObjectPath();
+    }
+
+    public Jt400Type getType() {
+        return configuration.getType();
+    }
+
+    public void setType(Jt400Type type) {
+        configuration.setType(type);
+    }
+
+    public String getSearchKey() {
+        return configuration.getSearchKey();
+    }
+
+    public boolean isKeyed() {
+        return configuration.isKeyed();
+    }
+
+    public Integer[] getOutputFieldsIdxArray() {
+        return configuration.getOutputFieldsIdxArray();
+    }
+
+    public int getCcsid() {
+        return configuration.getCcsid();
+    }
+
+    public void setOutputFieldsIdxArray(Integer[] outputFieldsIdxArray) {
+        configuration.setOutputFieldsIdxArray(outputFieldsIdxArray);
+    }
+
+    public void setSearchKey(String searchKey) {
+        configuration.setSearchKey(searchKey);
+    }
+
+    public void setOutputFieldsIdx(String outputFieldsIdx) {
+        configuration.setOutputFieldsIdx(outputFieldsIdx);
+    }
+
+    public void setKeyed(boolean keyed) {
+        configuration.setKeyed(keyed);
+    }
+
+    public Integer[] getOutputFieldsLengthArray() {
+        return configuration.getOutputFieldsLengthArray();
+    }
+
+    public void setSearchType(Jt400Configuration.SearchType searchType) {
+        configuration.setSearchType(searchType);
+    }
+
+    public boolean isGuiAvailable() {
+        return configuration.isGuiAvailable();
+    }
+
+    public void setFormat(Jt400Configuration.Format format) {
+        configuration.setFormat(format);
+    }
+
+    public void setFieldsLength(String fieldsLength) {
+        configuration.setFieldsLength(fieldsLength);
+    }
+
+    public Jt400Configuration.Format getFormat() {
+        return configuration.getFormat();
+    }
+
+    public void setOutputFieldsLengthArray(Integer[] outputFieldsLengthArray) {
+        configuration.setOutputFieldsLengthArray(outputFieldsLengthArray);
+    }
+
+    public int getCssid() {
+        return configuration.getCssid();
+    }
+
+    public String getUserID() {
+        return configuration.getUserID();
+    }
+
+    public Jt400Configuration.SearchType getSearchType() {
+        return configuration.getSearchType();
+    }
+
+    public void setCcsid(int ccsid) {
+        configuration.setCcsid(ccsid);
+    }
+
+    public void setGuiAvailable(boolean guiAvailable) {
+        configuration.setGuiAvailable(guiAvailable);
+    }
+
+    public String getPassword() {
+        return configuration.getPassword();
+    }
+
+    public String getSystemName() {
+        return configuration.getSystemName();
+    }
+
+    public boolean isFieldIdxForOuput(int idx) {
+        return Arrays.binarySearch(getOutputFieldsIdxArray(), idx) >= 0;
+    }
+
+    public int getOutputFieldLength(int idx) {
+        return configuration.getOutputFieldsLengthArray()[idx];
+    }
+
+    public void setObjectPath(String objectPath) {
+        configuration.setObjectPath(objectPath);
+    }
+
+    public void setPassword(String password) {
+        configuration.setPassword(password);
+    }
+
+    public void setUserID(String userID) {
+        configuration.setUserID(userID);
+    }
+
+    public void setSystemName(String systemName) {
+        configuration.setSystemName(systemName);
+    }
 }

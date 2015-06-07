@@ -42,11 +42,15 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
+
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.conn.params.ConnRoutePNames;
@@ -82,7 +86,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
 
     @SuppressWarnings("deprecation")
     public LinkedInOAuthRequestFilter(OAuthParams oAuthParams, Map<String, Object> httpParams,
-                                      boolean lazyAuth) {
+                                      boolean lazyAuth, String[] enabledProtocols) {
 
         this.oAuthParams = oAuthParams;
         this.oAuthToken = null;
@@ -95,6 +99,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
         options.setThrowExceptionOnFailingStatusCode(true);
         options.setThrowExceptionOnScriptError(true);
         options.setPrintContentOnFailingStatusCode(LOG.isDebugEnabled());
+        options.setSSLClientProtocols(enabledProtocols);
 
         // add HTTP proxy if set
         if (httpParams != null && httpParams.get(ConnRoutePNames.DEFAULT_PROXY) != null) {
@@ -104,6 +109,15 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                 socksProxy != null ? socksProxy : false);
             options.setProxyConfig(proxyConfig);
         }
+
+        // disable default gzip compression, as error pages are sent with no compression and htmlunit doesn't negotiate
+        new WebConnectionWrapper(webClient) {
+            @Override
+            public WebResponse getResponse(WebRequest request) throws IOException {
+                request.setAdditionalHeader(HttpHeaders.ACCEPT_ENCODING, "identity");
+                return super.getResponse(request);
+            }
+        };
 
         if (!lazyAuth) {
             try {
@@ -144,6 +158,12 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                     builder.toString(), encodedRedirectUri);
             }
             final HtmlPage authPage = webClient.getPage(url);
+
+            // look for <div role="alert">
+            final HtmlDivision div = authPage.getFirstByXPath("//div[@role='alert']");
+            if (div != null) {
+                throw new IllegalArgumentException("Error authorizing application: " + div.getTextContent());
+            }
 
             // submit login credentials
             final HtmlForm loginForm = authPage.getFormByName("oauth2SAuthorizeForm");

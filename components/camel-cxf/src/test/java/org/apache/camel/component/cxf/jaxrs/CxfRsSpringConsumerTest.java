@@ -23,7 +23,9 @@ import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomException;
+import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -37,15 +39,25 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
     
     
     protected RouteBuilder createRouteBuilder() throws Exception {
+        final Processor testProcessor = new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                // just throw the CustomException here
+                throw new CustomException("Here is the exception");
+            }  
+        };
+        final Processor responseProcessor = new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                // do something else with the request properties as usual
+                // do something else with the response
+                exchange.getOut().getBody(Customer.class).setId(246);
+            }  
+        };
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(new NoErrorHandlerBuilder());
-                from("cxfrs://bean://rsServer").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // just throw the CustomException here
-                        throw new CustomException("Here is the exception");
-                    }  
-                });
+                from("cxfrs://bean://rsServer").process(testProcessor);
+                from("cxfrs://bean://rsServer2").process(testProcessor);
+                from("cxfrs://bean://rsServerInvoke?performInvocation=true").process(responseProcessor);
             }
         };
     }
@@ -58,7 +70,24 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
     
     @Test
     public void testMappingException() throws Exception {
-        HttpGet get = new HttpGet("http://localhost:" + port1 + "/CxfRsSpringConsumerTest/customerservice/customers/126");
+        String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerTest/customerservice/customers/126";
+        doTestMappingException(address);
+    }
+    @Test
+    public void testMappingException2() throws Exception {
+        String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerTest2/customerservice/customers/126";
+        doTestMappingException(address);
+    }
+    @Test
+    public void testInvokeCxfRsConsumer() throws Exception {
+        String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerInvokeService/customerservice/customers/123";
+        WebClient wc = WebClient.create(address);
+        Customer c = wc.accept("application/json").get(Customer.class);
+        assertEquals(246L, c.getId());
+    }
+    
+    private void doTestMappingException(String address) throws Exception {
+        HttpGet get = new HttpGet(address);
         get.addHeader("Accept" , "application/json");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 

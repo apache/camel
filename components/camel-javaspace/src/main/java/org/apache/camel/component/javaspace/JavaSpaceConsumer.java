@@ -32,7 +32,6 @@ import net.jini.core.transaction.CannotCommitException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.UnknownTransactionException;
 import net.jini.space.JavaSpace;
-
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -83,10 +82,10 @@ public class JavaSpaceConsumer extends DefaultConsumer {
         if (this.verb.equalsIgnoreCase("read")) {
             verb = READ;
         }
-        javaSpace = JiniSpaceAccessor.findSpace(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining(),
+        javaSpace = JiniSpaceAccessor.findSpace(((JavaSpaceEndpoint) this.getEndpoint()).getUrl(),
                 ((JavaSpaceEndpoint) this.getEndpoint()).getSpaceName());
         if (transactional) {
-            transactionHelper = TransactionHelper.getInstance(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining());
+            transactionHelper = TransactionHelper.getInstance(((JavaSpaceEndpoint) this.getEndpoint()).getUrl());
         }
         for (int i = 0; i < concurrentConsumers; ++i) {
             Task worker = new Task((JavaSpaceEndpoint) this.getEndpoint(), this.getProcessor(), javaSpace,

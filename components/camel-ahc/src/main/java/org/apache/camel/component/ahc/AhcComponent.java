@@ -119,6 +119,9 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         return client;
     }
 
+    /**
+     * To use a custom {@link AsyncHttpClient}
+     */
     public void setClient(AsyncHttpClient client) {
         this.client = client;
     }
@@ -130,6 +133,9 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         return binding;
     }
 
+    /**
+     * To use a custom {@link AhcBinding} which allows to control how to bind between AHC and Camel.
+     */
     public void setBinding(AhcBinding binding) {
         this.binding = binding;
     }
@@ -138,6 +144,9 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         return clientConfig;
     }
 
+    /**
+     * To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
+     */
     public void setClientConfig(AsyncHttpClientConfig clientConfig) {
         this.clientConfig = clientConfig;
     }
@@ -146,6 +155,11 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         return sslContextParameters;
     }
 
+    /**
+     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry.
+     * Note that configuring this option will override any SSL/TLS configuration options provided through the
+     * clientConfig option at the endpoint or component level.
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -163,13 +177,10 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
      * the builder.
      *
      * @param clientConfig the instance to serve as a template for the builder
-     *
      * @return a builder configured with the same options as the supplied config
      */
     static AsyncHttpClientConfig.Builder cloneConfig(AsyncHttpClientConfig clientConfig) {
-
         AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder(clientConfig);
-
         return builder;
     }
 }

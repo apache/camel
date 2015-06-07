@@ -47,7 +47,7 @@ public class CustomParameterMappingStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").beanRef("foo").to("mock:result");
+                from("direct:a").bean("foo").to("mock:result");
             }
         };
     }

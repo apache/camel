@@ -24,13 +24,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents a <a href="http://camel.apache.org/flatpack.html">Flatpack</a> {@link org.apache.camel.spi.DataFormat}.
+ * Flatpack data format
  */
+@Metadata(label = "dataformat,transformation", title = "Flatpack")
 @XmlRootElement(name = "flatpack")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FlatpackDataFormat extends DataFormatDefinition {
@@ -40,11 +42,11 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     private String definition;
     @XmlAttribute
     private Boolean fixed;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean ignoreFirstRecord;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "\"")
     private String textQualifier;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = ",")
     private String delimiter;
     @XmlAttribute
     private Boolean allowShortLines;
@@ -59,6 +61,9 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return parserFactoryRef;
     }
 
+    /**
+     * References to a custom parser factory to lookup in the registry
+     */
     public void setParserFactoryRef(String parserFactoryRef) {
         this.parserFactoryRef = parserFactoryRef;
     }
@@ -67,6 +72,9 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return definition;
     }
 
+    /**
+     * The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap.
+     */
     public void setDefinition(String definition) {
         this.definition = definition;
     }
@@ -75,6 +83,10 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return fixed;
     }
 
+    /**
+     * Delimited or fixed.
+     * Is by default false = delimited
+     */
     public void setFixed(Boolean fixed) {
         this.fixed = fixed;
     }
@@ -83,6 +95,11 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return ignoreFirstRecord;
     }
 
+    /**
+     * Whether the first line is ignored for delimited files (for the column headers).
+     * <p/>
+     * Is by default true.
+     */
     public void setIgnoreFirstRecord(Boolean ignoreFirstRecord) {
         this.ignoreFirstRecord = ignoreFirstRecord;
     }
@@ -91,6 +108,9 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return textQualifier;
     }
 
+    /**
+     * If the text is qualified with a char such as &quot;
+     */
     public void setTextQualifier(String textQualifier) {
         this.textQualifier = textQualifier;
     }
@@ -99,6 +119,9 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return delimiter;
     }
 
+    /**
+     * The delimiter char (could be ; , or similar)
+     */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
@@ -107,6 +130,9 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return allowShortLines;
     }
 
+    /**
+     * Allows for lines to be shorter than expected and ignores the extra characters
+     */
     public void setAllowShortLines(Boolean allowShortLines) {
         this.allowShortLines = allowShortLines;
     }
@@ -115,6 +141,9 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return ignoreExtraColumns;
     }
 
+    /**
+     * Allows for lines to be longer than expected and ignores the extra characters.
+     */
     public void setIgnoreExtraColumns(Boolean ignoreExtraColumns) {
         this.ignoreExtraColumns = ignoreExtraColumns;
     }

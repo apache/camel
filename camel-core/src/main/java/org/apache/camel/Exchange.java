@@ -78,6 +78,7 @@ public interface Exchange {
     String AGGREGATED_COMPLETED_BY          = "CamelAggregatedCompletedBy";
     String AGGREGATED_CORRELATION_KEY       = "CamelAggregatedCorrelationKey";
     String AGGREGATION_STRATEGY             = "CamelAggregationStrategy";
+    String AGGREGATION_COMPLETE_CURRENT_GROUP = "CamelAggregationCompleteCurrentGroup";
     String AGGREGATION_COMPLETE_ALL_GROUPS  = "CamelAggregationCompleteAllGroups";
     String AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE  = "CamelAggregationCompleteAllGroupsInclusive";
     String ASYNC_WAIT                       = "CamelAsyncWait";
@@ -117,6 +118,7 @@ public interface Exchange {
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
     String FAILURE_ROUTE_ID     = "CamelFailureRouteId";
     String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
+    String FILE_CONTENT_TYPE    = "CamelFileContentType";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";
     String FILE_NAME_ONLY       = "CamelFileNameOnly";
@@ -127,8 +129,10 @@ public interface Exchange {
     String FILE_LAST_MODIFIED   = "CamelFileLastModified";
     String FILE_LENGTH          = "CamelFileLength";
     String FILTER_MATCHED       = "CamelFilterMatched";
-    String FILE_LOCK_FILE_ACQUIRED   = "CamelFileLockFileAcquired"; 
+    String FILE_LOCK_FILE_ACQUIRED = "CamelFileLockFileAcquired";
     String FILE_LOCK_FILE_NAME  = "CamelFileLockFileName";
+    String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
+    String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
     
@@ -167,6 +171,7 @@ public interface Exchange {
     String OVERRULE_FILE_NAME = "CamelOverruleFileName";
 
     String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
+    String STREAM_CACHE_UNIT_OF_WORK = "CamelStreamCacheUnitOfWork";
     
     String RECIPIENT_LIST_ENDPOINT = "CamelRecipientListEndpoint";
     String RECEIVED_TIMESTAMP      = "CamelReceivedTimestamp";
@@ -178,9 +183,13 @@ public interface Exchange {
     String ROLLBACK_ONLY           = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
     String ROUTE_STOP              = "CamelRouteStop";
+
+    String REUSE_SCRIPT_ENGINE = "CamelReuseScripteEngine";
+    String COMPILE_SCRIPT = "CamelCompileScript";
     
     String SAXPARSER_FACTORY   = "CamelSAXParserFactory";
 
+    String SCHEDULER_POLLED_MESSAGES = "CamelSchedulerPolledMessages";
     String SOAP_ACTION        = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
     String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding"; 
@@ -291,6 +300,24 @@ public interface Exchange {
      */
     Object removeProperty(String name);
 
+    /**
+     * Remove all of the properties associated with the exchange matching a specific pattern
+     *
+     * @param pattern pattern of names
+     * @return boolean whether any properties matched
+     */
+    boolean removeProperties(String pattern);
+    
+    /**
+     * Removes the properties from this exchange that match the given <tt>pattern</tt>, 
+     * except for the ones matching one ore more <tt>excludePatterns</tt>
+     * 
+     * @param pattern pattern of names that should be removed
+     * @param excludePatterns one or more pattern of properties names that should be excluded (= preserved)
+     * @return boolean whether any properties matched
+     */ 
+    boolean removeProperties(String pattern, String... excludePatterns);
+    
     /**
      * Returns all of the properties associated with the exchange
      *
@@ -449,8 +476,19 @@ public interface Exchange {
     /**
      * Creates a copy of the current message exchange so that it can be
      * forwarded to another destination
+     * <p/>
+     * Notice this operation invokes <tt>copy(false)</tt>
      */
     Exchange copy();
+
+    /**
+     * Creates a copy of the current message exchange so that it can be
+     * forwarded to another destination
+     *
+     * @param safeCopy whether to copy exchange properties and message headers safely to a new map instance,
+     *                 or allow sharing the same map instances in the returned copy.
+     */
+    Exchange copy(boolean safeCopy);
 
     /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint

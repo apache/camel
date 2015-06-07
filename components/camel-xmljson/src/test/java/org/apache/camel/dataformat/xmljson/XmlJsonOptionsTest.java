@@ -25,15 +25,16 @@ import org.w3c.dom.Document;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
 /**
  * Testing options to the XML JSON data format
  */
-public class XmlJsonOptionsTest extends CamelTestSupport {
+public class XmlJsonOptionsTest extends AbstractJsonTestSupport {
 
     @Test
     public void testSomeOptionsToJSON() throws Exception {
@@ -139,6 +140,63 @@ public class XmlJsonOptionsTest extends CamelTestSupport {
         assertEquals("Root element must have namespace attributes", 2, document.getDocumentElement().getAttributes().getLength());
         mockXML.assertIsSatisfied();
     }
+    
+    @Test
+    public void testTypeHintsToJSON() throws Exception {
+        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage5-typeHints.xml");
+        String in = context.getTypeConverter().convertTo(String.class, inStream);
+
+        MockEndpoint mockJSON = getMockEndpoint("mock:jsonTypeHints");
+        mockJSON.expectedMessageCount(1);
+        mockJSON.message(0).body().isInstanceOf(byte[].class);
+
+        Object json = template.requestBody("direct:marshalTypeHints", in);
+        String jsonString = context.getTypeConverter().convertTo(String.class, json);
+        JSONObject obj = (JSONObject) JSONSerializer.toJSON(jsonString);
+        assertEquals("root.a must be number", Integer.valueOf(1), obj.getJSONObject("root").get("a"));
+        assertEquals("root.b must be boolean", Boolean.TRUE, obj.getJSONObject("root").get("b"));
+
+        mockJSON.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testTypeHintsToXML() throws Exception {
+        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage5-typeHints.json");
+        String in = context.getTypeConverter().convertTo(String.class, inStream);
+
+        MockEndpoint mockXML = getMockEndpoint("mock:xmlTypeHints");
+        mockXML.expectedMessageCount(1);
+        mockXML.message(0).body().isInstanceOf(String.class);
+
+        Object marshalled = template.requestBody("direct:unmarshalTypeHints", in);
+        Document document = context.getTypeConverter().convertTo(Document.class, marshalled);
+        assertEquals("Element a should exists", 1, document.getDocumentElement().getElementsByTagName("a").getLength());
+        assertNotNull("Element a should have attribute type", document.getDocumentElement().getElementsByTagName("a").item(0).getAttributes().getNamedItem("type"));
+        assertEquals("Element a should have attribute type with value number", "number",
+                     document.getDocumentElement().getElementsByTagName("a").item(0).getAttributes().getNamedItem("type").getTextContent());
+        assertEquals("Element b should have attribute type with value boolean", 
+                     "boolean", document.getDocumentElement().getElementsByTagName("b").item(0).getAttributes().getNamedItem("type").getTextContent());
+        mockXML.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testPrefixedTypeHintsToJSON() throws Exception {
+        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage6-prefixedTypeHints.xml");
+        String in = context.getTypeConverter().convertTo(String.class, inStream);
+
+        MockEndpoint mockJSON = getMockEndpoint("mock:jsonPrefixedTypeHints");
+        mockJSON.expectedMessageCount(1);
+        mockJSON.message(0).body().isInstanceOf(byte[].class);
+
+        Object json = template.requestBody("direct:marshalPrefixedTypeHints", in);
+        String jsonString = context.getTypeConverter().convertTo(String.class, json);
+        JSONObject obj = (JSONObject) JSONSerializer.toJSON(jsonString);
+        assertEquals("root.a must be number", Integer.valueOf(1), obj.getJSONObject("root").get("a"));
+        assertEquals("root.b must be boolean", Boolean.TRUE, obj.getJSONObject("root").get("b"));
+
+        mockJSON.assertIsSatisfied();
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -169,6 +227,20 @@ public class XmlJsonOptionsTest extends CamelTestSupport {
                 from("direct:marshalNS").marshal(namespacesFormat).to("mock:jsonNS");
                 // from JSON to XML
                 from("direct:unmarshalNS").unmarshal(namespacesFormat).to("mock:xmlNS");
+
+                XmlJsonDataFormat typeHintsFormat = new XmlJsonDataFormat();
+                typeHintsFormat.setForceTopLevelObject(true);
+                typeHintsFormat.setTypeHints("YES");
+                // from XML to JSON
+                from("direct:marshalTypeHints").marshal(typeHintsFormat).to("mock:jsonTypeHints");
+                // from JSON to XML
+                from("direct:unmarshalTypeHints").unmarshal(typeHintsFormat).to("mock:xmlTypeHints");
+                
+                XmlJsonDataFormat prefixedTypeHintsFormat = new XmlJsonDataFormat();
+                prefixedTypeHintsFormat.setForceTopLevelObject(true);
+                prefixedTypeHintsFormat.setTypeHints("WITH_PREFIX");
+                // from XML to JSON
+                from("direct:marshalPrefixedTypeHints").marshal(prefixedTypeHintsFormat).to("mock:jsonPrefixedTypeHints");
 
             }
         };

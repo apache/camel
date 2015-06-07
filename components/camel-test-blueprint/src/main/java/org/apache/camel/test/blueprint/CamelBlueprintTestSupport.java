@@ -19,6 +19,8 @@ package org.apache.camel.test.blueprint;
 import java.util.Dictionary;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -80,10 +82,18 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         Map<String, KeyValueHolder<Object, Dictionary>> map = new LinkedHashMap<String, KeyValueHolder<Object, Dictionary>>();
         addServicesOnStartup(map);
+
+        List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> servicesList = new LinkedList<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>>();
         for (Map.Entry<String, KeyValueHolder<Object, Dictionary>> entry : map.entrySet()) {
-            String clazz = entry.getKey();
-            Object service = entry.getValue().getKey();
-            Dictionary dict = entry.getValue().getValue();
+            servicesList.add(asKeyValueService(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue()));
+        }
+
+        addServicesOnStartup(servicesList);
+
+        for (KeyValueHolder<String, KeyValueHolder<Object, Dictionary>> item : servicesList) {
+            String clazz = item.getKey();
+            Object service = item.getValue().getKey();
+            Dictionary dict = item.getValue().getValue();
             log.debug("Registering service {} -> {}", clazz, service);
             ServiceRegistration<?> reg = answer.registerService(clazz, service, dict);
             if (reg != null) {
@@ -202,11 +212,29 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     }
 
     /**
+     * Override this method to add services to be registered on startup.
+     * <p/>
+     * You can use the builder methods {@link #asKeyValueService(String, Object, Dictionary)}
+     * to make it easy to add the services to the List.
+     */
+    protected void addServicesOnStartup(List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> services) {
+        // noop
+    }
+
+    /**
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
      */
     protected KeyValueHolder<Object, Dictionary> asService(Object service, Dictionary dict) {
         return new KeyValueHolder<Object, Dictionary>(service, dict);
     }
+
+    /**
+     * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.List)}
+     */
+    protected KeyValueHolder<String, KeyValueHolder<Object, Dictionary>> asKeyValueService(String name, Object service, Dictionary dict) {
+        return new KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>(name, new KeyValueHolder<Object, Dictionary>(service, dict));
+    }
+
 
     /**
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}

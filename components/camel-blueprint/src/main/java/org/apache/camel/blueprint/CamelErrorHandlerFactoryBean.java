@@ -44,6 +44,8 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     @XmlAttribute
     private String deadLetterUri;
     @XmlAttribute
+    private Boolean deadLetterHandleNewException;
+    @XmlAttribute
     private LoggingLevel level;
     @XmlAttribute
     private String logName;
@@ -51,6 +53,8 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     private Boolean useOriginalMessage;
     @XmlAttribute
     private String onRedeliveryRef;
+    @XmlAttribute
+    private String onPrepareFailureRef;
     @XmlAttribute
     private String retryWhileRef;
     @XmlAttribute
@@ -70,6 +74,9 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             if (deadLetterUri != null) {
                 handler.setDeadLetterUri(deadLetterUri);
             }
+            if (deadLetterHandleNewException != null) {
+                handler.setDeadLetterHandleNewException(deadLetterHandleNewException);
+            }
             if (useOriginalMessage != null) {
                 handler.setUseOriginalMessage(useOriginalMessage);
             }
@@ -81,6 +88,9 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             }
             if (onRedeliveryRef != null) {
                 handler.setOnRedelivery(lookup(onRedeliveryRef, Processor.class));
+            }
+            if (onPrepareFailureRef != null) {
+                handler.setOnPrepareFailure(lookup(onPrepareFailureRef, Processor.class));
             }
             if (retryWhileRef != null) {
                 handler.setRetryWhileRef(retryWhileRef);

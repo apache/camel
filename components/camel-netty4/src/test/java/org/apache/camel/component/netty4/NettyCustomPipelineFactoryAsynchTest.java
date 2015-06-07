@@ -49,7 +49,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4:tcp://localhost:{{port}}?serverPipelineFactory=#spf&textline=true")
+                from("netty4:tcp://localhost:{{port}}?serverInitializerFactory=#spf&textline=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
@@ -62,7 +62,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
     @Test
     public void testCustomClientPipelineFactory() throws Exception {
         String response = (String) template.requestBody(
-                "netty4:tcp://localhost:{{port}}?clientPipelineFactory=#cpf&textline=true",
+                "netty4:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&textline=true",
                 "Forest Gump describing Vietnam...");
 
         assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'", response);

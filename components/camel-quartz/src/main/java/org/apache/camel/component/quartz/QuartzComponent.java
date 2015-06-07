@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public class QuartzComponent extends UriEndpointComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
     private Scheduler scheduler;
-    private final List<JobToAdd> jobsToAdd = new ArrayList<JobToAdd>();
+    private final transient List<JobToAdd> jobsToAdd = new ArrayList<JobToAdd>();
     private SchedulerFactory factory;
     private Properties properties;
     private String propertiesFile;
@@ -159,6 +159,10 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         }
 
         QuartzEndpoint answer = new QuartzEndpoint(uri, this);
+        answer.setGroupName(group);
+        answer.setTimerName(name);
+        answer.setCron(cron);
+
         setProperties(answer.getJobDetail(), jobParameters);
 
         // enrich job data map with trigger information
@@ -290,13 +294,18 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         incrementJobCounter(getScheduler());
     }
 
-    private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
-        if (oldTrigger instanceof CronTrigger && oldTrigger.equals(newTrigger)) {
-            CronTrigger oldCron = (CronTrigger) oldTrigger;
+    private static boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
+        if (newTrigger instanceof CronTrigger && oldTrigger instanceof CronTrigger) {
             CronTrigger newCron = (CronTrigger) newTrigger;
-            return !oldCron.getCronExpression().equals(newCron.getCronExpression());
+            CronTrigger oldCron = (CronTrigger) oldTrigger;
+            return !newCron.getCronExpression().equals(oldCron.getCronExpression());
+        } else if (newTrigger instanceof SimpleTrigger && oldTrigger instanceof SimpleTrigger) {
+            SimpleTrigger newSimple = (SimpleTrigger) newTrigger;
+            SimpleTrigger oldSimple = (SimpleTrigger) oldTrigger;
+            return newSimple.getRepeatInterval() != oldSimple.getRepeatInterval()
+                    || newSimple.getRepeatCount() != oldSimple.getRepeatCount();
         } else {
-            return !newTrigger.equals(oldTrigger);
+            return !newTrigger.getClass().equals(oldTrigger.getClass()) || !newTrigger.equals(oldTrigger);
         }
     }
 
@@ -390,6 +399,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return factory;
     }
 
+    /**
+     * To use the custom SchedulerFactory which is used to create the Scheduler.
+     */
     public void setFactory(SchedulerFactory factory) {
         this.factory = factory;
     }
@@ -401,6 +413,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return scheduler;
     }
 
+    /**
+     * To use the custom configured Quartz scheduler, instead of creating a new Scheduler.
+     */
     public void setScheduler(final Scheduler scheduler) {
         this.scheduler = scheduler;
     }
@@ -409,6 +424,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return properties;
     }
 
+    /**
+     * Properties to configure the Quartz scheduler.
+     */
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
@@ -417,6 +435,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return propertiesFile;
     }
 
+    /**
+     * File name of the properties to load from the classpath
+     */
     public void setPropertiesFile(String propertiesFile) {
         this.propertiesFile = propertiesFile;
     }
@@ -425,6 +446,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return startDelayedSeconds;
     }
 
+    /**
+     * Seconds to wait before starting the quartz scheduler.
+     */
     public void setStartDelayedSeconds(int startDelayedSeconds) {
         this.startDelayedSeconds = startDelayedSeconds;
     }
@@ -433,6 +457,11 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return autoStartScheduler;
     }
 
+    /**
+     * Whether or not the scheduler should be auto started.
+     * <p/>
+     * This options is default true
+     */
     public void setAutoStartScheduler(boolean autoStartScheduler) {
         this.autoStartScheduler = autoStartScheduler;
     }
@@ -441,6 +470,11 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return enableJmx;
     }
 
+    /**
+     * Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX.
+     * <p/>
+     * This options is default true
+     */
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
     }

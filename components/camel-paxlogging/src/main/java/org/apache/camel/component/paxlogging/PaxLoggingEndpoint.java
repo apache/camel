@@ -21,21 +21,37 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Paxlogging endpoint.
  */
+@UriEndpoint(scheme = "paxlogging", title = "OSGi PAX Logging", syntax = "paxlogging:appender", consumerOnly = true, consumerClass = PaxLoggingConsumer.class, label = "monitoring")
 public class PaxLoggingEndpoint extends DefaultEndpoint {
 
-    private final String name;
+    @UriPath @Metadata(required = "true")
+    private final String appender;
 
-    public PaxLoggingEndpoint(String uri, PaxLoggingComponent component, String name) {
+    public PaxLoggingEndpoint(String uri, PaxLoggingComponent component, String appender) {
         super(uri, component);
-        this.name = name;
+        this.appender = appender;
     }
 
+    /**
+     * Appender is the name of the pax appender that need to be configured in the PaxLogging service configuration.
+     */
+    public String getAppender() {
+        return appender;
+    }
+
+    /**
+     * @deprecated use {@link #getAppender()}
+     */
+    @Deprecated
     public String getName() {
-        return name;
+        return getAppender();
     }
 
     public PaxLoggingComponent getComponent() {

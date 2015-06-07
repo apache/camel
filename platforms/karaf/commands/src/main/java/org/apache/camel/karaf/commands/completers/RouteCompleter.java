@@ -17,9 +17,9 @@
 package org.apache.camel.karaf.commands.completers;
 
 import java.util.List;
+import java.util.Map;
 
 import jline.console.completer.StringsCompleter;
-import org.apache.camel.Route;
 
 /**
  * A Jline completer for the Camel routes.
@@ -30,9 +30,9 @@ public class RouteCompleter extends CamelCompleterSupport {
     public int complete(String buffer, int cursor, List candidates) {
         try {
             StringsCompleter delegate = new StringsCompleter();
-            List<Route> routes = camelController.getRoutes(null);
-            for (Route route : routes) {
-                delegate.getStrings().add(route.getId());
+            List<Map<String, String>> routes = camelController.getRoutes(null);
+            for (Map<String, String> row : routes) {
+                delegate.getStrings().add(row.get("routeId"));
             }
             return delegate.complete(buffer, cursor, candidates);
         } catch (Exception e) {

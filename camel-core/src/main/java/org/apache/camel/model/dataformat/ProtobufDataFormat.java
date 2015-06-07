@@ -25,12 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a protobuf DataFormat {@link org.apache.camel.spi.DataFormat}
+ * Google protobuf data format
  *
  * @version 
  */
+@Metadata(label = "dataformat,transformation", title = "Protobuf")
 @XmlRootElement(name = "protobuf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProtobufDataFormat extends DataFormatDefinition {
@@ -52,6 +54,9 @@ public class ProtobufDataFormat extends DataFormatDefinition {
         return instanceClass;
     }
 
+    /**
+     * Name of class to use when unarmshalling
+     */
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
     }

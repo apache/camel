@@ -24,15 +24,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.processor.SetHeaderProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;setHeader/&gt; element
+ * Sets the value of a message header
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetHeaderDefinition extends NoOutputExpressionNode {
@@ -63,11 +65,6 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "setHeader";
-    }
-
-    @Override
     public String getLabel() {
         return "setHeader[" + getHeaderName() + "]";
     }
@@ -76,9 +73,21 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(headerName, "headerName");
         Expression expr = getExpression().createExpression(routeContext);
-        return ProcessorBuilder.setHeader(getHeaderName(), expr);
+        return new SetHeaderProcessor(getHeaderName(), expr);
     }
 
+    /**
+     * Expression to return the value of the header
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
+    /**
+     * Name of message header to set a new value
+     */
     @Required
     public void setHeaderName(String headerName) {
         this.headerName = headerName;

@@ -46,12 +46,12 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
+import org.apache.camel.model.PropertiesDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
-import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -282,7 +282,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             LOG.info("Bridging Camel and Spring property placeholder configurer with id: " + id);
 
             // get properties component
-            PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
+            PropertiesComponent pc = (PropertiesComponent) getContext().getComponent("properties", false);
+            if (pc == null) {
+                // do not auto create the component as spring autowrire by constructor causes a side effect when using bridge
+                pc = new PropertiesComponent();
+                getContext().addComponent("properties", pc);
+            }
             // replace existing resolver with us
             configurer.setResolver(pc.getPropertiesResolver());
             configurer.setParser(pc.getPropertiesParser());
@@ -419,6 +424,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public List<CamelEndpointFactoryBean> getEndpoints() {
         return endpoints;
+    }
+
+    public void setEndpoints(List<CamelEndpointFactoryBean> endpoints) {
+        this.endpoints = endpoints;
     }
 
     public List<CamelRedeliveryPolicyFactoryBean> getRedeliveryPolicies() {

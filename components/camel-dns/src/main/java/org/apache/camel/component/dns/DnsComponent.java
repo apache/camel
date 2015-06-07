@@ -19,9 +19,11 @@ package org.apache.camel.component.dns;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
+ * This is a component for Camel to run DNS queries, using DNSJava.
+ * <p/>
  * The DNS components creates endpoints of the form: <br/>
  * dns:///... <br/>
  * At this point, the DNS component works with these operations:<br/>
@@ -65,20 +67,18 @@ import org.apache.camel.impl.DefaultComponent;
  * <p/>
  * </p>
  */
-public class DnsComponent extends DefaultComponent {
+public class DnsComponent extends UriEndpointComponent {
+
+    public DnsComponent() {
+        super(DnsEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        if (DnsConstants.OPERATION_IP.equals(remaining)) {
-            return new DnsIpEndpoint(this);
-        } else if (DnsConstants.OPERATION_LOOKUP.equals(remaining)) {
-            return new DnsLookupEndpoint(this);
-        } else if (DnsConstants.OPERATION_DIG.equals(remaining)) {
-            return new DnsDigEndpoint(this);
-        } else if (DnsConstants.OPERATION_WIKIPEDIA.equals(remaining)) {
-            return new WikipediaEndpoint(this);
-        } else {
-            throw new IllegalArgumentException(uri + " is unsupported by the DNS component");
-        }
+        DnsType type = DnsType.valueOf(remaining);
+        DnsEndpoint endpoint = new DnsEndpoint(uri, this);
+        endpoint.setDnsType(type);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
 }

@@ -40,6 +40,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
     private final BundleContext bundleContext;
 
     public OsgiClassResolver(CamelContext camelContext, BundleContext context) {
+        super(camelContext);
         this.camelContext = camelContext;
         this.bundleContext = context;
     }
@@ -87,7 +88,12 @@ public class OsgiClassResolver extends DefaultClassResolver {
             } catch (IOException ex) {
                 throw new RuntimeException("Cannot load resource: " + uri, ex);
             }
-        } 
+        }
+
+        // fallback to default as spring-dm may have issues loading resources
+        if (answer == null) {
+            answer = super.loadResourceAsStream(uri);
+        }
         return answer;
     }
 
@@ -95,7 +101,13 @@ public class OsgiClassResolver extends DefaultClassResolver {
     public URL loadResourceAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
         String resolvedName = resolveUriPath(uri);
-        return bundleContext.getBundle().getResource(resolvedName);
+        URL answer = bundleContext.getBundle().getResource(resolvedName);
+
+        // fallback to default as spring-dm may have issues loading resources
+        if (answer == null) {
+            answer = super.loadResourceAsURL(uri);
+        }
+        return answer;
     }
 
     @Override

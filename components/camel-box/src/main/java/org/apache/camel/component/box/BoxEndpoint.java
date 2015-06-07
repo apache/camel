@@ -30,6 +30,7 @@ import org.apache.camel.component.box.internal.BoxConstants;
 import org.apache.camel.component.box.internal.BoxPropertiesHelper;
 import org.apache.camel.component.box.internal.CachedBoxClient;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
@@ -38,11 +39,14 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a Box endpoint.
  */
-@UriEndpoint(scheme = "box", consumerClass = BoxConsumer.class, consumerPrefix = "consumer")
+@UriEndpoint(scheme = "box", title = "Box", syntax = "box:apiName/methodName", consumerClass = BoxConsumer.class, consumerPrefix = "consumer", label = "api,file,cloud")
 public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguration> {
 
     private static final String SHARED_LINK_PROPERTY = "sharedLink";
     private static final String SHARED_PASSWORD_PROPERTY = "sharedPassword";
+
+    @UriParam
+    private BoxConfiguration configuration;
 
     // cached client
     private CachedBoxClient cachedBoxClient;
@@ -53,12 +57,12 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
     // configuration values for shared links
     private String sharedLink;
     private String sharedPassword;
-
     private boolean boxClientShared;
 
     public BoxEndpoint(String uri, BoxComponent component,
-                         BoxApiName apiName, String methodName, BoxConfiguration endpointConfiguration) {
+                       BoxApiName apiName, String methodName, BoxConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, BoxApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+        this.configuration = endpointConfiguration;
     }
 
     public Producer createProducer() throws Exception {

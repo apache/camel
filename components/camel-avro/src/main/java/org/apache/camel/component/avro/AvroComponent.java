@@ -25,22 +25,22 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.avro.Protocol;
 import org.apache.avro.reflect.ReflectData;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.URISupport;
 
-public class AvroComponent extends DefaultComponent {
+public class AvroComponent extends UriEndpointComponent {
 
     private AvroConfiguration configuration;
     private ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<String, AvroListener>();
 
     public AvroComponent() {
+        super(AvroEndpoint.class);
     }
 
     public AvroComponent(CamelContext context) {
-        super(context);
+        super(context, AvroEndpoint.class);
     }
 
 
@@ -64,12 +64,12 @@ public class AvroComponent extends DefaultComponent {
             config = new AvroConfiguration();
         }
 
-        URI enpointUri = new URI(URISupport.normalizeUri(remaining));
-        applyToConfiguration(config, enpointUri, parameters);
+        URI endpointUri = new URI(URISupport.normalizeUri(remaining));
+        applyToConfiguration(config, endpointUri, parameters);
 
-        if (AvroConstants.AVRO_NETTY_TRANSPORT.equals(enpointUri.getScheme())) {
+        if (AvroConstants.AVRO_NETTY_TRANSPORT.equals(endpointUri.getScheme())) {
             return new AvroNettyEndpoint(remaining, this, config);
-        } else if (AvroConstants.AVRO_HTTP_TRANSPORT.equals(enpointUri.getScheme())) {
+        } else if (AvroConstants.AVRO_HTTP_TRANSPORT.equals(endpointUri.getScheme())) {
             return new AvroHttpEndpoint(remaining, this, config);
         } else {
             throw new IllegalArgumentException("Unknown avro scheme. Should use either netty or http.");
@@ -160,6 +160,9 @@ public class AvroComponent extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * To use a shared {@link AvroConfiguration} to configure options once
+     */
     public void setConfiguration(AvroConfiguration configuration) {
         this.configuration = configuration;
     }

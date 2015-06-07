@@ -18,27 +18,21 @@ package org.apache.camel.component.stax;
 
 import java.util.Map;
 
-import org.xml.sax.ContentHandler;
-
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.impl.UriEndpointComponent;
 
-public class StAXComponent extends DefaultComponent {
+public class StAXComponent extends UriEndpointComponent {
+
+    public StAXComponent() {
+        super(StAXEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        StAXProcessor processor;
-        if (EndpointHelper.isReferenceParameter(remaining)) {
-            ContentHandler handler = EndpointHelper.resolveReferenceParameter(getCamelContext(), remaining.substring(1), ContentHandler.class, true);
-            processor = new StAXProcessor(handler);
-        } else {
-            Class clazz = getCamelContext().getClassResolver().resolveMandatoryClass(remaining, ContentHandler.class);
-            processor = new StAXProcessor(clazz);
-        }
-        setProperties(processor, parameters);
-        return new ProcessorEndpoint(uri, this, processor);
+        StAXEndpoint answer = new StAXEndpoint(uri, getCamelContext());
+        answer.setContentHandlerClass(remaining);
+        setProperties(answer, parameters);
+        return answer;
     }
 
 }

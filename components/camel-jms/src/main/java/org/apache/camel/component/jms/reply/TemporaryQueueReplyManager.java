@@ -57,12 +57,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         return super.getReplyTo();
     }
     
-    public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                String originalCorrelationId, String correlationId, long requestTimeout) {
-        // add to correlation map
-        TemporaryQueueReplyHandler handler = new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
-        correlation.put(correlationId, handler, requestTimeout);
-        return correlationId;
+    protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+                                              String originalCorrelationId, String correlationId, long requestTimeout) {
+        return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
@@ -75,7 +72,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     }
 
     @Override
-    protected void handleReplyMessage(String correlationID, Message message) {
+    protected void handleReplyMessage(String correlationID, Message message, Session session) {
         ReplyHandler handler = correlation.get(correlationID);
         if (handler == null && endpoint.isUseMessageIDAsCorrelationID()) {
             handler = waitForProvisionCorrelationToBeUpdated(correlationID, message);
@@ -83,7 +80,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         if (handler != null) {
             correlation.remove(correlationID);
-            handler.onReply(correlationID, message);
+            handler.onReply(correlationID, message, session);
         } else {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
@@ -113,9 +110,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
-        answer.setConcurrentConsumers(endpoint.getConcurrentConsumers());
-        if (endpoint.getMaxConcurrentConsumers() > 0) {
-            answer.setMaxConcurrentConsumers(endpoint.getMaxConcurrentConsumers());
+        answer.setConcurrentConsumers(endpoint.getReplyToConcurrentConsumers());
+        if (endpoint.getReplyToMaxConcurrentConsumers() > 0) {
+            answer.setMaxConcurrentConsumers(endpoint.getReplyToMaxConcurrentConsumers());
         }
         answer.setConnectionFactory(endpoint.getConnectionFactory());
         // we use CACHE_CONSUMER by default to cling to the consumer as long as we can, since we can only consume
@@ -143,7 +140,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getErrorHandler() != null) {
             answer.setErrorHandler(endpoint.getErrorHandler());
         } else {
-            answer.setErrorHandler(new DefaultSpringErrorHandler(TemporaryQueueReplyManager.class, endpoint.getErrorHandlerLoggingLevel(), endpoint.isErrorHandlerLogStackTrace()));
+            answer.setErrorHandler(new DefaultSpringErrorHandler(endpoint.getCamelContext(), TemporaryQueueReplyManager.class, 
+                                                                 endpoint.getErrorHandlerLoggingLevel(), endpoint.isErrorHandlerLogStackTrace()));
         }
         if (endpoint.getReceiveTimeout() >= 0) {
             answer.setReceiveTimeout(endpoint.getReceiveTimeout());

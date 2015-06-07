@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.http.NettyHttpProducer;
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -28,6 +29,7 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.codec.http.HttpChunk;
 import org.jboss.netty.handler.codec.http.HttpChunkTrailer;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.slf4j.Logger;
@@ -91,6 +93,11 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             }
         } else if (msg instanceof HttpResponse) {
             response = (HttpResponse) msg;
+            Exchange exchange = super.getExchange(ctx);
+            if (!HttpHeaders.isKeepAlive(response)) {
+                // just want to make sure we close the channel if the keepAlive is not true
+                exchange.setProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+            }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("HttpResponse received: {} chunked:", response, response.isChunked());
             }

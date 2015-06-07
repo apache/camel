@@ -41,15 +41,16 @@ public class SedaComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"blockWhenFull\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"concurrentConsumers\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"blockWhenFull\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"boolean\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("seda");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

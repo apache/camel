@@ -53,7 +53,6 @@ public final class StringQuoteHelper {
         return quote + text + quote;
     }
 
-
     /**
      * Splits the input safely honoring if values is enclosed in quotes.
      * <p/>

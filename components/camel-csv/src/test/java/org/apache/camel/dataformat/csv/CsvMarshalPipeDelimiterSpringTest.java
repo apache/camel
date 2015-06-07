@@ -29,7 +29,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>
- * @version 
  */
 public class CsvMarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {
 
@@ -44,12 +43,11 @@ public class CsvMarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String body = result.getReceivedExchanges().get(0).getIn().getBody(
-                String.class);
-        String[] lines = body.split("\n");
+        String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        String[] lines = body.split(LS);
         assertEquals(2, lines.length);
-        assertEquals("123|Camel in Action|1", lines[0]);
-        assertEquals("124|ActiveMQ in Action|2", lines[1]);
+        assertEquals("123|Camel in Action|1", lines[0].trim());
+        assertEquals("124|ActiveMQ in Action|2", lines[1].trim());
     }
 
     private List<Map<String, Object>> createBody() {

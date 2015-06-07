@@ -25,7 +25,6 @@ public final class MongoDbConstants {
     public static final String BATCH_SIZE = "CamelMongoDbBatchSize";
     public static final String NUM_TO_SKIP = "CamelMongoDbNumToSkip";
     public static final String INSERT_RECORDS_AFFECTED = "CamelMongoDbInsertRecordsAffected";
-    public static final String LAST_ERROR = "CamelMongoDbLastError";
     public static final String MULTIUPDATE = "CamelMongoDbMultiUpdate";
     public static final String UPSERT = "CamelMongoDbUpsert";
     public static final String RECORDS_AFFECTED = "CamelMongoDbRecordsAffected";
@@ -37,6 +36,7 @@ public final class MongoDbConstants {
     public static final String LIMIT = "CamelMongoDbLimit";
     public static final String FROM_TAILABLE = "CamelMongoDbTailable";
     public static final String WRITERESULT = "CamelMongoWriteResult";
+    public static final String OID = "CamelMongoOid";
 
     private MongoDbConstants() {
     }

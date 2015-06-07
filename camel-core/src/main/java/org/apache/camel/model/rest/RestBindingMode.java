@@ -19,8 +19,11 @@ package org.apache.camel.model.rest;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.camel.spi.Metadata;
+
+@Metadata(label = "rest")
 @XmlType
-@XmlEnum(String.class)
+@XmlEnum
 public enum RestBindingMode {
 
     auto, off, json, xml, json_xml

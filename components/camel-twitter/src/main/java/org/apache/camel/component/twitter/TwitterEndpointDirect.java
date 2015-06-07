@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Twitter direct endpoint
  */
-@UriEndpoint(scheme = "twitter", consumerClass = Twitter4JConsumer.class)
+@UriEndpoint(scheme = "twitter", title = "Twitter", syntax = "twitter:type", consumerClass = Twitter4JConsumer.class, label = "api,social")
 public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
 
     @UriParam
@@ -123,16 +123,6 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
     @ManagedAttribute
     public boolean isFilterOld() {
         return getProperties().isFilterOld();
-    }
-
-    @ManagedAttribute
-    public void setDate(String date) {
-        getProperties().setDate(date);
-    }
-
-    @ManagedAttribute
-    public String getDate() {
-        return getProperties().getDate();
     }
 
     @ManagedAttribute

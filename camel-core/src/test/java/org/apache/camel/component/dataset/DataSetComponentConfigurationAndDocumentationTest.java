@@ -41,9 +41,10 @@ public class DataSetComponentConfigurationAndDocumentationTest extends ContextTe
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"preloadSize\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"minRate\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"exchangePattern\": { \"type\": \"string\", \"enum\":"));
+        assertTrue(json.contains("\"preloadSize\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"minRate\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"exchangePattern\": { \"kind\": \"parameter\", \"type\": \"string\", \"javaType\": \"org.apache.camel.ExchangePattern\""
+                + ", \"enum\": [ \"InOnly\", \"RobustInOnly\", \"InOut\", \"InOptionalOut\", \"OutOnly\", \"RobustOutOnly\", \"OutIn\", \"OutOptionalIn\" ]"));
         assertTrue(json.contains("\"InOut\""));
     }
 
@@ -51,7 +52,7 @@ public class DataSetComponentConfigurationAndDocumentationTest extends ContextTe
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("dataset");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

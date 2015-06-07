@@ -59,11 +59,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
     private Component component;
-    @UriParam
+    @UriParam(defaultValue = "InOnly", description = "Sets the default exchange pattern when creating an exchange")
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     // option to allow end user to dictate whether async processing should be
     // used or not (if possible)
-    @UriParam
+    @UriParam(defaultValue = "false",
+            description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
     private boolean synchronous;
     private final String id = EndpointHelper.createEndpointId();
     private Map<String, Object> consumerProperties;
@@ -240,17 +241,14 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Returns the default exchange pattern to use for createExchange().
-     * 
-     * @see #setExchangePattern(ExchangePattern exchangePattern)
+     * Returns the default exchange pattern to use when creating an exchange.
      */
     public ExchangePattern getExchangePattern() {
         return exchangePattern;
     }
 
     /**
-     * Sets the default exchange pattern to use for {@link #createExchange()}.
-     * The default value is {@link ExchangePattern#InOnly}
+     * Sets the default exchange pattern when creating an exchange.
      */
     public void setExchangePattern(ExchangePattern exchangePattern) {
         this.exchangePattern = exchangePattern;
@@ -258,8 +256,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     /**
      * Returns whether synchronous processing should be strictly used.
-     * 
-     * @see #setSynchronous(boolean synchronous)
      */
     public boolean isSynchronous() {
         return synchronous;

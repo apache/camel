@@ -30,7 +30,7 @@ public class CamelContextCompleter extends CamelCompleterSupport {
     public int complete(String buffer, int cursor, List candidates) {
         try {
             StringsCompleter delegate = new StringsCompleter();
-            List<CamelContext> camelContexts = camelController.getCamelContexts();
+            List<CamelContext> camelContexts = camelController.getLocalCamelContexts();
             for (CamelContext camelContext : camelContexts) {
                 delegate.getStrings().add(camelContext.getName());
             }

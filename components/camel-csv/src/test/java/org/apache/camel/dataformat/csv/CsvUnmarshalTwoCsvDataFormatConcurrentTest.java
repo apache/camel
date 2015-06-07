@@ -24,9 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
@@ -69,21 +66,19 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                CsvDataFormat csv = new CsvDataFormat();
-                csv.setDelimiter("|");
-                CsvDataFormat csv2 = new CsvDataFormat();
-                csv2.setDelimiter(";");
+                CsvDataFormat csv = new CsvDataFormat().setDelimiter('|');
+                CsvDataFormat csv2 = new CsvDataFormat().setDelimiter(';');
 
                 from("direct:start")
-                    .multicast().parallelProcessing().to("direct:csv", "direct:csv2");
+                        .multicast().parallelProcessing().to("direct:csv", "direct:csv2");
 
                 from("direct:csv")
-                    .unmarshal(csv)
-                    .to("mock:result");
+                        .unmarshal(csv)
+                        .to("mock:result");
 
                 from("direct:csv2")
-                    .unmarshal(csv2)
-                    .to("mock:result2");
+                        .unmarshal(csv2)
+                        .to("mock:result2");
             }
         };
     }

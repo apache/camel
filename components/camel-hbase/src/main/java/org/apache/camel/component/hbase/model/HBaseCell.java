@@ -28,6 +28,7 @@ public class HBaseCell {
     private String family;
     private String qualifier;
     private Object value;
+    private Long timestamp;
     //The value type can be optionally specified for Gets and Scan, to specify how the byte[] read will be converted.
     private Class<?> valueType = String.class;
 
@@ -73,6 +74,14 @@ public class HBaseCell {
         this.valueType = valueType;
     }
 
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -82,12 +91,21 @@ public class HBaseCell {
             return false;
         }
 
-        HBaseCell cell = (HBaseCell) o;
+        HBaseCell hBaseCell = (HBaseCell) o;
 
-        if (family != null ? !family.equals(cell.family) : cell.family != null) {
+        if (family != null ? !family.equals(hBaseCell.family) : hBaseCell.family != null) {
             return false;
         }
-        if (qualifier != null ? !qualifier.equals(cell.qualifier) : cell.qualifier != null) {
+        if (qualifier != null ? !qualifier.equals(hBaseCell.qualifier) : hBaseCell.qualifier != null) {
+            return false;
+        }
+        if (timestamp != null ? !timestamp.equals(hBaseCell.timestamp) : hBaseCell.timestamp != null) {
+            return false;
+        }
+        if (value != null ? !value.equals(hBaseCell.value) : hBaseCell.value != null) {
+            return false;
+        }
+        if (valueType != null ? !valueType.equals(hBaseCell.valueType) : hBaseCell.valueType != null) {
             return false;
         }
 
@@ -98,6 +116,9 @@ public class HBaseCell {
     public int hashCode() {
         int result = family != null ? family.hashCode() : 0;
         result = 31 * result + (qualifier != null ? qualifier.hashCode() : 0);
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
+        result = 31 * result + (valueType != null ? valueType.hashCode() : 0);
         return result;
     }
 }

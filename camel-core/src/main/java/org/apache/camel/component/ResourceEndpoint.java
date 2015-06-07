@@ -27,7 +27,9 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedResourceEndpointMBean;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
@@ -41,9 +43,9 @@ import org.slf4j.LoggerFactory;
 public abstract class ResourceEndpoint extends ProcessorEndpoint implements ManagedResourceEndpointMBean {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private volatile byte[] buffer;
-    @UriParam
+    @UriPath(description = "Path to the resource") @Metadata(required = "true")
     private String resourceUri;
-    @UriParam
+    @UriParam(defaultValue = "false", description = "Sets whether to use resource content cache or not")
     private boolean contentCache;
 
     public ResourceEndpoint() {
@@ -128,9 +130,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     }
 
     /**
-     * Sets whether to use resource content cache or not - default is <tt>false</tt>.
-     *
-     * @see #getResourceAsInputStream()
+     * Sets whether to use resource content cache or not.
      */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
@@ -140,6 +140,11 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
         return resourceUri;
     }
 
+    /**
+     * Path to the resource
+     *
+     * @param resourceUri  the resource path
+     */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }

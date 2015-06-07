@@ -19,6 +19,7 @@ package org.apache.camel.component.hbase;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.hbase.filters.ModelAwareFilter;
@@ -29,7 +30,6 @@ import org.apache.camel.component.hbase.model.HBaseData;
 import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
@@ -41,6 +41,7 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
+import org.apache.hadoop.hbase.util.Bytes;
 
 /**
  * The HBase producer.
@@ -66,6 +67,9 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
 
             updateHeaders(exchange);
             String operation = (String) exchange.getIn().getHeader(HBaseConstants.OPERATION);
+
+            Integer maxScanResult = exchange.getIn().getHeader(HBaseConstants.HBASE_MAX_SCAN_RESULTS, Integer.class);
+            String fromRowId = (String) exchange.getIn().getHeader(HBaseConstants.FROM_ROW);
             CellMappingStrategy mappingStrategy = endpoint.getCellMappingStrategyFactory().getStrategy(exchange.getIn());
 
             HBaseData data = mappingStrategy.resolveModel(exchange.getIn());
@@ -85,7 +89,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 } else if (HBaseConstants.DELETE.equals(operation)) {
                     deleteOperations.add(createDeleteRow(hRow));
                 } else if (HBaseConstants.SCAN.equals(operation)) {
-                    scanOperationResult = scanCells(table, hRow, endpoint.getFilters());
+                    scanOperationResult = scanCells(table, hRow, fromRowId, maxScanResult, endpoint.getFilters());
                 }
             }
 
@@ -131,13 +135,8 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
     }
 
     /**
-     * Perfoms an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs).
+     * Performs an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs).
      * The result is <p>the most recent entry</p> for each column.
-     *
-     * @param table
-     * @param hRow
-     * @return
-     * @throws Exception
      */
     private HBaseRow getCells(HTableInterface table, HBaseRow hRow) throws Exception {
         HBaseRow resultRow = new HBaseRow();
@@ -160,6 +159,10 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
 
         Result result = table.get(get);
 
+        if (!result.isEmpty()) {
+            resultRow.setTimestamp(result.raw()[0].getTimestamp());
+        }
+
         for (HBaseCell cellModel : cellModels) {
             HBaseCell resultCell = new HBaseCell();
             String family = cellModel.getFamily();
@@ -171,6 +174,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
             if (kvs != null && !kvs.isEmpty()) {
                 //Return the most recent entry.
                 resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(cellModel.getValueType(), kvs.get(0).getValue()));
+                resultCell.setTimestamp(kvs.get(0).getTimestamp());
             }
             resultCells.add(resultCell);
             resultRow.getCells().add(resultCell);
@@ -180,9 +184,6 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
 
     /**
      * Creates an HBase {@link Delete} on a specific row, using a collection of values (family/column/value pairs).
-     *
-     * @param hRow
-     * @throws Exception
      */
     private Delete createDeleteRow(HBaseRow hRow) throws Exception {
         ObjectHelper.notNull(hRow, "HBase row");
@@ -191,25 +192,37 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
     }
 
     /**
-     * Perfoms an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs).
+     * Performs an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs).
      * The result is <p>the most recent entry</p> for each column.
-     *
-     * @param table
-     * @param model
-     * @return
-     * @throws Exception
      */
-    private List<HBaseRow> scanCells(HTableInterface table, HBaseRow model, List<Filter> filters) throws Exception {
+    private List<HBaseRow> scanCells(HTableInterface table, HBaseRow model, String start, Integer maxRowScan, List<Filter> filters) throws Exception {
         List<HBaseRow> rowSet = new LinkedList<HBaseRow>();
-        Scan scan = new Scan();
+
+        HBaseRow startRow = new HBaseRow(model.getCells());
+        startRow.setId(start);
+
+        Scan scan;
+        if (start != null) {
+            scan = new Scan(Bytes.toBytes(start));
+        } else {
+            scan = new Scan();
+        }
+
+        // need to clone the filters as they are not thread safe to use
         if (filters != null && !filters.isEmpty()) {
+            List<Filter> clonedFilters = new LinkedList<Filter>();
             for (Filter filter : filters) {
                 if (ModelAwareFilter.class.isAssignableFrom(filter.getClass())) {
-                    ((ModelAwareFilter<?>) filter).apply(endpoint.getCamelContext(), model);
+                    Object clone = endpoint.getCamelContext().getInjector().newInstance(filter.getClass());
+                    if (clone instanceof ModelAwareFilter) {
+                        ((ModelAwareFilter<?>) clone).apply(endpoint.getCamelContext(), model);
+                        clonedFilters.add((ModelAwareFilter<?>) clone);
+                    }
                 }
             }
-            scan.setFilter(new FilterList(FilterList.Operator.MUST_PASS_ALL, filters));
+            scan.setFilter(new FilterList(FilterList.Operator.MUST_PASS_ALL, clonedFilters));
         }
+
         Set<HBaseCell> cellModels = model.getCells();
         for (HBaseCell cellModel : cellModels) {
             String family = cellModel.getFamily();
@@ -221,10 +234,14 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
         }
 
         ResultScanner resultScanner = table.getScanner(scan);
+        int count = 0;
         Result result = resultScanner.next();
-        while (result != null) {
+
+        while (result != null && count < maxRowScan) {
             HBaseRow resultRow = new HBaseRow();
             resultRow.setId(endpoint.getCamelContext().getTypeConverter().convertTo(model.getRowType(), result.getRow()));
+
+            resultRow.setTimestamp(result.raw()[0].getTimestamp());
             cellModels = model.getCells();
             for (HBaseCell modelCell : cellModels) {
                 HBaseCell resultCell = new HBaseCell();
@@ -235,10 +252,14 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                         result.getValue(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column))));
                 resultCell.setFamily(modelCell.getFamily());
                 resultCell.setQualifier(modelCell.getQualifier());
-                resultRow.getCells().add(resultCell);
-                rowSet.add(resultRow);
-            }
 
+                if (result.getColumnLatest(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column)) != null) {
+                    resultCell.setTimestamp(result.getColumnLatest(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column)).getTimestamp());
+                }
+                resultRow.getCells().add(resultCell);
+            }
+            rowSet.add(resultRow);
+            count++;
             result = resultScanner.next();
         }
         return rowSet;

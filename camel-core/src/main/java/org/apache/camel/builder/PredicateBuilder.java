@@ -105,6 +105,36 @@ public final class PredicateBuilder {
     }
 
     /**
+     * Concat the given predicates into a single predicate, which matches
+     * if at least one predicates matches.
+     *
+     * @param predicates predicates
+     * @return a single predicate containing all the predicates
+     */
+    public static Predicate or(List<Predicate> predicates) {
+        Predicate answer = null;
+        for (Predicate predicate : predicates) {
+            if (answer == null) {
+                answer = predicate;
+            } else {
+                answer = or(answer, predicate);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Concat the given predicates into a single predicate, which matches
+     * if at least one predicates matches.
+     *
+     * @param predicates predicates
+     * @return a single predicate containing all the predicates
+     */
+    public static Predicate or(Predicate... predicates) {
+        return or(Arrays.asList(predicates));
+    }
+
+    /**
      * A helper method to return true if any of the predicates matches.
      */
     public static Predicate in(final Predicate... predicates) {

@@ -19,11 +19,11 @@ package org.apache.camel.component.sjms;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import javax.jms.Connection;
+import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Session;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -177,37 +177,22 @@ public class SjmsConsumer extends DefaultConsumer {
      * Creates a {@link MessageConsumerResources} with a dedicated
      * {@link Session} required for transacted and InOut consumers.
      */
-    @SuppressWarnings("unused")
     private MessageConsumerResources createConsumer() throws Exception {
-        MessageConsumerResources answer = null;
-        Connection conn = null;
+        MessageConsumerResources answer;
+        Connection conn = getConnectionResource().borrowConnection();
         try {
-            conn = getConnectionResource().borrowConnection();
-
-            Session session = null;
-            MessageConsumer messageConsumer = null;
-            if (isTransacted()) {
-                session = conn.createSession(true, Session.SESSION_TRANSACTED);
-            } else {
-                session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            }
-            messageConsumer = JmsObjectFactory.createMessageConsumer(session, getDestinationName(), getMessageSelector(), isTopic(), getDurableSubscriptionId());
+            Session session = conn.createSession(isTransacted(), isTransacted() ? Session.SESSION_TRANSACTED : Session.AUTO_ACKNOWLEDGE);
+            Destination destination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getDestinationName(), isTopic());
+            MessageConsumer messageConsumer = JmsObjectFactory.createMessageConsumer(session, destination, getMessageSelector(), isTopic(), getDurableSubscriptionId());
             MessageListener handler = createMessageHandler(session);
             messageConsumer.setMessageListener(handler);
 
-            if (session == null) {
-                throw new CamelException("Message Consumer Creation Exception: Session is NULL");
-            }
-            if (messageConsumer == null) {
-                throw new CamelException("Message Consumer Creation Exception: MessageConsumer is NULL");
-            }
             answer = new MessageConsumerResources(session, messageConsumer);
         } catch (Exception e) {
-            log.error("Unable to create the MessageConsumer: " + e.getLocalizedMessage());
+            log.error("Unable to create the MessageConsumer", e);
+            throw e;
         } finally {
-            if (conn != null) {
-                getConnectionResource().returnConnection(conn);
-            }
+            getConnectionResource().returnConnection(conn);
         }
         return answer;
     }

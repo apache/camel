@@ -22,6 +22,8 @@ import org.apache.camel.RuntimeCamelException;
  * Schematron configuration Exception.
  */
 public class SchematronConfigException extends RuntimeCamelException {
+    private static final long serialVersionUID = 1L;
+
     public SchematronConfigException(Throwable e) {
         super(e);
     }

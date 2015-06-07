@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.16-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-xmljson</artifactId>
@@ -47,9 +47,9 @@
       <classifier>jdk15</classifier>
     </dependency>
     <dependency>
-      <groupId>xom</groupId>
-      <artifactId>xom</artifactId>
-      <version>${xom-version}</version>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>${commons-lang-version}</version>
     </dependency>
 
     <!-- testing -->
@@ -70,5 +70,38 @@
     </dependency>
 
   </dependencies>
+
+  <!-- NOTICE: The XOM runtime dependency cannot be made part of the classpath by default due to legal issues. 
+       Therefore, it must be activated explicitly by the user through the build profile below.
+  -->
+  <profiles>
+    <profile>
+      <id>build-with-xom</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>xom</groupId>
+          <artifactId>xom</artifactId>
+          <version>${xom-version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>test-with-xom</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>xom</groupId>
+          <artifactId>xom</artifactId>
+          <version>${xom-version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
 </project>

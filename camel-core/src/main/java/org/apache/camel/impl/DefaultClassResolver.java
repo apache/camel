@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -27,14 +29,40 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Default class resolver that uses regular class loader to load classes.
  */
-public class DefaultClassResolver implements ClassResolver {
+public class DefaultClassResolver implements ClassResolver, CamelContextAware {
+
+    private CamelContext camelContext;
+
+    public DefaultClassResolver() {
+    }
+
+    public DefaultClassResolver(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
 
     public Class<?> resolveClass(String name) {
-        return loadClass(name, DefaultClassResolver.class.getClassLoader());
+        Class<?> answer = loadClass(name, DefaultClassResolver.class.getClassLoader());
+        if (answer == null && getApplicationContextClassLoader() != null) {
+            // fallback and use application context class loader
+            answer = loadClass(name, getApplicationContextClassLoader());
+        }
+        return answer;
     }
 
     public <T> Class<T> resolveClass(String name, Class<T> type) {
         Class<T> answer = CastUtils.cast(loadClass(name, DefaultClassResolver.class.getClassLoader()));
+        if (answer == null && getApplicationContextClassLoader() != null) {
+            // fallback and use application context class loader
+            answer = CastUtils.cast(loadClass(name, getApplicationContextClassLoader()));
+        }
         return answer;
     }
 
@@ -43,8 +71,7 @@ public class DefaultClassResolver implements ClassResolver {
     }
 
     public <T> Class<T> resolveClass(String name, Class<T> type, ClassLoader loader) {
-        Class<T> answer = CastUtils.cast(loadClass(name, loader));
-        return answer;
+        return CastUtils.cast(loadClass(name, loader));
     }
 
     public Class<?> resolveMandatoryClass(String name) throws ClassNotFoundException {
@@ -81,19 +108,18 @@ public class DefaultClassResolver implements ClassResolver {
 
     public InputStream loadResourceAsStream(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        return ObjectHelper.loadResourceAsStream(uri);
+        return ObjectHelper.loadResourceAsStream(uri, getApplicationContextClassLoader());
     }
 
     public URL loadResourceAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        return ObjectHelper.loadResourceAsURL(uri);
+        return ObjectHelper.loadResourceAsURL(uri, getApplicationContextClassLoader());
     }
 
     public Enumeration<URL> loadResourcesAsURL(String uri) {
         return loadAllResourcesAsURL(uri);
     }
 
-    @Override
     public Enumeration<URL> loadAllResourcesAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
         return ObjectHelper.loadResourcesAsURL(uri);
@@ -103,4 +129,9 @@ public class DefaultClassResolver implements ClassResolver {
         ObjectHelper.notEmpty(name, "name");
         return ObjectHelper.loadClass(name, loader);
     }
+
+    protected ClassLoader getApplicationContextClassLoader() {
+        return camelContext != null ? camelContext.getApplicationContextClassLoader() : null;
+    }
+
 }

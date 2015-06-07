@@ -286,7 +286,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         } else {
             setEndpointHeaderFilterStrategy(endpoint);
         }
-        endpoint.setBinding(getHttpBinding());
+        endpoint.setHttpBinding(getHttpBinding());
         if (httpBinding != null) {
             endpoint.setHttpBinding(httpBinding);
         }
@@ -357,6 +357,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return httpClientConfigurer;
     }
 
+    /**
+     * To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
+     */
     public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
         this.httpClientConfigurer = httpClientConfigurer;
     }
@@ -365,6 +368,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return clientConnectionManager;
     }
 
+    /**
+     * To use a custom HttpClientConnectionManager to manage connections
+     */
     public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
@@ -373,6 +379,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return httpBinding;
     }
 
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+     */
     public void setHttpBinding(HttpBinding httpBinding) {
         this.httpBinding = httpBinding;
     }
@@ -381,6 +390,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return httpContext;
     }
 
+    /**
+     * To use a custom org.apache.http.protocol.HttpContext when executing requests.
+     */
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
     }
@@ -389,6 +401,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters.
+     * Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent.
+     * If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -397,6 +414,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return x509HostnameVerifier;
     }
 
+    /**
+     * To use a custom X509HostnameVerifier such as org.apache.http.conn.ssl.StrictHostnameVerifier
+     * or org.apache.http.conn.ssl.AllowAllHostnameVerifier.
+     */
     public void setX509HostnameVerifier(X509HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
     }
@@ -405,6 +426,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return maxTotalConnections;
     }
 
+    /**
+     * The maximum number of connections.
+     */
     public void setMaxTotalConnections(int maxTotalConnections) {
         this.maxTotalConnections = maxTotalConnections;
     }
@@ -413,6 +437,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return connectionsPerRoute;
     }
 
+    /**
+     * The maximum number of connections per route.
+     */
     public void setConnectionsPerRoute(int connectionsPerRoute) {
         this.connectionsPerRoute = connectionsPerRoute;
     }
@@ -420,7 +447,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     public long getConnectionTimeToLive() {
         return connectionTimeToLive;
     }
-    
+
+    /**
+     * The time for connection to live, the time unit is millisecond, the default value is always keep alive.
+     */
     public void setConnectionTimeToLive(long connectionTimeToLive) {
         this.connectionTimeToLive = connectionTimeToLive;
     }
@@ -429,6 +459,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return cookieStore;
     }
 
+    /**
+     * To use a custom org.apache.http.client.CookieStore.
+     * By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store.
+     * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie
+     * shouldn't be stored as we are just bridging (eg acting as a proxy).
+     */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
     }

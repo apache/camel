@@ -22,10 +22,8 @@ import javax.security.auth.login.LoginException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("TODO fix it")
 public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNettyTest {
 
     @Override

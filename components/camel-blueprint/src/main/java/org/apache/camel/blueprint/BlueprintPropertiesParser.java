@@ -51,6 +51,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
     private Method method;
 
     public BlueprintPropertiesParser(PropertiesComponent propertiesComponent, BlueprintContainer container, PropertiesParser delegate) {
+        super(propertiesComponent);
         this.propertiesComponent = propertiesComponent;
         this.container = container;
         this.delegate = delegate;

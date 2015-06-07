@@ -26,17 +26,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents a Splunk endpoint.
  */
+@UriEndpoint(scheme = "splunk", title = "Splunk", syntax = "splunk:name", consumerClass = SplunkConsumer.class, label = "monitoring")
 public class SplunkEndpoint extends ScheduledPollEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
 
-    private SplunkConfiguration configuration;
     private Service service;
+    @UriParam
+    private SplunkConfiguration configuration;
 
     public SplunkEndpoint() {
     }

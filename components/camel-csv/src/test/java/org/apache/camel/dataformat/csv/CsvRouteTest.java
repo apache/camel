@@ -42,15 +42,10 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.csv.writer.CSVConfig;
-import org.apache.commons.csv.writer.CSVField;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class CsvRouteTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CsvRouteTest.class);
 
@@ -74,18 +69,18 @@ public class CsvRouteTest extends CamelTestSupport {
 
             log.debug("Received " + text);
             assertNotNull("Should be able to convert received body to a string", text);
-            
+
             // order is not guaranteed with a Map (which was passed in before)
             // so we need to check for both combinations
-            assertTrue("Text body has wrong value.", "abc,123".equals(text.trim()) 
-                       || "123,abc".equals(text.trim()));
+            assertTrue("Text body has wrong value.", "abc,123".equals(text.trim())
+                    || "123,abc".equals(text.trim()));
         }
     }
 
     @Test
     public void testMultipleMessages() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMulti",
-                                                               MockEndpoint.class);
+                MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
         Map<String, Object> body1 = new HashMap<String, Object>();
         body1.put("foo", "abc");
@@ -106,7 +101,7 @@ public class CsvRouteTest extends CamelTestSupport {
 
         log.debug("Received " + text1);
         assertTrue("First CSV body has wrong value",
-                   Pattern.matches("(abc,123)|(123,abc)", text1.trim()));
+                Pattern.matches("(abc,123)|(123,abc)", text1.trim()));
 
         Message in2 = list.get(1).getIn();
         String text2 = in2.getBody(String.class);
@@ -116,17 +111,17 @@ public class CsvRouteTest extends CamelTestSupport {
         // fields should keep the same order from one call to the other
         if (text1.trim().equals("abc,123")) {
             assertEquals("Second CSV body has wrong value",
-                         "def,456,789", text2.trim());
+                    "def,456,789", text2.trim());
         } else {
             assertEquals("Second CSV body has wrong value",
-                         "456,def,789", text2.trim());
+                    "456,def,789", text2.trim());
         }
     }
 
     @Test
     public void testPresetConfig() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMultiCustom",
-                                                               MockEndpoint.class);
+                MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
         Map<String, Object> body1 = new HashMap<String, Object>();
         body1.put("foo", "abc");
@@ -147,14 +142,14 @@ public class CsvRouteTest extends CamelTestSupport {
 
         log.debug("Received " + text1);
         assertEquals("First CSV body has wrong value",
-                     "abc;;123", text1.trim());
+                "abc;;123", text1.trim());
 
         Message in2 = list.get(1).getIn();
         String text2 = in2.getBody(String.class);
 
         log.debug("Received " + text2);
         assertEquals("Second CSV body has wrong value",
-                     "def;789;456", text2.trim());
+                "def;789;456", text2.trim());
 
     }
 
@@ -169,7 +164,7 @@ public class CsvRouteTest extends CamelTestSupport {
         List<List<String>> data = (List<List<String>>) exchange.getIn().getBody();
         for (List<String> line : data) {
             LOG.debug(String.format("%s has an IQ of %s and is currently %s",
-                                    line.get(0), line.get(1), line.get(2)));
+                    line.get(0), line.get(1), line.get(2)));
         }
         // END SNIPPET : unmarshalResult
     }
@@ -179,31 +174,27 @@ public class CsvRouteTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: marshalRoute
                 from("direct:start").
-                    marshal().csv().
-                    to("mock:result");
+                        marshal().csv().
+                        to("mock:result");
                 // END SNIPPET: marshalRoute
 
                 from("direct:startMulti").
-                    marshal().csv().
-                    to("mock:resultMulti");
+                        marshal().csv().
+                        to("mock:resultMulti");
 
-                CsvDataFormat customCsv = new CsvDataFormat();
-                CSVConfig custom = new CSVConfig();
-                custom.setDelimiter(';');
-                custom.addField(new CSVField("foo"));
-                custom.addField(new CSVField("baz"));
-                custom.addField(new CSVField("bar"));
-                customCsv.setConfig(custom);
-                customCsv.setAutogenColumns(false);
+                CsvDataFormat customCsv = new CsvDataFormat()
+                        .setDelimiter(';')
+                        .setHeader(new String[]{"foo", "baz", "bar"})
+                        .setSkipHeaderRecord(true);
 
                 from("direct:startMultiCustom").
-                    marshal(customCsv).
-                    to("mock:resultMultiCustom");
+                        marshal(customCsv).
+                        to("mock:resultMultiCustom");
 
                 // START SNIPPET: unmarshalRoute
                 from("file:src/test/resources/?fileName=daltons.csv&noop=true").
-                    unmarshal().csv().
-                    to("mock:daltons");
+                        unmarshal().csv().
+                        to("mock:daltons");
                 // END SNIPPET: unmarshalRoute
             }
         };

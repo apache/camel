@@ -24,8 +24,10 @@ import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -33,11 +35,15 @@ import org.slf4j.Logger;
 /**
  * Logger endpoint.
  */
-@UriEndpoint(scheme = "log")
+@UriEndpoint(scheme = "log", title = "Log", syntax = "log:loggerName", producerOnly = true, label = "core,monitoring")
 public class LogEndpoint extends ProcessorEndpoint {
 
     private volatile Processor logger;
-    @UriParam
+    private Logger providedLogger;
+    private ExchangeFormatter localFormatter;
+    @UriPath(description = "Name of the logging category to use") @Metadata(required = "true")
+    private String loggerName;
+    @UriParam(defaultValue = "INFO", enums = "ERROR,WARN,INFO,DEBUG,TRACE,OFF")
     private String level;
     @UriParam
     private String marker;
@@ -45,14 +51,10 @@ public class LogEndpoint extends ProcessorEndpoint {
     private Integer groupSize;
     @UriParam
     private Long groupInterval;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private Boolean groupActiveOnly;
     @UriParam
     private Long groupDelay;
-    
-    private ExchangeFormatter localFormatter;
-    private Logger providedLogger;
-    private String loggerName;
 
     public LogEndpoint() {
     }
@@ -70,7 +72,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     protected void doStart() throws Exception {
         if (logger == null) {
             // setup a new logger here
-            CamelLogger camelLogger = null;
+            CamelLogger camelLogger;
             LoggingLevel loggingLevel = LoggingLevel.INFO;
             if (level != null) {
                 loggingLevel = LoggingLevel.valueOf(level);
@@ -121,50 +123,90 @@ public class LogEndpoint extends ProcessorEndpoint {
         return "log:" + logger.toString();
     }
 
+    /**
+     * Logging level to use.
+     * <p/>
+     * The default value is INFO.
+     */
     public String getLevel() {
         return level;
     }
 
+    /**
+     * Logging level to use.
+     * <p/>
+     * The default value is INFO.
+     */
     public void setLevel(String level) {
         this.level = level;
     }
 
+    /**
+     * An optional Marker name to use.
+     */
     public String getMarker() {
         return marker;
     }
 
+    /**
+     * An optional Marker name to use.
+     */
     public void setMarker(String marker) {
         this.marker = marker;
     }
 
+    /**
+     * An integer that specifies a group size for throughput logging.
+     */
     public Integer getGroupSize() {
         return groupSize;
     }
 
+    /**
+     * An integer that specifies a group size for throughput logging.
+     */
     public void setGroupSize(Integer groupSize) {
         this.groupSize = groupSize;
     }
 
+    /**
+     * If specified will group message stats by this time interval (in millis)
+     */
     public Long getGroupInterval() {
         return groupInterval;
     }
 
+    /**
+     * If specified will group message stats by this time interval (in millis)
+     */
     public void setGroupInterval(Long groupInterval) {
         this.groupInterval = groupInterval;
     }
 
+    /**
+     * If true, will hide stats when no new messages have been received for a time interval, if false, show stats regardless of message traffic.
+     */
     public Boolean getGroupActiveOnly() {
         return groupActiveOnly;
     }
 
+    /**
+     * If true, will hide stats when no new messages have been received for a time interval, if false, show stats regardless of message traffic.
+     */
     public void setGroupActiveOnly(Boolean groupActiveOnly) {
         this.groupActiveOnly = groupActiveOnly;
     }
 
+    /**
+     * Set the initial delay for stats (in millis)
+     */
     public Long getGroupDelay() {
         return groupDelay;
     }
 
+    /**
+     * Set the initial delay for stats (in millis)
+     */
     public void setGroupDelay(Long groupDelay) {
         this.groupDelay = groupDelay;
     }
@@ -185,10 +227,16 @@ public class LogEndpoint extends ProcessorEndpoint {
         this.providedLogger = providedLogger;
     }
 
+    /**
+     * The logger name to use
+     */
     public String getLoggerName() {
         return loggerName;
     }
 
+    /**
+     * The logger name to use
+     */
     public void setLoggerName(String loggerName) {
         this.loggerName = loggerName;
     }

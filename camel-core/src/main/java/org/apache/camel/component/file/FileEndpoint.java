@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -32,17 +33,18 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * File endpoint.
  */
-@UriEndpoint(scheme = "file", consumerClass = FileConsumer.class)
+@UriEndpoint(scheme = "file", title = "File", syntax = "file:directoryName", consumerClass = FileConsumer.class, label = "core,file")
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private final FileOperations operations = new FileOperations(this);
-    @UriPath
+
+    @UriPath(name = "directoryName") @Metadata(required = "true")
     private File file;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean copyAndDeleteOnRenameFail = true;
     @UriParam
     private boolean renameUsingCopy;
-    @UriParam
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean forceWrites = true;
 
     public FileEndpoint() {
@@ -141,6 +143,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return file;
     }
 
+    /**
+     * The starting directory
+     */
     public void setFile(File file) {
         this.file = file;
         // update configuration as well
@@ -172,6 +177,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return copyAndDeleteOnRenameFail;
     }
 
+    /**
+     * Whether to fallback and do a copy and delete file, in case the file could not be renamed directly. This option is not available for the FTP component.
+     */
     public void setCopyAndDeleteOnRenameFail(boolean copyAndDeleteOnRenameFail) {
         this.copyAndDeleteOnRenameFail = copyAndDeleteOnRenameFail;
     }
@@ -180,6 +188,12 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return renameUsingCopy;
     }
 
+    /**
+     * Perform rename operations using a copy and delete strategy.
+     * This is primarily used in environments where the regular rename operation is unreliable (e.g. across different file systems or networks).
+     * This option takes precedence over the copyAndDeleteOnRenameFail parameter that will automatically fall back to the copy and delete strategy,
+     * but only after additional delays.
+     */
     public void setRenameUsingCopy(boolean renameUsingCopy) {
         this.renameUsingCopy = renameUsingCopy;
     }
@@ -188,6 +202,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return forceWrites;
     }
 
+    /**
+     * Whether to force syncing writes to the file system.
+     * You can turn this off if you do not want this level of guarantee, for example if writing to logs / audit logs etc; this would yield better performance.
+     */
     public void setForceWrites(boolean forceWrites) {
         this.forceWrites = forceWrites;
     }

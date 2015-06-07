@@ -27,6 +27,7 @@ DataFormatsDefinition
 FlatpackDataFormat
 GzipDataFormat
 HL7DataFormat
+IcalDataFormat
 JaxbDataFormat
 JibxDataFormat
 JsonDataFormat
@@ -38,6 +39,10 @@ SoapJaxbDataFormat
 StringDataFormat
 SyslogDataFormat
 TidyMarkupDataFormat
+UniVocityCsvDataFormat
+UniVocityFixedWidthDataFormat
+UniVocityHeader
+UniVocityTsvDataFormat
 XMLBeansDataFormat
 XMLSecurityDataFormat
 XStreamDataFormat

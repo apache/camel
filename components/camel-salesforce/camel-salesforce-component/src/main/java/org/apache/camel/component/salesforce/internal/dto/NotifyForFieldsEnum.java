@@ -24,10 +24,14 @@ import org.codehaus.jackson.annotate.JsonValue;
  */
 public enum NotifyForFieldsEnum {
 
-    SELECT("Select"),
-    WHERE("Where"),
+    // All
+    ALL("All"),
+    // Referenced
     REFERENCED("Referenced"),
-    ALL("All");
+    // Select
+    SELECT("Select"),
+    // Where
+    WHERE("Where");
 
     final String value;
 

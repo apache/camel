@@ -24,14 +24,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.tokenizer.XMLTokenizeLanguage;
+import org.apache.camel.spi.Metadata;
 
 /**
  * For expressions and predicates using a body or header tokenizer.
  *
  * @see XMLTokenizeLanguage
  */
+@Metadata(label = "language", title = "XML Tokenize")
 @XmlRootElement(name = "xtokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLTokenizerExpression extends NamespaceAwareExpression {
@@ -58,29 +59,43 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         return headerName;
     }
 
+    /**
+     * Name of header to tokenize instead of using the message body.
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
-    }
-
-    public void setMode(String mode) {
-        this.mode = mode;
     }
 
     public String getMode() {
         return mode;
     }
 
+    /**
+     * The extraction mode. The available extraction modes are:
+     * <ul>
+     *     <li>i - injecting the contextual namespace bindings into the extracted token (default)</li>
+     *     <li>w - wrapping the extracted token in its ancestor context</li>
+     *     <li>u - unwrapping the extracted token to its child content</li>
+     *     <li>t - extracting the text content of the specified element</li>
+     * </ul>
+     */
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
     public Integer getGroup() {
         return group;
     }
 
+    /**
+     * To group N parts together
+     */
     public void setGroup(Integer group) {
         this.group = group;
     }
 
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
-        super.configureExpression(camelContext, expression);
         if (headerName != null) {
             setProperty(expression, "headerName", headerName);
         }
@@ -90,11 +105,11 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         if (group != null) {
             setProperty(expression, "group", group);
         }
+        super.configureExpression(camelContext, expression);
     }
 
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        super.configurePredicate(camelContext, predicate);
         if (headerName != null) {
             setProperty(predicate, "headerName", headerName);
         }
@@ -104,6 +119,7 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         if (group != null) {
             setProperty(predicate, "group", group);
         }
+        super.configurePredicate(camelContext, predicate);
     }
 
     @Override

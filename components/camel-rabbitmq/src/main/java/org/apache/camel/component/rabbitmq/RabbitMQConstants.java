@@ -17,7 +17,7 @@
 package org.apache.camel.component.rabbitmq;
 
 public final class RabbitMQConstants {
-    
+    // TODO need to change the constant which is start with camel
     public static final String ROUTING_KEY = "rabbitmq.ROUTING_KEY";
     public static final String EXCHANGE_NAME = "rabbitmq.EXCHANGE_NAME";
     public static final String CONTENT_TYPE = "rabbitmq.CONTENT_TYPE";
@@ -34,6 +34,9 @@ public final class RabbitMQConstants {
     public static final String EXPIRATION = "rabbitmq.EXPIRATION";
     public static final String TIMESTAMP = "rabbitmq.TIMESTAMP";
     public static final String APP_ID = "rabbitmq.APP_ID";
+    public static final String REQUEUE = "rabbitmq.REQUEUE";
+    public static final String MANDATORY = "rabbitmq.MANDATORY";
+    public static final String IMMEDIATE = "rabbitmq.IMMEDIATE";
     public static final String RABBITMQ_DEAD_LETTER_EXCHANGE = "x-dead-letter-exchange";
     public static final String RABBITMQ_DEAD_LETTER_ROUTING_KEY = "x-dead-letter-routing-key";
     

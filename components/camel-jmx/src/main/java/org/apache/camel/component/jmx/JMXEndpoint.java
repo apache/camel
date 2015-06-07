@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -40,6 +43,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * You can append query options to the URI in the following format, ?options=value&option2=value&...
  */
+@UriEndpoint(scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true, consumerClass = JMXConsumer.class, label = "monitoring")
 public class JMXEndpoint extends DefaultEndpoint {
 
     // error messages as constants so they can be asserted on from unit tests
@@ -52,141 +56,167 @@ public class JMXEndpoint extends DefaultEndpoint {
     protected static final String ERR_OBSERVED_ATTRIBUTE = "Observed attribute must be specified";
 
     /**
+     * server url comes from the remaining endpoint
+     */
+    @UriPath
+    private String serverURL;
+
+    /**
      * URI Property: [monitor types only] The attribute to observe for the monitor bean.  
      */
-    private String mObservedAttribute;
+    @UriParam
+    private String observedAttribute;
 
     /**
      * URI Property: [monitor types only] The frequency to poll the bean to check the monitor.  
      */
-    private long mGranularityPeriod;
+    @UriParam
+    private long granularityPeriod;
 
     /**
      * URI Property: [monitor types only] The type of monitor to create. One of string, gauge, counter.  
      */
-    private String mMonitorType;
+    @UriParam
+    private String monitorType;
 
     /**
      * URI Property: [counter monitor only] Initial threshold for the monitor. The value must exceed this before notifications are fired.  
      */
-    private int mInitThreshold;
+    @UriParam
+    private int initThreshold;
 
     /**
      * URI Property: [counter monitor only] The amount to increment the threshold after it's been exceeded.  
      */
-    private int mOffset;
+    @UriParam
+    private int offset;
 
     /**
      * URI Property: [counter monitor only] The value at which the counter is reset to zero  
      */
-    private int mModulus;
+    @UriParam
+    private int modulus;
 
     /**
      * URI Property: [counter + gauge monitor only] If true, then the value reported in the notification is the difference from the threshold as opposed to the value itself.  
      */
-    private boolean mDifferenceMode;
+    @UriParam
+    private boolean differenceMode;
 
     /**
      * URI Property: [gauge monitor only] If true, the gauge will fire a notification when the high threshold is exceeded  
      */
-    private boolean mNotifyHigh;
+    @UriParam
+    private boolean notifyHigh;
 
     /**
      * URI Property: [gauge monitor only] If true, the gauge will fire a notification when the low threshold is exceeded  
      */
-    private boolean mNotifyLow;
+    @UriParam
+    private boolean notifyLow;
 
     /**
      * URI Property: [gauge monitor only] Value for the gauge's high threshold  
      */
-    private Double mThresholdHigh;
+    @UriParam
+    private Double thresholdHigh;
 
     /**
      * URI Property: [gauge monitor only] Value for the gauge's low threshold  
      */
-    private Double mThresholdLow;
+    @UriParam
+    private Double thresholdLow;
 
     /**
      * URI Property: [string monitor only] If true, the string monitor will fire a notification when the string attribute differs from the string to compare.  
      */
-    private boolean mNotifyDiffer;
+    @UriParam
+    private boolean notifyDiffer;
 
     /**
      * URI Property: [string monitor only] If true, the string monitor will fire a notification when the string attribute matches the string to compare.  
      */
-    private boolean mNotifyMatch;
+    @UriParam
+    private boolean notifyMatch;
 
     /**
      * URI Property: [string monitor only] Value for the string monitor's string to compare.  
      */
-    private String mStringToCompare;
+    @UriParam
+    private String stringToCompare;
     
     /**
      * URI Property: Format for the message body. Either "xml" or "raw". If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body.
      */
-    private String mFormat = "xml";
+    @UriParam(defaultValue = "xml")
+    private String format = "xml";
 
     /**
      * URI Property: credentials for making a remote connection
      */
-    private String mUser;
+    @UriParam
+    private String user;
 
     /**
      * URI Property: credentials for making a remote connection
      */
-    private String mPassword;
+    @UriParam
+    private String password;
 
     /**
      * URI Property: The domain for the mbean you're connecting to
      */
-    private String mObjectDomain;
+    @UriParam
+    private String objectDomain;
 
     /**
      * URI Property: The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed.
      */
-    private String mObjectName;
+    @UriParam
+    private String objectName;
 
     /**
      * URI Property: Reference to a bean that implements the NotificationFilter.
      */
-    private NotificationFilter mNotificationFilter;
+    @UriParam
+    private NotificationFilter notificationFilter;
 
     /**
      * URI Property: Value to handback to the listener when a notification is received. This value will be put in the message header with the key "jmx.handback"
      */
-    private Object mHandback;
+    @UriParam
+    private Object handback;
     
     /**
      * URI Property:  If true the consumer will throw an exception if unable to establish the JMX connection upon startup.  If false, the consumer will attempt
      *                to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured  reconnectionDelay 
      */
-    private boolean mTestConnectionOnStartup = true;
+    @UriParam(defaultValue = "true")
+    private boolean testConnectionOnStartup = true;
     
     
     /**
      * URI Property:  If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs.  The consumer will attempt
      *                to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured  reconnectionDelay
      */
-    private boolean mReconnectOnConnectionFailure;
+    @UriParam
+    private boolean reconnectOnConnectionFailure;
      
      /**
       * URI Property:  The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection
       */
-    private int mReconnectDelay = 10;
+    @UriParam(defaultValue = "10")
+    private int reconnectDelay = 10;
 
     /**
      * URI Property: properties for the object name. These values will be used if the objectName param is not set
      */
-    private Hashtable<String, String> mObjectProperties;
+    private Hashtable<String, String> objectProperties;
 
     /**
      * cached object name that was built from the objectName param or the hashtable
      */
-    private ObjectName mJMXObjectName;
-    /**
-     * server url comes from the remaining endpoint
-     */
-    private String mServerURL;
+    private transient ObjectName jmxObjectName;
 
     public JMXEndpoint(String aEndpointUri, JMXComponent aComponent) {
         super(aEndpointUri, aComponent);
@@ -241,11 +271,11 @@ public class JMXEndpoint extends DefaultEndpoint {
     }
 
     public String getFormat() {
-        return mFormat;
+        return format;
     }
 
     public void setFormat(String aFormat) {
-        mFormat = aFormat;
+        format = aFormat;
     }
 
     public boolean isXML() {
@@ -257,66 +287,66 @@ public class JMXEndpoint extends DefaultEndpoint {
     }
 
     public String getUser() {
-        return mUser;
+        return user;
     }
 
     public void setUser(String aUser) {
-        mUser = aUser;
+        user = aUser;
     }
 
     public String getPassword() {
-        return mPassword;
+        return password;
     }
 
     public void setPassword(String aPassword) {
-        mPassword = aPassword;
+        password = aPassword;
     }
 
     public String getObjectDomain() {
-        return mObjectDomain;
+        return objectDomain;
     }
 
     public void setObjectDomain(String aObjectDomain) {
-        mObjectDomain = aObjectDomain;
+        objectDomain = aObjectDomain;
     }
 
     public String getObjectName() {
-        return mObjectName;
+        return objectName;
     }
 
     public void setObjectName(String aObjectName) {
         if (getObjectProperties() != null) {
             throw new IllegalArgumentException("Cannot set both objectName and objectProperties");
         }
-        mObjectName = aObjectName;
+        objectName = aObjectName;
     }
 
     protected String getServerURL() {
-        return mServerURL;
+        return serverURL;
     }
 
     protected void setServerURL(String aServerURL) {
-        mServerURL = aServerURL;
+        serverURL = aServerURL;
     }
 
     public NotificationFilter getNotificationFilter() {
-        return mNotificationFilter;
+        return notificationFilter;
     }
 
     public void setNotificationFilter(NotificationFilter aFilterRef) {
-        mNotificationFilter = aFilterRef;
+        notificationFilter = aFilterRef;
     }
 
     public Object getHandback() {
-        return mHandback;
+        return handback;
     }
 
     public void setHandback(Object aHandback) {
-        mHandback = aHandback;
+        handback = aHandback;
     }
 
     public Hashtable<String, String> getObjectProperties() {
-        return mObjectProperties;
+        return objectProperties;
     }
 
     /**
@@ -333,155 +363,155 @@ public class JMXEndpoint extends DefaultEndpoint {
         if (getObjectName() != null) {
             throw new IllegalArgumentException("Cannot set both objectName and objectProperties");
         }
-        mObjectProperties = aObjectProperties;
+        objectProperties = aObjectProperties;
     }
 
     protected ObjectName getJMXObjectName() throws MalformedObjectNameException {
-        if (mJMXObjectName == null) {
+        if (jmxObjectName == null) {
             ObjectName on = buildObjectName();
             setJMXObjectName(on);
         }
-        return mJMXObjectName;
+        return jmxObjectName;
     }
 
     protected void setJMXObjectName(ObjectName aCachedObjectName) {
-        mJMXObjectName = aCachedObjectName;
+        jmxObjectName = aCachedObjectName;
     }
 
     public String getObservedAttribute() {
-        return mObservedAttribute;
+        return observedAttribute;
     }
 
     public void setObservedAttribute(String aObservedAttribute) {
-        mObservedAttribute = aObservedAttribute;
+        observedAttribute = aObservedAttribute;
     }
 
     public long getGranularityPeriod() {
-        return mGranularityPeriod;
+        return granularityPeriod;
     }
 
     public void setGranularityPeriod(long aGranularityPeriod) {
-        mGranularityPeriod = aGranularityPeriod;
+        granularityPeriod = aGranularityPeriod;
     }
 
     public String getMonitorType() {
-        return mMonitorType;
+        return monitorType;
     }
 
     public void setMonitorType(String aMonitorType) {
-        mMonitorType = aMonitorType;
+        monitorType = aMonitorType;
     }
 
     public int getInitThreshold() {
-        return mInitThreshold;
+        return initThreshold;
     }
 
     public void setInitThreshold(int aInitThreshold) {
-        mInitThreshold = aInitThreshold;
+        initThreshold = aInitThreshold;
     }
 
     public int getOffset() {
-        return mOffset;
+        return offset;
     }
 
     public void setOffset(int aOffset) {
-        mOffset = aOffset;
+        offset = aOffset;
     }
 
     public int getModulus() {
-        return mModulus;
+        return modulus;
     }
 
     public void setModulus(int aModulus) {
-        mModulus = aModulus;
+        modulus = aModulus;
     }
 
     public boolean isDifferenceMode() {
-        return mDifferenceMode;
+        return differenceMode;
     }
 
     public void setDifferenceMode(boolean aDifferenceMode) {
-        mDifferenceMode = aDifferenceMode;
+        differenceMode = aDifferenceMode;
     }
 
     public boolean isNotifyHigh() {
-        return mNotifyHigh;
+        return notifyHigh;
     }
 
     public void setNotifyHigh(boolean aNotifyHigh) {
-        mNotifyHigh = aNotifyHigh;
+        notifyHigh = aNotifyHigh;
     }
 
     public boolean isNotifyLow() {
-        return mNotifyLow;
+        return notifyLow;
     }
 
     public void setNotifyLow(boolean aNotifyLow) {
-        mNotifyLow = aNotifyLow;
+        notifyLow = aNotifyLow;
     }
 
     public Double getThresholdHigh() {
-        return mThresholdHigh;
+        return thresholdHigh;
     }
 
     public void setThresholdHigh(Double aThresholdHigh) {
-        mThresholdHigh = aThresholdHigh;
+        thresholdHigh = aThresholdHigh;
     }
 
     public Double getThresholdLow() {
-        return mThresholdLow;
+        return thresholdLow;
     }
 
     public void setThresholdLow(Double aThresholdLow) {
-        mThresholdLow = aThresholdLow;
+        thresholdLow = aThresholdLow;
     }
 
     public boolean isNotifyDiffer() {
-        return mNotifyDiffer;
+        return notifyDiffer;
     }
 
     public void setNotifyDiffer(boolean aNotifyDiffer) {
-        mNotifyDiffer = aNotifyDiffer;
+        notifyDiffer = aNotifyDiffer;
     }
 
     public boolean isNotifyMatch() {
-        return mNotifyMatch;
+        return notifyMatch;
     }
 
     public void setNotifyMatch(boolean aNotifyMatch) {
-        mNotifyMatch = aNotifyMatch;
+        notifyMatch = aNotifyMatch;
     }
 
     public String getStringToCompare() {
-        return mStringToCompare;
+        return stringToCompare;
     }
 
     public void setStringToCompare(String aStringToCompare) {
-        mStringToCompare = aStringToCompare;
+        stringToCompare = aStringToCompare;
     }
     
     public boolean getTestConnectionOnStartup() {
-        return this.mTestConnectionOnStartup;
+        return this.testConnectionOnStartup;
     }
     
     public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
-        this.mTestConnectionOnStartup = testConnectionOnStartup;
+        this.testConnectionOnStartup = testConnectionOnStartup;
     }
     
     public boolean getReconnectOnConnectionFailure() {
-        return this.mReconnectOnConnectionFailure;
+        return this.reconnectOnConnectionFailure;
     }
     
     public void setReconnectOnConnectionFailure(boolean reconnectOnConnectionFailure) {
-        this.mReconnectOnConnectionFailure = reconnectOnConnectionFailure;
+        this.reconnectOnConnectionFailure = reconnectOnConnectionFailure;
     }    
     
     public int getReconnectDelay() {
-        return this.mReconnectDelay;
+        return this.reconnectDelay;
     }    
      
     public void setReconnectDelay(int reconnectDelay) {
-        this.mReconnectDelay = reconnectDelay;
+        this.reconnectDelay = reconnectDelay;
     }
      
     private ObjectName buildObjectName() throws MalformedObjectNameException {

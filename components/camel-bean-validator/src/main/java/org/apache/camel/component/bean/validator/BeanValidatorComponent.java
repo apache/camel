@@ -18,52 +18,25 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.Map;
 
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.MessageInterpolator;
-import javax.validation.TraversableResolver;
-import javax.validation.ValidationProviderResolver;
-import javax.validation.ValidatorFactory;
-
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.util.PlatformHelper;
-
-import static org.apache.camel.component.bean.validator.ValidatorFactories.buildValidatorFactory;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Bean Validator Component for validating Java beans against reference implementation of JSR 303 Validator (Hibernate
  * Validator).
  */
-public class BeanValidatorComponent extends DefaultComponent {
+public class BeanValidatorComponent extends UriEndpointComponent {
+
+    public BeanValidatorComponent() {
+        super(BeanValidatorEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        BeanValidator beanValidator = new BeanValidator();
-
-        ValidatorFactory validatorFactory = buildValidatorFactory(
-                isOsgiContext(),
-                resolveAndRemoveReferenceParameter(parameters, "validationProviderResolver", ValidationProviderResolver.class),
-                resolveAndRemoveReferenceParameter(parameters, "messageInterpolator", MessageInterpolator.class),
-                resolveAndRemoveReferenceParameter(parameters, "traversableResolver", TraversableResolver.class),
-                resolveAndRemoveReferenceParameter(parameters, "constraintValidatorFactory", ConstraintValidatorFactory.class));
-        beanValidator.setValidatorFactory(validatorFactory);
-
-        String group = getAndRemoveParameter(parameters, "group", String.class);
-        if (group != null) {
-            beanValidator.setGroup(getCamelContext().getClassResolver().resolveMandatoryClass(group));
-        }
-
-        return new ProcessorEndpoint(uri, this, beanValidator);
-    }
-
-    /**
-     * Recognizes if component is executed in the OSGi environment.
-     *
-     * @return true if component is executed in the OSGi environment. False otherwise.
-     */
-    protected boolean isOsgiContext() {
-        return PlatformHelper.isOsgiContext(getCamelContext());
+        BeanValidatorEndpoint endpoint = new BeanValidatorEndpoint(uri, this);
+        endpoint.setLabel(remaining);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
 }

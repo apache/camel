@@ -20,11 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * For VTD-XML (fast and efficient XPath) expressions and predicates
  *
  * @version 
  */
+@Metadata(label = "language", title = "VtdXML")
 @XmlRootElement(name = "vtdxml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VtdXmlExpression extends NamespaceAwareExpression {

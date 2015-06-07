@@ -20,6 +20,7 @@ public final class ApnsConstants {
 
     public static final String HEADER_TOKENS = "CamelApnsTokens";
     public static final String HEADER_MESSAGE_TYPE = "CamelApnsMessageType";
+    public static final String HEADER_EXPIRY = "CamelApnsExpiry";
 
     private ApnsConstants() {
     }

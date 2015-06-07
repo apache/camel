@@ -51,30 +51,6 @@ public class EmbeddedMojo extends AbstractExecMojo {
     protected String duration;
 
     /**
-     * The DOT File name used to generate the DOT diagram of the route definitions
-     *
-     * @parameter default-value="${project.build.directory}/site/cameldoc/routes.dot"
-     * @readonly
-     */
-    protected String outputDirectory;
-
-    /**
-     * Allows the DOT file generation to be disabled
-     *
-     * @parameter property="true"
-     * @readonly
-     */
-    protected boolean dotEnabled;
-
-    /**
-     * Allows the routes from multiple contexts to be aggregated into one DOT file (in addition to the individual files)
-     *
-     * @parameter property="false"
-     * @readonly
-     */
-    protected boolean dotAggregationEnabled;
-
-    /**
      * Allows to provide a custom properties file on the classpath to initialize
      * a {@link javax.naming.InitialContext} object with. This corresponds to
      * the {@link org.apache.camel.guice.Main#setJndiProperties(String)} API
@@ -128,24 +104,6 @@ public class EmbeddedMojo extends AbstractExecMojo {
     // Properties
     //-------------------------------------------------------------------------
 
-    /**
-     * Getter for property output directory.
-     *
-     * @return The value of output directory.
-     */
-    public String getOutputDirectory() {
-        return outputDirectory;
-    }
-
-    /**
-     * Setter for the output directory.
-     *
-     * @param inOutputDirectory The value of output directory.
-     */
-    public void setOutputDirectory(String inOutputDirectory) {
-        this.outputDirectory = inOutputDirectory;
-    }
-
     public List<?> getClasspathElements() {
         return classpathElements;
     }
@@ -154,28 +112,12 @@ public class EmbeddedMojo extends AbstractExecMojo {
         this.classpathElements = classpathElements;
     }
 
-    public boolean isDotEnabled() {
-        return dotEnabled;
-    }
-
-    public void setDotEnabled(boolean dotEnabled) {
-        this.dotEnabled = dotEnabled;
-    }
-
     public String getDuration() {
         return duration;
     }
 
     public void setDuration(String duration) {
         this.duration = duration;
-    }
-
-    public boolean isDotAggregationEnabled() {
-        return dotAggregationEnabled;
-    }
-
-    public void setDotAggregationEnabled(boolean dotAggregationEnabled) {
-        this.dotAggregationEnabled = dotAggregationEnabled;
     }
 
     public String getMainClass() {
@@ -215,18 +157,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
     }
 
     protected String[] createArguments() {
-
         List<String> args = new ArrayList<String>(5);
-        if (isDotEnabled()) {
-            args.add("-outdir");
-            args.add(getOutputDirectory());
-        }
-
-        if (isDotAggregationEnabled()) {
-            args.add("-aggregate-dot");
-            args.add("true");
-        }
-
         args.add("-duration");
         args.add(getDuration());
 

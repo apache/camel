@@ -42,10 +42,8 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait 3 seconds so that the timeout kicks in
-        Thread.sleep(3000);
-
-        mock.assertIsSatisfied();
+        // wait about 4 seconds so that the timeout kicks in but it was discarded
+        mock.assertIsSatisfied(4000);
 
         // should invoke the timeout method
         assertEquals(1, invoked.get());

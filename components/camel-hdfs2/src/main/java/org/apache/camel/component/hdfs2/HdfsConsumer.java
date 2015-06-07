@@ -138,6 +138,12 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             try {
                 this.rwlock.writeLock().lock();
                 this.istream = HdfsInputStream.createInputStream(status.getPath().toString(), this.config);
+                if (!this.istream.isOpened()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping file: {} because it doesn't exist anymore", status.getPath().toString());
+                    }
+                    continue;
+                }
             } finally {
                 this.rwlock.writeLock().unlock();
             }
@@ -145,7 +151,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             try {
                 Holder<Object> key = new Holder<Object>();
                 Holder<Object> value = new Holder<Object>();
-                while (this.istream.next(key, value) != 0) {
+                while (this.istream.next(key, value) >= 0) {
                     Exchange exchange = this.getEndpoint().createExchange();
                     Message message = new DefaultMessage();
                     String fileName = StringUtils.substringAfterLast(status.getPath().toString(), "/");

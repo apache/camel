@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverters;
 
 /**
  * Registry for type converters.
@@ -37,7 +38,12 @@ public interface TypeConverterRegistry extends StaticService {
     interface Statistics {
 
         /**
-         * Number of attempts
+         * Number of noop attempts (no type conversion was needed)
+         */
+        long getNoopCounter();
+
+        /**
+         * Number of type conversion attempts
          */
         long getAttemptCounter();
 
@@ -91,6 +97,13 @@ public interface TypeConverterRegistry extends StaticService {
      * @return <tt>true</tt> if removed, <tt>false</tt> if the type converter didn't exist
      */
     boolean removeTypeConverter(Class<?> toType, Class<?> fromType);
+
+    /**
+     * Registers all the type converters from the class, each converter must be implemented as a method and annotated with {@link org.apache.camel.Converter}.
+     *
+     * @param typeConverters class which implements the type converters
+     */
+    void addTypeConverters(TypeConverters typeConverters);
 
     /**
      * Registers a new fallback type converter

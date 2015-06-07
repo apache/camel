@@ -20,15 +20,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents the GZip {@link DataFormat}
+ * GZip data format
  *
  * @version 
  */
+@Metadata(label = "dataformat,transformation", title = "GZip")
 @XmlRootElement(name = "gzip")
 public class GzipDataFormat extends DataFormatDefinition {
+
+    public GzipDataFormat() {
+        super("gzip");
+    }
 
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {

@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.optaplanner;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -41,16 +39,6 @@ public class OptaPlannerComponentConfigurationAndDocumentationTest extends Camel
         ComponentConfiguration componentConfiguration = component.createComponentConfiguration();
         String json = componentConfiguration.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"resourceUri\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("optaplanner");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 
 }

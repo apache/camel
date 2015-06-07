@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.swf;
 
+import java.util.Arrays;
+
 import com.amazonaws.services.simpleworkflow.flow.worker.GenericActivityWorker;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -37,7 +39,7 @@ public class SWFActivityConsumer extends DefaultConsumer {
     }
 
     public Object processActivity(Object[] inputParameters, String taskToken) throws Exception {
-        LOGGER.debug("Processing activity task: " + inputParameters);
+        LOGGER.debug("Processing activity task: " + Arrays.toString(inputParameters));
 
         Exchange exchange = endpoint.createExchange(inputParameters, SWFConstants.EXECUTE_ACTION);
         exchange.getIn().setHeader(SWFConstants.TASK_TOKEN, taskToken);
@@ -51,6 +53,7 @@ public class SWFActivityConsumer extends DefaultConsumer {
         CamelActivityImplementationFactory factory = new CamelActivityImplementationFactory(this, configuration);
         genericWorker = new GenericActivityWorker(endpoint.getSWClient(), configuration.getDomainName(), configuration.getActivityList());
         genericWorker.setActivityImplementationFactory(factory);
+        genericWorker.setTaskExecutorThreadPoolSize(configuration.getActivityThreadPoolSize());
         genericWorker.start();
         super.doStart();
     }

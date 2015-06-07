@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
@@ -33,6 +35,7 @@ import javax.management.QueryExp;
 import javax.management.StringValueExp;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -43,6 +46,7 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
 
@@ -53,11 +57,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     protected final String description;
     protected final ModelCamelContext context;
     private final LoadTriplet load = new LoadTriplet();
+    private final ConcurrentSkipListMap<InFlightKey, Long> exchangesInFlightStartTimestamps = new ConcurrentSkipListMap<InFlightKey, Long>();
+    private final ConcurrentHashMap<String, InFlightKey> exchangesInFlightKeys = new ConcurrentHashMap<String, InFlightKey>();
 
     public ManagedRoute(ModelCamelContext context, Route route) {
         this.route = route;
         this.context = context;
-        this.description = route.toString();
+        this.description = route.getDescription();
         boolean enabled = context.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
     }
@@ -101,7 +107,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public Integer getInflightExchanges() {
-        return context.getInflightRepository().size(route.getId());
+        return (int) super.getExchangesInflight();
     }
 
     public String getCamelId() {
@@ -178,7 +184,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     public void onTimer() {
         load.update(getInflightExchanges());
     }
-    
+
     public void start() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -211,7 +217,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        String routeId = getRouteId(); 
+        String routeId = getRouteId();
         context.stopRoute(routeId);
         context.removeRoute(routeId);
     }
@@ -220,7 +226,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        String routeId = getRouteId(); 
+        String routeId = getRouteId();
         context.stopRoute(routeId, timeout, TimeUnit.SECONDS);
         context.removeRoute(routeId);
     }
@@ -236,14 +242,14 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         String id = route.getId();
         RouteDefinition def = context.getRouteDefinition(id);
         if (def != null) {
-            return ModelHelper.dumpModelAsXml(def);
+            return ModelHelper.dumpModelAsXml(context, def);
         }
         return null;
     }
 
     public void updateRouteFromXml(String xml) throws Exception {
         // convert to model from xml
-        RouteDefinition def = ModelHelper.createModelFromXml(xml, RouteDefinition.class);
+        RouteDefinition def = ModelHelper.createModelFromXml(context, xml, RouteDefinition.class);
         if (def == null) {
             return;
         }
@@ -282,7 +288,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 Set<ObjectName> names = server.queryNames(query, null);
                 List<ManagedProcessorMBean> mps = new ArrayList<ManagedProcessorMBean>();
                 for (ObjectName on : names) {
-                    ManagedProcessorMBean processor = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedProcessorMBean.class, true);
+                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
 
                     // the processor must belong to this route
                     if (getRouteId().equals(processor.getRouteId())) {
@@ -303,7 +309,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
                 // and now add the sorted list of processors to the xml output
                 for (ManagedProcessorMBean processor : mps) {
-                    sb.append("    <processorStat").append(String.format(" id=\"%s\" index=\"%s\"", processor.getProcessorId(), processor.getIndex()));
+                    sb.append("    <processorStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", processor.getProcessorId(), processor.getIndex(), processor.getState()));
                     // do we have an accumulated time then append that
                     Long accTime = accumulatedTimes.get(processor.getProcessorId());
                     if (accTime != null) {
@@ -324,10 +330,19 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
 
         StringBuilder answer = new StringBuilder();
-        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()));
+        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId())).append(String.format(" state=\"%s\"", getState()));
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
+        answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
         answer.append(" selfProcessingTime=\"").append(routeSelfTime).append("\"");
+        InFlightKey oldestInflightEntry = getOldestInflightEntry();
+        if (oldestInflightEntry == null) {
+            answer.append(" oldestInflightExchangeId=\"\"");
+            answer.append(" oldestInflightDuration=\"\"");
+        } else {
+            answer.append(" oldestInflightExchangeId=\"").append(oldestInflightEntry.exchangeId).append("\"");
+            answer.append(" oldestInflightDuration=\"").append(System.currentTimeMillis() - oldestInflightEntry.timeStamp).append("\"");
+        }
         answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
 
         if (includeProcessors) {
@@ -368,12 +383,126 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o != null && getClass() == o.getClass() && route.equals(((ManagedRoute)o).route));
+        return this == o || (o != null && getClass() == o.getClass() && route.equals(((ManagedRoute) o).route));
     }
 
     @Override
     public int hashCode() {
         return route.hashCode();
+    }
+
+    private InFlightKey getOldestInflightEntry() {
+        Map.Entry<InFlightKey, Long> entry = exchangesInFlightStartTimestamps.firstEntry();
+        if (entry != null) {
+            return entry.getKey();
+        }
+        return null;
+    }
+
+    public Long getOldestInflightDuration() {
+        InFlightKey oldest = getOldestInflightEntry();
+        if (oldest == null) {
+            return null;
+        }
+        return System.currentTimeMillis() - oldest.timeStamp;
+    }
+
+    public String getOldestInflightExchangeId() {
+        InFlightKey oldest = getOldestInflightEntry();
+        if (oldest == null) {
+            return null;
+        }
+        return oldest.exchangeId;
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        exchangesInFlightKeys.clear();
+        exchangesInFlightStartTimestamps.clear();
+        super.init(strategy);
+    }
+
+    @Override
+    public synchronized void processExchange(Exchange exchange) {
+        InFlightKey key = new InFlightKey(System.currentTimeMillis(), exchange.getExchangeId());
+        InFlightKey oldKey = exchangesInFlightKeys.putIfAbsent(exchange.getExchangeId(), key);
+        // we may already have the exchange being processed so only add to timestamp if its a new exchange
+        // for example when people call the same routes recursive
+        if (oldKey == null) {
+            exchangesInFlightStartTimestamps.put(key, key.timeStamp);
+        }
+        super.processExchange(exchange);
+    }
+
+    @Override
+    public synchronized void completedExchange(Exchange exchange, long time) {
+        InFlightKey key = exchangesInFlightKeys.remove(exchange.getExchangeId());
+        if (key != null) {
+            exchangesInFlightStartTimestamps.remove(key);
+        }
+        super.completedExchange(exchange, time);
+    }
+
+    @Override
+    public synchronized void failedExchange(Exchange exchange) {
+        InFlightKey key = exchangesInFlightKeys.remove(exchange.getExchangeId());
+        if (key != null) {
+            exchangesInFlightStartTimestamps.remove(key);
+        }
+        super.failedExchange(exchange);
+    }
+
+    private static class InFlightKey implements Comparable<InFlightKey> {
+
+        private final Long timeStamp;
+        private final String exchangeId;
+
+        InFlightKey(Long timeStamp, String exchangeId) {
+            this.timeStamp = timeStamp;
+            this.exchangeId = exchangeId;
+        }
+
+        @Override
+        public int compareTo(InFlightKey o) {
+            int compare = Long.compare(timeStamp, o.timeStamp);
+            if (compare == 0) {
+                return exchangeId.compareTo(o.exchangeId);
+            }
+            return compare;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            InFlightKey that = (InFlightKey) o;
+
+            if (!exchangeId.equals(that.exchangeId)) {
+                return false;
+            }
+            if (!timeStamp.equals(that.timeStamp)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = timeStamp.hashCode();
+            result = 31 * result + exchangeId.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return exchangeId;
+        }
     }
 
     /**
@@ -386,5 +515,4 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             return o1.getIndex().compareTo(o2.getIndex());
         }
     }
-
 }

@@ -29,6 +29,8 @@ import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.util.CaseInsensitiveMap;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -82,26 +84,58 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Exchange copy() {
+        // to be backwards compatible as today
+        return copy(false);
+    }
+
+    public Exchange copy(boolean safeCopy) {
         DefaultExchange exchange = new DefaultExchange(this);
 
         if (hasProperties()) {
-            exchange.setProperties(safeCopy(getProperties()));
+            exchange.setProperties(safeCopyProperties(getProperties()));
         }
-        
-        exchange.setIn(getIn().copy());
-        if (hasOut()) {
-            exchange.setOut(getOut().copy());
+
+        if (safeCopy) {
+            exchange.getIn().setBody(getIn().getBody());
+            if (getIn().hasHeaders()) {
+                exchange.getIn().setHeaders(safeCopyHeaders(getIn().getHeaders()));
+            }
+            if (hasOut()) {
+                exchange.getOut().setBody(getOut().getBody());
+                if (getOut().hasHeaders()) {
+                    exchange.getOut().setHeaders(safeCopyHeaders(getOut().getHeaders()));
+                }
+            }
+        } else {
+            // old way of doing copy which is @deprecated
+            // TODO: remove this in Camel 3.0, and always do a safe copy
+            exchange.setIn(getIn().copy());
+            if (hasOut()) {
+                exchange.setOut(getOut().copy());
+            }
         }
         exchange.setException(getException());
         return exchange;
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> safeCopy(Map<String, Object> properties) {
+    private static Map<String, Object> safeCopyHeaders(Map<String, Object> headers) {
+        if (headers == null) {
+            return null;
+        }
+
+        Map<String, Object> answer = new CaseInsensitiveMap();
+        answer.putAll(headers);
+        return answer;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
         if (properties == null) {
             return null;
         }
 
+        // TODO: properties should use same map kind as headers
         Map<String, Object> answer = new ConcurrentHashMap<String, Object>(properties);
 
         // safe copy message history using a defensive copy
@@ -186,6 +220,30 @@ public final class DefaultExchange implements Exchange {
             return null;
         }
         return getProperties().remove(name);
+    }
+
+    public boolean removeProperties(String pattern) {
+        return removeProperties(pattern, (String[]) null);
+    }
+
+    public boolean removeProperties(String pattern, String... excludePatterns) {
+        if (!hasProperties()) {
+            return false;
+        }
+
+        boolean matches = false;
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            String key = entry.getKey();
+            if (EndpointHelper.matchPattern(key, pattern)) {
+                if (excludePatterns != null && isExcludePatternMatch(key, excludePatterns)) {
+                    continue;
+                }
+                matches = true;
+                properties.remove(entry.getKey());
+            }
+
+        }
+        return matches;
     }
 
     public Map<String, Object> getProperties() {
@@ -320,7 +378,10 @@ public final class DefaultExchange implements Exchange {
     }
 
     public boolean isFailed() {
-        return (hasOut() && getOut().isFault()) || getException() != null;
+        if (exception != null) {
+            return true;
+        }
+        return hasOut() ? getOut().isFault() : getIn().isFault();
     }
 
     public boolean isTransacted() {
@@ -369,7 +430,7 @@ public final class DefaultExchange implements Exchange {
 
     public void setUnitOfWork(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
-        if (onCompletions != null) {
+        if (unitOfWork != null && onCompletions != null) {
             // now an unit of work has been assigned so add the on completions
             // we might have registered already
             for (Synchronization onCompletion : onCompletions) {
@@ -449,5 +510,14 @@ public final class DefaultExchange implements Exchange {
             answer = context.getUuidGenerator().generateUuid();
         }
         return answer;
+    }
+    
+    private static boolean isExcludePatternMatch(String key, String... excludePatterns) {
+        for (String pattern : excludePatterns) {
+            if (EndpointHelper.matchPattern(key, pattern)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

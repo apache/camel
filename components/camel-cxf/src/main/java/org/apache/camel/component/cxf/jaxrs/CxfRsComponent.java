@@ -70,8 +70,9 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
                 setProperties(answer, copy);      
             }
             // setup the skipFaultLogging
-           
-            
+
+            answer.setBeanId(beanId);
+
         } else {
             // endpoint URI does not specify a bean
             answer = new CxfRsEndpoint(remaining, this);

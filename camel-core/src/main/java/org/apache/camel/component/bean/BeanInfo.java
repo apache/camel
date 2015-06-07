@@ -26,15 +26,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Attachments;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeException;
+import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Expression;
 import org.apache.camel.Handler;
 import org.apache.camel.Header;
@@ -296,18 +299,64 @@ public class BeanInfo {
 
         LOG.trace("Introspecting class: {}", clazz);
 
-        // if the class is not public then fallback and use interface methods if possible
-        // this allow Camel to invoke private beans which implements interfaces
-        List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
-        if (!Modifier.isPublic(clazz.getModifiers())) {
+        // favor declared methods, and then filter out duplicate interface methods
+        List<Method> methods;
+        if (Modifier.isPublic(clazz.getModifiers())) {
+            LOG.trace("Preferring class methods as class: {} is public accessible", clazz);
+            methods = new ArrayList<Method>(Arrays.asList(clazz.getDeclaredMethods()));
+        } else {
             LOG.trace("Preferring interface methods as class: {} is not public accessible", clazz);
-            List<Method> interfaceMethods = getInterfaceMethods(clazz);
-            
-            // still keep non-accessible class methods to provide more specific Exception if method is non-accessible
-            interfaceMethods.addAll(methods);
-            methods = interfaceMethods;
+            methods = getInterfaceMethods(clazz);
+            // and then we must add its declared methods as well
+            List<Method> extraMethods = Arrays.asList(clazz.getDeclaredMethods());
+            methods.addAll(extraMethods);
         }
-        
+
+        Set<Method> overrides = new HashSet<Method>();
+
+        // do not remove duplicates form class from the Java itself as they have some "duplicates" we need
+        boolean javaClass = clazz.getName().startsWith("java.") || clazz.getName().startsWith("javax.");
+        if (!javaClass) {
+            // it may have duplicate methods already, even from declared or from interfaces + declared
+            for (Method source : methods) {
+
+                // skip bridge methods in duplicate checks (as the bridge method is inserted by the compiler due to type erasure)
+                if (source.isBridge()) {
+                    continue;
+                }
+
+                for (Method target : methods) {
+                    // skip ourselves
+                    if (ObjectHelper.isOverridingMethod(source, target, true)) {
+                        continue;
+                    }
+                    // skip duplicates which may be assign compatible (favor keep first added method when duplicate)
+                    if (ObjectHelper.isOverridingMethod(source, target, false)) {
+                        overrides.add(target);
+                    }
+                }
+            }
+            methods.removeAll(overrides);
+            overrides.clear();
+        }
+
+        // if we are a public class, then add non duplicate interface classes also
+        if (Modifier.isPublic(clazz.getModifiers())) {
+            // add additional interface methods
+            List<Method> extraMethods = getInterfaceMethods(clazz);
+            for (Method target : extraMethods) {
+                for (Method source : methods) {
+                    if (ObjectHelper.isOverridingMethod(source, target, false)) {
+                        overrides.add(target);
+                    }
+                }
+            }
+            // remove all the overrides methods
+            extraMethods.removeAll(overrides);
+            methods.addAll(extraMethods);
+        }
+
+        // now introspect the methods and filter non valid methods
         for (Method method : methods) {
             boolean valid = isValidMethod(clazz, method);
             LOG.trace("Method: {} is valid: {}", method, valid);
@@ -382,6 +431,16 @@ public class BeanInfo {
      */
     public MethodInfo getMethodInfo(Method method) {
         MethodInfo answer = methodMap.get(method);
+        if (answer == null) {
+            // maybe the method overrides, and the method map keeps info of the source override we can use
+            for (Method source : methodMap.keySet()) {
+                if (ObjectHelper.isOverridingMethod(source, method, false)) {
+                    answer = methodMap.get(source);
+                    break;
+                }
+            }
+        }
+
         if (answer == null) {
             // maybe the method is defined on a base class?
             if (type != Object.class) {
@@ -700,20 +759,22 @@ public class BeanInfo {
             MethodInfo matched = null;
             int matchCounter = 0;
             for (MethodInfo methodInfo : operationList) {
-                if (methodInfo.getBodyParameterType().isInstance(body)) {
-                    return methodInfo;
-                }
-
-                // we should only try to convert, as we are looking for best match
-                Object value = exchange.getContext().getTypeConverter().tryConvertTo(methodInfo.getBodyParameterType(), exchange, body);
-                if (value != null) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Converted body from: {} to: {}",
-                                body.getClass().getCanonicalName(), methodInfo.getBodyParameterType().getCanonicalName());
+                if (methodInfo.getBodyParameterType() != null) {
+                    if (methodInfo.getBodyParameterType().isInstance(body)) {
+                        return methodInfo;
                     }
-                    matchCounter++;
-                    newBody = value;
-                    matched = methodInfo;
+
+                    // we should only try to convert, as we are looking for best match
+                    Object value = exchange.getContext().getTypeConverter().tryConvertTo(methodInfo.getBodyParameterType(), exchange, body);
+                    if (value != null) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Converted body from: {} to: {}",
+                                    body.getClass().getCanonicalName(), methodInfo.getBodyParameterType().getCanonicalName());
+                        }
+                        matchCounter++;
+                        newBody = value;
+                        matched = methodInfo;
+                    }
                 }
             }
             if (matchCounter > 1) {
@@ -842,7 +903,10 @@ public class BeanInfo {
             return ExpressionBuilder.attachmentsExpression();
         } else if (annotation instanceof Property) {
             Property propertyAnnotation = (Property)annotation;
-            return ExpressionBuilder.propertyExpression(propertyAnnotation.value());
+            return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
+        } else if (annotation instanceof ExchangeProperty) {
+            ExchangeProperty propertyAnnotation = (ExchangeProperty)annotation;
+            return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
         } else if (annotation instanceof Properties) {
             return ExpressionBuilder.propertiesExpression();
         } else if (annotation instanceof Header) {
@@ -875,10 +939,14 @@ public class BeanInfo {
     
     private static List<Method> getInterfaceMethods(Class<?> clazz) {
         final List<Method> answer = new ArrayList<Method>();
-        for (Class<?> interfaceClazz : clazz.getInterfaces()) {
-            for (Method interfaceMethod : interfaceClazz.getDeclaredMethods()) {
-                answer.add(interfaceMethod);
+
+        while (clazz != null && !clazz.equals(Object.class)) {
+            for (Class<?> interfaceClazz : clazz.getInterfaces()) {
+                for (Method interfaceMethod : interfaceClazz.getDeclaredMethods()) {
+                    answer.add(interfaceMethod);
+                }
             }
+            clazz = clazz.getSuperclass();
         }
 
         return answer;

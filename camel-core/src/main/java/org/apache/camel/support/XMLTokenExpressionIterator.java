@@ -174,7 +174,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private boolean backtrack;
         private int trackdepth = -1;
         private int depth;
-        
+        private boolean compliant;
+
         private Object nextToken;
         
         public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, InputStream in, String charset) 
@@ -213,6 +214,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             this.reader = new StaxConverter().createXMLStreamReader(this.in);
 
             LOG.trace("reader.class: {}", reader.getClass());
+            // perform the first offset compliance test
             int coff = reader.getLocation().getCharacterOffset();
             if (coff != 0) {
                 LOG.error("XMLStreamReader {} not supporting Location");
@@ -233,7 +235,6 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 this.tokens = new ArrayList<String>();
             }       
             this.nextToken = getNextToken();
-
         }
         
         private boolean isDoS() {
@@ -466,6 +467,15 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     }
                     
                     String token = getCurrenText();
+                    // perform the second compliance test
+                    if (!compliant) {
+                        if (token != null && token.startsWith("<") && !token.startsWith("<?")) {
+                            LOG.error("XMLStreamReader {} not supporting Location");
+                            throw new XMLStreamException("reader not supporting Location");
+                        }
+                        compliant = true;
+                    }
+
                     LOG.trace("token={}", token);
                     if (!backtrack && mode == 'w') {
                         pushSegment(name, token);
@@ -575,7 +585,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             try {
                 nextToken = getNextToken();
             } catch (XMLStreamException e) {
-                //
+                nextToken = null;
+                throw new RuntimeException(e);
             }
             return o;
         }

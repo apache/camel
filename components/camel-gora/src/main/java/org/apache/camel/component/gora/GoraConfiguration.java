@@ -18,6 +18,10 @@
 package org.apache.camel.component.gora;
 
 import com.google.common.base.Strings;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.hadoop.conf.Configuration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -28,26 +32,34 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * Gora Configuration.
  *
  */
+@UriParams
 public class GoraConfiguration {
+
+    @UriPath @Metadata(required = "true")
+    private String name;
 
     /**
      * key type
      */
+    @UriParam
     private String keyClass;
 
     /**
      * configuration
      */
+    @UriParam
     private Configuration hadoopConfiguration;
 
     /**
      * value type
      */
+    @UriParam
     private String valueClass;
 
     /**
      *  dataStore type
      */
+    @UriParam
     private String dataStoreClass;
 
     /** Consumer only properties! */
@@ -55,57 +67,67 @@ public class GoraConfiguration {
     /**
      *  Gora Query Start Time attribute
      */
+    @UriParam
     private long startTime;
 
     /**
      * Gora Query End Time attribute
      */
+    @UriParam
     private long endTime;
 
     /**
      * Gora Query Time Range From attribute
      */
+    @UriParam
     private long timeRangeFrom;
 
     /**
      * Gora Query Key Range To attribute
      */
+    @UriParam
     private long timeRangeTo;
 
     /**
      * Gora Query Limit attribute
      */
+    @UriParam
     private long limit;
 
     /**
      * Gora Query Timestamp attribute
      */
+    @UriParam
     private long timestamp;
 
     /**
      * Gora Query Start Key attribute
      */
+    @UriParam
     private Object startKey;
 
     /**
      * Gora Query End Key attribute
      */
+    @UriParam
     private Object endKey;
 
     /**
      * Gora Query Key Range From attribute
      */
+    @UriParam
     private Object keyRangeFrom;
 
     /**
      * Gora Query Key Range To attribute
      */
+    @UriParam
     private Object keyRangeTo;
-
 
     /**
      * Gora Query Fields attribute
      */
+    @UriParam
     private Strings fields;
 
     /**
@@ -113,6 +135,7 @@ public class GoraConfiguration {
      *
      * <b>NOTE:<b/> used only by consumer
      */
+    @UriParam(defaultValue = "1")
     private int concurrentConsumers = 1;
 
     /**
@@ -120,6 +143,7 @@ public class GoraConfiguration {
      *
      * <b>NOTE:<b/> used only by producer
      */
+    @UriParam(defaultValue = "true")
     private boolean flushOnEveryOperation = true;
 
     /**
@@ -468,5 +492,16 @@ public class GoraConfiguration {
 
         checkNotNull(hadoopConfiguration, "Hadoop Configuration could not be null!");
         this.hadoopConfiguration = hadoopConfiguration;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Instance name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

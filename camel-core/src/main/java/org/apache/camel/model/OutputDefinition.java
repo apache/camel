@@ -23,14 +23,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * A useful base class for output types
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
+
     @XmlElementRef
     protected List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
@@ -49,11 +53,6 @@ public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends Pr
                 configureChild(output);
             }
         }
-    }
-
-    @Override
-    public String getShortName() {
-        return "output";
     }
 
     @Override

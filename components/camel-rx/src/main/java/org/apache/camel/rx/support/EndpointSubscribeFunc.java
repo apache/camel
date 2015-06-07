@@ -34,6 +34,6 @@ public class EndpointSubscribeFunc<T> implements Observable.OnSubscribe<T> {
 
     @Override
     public void call(Subscriber<? super T> subscriber) {
-        new EndpointSubscription<T>(endpoint, subscriber, converter);
+        subscriber.add(new EndpointSubscription<T>(endpoint, subscriber, converter));
     }
 }

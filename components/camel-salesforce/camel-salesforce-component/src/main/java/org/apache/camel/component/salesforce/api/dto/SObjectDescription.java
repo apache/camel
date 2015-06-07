@@ -23,12 +23,24 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public class SObjectDescription extends SObject {
 
     @XStreamImplicit
+    private List<ActionOverride> actionOverrides;
+    @XStreamImplicit
     private List<SObjectField> fields;
     private SObjectDescriptionUrls urls;
     @XStreamImplicit
     private List<ChildRelationShip> childRelationships;
     @XStreamImplicit
     private List<RecordTypeInfo> recordTypeInfos;
+    @XStreamImplicit
+    private List<NamedLayoutInfo> namedLayoutInfos;
+
+    public List<ActionOverride> getActionOverrides() {
+        return actionOverrides;
+    }
+
+    public void setActionOverrides(List<ActionOverride> actionOverrides) {
+        this.actionOverrides = actionOverrides;
+    }
 
     public List<SObjectField> getFields() {
         return fields;
@@ -60,5 +72,13 @@ public class SObjectDescription extends SObject {
 
     public void setRecordTypeInfos(List<RecordTypeInfo> recordTypeInfos) {
         this.recordTypeInfos = recordTypeInfos;
+    }
+
+    public List<NamedLayoutInfo> getNamedLayoutInfos() {
+        return namedLayoutInfos;
+    }
+
+    public void setNamedLayoutInfos(List<NamedLayoutInfo> namedLayoutInfos) {
+        this.namedLayoutInfos = namedLayoutInfos;
     }
 }

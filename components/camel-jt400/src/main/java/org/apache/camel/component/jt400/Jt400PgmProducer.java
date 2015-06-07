@@ -29,7 +29,6 @@ import com.ibm.as400.access.ProgramCall;
 import com.ibm.as400.access.ProgramParameter;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,17 +39,17 @@ public class Jt400PgmProducer extends DefaultProducer {
     
     private AS400 iSeries;
 
-    public Jt400PgmProducer(Jt400PgmEndpoint endpoint) {
+    public Jt400PgmProducer(Jt400Endpoint endpoint) {
         super(endpoint);
     }
 
-    private Jt400PgmEndpoint getISeriesEndpoint() {
-        return (Jt400PgmEndpoint) super.getEndpoint();
+    private Jt400Endpoint getISeriesEndpoint() {
+        return (Jt400Endpoint) super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
 
-        String commandStr = getISeriesEndpoint().getProgramToExecute();
+        String commandStr = getISeriesEndpoint().getObjectPath();
         ProgramParameter[] parameterList = getParameterList(exchange);
 
         ProgramCall pgmCall = new ProgramCall(iSeries);
@@ -103,7 +102,7 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (input) {
                 if (param != null) {
                     AS400DataType typeConverter;
-                    if (getISeriesEndpoint().getFormat() == Format.binary) {
+                    if (getISeriesEndpoint().getFormat() == Jt400Configuration.Format.binary) {
                         typeConverter = new AS400ByteArray(length);
                     } else {
                         typeConverter = new AS400Text(length, iSeries);
@@ -150,7 +149,7 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (output != null) {
                 int length = pgmParam.getOutputDataLength();
                 AS400DataType typeConverter;
-                if (getISeriesEndpoint().getFormat() == Format.binary) {
+                if (getISeriesEndpoint().getFormat() == Jt400Configuration.Format.binary) {
                     typeConverter = new AS400ByteArray(length);
                 } else {
                     typeConverter = new AS400Text(length, iSeries);
@@ -187,7 +186,7 @@ public class Jt400PgmProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         if (iSeries == null) {
-            iSeries = getISeriesEndpoint().getiSeries();
+            iSeries = getISeriesEndpoint().getSystem();
         }
         if (!iSeries.isConnected(AS400.COMMAND)) {
             LOG.info("Connecting to {}", getISeriesEndpoint());
@@ -199,7 +198,7 @@ public class Jt400PgmProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         if (iSeries != null) {
             LOG.info("Releasing connection to {}", getISeriesEndpoint());
-            getISeriesEndpoint().releaseiSeries(iSeries);
+            getISeriesEndpoint().releaseSystem(iSeries);
             iSeries = null;
         }
     }

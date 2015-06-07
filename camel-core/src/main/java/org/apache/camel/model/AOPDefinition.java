@@ -25,15 +25,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.AOPProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;aop/&gt; element
+ * Does processing before and/or after the route is completed
  *
  * @deprecated will be removed in the future. You can for example use {@link Processor} and
  * {@link org.apache.camel.spi.InterceptStrategy} to do AOP in Camel.
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "aop")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated
@@ -57,6 +59,9 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
         return beforeUri;
     }
 
+    /**
+     * Endpoint to call in AOP before.
+     */
     public void setBeforeUri(String beforeUri) {
         this.beforeUri = beforeUri;
     }
@@ -65,6 +70,12 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
         return afterUri;
     }
 
+    /**
+     * Endpoint to call in AOP after.
+     * <p/>
+     * The difference between after and afterFinally is that afterFinally is invoked from a finally block
+     * so it will always be invoked no matter what, eg also in case of an exception occur.
+     */
     public void setAfterUri(String afterUri) {
         this.afterUri = afterUri;
     }
@@ -73,13 +84,14 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
         return afterFinallyUri;
     }
 
+    /**
+     * Endpoint to call in AOP after finally.
+     * <p/>
+     * The difference between after and afterFinally is that afterFinally is invoked from a finally block
+     * so it will always be invoked no matter what, eg also in case of an exception occur.
+     */
     public void setAfterFinallyUri(String afterFinallyUri) {
         this.afterFinallyUri = afterFinallyUri;
-    }
-
-    @Override
-    public String getShortName() {
-        return "aop";
     }
 
     @Override

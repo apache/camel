@@ -26,7 +26,7 @@
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel</artifactId>
-  <version>2.15-SNAPSHOT</version>
+  <version>2.16-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel build POM</description>
@@ -34,10 +34,13 @@
   <inceptionYear>2007</inceptionYear>
 
   <prerequisites>
-    <maven>3.0.4</maven>
+    <maven>3.1.1</maven>
   </prerequisites>
 
   <properties>
+    <!-- enforce to require using at least this maven version -->
+    <maven-enforcer-require-maven-version>3.1.1</maven-enforcer-require-maven-version>
+
     <!-- unify the encoding for all the modules -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -48,10 +51,13 @@
 
     <!-- use maven compiler 2.5.1 as 3.0/3.1 recompiles everything even if nothingh has changed, or only 1 file,
          so 2.5.1 is much faster to use for development -->
-    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
+    <!-- change the maven comipler plugin version to 3.1 to enable google error prone source code detector -->
+    <maven-compiler-plugin-version>3.1</maven-compiler-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
-    <jaxb-version>2.2.7</jaxb-version>
+    <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
+    <jaxb-version>2.2.11</jaxb-version>
+    <errorprone-version>2.5</errorprone-version>
   </properties>
 
   <mailingLists>
@@ -117,14 +123,14 @@
 
   <modules>
     <module>parent</module>
+    <module>etc</module>
     <module>buildingtools</module>
     <module>camel-core</module>
     <module>components</module>
-    <module>platforms</module>
     <module>tooling</module>
+    <module>platforms</module>
     <module>tests</module>
     <module>examples</module>
-    <module>etc</module>
   </modules>
 
   <scm>
@@ -136,12 +142,44 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
+
+    <!-- enforce maven version -->
+    <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>1.4</version>
+          <executions>
+            <execution>
+              <id>enforce-maven</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireMavenVersion>
+                    <version>${maven-enforcer-require-maven-version}</version>
+                  </requireMavenVersion>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+    </plugins>
+
     <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-eclipse-plugin</artifactId>
           <version>2.9</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.camel</groupId>
+              <artifactId>camel-buildtools</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
           <configuration>
             <downloadSources>true</downloadSources>
             <downloadJavadocs>false</downloadJavadocs>
@@ -151,7 +189,14 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-idea-plugin</artifactId>
-          <version>2.2</version>
+          <version>2.2.1</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.camel</groupId>
+              <artifactId>camel-buildtools</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
           <configuration>
             <downloadSources>true</downloadSources>
             <downloadJavadocs>false</downloadJavadocs>
@@ -167,6 +212,7 @@
                 <exclude>**/README</exclude>
                 <exclude>**/README.txt</exclude>
                 <exclude>**/README.md</exclude>
+                <exclude>**/ReadMe.md</exclude>
                 <exclude>**/resources/**/*.xsd</exclude>
                 <exclude>**/webapp/js/**/*</exclude>
                 <exclude>**/test/resources/**/*</exclude>
@@ -177,8 +223,10 @@
                   license -->
                 <exclude>**/src/styles/print.css</exclude>
                 <!-- cxf does not handle comments here -->
-                <excludes>**/src/main/resources/META-INF/cxf/cxf.extension</excludes>
-                <excludes>**/src/main/resources/META-INF/cxf/bus-extensions.txt</excludes>
+                <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
+                <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
+                <!-- ignore the api signatures files -->
+                <exclude>**/src/signatures/*.txt</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
@@ -214,7 +262,7 @@
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
             <!-- The profile we want to use when doing the release -->
-            <arguments>-Prelease,enable-schemagen,apt,sourcecheck,hibernate,osgi.test,performance.test</arguments>
+            <arguments>-Prelease,enable-schemagen,apt,sourcecheck,hibernate</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
@@ -378,6 +426,11 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-antrun-plugin</artifactId>
               <dependencies>
+                <dependency>
+                  <groupId>com.sun.xml.bind</groupId>
+                  <artifactId>jaxb-core</artifactId>
+                  <version>${jaxb-version}</version>
+                </dependency>
                 <dependency>
                   <groupId>com.sun.xml.bind</groupId>
                   <artifactId>jaxb-impl</artifactId>

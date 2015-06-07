@@ -27,21 +27,42 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.PipelineHelper;
 import org.apache.camel.spi.Binding;
 import org.apache.camel.spi.HasBinding;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ServiceHelper;
+
+import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
 
 /**
  * Applies a {@link org.apache.camel.spi.Binding} to an underlying {@link Endpoint} so that the binding processes messages
  * before its sent to the endpoint and processes messages received by the endpoint consumer before its passed
  * to the real consumer.
  */
+@UriEndpoint(scheme = "binding", title = "Binding", syntax = "binding:bindingName:delegateUri", consumerClass = BindingConsumerProcessor.class, label = "core,transformation")
 public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
-    private final Binding binding;
-    private final Endpoint delegate;
 
+    @UriPath @Metadata(required = "true")
+    private final String bindingName;
+    @UriPath @Metadata(required = "true")
+    private final String delegateUri;
+    private Binding binding;
+    private Endpoint delegate;
+
+    @Deprecated
     public BindingEndpoint(String uri, Component component, Binding binding, Endpoint delegate) {
         super(uri, component);
         this.binding = binding;
         this.delegate = delegate;
+        this.bindingName = null;
+        this.delegateUri = null;
+    }
+
+    public BindingEndpoint(String uri, Component component, String bindingName, String delegateUri) {
+        super(uri, component);
+        this.bindingName = bindingName;
+        this.delegateUri = delegateUri;
     }
 
     @Override
@@ -70,6 +91,20 @@ public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
     }
 
     /**
+     * Name of the binding to lookup in the Camel registry.
+     */
+    public String getBindingName() {
+        return bindingName;
+    }
+
+    /**
+     * Uri of the delegate endpoint.
+     */
+    public String getDelegateUri() {
+        return delegateUri;
+    }
+
+    /**
      * Applies the {@link Binding} processor to the given exchange before passing it on to the delegateProcessor (either a producer or consumer)
      */
     public void pipelineBindingProcessor(Processor bindingProcessor, Exchange exchange, Processor delegateProcessor) throws Exception {
@@ -81,6 +116,13 @@ public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
 
     @Override
     protected void doStart() throws Exception {
+        if (binding == null) {
+            binding = CamelContextHelper.mandatoryLookup(getCamelContext(), bindingName, Binding.class);
+        }
+        if (delegate == null) {
+            delegate = getMandatoryEndpoint(getCamelContext(), delegateUri);
+        }
+
         // inject CamelContext
         if (binding instanceof CamelContextAware) {
             ((CamelContextAware) binding).setCamelContext(getCamelContext());

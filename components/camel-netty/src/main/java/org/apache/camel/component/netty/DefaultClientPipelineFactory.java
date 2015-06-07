@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -84,7 +85,7 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using request timeout {} millis", producer.getConfiguration().getRequestTimeout());
             }
-            ChannelHandler timeout = new ReadTimeoutHandler(NettyComponent.getTimer(), producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+            ChannelHandler timeout = new ReadTimeoutHandler(producer.getEndpoint().getTimer(), producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
             addToPipeline("timeout", channelPipeline, timeout);
         }
 
@@ -154,6 +155,10 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
             return producer.getConfiguration().getSslHandler();
         } else if (sslContext != null) {
             SSLEngine engine = sslContext.createSSLEngine();
+            if (producer.getConfiguration().getSslContextParameters() == null) {
+                // just set the enabledProtocols if the SslContextParameter doesn't set
+                engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
+            }
             engine.setUseClientMode(true);
             return new SslHandler(engine);
         }

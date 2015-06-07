@@ -300,6 +300,10 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(true, map.containsKey("FOO"));
 
         assertEquals(true, map.keySet().contains("FOO"));
+        assertEquals(true, map.keySet().contains("FoO"));
+        assertEquals(true, map.keySet().contains("Foo"));
+        assertEquals(true, map.keySet().contains("foo"));
+        assertEquals(true, map.keySet().contains("fOO"));
 
         map.put("FOO", "cake");
         assertEquals(1, map.size());
@@ -340,7 +344,9 @@ public class CaseInsensitiveMapTest extends TestCase {
 
         Map<String, Object> other = new HashMap<String, Object>(map);
         assertEquals(false, other.containsKey("foo"));
-        assertEquals(true, other.containsKey("FOO"));
+        assertEquals(false, other.containsKey("FOO"));
+        // CaseInsensitiveMap preserves the original keys, which would be the 1st key we put
+        assertEquals(true, other.containsKey("Foo"));
         assertEquals(1, other.size());
     }
 
@@ -427,17 +433,16 @@ public class CaseInsensitiveMapTest extends TestCase {
 
         Map<String, Object> other = new HashMap<String, Object>();
 
-        // this is wrong!!! you should use entrySet
         for (String key : map.keySet()) {
             Object value = map.get(key);
             other.put(key, value);
         }
 
-        // now the keys will be in lower case
-        assertEquals(true, other.containsKey("foo"));
-        assertEquals(false, other.containsKey("Foo"));
-        assertEquals(true, other.containsKey("bar"));
-        assertEquals(false, other.containsKey("BAR"));
+        // the original case of the keys should be preserved
+        assertEquals(false, other.containsKey("foo"));
+        assertEquals(true, other.containsKey("Foo"));
+        assertEquals(false, other.containsKey("bar"));
+        assertEquals(true, other.containsKey("BAR"));
         assertEquals(2, other.size());
     }
 
@@ -459,7 +464,9 @@ public class CaseInsensitiveMapTest extends TestCase {
                     foo.put("cake", "cheese");
 
                     // copy foo to map as map is a shared resource
-                    map.putAll(foo);
+                    synchronized (map) {
+                        map.putAll(foo);
+                    }
 
                     latch.countDown();
                 }

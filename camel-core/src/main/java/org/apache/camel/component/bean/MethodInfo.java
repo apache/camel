@@ -443,7 +443,7 @@ public class MethodInfo {
                 // any provided parameter values in the method name
                 String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, "", String.class);
                 // the parameter values is between the parenthesis
-                String methodParameters = ObjectHelper.between(methodName, "(", ")");
+                String methodParameters = ObjectHelper.betweenOuterPair(methodName, '(', ')');
                 // use an iterator to walk the parameter values
                 Iterator<?> it = null;
                 if (methodParameters != null) {
@@ -478,20 +478,17 @@ public class MethodInfo {
                             // evaluate the parameter value binding
                             value = evaluateParameterValue(exchange, i, parameterValue, parameterType);
                         }
-
                         // use bean parameter binding, if still no value
                         Expression expression = expressions[i];
                         if (value == null && expression != null) {
                             value = evaluateParameterBinding(exchange, expression, i, parameterType);
                         }
                     }
-
                     // remember the value to use
                     if (value != Void.TYPE) {
                         answer[i] = value;
                     }
                 }
-
                 return (T) answer;
             }
 
@@ -594,9 +591,14 @@ public class MethodInfo {
                 // use object first to avoid type conversion so we know if there is a value or not
                 Object result = expression.evaluate(exchange, Object.class);
                 if (result != null) {
-                    // we got a value now try to convert it to the expected type
                     try {
-                        answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
+                        if (parameterType.isInstance(result)) {
+                            // optimize if the value is already the same type
+                            answer = result;
+                        } else {
+                            // we got a value now try to convert it to the expected type
+                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
+                        }
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
                         }

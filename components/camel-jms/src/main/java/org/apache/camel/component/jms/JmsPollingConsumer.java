@@ -19,15 +19,16 @@ package org.apache.camel.component.jms;
 import javax.jms.Message;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ServicePoolAware;
 import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * @version 
+ *  A JMS {@link org.apache.camel.PollingConsumer}.
  */
-public class JmsPollingConsumer extends PollingConsumerSupport {
+public class JmsPollingConsumer extends PollingConsumerSupport implements ServicePoolAware {
     private JmsOperations template;
     private JmsEndpoint jmsEndpoint;
 
@@ -35,6 +36,10 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
         super(endpoint);
         this.jmsEndpoint = endpoint;
         this.template = template;
+    }
+    
+    public JmsPollingConsumer(JmsEndpoint endpoint) {
+        this(endpoint, endpoint.createInOnlyTemplate());
     }
 
     @Override
@@ -60,15 +65,17 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
             message = template.receive();
         }
         if (message != null) {
-            return getEndpoint().createExchange(message);
+            return getEndpoint().createExchange(message, null);
         }
         return null;
     }
 
     protected void doStart() throws Exception {
+        // noop
     }
 
     protected void doStop() throws Exception {
+        // noop
     }
 
     protected void setReceiveTimeout(long timeout) {

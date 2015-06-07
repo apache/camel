@@ -73,6 +73,10 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
         case HazelcastConstants.REMOVEVALUE_OPERATION:
             this.remove(pos, exchange);
             break;
+            
+        case HazelcastConstants.CLEAR_OPERATION:
+            this.clear();
+            break;
 
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the LIST cache.", operation, HazelcastConstants.OPERATION));
@@ -94,12 +98,10 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
     }
 
     private void get(Integer pos, Exchange exchange) {
-        // TODO: this operation is currently not supported by hazelcast
         exchange.getOut().setBody(this.list.get(pos));
     }
 
     private void set(Integer pos, Exchange exchange) {
-        // TODO: this operation is currently not supported by hazelcast
         if (null == pos) {
             throw new IllegalArgumentException("Empty position for set operation.");
         } else {
@@ -114,10 +116,13 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
             final Object body = exchange.getIn().getBody();
             list.remove(body);
         } else {
-            // TODO: this operation is currently not supported by hazelcast
             // removes the element at the specified position
             int position = pos;
             list.remove(position);
         }
+    }
+    
+    private void clear() {
+        list.clear();
     }
 }

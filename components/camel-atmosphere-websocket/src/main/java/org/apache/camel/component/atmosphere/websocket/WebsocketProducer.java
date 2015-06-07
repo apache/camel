@@ -51,7 +51,7 @@ public class WebsocketProducer extends DefaultProducer {
         //TODO support binary data
         Object message = in.getBody();
         if (message == null) {
-            LOG.info("Ignoring a null message");
+            LOG.debug("Ignoring a null message");
             return;
         }
         

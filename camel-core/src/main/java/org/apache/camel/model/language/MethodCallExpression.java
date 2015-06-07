@@ -33,15 +33,16 @@ import org.apache.camel.component.bean.ConstantStaticTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.bean.BeanExpression;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 
 /**
- * For expressions and predicates using the
- * <a href="http://camel.apache.org/bean-language.html">bean language</a>
+ * For expressions and predicates using a java bean (aka method call)
  *
  * @version
  */
+@Metadata(label = "language", title = "Bean method")
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {
@@ -100,6 +101,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return bean;
     }
 
+    /**
+     * Either a reference or a class name of the bean to use
+     */
     public void setBean(String bean) {
         this.bean = bean;
     }
@@ -108,6 +112,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return ref;
     }
 
+    /**
+     * Reference to bean to lookup in the registry
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -116,6 +123,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return method;
     }
 
+    /**
+     * Name of method to call
+     */
     public void setMethod(String method) {
         this.method = method;
     }
@@ -133,6 +143,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return beanTypeName;
     }
 
+    /**
+     * Class name of the bean to use
+     */
     public void setBeanTypeName(String beanTypeName) {
         this.beanTypeName = beanTypeName;
     }

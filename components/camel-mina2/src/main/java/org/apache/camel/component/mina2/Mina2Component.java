@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.core.filterchain.IoFilter;
 
@@ -31,15 +31,16 @@ import org.apache.mina.core.filterchain.IoFilter;
  *
  * @version 
  */
-public class Mina2Component extends DefaultComponent {
+public class Mina2Component extends UriEndpointComponent {
 
     private Mina2Configuration configuration;
 
     public Mina2Component() {
+        super(Mina2Endpoint.class);
     }
 
     public Mina2Component(CamelContext context) {
-        super(context);
+        super(context, Mina2Endpoint.class);
     }
 
     @Override
@@ -103,6 +104,9 @@ public class Mina2Component extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared mina configuration.
+     */
     public void setConfiguration(Mina2Configuration configuration) {
         this.configuration = configuration;
     }

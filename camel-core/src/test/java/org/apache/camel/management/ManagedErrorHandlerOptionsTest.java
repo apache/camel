@@ -100,6 +100,9 @@ public class ManagedErrorHandlerOptionsTest extends ManagementTestSupport {
         Boolean uebf = (Boolean) mbeanServer.getAttribute(on, "UseExponentialBackOff");
         assertEquals(true, uebf.booleanValue());
 
+        Boolean ne = (Boolean) mbeanServer.getAttribute(on, "DeadLetterHandleNewException");
+        assertEquals(false, ne.booleanValue());
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 

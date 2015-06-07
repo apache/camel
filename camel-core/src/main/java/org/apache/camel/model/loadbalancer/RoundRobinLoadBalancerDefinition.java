@@ -22,11 +22,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;roundRobin/&gt; element
+ * Round robin load balancer
+ *
+ * The round robin load balancer will use the next endpoint for each message.
+ * This load balancer is not meant to work with failover, for that you should use the dedicated failover load balancer.
  */
+@Metadata(label = "configuration,loadbalance")
 @XmlRootElement(name = "roundRobin")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoundRobinLoadBalancerDefinition extends LoadBalancerDefinition {

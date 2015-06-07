@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.ErrorHandlerSupport;
@@ -93,5 +94,29 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
     public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
         ObjectHelper.notNull(exceptionPolicyStrategy, "ExceptionPolicyStrategy");
         this.exceptionPolicyStrategy = exceptionPolicyStrategy;
+    }
+    
+    /**
+     * Remove the OnExceptionList by look up the route id from the ErrorHandlerBuilder internal map
+     * @param id the route id
+     * @return true if the route context is found and removed
+     */
+    public boolean removeOnExceptionList(String id) {
+        for (RouteContext routeContext : onExceptions.keySet()) {
+            if (getRouteId(routeContext).equals(id)) {
+                onExceptions.remove(routeContext);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    protected String getRouteId(RouteContext routeContext) {
+        CamelContext context = routeContext.getCamelContext();
+        if (context != null) {
+            return routeContext.getRoute().idOrCreate(context.getNodeIdFactory());
+        } else {
+            return routeContext.getRoute().getId();
+        }
     }
 }

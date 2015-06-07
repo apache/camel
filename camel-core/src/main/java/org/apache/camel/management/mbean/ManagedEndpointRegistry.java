@@ -16,10 +16,20 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Collection;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedEndpointRegistryMBean;
-import org.apache.camel.impl.EndpointRegistry;
+import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
@@ -41,16 +51,45 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
         return endpointRegistry.toString();
     }
 
+    public Integer getDynamicSize() {
+        return endpointRegistry.dynamicSize();
+    }
+
+    public Integer getStaticSize() {
+        return endpointRegistry.staticSize();
+    }
+
     public Integer getSize() {
         return endpointRegistry.size();
     }
 
     public Integer getMaximumCacheSize() {
-        return endpointRegistry.getMaxCacheSize();
+        return endpointRegistry.getMaximumCacheSize();
     }
 
     public void purge() {
         endpointRegistry.purge();
+    }
+
+    @SuppressWarnings("unchecked")
+    public TabularData listEndpoints() {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listEndpointsTabularType());
+            Collection<Endpoint> endpoints = endpointRegistry.values();
+            for (Endpoint endpoint : endpoints) {
+                CompositeType ct = CamelOpenMBeanTypes.listEndpointsCompositeType();
+                String url = endpoint.getEndpointUri();
+
+                boolean fromStatic = endpointRegistry.isStatic(url);
+                boolean fromDynamic = endpointRegistry.isDynamic(url);
+
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "static", "dynamic"}, new Object[]{url, fromStatic, fromDynamic});
+                answer.put(data);
+            }
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
 }

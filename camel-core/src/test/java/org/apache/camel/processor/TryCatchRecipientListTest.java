@@ -36,7 +36,7 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("doCatch");
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:catch").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:catch").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:catch").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
 
@@ -51,7 +51,7 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("doCatch");
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:catch").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:catch").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:catch").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
 
@@ -68,9 +68,9 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:result2").expectedBodiesReceived("doCatch2");
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:catch").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:catch").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:catch").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:catch2").expectedBodiesReceived("doCatch");
-        getMockEndpoint("mock:catch2").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:catch2").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
 
@@ -84,7 +84,7 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
-        getMockEndpoint("mock:dead").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:dead").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
 
@@ -98,7 +98,7 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
-        getMockEndpoint("mock:dead").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:dead").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
 

@@ -35,20 +35,24 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
+import org.apache.camel.processor.aggregate.PreCompletionAwareAggregationStrategy;
 import org.apache.camel.spi.AggregationRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
- * Represents an XML &lt;aggregate/&gt; element
+ * Aggregates many messages into a single message
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements ExecutorServiceAwareDefinition<AggregateDefinition> {
@@ -64,8 +68,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition;
     @XmlTransient
     private ExpressionDefinition expression;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
@@ -101,6 +103,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private Boolean completionFromBatchConsumer;
     @XmlAttribute
+    @Deprecated
     private Boolean groupExchanges;
     @XmlAttribute
     private Boolean eagerCheckCompletion;
@@ -112,6 +115,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Boolean discardOnCompletionTimeout;
     @XmlAttribute
     private Boolean forceCompletionOnStop;
+    @XmlTransient
+    private AggregateController aggregateController;
+    @XmlAttribute
+    private String aggregateControllerRef;
+    @XmlElementRef
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
     public AggregateDefinition() {
     }
@@ -147,11 +156,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     @Override
-    public String getShortName() {
-        return "aggregate";
-    }
-
-    @Override
     public String getLabel() {
         return "aggregate[" + description() + "]";
     }
@@ -174,9 +178,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", this, isParallelProcessing());
-        if (threadPool == null && !isParallelProcessing()) {
+        boolean parallel = getParallelProcessing() != null && getParallelProcessing();
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, parallel);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", this, parallel);
+        if (threadPool == null && !parallel) {
             // executor service is mandatory for the Aggregator
             // we do not run in parallel mode, but use a synchronous executor, so we run in current thread
             threadPool = new SynchronousExecutorService();
@@ -189,6 +194,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         AggregationRepository repository = createAggregationRepository(routeContext);
         if (repository != null) {
             answer.setAggregationRepository(repository);
+        }
+
+        if (getAggregateController() == null && getAggregateControllerRef() != null) {
+            setAggregateController(routeContext.mandatoryLookup(getAggregateControllerRef(), AggregateController.class));
         }
 
         // this EIP supports using a shared timeout checker thread pool or fallback to create a new thread pool
@@ -211,11 +220,17 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         answer.setShutdownTimeoutCheckerExecutorService(shutdownTimeoutThreadPool);
 
         // set other options
-        answer.setParallelProcessing(isParallelProcessing());
-        answer.setOptimisticLocking(isOptimisticLocking());
+        answer.setParallelProcessing(parallel);
+        if (getOptimisticLocking() != null) {
+            answer.setOptimisticLocking(getOptimisticLocking());
+        }
         if (getCompletionPredicate() != null) {
             Predicate predicate = getCompletionPredicate().createPredicate(routeContext);
             answer.setCompletionPredicate(predicate);
+        } else if (strategy instanceof Predicate) {
+            // if aggregation strategy implements predicate and was not configured then use as fallback
+            log.debug("Using AggregationStrategy as completion predicate: {}", strategy);
+            answer.setCompletionPredicate((Predicate) strategy);
         }
         if (getCompletionTimeoutExpression() != null) {
             Expression expression = getCompletionTimeoutExpression().createExpression(routeContext);
@@ -235,19 +250,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             answer.setCompletionSize(getCompletionSize());
         }
         if (getCompletionFromBatchConsumer() != null) {
-            answer.setCompletionFromBatchConsumer(isCompletionFromBatchConsumer());
+            answer.setCompletionFromBatchConsumer(getCompletionFromBatchConsumer());
         }
         if (getEagerCheckCompletion() != null) {
-            answer.setEagerCheckCompletion(isEagerCheckCompletion());
+            answer.setEagerCheckCompletion(getEagerCheckCompletion());
         }
         if (getIgnoreInvalidCorrelationKeys() != null) {
-            answer.setIgnoreInvalidCorrelationKeys(isIgnoreInvalidCorrelationKeys());
+            answer.setIgnoreInvalidCorrelationKeys(getIgnoreInvalidCorrelationKeys());
         }
         if (getCloseCorrelationKeyOnCompletion() != null) {
             answer.setCloseCorrelationKeyOnCompletion(getCloseCorrelationKeyOnCompletion());
         }
         if (getDiscardOnCompletionTimeout() != null) {
-            answer.setDiscardOnCompletionTimeout(isDiscardOnCompletionTimeout());
+            answer.setDiscardOnCompletionTimeout(getDiscardOnCompletionTimeout());
         }
         if (getForceCompletionOnStop() != null) {
             answer.setForceCompletionOnStop(getForceCompletionOnStop());
@@ -258,6 +273,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             }
         } else {
             answer.setOptimisticLockRetryPolicy(optimisticLockRetryPolicy);
+        }
+        if (getAggregateController() != null) {
+            answer.setAggregateController(getAggregateController());
         }
         return answer;
     }
@@ -334,6 +352,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return aggregationStrategy;
     }
 
+    /**
+     * The AggregationStrategy to use.
+     * <p/>
+     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing already merged exchanges.
+     * At first call the oldExchange parameter is null.
+     * On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
+     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
@@ -342,14 +367,39 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return strategyRef;
     }
 
+    /**
+     * A reference to lookup the AggregationStrategy in the Registry.
+     * <p/>
+     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing already merged exchanges.
+     * At first call the oldExchange parameter is null.
+     * On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
+     */
     public void setAggregationStrategyRef(String aggregationStrategyRef) {
         this.strategyRef = aggregationStrategyRef;
+    }
+
+    public String getStrategyRef() {
+        return strategyRef;
+    }
+
+    /**
+     * A reference to lookup the AggregationStrategy in the Registry.
+     * <p/>
+     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing already merged exchanges.
+     * At first call the oldExchange parameter is null.
+     * On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
+     */
+    public void setStrategyRef(String strategyRef) {
+        this.strategyRef = strategyRef;
     }
 
     public String getAggregationStrategyMethodName() {
         return strategyMethodName;
     }
 
+    /**
+     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     */
     public void setAggregationStrategyMethodName(String strategyMethodName) {
         this.strategyMethodName = strategyMethodName;
     }
@@ -358,8 +408,38 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return strategyMethodAllowNull;
     }
 
+    public String getStrategyMethodName() {
+        return strategyMethodName;
+    }
+
+    /**
+     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     */
+    public void setStrategyMethodName(String strategyMethodName) {
+        this.strategyMethodName = strategyMethodName;
+    }
+
+    /**
+     * If this option is false then the aggregate method is not used for the very first aggregation.
+     * If this option is true then null values is used as the oldExchange (at the very first aggregation),
+     * when using POJOs as the AggregationStrategy.
+     */
     public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
         this.strategyMethodAllowNull = strategyMethodAllowNull;
+    }
+
+    /**
+     * The expression used to calculate the correlation key to use for aggregation.
+     * The Exchange which has the same correlation key is aggregated together.
+     * If the correlation key could not be evaluated an Exception is thrown.
+     * You can disable this by using the ignoreBadCorrelationKeys option.
+     */
+    public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
+        this.correlationExpression = correlationExpression;
+    }
+
+    public ExpressionSubElementDefinition getCorrelationExpression() {
+        return correlationExpression;
     }
 
     public Integer getCompletionSize() {
@@ -430,20 +510,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return groupExchanges;
     }
 
-    public boolean isGroupExchanges() {
-        return groupExchanges != null && groupExchanges;
-    }
-
     public void setGroupExchanges(Boolean groupExchanges) {
         this.groupExchanges = groupExchanges;
     }
 
     public Boolean getCompletionFromBatchConsumer() {
         return completionFromBatchConsumer;
-    }
-
-    public boolean isCompletionFromBatchConsumer() {
-        return completionFromBatchConsumer != null && completionFromBatchConsumer;
     }
 
     public void setCompletionFromBatchConsumer(Boolean completionFromBatchConsumer) {
@@ -466,16 +538,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.optimisticLocking = optimisticLocking;
     }
 
-    public boolean isOptimisticLocking() {
-        return optimisticLocking != null && optimisticLocking;
-    }
-
     public Boolean getParallelProcessing() {
         return parallelProcessing;
-    }
-
-    public boolean isParallelProcessing() {
-        return parallelProcessing != null && parallelProcessing;
     }
 
     public void setParallelProcessing(boolean parallelProcessing) {
@@ -490,28 +554,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.executorServiceRef = executorServiceRef;
     }
 
-    public String getStrategyRef() {
-        return strategyRef;
-    }
-
-    public void setStrategyRef(String strategyRef) {
-        this.strategyRef = strategyRef;
-    }
-
-    public String getStrategyMethodName() {
-        return strategyMethodName;
-    }
-
-    public void setStrategyMethodName(String strategyMethodName) {
-        this.strategyMethodName = strategyMethodName;
-    }
-
     public Boolean getEagerCheckCompletion() {
         return eagerCheckCompletion;
-    }
-
-    public boolean isEagerCheckCompletion() {
-        return eagerCheckCompletion != null && eagerCheckCompletion;
     }
 
     public void setEagerCheckCompletion(Boolean eagerCheckCompletion) {
@@ -520,10 +564,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public Boolean getIgnoreInvalidCorrelationKeys() {
         return ignoreInvalidCorrelationKeys;
-    }
-
-    public boolean isIgnoreInvalidCorrelationKeys() {
-        return ignoreInvalidCorrelationKeys != null && ignoreInvalidCorrelationKeys;
     }
 
     public void setIgnoreInvalidCorrelationKeys(Boolean ignoreInvalidCorrelationKeys) {
@@ -558,10 +598,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return discardOnCompletionTimeout;
     }
 
-    public boolean isDiscardOnCompletionTimeout() {
-        return discardOnCompletionTimeout != null && discardOnCompletionTimeout;
-    }
-
     public void setDiscardOnCompletionTimeout(Boolean discardOnCompletionTimeout) {
         this.discardOnCompletionTimeout = discardOnCompletionTimeout;
     }
@@ -580,6 +616,34 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public String getTimeoutCheckerExecutorServiceRef() {
         return timeoutCheckerExecutorServiceRef;
+    }
+
+    public Boolean getForceCompletionOnStop() {
+        return forceCompletionOnStop;
+    }
+
+    public void setForceCompletionOnStop(Boolean forceCompletionOnStop) {
+        this.forceCompletionOnStop = forceCompletionOnStop;
+    }
+
+    public AggregateController getAggregateController() {
+        return aggregateController;
+    }
+
+    public void setAggregateController(AggregateController aggregateController) {
+        this.aggregateController = aggregateController;
+    }
+
+    public String getAggregateControllerRef() {
+        return aggregateControllerRef;
+    }
+
+    /**
+     * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
+     * this aggregator.
+     */
+    public void setAggregateControllerRef(String aggregateControllerRef) {
+        this.aggregateControllerRef = aggregateControllerRef;
     }
 
     // Fluent API
@@ -778,8 +842,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * Enables grouped exchanges, so the aggregator will group all aggregated exchanges into a single
      * combined Exchange holding all the aggregated exchanges in a {@link java.util.List}.
      *
-     * @return the builder
+     * @deprecated use {@link GroupedExchangeAggregationStrategy} as aggregation strategy instead.
      */
+    @Deprecated
     public AggregateDefinition groupExchanges() {
         setGroupExchanges(true);
         // must use eager check when using grouped exchanges
@@ -789,9 +854,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * Sets the predicate used to determine if the aggregation is completed
-     *
-     * @param predicate  the predicate
-     * @return the builder
      */
     public AggregateDefinition completionPredicate(Predicate predicate) {
         checkNoCompletedPredicate();
@@ -799,81 +861,86 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return this;
     }
 
-     /**
-     * Sets the force completion on stop flag, which considers the current group as complete
-     * and sends out the aggregated exchange when the stop event is executed
-     *
-     * @return builder
+    /**
+     * Indicates to complete all current aggregated exchanges when the context is stopped
      */
     public AggregateDefinition forceCompletionOnStop() {
         setForceCompletionOnStop(true);
         return this;
     }
 
-    public Boolean getForceCompletionOnStop() {
-        return forceCompletionOnStop;
-    }
-
-    public boolean isForceCompletionOnStop() {
-        return forceCompletionOnStop != null && forceCompletionOnStop;
-    }
-
-    public void setForceCompletionOnStop(Boolean forceCompletionOnStop) {
-        this.forceCompletionOnStop = forceCompletionOnStop;
-    }
-
     /**
-     * Sending the aggregated output in parallel
-     *
-     * @return the builder
+     * When aggregated are completed they are being send out of the aggregator.
+     * This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency.
+     * If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads.
      */
     public AggregateDefinition parallelProcessing() {
         setParallelProcessing(true);
         return this;
     }
 
+    /**
+     * Turns on using optimistic locking, which requires the aggregationRepository being used,
+     * is supporting this by implementing {@link org.apache.camel.spi.OptimisticLockingAggregationRepository}.
+     */
     public AggregateDefinition optimisticLocking() {
         setOptimisticLocking(true);
         return this;
     }
 
+    /**
+     * Allows to configure retry settings when using optimistic locking.
+     */
     public AggregateDefinition optimisticLockRetryPolicy(OptimisticLockRetryPolicy policy) {
         setOptimisticLockRetryPolicy(policy);
         return this;
     }
-    
+
+    /**
+     * If using parallelProcessing you can specify a custom thread pool to be used.
+     * In fact also if you are not using parallelProcessing this custom thread pool is used to send out aggregated exchanges as well.
+     */
     public AggregateDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
+    /**
+     * If using parallelProcessing you can specify a custom thread pool to be used.
+     * In fact also if you are not using parallelProcessing this custom thread pool is used to send out aggregated exchanges as well.
+     */
     public AggregateDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }
 
+    /**
+     * If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a
+     * background thread is created to check for the completion for every aggregator.
+     * Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator.
+     */
     public AggregateDefinition timeoutCheckerExecutorService(ScheduledExecutorService executorService) {
         setTimeoutCheckerExecutorService(executorService);
         return this;
     }
 
+    /**
+     * If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a
+     * background thread is created to check for the completion for every aggregator.
+     * Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator.
+     */
     public AggregateDefinition timeoutCheckerExecutorServiceRef(String executorServiceRef) {
         setTimeoutCheckerExecutorServiceRef(executorServiceRef);
         return this;
     }
-    
-    protected void checkNoCompletedPredicate() {
-        if (getCompletionPredicate() != null) {
-            throw new IllegalArgumentException("There is already a completionPredicate defined for this aggregator: " + this);
-        }
-    }
 
-    public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
-        this.correlationExpression = correlationExpression;
-    }
-
-    public ExpressionSubElementDefinition getCorrelationExpression() {
-        return correlationExpression;
+    /**
+     * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
+     * this aggregator.
+     */
+    public AggregateDefinition aggregateController(AggregateController aggregateController) {
+        setAggregateController(aggregateController);
+        return this;
     }
 
     // Section - Methods from ExpressionNode
@@ -889,6 +956,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
+    }
+
+    protected void checkNoCompletedPredicate() {
+        if (getCompletionPredicate() != null) {
+            throw new IllegalArgumentException("There is already a completionPredicate defined for this aggregator: " + this);
+        }
     }
 
     @Override

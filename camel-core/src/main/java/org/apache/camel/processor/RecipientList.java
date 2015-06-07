@@ -30,6 +30,7 @@ import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -48,11 +49,12 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @version 
  */
-public class RecipientList extends ServiceSupport implements AsyncProcessor {
+public class RecipientList extends ServiceSupport implements AsyncProcessor, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipientList.class);
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
+    private String id;
     private ProducerCache producerCache;
     private Expression expression;
     private final String delimiter;
@@ -99,6 +101,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     @Override
     public String toString() {
         return "RecipientList[" + (expression != null ? expression : "") + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void process(Exchange exchange) throws Exception {

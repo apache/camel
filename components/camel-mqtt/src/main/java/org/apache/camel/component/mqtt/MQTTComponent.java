@@ -19,20 +19,67 @@ package org.apache.camel.component.mqtt;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * MQTT Component
  */
-public class MQTTComponent extends DefaultComponent {
+public class MQTTComponent extends UriEndpointComponent {
+    private String host;
+    private String userName;
+    private String password;
+
+    public MQTTComponent() {
+        super(MQTTEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MQTTConfiguration configuration = new MQTTConfiguration();
+
+        if (host != null) {
+            configuration.setHost(host);
+        }
+        if (userName != null) {
+            configuration.setUserName(userName);
+        }
+        if (password != null) {
+            configuration.setPassword(password);
+        }
 
         // and then override from parameters
         setProperties(configuration, parameters);
 
         MQTTEndpoint endpoint = new MQTTEndpoint(uri, this, configuration);
+        endpoint.setName(remaining);
         return endpoint;
+    }
+
+    @Override
+    public boolean useRawUri() {
+        return true; // to prevent MQTT "+" wildcard from being lost
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

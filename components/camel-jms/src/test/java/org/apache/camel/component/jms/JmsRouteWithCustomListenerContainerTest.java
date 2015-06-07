@@ -87,7 +87,7 @@ public class JmsRouteWithCustomListenerContainerTest extends CamelTestSupport {
                 from("activemq:queue:inbox?messageListenerContainerFactoryRef=myListenerContainerFactory")
                     .to("mock:inbox")
                     .inOnly("activemq:topic:order")
-                    .beanRef("orderService", "handleOrder");
+                    .bean("orderService", "handleOrder");
 
                 from("activemq:topic:order")
                     .to("mock:topic");

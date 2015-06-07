@@ -21,7 +21,7 @@ import com.notnoop.apns.utils.FixedCertificates;
 
 import org.apache.camel.component.apns.model.ConnectionStrategy;
 import org.apache.camel.component.apns.util.ApnsUtils;
-
+import org.apache.camel.component.apns.util.TestConstants;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -60,11 +60,11 @@ public class ApnsServiceFactoryTest {
         throws Exception {
         ApnsServiceFactory apnsServiceFactory = new ApnsServiceFactory();
 
-        apnsServiceFactory.setFeedbackHost(FixedCertificates.TEST_HOST);
-        apnsServiceFactory.setFeedbackPort(FixedCertificates.TEST_FEEDBACK_PORT);
-        apnsServiceFactory.setGatewayHost(FixedCertificates.TEST_HOST);
-        apnsServiceFactory.setGatewayPort(FixedCertificates.TEST_GATEWAY_PORT);
-        apnsServiceFactory.setSslContext(ApnsUtils.clientContext());
+        apnsServiceFactory.setFeedbackHost(TestConstants.TEST_HOST);
+        apnsServiceFactory.setFeedbackPort(TestConstants.TEST_FEEDBACK_PORT);
+        apnsServiceFactory.setGatewayHost(TestConstants.TEST_HOST);
+        apnsServiceFactory.setGatewayPort(TestConstants.TEST_GATEWAY_PORT);
+        apnsServiceFactory.setSslContextParameters(ApnsUtils.clientContext());
 
         return apnsServiceFactory;
     }

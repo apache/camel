@@ -26,17 +26,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SES Endpoint</a>.  
  *
  */
+@UriEndpoint(scheme = "aws-ses", title = "AWS Simple Email Service", syntax = "aws-ses:from", producerOnly = true, label = "cloud,mail")
 public class SesEndpoint extends DefaultEndpoint {
-    
-    private SesConfiguration configuration;
-    
+
     private AmazonSimpleEmailService sesClient;
+
+    @UriParam
+    private SesConfiguration configuration;
 
     @Deprecated
     public SesEndpoint(String uri, CamelContext context, SesConfiguration configuration) {

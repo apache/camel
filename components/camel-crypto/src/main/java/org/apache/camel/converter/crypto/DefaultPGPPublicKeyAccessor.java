@@ -28,6 +28,7 @@ import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 
 /**
  * Caches a public key ring.
@@ -40,7 +41,9 @@ public class DefaultPGPPublicKeyAccessor implements PGPPublicKeyAccessor {
 
     public DefaultPGPPublicKeyAccessor(byte[] publicKeyRing) throws IOException, PGPException {
         ObjectHelper.notNull(publicKeyRing, "publicKeyRing");
-        pgpPublicKeyRing = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(new ByteArrayInputStream(publicKeyRing)));
+        pgpPublicKeyRing = 
+            new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(new ByteArrayInputStream(publicKeyRing)),
+                                           new BcKeyFingerprintCalculator());
     }
 
     @Override

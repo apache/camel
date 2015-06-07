@@ -19,36 +19,37 @@ package org.apache.camel.component.velocity;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.velocity.app.VelocityEngine;
 
 /**
  * @version 
  */
-public class VelocityComponent extends DefaultComponent {
+public class VelocityComponent extends UriEndpointComponent {
     private VelocityEngine velocityEngine;
+    
+    public VelocityComponent() {
+        super(VelocityEndpoint.class);
+    }
 
     public VelocityEngine getVelocityEngine() {
         return velocityEngine;
     }
 
+    /**
+     * To use the {@link VelocityEngine} otherwise a new engine is created
+     */
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String propertiesFile = getAndRemoveParameter(parameters, "propertiesFile", String.class);
-        String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
 
         VelocityEndpoint answer = new VelocityEndpoint(uri, this, remaining);
+        setProperties(answer, parameters);
         answer.setContentCache(cache);
-        answer.setPropertiesFile(propertiesFile);
-        if (ObjectHelper.isNotEmpty(encoding)) {
-            answer.setEncoding(encoding);
-        }
         answer.setVelocityEngine(velocityEngine);
 
         // if its a http resource then append any remaining parameters and update the resource uri

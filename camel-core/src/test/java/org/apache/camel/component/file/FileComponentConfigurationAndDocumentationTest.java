@@ -41,15 +41,16 @@ public class FileComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"exclude\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"delete\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"doneFileName\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"exclude\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"delete\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"boolean\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("file");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

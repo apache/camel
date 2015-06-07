@@ -76,7 +76,7 @@ public abstract class TestSupport extends TestCase {
      * Returns a value builder for the given property
      */
     public static ValueBuilder property(String name) {
-        return Builder.property(name);
+        return Builder.exchangeProperty(name);
     }
 
     /**
@@ -489,8 +489,8 @@ public abstract class TestSupport extends TestCase {
      * @return <tt>true</tt> if its that platform.
      */
     public static boolean isPlatform(String platform) {
-        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        return osName.contains(platform.toLowerCase(Locale.US));
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+        return osName.contains(platform.toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -502,8 +502,8 @@ public abstract class TestSupport extends TestCase {
      * @return <tt>true</tt> if its that vendor.
      */
     public static boolean isJavaVendor(String vendor) {
-        String javaVendor = System.getProperty("java.vendor").toLowerCase(Locale.US);
-        return javaVendor.contains(vendor.toLowerCase(Locale.US));
+        String javaVendor = System.getProperty("java.vendor").toLowerCase(Locale.ENGLISH);
+        return javaVendor.contains(vendor.toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -516,6 +516,6 @@ public abstract class TestSupport extends TestCase {
      */
     public static boolean isJavaVersion(String version) {
         String javaVersion = System.getProperty("java.version");
-        return javaVersion.contains(version.toLowerCase(Locale.US));
+        return javaVersion.contains(version.toLowerCase(Locale.ENGLISH));
     }
 }

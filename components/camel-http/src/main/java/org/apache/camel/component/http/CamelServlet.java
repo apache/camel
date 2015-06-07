@@ -179,12 +179,12 @@ public class CamelServlet extends HttpServlet {
 
     public void connect(HttpConsumer consumer) {
         log.debug("Connecting consumer: {}", consumer);
-        consumers.put(consumer.getPath(), consumer);
+        consumers.put(consumer.getEndpoint().getEndpointUri(), consumer);
     }
 
     public void disconnect(HttpConsumer consumer) {
         log.debug("Disconnecting consumer: {}", consumer);
-        consumers.remove(consumer.getPath());
+        consumers.remove(consumer.getEndpoint().getEndpointUri());
     }
 
     public String getServletName() {

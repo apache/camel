@@ -33,18 +33,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Consumer to read data from a database.
- *
- * @version 
  */
 public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyBatisConsumer.class);
 
-    private static final class DataHolder {
-        private Exchange exchange;
-        private Object data;
+    static final class DataHolder {
+        Exchange exchange;
+        Object data;
 
-        private DataHolder() {
+        DataHolder() {
         }
     }
 
@@ -65,8 +63,6 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
      * Whether allow empty resultset to be routed to the next hop
      */
     private boolean routeEmptyResultSet;
-
-    private int maxMessagesPerPoll;
 
     public MyBatisConsumer(MyBatisEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -158,9 +154,14 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     private Exchange createExchange(Object data) {
         final MyBatisEndpoint endpoint = getEndpoint();
         final Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
+        final String outputHeader = getEndpoint().getOutputHeader();
 
         Message msg = exchange.getIn();
-        msg.setBody(data);
+        if (outputHeader != null) {
+            msg.setHeader(outputHeader, data);
+        } else {
+            msg.setBody(data);
+        }
         msg.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, endpoint.getStatement());
 
         return exchange;

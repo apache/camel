@@ -28,7 +28,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.fop.apps.FOPException;
@@ -42,12 +41,12 @@ import org.apache.fop.pdf.PDFEncryptionParams;
  */
 public class FopProducer extends DefaultProducer {
     private final FopFactory fopFactory;
-    private final String remaining;
+    private final String outputFormat;
 
-    public FopProducer(FopEndpoint endpoint, FopFactory fopFactory, String remaining) {
+    public FopProducer(FopEndpoint endpoint, FopFactory fopFactory, String outputFormat) {
         super(endpoint);
         this.fopFactory = fopFactory;
-        this.remaining = remaining;
+        this.outputFormat = outputFormat;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -67,13 +66,18 @@ public class FopProducer extends DefaultProducer {
     }
 
     private String getOutputFormat(Exchange exchange) {
-        String outputFormat = exchange.getIn()
-                .getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, this.remaining, String.class);
-        if (outputFormat == null) {
-            throw new RuntimeExchangeException("Missing output format", exchange);
+        String headerOutputFormat = exchange.getIn().getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, String.class);
+        if (headerOutputFormat != null) {
+            // it may be a short hand
+            FopOutputType type = exchange.getContext().getTypeConverter().tryConvertTo(FopOutputType.class, exchange, headerOutputFormat);
+            if (type != null) {
+                return type.getFormatExtended();
+            } else {
+                return headerOutputFormat;
+            }
+        } else {
+            return outputFormat;
         }
-
-        return outputFormat;
     }
 
     private OutputStream transform(FOUserAgent userAgent, String outputFormat, Source src)
@@ -107,4 +111,5 @@ public class FopProducer extends DefaultProducer {
             IntrospectionSupport.setProperties(userAgent, parameters);
         }
     }
+    
 }

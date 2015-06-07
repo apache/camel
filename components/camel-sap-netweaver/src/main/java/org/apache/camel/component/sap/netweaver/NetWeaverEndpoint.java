@@ -21,21 +21,25 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
+@UriEndpoint(scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url", producerOnly = true, label = "sap")
 public class NetWeaverEndpoint extends DefaultEndpoint {
 
-    @UriParam
-    private boolean json = true;
-    @UriParam
-    private boolean jsonAsMap = true;
-    @UriParam
-    private boolean flatternMap = true;
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String url;
-    @UriParam
+    @UriParam(defaultValue = "true")
+    private boolean json = true;
+    @UriParam(defaultValue = "true")
+    private boolean jsonAsMap = true;
+    @UriParam(defaultValue = "true")
+    private boolean flatternMap = true;
+    @UriParam @Metadata(required = "true")
     private String username;
-    @UriParam
+    @UriParam @Metadata(required = "true")
     private String password;
 
     public NetWeaverEndpoint(String endpointUri, Component component) {
@@ -61,6 +65,9 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
         return url;
     }
 
+    /**
+     * Url to the SAP net-weaver gateway server.
+     */
     public void setUrl(String url) {
         this.url = url;
     }
@@ -69,6 +76,9 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
         return username;
     }
 
+    /**
+     * Username for account.
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -77,6 +87,9 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
         return password;
     }
 
+    /**
+     * Password for account.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -85,6 +98,9 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
         return json;
     }
 
+    /**
+     * Whether to return data in JSON format. If this option is false, then XML is returned in Atom format.
+     */
     public void setJson(boolean json) {
         this.json = json;
     }
@@ -93,6 +109,9 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
         return jsonAsMap;
     }
 
+    /**
+     * To transform the JSON from a String to a Map in the message body.
+     */
     public void setJsonAsMap(boolean jsonAsMap) {
         this.jsonAsMap = jsonAsMap;
     }
@@ -101,6 +120,9 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
         return flatternMap;
     }
 
+    /**
+     * If the JSON Map contains only a single entry, then flattern by storing that single entry value as the message body.
+     */
     public void setFlatternMap(boolean flatternMap) {
         this.flatternMap = flatternMap;
     }

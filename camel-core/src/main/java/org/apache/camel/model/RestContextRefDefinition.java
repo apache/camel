@@ -22,14 +22,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents an XML &lt;restContextRef/&gt; element
+ * To refer to an XML file with rest services defined using the rest-dsl
  *
  * @version 
  */
+@Metadata(label = "configuration,rest")
 @XmlRootElement(name = "restContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestContextRefDefinition {
@@ -48,11 +49,14 @@ public class RestContextRefDefinition {
         return ref;
     }
 
+    /**
+     * Reference to the rest-dsl
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
     
-    public List<RestDefinition> lookupRests(CamelContext camelContext) {
+    public List<RestDefinition> lookupRests(ModelCamelContext camelContext) {
         return RestContextRefDefinitionHelper.lookupRests(camelContext, ref);
     }
 

@@ -24,24 +24,30 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;idempotentConsumer/&gt; element
+ * Filters out duplicate messages
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IdempotentConsumerDefinition extends ExpressionNode {
-    @XmlAttribute
+
+    @XmlAttribute(required = true)
     private String messageIdRepositoryRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean eager;
     @XmlAttribute
+    private Boolean completionEager;
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean skipDuplicate;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean removeOnFailure;
     @XmlTransient
     private IdempotentRepository<?> idempotentRepository;
@@ -62,11 +68,6 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     @Override
     public String getLabel() {
         return "idempotentConsumer[" + getExpression() + "]";
-    }
-
-    @Override
-    public String getShortName() {
-        return "idempotentConsumer";
     }
 
     // Fluent API
@@ -108,6 +109,26 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     }
 
     /**
+     * Sets whether to complete the idempotent consumer eager or when the exchange is done.
+     * <p/>
+     * If this option is <tt>true</tt> to complete eager, then the idempotent consumer will trigger its completion
+     * when the exchange reached the end of the block of the idempotent consumer pattern. So if the exchange
+     * is continued routed after the block ends, then whatever happens there does not affect the state.
+     * <p/>
+     * If this option is <tt>false</tt> (default) to <b>not</b> complete eager, then the idempotent consumer
+     * will complete when the exchange is done being routed. So if the exchange is continued routed after the block ends,
+     * then whatever happens there <b>also</b> affect the state.
+     * For example if the exchange failed due to an exception, then the state of the idempotent consumer will be a rollback.
+     *
+     * @param completionEager   whether to complete eager or complete when the exchange is done
+     * @return builder
+     */
+    public IdempotentConsumerDefinition completionEager(boolean completionEager) {
+        setCompletionEager(completionEager);
+        return this;
+    }
+
+    /**
      * Sets whether to remove or keep the key on failure.
      * <p/>
      * The default behavior is to remove the key on failure.
@@ -137,6 +158,16 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         return this;
     }
 
+    /**
+     * Expression used to calculate the correlation key to use for duplicate check.
+     * The Exchange which has the same correlation key is regarded as a duplicate and will be rejected.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
     public String getMessageIdRepositoryRef() {
         return messageIdRepositoryRef;
     }
@@ -161,22 +192,12 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.eager = eager;
     }
 
-    public boolean isEager() {
-        // defaults to true if not configured
-        return eager != null ? eager : true;
-    }
-
     public Boolean getSkipDuplicate() {
         return skipDuplicate;
     }
 
     public void setSkipDuplicate(Boolean skipDuplicate) {
         this.skipDuplicate = skipDuplicate;
-    }
-
-    public boolean isSkipDuplicate() {
-        // defaults to true if not configured
-        return skipDuplicate != null ? skipDuplicate : true;
     }
 
     public Boolean getRemoveOnFailure() {
@@ -187,11 +208,13 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.removeOnFailure = removeOnFailure;
     }
 
-    public boolean isRemoveOnFailure() {
-        // defaults to true if not configured
-        return removeOnFailure != null ? removeOnFailure : true;
+    public Boolean getCompletionEager() {
+        return completionEager;
     }
 
+    public void setCompletionEager(Boolean completionEager) {
+        this.completionEager = completionEager;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -207,7 +230,14 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
 
         Expression expression = getExpression().createExpression(routeContext);
 
-        return new IdempotentConsumer(expression, idempotentRepository, isEager(), isSkipDuplicate(), isRemoveOnFailure(), childProcessor);
+        // these boolean should be true by default
+        boolean eager = getEager() == null || getEager();
+        boolean duplicate = getSkipDuplicate() == null || getSkipDuplicate();
+        boolean remove = getRemoveOnFailure() == null || getRemoveOnFailure();
+        // these boolean should be false by default
+        boolean completionEager = getCompletionEager() != null && getCompletionEager();
+
+        return new IdempotentConsumer(expression, idempotentRepository, eager, completionEager, duplicate, remove, childProcessor);
     }
 
     /**

@@ -18,12 +18,31 @@ package org.apache.camel.component.jcr;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
 import org.junit.Test;
 
 public class JcrNodePathCreationTest extends JcrRouteTestSupport {
+
+    private Value[] multiValued;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+
+        Session session = openSession();
+
+        ValueFactory valFact = session.getValueFactory();
+        multiValued = new Value[]{valFact.createValue("value-1"),
+                valFact.createValue("value-2")};
+
+        session.logout();
+    }
 
     @Test
     public void testJcrNodePathCreation() throws Exception {
@@ -43,7 +62,28 @@ public class JcrNodePathCreationTest extends JcrRouteTestSupport {
             }
         }
     }
-    
+
+    @Test
+    public void testJcrNodePathCreationMultiValued() throws Exception {
+        Exchange exchange = createExchangeWithBody(multiValued);
+        Exchange out = template.send("direct:a", exchange);
+        assertNotNull(out);
+        String uuid = out.getOut().getBody(String.class);
+        assertNotNull("Out body was null; expected JCR node UUID", uuid);
+        Session session = openSession();
+        try {
+            Node node = session.getNodeByIdentifier(uuid);
+            assertNotNull(node);
+            assertEquals("/home/test/node/with/path", node.getPath());
+            assertTrue(node.getProperty("my.contents.property").isMultiple());
+            assertArrayEquals(multiValued, node.getProperty("my.contents.property").getValues());
+        } finally {
+            if (session != null && session.isLive()) {
+                session.logout();
+            }
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -51,10 +91,10 @@ public class JcrNodePathCreationTest extends JcrRouteTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: jcr
                 from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node/with/path"))
-                    .setHeader("my.contents.property", body()).to("jcr://user:pass@repository/home/test");
+                .setHeader("my.contents.property", body()).to("jcr://user:pass@repository/home/test");
                 // END SNIPPET: jcr
             }
         };
     }
-    
+
 }

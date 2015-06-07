@@ -23,9 +23,11 @@ public final class HazelcastConstants {
     */
     public static final String MAP_PREFIX = "map:";
     public static final String MULTIMAP_PREFIX = "multimap:";
+    public static final String REPLICATEDMAP_PREFIX = "replicatedmap:";
     public static final String ATOMICNUMBER_PREFIX = "atomicvalue:";
     public static final String INSTANCE_PREFIX = "instance:";
     public static final String QUEUE_PREFIX = "queue:";
+    public static final String TOPIC_PREFIX = "topic:";
     public static final String SEDA_PREFIX = "seda:";
     public static final String LIST_PREFIX = "list:";
 
@@ -34,6 +36,9 @@ public final class HazelcastConstants {
      */
     public static final String OBJECT_ID = "CamelHazelcastObjectId";
     public static final String OBJECT_POS = "CamelHazelcastObjectIndex";
+    public static final String OBJECT_VALUE = "CamelHazelcastObjectValue";
+    public static final String TTL_VALUE = "CamelHazelcastObjectTtlValue";
+    public static final String TTL_UNIT = "CamelHazelcastObjectTtlUnit";
     public static final String QUERY = "CamelHazelcastQuery";
 
     /*
@@ -47,13 +52,16 @@ public final class HazelcastConstants {
     public static final String CACHE_NAME = "CamelHazelcastCacheName";
     public static final String CACHE_TYPE = "CamelHazelcastCacheType";
 
-    // actions (put, delete, get, update)
+    // actions (put, delete, get, getAll, update, clear)
     public static final String OPERATION = "CamelHazelcastOperationType";
     public static final int PUT_OPERATION = 1;
     public static final int DELETE_OPERATION = 2;
     public static final int GET_OPERATION = 3;
     public static final int UPDATE_OPERATION = 4;
     public static final int QUERY_OPERATION = 5;
+    public static final int GET_ALL_OPERATION = 6;
+    public static final int CLEAR_OPERATION = 7;
+    public static final int PUT_IF_ABSENT_OPERATION = 8;
 
     // multimap
     public static final int REMOVEVALUE_OPERATION = 10;
@@ -70,6 +78,9 @@ public final class HazelcastConstants {
     public static final int PEEK_OPERATION = 33;
     public static final int POLL_OPERATION = 34;
 
+    // topic
+    public static final int PUBLISH_OPERATION = 35;
+
     /*
      * header values
      */
@@ -79,6 +90,9 @@ public final class HazelcastConstants {
     public static final String EVICTED = "evicted";
     public static final String UPDATED = "updated";
     public static final String ADDED = "added";
+
+    // message listener actions (topic)
+    public static final String RECEIVED = "received";
 
     // storage types (map, queue, topic, multimap)
     public static final String MAP = "map";
@@ -93,6 +107,9 @@ public final class HazelcastConstants {
 
     // parameter names
     public static final String OPERATION_PARAM = "operation";
+    public static final String HAZELCAST_INSTANCE_NAME_PARAM = "hazelcastInstanceName";
+    public static final String HAZELCAST_INSTANCE_PARAM = "hazelcastInstance";
+
 
     private HazelcastConstants() {
     }

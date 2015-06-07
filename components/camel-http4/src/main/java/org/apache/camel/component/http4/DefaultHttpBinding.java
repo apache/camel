@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
+ * <p/>
+ * Uses by default the {@link org.apache.camel.component.http4.HttpHeaderFilterStrategy}
  *
  * @version 
  */
@@ -58,10 +60,9 @@ public class DefaultHttpBinding implements HttpBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
     private boolean useReaderForPayload;
+    private boolean transferException;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    private HttpEndpoint endpoint;
 
-    @Deprecated
     public DefaultHttpBinding() {
     }
 
@@ -70,9 +71,10 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    @Deprecated
     public DefaultHttpBinding(HttpEndpoint endpoint) {
-        this.endpoint = endpoint;
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+        this.transferException = endpoint.isTransferException();
     }
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
@@ -124,8 +126,8 @@ public class DefaultHttpBinding implements HttpBinding {
         // if content type is serialized java object, then de-serialize it to a Java object
         if (request.getContentType() != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
             try {
-                InputStream is = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
-                Object object = HttpHelper.deserializeJavaObjectFromStream(is);
+                InputStream is = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
+                Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext());
                 if (object != null) {
                     message.setBody(object);
                 }
@@ -229,7 +231,7 @@ public class DefaultHttpBinding implements HttpBinding {
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
         // 500 for internal server error
         response.setStatus(500);
-        if (endpoint != null && endpoint.isTransferException()) {
+        if (isTransferException()) {
             // transfer the exception as a serialized java object
             HttpHelper.writeObjectToServletResponse(response, exception);
         } else {
@@ -400,16 +402,26 @@ public class DefaultHttpBinding implements HttpBinding {
     public Object parseBody(HttpMessage httpMessage) throws IOException {
         // lets assume the body is a reader
         HttpServletRequest request = httpMessage.getRequest();
-        // Need to handle the GET Method which has no inputStream
-        if ("GET".equals(request.getMethod())) {
+        // there is only a body if we have a content length, or its -1 to indicate unknown length
+        int len = request.getContentLength();
+        LOG.trace("HttpServletRequest content-length: {}", len);
+        if (len == 0) {
             return null;
         }
         if (isUseReaderForPayload()) {
             // use reader to read the response body
             return request.getReader();
         } else {
-            // reade the response body from servlet request
-            return HttpHelper.readResponseBodyFromServletRequest(request, httpMessage.getExchange());
+            // if we do not know if there is any data at all, then make sure to check the stream first
+            if (len < 0) {
+                InputStream is = request.getInputStream();
+                if (is.available() == 0) {
+                    // no data so return null
+                    return null;
+                }
+            }
+            // read the response body from servlet request
+            return HttpHelper.readRequestBodyFromServletRequest(request, httpMessage.getExchange());
         }
     }
 
@@ -419,6 +431,14 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void setUseReaderForPayload(boolean useReaderForPayload) {
         this.useReaderForPayload = useReaderForPayload;
+    }
+
+    public boolean isTransferException() {
+        return transferException;
+    }
+
+    public void setTransferException(boolean transferException) {
+        this.transferException = transferException;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {

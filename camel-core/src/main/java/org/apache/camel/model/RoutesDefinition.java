@@ -26,12 +26,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a collection of routes
+ * A series of Camel routes
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition> implements RouteContainer {
@@ -58,11 +60,6 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @Override
     public String toString() {
         return "Routes: " + routes;
-    }
-
-    @Override
-    public String getShortName() {
-        return "routes";
     }
 
     public String getLabel() {

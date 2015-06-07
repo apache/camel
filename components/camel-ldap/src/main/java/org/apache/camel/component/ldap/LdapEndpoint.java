@@ -24,31 +24,41 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Represents an endpoint that synchronously invokes an LDAP server when a producer sends a message to it.
  */
+@UriEndpoint(scheme = "ldap", title = "LDAP", syntax = "ldap:dirContextName", producerOnly = true, label = "ldap")
 public class LdapEndpoint extends DefaultEndpoint {
     public static final String SYSTEM_DN = "ou=system";
     public static final String OBJECT_SCOPE = "object";
     public static final String ONELEVEL_SCOPE = "onelevel";
     public static final String SUBTREE_SCOPE = "subtree";
 
-    private String remaining;
+    @UriPath @Metadata(required = "true")
+    private String dirContextName;
+    @UriParam(defaultValue = SYSTEM_DN)
     private String base = SYSTEM_DN;
+    @UriParam(defaultValue = SUBTREE_SCOPE, enums = "object,onelevel,subtree")
     private String scope = SUBTREE_SCOPE;
+    @UriParam
     private Integer pageSize;
+    @UriParam
     private String returnedAttributes;
 
     protected LdapEndpoint(String endpointUri, String remaining, LdapComponent component) throws URISyntaxException {
         super(endpointUri, component);
-        this.remaining = remaining;
+        this.dirContextName = remaining;
     }
 
     @SuppressWarnings("deprecation")
     public LdapEndpoint(String endpointUri, String remaining) throws URISyntaxException {
         super(endpointUri);
-        this.remaining = remaining;
+        this.dirContextName = remaining;
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -56,17 +66,43 @@ public class LdapEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new LdapProducer(this, remaining, base, toSearchControlScope(scope), pageSize, returnedAttributes);
+        return new LdapProducer(this, dirContextName, base, toSearchControlScope(scope), pageSize, returnedAttributes);
     }
 
     public boolean isSingleton() {
         return true;
     }
 
+    public String getDirContextName() {
+        return dirContextName;
+    }
+
+    /**
+     * Name of {@link javax.naming.directory.DirContext} bean to lookup in the registry.
+     */
+    public void setDirContextName(String dirContextName) {
+        this.dirContextName = dirContextName;
+    }
+
+    /**
+     * When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query).
+     * To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown)
+     */
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
     public String getBase() {
         return base;
     }
 
+    /**
+     * The base DN for searches.
+     */
     public void setBase(String base) {
         this.base = base;
     }
@@ -75,22 +111,20 @@ public class LdapEndpoint extends DefaultEndpoint {
         return scope;
     }
 
+    /**
+     * Specifies how deeply to search the tree of entries, starting at the base DN.
+     */
     public void setScope(String scope) {
         this.scope = scope;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
     }
 
     public String getReturnedAttributes() {
         return returnedAttributes;
     }
 
+    /**
+     * Comma-separated list of attributes that should be set in each entry of the result
+     */
     public void setReturnedAttributes(String returnedAttributes) {
         this.returnedAttributes = returnedAttributes;
     }

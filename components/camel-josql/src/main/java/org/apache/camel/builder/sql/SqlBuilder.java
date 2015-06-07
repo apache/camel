@@ -127,7 +127,10 @@ public class SqlBuilder implements Expression, Predicate {
 
         query.setVariable("exchange", exchange);
         query.setVariable("in", exchange.getIn());
-        query.setVariable("out", exchange.getOut());
+        // To avoid the side effect of creating out message without notice
+        if (exchange.hasOut()) {
+            query.setVariable("out", exchange.getOut());
+        }
     }
 
     protected void addVariables(Map<String, Object> map) {

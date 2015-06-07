@@ -70,7 +70,12 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
+        // TODO we need to remove the Ref in Camel 3.0
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
+        if (binding == null) {
+            // just check the httpBinding parameter
+            binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
+        }
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
@@ -192,15 +197,15 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         String query = URISupport.createQueryString(map);
 
         String url = "servlet:///%s?httpMethodRestrict=%s";
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
-
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
 
         // get the endpoint
         url = String.format(url, path, restrict);
+        
+        if (!query.isEmpty()) {
+            url = url + "&" + query;
+        }       
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
         setProperties(endpoint, parameters);
 

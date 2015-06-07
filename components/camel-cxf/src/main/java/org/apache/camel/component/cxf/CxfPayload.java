@@ -29,6 +29,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.w3c.dom.Element;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.staxutils.StaxUtils;
 
 
@@ -110,10 +111,15 @@ public class CxfPayload<T> {
     protected static void addNamespace(Element element, Map<String, String> nsMap) {
         if (nsMap != null) {
             for (String ns : nsMap.keySet()) {
+                // We should not override the namespace setting of the element
                 if (XMLConstants.XMLNS_ATTRIBUTE.equals(ns)) {
-                    element.setAttribute(ns, nsMap.get(ns));
+                    if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE))) {
+                        element.setAttribute(ns, nsMap.get(ns));
+                    }
                 } else {
-                    element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+                    if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns))) {
+                        element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+                    }
                 }
             }
         }
@@ -133,7 +139,11 @@ public class CxfPayload<T> {
     public List<T> getHeaders() {
         return headers;
     }
-    
+
+    public Map<String, String> getNsMap() {
+        return nsMap;
+    }
+
     public String toString() {
         // do not load or print the payload body etc as we do not want to load that into memory etc
         return super.toString();

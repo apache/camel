@@ -42,8 +42,8 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
  * any of the start and end markers, the encoder will add these, and stream the string as bytes.
  * <p/>
  * This codes supports charset encoding/decoding between bytes and String. The JVM platform default charset
- * is used, but the charset can be configued on this codec using the setter method.
- * The decoder will use the JVM platform default charset for decoding, but the charset can be configued on the this codec.
+ * is used, but the charset can be configured on this codec using the setter method.
+ * The decoder will use the JVM platform default charset for decoding, but the charset can be configured on the this codec.
  */
 public class HL7MLLPCodec implements ProtocolCodecFactory {
 
@@ -109,4 +109,11 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
         config.setValidate(validate);
     }
 
+    public boolean isProduceString() {
+        return config.isProduceString();
+    }
+
+    public void setProduceString(boolean apply) {
+        config.setProduceString(apply);
+    }
 }

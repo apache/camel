@@ -23,23 +23,34 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;failover/&gt; element
+ * Failover load balancer
+ *
+ * The failover load balancer is capable of trying the next processor in case an Exchange failed with an exception during processing.
+ * You can constrain the failover to activate only when one exception of a list you specify occurs.
+ * If you do not specify a list any exception will cause fail over to occur.
+ * This balancer uses the same strategy for matching exceptions as the Exception Clause does for the onException.
  */
+@Metadata(label = "configuration,loadbalance")
 @XmlRootElement(name = "failover")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
+    @XmlTransient
+    private List<Class<?>> exceptionTypes = new ArrayList<Class<?>>();
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlAttribute
     private Boolean roundRobin;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "-1")
     private Integer maximumFailoverAttempts;
 
     public FailoverLoadBalancerDefinition() {
@@ -49,18 +60,25 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         FailOverLoadBalancer answer;
 
-        if (!exceptions.isEmpty()) {
-            List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        if (!exceptionTypes.isEmpty()) {
+            classes.addAll(exceptionTypes);
+        } else if (!exceptions.isEmpty()) {
             for (String name : exceptions) {
                 Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(name);
                 if (type == null) {
                     throw new IllegalArgumentException("Cannot find class: " + name + " in the classpath");
                 }
+                if (!ObjectHelper.isAssignableFrom(Throwable.class, type)) {
+                    throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
+                }
                 classes.add(type);
             }
-            answer = new FailOverLoadBalancer(classes);
-        } else {
+        }
+        if (classes.isEmpty()) {
             answer = new FailOverLoadBalancer();
+        } else {
+            answer = new FailOverLoadBalancer(classes);
         }
 
         if (getMaximumFailoverAttempts() != null) {
@@ -77,18 +95,37 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         return exceptions;
     }
 
+    /**
+     * A list of class names for specific exceptions to monitor.
+     * If no exceptions is configured then all exceptions is monitored
+     */
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
     }
 
-    public boolean isRoundRobin() {
-        return roundRobin != null && roundRobin;
+    public List<Class<?>> getExceptionTypes() {
+        return exceptionTypes;
+    }
+
+    /**
+     * A list of specific exceptions to monitor.
+     * If no exceptions is configured then all exceptions is monitored
+     */
+    public void setExceptionTypes(List<Class<?>> exceptionTypes) {
+        this.exceptionTypes = exceptionTypes;
     }
 
     public Boolean getRoundRobin() {
         return roundRobin;
     }
 
+    /**
+     * Whether or not the failover load balancer should operate in round robin mode or not.
+     * If not, then it will always start from the first endpoint when a new message is to be processed.
+     * In other words it restart from the top for every message.
+     * If round robin is enabled, then it keeps state and will continue with the next endpoint in a round robin fashion.
+     * When using round robin it will not stick to last known good endpoint, it will always pick the next endpoint to use.
+     */
     public void setRoundRobin(Boolean roundRobin) {
         this.roundRobin = roundRobin;
     }
@@ -97,6 +134,12 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         return maximumFailoverAttempts;
     }
 
+    /**
+     * A value to indicate after X failover attempts we should exhaust (give up).
+     * Use -1 to indicate never give up and continuously try to failover. Use 0 to never failover.
+     * And use e.g. 3 to failover at most 3 times before giving up.
+     * his option can be used whether or not roundRobin is enabled or not.
+     */
     public void setMaximumFailoverAttempts(Integer maximumFailoverAttempts) {
         this.maximumFailoverAttempts = maximumFailoverAttempts;
     }

@@ -29,6 +29,7 @@
         <dataFormats>
             <!-- this one uses our own TestPojo class as unmarshal type -->
             <json id="gson" library="Gson" unmarshalTypeName="org.apache.camel.component.gson.TestPojo"/>
+            <json id="pretty" library="Gson" prettyPrint="true" unmarshalTypeName="org.apache.camel.component.gson.TestPojo"/>
         </dataFormats>
 
         <route>
@@ -39,6 +40,17 @@
         <route>
             <from uri="direct:backPojo"/>
             <unmarshal ref="gson"/>
+            <to uri="mock:reversePojo"/>
+        </route>
+
+        <route>
+            <from uri="direct:inPretty"/>
+            <marshal ref="pretty"/>
+        </route>
+
+        <route>
+            <from uri="direct:backPretty"/>
+            <unmarshal ref="pretty"/>
             <to uri="mock:reversePojo"/>
         </route>
 

@@ -19,6 +19,7 @@ package org.apache.camel.cdi.component.properties;
 import java.util.Properties;
 
 import org.apache.camel.component.properties.DefaultPropertiesParser;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.deltaspike.core.api.config.ConfigResolver;
 
 /**
@@ -27,6 +28,10 @@ import org.apache.deltaspike.core.api.config.ConfigResolver;
  * will be delegated to parent implementation.
  */
 public class CdiPropertiesParser extends DefaultPropertiesParser {
+
+    public CdiPropertiesParser(PropertiesComponent propertiesComponent) {
+        super(propertiesComponent);
+    }
 
     @Override
     public String parseProperty(String key, String value, Properties properties) {

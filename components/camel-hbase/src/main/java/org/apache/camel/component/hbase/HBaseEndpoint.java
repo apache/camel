@@ -17,12 +17,17 @@
 package org.apache.camel.component.hbase;
 
 import java.util.List;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory;
 import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HTablePool;
@@ -31,23 +36,34 @@ import org.apache.hadoop.hbase.filter.Filter;
 /**
  * Represents an HBase endpoint.
  */
+@UriEndpoint(scheme = "hbase", title = "HBase", syntax = "hbase:tableName", consumerClass = HBaseConsumer.class, label = "hadoop")
 public class HBaseEndpoint extends DefaultEndpoint {
 
     private Configuration configuration;
-    private final String tableName;
     private final HTablePool tablePool;
     private HBaseAdmin admin;
 
-    //Operation properties.
+    @UriPath(description = "The name of the table") @Metadata(required = "true")
+    private final String tableName;
+    @UriParam(label = "producer", defaultValue = "100")
     private int maxResults = 100;
+    @UriParam
     private List<Filter> filters;
+    @UriParam(label = "consumer", enums = "CamelHBasePut,CamelHBaseGet,CamelHBaseScan,CamelHBaseDelete")
     private String operation;
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean remove = true;
+    @UriParam(enums = "header,body")
     private String mappingStrategyName;
+    @UriParam
     private String mappingStrategyClassName;
+    @UriParam
     private CellMappingStrategyFactory cellMappingStrategyFactory = new CellMappingStrategyFactory();
+    @UriParam(label = "consumer")
     private HBaseRemoveHandler removeHandler = new HBaseDeleteHandler();
+    @UriParam
     private HBaseRow rowModel;
+    @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
 
     public HBaseEndpoint(String uri, HBaseComponent component, HTablePool tablePool, String tableName) {
@@ -94,6 +110,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return maxResults;
     }
 
+    /**
+     * The maximum number of rows to scan.
+     */
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
     }
@@ -102,6 +121,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return filters;
     }
 
+    /**
+     * A list of filters to use.
+     */
     public void setFilters(List<Filter> filters) {
         this.filters = filters;
     }
@@ -110,6 +132,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return operation;
     }
 
+    /**
+     * The HBase operation to perform
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -118,6 +143,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return cellMappingStrategyFactory;
     }
 
+    /**
+     * To use a custom CellMappingStrategyFactory that is responsible for mapping cells.
+     */
     public void setCellMappingStrategyFactory(CellMappingStrategyFactory cellMappingStrategyFactory) {
         this.cellMappingStrategyFactory = cellMappingStrategyFactory;
     }
@@ -126,6 +154,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return mappingStrategyName;
     }
 
+    /**
+     * The strategy to use for mapping Camel messages to HBase columns. Supported values: header, or body.
+     */
     public void setMappingStrategyName(String mappingStrategyName) {
         this.mappingStrategyName = mappingStrategyName;
     }
@@ -134,6 +165,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return mappingStrategyClassName;
     }
 
+    /**
+     * The class name of a custom mapping strategy implementation.
+     */
     public void setMappingStrategyClassName(String mappingStrategyClassName) {
         this.mappingStrategyClassName = mappingStrategyClassName;
     }
@@ -142,6 +176,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return rowModel;
     }
 
+    /**
+     * An instance of org.apache.camel.component.hbase.model.HBaseRow which describes how each row should be modeled
+     */
     public void setRowModel(HBaseRow rowModel) {
         this.rowModel = rowModel;
     }
@@ -150,6 +187,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return remove;
     }
 
+    /**
+     * If the option is true, Camel HBase Consumer will remove the rows which it processes.
+     */
     public void setRemove(boolean remove) {
         this.remove = remove;
     }
@@ -158,6 +198,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return removeHandler;
     }
 
+    /**
+     * To use a custom HBaseRemoveHandler that is executed when a row is to be removed.
+     */
     public void setRemoveHandler(HBaseRemoveHandler removeHandler) {
         this.removeHandler = removeHandler;
     }
@@ -166,6 +209,11 @@ public class HBaseEndpoint extends DefaultEndpoint {
         return maxMessagesPerPoll;
     }
 
+    /**
+     * Gets the maximum number of messages as a limit to poll at each polling.
+     * <p/>
+     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }

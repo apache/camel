@@ -31,7 +31,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.test.junit4.ExchangeTestSupport;
 import org.junit.Before;
@@ -86,7 +86,14 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         assertNotNull(nodeList);
         assertEquals("Get a worng size of nodeList", 1,  nodeList.getLength());
     }
-   
+
+    @Test
+    public void testCxfPayloadToStreamCache() {
+        StreamCache streamCache = CxfPayloadConverter.cxfPayLoadToStreamCache(payload, exchange);
+        assertNotNull(streamCache);
+        assertTrue(streamCache instanceof CxfPayload);
+    }
+
     @Test
     public void testToCxfPayload() {
         // use default type converter

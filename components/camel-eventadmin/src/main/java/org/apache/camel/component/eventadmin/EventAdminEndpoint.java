@@ -20,13 +20,19 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * EventAdmin endpoint
  */
+@UriEndpoint(scheme = "eventadmin", title = "OSGi EventAdmin", syntax = "eventadmin:topic", consumerClass = EventAdminConsumer.class, label = "eventbus")
 public class EventAdminEndpoint extends DefaultEndpoint {
 
+    @UriPath
     private final String topic;
+    @UriParam
     private boolean send;
 
     public EventAdminEndpoint(String uri, EventAdminComponent component, String topic) {
@@ -34,6 +40,9 @@ public class EventAdminEndpoint extends DefaultEndpoint {
         this.topic = topic;
     }
 
+    /**
+     * Name of topic to listen or send to
+     */
     public String getTopic() {
         return topic;
     }
@@ -42,6 +51,10 @@ public class EventAdminEndpoint extends DefaultEndpoint {
         return send;
     }
 
+    /**
+     * Whether to use 'send' or 'synchronous' deliver.
+     * Default false (async delivery)
+     */
     public void setSend(boolean send) {
         this.send = send;
     }

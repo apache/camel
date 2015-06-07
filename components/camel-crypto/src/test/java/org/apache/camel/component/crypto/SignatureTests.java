@@ -37,6 +37,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,6 +55,10 @@ public class SignatureTests extends CamelTestSupport {
         JndiRegistry registry = super.createRegistry();
         KeyStore keystore = loadKeystore();
         Certificate cert = keystore.getCertificate("bob");
+        KeyStoreParameters keystoreParameters = new KeyStoreParameters();
+        keystoreParameters.setPassword("letmein");
+        keystoreParameters.setResource("./ks.keystore");
+        registry.bind("signatureParams", keystoreParameters);
         registry.bind("keystore", keystore);
         registry.bind("myPublicKey", cert.getPublicKey());
         registry.bind("myCert", cert);
@@ -134,6 +139,13 @@ public class SignatureTests extends CamelTestSupport {
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
+                // START SNIPPET: keystore
+                from("direct:keystoreParameters").to("crypto:sign://keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob&password=letmein",
+                    "crypto:verify://keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob", "mock:result");
+                // END SNIPPET: keystore
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
                 // START SNIPPET: signature-header
                 from("direct:signature-header").to("crypto:sign://another?privateKey=#myPrivateKey&signatureHeader=AnotherDigitalSignature",
                                                    "crypto:verify://another?publicKey=#myPublicKey&signatureHeader=AnotherDigitalSignature", "mock:result");
@@ -187,14 +199,14 @@ public class SignatureTests extends CamelTestSupport {
         sendBody("direct:algorithm", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA1() throws Exception {
         setupMock();
         sendBody("direct:rsa-sha1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA256() throws Exception {
         setupMock();
@@ -238,6 +250,13 @@ public class SignatureTests extends CamelTestSupport {
     public void testSetKeystoreInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:keystore", payload);
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testSetKeystoreParametersInRouteDefinition() throws Exception {
+        setupMock();
+        sendBody("direct:keystoreParameters", payload);
         assertMockEndpointsSatisfied();
     }
 

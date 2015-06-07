@@ -19,14 +19,20 @@ package org.apache.camel.component.mqtt;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
+import org.fusesource.hawtdispatch.Task;
 import org.fusesource.mqtt.client.Callback;
 import org.fusesource.mqtt.client.CallbackConnection;
 import org.fusesource.mqtt.client.Listener;
@@ -39,11 +45,18 @@ import org.slf4j.LoggerFactory;
 /**
  * MQTT endpoint
  */
+@UriEndpoint(scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging")
 public class MQTTEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
 
+    private static final int PUBLISH_MAX_RECONNECT_ATTEMPTS = 3;
+
     private CallbackConnection connection;
+    @UriPath @Metadata(required = "true")
+    private String name;
+    @UriParam
     private final MQTTConfiguration configuration;
+    private volatile boolean connected;
     private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<MQTTConsumer>();
 
     public MQTTEndpoint(String uri, MQTTComponent component, MQTTConfiguration properties) {
@@ -67,17 +80,32 @@ public class MQTTEndpoint extends DefaultEndpoint {
         return configuration;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        createConnection();
+    }
+
+    protected void createConnection() {
         connection = configuration.callbackConnection();
 
         connection.listener(new Listener() {
             public void onConnected() {
+                connected = true;
                 LOG.info("MQTT Connection connected to {}", configuration.getHost());
             }
 
             public void onDisconnected() {
+                connected = false;
                 LOG.debug("MQTT Connection disconnected from {}", configuration.getHost());
             }
 
@@ -96,6 +124,9 @@ public class MQTTEndpoint extends DefaultEndpoint {
             }
 
             public void onFailure(Throwable value) {
+                // mark this connection as disconnected so we force re-connect
+                connected = false;
+                LOG.warn("Connection to " + configuration.getHost() + " failure due " + value.getMessage() + ". Forcing a disconnect to re-connect on next attempt.");
                 connection.disconnect(new Callback<Void>() {
                     public void onSuccess(Void value) {
                     }
@@ -106,58 +137,131 @@ public class MQTTEndpoint extends DefaultEndpoint {
                 });
             }
         });
+    }
 
-        final Promise<Object> promise = new Promise<Object>();
-        connection.connect(new Callback<Void>() {
-            public void onSuccess(Void value) {
-                String subscribeTopicName = configuration.getSubscribeTopicName();
-                subscribeTopicName = subscribeTopicName != null ? subscribeTopicName.trim() : null;
+    protected void doStop() throws Exception {
+        super.doStop();
 
-                if (subscribeTopicName != null && !subscribeTopicName.isEmpty()) {
-                    Topic[] topics = {new Topic(subscribeTopicName, configuration.getQoS())};
-                    connection.subscribe(topics, new Callback<byte[]>() {
-                        public void onSuccess(byte[] value) {
+        if (connection != null) {
+            final Promise<Void> promise = new Promise<Void>();
+            connection.getDispatchQueue().execute(new Task() {
+                @Override
+                public void run() {
+                    connection.disconnect(new Callback<Void>() {
+                        public void onSuccess(Void value) {
                             promise.onSuccess(value);
                         }
 
                         public void onFailure(Throwable value) {
                             promise.onFailure(value);
+                        }
+                    });
+                }
+            });
+            promise.await(configuration.getDisconnectWaitInSeconds(), TimeUnit.SECONDS);
+        }
+    }
+
+    void connect() throws Exception {
+        final Promise<Object> promise = new Promise<Object>();
+        connection.connect(new Callback<Void>() {
+            public void onSuccess(Void value) {
+                LOG.debug("Connected to {}", configuration.getHost());
+
+                Topic[] topics = createSubscribeTopics();
+                if (topics != null && topics.length > 0) {
+                    connection.subscribe(topics, new Callback<byte[]>() {
+                        public void onSuccess(byte[] value) {
+                            promise.onSuccess(value);
+                            connected = true;
+                        }
+
+                        public void onFailure(Throwable value) {
+                            promise.onFailure(value);
                             connection.disconnect(null);
+                            connected = false;
                         }
                     });
                 } else {
                     promise.onSuccess(value);
+                    connected = true;
                 }
 
             }
 
             public void onFailure(Throwable value) {
+                LOG.warn("Failed to connect to " + configuration.getHost() + " due " + value.getMessage());
                 promise.onFailure(value);
                 connection.disconnect(null);
+                connected = false;
             }
         });
+        LOG.info("Connecting to {} using {} seconds timeout", configuration.getHost(), configuration.getConnectWaitInSeconds());
         promise.await(configuration.getConnectWaitInSeconds(), TimeUnit.SECONDS);
     }
 
-    protected void doStop() throws Exception {
-        if (connection != null) {
-            final Promise<Void> promise = new Promise<Void>();
-            connection.disconnect(new Callback<Void>() {
-                public void onSuccess(Void value) {
-                    promise.onSuccess(value);
-                }
-
-                public void onFailure(Throwable value) {
-                    promise.onFailure(value);
-                }
-            });
-            promise.await(configuration.getDisconnectWaitInSeconds(), TimeUnit.SECONDS);
+    Topic[] createSubscribeTopics() {
+        String subscribeTopicList = configuration.getSubscribeTopicNames();
+        if (subscribeTopicList != null && !subscribeTopicList.isEmpty()) {
+            String[] topicNames = subscribeTopicList.split(",");
+            Topic[] topics = new Topic[topicNames.length];
+            for (int i = 0; i < topicNames.length; i++) {
+                topics[i] = new Topic(topicNames[i].trim(), configuration.getQoS());
+            }
+            return topics;
+        } else { // fall back on singular topic name
+            String subscribeTopicName = configuration.getSubscribeTopicName();
+            subscribeTopicName = subscribeTopicName != null ? subscribeTopicName.trim() : null;
+            if (subscribeTopicName != null && !subscribeTopicName.isEmpty()) {
+                Topic[] topics = {new Topic(subscribeTopicName, configuration.getQoS())};
+                return topics;
+            }
         }
-        super.doStop();
+        LOG.warn("No topic subscriptions were specified in configuration");
+        return null;
     }
 
-    void publish(String topic, byte[] payload, QoS qoS, boolean retain, Callback<Void> callback) throws Exception {
-        connection.publish(topic, payload, qoS, retain, callback);
+    boolean isConnected() {
+        return connected;
+    }
+ 
+    void publish(final String topic, final byte[] payload, final QoS qoS, final boolean retain, final Callback<Void> callback) throws Exception {
+        // if not connected then create a new connection to re-connect
+        boolean done = isConnected();
+        int attempt = 0;
+        TimeoutException timeout = null;
+        while (!done && attempt <= PUBLISH_MAX_RECONNECT_ATTEMPTS) {
+            attempt++;
+            try {
+                LOG.warn("#{} attempt to re-create connection to {} before publishing", attempt, configuration.getHost());
+                createConnection();
+                connect();
+            } catch (TimeoutException e) {
+                timeout = e;
+                LOG.debug("Timed out after {} seconds after {} attempt to re-create connection to {}",
+                        new Object[]{configuration.getConnectWaitInSeconds(), attempt, configuration.getHost()});
+            } catch (Throwable e) {
+                // other kind of error then exit asap
+                callback.onFailure(e);
+                return;
+            }
+
+            done = isConnected();
+        }
+
+        if (attempt > 3 && !isConnected()) {
+            LOG.warn("Cannot re-connect to {} after {} attempts", configuration.getHost(), attempt);
+            callback.onFailure(timeout);
+            return;
+        }
+
+        connection.getDispatchQueue().execute(new Task() {
+            @Override
+            public void run() {
+                LOG.debug("Publishing to {}", configuration.getHost());
+                connection.publish(topic, payload, qoS, retain, callback);
+            }
+        });
     }
 
     void addConsumer(MQTTConsumer consumer) {

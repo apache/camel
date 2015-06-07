@@ -19,13 +19,17 @@ package org.apache.camel.component.aws.swf;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * Defines the <a href="http://aws.amazon.com/swf/">Amazon Simple Workflow Component</a>
  */
-public class SWFComponent extends DefaultComponent {
+public class SWFComponent extends UriEndpointComponent {
+
+    public SWFComponent() {
+        super(SWFEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Map<String, Object> clientConfigurationParameters = IntrospectionSupport.extractProperties(parameters, "clientConfiguration.");

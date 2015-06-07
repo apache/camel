@@ -33,7 +33,11 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route State")
     String getState();
 
+    /**
+     * @deprecated use {@link #getExchangesInflight()}
+     */
     @ManagedAttribute(description = "Current number of inflight Exchanges")
+    @Deprecated
     Integer getInflightExchanges();
 
     @ManagedAttribute(description = "Camel ID")
@@ -109,5 +113,12 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedOperation(description = "Returns the JSON representation of all the static endpoints (and possible dynamic) defined in this route")
     String createRouteStaticEndpointJson(boolean includeDynamic);
+
+    @ManagedAttribute(description = "Oldest inflight exchange duration")
+    Long getOldestInflightDuration();
+
+    @ManagedAttribute(description = "Oldest inflight exchange id")
+    String getOldestInflightExchangeId();
+
 
 }

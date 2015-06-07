@@ -22,8 +22,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <!-- define the locations using multi line to test that it works also -->
     <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent">
-        <property name="location" value="classpath:org/apache/camel/component/properties/cheese.properties"/>
+        <property name="location" value="
+            classpath:org/apache/camel/component/properties/myprop.properties,
+            classpath:org/apache/camel/component/properties/cheese.properties"/>
     </bean>
 
     <camelContext autoStartup="{{autoStartup}}" xmlns="http://camel.apache.org/schema/spring">

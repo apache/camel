@@ -53,7 +53,7 @@ public final class FileUtil {
 
     private static boolean initWindowsOs() {
         // initialize once as System.getProperty is not fast
-        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         return osName.contains("windows");
     }
 
@@ -194,11 +194,40 @@ public final class FileUtil {
         if (name == null) {
             return null;
         }
-        int pos = name.lastIndexOf('.');
-        if (pos != -1) {
-            return name.substring(0, pos);
+
+        // the name may have a leading path
+        int posUnix = name.lastIndexOf('/');
+        int posWin = name.lastIndexOf('\\');
+        int pos = Math.max(posUnix, posWin);
+
+        if (pos > 0) {
+            String onlyName = name.substring(pos + 1);
+            int pos2 = onlyName.indexOf('.');
+            if (pos2 > 0) {
+                return name.substring(0, pos + pos2 + 1);
+            }
+        } else {
+            int pos2 = name.indexOf('.');
+            if (pos2 > 0) {
+                return name.substring(0, pos2);
+            }
         }
+
         return name;
+    }
+
+    public static String onlyExt(String name) {
+        if (name == null) {
+            return null;
+        }
+        name = stripPath(name);
+
+        // extension is the first dot, as a file may have double extension such as .tar.gz
+        int pos = name.indexOf('.');
+        if (pos != -1) {
+            return name.substring(pos + 1);
+        }
+        return null;
     }
 
     /**
@@ -324,13 +353,28 @@ public final class FileUtil {
                                    + " does not exist, please set java.io.tempdir"
                                    + " to an existing directory");
         }
+        
+        if (!checkExists.canWrite()) {
+            throw new RuntimeException("The directory "
+                + checkExists.getAbsolutePath()
+                + " is not writable, please set java.io.tempdir"
+                + " to a writable directory");
+        }
 
         // create a sub folder with a random number
         Random ran = new Random();
         int x = ran.nextInt(1000000);
-
         File f = new File(s, "camel-tmp-" + x);
+        int count = 0;
+        // Let us just try 100 times to avoid the infinite loop
         while (!f.mkdir()) {
+            count++;
+            if (count >= 100) {
+                throw new RuntimeException("Camel cannot a temp directory from"
+                    + checkExists.getAbsolutePath()
+                    + " 100 times , please set java.io.tempdir"
+                    + " to a writable directory");
+            }
             x = ran.nextInt(1000000);
             f = new File(s, "camel-tmp-" + x);
         }
@@ -460,9 +504,11 @@ public final class FileUtil {
     }
 
     public static void copyFile(File from, File to) throws IOException {
-        FileChannel in = new FileInputStream(from).getChannel();
-        FileChannel out = new FileOutputStream(to).getChannel();
+        FileChannel in = null;
+        FileChannel out = null;
         try {
+            in = new FileInputStream(from).getChannel();
+            out = new FileOutputStream(to).getChannel();
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using FileChannel to copy from: " + in + " to: " + out);
             }
@@ -537,9 +583,15 @@ public final class FileUtil {
      * @throws IOException is thrown if error creating the new file
      */
     public static boolean createNewFile(File file) throws IOException {
+        // need to check first
+        if (file.exists()) {
+            return false;
+        }
         try {
             return file.createNewFile();
         } catch (IOException e) {
+            // and check again if the file was created as createNewFile may create the file
+            // but throw a permission error afterwards when using some NAS
             if (file.exists()) {
                 return true;
             } else {

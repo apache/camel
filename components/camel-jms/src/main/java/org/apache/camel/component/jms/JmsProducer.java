@@ -209,8 +209,14 @@ public class JmsProducer extends DefaultAsyncProducer {
             public Message createMessage(Session session) throws JMSException {
                 Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
 
-                // get the reply to destination to be used from the reply manager
-                Destination replyTo = replyManager.getReplyTo();
+                Destination replyTo = null;
+                String replyToOverride = endpoint.getConfiguration().getReplyToOverride();
+                if (replyToOverride != null) {
+                    replyTo = resolveOrCreateDestination(replyToOverride, session);
+                } else {
+                    // get the reply to destination to be used from the reply manager
+                    replyTo = replyManager.getReplyTo();
+                }
                 if (replyTo == null) {
                     throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
                 }
@@ -231,9 +237,6 @@ public class JmsProducer extends DefaultAsyncProducer {
         };
 
         doSend(true, destinationName, destination, messageCreator, messageSentCallback);
-
-        // after sending then set the OUT message id to the JMSMessageID so its identical
-        setMessageId(exchange);
 
         // continue routing asynchronously (reply will be processed async when its received)
         return false;
@@ -336,37 +339,16 @@ public class JmsProducer extends DefaultAsyncProducer {
                 if (jmsReplyTo != null && jmsReplyTo instanceof String) {
                     String replyTo = (String) jmsReplyTo;
                     // we need to null it as we use the String to resolve it as a Destination instance
-                    jmsReplyTo = null;
-                    boolean isPubSub = isTopicPrefix(replyTo) || (!isQueuePrefix(replyTo) && endpoint.isPubSubDomain());
-                    // try using destination resolver to lookup the destination
-                    if (endpoint.getDestinationResolver() != null) {
-                        jmsReplyTo = endpoint.getDestinationResolver().resolveDestinationName(session, replyTo, isPubSub);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Resolved JMSReplyTo destination {} using DestinationResolver {} as PubSubDomain {} -> {}",
-                                    new Object[]{replyTo, endpoint.getDestinationResolver(), isPubSub, jmsReplyTo});
-                        }
-                    }
-                    if (jmsReplyTo == null) {
-                        // must normalize the destination name
-                        String before = replyTo;
-                        replyTo = normalizeDestinationName(replyTo);
-                        LOG.trace("Normalized JMSReplyTo destination name {} -> {}", before, replyTo);
-
-                        // okay then fallback and create the queue/topic
-                        if (isPubSub) {
-                            LOG.debug("Creating JMSReplyTo topic: {}", replyTo);
-                            jmsReplyTo = session.createTopic(replyTo);
-                        } else {
-                            LOG.debug("Creating JMSReplyTo queue: {}", replyTo);
-                            jmsReplyTo = session.createQueue(replyTo);
-                        }
-                    }
+                    jmsReplyTo = resolveOrCreateDestination(replyTo, session);
                 }
 
                 // set the JMSReplyTo on the answer if we are to use it
                 Destination replyTo = null;
-                if (jmsReplyTo instanceof Destination) {
-                    replyTo = (Destination) jmsReplyTo;
+                String replyToOverride = endpoint.getConfiguration().getReplyToOverride();
+                if (replyToOverride != null) {
+                    replyTo = resolveOrCreateDestination(replyToOverride, session);
+                } else if (jmsReplyTo instanceof Destination) {
+                    replyTo = (Destination)jmsReplyTo;
                 }
                 if (replyTo != null) {
                     LOG.debug("Using JMSReplyTo destination: {}", replyTo);
@@ -434,6 +416,39 @@ public class JmsProducer extends DefaultAsyncProducer {
         } else {
             throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
         }
+    }
+
+    protected Destination resolveOrCreateDestination(String destinationName, Session session)
+        throws JMSException {
+        Destination dest = null;
+
+        boolean isPubSub = isTopicPrefix(destinationName)
+                           || (!isQueuePrefix(destinationName) && endpoint.isPubSubDomain());
+        // try using destination resolver to lookup the destination
+        if (endpoint.getDestinationResolver() != null) {
+            dest = endpoint.getDestinationResolver().resolveDestinationName(session, destinationName,
+                                                                            isPubSub);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Resolved JMSReplyTo destination {} using DestinationResolver {} as PubSubDomain {} -> {}",
+                          new Object[] {destinationName, endpoint.getDestinationResolver(), isPubSub, dest});
+            }
+        }
+        if (dest == null) {
+            // must normalize the destination name
+            String before = destinationName;
+            destinationName = normalizeDestinationName(destinationName);
+            LOG.trace("Normalized JMSReplyTo destination name {} -> {}", before, destinationName);
+
+            // okay then fallback and create the queue/topic
+            if (isPubSub) {
+                LOG.debug("Creating JMSReplyTo topic: {}", destinationName);
+                dest = session.createTopic(destinationName);
+            } else {
+                LOG.debug("Creating JMSReplyTo queue: {}", destinationName);
+                dest = session.createQueue(destinationName);
+            }
+        }
+        return dest;
     }
 
     protected void setMessageId(Exchange exchange) {

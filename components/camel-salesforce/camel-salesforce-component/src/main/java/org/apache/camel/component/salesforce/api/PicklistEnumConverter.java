@@ -18,12 +18,16 @@ package org.apache.camel.component.salesforce.api;
 
 import java.lang.reflect.Method;
 
+import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+/**
+ * XStream converter for handling pick-list enum fields.
+ */
 public class PicklistEnumConverter implements Converter {
 
     private static final String FACTORY_METHOD = "fromValue";
@@ -35,7 +39,7 @@ public class PicklistEnumConverter implements Converter {
             Method getterMethod = aClass.getMethod("value");
             writer.setValue((String) getterMethod.invoke(o));
         } catch (Exception e) {
-            throw new IllegalArgumentException(
+            throw new ConversionException(
                     String.format("Exception writing pick list value %s of type %s: %s",
                             o, o.getClass().getName(), e.getMessage()), e);
         }
@@ -49,12 +53,8 @@ public class PicklistEnumConverter implements Converter {
             Method factoryMethod = requiredType.getMethod(FACTORY_METHOD, String.class);
             // use factory method to create object
             return factoryMethod.invoke(null, value);
-        } catch (SecurityException e) {
-            throw new IllegalArgumentException(
-                    String.format("Security Exception reading pick list value %s of type %s: %s",
-                            value, context.getRequiredType().getName(), e.getMessage()), e);
         } catch (Exception e) {
-            throw new IllegalArgumentException(
+            throw new ConversionException(
                     String.format("Exception reading pick list value %s of type %s: %s",
                             value, context.getRequiredType().getName(), e.getMessage()), e);
         }

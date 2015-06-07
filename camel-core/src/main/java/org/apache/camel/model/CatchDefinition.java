@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,14 +31,16 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
- * Represents an XML &lt;catch/&gt; element
+ * Catches exceptions as part of a try, catch, finally block
  *
  * @version 
  */
+@Metadata(label = "error")
 @XmlRootElement(name = "doCatch")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
@@ -71,11 +72,6 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @Override
     public String toString() {
         return "DoCatch[ " + getExceptionClasses() + " -> " + getOutputs() + "]";
-    }
-
-    @Override
-    public String getShortName() {
-        return "doCatch";
     }
 
     @Override
@@ -140,13 +136,31 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     // Fluent API
     //-------------------------------------------------------------------------
     /**
-     * Sets the exceptionClasses of the CatchType
+     * The exceptions to catch.
      *
      * @param exceptionClasses  a list of the exception classes
      * @return the builder
      */
     public CatchDefinition exceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
         setExceptionClasses(exceptionClasses);
+        return this;
+    }
+
+    /**
+     * The exception(s) to catch.
+     *
+     * @param exceptions  one or more exceptions
+     * @return the builder
+     */
+    public CatchDefinition exception(Class<? extends Throwable>... exceptions) {
+        if (exceptionClasses == null) {
+            exceptionClasses = new ArrayList<Class<? extends Throwable>>();
+        }
+        if (exceptions != null) {
+            for (Class<? extends Throwable> exception : exceptions) {
+                exceptionClasses.add(exception);
+            }
+        }
         return this;
     }
     

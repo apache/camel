@@ -94,7 +94,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelC
         return instanceClassName;
     }
 
-    public void setInstanceClass(String className) throws Exception {
+    public void setInstanceClassName(String className) throws Exception {
         instanceClassName = className;
     }
 

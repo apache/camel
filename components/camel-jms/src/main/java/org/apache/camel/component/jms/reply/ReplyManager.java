@@ -20,11 +20,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageListener;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jms.JmsEndpoint;
+import org.springframework.jms.listener.SessionAwareMessageListener;
 
 /**
  * The {@link ReplyManager} is responsible for handling <a href="http://camel.apache.org/request-reply.html">request-reply</a>
@@ -32,7 +32,7 @@ import org.apache.camel.component.jms.JmsEndpoint;
  *
  * @version 
  */
-public interface ReplyManager extends MessageListener {
+public interface ReplyManager extends SessionAwareMessageListener {
 
     /**
      * Sets the belonging {@link org.apache.camel.component.jms.JmsEndpoint}.

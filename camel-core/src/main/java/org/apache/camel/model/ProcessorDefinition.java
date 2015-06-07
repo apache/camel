@@ -62,13 +62,13 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,17 +77,24 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
+    @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
+    @XmlTransient
     protected final Logger log = LoggerFactory.getLogger(getClass());
-
+    @XmlAttribute
     protected Boolean inheritErrorHandler;
+    @XmlTransient
     private final LinkedList<Block> blocks = new LinkedList<Block>();
+    @XmlTransient
     private ProcessorDefinition<?> parent;
+    @XmlTransient
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     // use xs:any to support optional property placeholders
+    @XmlAnyAttribute
     private Map<QName, Object> otherAttributes;
+    @XmlTransient
     private final int index;
 
     protected ProcessorDefinition() {
@@ -102,7 +109,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the index number
      */
-    @XmlTransient // do not expose this in the XML DSL
     public int getIndex() {
         return index;
     }
@@ -285,7 +291,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             // do not use error handler for multicast as it offers fine grained error handlers for its outputs
             // however if share unit of work is enabled, we need to wrap an error handler on the multicast parent
             MulticastDefinition def = (MulticastDefinition) defn;
-            if (def.isShareUnitOfWork() && child == null) {
+            boolean isShareUnitOfWork = def.getShareUnitOfWork() != null && def.getShareUnitOfWork();
+            if (isShareUnitOfWork && child == null) {
                 // only wrap the parent (not the children of the multicast)
                 wrapChannelInErrorHandler(channel, routeContext);
             } else {
@@ -400,6 +407,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
+        // We will save list of actions to restore the outputs back to the original state.
+        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
+        try {
+            return createOutputsProcessorImpl(routeContext, outputs);
+        } finally {
+            propertyPlaceholdersChangeReverter.run();
+        }
+    }
+
+    protected Processor createOutputsProcessorImpl(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorDefinition<?> output : outputs) {
 
@@ -407,7 +424,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             output.preCreateProcessor();
 
             // resolve properties before we create the processor
-            ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, output);
+            ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), output);
 
             // resolve constant fields (eg Exchange.FILE_NAME)
             ProcessorDefinitionHelper.resolveKnownConstantFields(output);
@@ -419,7 +436,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 ExpressionDefinition expressionDefinition = exp.getExpression();
                 if (expressionDefinition != null) {
                     // resolve properties before we create the processor
-                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, expressionDefinition);
+                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
 
                     // resolve constant fields (eg Exchange.FILE_NAME)
                     ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
@@ -427,6 +444,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             }
 
             Processor processor = createProcessor(routeContext, output);
+
+            // inject id
+            if (processor instanceof IdAware) {
+                String id = output.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                ((IdAware) processor).setId(id);
+            }
 
             if (output instanceof Channel && processor == null) {
                 continue;
@@ -466,13 +489,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Creates the processor and wraps it in any necessary interceptors and error handlers
      */
     protected Processor makeProcessor(RouteContext routeContext) throws Exception {
+        // We will save list of actions to restore the definition back to the original state.
+        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
+        try {
+            return makeProcessorImpl(routeContext);
+        } finally {
+            // Lets restore
+            propertyPlaceholdersChangeReverter.run();
+        }
+    }
+
+    private Processor makeProcessorImpl(RouteContext routeContext) throws Exception {
         Processor processor = null;
 
         // allow any custom logic before we create the processor
         preCreateProcessor();
 
         // resolve properties before we create the processor
-        ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, this);
+        ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), this);
 
         // resolve constant fields (eg Exchange.FILE_NAME)
         ProcessorDefinitionHelper.resolveKnownConstantFields(this);
@@ -484,7 +518,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             ExpressionDefinition expressionDefinition = exp.getExpression();
             if (expressionDefinition != null) {
                 // resolve properties before we create the processor
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, expressionDefinition);
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
 
                 // resolve constant fields (eg Exchange.FILE_NAME)
                 ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
@@ -498,6 +532,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // fallback to default implementation if factory did not create the processor
         if (processor == null) {
             processor = createProcessor(routeContext);
+        }
+
+        // inject id
+        if (processor instanceof IdAware) {
+            String id = this.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+            ((IdAware) processor).setId(id);
         }
 
         if (processor == null) {
@@ -955,6 +995,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Set the route description for this route
+     *
+     * @param description the route description
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type routeDescription(String description) {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            DescriptionDefinition desc = new DescriptionDefinition();
+            desc.setText(description);
+            route.setDescription(desc);
+        }
+
+        return (Type) this;
+    }
+
+    /**
      * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a>
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
@@ -1134,8 +1194,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // must do this ugly cast to avoid compiler error on AIX/HP-UX
         ProcessorDefinition<?> defn = (ProcessorDefinition<?>) this;
         
-        // when using doTry .. doCatch .. doFinally we should always
-        // end the try definition to avoid having to use 2 x end() in the route
+        // when using choice .. when .. otherwise - doTry .. doCatch .. doFinally we should always
+        // end the choice/try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
         // TODO (camel-3.0): this should be done inside of TryDefinition or even better
         //  in Block(s) in general, but the api needs to be revisited for that.
@@ -1168,8 +1228,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * Ends the current block and returns back to the {@link ChoiceDefinition choice()} DSL.
+     * <p/>
+     * <b>Important:</b> If you want to end the entire choice block, then use {@link #end()} instead.
+     * The purpose of {@link #endChoice()} is to return <i>control</i> back to the {@link ChoiceDefinition choice()} DSL,
+     * so you can add subsequent <tt>when</tt> and <tt>otherwise</tt> to the choice. There can be situations where
+     * you would need to use {@link #endChoice()} often when you add additional EIPs inside the <tt>when</tt>'s, and
+     * the DSL <t>looses</t> scope when using a regular {@link #end()}, and you would need to use this {@link #endChoice()}
+     * to return back the scope to the {@link ChoiceDefinition choice()} DSL.
+     * <p/>
+     * For more details and examples see also this FAQ:
+     * <a href="http://camel.apache.org/why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.html">Why can I not use when or otherwise in a Java Camel route </a>.
      *
-     * @return the builder
+     * @return the choice builder
      */
     public ChoiceDefinition endChoice() {
         // are we nested choice?
@@ -1216,7 +1286,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public TryDefinition endDoTry() {
-        return (TryDefinition) end();
+        ProcessorDefinition<?> def = this;
+
+        // are we already a try?
+        if (def instanceof TryDefinition) {
+            return (TryDefinition) def;
+        }
+
+        // okay end this and get back to the try
+        def = end();
+        return (TryDefinition) def;
     }
 
     /**
@@ -1583,7 +1662,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @deprecated prefer to use {@link #routingSlip(org.apache.camel.Expression, String)} instead
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, String uriDelimiter) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header, uriDelimiter);
@@ -1605,7 +1683,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @deprecated prefer to use {@link #routingSlip(org.apache.camel.Expression)} instead
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header);
@@ -1629,7 +1706,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @deprecated prefer to use {@link #routingSlip()} instead
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, String uriDelimiter, boolean ignoreInvalidEndpoints) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header, uriDelimiter);
@@ -1654,7 +1730,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @deprecated prefer to use {@link #routingSlip()} instead
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, boolean ignoreInvalidEndpoints) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header);
@@ -2031,7 +2106,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public LoopDefinition loop(Expression expression) {
         LoopDefinition loop = new LoopDefinition();
-        loop.setExpression(expression);
+        loop.setExpression(new ExpressionDefinition(expression));
         addOutput(loop);
         return loop;
     }
@@ -2057,7 +2132,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param exception the exception to throw
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public Type throwException(Exception exception) {
         ThrowExceptionDefinition answer = new ThrowExceptionDefinition();
         answer.setException(exception);
@@ -2075,7 +2149,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see #rollback(String)
      * @see #markRollbackOnlyLast()
      */
-    @SuppressWarnings("unchecked")
     public Type markRollbackOnly() {
         RollbackDefinition answer = new RollbackDefinition();
         answer.setMarkRollbackOnly(true);
@@ -2096,7 +2169,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see #rollback(String)
      * @see #markRollbackOnly()
      */
-    @SuppressWarnings("unchecked")
     public Type markRollbackOnlyLast() {
         RollbackDefinition answer = new RollbackDefinition();
         answer.setMarkRollbackOnlyLast(true);
@@ -2127,7 +2199,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see #markRollbackOnly()
      */
-    @SuppressWarnings("unchecked")
     public Type rollback(String message) {
         RollbackDefinition answer = new RollbackDefinition(message);
         addOutput(answer);
@@ -2288,6 +2359,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return blocks.isEmpty() ? null : blocks.removeLast();
     }
 
+    @SuppressWarnings("unchecked")
     public Type startupOrder(int startupOrder) {
         ProcessorDefinition<?> def = this;
 
@@ -2419,6 +2491,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
+    public Type process(String ref) {
+        ProcessDefinition answer = new ProcessDefinition();
+        answer.setRef(ref);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds the custom processor reference to this destination which could be a final
+     * destination, or could be a transformation in a pipeline
+     *
+     * @param ref   reference to a {@link Processor} to lookup in the registry
+     * @return the builder
+     * @deprecated use {@link #process(String)}
+     */
+    @SuppressWarnings("unchecked")
+    @Deprecated
     public Type processRef(String ref) {
         ProcessDefinition answer = new ProcessDefinition();
         answer.setRef(ref);
@@ -2430,13 +2520,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean  the bean to invoke
+     * @param bean  the bean to invoke, or a reference to a bean if the type is a String
      * @return the builder
      */
     @SuppressWarnings("unchecked")
     public Type bean(Object bean) {
         BeanDefinition answer = new BeanDefinition();
-        answer.setBean(bean);
+        if (bean instanceof String) {
+            answer.setRef((String) bean);
+        } else {
+            answer.setBean(bean);
+        }
         addOutput(answer);
         return (Type) this;
     }
@@ -2445,14 +2539,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean  the bean to invoke
+     * @param bean  the bean to invoke, or a reference to a bean if the type is a String
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
      */
     @SuppressWarnings("unchecked")
     public Type bean(Object bean, String method) {
         BeanDefinition answer = new BeanDefinition();
-        answer.setBean(bean);
+        if (bean instanceof String) {
+            answer.setRef((String) bean);
+        } else {
+            answer.setBean(bean);
+        }
         answer.setMethod(method);
         addOutput(answer);
         return (Type) this;
@@ -2462,18 +2560,46 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean  the bean to invoke
-     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
-     *  the multi parameter 
+     * @param bean  the bean to invoke, or a reference to a bean if the type is a String
+     * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
+     *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     *  the multi parameter
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type bean(Object bean, String method, boolean multiParameterArray) {
+    public Type bean(Object bean, boolean cache) {
         BeanDefinition answer = new BeanDefinition();
-        answer.setBean(bean);
+        if (bean instanceof String) {
+            answer.setRef((String) bean);
+        } else {
+            answer.setBean(bean);
+        }
+        answer.setCache(cache);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param bean  the bean to invoke, or a reference to a bean if the type is a String
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
+     *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     *  the multi parameter
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type bean(Object bean, String method, boolean cache) {
+        BeanDefinition answer = new BeanDefinition();
+        if (bean instanceof String) {
+            answer.setRef((String) bean);
+        } else {
+            answer.setBean(bean);
+        }
         answer.setMethod(method);
-        answer.setMultiParameterArray(multiParameterArray);
+        answer.setCache(cache);
         addOutput(answer);
         return (Type) this;
     }
@@ -2519,8 +2645,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
      *  the multi parameter 
      * @return the builder
+     * @deprecated the option multiParameterArray is deprecated
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type bean(Class<?> beanType, String method, boolean multiParameterArray) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
@@ -2541,7 +2669,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
      *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
      * @return the builder
+     * @deprecated the option multiParameterArray is deprecated
      */
+    @SuppressWarnings("unchecked")
+    @Deprecated
     public Type bean(Class<?> beanType, String method, boolean multiParameterArray, boolean cache) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
@@ -2558,8 +2689,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param ref  reference to a bean to lookup in the registry
      * @return the builder
+     * @deprecated use {@link #bean(Object)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type beanRef(String ref) {
         BeanDefinition answer = new BeanDefinition(ref);
         addOutput(answer);
@@ -2573,8 +2706,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param ref  reference to a bean to lookup in the registry
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
+     * @deprecated use {@link #bean(Object, String)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type beanRef(String ref, String method) {
         BeanDefinition answer = new BeanDefinition(ref, method);
         addOutput(answer);
@@ -2589,8 +2724,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
      *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
      * @return the builder
+     * @deprecated use {@link #bean(Object, String, boolean)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type beanRef(String ref, boolean cache) {
         BeanDefinition answer = new BeanDefinition(ref);
         answer.setCache(cache);
@@ -2607,8 +2744,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
      *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
      * @return the builder
+     * @deprecated use {@link #bean(Object, String, boolean)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type beanRef(String ref, String method, boolean cache) {
         BeanDefinition answer = new BeanDefinition(ref, method);
         answer.setCache(cache);
@@ -2627,8 +2766,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
      *               the multi parameter 
      * @return the builder
+     * @deprecated the option multiParameterArray is deprecated
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type beanRef(String ref, String method, boolean cache, boolean multiParameterArray) {
         BeanDefinition answer = new BeanDefinition(ref, method);
         answer.setCache(cache);
@@ -2861,6 +3002,33 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type removeProperty(String name) {
         RemovePropertyDefinition answer = new RemovePropertyDefinition(name);
+        addOutput(answer);
+        return (Type) this;
+    }
+    
+    /**
+     * Adds a processor which removes the properties in the exchange
+     *
+     * @param pattern a pattern to match properties names to be removed
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type removeProperties(String pattern) {
+        RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Adds a processor which removes the properties in the exchange
+     *
+     * @param pattern a pattern to match properties names to be removed
+     * @param excludePatterns one or more pattern of properties names that should be excluded (= preserved)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type removeProperties(String pattern, String... excludePatterns) {
+        RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern, excludePatterns);
         addOutput(answer);
         return (Type) this;
     }
@@ -3359,7 +3527,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // Properties
     // -------------------------------------------------------------------------
-    @XmlTransient
     public ProcessorDefinition<?> getParent() {
         return parent;
     }
@@ -3368,7 +3535,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         this.parent = parent;
     }
 
-    @XmlTransient
     public List<InterceptStrategy> getInterceptStrategies() {
         return interceptStrategies;
     }
@@ -3381,7 +3547,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return inheritErrorHandler;
     }
 
-    @XmlAttribute
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
     }
@@ -3390,7 +3555,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return otherAttributes;
     }
 
-    @XmlAnyAttribute
     public void setOtherAttributes(Map<QName, Object> otherAttributes) {
         this.otherAttributes = otherAttributes;
     }

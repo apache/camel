@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.linkedin.api.model.EventType;
 import org.apache.camel.component.linkedin.internal.CompaniesResourceApiMethod;
 import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 
@@ -41,20 +42,6 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
     private static final Logger LOG = LoggerFactory.getLogger(CompaniesResourceIntegrationTest.class);
     private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(CompaniesResourceApiMethod.class).getName();
     private static final Long TEST_COMPANY_ID = 1337L;
-
-    // TODO provide parameter values for addCompanyUpdateComment
-    @Ignore
-    @Test
-    public void testAddCompanyUpdateComment() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("CamelLinkedIn.company_id", 0L);
-        // parameter type is String
-        headers.put("CamelLinkedIn.update_key", null);
-        // parameter type is org.apache.camel.component.linkedin.api.model.UpdateComment
-        headers.put("CamelLinkedIn.updatecomment", null);
-
-        requestBodyAndHeaders("direct://ADDCOMPANYUPDATECOMMENT", null, headers);
-    }
 
     // TODO provide parameter values for addCompanyUpdateCommentAsCompany
     @Ignore
@@ -145,7 +132,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
         // parameter type is Boolean
         headers.put("CamelLinkedIn.secure_urls", null);
 
-        final org.apache.camel.component.linkedin.api.model.Comments result = requestBodyAndHeaders("direct://GETCOMPANYUPDATECOMMENTS", null, headers);
+        final org.apache.camel.component.linkedin.api.model.UpdateComments result = requestBodyAndHeaders("direct://GETCOMPANYUPDATECOMMENTS", null, headers);
 
         assertNotNull("getCompanyUpdateComments result", result);
         LOG.debug("getCompanyUpdateComments: " + result);
@@ -174,12 +161,11 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
     public void testGetCompanyUpdates() throws Exception {
         final Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("CamelLinkedIn.company_id", TEST_COMPANY_ID);
-        // use defaults
-/*
         // parameter type is String
-        headers.put("CamelLinkedIn.fields", null);
-        // parameter type is org.apache.camel.component.linkedin.api.Eventtype
-        headers.put("CamelLinkedIn.event_type", null);
+//        headers.put("CamelLinkedIn.fields", null);
+        // parameter type is org.apache.camel.component.linkedin.api.model.Eventtype
+        headers.put("CamelLinkedIn.event_type", EventType.STATUS_UPDATE);
+/*
         // parameter type is Long
         headers.put("CamelLinkedIn.start", null);
         // parameter type is Long
@@ -224,7 +210,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
         // parameter type is org.apache.camel.component.linkedin.api.Timegranularity
         headers.put("CamelLinkedIn.time_granularity", null);
         // parameter type is String
-        headers.put("CamelLinkedIn.update_key", null);
+        headers.put("CamelLinkedIn.statistics_update_key", null);
 
         final org.apache.camel.component.linkedin.api.model.HistoricalStatusUpdateStatistics result = requestBodyAndHeaders("direct://GETHISTORICALSTATUSUPDATESTATISTICS", null, headers);
 
@@ -282,28 +268,10 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
         LOG.debug("isViewerShareEnabled: " + result);
     }
 
-    // TODO provide parameter values for likeCompanyUpdate
-    @Ignore
-    @Test
-    public void testLikeCompanyUpdate() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("CamelLinkedIn.company_id", 0L);
-        // parameter type is String
-        headers.put("CamelLinkedIn.update_key", null);
-        // parameter type is org.apache.camel.component.linkedin.api.model.IsLiked
-        headers.put("CamelLinkedIn.isliked", null);
-
-        requestBodyAndHeaders("direct://LIKECOMPANYUPDATE", null, headers);
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                // test route for addCompanyUpdateComment
-                from("direct://ADDCOMPANYUPDATECOMMENT")
-                    .to("linkedin://" + PATH_PREFIX + "/addCompanyUpdateComment");
-
                 // test route for addCompanyUpdateCommentAsCompany
                 from("direct://ADDCOMPANYUPDATECOMMENTASCOMPANY")
                     .to("linkedin://" + PATH_PREFIX + "/addCompanyUpdateCommentAsCompany");
@@ -359,10 +327,6 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
                 // test route for isViewerShareEnabled
                 from("direct://ISVIEWERSHAREENABLED")
                     .to("linkedin://" + PATH_PREFIX + "/isViewerShareEnabled?inBody=company_id");
-
-                // test route for likeCompanyUpdate
-                from("direct://LIKECOMPANYUPDATE")
-                    .to("linkedin://" + PATH_PREFIX + "/likeCompanyUpdate");
 
             }
         };

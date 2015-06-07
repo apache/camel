@@ -67,26 +67,39 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         super(camelContext, QuartzEndpoint.class);
     }
 
-    public int getStartDelayedSeconds() {
-        return startDelayedSeconds;
-    }
-
     public boolean isAutoStartScheduler() {
         return autoStartScheduler;
     }
 
-    public void setStartDelayedSeconds(int startDelayedSeconds) {
-        this.startDelayedSeconds = startDelayedSeconds;
-    }
-
+    /**
+     * Whether or not the scheduler should be auto started.
+     * <p/>
+     * This options is default true
+     */
     public void setAutoStartScheduler(boolean autoStartScheduler) {
         this.autoStartScheduler = autoStartScheduler;
+    }
+
+    public int getStartDelayedSeconds() {
+        return startDelayedSeconds;
+    }
+
+    /**
+     * Seconds to wait before starting the quartz scheduler.
+     */
+    public void setStartDelayedSeconds(int startDelayedSeconds) {
+        this.startDelayedSeconds = startDelayedSeconds;
     }
 
     public boolean isPrefixJobNameWithEndpointId() {
         return prefixJobNameWithEndpointId;
     }
 
+    /**
+     * Whether to prefix the quartz job with the endpoint id.
+     * <p/>
+     * This option is default false.
+     */
     public void setPrefixJobNameWithEndpointId(boolean prefixJobNameWithEndpointId) {
         this.prefixJobNameWithEndpointId = prefixJobNameWithEndpointId;
     }
@@ -95,6 +108,11 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return enableJmx;
     }
 
+    /**
+     * Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX.
+     * <p/>
+     * This options is default true
+     */
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
@@ -103,14 +121,20 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return properties;
     }
 
-    public String getPropertiesFile() {
-        return propertiesFile;
-    }
-
+    /**
+     * Properties to configure the Quartz scheduler.
+     */
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
 
+    public String getPropertiesFile() {
+        return propertiesFile;
+    }
+
+    /**
+     * File name of the properties to load from the classpath
+     */
     public void setPropertiesFile(String propertiesFile) {
         this.propertiesFile = propertiesFile;
     }
@@ -226,6 +250,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return answer;
     }
 
+    /**
+     * To use the custom SchedulerFactory which is used to create the Scheduler.
+     */
     public void setSchedulerFactory(SchedulerFactory schedulerFactory) {
         this.schedulerFactory = schedulerFactory;
     }
@@ -234,6 +261,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return scheduler;
     }
 
+    /**
+     * To use the custom configured Quartz scheduler, instead of creating a new Scheduler.
+     */
     public void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
     }

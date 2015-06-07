@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.osgi.http;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
@@ -111,6 +113,22 @@ public class HttpTypeConverterTest extends OSGiIntegrationTestSupport {
             return null;
         }
 
+        public String getHeader(String s) {
+            return null;
+        }
+
+        public Collection<String> getHeaderNames() {
+            return null;
+        }
+
+        public Collection<String> getHeaders(String s) {
+            return null;
+        }
+
+        public int getStatus() {
+            return 0;
+        }
+
         public Locale getLocale() {
             return null;
         }
@@ -159,7 +177,7 @@ public class HttpTypeConverterTest extends OSGiIntegrationTestSupport {
         Message message = new DefaultMessage();
         message.setHeader(Exchange.HTTP_SERVLET_RESPONSE, servletResponse);
         HttpServletResponse result = context.getTypeConverter().convertTo(HttpServletResponse.class, message);
-        Assert.assertNotNull("The http conveter doesn't work", result);
+        Assert.assertNotNull("The http converter doesn't work", result);
         
     }
     

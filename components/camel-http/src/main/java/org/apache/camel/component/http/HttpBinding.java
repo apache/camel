@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -114,6 +115,22 @@ public interface HttpBinding {
      * @param useReaderForPayload whether to use reader or not
      */
     void setUseReaderForPayload(boolean useReaderForPayload);
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back
+     * serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or
+     * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is,
+     * instead of the HttpOperationFailedException. The caused exception is required to be serialized.
+     */
+    boolean isTransferException();
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back
+     * serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or
+     * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is,
+     * instead of the HttpOperationFailedException. The caused exception is required to be serialized.
+     */
+    void setTransferException(boolean transferException);
 
     /**
      * Gets the header filter strategy

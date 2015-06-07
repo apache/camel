@@ -25,13 +25,15 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ExchangePatternProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;setExchangePattern/&gt; element
+ * Sets the exchange pattern on the message exchange
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "setExchangePattern")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchangePatternDefinition> {
@@ -56,13 +58,11 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
         return pattern;
     }
 
+    /**
+     * Sets the new exchange pattern of the Exchange to be used from this point forward
+     */
     public void setPattern(ExchangePattern pattern) {
         this.pattern = pattern;
-    }
-
-    @Override
-    public String getShortName() {
-        return "setExchangePattern";
     }
 
     @Override

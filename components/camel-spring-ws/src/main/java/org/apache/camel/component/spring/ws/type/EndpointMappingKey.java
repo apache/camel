@@ -16,10 +16,16 @@
  */
 package org.apache.camel.component.spring.ws.type;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.springframework.xml.xpath.XPathExpression;
 
+@UriParams
 public class EndpointMappingKey {
+    @UriPath(label = "consumer")
     private EndpointMappingType type;
+    @UriPath(label = "consumer")
     private String lookupKey;
 
     /* expression in case type is 'xpath' */
@@ -35,6 +41,18 @@ public class EndpointMappingKey {
         return type;
     }
 
+    /**
+     * Endpoint mapping type if endpoint mapping is used.
+     * <ul>
+     *     <li>rootqname - Offers the option to map web service requests based on the qualified name of the root element contained in the message.</li>
+     *     <li>soapaction - Used to map web service requests based on the SOAP action specified in the header of the message.</li>
+     *     <li>uri - In order to map web service requests that target a specific URI.</li>
+     *     <li>xpathresult - Used to map web service requests based on the evaluation of an XPath expression against the incoming message.
+     *                       The result of the evaluation should match the XPath result specified in the endpoint URI.</li>
+     *     <li>beanname - Allows you to reference an org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object in order to integrate with
+     *                    existing (legacy) endpoint mappings like PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc</li>
+     * </ul>
+     */
     public void setType(EndpointMappingType type) {
         this.type = type;
     }
@@ -43,6 +61,9 @@ public class EndpointMappingKey {
         return lookupKey;
     }
 
+    /**
+     * Endpoint mapping key if endpoint mapping is used
+     */
     public void setLookupKey(String lookupKey) {
         this.lookupKey = lookupKey;
     }

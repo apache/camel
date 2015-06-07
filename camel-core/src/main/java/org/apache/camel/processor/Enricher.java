@@ -20,11 +20,13 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -48,9 +50,10 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  *
  * @see PollEnricher
  */
-public class Enricher extends ServiceSupport implements AsyncProcessor {
+public class Enricher extends ServiceSupport implements AsyncProcessor, EndpointAware, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Enricher.class);
+    private String id;
     private AggregationStrategy aggregationStrategy;
     private Producer producer;
     private boolean aggregateOnException;
@@ -76,6 +79,14 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
     public Enricher(AggregationStrategy aggregationStrategy, Producer producer) {
         this.aggregationStrategy = aggregationStrategy;
         this.producer = producer;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
@@ -108,6 +119,10 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
      */
     public void setDefaultAggregationStrategy() {
         this.aggregationStrategy = defaultAggregationStrategy();
+    }
+
+    public Endpoint getEndpoint() {
+        return producer.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {

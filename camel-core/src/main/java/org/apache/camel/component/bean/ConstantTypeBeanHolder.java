@@ -68,6 +68,10 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
         return null;
     }
 
+    public boolean supportProcessor() {
+        return false;
+    }
+
     public BeanInfo getBeanInfo() {
         return beanInfo;
     }

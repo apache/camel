@@ -22,7 +22,7 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.parser.Parser;
 
-class HL7MLLPConfig {
+public class HL7MLLPConfig {
 
     private Charset charset = Charset.defaultCharset();
 
@@ -38,6 +38,8 @@ class HL7MLLPConfig {
     private HapiContext hapiContext = new DefaultHapiContext();
 
     private Parser parser = hapiContext.getGenericParser();
+
+    private boolean produceString = true;
 
     public Charset getCharset() {
         return charset;
@@ -102,5 +104,13 @@ class HL7MLLPConfig {
 
     public void setValidate(boolean validate) {
         parser.getParserConfiguration().setValidating(validate);
+    }
+
+    public boolean isProduceString() {
+        return produceString;
+    }
+
+    public void setProduceString(boolean produceString) {
+        this.produceString = produceString;
     }
 }

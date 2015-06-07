@@ -80,7 +80,7 @@ public class HL7MLLPCodecStandAndEndBytesTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        String out = (String)template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString());
+        String out = template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString(), String.class);
 
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);

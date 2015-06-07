@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>tooling</artifactId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.16-SNAPSHOT</version>
   </parent>
 
   <artifactId>archetypes</artifactId>
@@ -34,20 +34,41 @@
     <module>camel-archetype-activemq</module>
     <module>camel-archetype-api-component</module>
     <module>camel-archetype-blueprint</module>
+    <module>camel-archetype-cdi</module>
     <module>camel-archetype-component</module>
-    <module>camel-archetype-component-scala</module>
     <module>camel-archetype-cxf-code-first-blueprint</module>
     <module>camel-archetype-cxf-contract-first-blueprint</module>
     <module>camel-archetype-dataformat</module>
     <module>camel-archetype-groovy</module>
     <module>camel-archetype-java</module>
     <module>camel-archetype-scala</module>
+    <module>camel-archetype-scr</module>
     <module>camel-archetype-spring</module>
+    <module>camel-archetype-spring-boot</module>
     <module>camel-archetype-spring-dm</module>
     <module>camel-archetype-web</module>
-    <module>camel-archetype-webconsole</module>
   </modules>
+
   <build>
+    <plugins>
+
+      <!-- generate and attach Camel archetype catalog -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-and-attach-archetype-catalog</goal>
+            </goals>
+            <phase>process-resources</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -55,10 +76,10 @@
           <artifactId>maven-eclipse-plugin</artifactId>
           <configuration>
             <buildcommands>
-                <java.lang.String>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</java.lang.String>
+              <java.lang.String>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</java.lang.String>
             </buildcommands>
             <projectnatures>
-                <nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+              <nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
             </projectnatures>
             <additionalConfig>
               <file>
@@ -71,4 +92,5 @@
       </plugins>
     </pluginManagement>
   </build>
+
 </project>

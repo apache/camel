@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.apns.model.InactiveDevice;
 import org.apache.camel.component.apns.util.ApnsUtils;
+import org.apache.camel.component.apns.util.TestConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
 import org.junit.Assert;
@@ -48,7 +49,7 @@ public class SpringApnsConsumerTest extends AbstractJUnit4SpringContextTests {
 
     @Before
     public void startup() throws InterruptedException {
-        server = ApnsUtils.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);
+        server = ApnsUtils.prepareAndStartServer(TestConstants.TEST_GATEWAY_PORT, TestConstants.TEST_FEEDBACK_PORT);
     }
 
     @After
@@ -66,7 +67,7 @@ public class SpringApnsConsumerTest extends AbstractJUnit4SpringContextTests {
         mock.message(0).body().isInstanceOf(InactiveDevice.class);
 
         byte[] feedBackBytes = ApnsUtils.generateFeedbackBytes(deviceTokenBytes);
-        server.toSend.write(feedBackBytes);
+        server.getToSend().write(feedBackBytes);
 
         Thread.sleep(1000);
 

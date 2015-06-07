@@ -26,11 +26,13 @@ import java.lang.annotation.Target;
  * Marks a parameter as being an injection point of a property of an {@link Exchange}
  *
  * @see Exchange#getProperty(String)  
- * @version 
+ * @version
+ * @deprecated use {@link org.apache.camel.ExchangeProperty} instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.PARAMETER })
+@Deprecated
 public @interface Property {
     String value();
 }

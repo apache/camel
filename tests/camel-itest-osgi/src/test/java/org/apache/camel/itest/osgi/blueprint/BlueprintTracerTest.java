@@ -33,10 +33,10 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 @RunWith(PaxExam.class)
 public class BlueprintTracerTest extends OSGiBlueprintTestSupport {
 
-    private String name = BlueprintTracerTest.class.getName();
-
     @Test
     public void testTracer() throws Exception {
+        final String name = getClass().getName();
+
         // start bundle
         getInstalledBundle(name).start();
 
@@ -57,7 +57,7 @@ public class BlueprintTracerTest extends OSGiBlueprintTestSupport {
         result.assertIsSatisfied();
 
         DefaultTraceEventMessage em = tracer.getReceivedExchanges().get(0).getIn().getBody(DefaultTraceEventMessage.class);
-        assertEquals("Hello Camel", em.getBody());
+        assertEquals("Hello World", em.getBody());
 
         assertEquals("String", em.getBodyType());
         assertEquals(null, em.getCausedByException());

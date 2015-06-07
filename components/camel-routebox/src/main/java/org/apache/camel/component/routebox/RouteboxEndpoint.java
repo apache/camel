@@ -19,8 +19,13 @@ package org.apache.camel.component.routebox;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
+@UriEndpoint(scheme = "routebox", title = "RouteBox", syntax = "routebox:routeboxName", consumerClass = RouteboxConsumer.class, label = "eventbus")
 public abstract class RouteboxEndpoint extends DefaultEndpoint {
+
+    @UriParam
     RouteboxConfiguration config;
 
     public RouteboxEndpoint() {

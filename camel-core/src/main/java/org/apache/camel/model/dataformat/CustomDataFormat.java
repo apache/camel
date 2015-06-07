@@ -23,13 +23,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents the custom {@link org.apache.camel.spi.DataFormat} to lookup using a reference
+ * Custom data format
  *
  * @version
  */
+@Metadata(label = "dataformat,transformation", title = "Custom")
 @XmlRootElement(name = "customDataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomDataFormat extends DataFormatDefinition {
@@ -48,10 +50,16 @@ public class CustomDataFormat extends DataFormatDefinition {
         return DataFormatDefinition.getDataFormat(routeContext, null, ref);
     }
 
+    /**
+     * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
+     */
     public String getRef() {
         return ref;
     }
 
+    /**
+     * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }

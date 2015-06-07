@@ -41,15 +41,28 @@ public class DirectComponentConfigurationAndDocumentationTest extends ContextTes
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"block\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"block\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"boolean\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("direct");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
+    }
+
+    @Test
+    public void testComponentJsonSchema() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        String json = context.getComponentParameterJsonSchema("direct");
+        assertNotNull("Should have found some auto-generated JSON", json);
+        log.info(json);
+
+        // should include javadoc
+        assertTrue("Should include javadoc", json.contains("\"timeout\": { \"kind\": \"parameter\", \"label\": \"producer\","
+                + " \"type\": \"integer\", \"javaType\": \"long\", \"deprecated\": \"false\", \"defaultValue\": \"30000\","
+                + " \"description\": \"The timeout value to use if block is enabled."));
     }
 
 }

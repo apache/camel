@@ -16,32 +16,26 @@
  */
 package org.apache.camel.component.jt400;
 
-import java.util.HashMap;
-
 import com.ibm.as400.access.AS400ConnectionPool;
-import org.apache.camel.CamelException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-public class Jt400ComponentDefaultConnectionPoolTest {
+public class Jt400ComponentDefaultConnectionPoolTest extends Jt400TestSupport {
     private Jt400Component component;
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         component = new Jt400Component();
+        component.setCamelContext(context);
         try {
             // Use an invalid object type so that endpoints are never created
             // and actual connections are never requested
-            component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx",
-                    "/user:password@host/qsys.lib/library.lib/program.xxx",
-                    new HashMap<String, Object>(0));
+            component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx");
             Assert.fail("Should have thrown exception");
-        } catch (CamelException e) {
+        } catch (Exception e) {
             /* Expected */
         }
     }

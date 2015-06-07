@@ -29,7 +29,7 @@ import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
@@ -59,7 +59,7 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebsocketComponent extends DefaultComponent {
+public class WebsocketComponent extends UriEndpointComponent {
 
     protected static final Logger LOG = LoggerFactory.getLogger(WebsocketComponent.class);
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
@@ -113,6 +113,7 @@ public class WebsocketComponent extends DefaultComponent {
     }
 
     public WebsocketComponent() {
+        super(WebsocketEndpoint.class);
     }
 
     /**
@@ -426,7 +427,7 @@ public class WebsocketComponent extends DefaultComponent {
         }
     }
 
-    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketConsumer consumer, String remaining) throws Exception {
+    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketConsumer consumer, String resourceUri) throws Exception {
 
         // Get Connector from one of the Jetty Instances to add WebSocket Servlet
         WebsocketEndpoint endpoint = consumer.getEndpoint();
@@ -436,7 +437,7 @@ public class WebsocketComponent extends DefaultComponent {
         WebsocketComponentServlet servlet;
 
         if (connectorRef != null) {
-            String pathSpec = createPathSpec(remaining);
+            String pathSpec = createPathSpec(resourceUri);
             servlet = servlets.get(pathSpec);
             if (servlet == null) {
                 // Retrieve Context

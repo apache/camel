@@ -41,7 +41,7 @@ public class EnricherTest extends ContextTestSupport {
 
     public void testEnrichInOnly() throws InterruptedException {
         mock.expectedBodiesReceived("test:blah");
-        mock.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://mock");
+        mock.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://mock");
         template.sendBody("direct:enricher-test-1", "test");
         mock.assertIsSatisfied();
     }

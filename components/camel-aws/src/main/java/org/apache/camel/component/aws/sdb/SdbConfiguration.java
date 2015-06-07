@@ -17,22 +17,34 @@
 package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
-/**
- * The AWS SDB component configuration properties
- * 
- */
+@UriParams
 public class SdbConfiguration {
-    
-    private String accessKey;
-    private String secretKey;
-    private AmazonSimpleDB amazonSDBClient;
-    private String amazonSdbEndpoint;
+
+    @UriPath @Metadata(required = "true")
     private String domainName;
+    @UriParam
+    private AmazonSimpleDB amazonSDBClient;
+    @UriParam
+    private String accessKey;
+    @UriParam
+    private String secretKey;
+    @UriParam
+    private String amazonSdbEndpoint;
+    @UriParam
     private Integer maxNumberOfDomains;
-    private Boolean consistentRead;
+    @UriParam
+    private boolean consistentRead;
+    @UriParam(defaultValue = "PutAttributes")
     private SdbOperations operation = SdbOperations.PutAttributes;
 
+    /**
+     * The region with which the AWS-SDB client wants to work with.
+     */
     public void setAmazonSdbEndpoint(String amazonSdbEndpoint) {
         this.amazonSdbEndpoint = amazonSdbEndpoint;
     }
@@ -45,6 +57,9 @@ public class SdbConfiguration {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -53,6 +68,9 @@ public class SdbConfiguration {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -61,6 +79,9 @@ public class SdbConfiguration {
         return amazonSDBClient;
     }
 
+    /**
+     * To use the AmazonSimpleDB as the client
+     */
     public void setAmazonSDBClient(AmazonSimpleDB amazonSDBClient) {
         this.amazonSDBClient = amazonSDBClient;
     }
@@ -69,6 +90,9 @@ public class SdbConfiguration {
         return domainName;
     }
 
+    /**
+     * The name of the domain currently worked with.
+     */
     public void setDomainName(String domainName) {
         this.domainName = domainName;
     }
@@ -77,6 +101,9 @@ public class SdbConfiguration {
         return operation;
     }
 
+    /**
+     * Operation to perform
+     */
     public void setOperation(SdbOperations operation) {
         this.operation = operation;
     }
@@ -85,15 +112,21 @@ public class SdbConfiguration {
         return maxNumberOfDomains;
     }
 
+    /**
+     * The maximum number of domain names you want returned. The range is 1 to 100.
+     */
     public void setMaxNumberOfDomains(Integer maxNumberOfDomains) {
         this.maxNumberOfDomains = maxNumberOfDomains;
     }
 
-    public Boolean getConsistentRead() {
+    public boolean isConsistentRead() {
         return consistentRead;
     }
 
-    public void setConsistentRead(Boolean consistentRead) {
+    /**
+     * Determines whether or not strong consistency should be enforced when data is read.
+     */
+    public void setConsistentRead(boolean consistentRead) {
         this.consistentRead = consistentRead;
     }
 }

@@ -27,18 +27,21 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ServiceHelper;
 
-@UriEndpoint(scheme = "dataformat")
+@UriEndpoint(scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation", producerOnly = true, label = "core,transformation")
 public class DataFormatEndpoint extends DefaultEndpoint {
 
     private MarshalProcessor marshal;
     private UnmarshalProcessor unmarshal;
-    @UriParam
     private DataFormat dataFormat;
-    @UriParam
+
+    @UriPath(description = "Name of data format") @Metadata(required = "true")
+    private String name;
+    @UriPath(enums = "marshal,unmarshal") @Metadata(required = "true")
     private String operation;
 
     public DataFormatEndpoint() {
@@ -47,6 +50,14 @@ public class DataFormatEndpoint extends DefaultEndpoint {
     public DataFormatEndpoint(String endpointUri, Component component, DataFormat dataFormat) {
         super(endpointUri, component);
         this.dataFormat = dataFormat;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public DataFormat getDataFormat() {
@@ -61,6 +72,9 @@ public class DataFormatEndpoint extends DefaultEndpoint {
         return operation;
     }
 
+    /**
+     * Operation to use either marshal or unmarshal
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -96,6 +110,9 @@ public class DataFormatEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
+        if (dataFormat == null && name != null) {
+            dataFormat = getCamelContext().resolveDataFormat(name);
+        }
         if (operation.equals("marshal")) {
             marshal = new MarshalProcessor(dataFormat);
             marshal.setCamelContext(getCamelContext());

@@ -23,19 +23,30 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.CircuitBreakerLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;circuitBreaker/&gt; element
+ * Circuit break load balancer
+ * <p/>
+ * The Circuit Breaker load balancer is a stateful pattern that monitors all calls for certain exceptions.
+ * Initially the Circuit Breaker is in closed state and passes all messages.
+ * If there are failures and the threshold is reached, it moves to open state and rejects all calls until halfOpenAfter
+ * timeout is reached. After this timeout is reached, if there is a new call, it will pass and if the result is
+ * success the Circuit Breaker will move to closed state, or to open state if there was an error.
  */
+@Metadata(label = "configuration,loadbalance")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition {
+    @XmlTransient
+    private List<Class<?>> exceptionTypes = new ArrayList<Class<?>>();
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlAttribute
@@ -50,8 +61,10 @@ public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         CircuitBreakerLoadBalancer answer;
 
-        if (!exceptions.isEmpty()) {
-            List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        if (!exceptionTypes.isEmpty()) {
+            classes.addAll(exceptionTypes);
+        } else if (!exceptions.isEmpty()) {
             for (String name : exceptions) {
                 Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(name);
                 if (type == null) {
@@ -62,9 +75,11 @@ public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition
                 }
                 classes.add(type);
             }
-            answer = new CircuitBreakerLoadBalancer(classes);
-        } else {
+        }
+        if (classes.isEmpty()) {
             answer = new CircuitBreakerLoadBalancer();
+        } else {
+            answer = new CircuitBreakerLoadBalancer(classes);
         }
 
         if (getHalfOpenAfter() != null) {
@@ -80,6 +95,9 @@ public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition
         return halfOpenAfter;
     }
 
+    /**
+     * The timeout in millis to use as threshold to move state from closed to half-open or open state
+     */
     public void setHalfOpenAfter(Long halfOpenAfter) {
         this.halfOpenAfter = halfOpenAfter;
     }
@@ -88,6 +106,9 @@ public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition
         return threshold;
     }
 
+    /**
+     * Number of previous failed messages to use as threshold to move state from closed to half-open or open state
+     */
     public void setThreshold(Integer threshold) {
         this.threshold = threshold;
     }
@@ -96,10 +117,25 @@ public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition
         return exceptions;
     }
 
+    /**
+     * A list of class names for specific exceptions to monitor.
+     * If no exceptions is configured then all exceptions is monitored
+     */
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
     }
 
+    public List<Class<?>> getExceptionTypes() {
+        return exceptionTypes;
+    }
+
+    /**
+     * A list of specific exceptions to monitor.
+     * If no exceptions is configured then all exceptions is monitored
+     */
+    public void setExceptionTypes(List<Class<?>> exceptionTypes) {
+        this.exceptionTypes = exceptionTypes;
+    }
 
     @Override
     public String toString() {

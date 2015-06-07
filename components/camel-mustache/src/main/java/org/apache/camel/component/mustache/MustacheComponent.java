@@ -21,8 +21,7 @@ import java.util.Map;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.MustacheFactory;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link MustacheEndpoint}.
@@ -34,26 +33,18 @@ import org.apache.camel.util.ObjectHelper;
  * <li>endDelimiter: default "}}" </li>
  * </li>
  */
-public class MustacheComponent extends DefaultComponent {
+public class MustacheComponent extends UriEndpointComponent {
 
     private MustacheFactory mustacheFactory = new DefaultMustacheFactory();
+
+    public MustacheComponent() {
+        super(MustacheEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MustacheEndpoint endpoint = new MustacheEndpoint(uri, this, remaining);
         endpoint.setMustacheFactory(getMustacheFactory());
-        String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
-        if (ObjectHelper.isNotEmpty(encoding)) {
-            endpoint.setEncoding(encoding);
-        }
-        String startDelimiter = getAndRemoveParameter(parameters, "startDelimiter", String.class);
-        if (ObjectHelper.isNotEmpty(startDelimiter)) {
-            endpoint.setStartDelimiter(startDelimiter);
-        }
-        String endDelimiter = getAndRemoveParameter(parameters, "endDelimiter", String.class);
-        if (ObjectHelper.isNotEmpty(endDelimiter)) {
-            endpoint.setEndDelimiter(endDelimiter);
-        }
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -62,6 +53,9 @@ public class MustacheComponent extends DefaultComponent {
         return mustacheFactory;
     }
 
+    /**
+     * To use a custom {@link MustacheFactory}
+     */
     public void setMustacheFactory(MustacheFactory mustacheFactory) {
         this.mustacheFactory = mustacheFactory;
     }

@@ -30,7 +30,7 @@ public class PropertiesRouteIdTest extends ContextTestSupport {
         assertNotNull("Route with name Camel should exist", context.getRoute("Camel"));
 
         String id = context.getRouteDefinition("Camel").getOutputs().get(0).getId();
-        assertEquals("Cheese", id);
+        assertEquals("{{cool.other.name}}", id);
     }
 
     @Override

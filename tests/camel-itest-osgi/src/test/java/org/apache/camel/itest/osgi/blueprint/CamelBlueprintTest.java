@@ -72,8 +72,7 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
 
     @Test
     public void testRouteWithMissingDataFormat() throws Exception {
-        // paxexam-karaf-container doesn't support start stop bundle well, the bundle is started when it is deployed by default.
-        /*
+        getInstalledBundle("CamelBlueprintTestBundle3").stop();
         getInstalledBundle("org.apache.camel.camel-jackson").stop();
         try {
             getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle3)", 500);
@@ -86,8 +85,8 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
             fail("The blueprint container should not be available");
         } catch (Exception e) {
         }
-        getInstalledBundle("org.apache.camel.camel-jackson").start();*/
-        
+
+        getInstalledBundle("org.apache.camel.camel-jackson").start();
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle3)", 10000);
         getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle3)", 10000);
     }

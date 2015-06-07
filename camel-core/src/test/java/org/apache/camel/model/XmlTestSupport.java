@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.TestSupport;
+import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.model.rest.RestContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,6 @@ public abstract class XmlTestSupport extends TestSupport {
     }
 
     public static JAXBContext createJaxbContext() throws JAXBException {
-        return JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES);
+        return new DefaultModelJAXBContextFactory().newJAXBContext();
     }
 }

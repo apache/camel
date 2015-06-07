@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.lmax.disruptor.InsufficientCapacityException;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -36,6 +35,10 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,25 +48,38 @@ import org.slf4j.LoggerFactory;
  * <a href="https://github.com/LMAX-Exchange/disruptor">LMAX Disruptor</a> within a CamelContext
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
+@UriEndpoint(scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")
 public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
 
-    private final int concurrentConsumers;
-    private final boolean multipleConsumers;
-    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-    private long timeout = 30000;
-    private boolean blockWhenFull;
     private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<DisruptorProducer>();
     private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<DisruptorConsumer>();
-
     private final DisruptorReference disruptorReference;
+
+    @UriPath(description = "Name of queue") @Metadata(required = "true")
+    private String name;
+    @UriParam(label = "consumer", defaultValue = "1")
+    private final int concurrentConsumers;
+    @UriParam(label = "consumer")
+    private final boolean multipleConsumers;
+    @UriParam(label = "producer", defaultValue = "IfReplyExpected")
+    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
+    @UriParam(label = "producer", defaultValue = "30000")
+    private long timeout = 30000;
+    @UriParam(label = "producer")
+    private boolean blockWhenFull;
+    @UriParam(label = "consumer", defaultValue = "Blocking")
+    private DisruptorWaitStrategy waitStrategy;
+    @UriParam(label = "producer", defaultValue = "Multi")
+    private DisruptorProducerType producerType;
 
     public DisruptorEndpoint(final String endpointUri, final Component component,
                              final DisruptorReference disruptorReference, final int concurrentConsumers,
                              final boolean multipleConsumers, boolean blockWhenFull) throws Exception {
         super(endpointUri, component);
         this.disruptorReference = disruptorReference;
+        this.name = disruptorReference.getName();
         this.concurrentConsumers = concurrentConsumers;
         this.multipleConsumers = multipleConsumers;
         this.blockWhenFull = blockWhenFull;
@@ -94,6 +110,11 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         return status.name();
     }
 
+    @ManagedAttribute(description = "Queue name")
+    public String getName() {
+        return name;
+    }
+
     @ManagedAttribute(description = "Buffer max capacity")
     public int getBufferSize() {
         return disruptorReference.getBufferSize();
@@ -109,6 +130,9 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         return getDisruptor().getPendingExchangeCount();
     }
 
+    /**
+     * Number of concurrent threads processing exchanges.
+     */
     @ManagedAttribute(description = "Number of concurrent consumers")
     public int getConcurrentConsumers() {
         return concurrentConsumers;
@@ -118,6 +142,11 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         return waitForTaskToComplete;
     }
 
+    /**
+     * Option to specify whether the caller should wait for the async task to complete or not before continuing.
+     * The following three options are supported: Always, Never or IfReplyExpected. The first two values are self-explanatory.
+     * The last value, IfReplyExpected, will only wait if the message is Request Reply based.
+     */
     public void setWaitForTaskToComplete(final WaitForTaskToComplete waitForTaskToComplete) {
         this.waitForTaskToComplete = waitForTaskToComplete;
     }
@@ -127,10 +156,20 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         return timeout;
     }
 
+    /**
+     * Timeout (in milliseconds) before a producer will stop waiting for an asynchronous task to complete.
+     * You can disable timeout by using 0 or a negative value.
+     */
     public void setTimeout(final long timeout) {
         this.timeout = timeout;
     }
 
+    /**
+     * Specifies whether multiple consumers are allowed.
+     * If enabled, you can use Disruptor for Publish-Subscribe messaging.
+     * That is, you can send a message to the queue and have each consumer receive a copy of the message.
+     * When enabled, this option should be specified on every consumer endpoint.
+     */
     @ManagedAttribute
     public boolean isMultipleConsumers() {
         return multipleConsumers;
@@ -161,8 +200,38 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         return blockWhenFull;
     }
 
+    /**
+     * Whether a thread that sends messages to a full Disruptor will block until the ringbuffer's capacity is no longer exhausted.
+     * By default, the calling thread will block and wait until the message can be accepted.
+     * By disabling this option, an exception will be thrown stating that the queue is full.
+     */
     public void setBlockWhenFull(boolean blockWhenFull) {
         this.blockWhenFull = blockWhenFull;
+    }
+
+    public DisruptorWaitStrategy getWaitStrategy() {
+        return waitStrategy;
+    }
+
+    /**
+     * Defines the strategy used by consumer threads to wait on new exchanges to be published.
+     * The options allowed are:Blocking, Sleeping, BusySpin and Yielding.
+     */
+    public void setWaitStrategy(DisruptorWaitStrategy waitStrategy) {
+        this.waitStrategy = waitStrategy;
+    }
+
+    public DisruptorProducerType getProducerType() {
+        return producerType;
+    }
+
+    /**
+     * Defines the producers allowed on the Disruptor.
+     * The options allowed are: Multi to allow multiple producers and Single to enable certain optimizations only
+     * allowed when one concurrent producer (on one thread or otherwise synchronized) is active.
+     */
+    public void setProducerType(DisruptorProducerType producerType) {
+        this.producerType = producerType;
     }
 
     @Override
@@ -262,8 +331,6 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
 
     /**
      * Called by DisruptorProducers to publish new exchanges on the RingBuffer, blocking when full
-     *
-     * @param exchange
      */
     void publish(final Exchange exchange) throws DisruptorNotStartedException {
         disruptorReference.publish(exchange);
@@ -273,7 +340,6 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
      * Called by DisruptorProducers to publish new exchanges on the RingBuffer, throwing InsufficientCapacityException
      * when full
      *
-     * @param exchange
      * @throws InsufficientCapacityException when the Ringbuffer is full.
      */
     void tryPublish(final Exchange exchange) throws DisruptorNotStartedException, InsufficientCapacityException {

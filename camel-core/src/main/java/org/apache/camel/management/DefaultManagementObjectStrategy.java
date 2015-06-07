@@ -31,6 +31,7 @@ import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.log.LogEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.management.mbean.ManagedAggregateProcessor;
 import org.apache.camel.management.mbean.ManagedBeanProcessor;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
@@ -58,6 +59,7 @@ import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.EventNotifier;
@@ -197,6 +199,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
             } else if (target instanceof IdempotentConsumer) {
                 answer = new ManagedIdempotentConsumer(context, (IdempotentConsumer) target, definition);
+            } else if (target instanceof AggregateProcessor) {
+                answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, (org.apache.camel.model.AggregateDefinition) definition);
             } else if (target instanceof org.apache.camel.spi.ManagementAware) {
                 return ((org.apache.camel.spi.ManagementAware<Processor>) target).getManagedObject(processor);
             }

@@ -41,7 +41,7 @@
 
     <bean id="hdfs2" class="org.apache.camel.component.hdfs2.HdfsComponent" depends-on="hdfsOsgiHelper" />
 
-    <camelContext xmlns="http://camel.apache.org/schema/blueprint" xsi:schemaLocation="http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint-2.12.2.xsd">
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint" xsi:schemaLocation="http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
         <!-- using Camel properties component and refer to the blueprint property placeholder by its id -->
         <propertyPlaceholder id="properties" location="blueprint:external"
                              prefixToken="[[" suffixToken="]]"

@@ -17,7 +17,6 @@
 package org.apache.camel.component.ahc;
 
 import java.net.URI;
-
 import javax.net.ssl.SSLContext;
 
 import com.ning.http.client.AsyncHttpClient;
@@ -28,24 +27,35 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
-/**
- *
- */
+@UriEndpoint(scheme = "ahc", title = "AHC", syntax = "ahc:httpUri", producerOnly = true, label = "http")
 public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;
-    private AsyncHttpClientConfig clientConfig;
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    private AhcBinding binding;
+    @UriPath @Metadata(required = "true")
     private URI httpUri;
+    @UriParam
+    private AsyncHttpClientConfig clientConfig;
+    @UriParam
     private boolean bridgeEndpoint;
+    @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
+    @UriParam
     private boolean transferException;
+    @UriParam
     private SSLContextParameters sslContextParameters;
+    @UriParam(defaultValue = "" + 4 * 1024)
     private int bufferSize = 4 * 1024;
+    @UriParam
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    @UriParam
+    private AhcBinding binding;
 
     public AhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -85,6 +95,9 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return client;
     }
 
+    /**
+     * To use a custom {@link AsyncHttpClient}
+     */
     public void setClient(AsyncHttpClient client) {
         this.client = client;
     }
@@ -93,6 +106,9 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return clientConfig;
     }
 
+    /**
+     * To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
+     */
     public void setClientConfig(AsyncHttpClientConfig clientConfig) {
         this.clientConfig = clientConfig;
     }
@@ -101,6 +117,9 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return httpUri;
     }
 
+    /**
+     * The URI to use such as http://hostname:port/path
+     */
     public void setHttpUri(URI httpUri) {
         this.httpUri = httpUri;
     }
@@ -109,6 +128,9 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return binding;
     }
 
+    /**
+     * To use a custom {@link AhcBinding} which allows to control how to bind between AHC and Camel.
+     */
     public void setBinding(AhcBinding binding) {
         this.binding = binding;
     }
@@ -117,6 +139,9 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -125,6 +150,10 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return bridgeEndpoint;
     }
 
+    /**
+     * If the option is true, then the Exchange.HTTP_URI header is ignored, and use the endpoint's URI for request.
+     * You may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back.
+     */
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
     }
@@ -133,6 +162,10 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return throwExceptionOnFailure;
     }
 
+    /**
+     * Option to disable throwing the AhcOperationFailedException in case of failed responses from the remote server.
+     * This allows you to get all responses regardless of the HTTP status code.
+     */
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
@@ -141,6 +174,12 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return transferException;
     }
 
+    /**
+     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized
+     * in the response as a application/x-java-serialized-object content type (for example using Jetty or Servlet Camel components).
+     * On the producer side the exception will be deserialized and thrown as is, instead of the AhcOperationFailedException.
+     * The caused exception is required to be serialized.
+     */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
@@ -149,6 +188,12 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return sslContextParameters;
     }
 
+    /**
+     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry.
+     * This reference overrides any configured SSLContextParameters at the component level.
+     * See Using the JSSE Configuration Utility.
+     * Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level.
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -157,6 +202,9 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return bufferSize;
     }
 
+    /**
+     * The initial in-memory buffer size used when transferring data between Camel and AHC Client.
+     */
     public void setBufferSize(int bufferSize) {
         this.bufferSize = bufferSize;
     }

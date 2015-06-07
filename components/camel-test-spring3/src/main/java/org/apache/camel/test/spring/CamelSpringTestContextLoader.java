@@ -46,7 +46,6 @@ import org.springframework.test.context.support.AbstractContextLoader;
 import org.springframework.test.context.support.AbstractGenericContextLoader;
 import org.springframework.test.context.support.GenericXmlContextLoader;
 import org.springframework.util.StringUtils;
-
 import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
 
 /**
@@ -397,8 +396,10 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                    LOG.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpoints, contextName);
-                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints, true));
+                    // resovle the property place holders of the mockEndpoints 
+                    String mockEndpointsValue = camelContext.resolvePropertyPlaceholders(mockEndpoints);
+                    LOG.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpointsValue, contextName);
+                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsValue, true));
                 }
             });
         }

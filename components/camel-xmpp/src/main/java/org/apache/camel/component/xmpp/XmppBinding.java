@@ -25,14 +25,15 @@ import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
+import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link XmppMessage} to and from a
  * XMPP {@link Message}
- *
- * @version 
  */
 public class XmppBinding {
 
@@ -70,7 +71,7 @@ public class XmppBinding {
                     message.setLanguage(language);
                 } else {
                     try {
-                        message.setProperty(name, value);
+                        JivePropertiesManager.addProperty(message, name, value);
                         LOG.trace("Added property name: {} value: {}", name, value.toString());
                     } catch (IllegalArgumentException iae) {
                         if (LOG.isDebugEnabled()) {
@@ -80,38 +81,77 @@ public class XmppBinding {
                 }
             }
         }
-        
+
         String id = exchange.getExchangeId();
         if (id != null) {
-            message.setProperty("exchangeId", id);
+            JivePropertiesManager.addProperty(message, "exchangeId", id);
         }
     }
 
     /**
-     * Extracts the body from the XMPP message
+     * Populates the given XMPP packet from the inbound exchange
      */
-    public Object extractBodyFromXmpp(Exchange exchange, Message message) {
-        return message.getBody();
+    public void populateXmppPacket(Packet packet, Exchange exchange) {
+        Set<Map.Entry<String, Object>> entries = exchange.getIn().getHeaders().entrySet();
+        for (Map.Entry<String, Object> entry : entries) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value, exchange)) {
+                try {
+                    JivePropertiesManager.addProperty(packet, name, value);
+                    LOG.debug("Added property name: " + name + " value: " + value.toString());
+                } catch (IllegalArgumentException iae) {
+                    LOG.debug("Not adding property " + name + " to XMPP message due to " + iae);
+                }
+            }
+        }
+        String id = exchange.getExchangeId();
+        if (id != null) {
+            JivePropertiesManager.addProperty(packet, "exchangeId", id);
+        }
     }
 
-    public Map<String, Object> extractHeadersFromXmpp(Message xmppMessage, Exchange exchange) {
+
+    /**
+     * Extracts the body from the XMPP message
+     */
+    public Object extractBodyFromXmpp(Exchange exchange, Packet xmppPacket) {
+        return (xmppPacket instanceof Message) ? getMessageBody((Message) xmppPacket) : xmppPacket;
+    }
+
+    private Object getMessageBody(Message message) {
+        String messageBody = message.getBody();
+        if (messageBody == null) {
+            //probably a pubsub message
+            return message;
+        }
+        return messageBody;
+    }
+
+    public Map<String, Object> extractHeadersFromXmpp(Packet xmppPacket, Exchange exchange) {
         Map<String, Object> answer = new HashMap<String, Object>();
 
-        for (String name : xmppMessage.getPropertyNames()) {
-            Object value = xmppMessage.getProperty(name);
+        for (String name : JivePropertiesManager.getPropertiesNames(xmppPacket)) {
+            Object value = JivePropertiesManager.getProperty(xmppPacket, name);
 
             if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                 answer.put(name, value);
             }
         }
 
-        answer.put(XmppConstants.MESSAGE_TYPE, xmppMessage.getType());
-        answer.put(XmppConstants.SUBJECT, xmppMessage.getSubject());
-        answer.put(XmppConstants.THREAD_ID, xmppMessage.getThread());
-        answer.put(XmppConstants.FROM, xmppMessage.getFrom());
-        answer.put(XmppConstants.PACKET_ID, xmppMessage.getPacketID());
-        answer.put(XmppConstants.TO, xmppMessage.getTo());
-                
+        if (xmppPacket instanceof Message) {
+            Message xmppMessage = (Message) xmppPacket;
+            answer.put(XmppConstants.MESSAGE_TYPE, xmppMessage.getType());
+            answer.put(XmppConstants.SUBJECT, xmppMessage.getSubject());
+            answer.put(XmppConstants.THREAD_ID, xmppMessage.getThread());
+        } else if (xmppPacket instanceof PubSub) {
+            PubSub pubsubPacket = (PubSub) xmppPacket;
+            answer.put(XmppConstants.MESSAGE_TYPE, pubsubPacket.getType());
+        }
+        answer.put(XmppConstants.FROM, xmppPacket.getFrom());
+        answer.put(XmppConstants.PACKET_ID, xmppPacket.getPacketID());
+        answer.put(XmppConstants.TO, xmppPacket.getTo());
+
         return answer;
     }
 }

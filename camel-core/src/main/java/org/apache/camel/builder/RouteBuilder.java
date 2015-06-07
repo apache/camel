@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -302,7 +303,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     public void addRoutesToCamelContext(CamelContext context) throws Exception {
         // must configure routes before rests
-        configureRoutes((ModelCamelContext)context);
+        configureRoutes((ModelCamelContext) context);
         configureRests((ModelCamelContext) context);
 
         // but populate rests before routes, as we want to turn rests into routes
@@ -354,6 +355,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             RouteBuilder builder = (RouteBuilder) routes;
             builder.setContext(this.getContext());
             builder.setRouteCollection(this.getRouteCollection());
+            builder.setRestCollection(this.getRestCollection());
             builder.setErrorHandlerBuilder(this.getErrorHandlerBuilder());
             // must invoke configure on the original builder so it adds its configuration to me
             builder.configure();
@@ -409,6 +411,14 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             camelContext.setRestConfiguration(config);
         }
         camelContext.addRestDefinitions(getRestCollection().getRests());
+
+        // convert rests into routes so we reuse routes for runtime
+        for (RestDefinition rest : getRestCollection().getRests()) {
+            List<RouteDefinition> routes = rest.asRouteDefinition(getContext());
+            for (RouteDefinition route : routes) {
+                getRouteCollection().route(route);
+            }
+        }
     }
 
     public RestsDefinition getRestCollection() {

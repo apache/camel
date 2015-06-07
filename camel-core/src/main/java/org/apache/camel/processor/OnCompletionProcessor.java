@@ -30,6 +30,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -45,10 +46,11 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @version 
  */
-public class OnCompletionProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class OnCompletionProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(OnCompletionProcessor.class);
     private final CamelContext camelContext;
+    private String id;
     private final Processor processor;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
@@ -93,6 +95,14 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
 
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -256,9 +266,16 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
             // must use a copy as we dont want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
             final Exception original = copy.getException();
+            final boolean originalFault = copy.hasOut() ? copy.getOut().isFault() : copy.getIn().isFault();
             // must remove exception otherwise onFailure routing will fail as well
             // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
             copy.setException(null);
+            // must clear fault otherwise onFailure routing will fail as well
+            if (copy.hasOut()) {
+                copy.getOut().setFault(false);
+            } else {
+                copy.getIn().setFault(false);
+            }
 
             if (executorService != null) {
                 executorService.submit(new Callable<Exchange>() {
@@ -276,6 +293,12 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
                 doProcess(processor, copy);
                 // restore exception after processing
                 copy.setException(original);
+                // restore fault after processing
+                if (copy.hasOut()) {
+                    copy.getOut().setFault(originalFault);
+                } else {
+                    copy.getIn().setFault(originalFault);
+                }
             }
         }
 

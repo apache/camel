@@ -51,7 +51,7 @@ public class ToFileRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // the reports from the seda queue is processed by our processor
                 // before they are written to files in the target/reports directory
-                from("direct:reports").processRef("processReport").to("file://target/test-reports", "mock:result");
+                from("direct:reports").process("processReport").to("file://target/test-reports", "mock:result");
             }
         };
     }

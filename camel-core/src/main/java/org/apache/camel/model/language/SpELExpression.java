@@ -20,11 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * For Spring Expression Language (SpEL) expressions and predicates
  *
  * @version 
  */
+@Metadata(label = "language", title = "SpEL")
 @XmlRootElement(name = "spel")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SpELExpression extends ExpressionDefinition {

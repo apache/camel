@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.15-SNAPSHOT</version>
+        <version>2.16-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-castor</artifactId>
@@ -42,8 +42,8 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.castor</artifactId>
+            <groupId>org.codehaus.castor</groupId>
+            <artifactId>castor-xml</artifactId>
         </dependency>
 
         <!-- testing -->

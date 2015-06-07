@@ -58,6 +58,9 @@ public class LocalContextComponent extends DefaultComponent {
         return localCamelContext;
     }
 
+    /**
+     * Sets the local CamelContext to use.
+     */
     public void setLocalCamelContext(CamelContext localCamelContext) {
         this.localCamelContext = localCamelContext;
     }
@@ -92,7 +95,6 @@ public class LocalContextComponent extends DefaultComponent {
             }
         }
         throw new ResolveEndpointFailedException("Cannot find the endpoint with uri " + uri + " in the CamelContext " + getLocalCamelContext().getName());
-        
     }
 
     protected void logUsingEndpoint(String uri, Endpoint endpoint) {

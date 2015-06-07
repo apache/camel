@@ -25,7 +25,9 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IoAcceptor;
+import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
@@ -42,13 +44,20 @@ public class MinaConsumer extends DefaultConsumer {
 
     private final SocketAddress address;
     private final IoAcceptor acceptor;
-    private boolean sync;
+    private final IoConnector connector;
+    private final boolean sync;
+    private final String protocol;
+    private final boolean clientMode;
+    private IoSession session;
     private CamelLogger noReplyLogger;
 
     public MinaConsumer(final MinaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.address = endpoint.getAddress();
         this.acceptor = endpoint.getAcceptor();
+        this.connector = endpoint.getConnector();
+        this.protocol = endpoint.getConfiguration().getProtocol();
+        this.clientMode = endpoint.getConfiguration().isClientMode();
         this.sync = endpoint.getConfiguration().isSync();
         this.noReplyLogger = new CamelLogger(LOG, endpoint.getConfiguration().getNoReplyLogLevel());
     }
@@ -57,15 +66,27 @@ public class MinaConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         LOG.info("Binding to server address: {} using acceptor: {}", address, acceptor);
-
         IoHandler handler = new ReceiveHandler();
-        acceptor.bind(address, handler, getEndpoint().getAcceptorConfig());
+        if (protocol.equals("tcp") && clientMode) {
+            ConnectFuture future = connector.connect(address, handler, getEndpoint().getConnectorConfig());
+            future.join();
+            session = future.getSession();
+        } else {
+            acceptor.bind(address, handler, getEndpoint().getAcceptorConfig());
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
         LOG.info("Unbinding from server address: {} using acceptor: {}", address, acceptor);
-        acceptor.unbind(address);
+        if (protocol.equals("tcp") && clientMode) {
+            if (session != null) {
+                session.close();
+                session = null;
+            }
+        } else {
+            acceptor.unbind(address);
+        }
         super.doStop();
     }
     
@@ -118,7 +139,7 @@ public class MinaConsumer extends DefaultConsumer {
             // if sync then we should return a response
             if (sync) {
                 Object body;
-                if (ExchangeHelper.isOutCapable(exchange)) {
+                if (exchange.hasOut()) {
                     body = MinaPayloadHelper.getOut(getEndpoint(), exchange);
                 } else {
                     body = MinaPayloadHelper.getIn(getEndpoint(), exchange);

@@ -48,6 +48,9 @@ public class OpenShiftComponent extends UriEndpointComponent {
         return username;
     }
 
+    /**
+     * The username to login to openshift server.
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -56,6 +59,9 @@ public class OpenShiftComponent extends UriEndpointComponent {
         return password;
     }
 
+    /**
+     * The password for login to openshift server.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -64,6 +70,9 @@ public class OpenShiftComponent extends UriEndpointComponent {
         return domain;
     }
 
+    /**
+     * Domain name. If not specified then the default domain is used.
+     */
     public void setDomain(String domain) {
         this.domain = domain;
     }
@@ -72,6 +81,11 @@ public class OpenShiftComponent extends UriEndpointComponent {
         return server;
     }
 
+    /**
+     * Url to the openshift server.
+     * If not specified then the default value from the local openshift configuration file ~/.openshift/express.conf is used.
+     * And if that fails as well then "openshift.redhat.com" is used.
+     */
     public void setServer(String server) {
         this.server = server;
     }

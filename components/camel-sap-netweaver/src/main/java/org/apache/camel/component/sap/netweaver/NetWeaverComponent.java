@@ -19,9 +19,13 @@ package org.apache.camel.component.sap.netweaver;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-public class NetWeaverComponent extends DefaultComponent {
+public class NetWeaverComponent extends UriEndpointComponent {
+
+    public NetWeaverComponent() {
+        super(NetWeaverEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

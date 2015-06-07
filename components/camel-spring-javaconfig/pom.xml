@@ -17,11 +17,11 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.16-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-spring-javaconfig</artifactId>
@@ -32,7 +32,7 @@
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.spring.javaconfig.*</camel.osgi.export.pkg>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -46,11 +46,7 @@
           <groupId>org.springframework</groupId>
           <artifactId>spring-tx</artifactId>
         </exclusion>
-      </exclusions>      
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>

@@ -37,16 +37,24 @@ public final class HL7 {
         return new ValueBuilder(new TerserExpression(expression));
     }
 
-    public static Expression ack() {
-        return new AckExpression();
+    public static ValueBuilder ack() {
+        return new ValueBuilder(new AckExpression());
     }
 
-    public static Expression ack(AckCode code) {
-        return new AckExpression(code);
+    /**
+     * @deprecated Use {@link #ack(ca.uhn.hl7v2.AcknowledgmentCode)}
+     */
+    @Deprecated
+    public static ValueBuilder ack(AckCode code) {
+        return new ValueBuilder(new AckExpression(code));
     }
 
-    public static Expression convertLFToCR() {
-        return new ExpressionAdapter() {
+    public static ValueBuilder ack(AcknowledgmentCode code) {
+        return new ValueBuilder(new AckExpression(code));
+    }
+
+    public static ValueBuilder convertLFToCR() {
+        return new ValueBuilder(new ExpressionAdapter() {
 
             @Override
             public Object evaluate(Exchange exchange) {
@@ -54,14 +62,14 @@ public final class HL7 {
                 return s != null ? s.replace('\n', '\r') : null;
             }
 
-        };
+        });
     }
 
     /**
      * @deprecated Use {@link #ack(ca.uhn.hl7v2.AcknowledgmentCode, String, ErrorCode)}
      */
     @Deprecated
-    public static Expression ack(AckCode code, String errorMessage, int errorCode) {
+    public static ValueBuilder ack(AckCode code, String errorMessage, int errorCode) {
         return ack(code.toAcknowledgmentCode(), errorMessage, ErrorCode.errorCodeFor(errorCode));
     }
 
@@ -69,12 +77,12 @@ public final class HL7 {
      * @deprecated Use {@link #ack(ca.uhn.hl7v2.AcknowledgmentCode, String, ErrorCode)}
      */
     @Deprecated
-    public static Expression ack(AckCode code, String errorMessage, ErrorCode errorCode) {
+    public static ValueBuilder ack(AckCode code, String errorMessage, ErrorCode errorCode) {
         return ack(code.toAcknowledgmentCode(), errorMessage, errorCode);
     }
 
-    public static Expression ack(AcknowledgmentCode code, String errorMessage, ErrorCode errorCode) {
-        return new AckExpression(code, errorMessage, errorCode);
+    public static ValueBuilder ack(AcknowledgmentCode code, String errorMessage, ErrorCode errorCode) {
+        return new ValueBuilder(new AckExpression(code, errorMessage, errorCode));
     }
 
     public static Predicate messageConforms() {

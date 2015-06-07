@@ -29,14 +29,18 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
+import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
-import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
@@ -51,20 +55,28 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  * call back into {@link #onConsumerStart(QuartzConsumer)} to add/resume or {@link #onConsumerStop(QuartzConsumer)}
  * to pause the scheduler trigger.
  */
-@UriEndpoint(scheme = "quartz2", consumerClass = QuartzComponent.class)
+@UriEndpoint(scheme = "quartz2", title = "Quartz2", syntax = "quartz2:groupName/triggerName", consumerOnly = true, consumerClass = QuartzComponent.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
     private TriggerKey triggerKey;
-    @UriParam
-    private String cron;
     private LoadBalancer consumerLoadBalancer;
     private Map<String, Object> triggerParameters;
     private Map<String, Object> jobParameters;
+    // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
+    private final AtomicBoolean jobAdded = new AtomicBoolean(false);
+    private final AtomicBoolean jobPaused = new AtomicBoolean(false);
+
+    @UriPath(description = "The quartz group name to use. The combination of group name and timer name should be unique.", defaultValue = "Camel")
+    private String groupName;
+    @UriPath @Metadata(required = "true")
+    private String triggerName;
+    @UriParam
+    private String cron;
     @UriParam
     private boolean stateful;
     @UriParam
     private boolean fireNow;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
     @UriParam
     private boolean pauseJob;
@@ -72,17 +84,28 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private boolean durableJob;
     @UriParam
     private boolean recoverableJob;
-    /** In case of scheduler has already started, we want the trigger start slightly after current time to
-     * ensure endpoint is fully started before the job kicks in. */
+    @UriParam(defaultValue = "500")
+    private long triggerStartDelay = 500;
     @UriParam
-    private long triggerStartDelay = 500; // in millis second
+    private boolean usingFixedCamelContextName;
 
-    // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
-    private final AtomicBoolean jobAdded = new AtomicBoolean(false);
-    private final AtomicBoolean jobPaused = new AtomicBoolean(false);
-    
     public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {
         super(uri, quartzComponent);
+    }
+
+    public String getGroupName() {
+        return triggerKey.getName();
+    }
+
+    public String getTriggerName() {
+        return triggerKey.getName();
+    }
+
+    /**
+     * The quartz timer name to use. The combination of group name and timer name should be unique.
+     */
+    public void setTriggerName(String triggerName) {
+        this.triggerName = triggerName;
     }
 
     public String getCron() {
@@ -109,22 +132,44 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return pauseJob;
     }
 
+    /**
+     * If set to true, then the trigger automatically pauses when route stop.
+     * Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse
+     * pre-configured trigger with camel Uri. Just ensure the names match.
+     * Notice you cannot have both deleteJob and pauseJob set to true.
+     */
     public void setPauseJob(boolean pauseJob) {
         this.pauseJob = pauseJob;
     }
 
+    /**
+     * In case of scheduler has already started, we want the trigger start slightly after current time to
+     * ensure endpoint is fully started before the job kicks in.
+     */
     public void setTriggerStartDelay(long triggerStartDelay) {
         this.triggerStartDelay = triggerStartDelay;
     }
 
+    /**
+     * If set to true, then the trigger automatically delete when route stop.
+     * Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse
+     * pre-configured trigger with camel Uri. Just ensure the names match.
+     * Notice you cannot have both deleteJob and pauseJob set to true.
+     */
     public void setDeleteJob(boolean deleteJob) {
         this.deleteJob = deleteJob;
     }
 
+    /**
+     * If it is true will fire the trigger when the route is start when using SimpleTrigger.
+     */
     public void setFireNow(boolean fireNow) {
         this.fireNow = fireNow;
     }
 
+    /**
+     * Uses a Quartz @PersistJobDataAfterExecution and @DisallowConcurrentExecution instead of the default job.
+     */
     public void setStateful(boolean stateful) {
         this.stateful = stateful;
     }
@@ -133,6 +178,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return durableJob;
     }
 
+    /**
+     * Whether or not the job should remain stored after it is orphaned (no triggers point to it).
+     */
     public void setDurableJob(boolean durableJob) {
         this.durableJob = durableJob;
     }
@@ -141,8 +189,23 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return recoverableJob;
     }
 
+    /**
+     * Instructs the scheduler whether or not the job should be re-executed if a 'recovery' or 'fail-over' situation is encountered.
+     */
     public void setRecoverableJob(boolean recoverableJob) {
         this.recoverableJob = recoverableJob;
+    }
+
+    public boolean isUsingFixedCamelContextName() {
+        return usingFixedCamelContextName;
+    }
+
+    /**
+     * If it is true, JobDataMap uses the CamelContext name directly to reference the CamelContext,
+     * if it is false, JobDataMap uses use the CamelContext management name which could be changed during the deploy time.
+     */
+    public void setUsingFixedCamelContextName(boolean usingFixedCamelContextName) {
+        this.usingFixedCamelContextName = usingFixedCamelContextName;
     }
 
     public void setTriggerParameters(Map<String, Object> triggerParameters) {
@@ -164,6 +227,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
         this.consumerLoadBalancer = consumerLoadBalancer;
     }
 
+    /**
+     * Specifies a cron expression to define when to trigger.
+     */
     public void setCron(String cron) {
         this.cron = cron;
     }
@@ -236,22 +302,43 @@ public class QuartzEndpoint extends DefaultEndpoint {
         // Add or use existing trigger to/from scheduler
         Scheduler scheduler = getComponent().getScheduler();
         JobDetail jobDetail;
-        Trigger trigger = scheduler.getTrigger(triggerKey);
-        if (trigger == null) {
-            jobDetail = createJobDetail();
-            trigger = createTrigger(jobDetail);
+        Trigger oldTrigger = scheduler.getTrigger(triggerKey);
+        boolean triggerExisted = oldTrigger != null;
+        if (triggerExisted && !isRecoverableJob()) {
+            ensureNoDupTriggerKey();
+        }
 
-            QuartzHelper.updateJobDataMap(getCamelContext(), jobDetail, getEndpointUri());
+        jobDetail = createJobDetail();
+        Trigger trigger = createTrigger(jobDetail);
 
-            // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
-            Date nextFireDate = scheduler.scheduleJob(jobDetail, trigger);
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                         new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
-                                       jobDetail.getJobClass().getSimpleName(), nextFireDate});
+        QuartzHelper.updateJobDataMap(getCamelContext(), jobDetail, getEndpointUri(), isUsingFixedCamelContextName());
+
+        if (triggerExisted) {
+            // Reschedule job if trigger settings were changed
+            if (hasTriggerChanged(oldTrigger, trigger)) {
+                scheduler.rescheduleJob(triggerKey, trigger);
             }
         } else {
-            ensureNoDupTriggerKey();
+            try {
+                // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
+                scheduler.scheduleJob(jobDetail, trigger);
+            } catch (ObjectAlreadyExistsException ex) {
+                // some other VM might may have stored the job & trigger in DB in clustered mode, in the mean time
+                if (!(getComponent().isClustered())) {  
+                    throw ex;
+                } else { 
+                    trigger = scheduler.getTrigger(triggerKey); 
+                    if (trigger == null) { 
+                        throw new SchedulerException("Trigger could not be found in quartz scheduler."); 
+                    }
+                } 
+            }
+        }
+
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+                    new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
+                            jobDetail.getJobClass().getSimpleName(), trigger.getNextFireTime()});
         }
 
         // Increase camel job count for this endpoint
@@ -263,13 +350,28 @@ public class QuartzEndpoint extends DefaultEndpoint {
         jobAdded.set(true);
     }
 
+    private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
+        if (newTrigger instanceof CronTrigger && oldTrigger instanceof CronTrigger) {
+            CronTrigger newCron = (CronTrigger) newTrigger;
+            CronTrigger oldCron = (CronTrigger) oldTrigger;
+            return !newCron.getCronExpression().equals(oldCron.getCronExpression());
+        } else if (newTrigger instanceof SimpleTrigger && oldTrigger instanceof SimpleTrigger) {
+            SimpleTrigger newSimple = (SimpleTrigger) newTrigger;
+            SimpleTrigger oldSimple = (SimpleTrigger) oldTrigger;
+            return newSimple.getRepeatInterval() != oldSimple.getRepeatInterval()
+                    || newSimple.getRepeatCount() != oldSimple.getRepeatCount();
+        } else {
+            return !newTrigger.getClass().equals(oldTrigger.getClass()) || !newTrigger.equals(oldTrigger);
+        }
+    }
+
     private void ensureNoDupTriggerKey() {
         for (Route route : getCamelContext().getRoutes()) {
             if (route.getEndpoint() instanceof QuartzEndpoint) {
                 QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
                 TriggerKey checkTriggerKey = quartzEndpoint.getTriggerKey();
                 if (triggerKey.equals(checkTriggerKey)) {
-                    throw new IllegalArgumentException("Trigger key " + triggerKey + " is already in used by " + quartzEndpoint);
+                    throw new IllegalArgumentException("Trigger key " + triggerKey + " is already in use by " + quartzEndpoint);
                 }
             }
         }
@@ -289,8 +391,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
                         .withIdentity(triggerKey)
                         .startAt(startTime)
                         .withSchedule(cronSchedule(cron)
-                                .withMisfireHandlingInstructionFireAndProceed()
-                                .inTimeZone(TimeZone.getTimeZone(timeZone)))
+                        .withMisfireHandlingInstructionFireAndProceed()
+                        .inTimeZone(TimeZone.getTimeZone(timeZone)))
                         .build();
                 jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, timeZone);
             } else {
@@ -298,7 +400,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
                         .withIdentity(triggerKey)
                         .startAt(startTime)
                         .withSchedule(cronSchedule(cron)
-                                .withMisfireHandlingInstructionFireAndProceed())
+                        .withMisfireHandlingInstructionFireAndProceed())
                         .build();
             }
 

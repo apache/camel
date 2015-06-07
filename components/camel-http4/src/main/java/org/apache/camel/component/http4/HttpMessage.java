@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
@@ -48,7 +49,7 @@ public class HttpMessage extends DefaultMessage {
         }
         // use binding to read the request allowing end users to use their
         // implementation of the binding
-        getEndpoint().getBinding().readRequest(request, this);
+        getEndpoint().getHttpBinding().readRequest(request, this);
     }
 
     public HttpServletRequest getRequest() {
@@ -62,7 +63,7 @@ public class HttpMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         try {
-            return getEndpoint().getBinding().parseBody(this);
+            return getEndpoint().getHttpBinding().parseBody(this);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
@@ -71,4 +72,11 @@ public class HttpMessage extends DefaultMessage {
     private HttpEndpoint getEndpoint() {
         return (HttpEndpoint) getExchange().getFromEndpoint();
     }
+
+    @Override
+    public String toString() {
+        // do not use toString on HTTP message
+        return "HttpMessage@" + ObjectHelper.getIdentityHashCode(this);
+    }
+
 }

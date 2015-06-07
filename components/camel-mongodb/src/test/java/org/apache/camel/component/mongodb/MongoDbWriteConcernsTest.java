@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mongodb;
 
-import com.mongodb.CommandResult;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 
@@ -25,25 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class MongoDbWriteConcernsTest extends AbstractMongoDbTest {
-
-    // Test invalid write concern on message header - will it throw the exception?
-
-    @Test
-    public void testNoWriteConcern() throws Exception {
-        assertEquals(0, testCollection.count());
-        Object result = template.requestBody("direct:noWriteConcern", "{\"scientist\":\"newton\"}");
-        assertTrue("Result is not of type WriteResult", result instanceof WriteResult);
-        WriteResult wr = (WriteResult) result;
-        WriteConcern wc = wr.getLastConcern();
-        // check the WriteConcern's behaviour
-        if (wc.callGetLastError()) {
-            assertNotNull(wr.getCachedLastError());
-        } else {
-            assertNull(wr.getCachedLastError());
-        }
-        CommandResult cr = wr.getLastError();
-        assertTrue(cr.ok());
-    }
     
     @Test
     public void testDynamicWriteConcernSafe() throws Exception {
@@ -53,19 +33,13 @@ public class MongoDbWriteConcernsTest extends AbstractMongoDbTest {
         Object result = template.requestBodyAndHeader("direct:noWriteConcern", "{\"scientist\":\"newton\"}", MongoDbConstants.WRITECONCERN, WriteConcern.SAFE);
         assertTrue("Result is not of type WriteResult", result instanceof WriteResult);
         WriteResult wr = (WriteResult) result;
-        // should not be null because with WriteConcern.SAFE, getLastError was called implicitly by the driver
-        assertNotNull(wr.getCachedLastError());
-        CommandResult cr = wr.getLastError();
-        assertTrue(cr.ok());
+        assertTrue(wr.wasAcknowledged());
         
         // same behaviour should be reproduced with String 'SAFE'
         result = template.requestBodyAndHeader("direct:noWriteConcern", "{\"scientist\":\"newton\"}", MongoDbConstants.WRITECONCERN, "SAFE");
         assertTrue("Result is not of type WriteResult", result instanceof WriteResult);
         wr = (WriteResult) result;
-        // should not be null because with WriteConcern.SAFE, getLastError was called implicitly by the driver
-        assertNotNull(wr.getCachedLastError());
-        cr = wr.getLastError();
-        assertTrue(cr.ok());
+        assertTrue(wr.wasAcknowledged());
     }
     
     @Test
@@ -88,8 +62,7 @@ public class MongoDbWriteConcernsTest extends AbstractMongoDbTest {
                 from("direct:noWriteConcern").to("mongodb:myDb?database=test&collection=camelTest&operation=insert");
                 from("direct:writeConcernParam").to("mongodb:myDb?database=test&collection=camelTest&operation=insert&writeConcern=SAFE");
                 //from("direct:writeConcernRef").to("mongodb:myDb?database=test&collection=camelTest&operation=insert&writeConcernRef=customWriteConcern");
-                from("direct:noWriteConcernWithCallGetLastError").to("mongodb:myDb?database=test&collection=camelTest&operation=insert&" 
-                        + "invokeGetLastError=true");
+                from("direct:noWriteConcernWithCallGetLastError").to("mongodb:myDb?database=test&collection=camelTest&operation=insert");
 
 
             }

@@ -17,7 +17,10 @@
 package org.apache.camel.component.schematron.processor;
 
 import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerFactory;
 
+import net.sf.saxon.TransformerFactoryImpl;
+import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.util.Utils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -38,7 +41,7 @@ public class SchematronProcessorTest {
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
         logger.info("Validating payload: {}", payload);
-       
+
         // validate
         String result = getProcessor("sch/schematron-1.sch").validate(payload);
         logger.info("Schematron Report: {}", result);
@@ -59,7 +62,6 @@ public class SchematronProcessorTest {
         assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert/svrl:text", result));
         assertEquals("'chapter' element has more than one title present", Utils.evaluate("//svrl:successful-report/svrl:text", result).trim());
 
-
     }
 
     /**
@@ -69,7 +71,9 @@ public class SchematronProcessorTest {
      * @return
      */
     private SchematronProcessor getProcessor(final String schematron) {
-        Templates rules = TemplatesFactory.newInstance().newTemplates(ClassLoader.getSystemResourceAsStream(schematron));
+        TransformerFactory factory = new TransformerFactoryImpl();
+        factory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR));
+        Templates rules = TemplatesFactory.newInstance().getTemplates(ClassLoader.getSystemResourceAsStream(schematron), factory);
         return SchematronProcessorFactory.newScehamtronEngine(rules);
     }
 }

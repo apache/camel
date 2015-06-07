@@ -52,7 +52,7 @@ public class MongoDbTailTrackingManager {
         trackingObj = dbCol.findOne(filter);
         if (trackingObj == null) {
             dbCol.insert(filter, WriteConcern.SAFE);
-            trackingObj = dbCol.findOne();
+            trackingObj = dbCol.findOne(filter);
         }
         // keep only the _id, the rest is useless and causes more overhead during update
         trackingObj = new BasicDBObject("_id", trackingObj.get("_id"));

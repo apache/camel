@@ -16,18 +16,19 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.commands.ContextResumeCommand;
+import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to resume a Camel context.
- */
 @Command(scope = "camel", name = "context-resume", description = "Resumes a Camel context.")
-public class ContextResume extends AbstractContextCommand {
+public class ContextResume extends CamelCommandSupport {
+
+    @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
+    String context;
 
     @Override
-    protected void performContextCommand(CamelContext camelContext) throws Exception {
-        camelContext.resume();
+    protected Object doExecute() throws Exception {
+        ContextResumeCommand command = new ContextResumeCommand(context);
+        return command.execute(camelController, System.out, System.err);
     }
-
 }

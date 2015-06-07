@@ -17,39 +17,83 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
-/**
- * The AWS S3 component configuration properties
- * 
- */
+@UriParams
 public class S3Configuration implements Cloneable {
 
-    private String accessKey;
-    private String secretKey;
-    private AmazonS3 amazonS3Client;
-    
+    @UriPath @Metadata(required = "true")
     private String bucketName;
+    @UriParam
+    private AmazonS3 amazonS3Client;
+    @UriParam
+    private String accessKey;
+    @UriParam
+    private String secretKey;
+    @UriParam(label = "consumer")
     private String fileName;
+    @UriParam(label = "consumer")
     private String prefix;
+    @UriParam(label = "producer")
     private String region;
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
+    @UriParam(label = "producer")
     private boolean deleteAfterWrite;
+    @UriParam(label = "producer")
+    private boolean multiPartUpload;
+    @UriParam(label = "producer", defaultValue = "" + 25 * 1024 * 1024)
+    private long partSize = 25 * 1024 * 1024;
+    @UriParam
     private String amazonS3Endpoint;
+    @UriParam
     private String policy;
+    @UriParam(label = "producer")
     private String storageClass;
-    
+
+    public long getPartSize() {
+        return partSize;
+    }
+
+    /**
+     * Setup the partSize which is used in multi part upload, the default size is 25M.
+     */
+    public void setPartSize(long partSize) {
+        this.partSize = partSize;
+    }
+
+    public boolean isMultiPartUpload() {
+        return multiPartUpload;
+    }
+
+    /**
+     * If it is true, Camel will upload the file with multi part format, the part size is decided by the option of partSize
+     */
+    public void setMultiPartUpload(boolean multiPartUpload) {
+        this.multiPartUpload = multiPartUpload;
+    }
+
+    /**
+     * The region with which the AWS-S3 client wants to work with.
+     */
     public void setAmazonS3Endpoint(String amazonS3Endpoint) {
         this.amazonS3Endpoint = amazonS3Endpoint;
     }
-    
+
     public String getAmazonS3Endpoint() {
         return amazonS3Endpoint;
     }
-    
+
     public String getAccessKey() {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -58,14 +102,20 @@ public class S3Configuration implements Cloneable {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     public AmazonS3 getAmazonS3Client() {
         return amazonS3Client;
     }
 
+    /**
+     * To use the AmazonS3 as the client
+     */
     public void setAmazonS3Client(AmazonS3 amazonS3Client) {
         this.amazonS3Client = amazonS3Client;
     }
@@ -74,6 +124,9 @@ public class S3Configuration implements Cloneable {
         return prefix;
     }
 
+    /**
+     * The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in.
+     */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
@@ -82,15 +135,20 @@ public class S3Configuration implements Cloneable {
         return bucketName;
     }
 
+    /**
+     * Name of the bucket. The bucket will be created if it don't already exists.
+     */
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
     }
-
 
     public String getFileName() {
         return fileName;
     }
 
+    /**
+     * To get the object from the bucket with the given file name
+     */
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
@@ -99,6 +157,9 @@ public class S3Configuration implements Cloneable {
         return region;
     }
 
+    /**
+     * The region where the bucket is located.
+     */
     public void setRegion(String region) {
         this.region = region;
     }
@@ -107,6 +168,9 @@ public class S3Configuration implements Cloneable {
         return deleteAfterRead;
     }
 
+    /**
+     * Delete objects from S3 after it has been retrieved.
+     */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
     }
@@ -115,14 +179,20 @@ public class S3Configuration implements Cloneable {
         return deleteAfterWrite;
     }
 
+    /**
+     * Delete file object after the S3 file has been uploaded
+     */
     public void setDeleteAfterWrite(boolean deleteAfterWrite) {
         this.deleteAfterWrite = deleteAfterWrite;
     }
-    
+
     public String getPolicy() {
         return policy;
     }
 
+    /**
+     * The policy for this bucket
+     */
     public void setPolicy(String policy) {
         this.policy = policy;
     }
@@ -131,6 +201,9 @@ public class S3Configuration implements Cloneable {
         return storageClass;
     }
 
+    /**
+     * The storage class
+     */
     public void setStorageClass(String storageClass) {
         this.storageClass = storageClass;
     }

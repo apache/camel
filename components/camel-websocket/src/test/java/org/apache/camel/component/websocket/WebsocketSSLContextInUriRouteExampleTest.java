@@ -27,9 +27,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
+import com.ning.http.client.ws.WebSocket;
+import com.ning.http.client.ws.WebSocketTextListener;
+import com.ning.http.client.ws.WebSocketUpgradeHandler;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -71,10 +71,10 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("jsse/localhost.ks");
-        ksp.setPassword("changeit");
+        ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setKeyPassword("changeit");
+        kmp.setKeyPassword(pwd);
         kmp.setKeyStore(ksp);
 
         TrustManagersParameters tmp = new TrustManagersParameters();
@@ -83,7 +83,6 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         // NOTE: Needed since the client uses a loose trust configuration when no ssl context
         // is provided.  We turn on WANT client-auth to prefer using authentication
         SSLContextServerParameters scsp = new SSLContextServerParameters();
-        scsp.setClientAuthentication(ClientAuthentication.WANT.name());
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
@@ -109,31 +108,11 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
                 new AsyncHttpClientConfig.Builder();
 
         builder.setSSLContext(new SSLContextParameters().createSSLContext());
+        builder.setAcceptAnyCertificate(true);
         config = builder.build();
         c = new AsyncHttpClient(config);
 
         return c;
-    }
-
-    protected SSLContextParameters defineSSLContextParameters() {
-
-        KeyStoreParameters ksp = new KeyStoreParameters();
-        // ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
-        ksp.setResource("jsse/localhost.ks");
-        ksp.setPassword(pwd);
-
-        KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setKeyPassword(pwd);
-        kmp.setKeyStore(ksp);
-
-        TrustManagersParameters tmp = new TrustManagersParameters();
-        tmp.setKeyStore(ksp);
-
-        SSLContextParameters sslContextParameters = new SSLContextParameters();
-        sslContextParameters.setKeyManagers(kmp);
-        sslContextParameters.setTrustManagers(tmp);
-
-        return sslContextParameters;
     }
 
     @Test
@@ -150,9 +129,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
                                 latch.countDown();
                             }
 
-                            @Override
-                            public void onFragment(String fragment, boolean last) {
-                            }
+                            
 
                             @Override
                             public void onOpen(WebSocket websocket) {
@@ -170,7 +147,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
-        websocket.sendTextMessage("Hello from WS client");
+        websocket.sendMessage("Hello from WS client");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();

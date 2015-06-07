@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.util.ObjectHelper;
 
@@ -42,7 +43,7 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
     private String namePattern;
 
     public DefaultManagementNameStrategy(CamelContext camelContext) {
-        this(camelContext, "#name#", "#name#-#counter#");
+        this(camelContext, System.getProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN, "#name#"), "#name#-#counter#");
     }
 
     public DefaultManagementNameStrategy(CamelContext camelContext, String defaultPattern, String nextPattern) {

@@ -30,6 +30,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE })
 public @interface UriParams {
+
     /**
      * Returns the prefix used to access nested properties of this configuration object
      */

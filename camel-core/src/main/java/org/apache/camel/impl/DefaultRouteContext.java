@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.model.FromDefinition;
@@ -123,6 +124,12 @@ public class DefaultRouteContext implements RouteContext {
             if (!this.getCamelContext().equals(endpoint.getCamelContext())) {
                 throw new NoSuchEndpointException("ref:" + ref, "make sure the endpoint has the same camel context as the route does.");
             }
+            try {
+                // need add the endpoint into service
+                getCamelContext().addService(endpoint);
+            } catch (Exception ex) {
+                throw new RuntimeCamelException(ex);
+            }
         }
         if (endpoint == null) {
             throw new IllegalArgumentException("Either 'uri' or 'ref' must be specified on: " + this);
@@ -189,6 +196,7 @@ public class DefaultRouteContext implements RouteContext {
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
+            edcr.getProperties().put(Route.DESCRIPTION_PROPERTY, route.getDescriptionText());
             if (route.getGroup() != null) {
                 edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());
             }

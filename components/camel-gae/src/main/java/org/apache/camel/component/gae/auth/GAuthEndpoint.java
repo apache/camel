@@ -31,8 +31,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Represents a <a href="http://camel.apache.org/gauth.html">GAuth Endpoint</a>.
@@ -42,7 +44,7 @@ import org.apache.camel.spi.UriParam;
  * endpoint URIs are <code>gauth:authorize</code> and <code>gauth:upgrade</code>
  * , respectively.
  */
-@UriEndpoint(scheme = "gauth")
+@UriEndpoint(scheme = "gauth", title = "Google GAuth", syntax = "gauth:name", producerOnly = true, label = "cloud")
 public class GAuthEndpoint  extends DefaultEndpoint {
 
     public static enum Name {
@@ -62,7 +64,7 @@ public class GAuthEndpoint  extends DefaultEndpoint {
     
     private OutboundBinding<GAuthEndpoint, GoogleOAuthParameters, GoogleOAuthParameters> authorizeBinding;
     private OutboundBinding<GAuthEndpoint, GoogleOAuthParameters, GoogleOAuthParameters> upgradeBinding;
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private Name name;
     @UriParam
     private String callback;

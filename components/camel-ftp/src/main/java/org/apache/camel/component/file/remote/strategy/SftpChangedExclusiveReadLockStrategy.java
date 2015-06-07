@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote.strategy;
 
+import java.util.Date;
 import java.util.List;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -36,6 +37,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     private long checkInterval = 5000;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
     private long minLength = 1;
+    private long minAge;
     private boolean fastExistsCheck;
 
     @Override
@@ -51,6 +53,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
         long lastModified = Long.MIN_VALUE;
         long length = Long.MIN_VALUE;
         StopWatch watch = new StopWatch();
+        long startTime = (new Date()).getTime();
 
         while (!exclusive) {
             // timeout check
@@ -87,8 +90,10 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
 
             LOG.trace("Previous last modified: " + lastModified + ", new last modified: " + newLastModified);
             LOG.trace("Previous length: " + length + ", new length: " + newLength);
+            long newOlderThan = startTime + watch.taken() - minAge;
+            LOG.trace("New older than threshold: {}", newOlderThan);
 
-            if (length >= minLength && (newLastModified == lastModified && newLength == length)) {
+            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length) || (minAge != 0 && newLastModified < newOlderThan))) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -119,7 +124,17 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
         // noop
     }
 
@@ -152,6 +167,14 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
 
     public void setMinLength(long minLength) {
         this.minLength = minLength;
+    }
+
+    public long getMinAge() {
+        return minAge;
+    }
+
+    public void setMinAge(long minAge) {
+        this.minAge = minAge;
     }
 
     public boolean isFastExistsCheck() {

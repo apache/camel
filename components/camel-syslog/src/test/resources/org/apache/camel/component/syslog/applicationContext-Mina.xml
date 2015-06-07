@@ -25,7 +25,7 @@
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
   </bean>
 
-  <bean id="myMinaFactory" class="org.apache.camel.component.mina.MinaComponent">
+  <bean id="myMinaFactory" class="org.apache.camel.component.mina2.Mina2Component">
     <!-- we must provide a camel context so we refer to it by its id -->
     <constructor-arg index="0" ref="myCamel"/>
   </bean>
@@ -38,7 +38,7 @@
   </bean>
 
   <!-- this is our mina configuration with plain properties -->
-  <bean id="minaSyslogConfig" class="org.apache.camel.component.mina.MinaConfiguration">
+  <bean id="minaSyslogConfig" class="org.apache.camel.component.mina2.Mina2Configuration">
     <property name="protocol" value="udp"/>
     <property name="host" value="localhost"/>
     <property name="port" value="${server-port}"/>

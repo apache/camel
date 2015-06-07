@@ -37,7 +37,7 @@ public final class CamelJmsTestHelper {
     }
 
     public static PooledConnectionFactory createPooledConnectionFactory() {
-        ConnectionFactory cf = createConnectionFactory(null);
+        ConnectionFactory cf = createConnectionFactory(null, null);
         PooledConnectionFactory pooled = new PooledConnectionFactory();
         pooled.setConnectionFactory(cf);
         pooled.setMaxConnections(8);
@@ -45,10 +45,10 @@ public final class CamelJmsTestHelper {
     }
 
     public static ConnectionFactory createConnectionFactory() {
-        return createConnectionFactory(null);
+        return createConnectionFactory(null, null);
     }
 
-    public static ConnectionFactory createConnectionFactory(String options) {
+    public static ConnectionFactory createConnectionFactory(String options, Integer maximumRedeliveries) {
         // using a unique broker name improves testing when running the entire test suite in the same JVM
         int id = counter.incrementAndGet();
         String url = "vm://test-broker-" + id + "?broker.persistent=false&broker.useJmx=false";
@@ -65,6 +65,9 @@ public final class CamelJmsTestHelper {
         // Another way of guaranteeing order is to use persistent messages or transactions.
         connectionFactory.setUseAsyncSend(false);
         connectionFactory.setAlwaysSessionAsync(false);
+        if (maximumRedeliveries != null) {
+            connectionFactory.getRedeliveryPolicy().setMaximumRedeliveries(maximumRedeliveries);
+        }
         return connectionFactory;
     }
 

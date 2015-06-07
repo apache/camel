@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -79,10 +80,10 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
             });
             context.start();
             fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("PropertiesComponent with name properties must be defined in CamelContext to support property placeholders.", iae.getMessage());
+        } catch (RuntimeCamelException e) {
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            String msg = "PropertiesComponent with name properties must be defined in CamelContext to support property placeholders.";
+            assertTrue(cause.getMessage().startsWith(msg));
         }
     }
 

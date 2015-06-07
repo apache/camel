@@ -24,9 +24,14 @@ import org.codehaus.jackson.annotate.JsonValue;
  */
 public enum NotifyForOperationsEnum {
 
+    // All
+    ALL("All"),
+    // Create
     CREATE("Create"),
-    UPDATE("Update"),
-    ALL("All");
+    // Extended
+    EXTENDED("Extended"),
+    // Update
+    UPDATE("Update");
 
     final String value;
 

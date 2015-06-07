@@ -102,21 +102,21 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
             public void configure() throws Exception {
                 from("direct:okay")
                     .transacted("PROPAGATION_REQUIRED")
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
                     .transacted("PROPAGATION_REQUIRED")
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Donkey in Action")).bean("bookService");
 
                 // START SNIPPET: e1
                 from("direct:mixed")
                     // using required
                     .transacted("PROPAGATION_REQUIRED")
                     // all these steps will be okay
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService")
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Elephant in Action")).bean("bookService")
                     // continue on route 2
                     .to("direct:mixed2");
 
@@ -127,17 +127,17 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
                     // using a different propagation which is requires new
                     .transacted("PROPAGATION_REQUIRES_NEW")
                     // this step will be okay
-                    .setBody(constant("Lion in Action")).beanRef("bookService")
+                    .setBody(constant("Lion in Action")).bean("bookService")
                     // this step will fail with donkey
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Donkey in Action")).bean("bookService");
                 // END SNIPPET: e1
 
                 from("direct:mixed3")
                     // using required
                     .transacted("PROPAGATION_REQUIRED")
                     // all these steps will be okay
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService")
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Elephant in Action")).bean("bookService")
                     // continue on route 4
                     .to("direct:mixed4");
 
@@ -148,9 +148,9 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
                     // using a different propagation which is requires new
                     .transacted("PROPAGATION_REQUIRES_NEW")
                     // this step will be okay
-                    .setBody(constant("Lion in Action")).beanRef("bookService")
+                    .setBody(constant("Lion in Action")).bean("bookService")
                     // this step will be okay
-                    .setBody(constant("Crocodile in Action")).beanRef("bookService");
+                    .setBody(constant("Crocodile in Action")).bean("bookService");
             }
         };
     }

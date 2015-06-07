@@ -18,22 +18,36 @@ package org.apache.camel.component.xmlrpc;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 /**
  * Represents a xmlrpc endpoint.
  */
+@UriEndpoint(scheme = "xmlrpc", title = "XML RPC", syntax = "xmlrpc:address", producerOnly = true, label = "transformation")
 public class XmlRpcEndpoint extends DefaultEndpoint {
+    @UriPath @Metadata(required = "true")
     private String address;
+    @UriParam
+    private XmlRpcConfiguration configuration;
+    @UriParam
     private String defaultMethodName;
+    @UriParam
     private XmlRpcClientConfigurer clientConfigurer;
+    @UriParam
     private XmlRpcClientConfigImpl clientConfig = new XmlRpcClientConfigImpl();
 
     public XmlRpcEndpoint() {
@@ -79,6 +93,9 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
         return address;
     }
 
+    /**
+     * The server url
+     */
     public void setAddress(String address) {
         this.address = address;
     }
@@ -87,10 +104,16 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
         return clientConfigurer;
     }
 
+    /**
+     * To use a custom XmlRpcClientConfigurer to configure the client
+     */
     public void setClientConfigurer(XmlRpcClientConfigurer configurer) {
         this.clientConfigurer = configurer;
     }
-    
+
+    /**
+     * To use the given XmlRpcClientConfigImpl as configuration for the client.
+     */
     public void setClientConfig(XmlRpcClientConfigImpl config) {
         this.clientConfig = config;
     }
@@ -103,11 +126,31 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
         return defaultMethodName;
     }
 
+    /**
+     * The method name which would be used for the xmlrpc requests by default, if the Message header CamelXmlRpcMethodName is not set.
+     */
     public void setDefaultMethodName(String defaultMethodName) {
         this.defaultMethodName = defaultMethodName;
     }
-    
-    
-    
-    
+
+    public XmlRpcConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(XmlRpcConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (clientConfig == null) {
+            clientConfig = new XmlRpcClientConfigImpl();
+        }
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        IntrospectionSupport.getProperties(configuration, params, null);
+        setProperties(clientConfig, params);
+    }
 }

@@ -37,7 +37,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a Olingo2 endpoint.
  */
-@UriEndpoint(scheme = "olingo2", consumerClass = Olingo2Consumer.class, consumerPrefix = "consumer")
+@UriEndpoint(scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName", consumerClass = Olingo2Consumer.class, consumerPrefix = "consumer")
 public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration> {
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";

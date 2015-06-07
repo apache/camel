@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.InvalidArgumentException;
@@ -47,41 +46,71 @@ import javax.sip.header.ViaHeader;
 import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
 
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriParams
 public class SipConfiguration {    
     private static final Logger LOG = LoggerFactory.getLogger(SipConfiguration.class);
     private static final String IMPLEMENTATION = "gov.nist";
+    @UriPath @Metadata(required = "true")
     private URI uri;
     private Map<String, Object> parameters;
     private SipComponent component;
+    @UriParam
     private AddressFactory addressFactory;
+    @UriParam
     private MessageFactory messageFactory;
+    @UriParam
     private HeaderFactory headerFactory;
+    @UriParam
     private SipStack sipStack;
+    @UriParam
     private ListeningPoint listeningPoint;
     private String protocol;
+    @UriParam
     private SipURI sipUri;
+    @UriParam
     private String stackName;
+    @UriParam
     private String transport;
+    @UriParam
     private int maxForwards;
+    @UriParam
     private boolean consumer;
+    @UriParam
     private String eventHeaderName;
+    @UriParam
     private String eventId;
+    @UriParam
     private int msgExpiration;
+    @UriParam
     private String useRouterForAllUris;
+    @UriParam
     private long receiveTimeoutMillis;
+    @UriParam
     private String maxMessageSize;
+    @UriParam
     private String cacheConnections;
+    @UriParam
     private String contentType;
+    @UriParam
     private String contentSubType;
+    @UriParam
     private String automaticDialogSupport;
+    @UriParam
     private String nistServerLog;
+    @UriParam
     private String nistDebugLog;
+    @UriParam
     private String nistTraceLevel;
+    @UriParam
     private SipFactory sipFactory;
     private String fromUser;
     private String fromHost;
@@ -89,19 +118,32 @@ public class SipConfiguration {
     private String toUser;
     private String toHost;
     private int toPort;
+    @UriParam
     private boolean presenceAgent;
-    
+
+    @UriParam
     private FromHeader fromHeader;
+    @UriParam
     private ToHeader toHeader;
+    @UriParam
     private List<ViaHeader> viaHeaders;
+    @UriParam
     private ContentTypeHeader contentTypeHeader;
+    @UriParam
     private CallIdHeader callIdHeader;
+    @UriParam
     private MaxForwardsHeader maxForwardsHeader;
+    @UriParam
     private ContactHeader contactHeader;
+    @UriParam
     private EventHeader eventHeader;
+    @UriParam
     private ExtensionHeader extensionHeader;
+    @UriParam
     private ExpiresHeader expiresHeader;
+    @UriParam
     private ClientTransaction clientTransactionId;
+    @UriParam
     private Dialog dialog;
     
     public SipConfiguration() {

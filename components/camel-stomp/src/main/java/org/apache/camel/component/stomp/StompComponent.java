@@ -20,10 +20,15 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-public class StompComponent extends DefaultComponent {
+public class StompComponent extends UriEndpointComponent {
 
     private StompConfiguration configuration = new StompConfiguration();
+
+    public StompComponent() {
+        super(StompEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -43,19 +48,38 @@ public class StompComponent extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared stomp configuration
+     */
     public void setConfiguration(StompConfiguration configuration) {
         this.configuration = configuration;
     }
 
+    /**
+     * The URI of the Stomp broker to connect to
+     */
     public void setBrokerURL(String brokerURL) {
         getConfiguration().setBrokerURL(brokerURL);
     }
 
+    /**
+     * The username
+     */
     public void setLogin(String login) {
         getConfiguration().setLogin(login);
     }
 
+    /**
+     * The password
+     */
     public void setPasscode(String passcode) {
         getConfiguration().setPasscode(passcode);
+    }
+    
+    /**
+     * The virtual host
+     */
+    public void setHost(String host) {
+        getConfiguration().setHost(host);
     }
 }

@@ -25,16 +25,18 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.processor.WrapProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;policy/&gt; element
+ * Defines a policy the route will use
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {

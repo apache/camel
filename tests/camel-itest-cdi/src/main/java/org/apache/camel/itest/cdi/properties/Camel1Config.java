@@ -28,6 +28,11 @@ public class Camel1Config implements PropertyFileConfig {
     @Override
     public String getPropertyFileName() {
         return "camel1.properties";
-    };
+    }
+
+    @Override
+    public boolean isOptional() {
+        return false;
+    }
 
 }

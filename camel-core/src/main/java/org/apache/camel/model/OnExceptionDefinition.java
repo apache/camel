@@ -41,16 +41,18 @@ import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;onException/&gt; element
+ * Route to be executed when an exception is thrown
  *
  * @version 
  */
+@Metadata(label = "error")
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefinition> {
@@ -61,7 +63,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlElement(name = "retryWhile")
     private ExpressionSubElementDefinition retryWhile;
     @XmlElement(name = "redeliveryPolicy")
-    private RedeliveryPolicyDefinition redeliveryPolicy;
+    private RedeliveryPolicyDefinition redeliveryPolicyType;
     @XmlAttribute(name = "redeliveryPolicyRef")
     private String redeliveryPolicyRef;
     @XmlElement(name = "handled")
@@ -89,6 +91,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     // TODO: in Camel 3.0 the OnExceptionDefinition should not contain state and ErrorHandler processors
     @XmlTransient
     private final Map<String, Processor> errorHandlers = new HashMap<String, Processor>();
+    @XmlTransient
+    private RedeliveryPolicy redeliveryPolicy;
 
     public OnExceptionDefinition() {
     }
@@ -109,11 +113,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     public boolean isRouteScoped() {
         // is context scoped by default
         return routeScoped != null ? routeScoped : false;
-    }
-
-    @Override
-    public String getShortName() {
-        return "onException";
     }
 
     @Override
@@ -149,10 +148,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      *         for this exception handler.
      */
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
-        if (redeliveryPolicyRef != null) {
+        if (redeliveryPolicy != null) {
+            return redeliveryPolicy;
+        } else if (redeliveryPolicyRef != null) {
             return CamelContextHelper.mandatoryLookup(context, redeliveryPolicyRef, RedeliveryPolicy.class);
-        } else if (redeliveryPolicy != null) {
-            return redeliveryPolicy.createRedeliveryPolicy(context, parentPolicy);
+        } else if (redeliveryPolicyType != null) {
+            return redeliveryPolicyType.createRedeliveryPolicy(context, parentPolicy);
         } else if (!outputs.isEmpty() && parentPolicy.getMaximumRedeliveries() != 0) {
             // if we have outputs, then do not inherit parent maximumRedeliveries
             // as you would have to explicit configure maximumRedeliveries on this onException to use it
@@ -246,7 +247,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         if (outputs == null || getOutputs().isEmpty()) {
             // no outputs so there should be some sort of configuration
             if (handledPolicy == null && continuedPolicy == null && retryWhilePolicy == null
-                    && redeliveryPolicy == null && useOriginalMessagePolicy == null && onRedelivery == null) {
+                    && redeliveryPolicyType == null && useOriginalMessagePolicy == null && onRedelivery == null) {
                 throw new IllegalArgumentException(this + " is not configured.");
             }
         }
@@ -537,6 +538,28 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
+     * Sets whether new exceptions should be logged or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     * <p/>
+     * A new exception is an exception that was thrown while handling a previous exception.
+     */
+    public OnExceptionDefinition logNewException(boolean logNewException) {
+        getOrCreateRedeliveryPolicy().logNewException(logNewException);
+        return this;
+    }
+
+    /**
+     * Sets whether new exceptions should be logged or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     * <p/>
+     * A new exception is an exception that was thrown while handling a previous exception.
+     */
+    public OnExceptionDefinition logNewException(String logNewException) {
+        getOrCreateRedeliveryPolicy().logNewException(logNewException);
+        return this;
+    }
+
+    /**
      * Sets whether to log errors even if its continued
      */
     public OnExceptionDefinition logContinued(boolean logContinued) {
@@ -675,6 +698,17 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
+     * Set the {@link RedeliveryPolicy} to be used.
+     *
+     * @param redeliveryPolicy the redelivery policy
+     * @return the builder
+     */
+    public OnExceptionDefinition redeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
+        this.redeliveryPolicy = redeliveryPolicy;
+        return this;
+    }
+
+    /**
      * Sets a reference to a {@link RedeliveryPolicy} to lookup in the {@link org.apache.camel.spi.Registry} to be used.
      *
      * @param redeliveryPolicyRef reference to use for lookup
@@ -736,6 +770,18 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         return this;
     }
 
+    /**
+     * Sets a reference to a processor that should be processed <b>before</b> a redelivery attempt.
+     * <p/>
+     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
+     *
+     * @param ref  reference to the processor
+     */
+    public OnExceptionDefinition onRedeliveryRef(String ref) {
+        setOnRedeliveryRef(ref);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
     @Override
@@ -763,6 +809,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         return exceptions;
     }
 
+    /**
+     * A set of exceptions to react upon.
+     */
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
     }
@@ -776,11 +825,19 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     public RedeliveryPolicyDefinition getRedeliveryPolicy() {
-        return redeliveryPolicy;
+        return redeliveryPolicyType;
     }
 
     public void setRedeliveryPolicy(RedeliveryPolicyDefinition redeliveryPolicy) {
-        this.redeliveryPolicy = redeliveryPolicy;
+        this.redeliveryPolicyType = redeliveryPolicy;
+    }
+
+    public RedeliveryPolicyDefinition getRedeliveryPolicyType() {
+        return redeliveryPolicyType;
+    }
+
+    public void setRedeliveryPolicyType(RedeliveryPolicyDefinition redeliveryPolicyType) {
+        this.redeliveryPolicyType = redeliveryPolicyType;
     }
 
     public String getRedeliveryPolicyRef() {
@@ -871,25 +928,21 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
     }
 
-    public boolean isUseOriginalMessage() {
-        return useOriginalMessagePolicy != null && useOriginalMessagePolicy;
-    }
+    // Implementation methods
+    //-------------------------------------------------------------------------
 
-    public boolean isAsyncDelayedRedelivery(CamelContext context) {
+    protected boolean isAsyncDelayedRedelivery(CamelContext context) {
         if (getRedeliveryPolicy() != null) {
             return getRedeliveryPolicy().isAsyncDelayedRedelivery(context);
         }
         return false;
     }
 
-    // Implementation methods
-    //-------------------------------------------------------------------------
-
     protected RedeliveryPolicyDefinition getOrCreateRedeliveryPolicy() {
-        if (redeliveryPolicy == null) {
-            redeliveryPolicy = new RedeliveryPolicyDefinition();
+        if (redeliveryPolicyType == null) {
+            redeliveryPolicyType = new RedeliveryPolicyDefinition();
         }
-        return redeliveryPolicy;
+        return redeliveryPolicyType;
     }
 
     protected List<Class<? extends Throwable>> createExceptionClasses(ClassResolver resolver) throws ClassNotFoundException {

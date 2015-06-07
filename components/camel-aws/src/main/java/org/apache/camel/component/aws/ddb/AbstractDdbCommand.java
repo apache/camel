@@ -19,10 +19,9 @@ package org.apache.camel.component.aws.ddb;
 import java.util.Collection;
 import java.util.Map;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.ExpectedAttributeValue;
-import com.amazonaws.services.dynamodb.model.Key;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -81,8 +80,8 @@ public abstract class AbstractDdbCommand {
         msg.setHeader(headerKey, value);
     }
 
-    protected Key determineKey() {
-        return exchange.getIn().getHeader(DdbConstants.KEY, Key.class);
+    protected Map<String, AttributeValue> determineKey() {
+        return exchange.getIn().getHeader(DdbConstants.KEY, Map.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -91,7 +90,6 @@ public abstract class AbstractDdbCommand {
     }
 
     protected Boolean determineConsistentRead() {
-        Boolean consistentRead = exchange.getIn().getHeader(DdbConstants.CONSISTENT_READ, Boolean.class);
-        return consistentRead != null ? consistentRead : configuration.getConsistentRead();
+        return exchange.getIn().getHeader(DdbConstants.CONSISTENT_READ, configuration.isConsistentRead(), Boolean.class);
     }
 }

@@ -22,7 +22,6 @@ import javax.jms.TextMessage;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 
 import org.junit.Test;
@@ -41,7 +40,7 @@ public class InOnlyQueueProducerTest extends JmsTestSupport {
 
     @Test
     public void testInOnlyQueueProducer() throws Exception {
-        MessageConsumer mc = JmsObjectFactory.createQueueConsumer(getSession(), TEST_DESTINATION_NAME);
+        MessageConsumer mc = createQueueConsumer(TEST_DESTINATION_NAME);
         assertNotNull(mc);
         final String expectedBody = "Hello World!";
         MockEndpoint mock = getMockEndpoint("mock:result");

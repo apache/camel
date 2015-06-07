@@ -30,8 +30,8 @@ public class TransactionalClientDataSourceTransactedWithFileLocalOnExceptionTest
 
                 from("file://target/transacted/okay")
                     .transacted()
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("file://target/transacted/fail?moveFailed=../failed")
                     .onException(IllegalArgumentException.class)
@@ -39,8 +39,8 @@ public class TransactionalClientDataSourceTransactedWithFileLocalOnExceptionTest
                         .to("mock:error")
                     .end()
                     .transacted()
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

@@ -41,15 +41,15 @@ public class LogComponentConfigurationAndDocumentationTest extends ContextTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"level\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"groupInterval\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"level\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"groupInterval\": { \"kind\": \"parameter\", \"type\": \"integer\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("log");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

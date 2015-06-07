@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.16-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-groovy</artifactId>
@@ -30,6 +30,13 @@
   <description>Camel Groovy support</description>
 
   <properties>
+      <camel.osgi.import.pkg>
+          !org.apache.camel.component.groovy.*,
+          org.codehaus.groovy.runtime.callsite,
+          org.apache.camel.*;${camel.osgi.import.camel.version},
+          ${camel.osgi.import.defaults},
+          *
+      </camel.osgi.import.pkg>
 	  <camel.osgi.export.pkg>org.apache.camel.language.groovy.*,org.apache.camel.groovy.*</camel.osgi.export.pkg>
 	  <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=groovy</camel.osgi.export.service>
   </properties>
@@ -61,6 +68,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

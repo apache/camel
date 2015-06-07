@@ -19,27 +19,43 @@ package org.apache.camel.component.file.remote;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Proxy;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Secure FTP endpoint
  */
-@UriEndpoint(scheme = "sftp", consumerClass = SftpConsumer.class)
+@UriEndpoint(scheme = "sftp", title = "SFTP", syntax = "sftp:host:port/directoryName", consumerClass = SftpConsumer.class, label = "file")
 public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
+    @UriParam
+    protected SftpConfiguration configuration;
+    @UriParam
     Proxy proxy;
     
     public SftpEndpoint() {
     }
 
-    public SftpEndpoint(String uri, SftpComponent component, RemoteFileConfiguration configuration) {
+    public SftpEndpoint(String uri, SftpComponent component, SftpConfiguration configuration) {
         super(uri, component, configuration);
+        this.configuration = configuration;
     }
 
     @Override
     public SftpConfiguration getConfiguration() {
-        return (SftpConfiguration) this.configuration;
+        return this.configuration;
+    }
+
+    @Override
+    public void setConfiguration(GenericFileConfiguration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("SftpConfiguration expected");
+        }
+        // need to set on both
+        this.configuration = (SftpConfiguration) configuration;
+        super.setConfiguration(configuration);
     }
 
     @Override

@@ -23,9 +23,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
 /**
- * <code>ContextScanDefinition</code> represents a &lt;contextScan/&gt element.
+ * Scans for Java {@link org.apache.camel.builder.RouteBuilder} instances in the context {@link org.apache.camel.spi.Registry}.
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "contextScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContextScanDefinition {
@@ -45,10 +48,16 @@ public class ContextScanDefinition {
         return includes;
     }
 
+    /**
+     * Exclude finding route builder from these java package names.
+     */
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
     }
 
+    /**
+     * Include finding route builder from these java package names.
+     */
     public void setIncludes(List<String> includes) {
         this.includes = includes;
     }

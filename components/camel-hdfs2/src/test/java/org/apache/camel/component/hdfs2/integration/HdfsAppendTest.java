@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hdfs2.integration;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
@@ -28,6 +29,7 @@ import org.junit.Test;
 
 @Ignore("Must run manual")
 public class HdfsAppendTest extends CamelTestSupport {
+    private static final int ITERATIONS = 10;
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -81,6 +83,35 @@ public class HdfsAppendTest extends CamelTestSupport {
         in.close();
     }
 
+    @Test
+    public void testAppendWithDynamicFileName() throws Exception {
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start1").to("hdfs2://localhost:9000/tmp/test-dynamic/?append=true&fileSystemType=HDFS");
+            }
+        });
+        startCamelContext();
+
+        for (int i = 0; i < ITERATIONS; ++i) {
+            template.sendBodyAndHeader("direct:start1", "HELLO", Exchange.FILE_NAME, "camel-hdfs2.log");
+        }
+
+        Configuration conf = new Configuration();
+        Path file = new Path("hdfs://localhost:9000/tmp/test-dynamic/camel-hdfs2.log");
+        FileSystem fs = FileSystem.get(file.toUri(), conf);
+        FSDataInputStream in = fs.open(file);
+        byte[] buffer = new byte[5];
+        for (int i = 0; i < ITERATIONS; ++i) {
+            assertEquals(5, in.read(buffer));
+            System.out.println("> " + new String(buffer));
+        }
+        int ret = in.read(buffer);
+        assertEquals(-1, ret);
+        in.close();
+    }
+
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -89,6 +120,8 @@ public class HdfsAppendTest extends CamelTestSupport {
         Configuration conf = new Configuration();
         Path dir = new Path("hdfs://localhost:9000/tmp/test");
         FileSystem fs = FileSystem.get(dir.toUri(), conf);
+        fs.delete(dir, true);
+        dir = new Path("hdfs://localhost:9000/tmp/test-dynamic");
         fs.delete(dir, true);
     }
 }

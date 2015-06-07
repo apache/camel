@@ -27,11 +27,13 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class MessageHistoryDumpRoutingTest extends ContextTestSupport {
 
+    private String body = "Hello World 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+
     public void testReduceStacksNeeded() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedBodiesReceived(body);
 
-        template.sendBody("seda:start", "Hello World");
+        template.sendBody("seda:start", body);
 
         assertMockEndpointsSatisfied();
     }
@@ -42,6 +44,8 @@ public class MessageHistoryDumpRoutingTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 context.setMessageHistory(true);
+                // to test that the message history exchange gets clipped
+                context.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "100");
 
                 from("seda:start")
                         .to("log:foo")

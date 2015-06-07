@@ -79,7 +79,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
             @Override
             public void configure() throws Exception {
                 from("file://target/file/order", "seda:xml")
-                    .beanRef("orderService")
+                    .bean("orderService")
                     .to("mock:queue:order");
             }
         };

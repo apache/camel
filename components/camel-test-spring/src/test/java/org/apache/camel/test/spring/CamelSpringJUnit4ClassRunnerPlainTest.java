@@ -26,13 +26,12 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.util.StopWatch;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.Assert.assertEquals;
@@ -42,8 +41,10 @@ import static org.junit.Assert.assertTrue;
 
 // START SNIPPET: e1
 @RunWith(CamelSpringJUnit4ClassRunner.class)
-@ContextConfiguration
-// Put here to prevent Spring context caching across tests and test methods since some tests inherit 
+// must tell Spring to bootstrap with Camel
+@BootstrapWith(CamelTestContextBootstrapper.class)
+@ContextConfiguration()
+// Put here to prevent Spring context caching across tests and test methods since some tests inherit
 // from this test and therefore use the same Spring context.  Also because we want to reset the
 // Camel context and mock endpoints between test methods automatically.
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)

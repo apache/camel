@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.box.internal;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.SSLContext;
 
 import com.box.boxjavalibv2.BoxClient;
 import com.box.boxjavalibv2.authorization.IAuthFlowListener;
@@ -36,13 +40,21 @@ import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.ProxyConfig;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
+
 import org.apache.camel.component.box.BoxConfiguration;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.conn.params.ConnRoutePNames;
@@ -59,8 +71,6 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
 
     private final BoxConfiguration configuration;
     private final BoxClient boxClient;
-
-    private IAuthFlowListener listener;
 
     public LoginAuthFlowUI(BoxConfiguration configuration, BoxClient boxClient) {
         this.configuration = configuration;
@@ -81,6 +91,24 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
         options.setThrowExceptionOnFailingStatusCode(true);
         options.setThrowExceptionOnScriptError(true);
         options.setPrintContentOnFailingStatusCode(LOG.isDebugEnabled());
+        try {
+            // use default SSP to create supported non-SSL protocols list
+            final SSLContext sslContext = new SSLContextParameters().createSSLContext();
+            options.setSSLClientProtocols(sslContext.createSSLEngine().getEnabledProtocols());
+        } catch (GeneralSecurityException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } catch (IOException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+
+        // disable default gzip compression, as htmlunit does not negotiate pages sent with no compression
+        new WebConnectionWrapper(webClient) {
+            @Override
+            public WebResponse getResponse(WebRequest request) throws IOException {
+                request.setAdditionalHeader(HttpHeaders.ACCEPT_ENCODING, "identity");
+                return super.getResponse(request);
+            }
+        };
 
         // add HTTP proxy if set
         final Map<String, Object> httpParams = configuration.getHttpParams();
@@ -99,6 +127,16 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
             OAuthWebViewData viewData = new OAuthWebViewData(boxClient.getOAuthDataController());
             viewData.setOptionalState(String.valueOf(csrfId));
             final HtmlPage authPage = webClient.getPage(viewData.buildUrl().toString());
+
+            // look for <div role="error_message">
+            final HtmlDivision div = authPage.getFirstByXPath("//div[contains(concat(' ', @class, ' '), ' error_message ')]");
+            if (div != null) {
+                final String errorMessage = div.getTextContent()
+                    .replaceAll("\\s+", " ")
+                    .replaceAll(" Show Error Details", ":")
+                    .trim();
+                throw new IllegalArgumentException("Error authorizing application: " + errorMessage);
+            }
 
             // submit login credentials
             final HtmlForm loginForm = authPage.getFormByName("login_form");
@@ -138,7 +176,6 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
             if (!csrfId.equals(state)) {
                 final SecurityException e = new SecurityException("Invalid CSRF code!");
                 listener.onAuthFlowException(e);
-                this.listener.onAuthFlowException(e);
             } else {
 
                 // get authorization code
@@ -153,19 +190,17 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
                 final OAuthDataMessage authDataMessage = new OAuthDataMessage(oAuthToken,
                     boxClient.getJSONParser(), boxClient.getResourceHub());
                 listener.onAuthFlowEvent(OAuthEvent.OAUTH_CREATED, authDataMessage);
-                this.listener.onAuthFlowEvent(OAuthEvent.OAUTH_CREATED, authDataMessage);
             }
 
         } catch (Exception e) {
             // forward login exceptions to listener
             listener.onAuthFlowException(e);
-            this.listener.onAuthFlowException(e);
         }
     }
 
     @Override
     public void addAuthFlowListener(IAuthFlowListener listener) {
-        this.listener = listener;
+        throw new UnsupportedOperationException("addAuthFlowListener");
     }
 
     @Override

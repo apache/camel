@@ -32,14 +32,16 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Represents an XML &lt;multicast/&gt; element
+ *  Routes the same message to multiple paths either sequentially or in parallel.
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MulticastDefinition extends OutputDefinition<MulticastDefinition> implements ExecutorServiceAwareDefinition<MulticastDefinition> {
@@ -59,7 +61,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     private Boolean streaming;
     @XmlAttribute
     private Boolean stopOnException;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "0")
     private Long timeout;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
@@ -86,11 +88,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
     
     @Override
-    public String getShortName() {
-        return "multicast";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor answer = this.createChildProcessor(routeContext, true);
 
@@ -107,20 +104,17 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     // -------------------------------------------------------------------------
 
     /**
-     * Set the multicasting aggregationStrategy
-     *
-     * @return the builder
+     * Sets the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast.
+     * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy
      */
     public MulticastDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
         return this;
     }
-    
+
     /**
-     * Set the aggregationStrategy
-     *
-     * @param aggregationStrategyRef a reference to a strategy to lookup
-     * @return the builder
+     * Sets a reference to the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast.
+     * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy
      */
     public MulticastDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setStrategyRef(aggregationStrategyRef);
@@ -128,7 +122,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     /**
-     * Sets the method name to use when using a POJO as {@link AggregationStrategy}.
+     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
      *
      * @param  methodName the method name to call
      * @return the builder
@@ -139,7 +133,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     /**
-     * Sets allowing null when using a POJO as {@link AggregationStrategy}.
+     * If this option is false then the aggregate method is not used if there was no data to enrich.
+     * If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy
      *
      * @return the builder
      */
@@ -149,8 +144,10 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     /**
-     * Uses the {@link java.util.concurrent.ExecutorService} to do the multicasting work
-     *     
+     * If enabled then sending messages to the multicasts occurs concurrently.
+     * Note the caller thread will still wait until all messages has been fully processed, before it continues.
+     * Its only the sending and processing the replies from the multicasts which happens concurrently.
+     *
      * @return the builder
      */
     public MulticastDefinition parallelProcessing() {
@@ -159,10 +156,10 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     /**
-     * Doing the aggregate work in parallel
-     * <p/>
-     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
-     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
+     * If enabled then the aggregate method on AggregationStrategy can be called concurrently.
+     * Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe.
+     * By default this is false meaning that Camel synchronizes the call to the aggregate method.
+     * Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.
      *
      * @return the builder
      */
@@ -172,7 +169,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     /**
-     * Aggregates the responses as the are done (e.g. out of order sequence)
+     * If enabled then Camel will process replies out-of-order, eg in the order they come back.
+     * If disabled, Camel will process replies in the same order as defined by the multicast.
      *
      * @return the builder
      */
@@ -198,12 +196,20 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         setStopOnException(true);
         return this;
     }
-    
+
+    /**
+     * To use a custom Thread Pool to be used for parallel processing.
+     * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
+     */
     public MulticastDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
-    
+
+    /**
+     * Refers to a custom Thread Pool to be used for parallel processing.
+     * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
+     */
     public MulticastDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -236,7 +242,12 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     /**
-     * Sets a timeout value in millis to use when using parallelProcessing.
+     * Sets a total timeout specified in millis, when using parallel processing.
+     * If the Multicast hasn't been able to send and process all replies within the given timeframe,
+     * then the timeout triggers and the Multicast breaks out and continues.
+     * Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out.
+     * If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel
+     * to shut down in a graceful manner may continue to run. So use this option with a bit of care.
      *
      * @param timeout timeout in millis
      * @return the builder
@@ -248,6 +259,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     /**
      * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and each of the sub messages.
+     * Multicast will by default not share unit of work between the parent exchange and each multicasted exchange.
+     * This means each sub exchange has its own individual unit of work.
      *
      * @return the builder.
      * @see org.apache.camel.spi.SubUnitOfWork
@@ -264,20 +277,26 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
             strategy = new UseLatestAggregationStrategy();
         }
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Multicast", this, isParallelProcessing());
+        boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
+        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
+        boolean isStreaming = getStreaming() != null && getStreaming();
+        boolean isStopOnException = getStopOnException() != null && getStopOnException();
+        boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
+
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Multicast", this, isParallelProcessing);
 
         long timeout = getTimeout() != null ? getTimeout() : 0;
-        if (timeout > 0 && !isParallelProcessing()) {
+        if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
         if (onPrepareRef != null) {
             onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
         }
 
-        MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing(),
-                                      threadPool, shutdownThreadPool, isStreaming(), isStopOnException(), timeout, onPrepare, isShareUnitOfWork(), isParallelAggregate());
-        if (isShareUnitOfWork()) {
+        MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing,
+                                      threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, onPrepare, isShareUnitOfWork, isParallelAggregate);
+        if (isShareUnitOfWork) {
             // wrap answer in a sub unit of work, since we share the unit of work
             CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
             internalProcessor.addAdvice(new CamelInternalProcessor.SubUnitOfWorkProcessorAdvice());
@@ -329,10 +348,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.parallelProcessing = parallelProcessing;
     }
 
-    public boolean isParallelProcessing() {
-        return parallelProcessing != null && parallelProcessing;
-    }
-
     public Boolean getStreaming() {
         return streaming;
     }
@@ -341,20 +356,12 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.streaming = streaming;
     }
 
-    public boolean isStreaming() {
-        return streaming != null && streaming;
-    }
-
     public Boolean getStopOnException() {
         return stopOnException;
     }
 
     public void setStopOnException(Boolean stopOnException) {
         this.stopOnException = stopOnException;
-    }
-
-    public Boolean isStopOnException() {
-        return stopOnException != null && stopOnException;
     }
 
     public ExecutorService getExecutorService() {
@@ -369,6 +376,10 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         return strategyRef;
     }
 
+    /**
+     * Refers to an AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast.
+     * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy
+     */
     public void setStrategyRef(String strategyRef) {
         this.strategyRef = strategyRef;
     }
@@ -377,6 +388,9 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         return strategyMethodName;
     }
 
+    /**
+     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     */
     public void setStrategyMethodName(String strategyMethodName) {
         this.strategyMethodName = strategyMethodName;
     }
@@ -385,6 +399,10 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         return strategyMethodAllowNull;
     }
 
+    /**
+     * If this option is false then the aggregate method is not used if there was no data to enrich.
+     * If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy
+     */
     public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
@@ -393,6 +411,10 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         return executorServiceRef;
     }
 
+    /**
+     * Refers to a custom Thread Pool to be used for parallel processing.
+     * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
+     */
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }
@@ -429,22 +451,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
-    public boolean isShareUnitOfWork() {
-        return shareUnitOfWork != null && shareUnitOfWork;
-    }
-
     public Boolean getParallelAggregate() {
         return parallelAggregate;
-    }
-
-    /**
-     * Whether to aggregate using a sequential single thread, or allow parallel aggregation.
-     * <p/>
-     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
-     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
-     */
-    public boolean isParallelAggregate() {
-        return parallelAggregate != null && parallelAggregate;
     }
 
     public void setParallelAggregate(Boolean parallelAggregate) {

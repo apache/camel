@@ -36,22 +36,25 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;resequence/&gt; element
+ * Resequences (re-order) messages based on an expression
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
+    @Metadata(required = "false")
     @XmlElements({
-    @XmlElement(required = false, name = "batch-config", type = BatchResequencerConfig.class),
-    @XmlElement(required = false, name = "stream-config", type = StreamResequencerConfig.class)}
+    @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
+    @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)}
     )
     private ResequencerConfig resequencerConfig;
     @XmlTransient
@@ -65,11 +68,6 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
     public ResequenceDefinition() {
-    }
-
-    @Override
-    public String getShortName() {
-        return "resequence";
     }
 
     public List<ProcessorDefinition<?>> getOutputs() {
@@ -277,6 +275,9 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return resequencerConfig;
     }
 
+    /**
+     * To configure the resequencer in using either batch or stream configuration. Will by default use batch configuration.
+     */
     public void setResequencerConfig(ResequencerConfig resequencerConfig) {
         this.resequencerConfig = resequencerConfig;
     }
@@ -307,6 +308,9 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return expression;
     }
 
+    /**
+     * Expression to use for re-ordering the messages, such as a header with a sequence number
+     */
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
     }
@@ -356,8 +360,10 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
 
-        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), internal, expression,
-                config.isAllowDuplicates(), config.isReverse());
+        boolean isReverse = config.getReverse() != null && config.getReverse();
+        boolean isAllowDuplicates = config.getAllowDuplicates() != null && config.getAllowDuplicates();
+
+        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), internal, expression, isAllowDuplicates, isReverse);
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
         if (config.getIgnoreInvalidExchanges() != null) {

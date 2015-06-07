@@ -21,6 +21,9 @@ import java.util.Map;
 
 import javax.xml.transform.OutputKeys;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +32,9 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.xml.security.encryption.XMLCipher;
+import org.junit.Assert;
 import org.junit.Test;
+
 
 /**
  * Unit test of the encryptXML data format.
@@ -157,6 +162,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         xmlsecTestHelper.testEncryption(context);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testPartialPayloadAsymmetricKeyEncryptionWithContextTruststoreProperties() throws Exception {
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
@@ -177,6 +183,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     }
  
     @Test
+    @SuppressWarnings("deprecation")
     public void testPartialPayloadAsymmetricKeyEncryptionWithExchangeRecipientAlias() throws Exception {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:foo", MockEndpoint.class);
         resultEndpoint.setExpectedMessageCount(1);
@@ -198,6 +205,54 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             }
         });
         xmlsecTestHelper.testEncryption(context);
+    }
+    
+    @Test
+    public void testAsymmetricEncryptionAddKeyValue() throws Exception {
+        KeyStoreParameters tsParameters = new KeyStoreParameters();
+        tsParameters.setPassword("password");
+        tsParameters.setResource("sender.ts");
+
+        final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
+        xmlEncDataFormat.setKeyOrTrustStoreParameters(tsParameters);
+        xmlEncDataFormat.setXmlCipherAlgorithm(testCypherAlgorithm);
+        xmlEncDataFormat.setRecipientKeyAlias("recipient");
+        xmlEncDataFormat.setAddKeyValueForEncryptedKey(true);
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start")
+                    .marshal(xmlEncDataFormat).to("mock:encrypted");
+            }
+        });
+        Document doc = xmlsecTestHelper.testEncryption(TestHelper.XML_FRAGMENT, context);
+        NodeList nodeList = 
+            doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "RSAKeyValue");
+        Assert.assertTrue(nodeList.getLength() > 0);
+    }
+    
+    @Test
+    public void testAsymmetricEncryptionNoKeyValue() throws Exception {
+        KeyStoreParameters tsParameters = new KeyStoreParameters();
+        tsParameters.setPassword("password");
+        tsParameters.setResource("sender.ts");
+
+        final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
+        xmlEncDataFormat.setKeyOrTrustStoreParameters(tsParameters);
+        xmlEncDataFormat.setXmlCipherAlgorithm(testCypherAlgorithm);
+        xmlEncDataFormat.setRecipientKeyAlias("recipient");
+        xmlEncDataFormat.setAddKeyValueForEncryptedKey(false);
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start")
+                    .marshal(xmlEncDataFormat).to("mock:encrypted");
+            }
+        });
+        Document doc = xmlsecTestHelper.testEncryption(TestHelper.XML_FRAGMENT, context);
+        NodeList nodeList = 
+            doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "RSAKeyValue");
+        Assert.assertTrue(nodeList.getLength() == 0);
     }
  
     /*

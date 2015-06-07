@@ -25,12 +25,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.csv.writer.CSVConfig;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
@@ -44,12 +40,11 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String body = result.getReceivedExchanges().get(0).getIn().getBody(
-                String.class);
-        String[] lines = body.split("\n");
+        String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        String[] lines = body.split(LS);
         assertEquals(2, lines.length);
-        assertEquals("123|Camel in Action|1", lines[0]);
-        assertEquals("124|ActiveMQ in Action|2", lines[1]);
+        assertEquals("123|Camel in Action|1", lines[0].trim());
+        assertEquals("124|ActiveMQ in Action|2", lines[1].trim());
     }
 
     private List<Map<String, Object>> createBody() {
@@ -74,17 +69,9 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                CsvDataFormat csv = new CsvDataFormat();
-                CSVConfig config = new CSVConfig();
-                config.setDelimiter('|');
-                csv.setConfig(config);
-                
-                // also possible
-                // CsvDataFormat csv = new CsvDataFormat();
-                // csv.setDelimiter("|");
+                CsvDataFormat csv = new CsvDataFormat().setDelimiter('|').setHeaderDisabled(true);
 
-                from("direct:start").marshal(csv).convertBodyTo(String.class)
-                        .to("mock:result");
+                from("direct:start").marshal(csv).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

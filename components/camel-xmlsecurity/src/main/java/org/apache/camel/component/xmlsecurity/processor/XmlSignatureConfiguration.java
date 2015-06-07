@@ -17,7 +17,6 @@
 package org.apache.camel.component.xmlsecurity.processor;
 
 import java.util.Map;
-
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.dsig.XMLSignContext;
@@ -26,25 +25,35 @@ import javax.xml.crypto.dsig.XMLValidateContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
+@UriParams
 public abstract class XmlSignatureConfiguration implements Cloneable, CamelContextAware {
 
     private CamelContext context;
 
     private URIDereferencer uriDereferencer;
 
+    @UriParam
     private String baseUri;
 
-    private Map<String, ? extends Object> cryptoContextProperties;
+    @UriParam
+    private Map<String, ?> cryptoContextProperties;
 
+    @UriParam(defaultValue = "true")
     private Boolean disallowDoctypeDecl = Boolean.TRUE;
 
+    @UriParam(defaultValue = "false")
     private Boolean omitXmlDeclaration = Boolean.FALSE;
 
+    @UriParam(defaultValue = "true")
     private Boolean clearHeaders = Boolean.TRUE;
 
+    @UriParam
     private String schemaResourceUri;
-    
+
+    @UriParam
     private String outputXmlEncoding;
 
     public XmlSignatureConfiguration() {

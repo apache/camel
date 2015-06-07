@@ -31,15 +31,17 @@ import org.apache.camel.component.bean.ConstantStaticTypeBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;bean/&gt; element
+ * Calls a java bean
  *
  * @version 
  */
+@Metadata(label = "eip,endpoint")
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
@@ -49,9 +51,10 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private String method;
     @XmlAttribute
     private String beanType;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean cache;
     @XmlAttribute
+    @Deprecated
     private Boolean multiParameterArray;
     @XmlTransient
     private Class<?> beanClass;
@@ -98,15 +101,13 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return "bean[" + description() + "]";
     }
 
-    @Override
-    public String getShortName() {
-        return "bean";
-    }
-
     public String getRef() {
         return ref;
     }
 
+    /**
+     * Sets a reference to a bean to use
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -115,10 +116,16 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return method;
     }
 
+    /**
+     * Sets the method name on the bean to use
+     */
     public void setMethod(String method) {
         this.method = method;
     }
 
+    /**
+     * Sets an instance of the bean to use
+     */
     public void setBean(Object bean) {
         this.bean = bean;
     }
@@ -127,10 +134,16 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return beanType;
     }
 
+    /**
+     * Sets the Class of the bean
+     */
     public void setBeanType(String beanType) {
         this.beanType = beanType;
     }
 
+    /**
+     * Sets the Class of the bean
+     */
     public void setBeanType(Class<?> beanType) {
         this.beanClass = beanType;
     }
@@ -139,6 +152,9 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return cache;
     }
 
+    /**
+     * Caches the bean lookup, to avoid lookup up bean on every usage.
+     */
     public void setCache(Boolean cache) {
         this.cache = cache;
     }
@@ -146,7 +162,13 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     public Boolean getMultiParameterArray() {
         return multiParameterArray;
     }
-    
+
+    /**
+     * Whether the message body is an array type.
+     *
+     * @deprecated is to be replaced with a better solution in Camel 3.0
+     */
+    @Deprecated
     public void setMultiParameterArray(Boolean multiParameterArray) {
         this.multiParameterArray = multiParameterArray;
     }
@@ -154,7 +176,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     // Fluent API
     //-------------------------------------------------------------------------
     /**
-     * Sets the ref String on camel bean
+     * Sets a reference to a bean to use
      *
      * @param ref  the bean's id in the registry
      * @return the builder
@@ -167,7 +189,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
     
     /**
-     * Sets the calling method name of camel bean
+     * Sets the method name on the bean to use
      *
      * @param method  the bean's method name which wants camel to call
      * @return the builder
@@ -180,7 +202,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
     
     /**
-     * Sets the bean's instance that camel to call
+     * Sets an instance of the bean to use
      *
      * @param bean the instance of the bean
      * @return the builder
@@ -263,7 +285,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             // to a bean name but the String is being invoke instead
             if (bean instanceof String) {
                 throw new IllegalArgumentException("The bean instance is a java.lang.String type: " + bean
-                    + ". We suppose you want to refer to a bean instance by its id instead. Please use beanRef.");
+                    + ". We suppose you want to refer to a bean instance by its id instead. Please use ref.");
             }
 
             // the holder should either be bean or type based

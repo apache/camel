@@ -66,11 +66,15 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @XmlAttribute
     private String logExhausted;
     @XmlAttribute
+    private String logExhaustedMessageHistory;
+    @XmlAttribute
     private String disableRedelivery;
     @XmlAttribute
     private String delayPattern;
     @XmlAttribute
     private String allowRedeliveryWhileStopping;
+    @XmlAttribute
+    private String exchangeFormatterRef;
 
     public RedeliveryPolicy getObject() throws Exception {
         RedeliveryPolicy answer = new RedeliveryPolicy();
@@ -127,6 +131,9 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         if (logExhausted != null) {
             answer.setLogExhausted(CamelContextHelper.parseBoolean(context, logExhausted));
         }
+        if (logExhaustedMessageHistory != null) {
+            answer.setLogExhaustedMessageHistory(CamelContextHelper.parseBoolean(context, logExhaustedMessageHistory));
+        }
         if (disableRedelivery != null) {
             if (CamelContextHelper.parseBoolean(context, disableRedelivery)) {
                 answer.setMaximumRedeliveries(0);
@@ -137,6 +144,9 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         }
         if (allowRedeliveryWhileStopping != null) {
             answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context, allowRedeliveryWhileStopping));
+        }
+        if (exchangeFormatterRef != null) {
+            answer.setExchangeFormatterRef(exchangeFormatterRef);
         }
 
         return answer;
@@ -274,6 +284,14 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         this.logExhausted = logExhausted;
     }
 
+    public String getLogExhaustedMessageHistory() {
+        return logExhaustedMessageHistory;
+    }
+
+    public void setLogExhaustedMessageHistory(String logExhaustedMessageHistory) {
+        this.logExhaustedMessageHistory = logExhaustedMessageHistory;
+    }
+
     public String getDisableRedelivery() {
         return disableRedelivery;
     }
@@ -296,5 +314,13 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
 
     public void setAllowRedeliveryWhileStopping(String allowRedeliveryWhileStopping) {
         this.allowRedeliveryWhileStopping = allowRedeliveryWhileStopping;
+    }
+
+    public String getExchangeFormatterRef() {
+        return exchangeFormatterRef;
+    }
+
+    public void setExchangeFormatterRef(String exchangeFormatterRef) {
+        this.exchangeFormatterRef = exchangeFormatterRef;
     }
 }

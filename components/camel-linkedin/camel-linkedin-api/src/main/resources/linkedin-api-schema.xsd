@@ -193,12 +193,12 @@
         <xs:element ref="description"/>
         <xs:element ref="relation-to-viewer"/>
         <xs:element ref="counts-by-category"/>
-        <xs:element ref="is-open-to-non-members"/>
+        <xs:element minOccurs="0" ref="is-open-to-non-members"/>
         <xs:element name="category" type="GroupCategory"/>
         <xs:element ref="site-group-url"/>
         <xs:element ref="contact-email"/>
         <xs:element ref="locale"/>
-        <xs:element ref="allow-member-invites"/>
+        <xs:element minOccurs="0" ref="allow-member-invites"/>
         <xs:element ref="small-logo-url"/>
         <xs:element ref="large-logo-url"/>
         <xs:element ref="posts"/>
@@ -987,7 +987,7 @@
       <xs:sequence>
         <xs:element ref="id"/>
         <xs:element ref="timestamp"/>
-        <xs:element ref="comment"/>
+        <xs:element name="comment" type="xs:string"/>
         <xs:element ref="content"/>
         <xs:element ref="visibility"/>
         <xs:element ref="source"/>
@@ -2056,7 +2056,7 @@
       <xs:sequence>
         <xs:element ref="id"/>
         <xs:element ref="timestamp"/>
-        <xs:element ref="comment"/>
+        <xs:element name="comment" type="xs:string"/>
         <xs:element ref="content"/>
         <xs:element ref="visibility"/>
         <xs:element ref="source"/>
@@ -2252,4 +2252,40 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+
+  <xs:element name="order">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="recency"/>
+        <xs:enumeration value="popularity"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="post-role">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="creator"/>
+        <xs:enumeration value="commenter"/>
+        <xs:enumeration value="follower"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="event-type">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="job-posting"/>
+        <xs:enumeration value="new-product"/>
+        <xs:enumeration value="status-update"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="time-granularity">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="day"/>
+        <xs:enumeration value="month"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+
 </xs:schema>

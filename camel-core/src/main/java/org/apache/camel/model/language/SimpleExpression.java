@@ -26,14 +26,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.SimpleBuilder;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For expressions and predicates using the
- * <a href="http://camel.apache.org/simple.html">simple language</a>
+ * For expressions and predicates using the simple language
  *
  * @version 
  */
+@Metadata(label = "language", title = "Simple")
 @XmlRootElement(name = "simple")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleExpression extends ExpressionDefinition {
@@ -61,6 +62,9 @@ public class SimpleExpression extends ExpressionDefinition {
         return resultType;
     }
 
+    /**
+     * Sets the class of the result type (type from output)
+     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }
@@ -69,6 +73,9 @@ public class SimpleExpression extends ExpressionDefinition {
         return resultTypeName;
     }
 
+    /**
+     * Sets the class name of the result type (type from output)
+     */
     public void setResultTypeName(String resultTypeName) {
         this.resultTypeName = resultTypeName;
     }
@@ -84,7 +91,9 @@ public class SimpleExpression extends ExpressionDefinition {
         }
 
         String exp = getExpression();
-        if (isTrim() && exp != null) {
+        // should be true by default
+        boolean isTrim = getTrim() == null || getTrim();
+        if (exp != null && isTrim) {
             exp = exp.trim();
         }
 

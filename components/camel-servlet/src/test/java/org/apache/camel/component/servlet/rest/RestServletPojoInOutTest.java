@@ -18,6 +18,7 @@ package org.apache.camel.component.servlet.rest;
 
 import java.io.ByteArrayInputStream;
 
+import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
@@ -44,6 +45,22 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
     }
+    
+    @Test
+    public void testServletPojoGet() throws Exception {
+        
+        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/users/lives");
+        ServletUnitClient client = newClient();
+        client.setExceptionsThrownOnErrorStatus(false);
+        WebResponse response = client.getResponse(req);
+
+        assertEquals(200, response.getResponseCode());
+
+        String out = response.getText();
+
+        assertNotNull(out);
+        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+    }   
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -55,9 +72,16 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
+                    // just return the default country here
+                    .get("lives").to("direct:start")
                     .post("lives").type(UserPojo.class).outType(CountryPojo.class)
                         .route()
                         .bean(new UserService(), "livesWhere");
+                
+                CountryPojo country = new CountryPojo();
+                country.setIso("EN");
+                country.setCountry("England");
+                from("direct:start").transform().constant(country);
             }
         };
     }

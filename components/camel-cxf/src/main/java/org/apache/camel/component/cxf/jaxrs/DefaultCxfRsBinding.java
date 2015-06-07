@@ -18,6 +18,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,8 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.cxf.helpers.HttpHeaderHelper;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
 import org.apache.cxf.message.MessageContentsList;
@@ -106,6 +109,9 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         // TODO use header filter strategy and cxfToCamelHeaderMap
         CxfUtils.copyHttpHeadersFromCxfToCamel(cxfMessage, camelMessage);
         
+        // setup the charset from content-type header
+        setCharsetWithContentType(camelExchange);
+        
         //copy the protocol header
         copyProtocolHeader(cxfMessage, camelMessage, camelMessage.getExchange());
         
@@ -127,6 +133,18 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             Subject subject = new Subject();
             subject.getPrincipals().add(securityContext.getUserPrincipal());
             camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, subject);
+        }
+    }
+    
+    protected void setCharsetWithContentType(Exchange camelExchange) {
+        // setup the charset from content-type header
+        String contentTypeHeader = ExchangeHelper.getContentType(camelExchange);
+        if (contentTypeHeader != null) {
+            String charset = HttpHeaderHelper.findCharset(contentTypeHeader);
+            String normalizedEncoding = HttpHeaderHelper.mapCharset(charset, Charset.forName("UTF-8").name());
+            if (normalizedEncoding != null) {
+                camelExchange.setProperty(Exchange.CHARSET_NAME, normalizedEncoding);
+            }
         }
     }
 
@@ -264,7 +282,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         for (Map.Entry<String, List<String>>entry : headers.entrySet()) {
             // just make sure the first String element is not null
             if (headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), camelExchange) 
-                || entry.getValue().get(0) == null) {
+                || entry.getValue().isEmpty()) {
                 LOG.trace("Drop CXF message protocol header: {}={}", entry.getKey(), entry.getValue());
             } else {
                 // just put the first String element, as the complex one is filtered

@@ -19,7 +19,6 @@ package org.apache.camel.component.spring.ws;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.camel.CamelContext;
@@ -31,7 +30,7 @@ import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -46,14 +45,15 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
 /**
  * Apache Camel component for working with Spring Web Services (a.k.a Spring-WS).
  */
-public class SpringWebserviceComponent extends DefaultComponent {
+public class SpringWebserviceComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
 
     public SpringWebserviceComponent() {
+        super(SpringWebserviceEndpoint.class);
     }
 
     public SpringWebserviceComponent(CamelContext context) {
-        super(context);
+        super(context, SpringWebserviceEndpoint.class);
     }
 
     @Deprecated
@@ -83,8 +83,13 @@ public class SpringWebserviceComponent extends DefaultComponent {
             } else {
                 addEndpointMappingToConfiguration(parameters, configuration);
             }
-            configuration.setEndpointMappingKey(new EndpointMappingKey(type, lookupKey, 
-                type.equals(EndpointMappingType.XPATHRESULT) ? getXPathExpressionFromParameters(parameters) : null));
+            XPathExpression xPathExpression = null;
+            if (type.equals(EndpointMappingType.XPATHRESULT)) {
+                String expression = getAndRemoveParameter(parameters, "expression", String.class);
+                configuration.setExpression(expression);
+                xPathExpression = createXPathExpression(expression);
+            }
+            configuration.setEndpointMappingKey(new EndpointMappingKey(type, lookupKey, xPathExpression));
         }
     }
 
@@ -104,7 +109,9 @@ public class SpringWebserviceComponent extends DefaultComponent {
                     "messageFactory", WebServiceMessageFactory.class, null);
 
             if (webServiceTemplate.getDefaultUri() == null) {
-                webServiceTemplate.setDefaultUri(webServiceEndpointUri.toString());
+                String uri = webServiceEndpointUri.toString();
+                webServiceTemplate.setDefaultUri(uri);
+                configuration.setWebServiceEndpointUri(uri);
             }
             if (messageSender != null) {
                 webServiceTemplate.setMessageSender(messageSender);
@@ -122,8 +129,7 @@ public class SpringWebserviceComponent extends DefaultComponent {
         return SpringWebserviceConfiguration.decode(lookupKey);
     }
 
-    private XPathExpression getXPathExpressionFromParameters(Map<String, Object> parameters) {
-        String xpathExpression = getAndRemoveParameter(parameters, "expression", String.class);
+    private XPathExpression createXPathExpression(String xpathExpression) {
         if (xpathExpression == null) {
             throw new RuntimeCamelException("Expression parameter is required when using XPath endpoint mapping");
         }

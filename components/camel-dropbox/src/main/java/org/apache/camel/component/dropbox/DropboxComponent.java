@@ -23,13 +23,17 @@ import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxPropertyManager;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DropboxComponent extends DefaultComponent {
+public class DropboxComponent extends UriEndpointComponent {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxComponent.class);
+
+    public DropboxComponent() {
+        super(DropboxEndpoint.class);
+    }
 
     /**
      * Create a camel endpoint after passing validation on the incoming url.
@@ -63,8 +67,6 @@ public class DropboxComponent extends DefaultComponent {
 
         // and then override from parameters
         setProperties(configuration, parameters);
-
-        LOG.info("dropbox configuration set!");
 
         Endpoint endpoint = new DropboxEndpoint(uri, this, configuration);
         return endpoint;

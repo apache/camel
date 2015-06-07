@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -32,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The <a href="http://camel.apache.org/properties">properties</a> component.
+ * The <a href="http://camel.apache.org/properties">Properties Component</a> allows you to use property placeholders when defining Endpoint URIs
  *
  * @version 
  */
@@ -70,10 +71,12 @@ public class PropertiesComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
-    private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
-    private PropertiesParser propertiesParser = new DefaultPropertiesParser();
+    private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
+    private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
+    private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private String[] locations;
     private boolean ignoreMissingLocation;
+    private String encoding;
     private boolean cache = true;
     private String propertyPrefix;
     private String propertyPrefixResolved;
@@ -82,16 +85,23 @@ public class PropertiesComponent extends DefaultComponent {
     private boolean fallbackToUnaugmentedProperty = true;
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
+    private Properties initialProperties;
     private Properties overrideProperties;
-    
+
     public PropertiesComponent() {
+        // include out of the box functions
+        addFunction(new EnvPropertiesFunction());
+        addFunction(new SysPropertiesFunction());
+        addFunction(new ServicePropertiesFunction());
     }
     
     public PropertiesComponent(String location) {
+        this();
         setLocation(location);
     }
 
     public PropertiesComponent(String... locations) {
+        this();
         setLocations(locations);
     }
 
@@ -120,7 +130,14 @@ public class PropertiesComponent extends DefaultComponent {
     }
 
     public String parseUri(String uri, String... paths) throws Exception {
-        Properties prop = null;
+        Properties prop = new Properties();
+
+        // use initial properties
+        if (null != initialProperties) {
+            prop.putAll(initialProperties);
+        }
+
+        // use locations
         if (paths != null) {
             // location may contain JVM system property or OS environment variables
             // so we need to parse those
@@ -128,17 +145,18 @@ public class PropertiesComponent extends DefaultComponent {
 
             // check cache first
             CacheKey key = new CacheKey(locations);
-            prop = cache ? cacheMap.get(key) : null;
-            if (prop == null) {
-                prop = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
+            Properties locationsProp = cache ? cacheMap.get(key) : null;
+            if (locationsProp == null) {
+                locationsProp = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
                 if (cache) {
-                    cacheMap.put(key, prop);
+                    cacheMap.put(key, locationsProp);
                 }
             }
+            prop.putAll(locationsProp);
         }
 
         // use override properties
-        if (prop != null && overrideProperties != null) {
+        if (overrideProperties != null) {
             // make a copy to avoid affecting the original properties
             Properties override = new Properties();
             override.putAll(prop);
@@ -164,16 +182,46 @@ public class PropertiesComponent extends DefaultComponent {
         }
     }
 
+    /**
+     * Is this component created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
+     */
+    public boolean isDefaultCreated() {
+        return locations == null;
+    }
+
     public String[] getLocations() {
         return locations;
     }
 
     public void setLocations(String[] locations) {
+        // make sure to trim as people may use new lines when configuring using XML
+        // and do this in the setter as Spring/Blueprint resolves placeholders before Camel is being started
+        if (locations != null && locations.length > 0) {
+            for (int i = 0; i < locations.length; i++) {
+                String loc = locations[i];
+                locations[i] = loc.trim();
+            }
+        }
+
         this.locations = locations;
     }
 
     public void setLocation(String location) {
         setLocations(location.split(","));
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    /**
+     * Encoding to use when loading properties file from the file system or classpath.
+     * <p/>
+     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
+     * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     */
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     public PropertiesResolver getPropertiesResolver() {
@@ -272,6 +320,19 @@ public class PropertiesComponent extends DefaultComponent {
         }
     }
 
+    public Properties getInitialProperties() {
+        return initialProperties;
+    }
+
+    /**
+     * Sets initial properties which will be used before any locations are resolved.
+     *
+     * @param initialProperties properties that are added first
+     */
+    public void setInitialProperties(Properties initialProperties) {
+        this.initialProperties = initialProperties;
+    }
+
     public Properties getOverrideProperties() {
         return overrideProperties;
     }
@@ -284,6 +345,37 @@ public class PropertiesComponent extends DefaultComponent {
      */
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
+    }
+
+    /**
+     * Gets the functions registered in this properties component.
+     */
+    public Map<String, PropertiesFunction> getFunctions() {
+        return functions;
+    }
+
+    /**
+     * Registers the {@link org.apache.camel.component.properties.PropertiesFunction} as a function to this component.
+     */
+    public void addFunction(PropertiesFunction function) {
+        this.functions.put(function.getName(), function);
+    }
+
+    /**
+     * Is there a {@link org.apache.camel.component.properties.PropertiesFunction} with the given name?
+     */
+    public boolean hasFunction(String name) {
+        return functions.containsKey(name);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // inject the component to the parser
+        if (propertiesParser instanceof DefaultPropertiesParser) {
+            ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
+        }
     }
 
     @Override

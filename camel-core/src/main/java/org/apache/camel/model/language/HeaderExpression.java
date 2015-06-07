@@ -20,11 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
 /**
- * An expression which extracts the named header
+ * An expression which extracts the named exchange header
  *
  * @version 
  */
+@Metadata(label = "language", title = "Header")
 @XmlRootElement(name = "header")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HeaderExpression extends ExpressionDefinition {

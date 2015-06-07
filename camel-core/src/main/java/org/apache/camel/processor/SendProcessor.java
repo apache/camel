@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import org.apache.camel.AsyncCallback;
@@ -23,6 +24,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducerCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
@@ -30,9 +32,11 @@ import org.apache.camel.ServicePoolAware;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -46,35 +50,45 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware, IdAware {
     protected static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
     protected final CamelContext camelContext;
     protected final ExchangePattern pattern;
     protected ProducerCache producerCache;
     protected AsyncProcessor producer;
     protected Endpoint destination;
-    protected final boolean unhandleException;
+    protected ExchangePattern destinationExchangePattern;
+    protected String id;
 
     public SendProcessor(Endpoint destination) {
         this(destination, null);
     }
 
     public SendProcessor(Endpoint destination, ExchangePattern pattern) {
-        this(destination, pattern, false);
-    }
-    
-    public SendProcessor(Endpoint destination, ExchangePattern pattern, boolean unhandleException) {
         ObjectHelper.notNull(destination, "destination");
         this.destination = destination;
         this.camelContext = destination.getCamelContext();
         this.pattern = pattern;
-        this.unhandleException = unhandleException;
+        try {
+            this.destinationExchangePattern = null;
+            this.destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(destination.getEndpointUri());
+        } catch (URISyntaxException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         ObjectHelper.notNull(this.camelContext, "camelContext");
     }
 
     @Override
     public String toString() {
         return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
@@ -87,7 +101,12 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     public String getTraceLabel() {
         return URISupport.sanitizeUri(destination.getEndpointUri());
     }
-    
+
+    @Override
+    public Endpoint getEndpoint() {
+        return destination;
+    }
+
     public void process(final Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
@@ -127,17 +146,13 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
                             long timeTaken = watch.stop();
                             EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
                         } finally {
-                            checkException(target);
                             callback.done(doneSync);
                         }
                     }
                 });
             } catch (Throwable throwable) {
-                if (exchange != null) {
-                    exchange.setException(throwable);
-                    checkException(exchange);
-                }
-
+                exchange.setException(throwable);
+                callback.done(sync);
             }
 
             return sync;
@@ -153,7 +168,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
                     public void done(boolean doneSync) {
                         // restore previous MEP
                         target.setPattern(existingPattern);
-                        checkException(target);
                         // signal we are done
                         callback.done(doneSync);
                     }
@@ -162,15 +176,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         });
     }
     
-    protected void checkException(Exchange exchange) {
-        if (unhandleException && exchange.getException() != null) {
-            // Override the default setting of DeadLetterChannel
-            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, "false");
-            // just override the exception with the new added
-            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
-        }
-    }
-
     public Endpoint getDestination() {
         return destination;
     }
@@ -180,7 +185,10 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     }
 
     protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {
-        if (pattern != null) {
+        // destination exchange pattern overrides pattern
+        if (destinationExchangePattern != null) {
+            exchange.setPattern(destinationExchangePattern);
+        } else if (pattern != null) {
             exchange.setPattern(pattern);
         }
         // set property which endpoint we send to

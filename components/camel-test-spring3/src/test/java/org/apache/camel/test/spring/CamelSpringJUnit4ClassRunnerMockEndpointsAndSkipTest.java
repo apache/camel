@@ -26,7 +26,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@MockEndpointsAndSkip("seda:*")
+@MockEndpointsAndSkip("{{mock.skip}}")
 public class CamelSpringJUnit4ClassRunnerMockEndpointsAndSkipTest
         extends CamelSpringJUnit4ClassRunnerPlainTest {
 

@@ -63,7 +63,7 @@ public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
                 from("direct:start")
                     .to("xslt:org/apache/camel/component/xslt/transform.xsl") 
                     .multicast()
-                        .beanRef("testBean")
+                        .bean("testBean")
                         .to("mock:result");
             }
         };

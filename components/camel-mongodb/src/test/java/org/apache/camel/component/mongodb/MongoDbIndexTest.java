@@ -26,6 +26,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MongoDbIndexTest extends AbstractMongoDbTest {
@@ -149,6 +150,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
     }
 
+    @Ignore
     @Test
     public void testInsertAutoCreateCollectionAndURIIndex() {
         assertEquals(0, testCollection.count());

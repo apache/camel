@@ -50,6 +50,26 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
     }
 
     @Test
+    public void testMarshalAndUnmarshalMapWithPrettyPrint() throws Exception {
+        Map<String, Object> in = new HashMap<String, Object>();
+        in.put("name", "Camel");
+
+        MockEndpoint mock = getMockEndpoint("mock:reverse");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(Map.class);
+        mock.message(0).body().equals(in);
+
+        Object marshalled = template.requestBody("direct:inPretty", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        String expected = String.format("{%s  \"name\" : \"Camel\"%s}", LS, LS);
+        assertEquals(expected, marshalledAsString);
+
+        template.sendBody("direct:back", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     public void testMarshalAndUnmarshalPojo() throws Exception {
         TestPojo in = new TestPojo();
         in.setName("Camel");

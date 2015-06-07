@@ -17,10 +17,9 @@
 package org.apache.camel.component.websocket;
 
 import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
-
+import com.ning.http.client.ws.WebSocket;
+import com.ning.http.client.ws.WebSocketListener;
+import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -45,16 +44,7 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
             new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketTextListener() {
-                    @Override
-                    public void onMessage(String message) {
-                        
-                    }
-
-                    @Override
-                    public void onFragment(String fragment, boolean last) {
-                    }
-
+                .addWebSocketListener(new WebSocketListener() {
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }
@@ -68,14 +58,47 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
                         t.printStackTrace();
                     }
                 }).build()).get();
-        
+
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Test");
 
-        websocket.sendTextMessage("Test");
+        websocket.sendMessage("Test");
 
         result.assertIsSatisfied();
         
+        websocket.close();
+        c.close();
+    }
+
+    @Test
+    public void testWSBytesHttpCall() throws Exception {
+        AsyncHttpClient c = new AsyncHttpClient();
+
+        WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
+            new WebSocketUpgradeHandler.Builder()
+                .addWebSocketListener(new WebSocketListener() {
+                    @Override
+                    public void onOpen(WebSocket websocket) {
+                    }
+
+                    @Override
+                    public void onClose(WebSocket websocket) {
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        t.printStackTrace();
+                    }
+                }).build()).get();
+
+        MockEndpoint result = getMockEndpoint("mock:result");
+        final byte[] testmessage = "Test".getBytes("utf-8");
+        result.expectedBodiesReceived(testmessage);
+
+        websocket.sendMessage(testmessage);
+
+        result.assertIsSatisfied();
+
         websocket.close();
         c.close();
     }

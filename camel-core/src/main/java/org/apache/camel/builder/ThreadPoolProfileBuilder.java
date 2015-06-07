@@ -72,20 +72,23 @@ public class ThreadPoolProfileBuilder {
         return this;
     }
 
+    public ThreadPoolProfileBuilder allowCoreThreadTimeOut(Boolean allowCoreThreadTimeOut) {
+        profile.setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
+        return this;
+    }
+
     public ThreadPoolProfileBuilder rejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
         profile.setRejectedPolicy(rejectedPolicy);
         return this;
     }
 
     /**
-     * Builds the new thread pool
+     * Builds the thread pool profile
      * 
-     * @return the created thread pool
-     * @throws Exception is thrown if error building the thread pool
+     * @return the thread pool profile
      */
     public ThreadPoolProfile build() {
         return profile;
     }
-
 
 }

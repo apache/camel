@@ -27,39 +27,35 @@ import org.apache.camel.support.TypeConverterSupport;
 /**
  * A simple converter that can convert any object to a String type by using the
  * toString() method of the object.
- *
- * @version 
  */
 public class ToStringTypeConverter extends TypeConverterSupport {
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T convertTo(Class<T> toType, Exchange exchange, Object value) {
-        if (value != null) {
 
-            // should not try to convert Message
-            if (Message.class.isAssignableFrom(value.getClass())) {
-                return (T) Void.TYPE;
-            }
+        // should not try to convert Message
+        if (Message.class.isAssignableFrom(value.getClass())) {
+            return (T) Void.TYPE;
+        }
 
-            // should not try to convert future
-            if (Future.class.isAssignableFrom(value.getClass())) {
-                return (T) Void.TYPE;
-            }
+        // should not try to convert future
+        if (Future.class.isAssignableFrom(value.getClass())) {
+            return (T) Void.TYPE;
+        }
 
-            // should not try to convert bean invocations
-            if (BeanInvocation.class.isAssignableFrom(value.getClass())) {
-                return (T) Void.TYPE;
-            }
+        // should not try to convert bean invocations
+        if (BeanInvocation.class.isAssignableFrom(value.getClass())) {
+            return (T) Void.TYPE;
+        }
 
-            // should not try to convert files
-            if (WrappedFile.class.isAssignableFrom(value.getClass())) {
-                return (T) Void.TYPE;
-            }
+        // should not try to convert files
+        if (WrappedFile.class.isAssignableFrom(value.getClass())) {
+            return (T) Void.TYPE;
+        }
 
-            if (toType.equals(String.class)) {
-                return (T)value.toString();
-            }
+        if (toType.equals(String.class)) {
+            return (T) value.toString();
         }
         return null;
     }

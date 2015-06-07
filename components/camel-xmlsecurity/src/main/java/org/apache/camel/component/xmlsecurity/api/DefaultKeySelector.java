@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xmlsecurity.api;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -30,16 +32,23 @@ import javax.xml.crypto.KeySelectorResult;
 import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+
 /**
  * Default implementation for the key selector. The key is read from a key-store
  * for a given alias. Depending on the purpose a private or public key is
  * returned.
  */
-public class DefaultKeySelector extends KeySelector {
+public class DefaultKeySelector extends KeySelector implements CamelContextAware {
 
     private final KeyStoreAndAlias keyStoreAndAlias = new KeyStoreAndAlias();
 
     private KeySelectorResult nullKeyResult;
+    
+    private CamelContext context;
 
     public void setKeyStore(KeyStore keyStore) {
         keyStoreAndAlias.setKeyStore(keyStore);
@@ -53,12 +62,19 @@ public class DefaultKeySelector extends KeySelector {
         if (password == null) {
             keyStoreAndAlias.setPassword(null);
         } else {
-            keyStoreAndAlias.setPassword(password.toCharArray());
+            setPassword(password.toCharArray());
         }
     }
 
     public void setPassword(char[] password) {
         keyStoreAndAlias.setPassword(password);
+    }
+    
+    public void setKeyStoreParameters(KeyStoreParameters parameters) 
+        throws GeneralSecurityException, IOException {
+        if (parameters != null) {
+            keyStoreAndAlias.setKeyStore(parameters.createKeyStore());
+        }
     }
 
     public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
@@ -88,7 +104,19 @@ public class DefaultKeySelector extends KeySelector {
             }
             Key key;
             try {
-                key = keyStoreAndAlias.getKeyStore().getKey(keyStoreAndAlias.getAlias(), keyStoreAndAlias.getPassword());
+                if (this.getCamelContext() != null && keyStoreAndAlias.getPassword() != null) {
+                    try {
+                        String passwordProperty = 
+                            this.getCamelContext().resolvePropertyPlaceholders(
+                                new String(keyStoreAndAlias.getPassword()));
+                        key = keyStoreAndAlias.getKeyStore().getKey(keyStoreAndAlias.getAlias(), passwordProperty.toCharArray());
+                    } catch (Exception e) {
+                        throw new RuntimeCamelException("Error parsing property value: " 
+                            + new String(keyStoreAndAlias.getPassword()), e);
+                    }
+                } else {
+                    key = keyStoreAndAlias.getKeyStore().getKey(keyStoreAndAlias.getAlias(), keyStoreAndAlias.getPassword());
+                }
             } catch (UnrecoverableKeyException e) {
                 throw new KeySelectorException(e);
             } catch (KeyStoreException e) {
@@ -127,6 +155,16 @@ public class DefaultKeySelector extends KeySelector {
             };
         }
         return nullKeyResult;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return context;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext context) {
+        this.context = context;
     }
 
 }

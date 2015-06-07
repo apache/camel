@@ -81,7 +81,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                             documentString = ECHO_RESPONSE;
                             checkRequest("ECHO_REQUEST", request);
                         }
-                        Document outDocument = converter.toDOMDocument(documentString);
+                        Document outDocument = converter.toDOMDocument(documentString, exchange);
                         outElements.add(new DOMSource(outDocument.getDocumentElement()));
                         // set the payload header with null
                         CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements, null);

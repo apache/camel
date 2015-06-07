@@ -27,7 +27,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
 public class CdiPropertiesComponent extends PropertiesComponent {
 
     public CdiPropertiesComponent() {
-        setPropertiesParser(new CdiPropertiesParser());
+        setPropertiesParser(new CdiPropertiesParser(this));
     }
 
 }

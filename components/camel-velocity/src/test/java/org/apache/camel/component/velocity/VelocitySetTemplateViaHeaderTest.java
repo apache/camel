@@ -40,16 +40,16 @@ public class VelocitySetTemplateViaHeaderTest extends CamelTestSupport {
     public void testVelocityLetter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Dear Ibsen, Claus\n\nThanks for the order of Camel in Action.\n\nRegards Camel Riders Bookstore\nPS: Next beer is on me, James");
+        mock.message(0).body(String.class).contains("Thanks for the order of Camel in Action");
 
         template.send("direct:a", createLetter("org/apache/camel/component/velocity/letter.vm"));
 
         mock.assertIsSatisfied();
         
         mock.reset();
-        
+
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Dear Ibsen, Claus\n\nThanks for the order of Camel in Action.\n\nRegards Apache Camel Riders Bookstore\nPS: Next beer is on me, James");
+        mock.message(0).body(String.class).contains("Regards Apache Camel Riders Bookstore");
 
         template.send("direct:a", createLetter("org/apache/camel/component/velocity/letter2.vm"));
 

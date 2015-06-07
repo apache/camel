@@ -20,6 +20,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.ServiceHelper;
@@ -31,7 +32,7 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version 
  */
-public class ProcessorPollingConsumer extends PollingConsumerSupport {
+public class ProcessorPollingConsumer extends PollingConsumerSupport implements IsSingleton {
     private final Processor processor;
 
     public ProcessorPollingConsumer(Endpoint endpoint, Processor processor) {
@@ -69,4 +70,10 @@ public class ProcessorPollingConsumer extends PollingConsumerSupport {
     public Exchange receive(long timeout) {
         return receive();
     }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+    
 }

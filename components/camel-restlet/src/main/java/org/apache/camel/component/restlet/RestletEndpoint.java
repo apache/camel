@@ -27,7 +27,12 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.data.Method;
 
 /**
@@ -35,6 +40,7 @@ import org.restlet.data.Method;
  *
  * @version 
  */
+@UriEndpoint(scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern", consumerClass = RestletConsumer.class, label = "http,rest")
 public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final int DEFAULT_PORT = 80;
@@ -43,28 +49,36 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private static final int DEFAULT_SOCKET_TIMEOUT = 30000;
     private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
 
-    private Method restletMethod = Method.GET;
-
-    // Optional and for consumer only. This allows a single route to service multiple methods.
-    // If it is non-null then restletMethod is ignored.
-    private Method[] restletMethods;
-
+    @UriPath(enums = "http,https") @Metadata(required = "true")
     private String protocol = DEFAULT_PROTOCOL;
+    @UriPath @Metadata(required = "true")
     private String host = DEFAULT_HOST;
+    @UriPath(defaultValue = "80") @Metadata(required = "true")
     private int port = DEFAULT_PORT;
-    private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
-    private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
+    @UriPath @Metadata(required = "true")
     private String uriPattern;
-
-    // Optional and for consumer only. This allows a single route to service multiple URI patterns.
-    // The URI pattern defined in the endpoint will still be honored.
+    @UriParam(label = "producer", defaultValue = "" + DEFAULT_SOCKET_TIMEOUT)
+    private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
+    @UriParam(label = "producer", defaultValue = "" + DEFAULT_CONNECT_TIMEOUT)
+    private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
+    @UriParam(defaultValue = "GET")
+    private Method restletMethod = Method.GET;
+    @UriParam(label = "consumer")
+    private Method[] restletMethods;
+    @UriParam(label = "consumer")
     private List<String> restletUriPatterns;
-
+    @UriParam
     private Map<String, String> restletRealm;
+    @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
+    @UriParam
     private RestletBinding restletBinding;
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
+    @UriParam
     private boolean disableStreamCache;
+    @UriParam
+    private SSLContextParameters sslContextParameters;
 
     public RestletEndpoint(RestletComponent component, String remaining) throws Exception {
         super(remaining, component);
@@ -111,6 +125,10 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return restletMethod;
     }
 
+    /**
+     * On a producer endpoint, specifies the request method to use.
+     * On a consumer endpoint, specifies that the endpoint consumes only restletMethod requests.
+     */
     public void setRestletMethod(Method restletMethod) {
         this.restletMethod = restletMethod;
     }
@@ -119,6 +137,9 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return protocol;
     }
 
+    /**
+     * The protocol to use which is http or https
+     */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
@@ -127,6 +148,9 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return host;
     }
 
+    /**
+     * The hostname of the restlet service
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -135,6 +159,9 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return port;
     }
 
+    /**
+     * The port number of the restlet service
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -143,6 +170,9 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return socketTimeout;
     }
 
+    /**
+     * The Client socket receive timeout, 0 for unlimited wait.
+     */
     public void setSocketTimeout(int socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
@@ -151,6 +181,9 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return connectTimeout;
     }
 
+    /**
+     * The Client will give up connection if the connection is timeout, 0 for unlimited wait.
+     */
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
@@ -159,6 +192,9 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return uriPattern;
     }
 
+    /**
+     * The resource pattern such as /customer/{id}
+     */
     public void setUriPattern(String uriPattern) {
         this.uriPattern = uriPattern;
     }
@@ -167,10 +203,16 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return restletBinding;
     }
 
+    /**
+     * To use a custom RestletBinding to bind between Restlet and Camel message.
+     */
     public void setRestletBinding(RestletBinding restletBinding) {
         this.restletBinding = restletBinding;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
         if (restletBinding instanceof HeaderFilterStrategyAware) {
@@ -182,6 +224,9 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return headerFilterStrategy;
     }
 
+    /**
+     * To configure the security realms of restlet as a map.
+     */
     public void setRestletRealm(Map<String, String> restletRealm) {
         this.restletRealm = restletRealm;
     }
@@ -196,6 +241,10 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return ExchangePattern.InOut;
     }
 
+    /**
+     * Specify one or more methods separated by commas (e.g. restletMethods=post,put) to be serviced by a restlet consumer endpoint.
+     * If both restletMethod and restletMethods options are specified, the restletMethod setting is ignored.
+     */
     public void setRestletMethods(Method[] restletMethods) {
         this.restletMethods = restletMethods;
     }
@@ -204,6 +253,11 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return restletMethods;
     }
 
+    /**
+     * Specify one ore more URI templates to be serviced by a restlet consumer endpoint, using the # notation to
+     * reference a List<String> in the Camel Registry.
+     * If a URI pattern has been defined in the endpoint URI, both the URI pattern defined in the endpoint and the restletUriPatterns option will be honored.
+     */
     public void setRestletUriPatterns(List<String> restletUriPatterns) {
         this.restletUriPatterns = restletUriPatterns;
     }
@@ -216,6 +270,10 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return throwExceptionOnFailure;
     }
 
+    /**
+     * Whether to throw exception on a producer failure. If this option is false then the http status code is set as a message header which
+     * can be checked if it has an error value.
+     */
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
@@ -224,8 +282,28 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return disableStreamCache;
     }
 
+    /**
+     * Determines whether or not the raw input stream from Restlet is cached or not
+     * (Camel will read the stream into a in memory/overflow to file, Stream caching) cache.
+     * By default Camel will cache the Restlet input stream to support reading it multiple times to ensure Camel
+     * can retrieve all data from the stream. However you can set this option to true when you for example need
+     * to access the raw stream, such as streaming it directly to a file or other persistent store.
+     * DefaultRestletBinding will copy the request input stream into a stream cache and put it into message body
+     * if this option is false to support reading the stream multiple times.
+     */
     public void setDisableStreamCache(boolean disableStreamCache) {
         this.disableStreamCache = disableStreamCache;
+    }
+    
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters.
+     */
+    public void setSslContextParameters(SSLContextParameters scp) {
+        this.sslContextParameters = scp;
     }
 
     // Update the endpointUri with the restlet method information

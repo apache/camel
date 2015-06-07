@@ -21,7 +21,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>2.15-SNAPSHOT</version>
+        <version>2.16-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-dozer</artifactId>
@@ -30,7 +30,10 @@
     <description>Camel Support for the Dozer type conversion framework</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.converter.dozer.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>
+            org.apache.camel.converter.dozer.*,
+            org.apache.camel.component.dozer.*
+        </camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
@@ -43,9 +46,14 @@
             <artifactId>dozer</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring</artifactId>
-            <scope>test</scope>
+          <groupId>javax.el</groupId>
+          <artifactId>javax.el-api</artifactId>
+          <version>${javax.el-api-version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.glassfish.web</groupId>
+          <artifactId>javax.el</artifactId>
+          <version>${javax.el-version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -57,7 +65,21 @@
           <artifactId>slf4j-log4j12</artifactId>
           <scope>test</scope>
         </dependency>
-
+	    <dependency>
+	      <groupId>org.apache.camel</groupId>
+	      <artifactId>camel-test-spring</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.apache.camel</groupId>
+	      <artifactId>camel-jaxb</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.apache.camel</groupId>
+	      <artifactId>camel-jackson</artifactId>
+	      <scope>test</scope>
+	    </dependency>
     </dependencies>
 
 </project>

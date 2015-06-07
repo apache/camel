@@ -269,15 +269,17 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         String query = URISupport.createQueryString(map);
 
         String url = "netty-http:%s://%s:%s/%s?httpMethodRestrict=%s";
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
-
+        
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-
         // get the endpoint
         url = String.format(url, scheme, host, port, path, restrict);
+        
+        if (!query.isEmpty()) {
+            url = url + "&" + query;
+        }
+
+        
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
         setProperties(endpoint, parameters);
 

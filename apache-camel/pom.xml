@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.16-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -69,6 +69,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-atmos</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-atmosphere-websocket</artifactId>
     </dependency>
     <dependency>
@@ -97,6 +101,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-beanstalk</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-bean-validator</artifactId>
     </dependency>
     <dependency>
@@ -117,7 +125,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-boon</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-cache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cassandraql</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -126,6 +142,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cdi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-chunk</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -168,6 +188,10 @@
       <artifactId>camel-dns</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-docker</artifactId>
+    </dependency>
+     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-dozer</artifactId>
     </dependency>
@@ -221,11 +245,27 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ganglia</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-geocoder</artifactId>
+    </dependency>
+     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-github</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-google-calendar</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-google-drive</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-google-mail</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -277,6 +317,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-hipchat</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-hl7</artifactId>
     </dependency>
     <dependency>
@@ -325,7 +369,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty</artifactId>
+      <artifactId>camel-jetty-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty8</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty9</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -338,6 +390,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jira</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -396,6 +452,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-kura</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-lucene</artifactId>
     </dependency>
     <dependency>
@@ -407,11 +467,11 @@
       <artifactId>camel-leveldb</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel.component.linkedin</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel.component.linkedin</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin</artifactId>
     </dependency>
     <dependency>
@@ -479,11 +539,11 @@
       <artifactId>camel-ognl</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel.component.olingo2</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-olingo2-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel.component.olingo2</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-olingo2</artifactId>
     </dependency>
     <dependency>
@@ -496,7 +556,19 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-paho</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-paxlogging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-pdf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-pgevent</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -568,6 +640,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-scr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-script</artifactId>
     </dependency>
     <dependency>
@@ -589,6 +665,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-sjms</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-slack</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -700,11 +780,19 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-spring40</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-testng</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-twitter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-univocity-parsers</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -763,7 +851,19 @@
       <artifactId>camel-zookeeper</artifactId>
     </dependency>
 
-    <!-- camel karaf -->
+    <!-- camel catalog and commands -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-commands-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-commands-jolokia</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>
       <artifactId>camel-karaf-commands</artifactId>
@@ -781,10 +881,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-example-cxf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-docs</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -894,7 +990,7 @@
                   </descriptors>
                   <finalName>${project.artifactId}-${project.version}</finalName>
                   <appendAssemblyId>false</appendAssemblyId>
-	          <tarLongFileMode>gnu</tarLongFileMode>
+                  <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
               </execution>
               <execution>
@@ -914,24 +1010,5 @@
           </plugin>
         </plugins>
       </build>
-
-  <reporting>
-    <plugins>
-      <!-- let's generate nice PNG / SVG diagrams from our routes -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <reportSets>
-          <reportSet>
-            <configuration />
-            <reports>
-              <report>converters-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>
 
 </project>

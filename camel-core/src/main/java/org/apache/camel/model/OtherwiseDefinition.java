@@ -22,14 +22,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * Represents an XML &lt;otherwise/&gt; element
+ * Route to be executed when all other choices evaluate to <tt>false</tt>
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
@@ -45,11 +47,6 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return this.createChildProcessor(routeContext, false);
-    }
-
-    @Override
-    public String getShortName() {
-        return "otherwise";
     }
 
     @Override

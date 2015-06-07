@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -24,17 +25,23 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +50,9 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
+    private String id;
     private final Endpoint destination;
     private final Processor processor;
     private final ExchangePattern exchangePattern;
@@ -78,29 +86,56 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         return "wireTap(" + destination + ")";
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Endpoint getEndpoint() {
+        return destination;
+    }
+
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    public boolean process(Exchange exchange, final AsyncCallback callback) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
             throw new IllegalStateException("WireTapProcessor has not been started: " + this);
         }
 
         // must configure the wire tap beforehand
-        final Exchange wireTapExchange = configureExchange(exchange, exchangePattern);
+        Exchange target;
+        try {
+            target = configureExchange(exchange, exchangePattern);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
+
+        final Exchange wireTapExchange = target;
 
         // send the exchange to the destination using an executor service
         executorService.submit(new Callable<Exchange>() {
             public Exchange call() throws Exception {
+                final StopWatch watch = new StopWatch();
                 try {
+                    EventHelper.notifyExchangeSending(wireTapExchange.getContext(), wireTapExchange, destination);
                     LOG.debug(">>>> (wiretap) {} {}", destination, wireTapExchange);
                     processor.process(wireTapExchange);
                 } catch (Throwable e) {
                     LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + destination + ". This exception will be ignored.", e);
+                } finally {
+                    // emit event that the exchange was sent to the endpoint
+                    long timeTaken = watch.stop();
+                    EventHelper.notifyExchangeSent(wireTapExchange.getContext(), wireTapExchange, destination, timeTaken);
                 }
                 return wireTapExchange;
-            };
+            }
         });
 
         // continue routing this synchronously
@@ -109,7 +144,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
 
-    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {
+    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) throws IOException {
         Exchange answer;
         if (copy) {
             // use a copy of the original exchange
@@ -137,6 +172,17 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
+            }
+        }
+
+        // if the body is a stream cache we must use a copy of the stream in the wire tapped exchange
+        Message msg = answer.hasOut() ? answer.getOut() : answer.getIn();
+        if (msg.getBody() instanceof StreamCache) {
+            // in parallel processing case, the stream must be copied, therefore get the stream
+            StreamCache cache = (StreamCache) msg.getBody();
+            StreamCache copied = cache.copy(answer);
+            if (copied != null) {
+                msg.setBody(copied);
             }
         }
 

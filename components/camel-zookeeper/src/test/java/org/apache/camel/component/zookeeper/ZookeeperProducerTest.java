@@ -92,18 +92,6 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
     }
 
     @Test
-    public void setUsingNodeFromHeader() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:consumed-from-set-node");
-        mock.expectedMessageCount(1);
-
-        Exchange e = createExchangeWithBody(testPayload);
-        e.setPattern(ExchangePattern.InOut);
-        template.sendBodyAndHeader("direct:node-from-header", e, ZOOKEEPER_NODE, "/set");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
     public void setUsingCreateModeFromHeader() throws Exception {
         client.createPersistent("/modes-test", "parent for modes");
         for (CreateMode mode : CreateMode.values()) {

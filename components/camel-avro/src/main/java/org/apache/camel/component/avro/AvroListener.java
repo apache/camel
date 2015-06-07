@@ -69,9 +69,9 @@ public class AvroListener {
         }
 
 
-        if (AVRO_HTTP_TRANSPORT.equalsIgnoreCase(configuration.getTransport())) {
+        if (AVRO_HTTP_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
             server = new HttpServer(responder, configuration.getPort());
-        } else if (AVRO_NETTY_TRANSPORT.equalsIgnoreCase(configuration.getTransport())) {
+        } else if (AVRO_NETTY_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
             server = new NettyServer(responder, new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else {
             throw new IllegalArgumentException("Unknown transport " + configuration.getTransport());

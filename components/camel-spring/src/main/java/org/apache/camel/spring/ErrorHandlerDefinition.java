@@ -38,6 +38,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private String deadLetterUri;
     @XmlAttribute
+    private String deadLetterHandleNewException;
+    @XmlAttribute
     private LoggingLevel level;
     @XmlAttribute
     private LoggingLevel rollbackLoggingLevel;
@@ -51,6 +53,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     private String transactionManagerRef;
     @XmlAttribute
     private String onRedeliveryRef;
+    @XmlAttribute
+    private String onPrepareFailureRef;
     @XmlAttribute
     private String retryWhileRef;
     @XmlAttribute

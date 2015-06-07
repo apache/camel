@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * The <a href="http://camel.apache.org/controlbus.html">control bus</a> component.
+ * The <a href="http://camel.apache.org/controlbus.html">Control Bus component</a> allows sending messages to a control-bus endpoint to control the lifecycle of routes.
  */
 public class ControlBusComponent extends UriEndpointComponent {
 
@@ -40,11 +40,7 @@ public class ControlBusComponent extends UriEndpointComponent {
         // does the control bus use a language
         if (remaining != null && remaining.startsWith("language:")) {
             String lan = remaining.substring(9);
-            if (lan != null) {
-                answer.setLanguage(getCamelContext().resolveLanguage(lan));
-            } else {
-                throw new IllegalArgumentException("Language must be configured in endpoint uri: " + uri);
-            }
+            answer.setLanguage(getCamelContext().resolveLanguage(lan));
         }
 
         setProperties(answer, parameters);

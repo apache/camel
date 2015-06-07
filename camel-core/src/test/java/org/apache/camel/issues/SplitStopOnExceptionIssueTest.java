@@ -28,7 +28,7 @@ public class SplitStopOnExceptionIssueTest extends ContextTestSupport {
 
     public void testSplit() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived("Hello", "World", "Kaboom");
-        getMockEndpoint("mock:line").allMessages().property("foo").isEqualTo("changed");
+        getMockEndpoint("mock:line").allMessages().exchangeProperty("foo").isEqualTo("changed");
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

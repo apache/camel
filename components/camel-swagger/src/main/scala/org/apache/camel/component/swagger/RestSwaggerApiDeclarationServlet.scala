@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.swagger
 
+import java.net.URL
 import javax.servlet.http.{HttpServlet, HttpServletResponse, HttpServletRequest}
 import javax.servlet.ServletConfig
 
@@ -24,8 +25,10 @@ import com.wordnik.swagger.core.util.JsonSerializer
 import com.wordnik.swagger.config.{SwaggerConfig, ConfigFactory, FilterFactory}
 import com.wordnik.swagger.model.{ApiInfo, ResourceListing, ApiListingReference}
 
-import org.apache.camel.CamelContext
+import org.apache.camel.model.rest.RestDefinition
 import org.slf4j.LoggerFactory
+
+import scala.collection.mutable
 
 /**
  * A Http Servlet to expose the REST services as Swagger APIs.
@@ -35,9 +38,10 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
   private val LOG = LoggerFactory.getLogger(classOf[RestSwaggerApiDeclarationServlet])
 
   val reader = new RestSwaggerReader()
-  var camel: CamelContext = null
+  var camelId: String = null
   val swaggerConfig: SwaggerConfig = ConfigFactory.config
   var cors: Boolean = false
+  var initDone: Boolean = false
 
   override def init(config: ServletConfig): Unit = {
     super.init(config)
@@ -63,6 +67,10 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
     if (s != null) {
       cors = "true".equalsIgnoreCase(s)
     }
+    s = config.getInitParameter("camelId")
+    if (s != null) {
+      camelId = s
+    }
 
     val title = config.getInitParameter("api.title")
     val description = config.getInitParameter("api.description")
@@ -73,22 +81,15 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
 
     val apiInfo = new ApiInfo(title, description, termsOfServiceUrl, contact, license, licenseUrl)
     swaggerConfig.setApiInfo(apiInfo)
-
-    camel = lookupCamelContext(config)
-    if (camel == null) {
-      LOG.warn("Cannot find CamelContext to be used.")
-    }
   }
 
-  /**
-   * Used for implementations to lookup the CamelContext to be used.
-   *
-   * @param config  the servlet config
-   * @return the CamelContext to use, or <tt>null</tt> if no CamelContext was found
-   */
-  def lookupCamelContext(config: ServletConfig) : CamelContext
+  def getRestDefinitions(camelId: String) : mutable.Buffer[RestDefinition]
 
   override protected def doGet(request: HttpServletRequest, response: HttpServletResponse) = {
+    if (!initDone) {
+      initBaseAndApiPaths(request)
+    }
+
     val route = request.getPathInfo
     // render overview if the route is empty or is the root path
     if (route != null && route != "" && route != "/") {
@@ -96,6 +97,56 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
     } else {
       renderResourceListing(request, response)
     }
+  }
+
+  def initBaseAndApiPaths(request: HttpServletRequest) = {
+    var base = swaggerConfig.getBasePath
+    if (base == null || !base.startsWith("http")) {
+      // base path is configured using relative, so lets calculate the absolute url now we have the http request
+      val url = new URL(request.getRequestURL.toString)
+      if (base == null) {
+        base = ""
+      }
+      val path = translateContextPath(request)
+      if (url.getPort != 80 && url.getPort != -1) {
+        base = url.getProtocol + "://" + url.getHost + ":" + url.getPort + path + "/" + base
+      } else {
+        base = url.getProtocol + "://" + url.getHost + request.getContextPath + "/" + base
+      }
+      swaggerConfig.setBasePath(base)
+    }
+    base = swaggerConfig.getApiPath
+    if (base == null || !base.startsWith("http")) {
+      // api path is configured using relative, so lets calculate the absolute url now we have the http request
+      val url = new URL(request.getRequestURL.toString)
+      if (base == null) {
+        base = ""
+      }
+      val path = translateContextPath(request)
+      if (url.getPort != 80 && url.getPort != -1) {
+        base = url.getProtocol + "://" + url.getHost + ":" + url.getPort + path + "/" + base
+      } else {
+        base = url.getProtocol + "://" + url.getHost + request.getContextPath + "/" + base
+      }
+      swaggerConfig.setApiPath(base)
+    }
+    initDone = true
+  }
+
+  /**
+   * We do only want the base context-path and not sub paths
+   */
+  def translateContextPath(request: HttpServletRequest): String = {
+    var path = request.getContextPath
+    if (path.isEmpty || path.equals("/")) {
+      return ""
+    } else {
+      val idx = path.lastIndexOf("/")
+      if (idx > 0) {
+        return path.substring(0, idx)
+      }
+    }
+    path
   }
 
   /**
@@ -114,9 +165,10 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
       response.addHeader("Access-Control-Allow-Origin", "*")
     }
 
-    if (camel != null) {
+    val rests = getRestDefinitions(camelId)
+    if (rests != null) {
       val f = new SpecFilter
-      val listings = RestApiListingCache.listing(camel, swaggerConfig).map(specs => {
+      val listings = RestApiListingCache.listing(rests, swaggerConfig).map(specs => {
         (for (spec <- specs.values)
         yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
           ).filter(m => m.apis.size > 0)
@@ -158,8 +210,9 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
       response.addHeader("Access-Control-Allow-Origin", "*")
     }
 
-    if (camel != null) {
-      val listings = RestApiListingCache.listing(camel, swaggerConfig).map(specs => {
+    val rests = getRestDefinitions(camelId)
+    if (rests != null) {
+      val listings = RestApiListingCache.listing(rests, swaggerConfig).map(specs => {
           (for (spec <- specs.values) yield {
           f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
         }).filter(m => m.resourcePath == pathPart)

@@ -34,6 +34,7 @@ class RouteIdTest extends ScalaTestSupport {
     assertMockEndpointsSatisfied()
 
     assertEquals("route-a", context.getRouteDefinitions.get(0).getId)
+    assertEquals("This is the a route", context.getRouteDefinitions.get(0).getDescriptionText)
   }
 
   @Test
@@ -52,7 +53,7 @@ class RouteIdTest extends ScalaTestSupport {
   val builder = new RouteBuilder {
 
     // java DSL
-    from("direct:a").routeId("route-a").to("mock:a")
+    from("direct:a") routeId "route-a" routeDescription "This is the a route" to "mock:a"
 
     // scala DSL
     "direct:b" routeId "route-b" to "mock:b"

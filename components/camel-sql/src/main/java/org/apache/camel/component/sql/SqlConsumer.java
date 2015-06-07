@@ -21,7 +21,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 import org.apache.camel.Exchange;
@@ -35,6 +34,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
+
+import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 
 public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
@@ -99,7 +100,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                 try {
                     log.trace("Got result list from query: {}, outputType={}", rs, outputType);
                     if (outputType == SqlOutputType.SelectList) {
-                        List<Map<String, Object>> data = getEndpoint().queryForList(rs);
+                        List<?> data = getEndpoint().queryForList(rs, true);
                         addListToQueue(data, answer);
                     } else if (outputType == SqlOutputType.SelectOne) {
                         Object data = getEndpoint().queryForObject(rs);
@@ -110,7 +111,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                         throw new IllegalArgumentException("Invalid outputType=" + outputType);
                     }
                 } finally {
-                    rs.close();
+                    closeResultSet(rs);
                 }
 
                 // process all the exchanges in this batch
@@ -153,7 +154,11 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     protected Exchange createExchange(Object data) {
         final Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
         Message msg = exchange.getIn();
-        msg.setBody(data);
+        if (getEndpoint().getOutputHeader() != null) {
+            msg.setHeader(getEndpoint().getOutputHeader(), data);
+        } else {
+            msg.setBody(data);
+        }
         return exchange;
     }
 

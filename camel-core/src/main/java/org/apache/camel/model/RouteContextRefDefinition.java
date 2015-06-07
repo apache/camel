@@ -23,12 +23,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents an XML &lt;routeContextRef/&gt; element
+ * To refer to an XML file with routes defined using the xml-dsl
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "routeContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteContextRefDefinition {
@@ -47,11 +49,14 @@ public class RouteContextRefDefinition {
         return ref;
     }
 
+    /**
+     * Reference to the routes in the xml dsl
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
     
-    public List<RouteDefinition> lookupRoutes(CamelContext camelContext) {
+    public List<RouteDefinition> lookupRoutes(ModelCamelContext camelContext) {
         return RouteContextRefDefinitionHelper.lookupRoutes(camelContext, ref);
     }
 

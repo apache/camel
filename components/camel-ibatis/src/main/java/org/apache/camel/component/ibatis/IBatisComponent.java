@@ -22,7 +22,7 @@ import java.util.Map;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ResourceHelper;
 
 /**
@@ -57,22 +57,25 @@ import org.apache.camel.util.ResourceHelper;
  * @see IBatisProducer
  * @see IBatisConsumer
  */
-public class IBatisComponent extends DefaultComponent {
+public class IBatisComponent extends UriEndpointComponent {
     private static final String DEFAULT_CONFIG_URI = "classpath:SqlMapConfig.xml";
     private SqlMapClient sqlMapClient;
     private String sqlMapConfig = DEFAULT_CONFIG_URI;
     private boolean useTransactions = true;
 
     public IBatisComponent() {
+        super(IBatisEndpoint.class);
     }
 
     public IBatisComponent(SqlMapClient sqlMapClient) {
+        this();
         this.sqlMapClient = sqlMapClient;
     }
 
     @Override
     protected IBatisEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         IBatisEndpoint answer = new IBatisEndpoint(uri, this, remaining);
+        answer.setUseTransactions(isUseTransactions());
         setProperties(answer, parameters);
         return answer;
     }
@@ -89,6 +92,9 @@ public class IBatisComponent extends DefaultComponent {
         return sqlMapClient;
     }
 
+    /**
+     * To use the given {@link com.ibatis.sqlmap.client.SqlMapClient}
+     */
     public void setSqlMapClient(SqlMapClient sqlMapClient) {
         this.sqlMapClient = sqlMapClient;
     }
@@ -97,6 +103,11 @@ public class IBatisComponent extends DefaultComponent {
         return sqlMapConfig;
     }
 
+    /**
+     * Location of iBatis xml configuration file.
+     * <p/>
+     * The default value is: SqlMapConfig.xml loaded from the classpath
+     */
     public void setSqlMapConfig(String sqlMapConfig) {
         this.sqlMapConfig = sqlMapConfig;
     }
@@ -104,7 +115,12 @@ public class IBatisComponent extends DefaultComponent {
     public boolean isUseTransactions() {
         return useTransactions;
     }
-    
+
+    /**
+     * Whether to use transactions.
+     * <p/>
+     * This option is by default true.
+     */
     public void setUseTransactions(boolean useTransactions) {
         this.useTransactions = useTransactions;
     }

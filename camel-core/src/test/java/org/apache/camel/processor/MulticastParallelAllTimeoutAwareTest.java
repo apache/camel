@@ -42,7 +42,8 @@ public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertNotNull(receivedExchange);
-        assertEquals(0, receivedIndex);
+        // Just make sure the MyAggregationStrategy is called for all the exchange
+        assertEquals(2, receivedIndex);
         assertEquals(3, receivedTotal);
         assertEquals(500, receivedTimeout);
     }

@@ -30,20 +30,24 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SNS Endpoint</a>.  
- *
  */
+@UriEndpoint(scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicName", producerOnly = true, label = "cloud,mobile,messaging")
 public class SnsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnsEndpoint.class);
 
-    private SnsConfiguration configuration;
     private AmazonSNS snsClient;
+
+    @UriParam
+    private SnsConfiguration configuration;
 
     @Deprecated
     public SnsEndpoint(String uri, CamelContext context, SnsConfiguration configuration) {
@@ -72,6 +76,13 @@ public class SnsEndpoint extends DefaultEndpoint {
         super.doStart();
         snsClient = configuration.getAmazonSNSClient() != null
             ? configuration.getAmazonSNSClient() : createSNSClient();
+        
+        // Override the setting Endpoint from url
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSNSEndpoint())) {
+            LOG.trace("Updating the SNS region with : {} " + configuration.getAmazonSNSEndpoint());
+            snsClient.setEndpoint(configuration.getAmazonSNSEndpoint());
+        }
+        
         // creates a new topic, or returns the URL of an existing one
         CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
         
@@ -89,11 +100,7 @@ public class SnsEndpoint extends DefaultEndpoint {
             
             LOG.trace("Topic policy updated");
         }
-        // Override the setting Endpoint from url
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonSNSEndpoint())) {
-            LOG.trace("Updating the SNS region with : {} " + configuration.getAmazonSNSEndpoint());
-            snsClient.setEndpoint(configuration.getAmazonSNSEndpoint());
-        }
+        
     }
 
     public SnsConfiguration getConfiguration() {

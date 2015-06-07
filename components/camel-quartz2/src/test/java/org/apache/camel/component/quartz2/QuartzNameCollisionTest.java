@@ -55,7 +55,7 @@ public class QuartzNameCollisionTest {
             Assert.fail("Should have thrown an exception");
         } catch (FailedToCreateRouteException e) {
             String reason = e.getMessage();
-            Assert.assertEquals(reason.indexOf("Trigger key myGroup.myTimerName is already in used") >= 0, true);
+            Assert.assertEquals(reason.indexOf("Trigger key myGroup.myTimerName is already in use") >= 0, true);
         }
     }
 

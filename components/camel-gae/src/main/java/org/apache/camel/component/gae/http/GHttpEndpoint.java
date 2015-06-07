@@ -21,14 +21,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
-
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -41,7 +39,6 @@ import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -51,17 +48,12 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  * Represents a <a href="http://camel.apache.org/ghttp.html">Google App Engine
  * HTTP endpoint</a>.
  */
-@UriEndpoint(scheme = "ghttp")
+@UriEndpoint(scheme = "ghttp", title = "Google HTTP", syntax = "ghttp:httpUri", producerOnly = true, label = "cloud")
 public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSupport<GHttpEndpoint, HTTPRequest, HTTPResponse> {
 
-    @UriParam
     public static final String GHTTP_SCHEME = "ghttp";
-    @UriParam
     public static final String GHTTPS_SCHEME = "ghttps";
-
-    @UriParam
     public static final String HTTP_SCHEME = "http";
-    @UriParam
     public static final String HTTPS_SCHEME = "https";
     
     private URLFetchService urlFetchService;
@@ -96,7 +88,7 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
         if (query == null) {
             parameters = URISupport.parseParameters(uriObj);
         } else {
-            parameters = URISupport.parseQuery(query);
+            parameters = URISupport.parseQuery(query, false, true);
         }
         if (uriObj.getScheme().equals(GHTTPS_SCHEME)) {
             uriObj = new URI(HTTPS_SCHEME + ":" + uriObj.getRawSchemeSpecificPart());

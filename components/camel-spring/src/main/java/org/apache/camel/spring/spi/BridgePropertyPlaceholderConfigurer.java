@@ -112,6 +112,17 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         super.setIgnoreResourceNotFound(ignoreResourceNotFound);
         this.ignoreResourceNotFound = ignoreResourceNotFound;
     }
+    
+    @Override
+    protected String resolvePlaceholder(String placeholder, Properties props) {
+        String value = props.getProperty(placeholder);
+        if (parser != null) {
+            // Just apply the parser to the place holder value to avoid configuring the other placeholder configure twice for the inside and outside camel context
+            return parser.parseProperty(placeholder, value, props);
+        } else {
+            return value;
+        }
+    }
 
     @Override
     public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
@@ -197,12 +208,14 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     }
 
     public void setParser(PropertiesParser parser) {
-        this.parser = parser;
+        if (this.parser != null) {
+            // use a bridge if there is already a parser configured
+            this.parser = new BridgePropertiesParser(this.parser, parser);
+        } else {
+            this.parser = parser;
+        }
     }
 
-    /**
-     * {@link PropertyPlaceholderHelper.PlaceholderResolver} to support using
-     */
     private class BridgePropertyPlaceholderResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
 
         private final Properties properties;
@@ -226,5 +239,39 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
     }
 
+    private final class BridgePropertiesParser implements PropertiesParser {
+
+        private final PropertiesParser delegate;
+        private final PropertiesParser parser;
+
+        private BridgePropertiesParser(PropertiesParser delegate, PropertiesParser parser) {
+            this.delegate = delegate;
+            this.parser = parser;
+        }
+
+        @Override
+        public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
+            String answer = null;
+            if (delegate != null) {
+                answer = delegate.parseUri(text, properties, prefixToken, suffixToken);
+            }
+            if (answer != null) {
+                text = answer;
+            }
+            return parser.parseUri(text, properties, prefixToken, suffixToken);
+        }
+
+        @Override
+        public String parseProperty(String key, String value, Properties properties) {
+            String answer = null;
+            if (delegate != null) {
+                answer = delegate.parseProperty(key, value, properties);
+            }
+            if (answer != null) {
+                value = answer;
+            }
+            return parser.parseProperty(key, value, properties);
+        }
+    }
 
 }

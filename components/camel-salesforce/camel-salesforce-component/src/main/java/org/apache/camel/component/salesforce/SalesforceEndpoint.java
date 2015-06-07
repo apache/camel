@@ -24,18 +24,25 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+import org.eclipse.jetty.client.HttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a Salesforce endpoint.
  */
-@UriEndpoint(scheme = "salesforce", consumerClass = SalesforceConsumer.class)
+@UriEndpoint(scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm", consumerClass = SalesforceConsumer.class)
 public class SalesforceEndpoint extends DefaultEndpoint {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
+
+    @UriPath
+    private final OperationName operationName;
+    @UriPath
+    private final String topicName;
     @UriParam
     private final SalesforceEndpointConfig config;
-
-    private final OperationName operationName;
-    private final String topicName;
 
     public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent,
                               SalesforceEndpointConfig config, OperationName operationName, String topicName) {
@@ -96,4 +103,35 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         return topicName;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        try {
+            super.doStart();
+        } finally {
+            // check if this endpoint has its own http client that needs to be started
+            final HttpClient httpClient = getConfiguration().getHttpClient();
+            if (httpClient != null && getComponent().getConfig().getHttpClient() != httpClient) {
+                final String endpointUri = getEndpointUri();
+                LOG.debug("Starting http client for {} ...", endpointUri);
+                httpClient.start();
+                LOG.debug("Started http client for {}", endpointUri);
+            }
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        try {
+            super.doStop();
+        } finally {
+            // check if this endpoint has its own http client that needs to be stopped
+            final HttpClient httpClient = getConfiguration().getHttpClient();
+            if (httpClient != null && getComponent().getConfig().getHttpClient() != httpClient) {
+                final String endpointUri = getEndpointUri();
+                LOG.debug("Stopping http client for {} ...", endpointUri);
+                httpClient.stop();
+                LOG.debug("Stopped http client for {}", endpointUri);
+            }
+        }
+    }
 }

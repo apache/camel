@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * for asynchronous SEDA exchanges on an
  * <a href="https://github.com/LMAX-Exchange/disruptor">LMAX Disruptor</a> within a CamelContext
  */
-public class DisruptorComponent extends DefaultComponent {
+public class DisruptorComponent extends UriEndpointComponent {
     
     public static final int DEFAULT_BUFFER_SIZE = 1024;
     public static final int MAX_CONCURRENT_CONSUMERS = 500;
@@ -50,13 +49,17 @@ public class DisruptorComponent extends DefaultComponent {
     //synchronized access guarded by this
     private final Map<String, DisruptorReference> disruptors = new HashMap<String, DisruptorReference>();
 
+    public DisruptorComponent() {
+        super(DisruptorEndpoint.class);
+    }
+
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining,
                                       final Map<String, Object> parameters) throws Exception {
-        final int concurrentConsumers = getAndRemoveParameter(parameters, "concurrentConsumers",
-                Integer.class, defaultConcurrentConsumers);
-        final boolean limitConcurrentConsumers = getAndRemoveParameter(parameters, "limitConcurrentConsumers",
-                Boolean.class, true);
+
+        final int concurrentConsumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, defaultConcurrentConsumers);
+        final boolean limitConcurrentConsumers = getAndRemoveParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
+
         if (limitConcurrentConsumers && concurrentConsumers > MAX_CONCURRENT_CONSUMERS) {
             throw new IllegalArgumentException(
                     "The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
@@ -79,32 +82,24 @@ public class DisruptorComponent extends DefaultComponent {
         // Check if the pollTimeout argument is set (may be the case if Disruptor component is used as drop-in
         // replacement for the SEDA component.
         if (parameters.containsKey("pollTimeout")) {
-            throw new IllegalArgumentException(
-                    "The 'pollTimeout' argument is not supported by the Disruptor component");
+            throw new IllegalArgumentException("The 'pollTimeout' argument is not supported by the Disruptor component");
         }
 
-        final DisruptorWaitStrategy waitStrategy = getAndRemoveParameter(parameters, "waitStrategy",
-                DisruptorWaitStrategy.class, defaultWaitStrategy);
+        final DisruptorWaitStrategy waitStrategy = getAndRemoveParameter(parameters, "waitStrategy", DisruptorWaitStrategy.class, defaultWaitStrategy);
+        final DisruptorProducerType producerType = getAndRemoveParameter(parameters, "producerType", DisruptorProducerType.class, defaultProducerType);
+        final boolean multipleConsumers = getAndRemoveParameter(parameters, "multipleConsumers", boolean.class, defaultMultipleConsumers);
+        final boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", boolean.class, defaultBlockWhenFull);
 
-        final DisruptorProducerType producerType = getAndRemoveParameter(parameters, "producerType",
-                DisruptorProducerType.class, defaultProducerType);
-
-        final boolean multipleConsumers = getAndRemoveParameter(parameters, "multipleConsumers",
-                boolean.class, defaultMultipleConsumers);
-
-        final boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", boolean.class,
-                defaultBlockWhenFull);
-
-        final DisruptorReference disruptorReference = getOrCreateDisruptor(uri, size, producerType,
-                waitStrategy);
-        final DisruptorEndpoint disruptorEndpoint = new DisruptorEndpoint(uri, this, disruptorReference,
-                concurrentConsumers, multipleConsumers, blockWhenFull);
+        final DisruptorReference disruptorReference = getOrCreateDisruptor(uri, remaining, size, producerType, waitStrategy);
+        final DisruptorEndpoint disruptorEndpoint = new DisruptorEndpoint(uri, this, disruptorReference, concurrentConsumers, multipleConsumers, blockWhenFull);
+        disruptorEndpoint.setWaitStrategy(waitStrategy);
+        disruptorEndpoint.setProducerType(producerType);
         disruptorEndpoint.configureProperties(parameters);
 
         return disruptorEndpoint;
     }
 
-    private DisruptorReference getOrCreateDisruptor(final String uri, final int size,
+    private DisruptorReference getOrCreateDisruptor(final String uri, final String name, final int size,
                                                     final DisruptorProducerType producerType,
                                                     final DisruptorWaitStrategy waitStrategy) throws Exception {
         final String key = getDisruptorKey(uri);
@@ -125,7 +120,7 @@ public class DisruptorComponent extends DefaultComponent {
             DisruptorReference ref = getDisruptors().get(key);
             if (ref == null) {
                 LOGGER.debug("Creating new disruptor for key {}", key);
-                ref = new DisruptorReference(this, uri, sizeToUse, producerType, waitStrategy);
+                ref = new DisruptorReference(this, uri, name, sizeToUse, producerType, waitStrategy);
                 getDisruptors().put(key, ref);
             } else {
                 //if size was explicitly requested, the size to use should match the retrieved DisruptorReference
@@ -177,6 +172,9 @@ public class DisruptorComponent extends DefaultComponent {
         return defaultConcurrentConsumers;
     }
 
+    /**
+     * To configure the default number of concurrent consumers
+     */
     public void setDefaultConcurrentConsumers(final int defaultConcurrentConsumers) {
         this.defaultConcurrentConsumers = defaultConcurrentConsumers;
     }
@@ -185,6 +183,9 @@ public class DisruptorComponent extends DefaultComponent {
         return defaultMultipleConsumers;
     }
 
+    /**
+     * To configure the default value for multiple consumers
+     */
     public void setDefaultMultipleConsumers(final boolean defaultMultipleConsumers) {
         this.defaultMultipleConsumers = defaultMultipleConsumers;
     }
@@ -193,6 +194,11 @@ public class DisruptorComponent extends DefaultComponent {
         return defaultProducerType;
     }
 
+    /**
+     * To configure the default value for DisruptorProducerType
+     * <p/>
+     * The default value is Multi.
+     */
     public void setDefaultProducerType(final DisruptorProducerType defaultProducerType) {
         this.defaultProducerType = defaultProducerType;
     }
@@ -201,6 +207,11 @@ public class DisruptorComponent extends DefaultComponent {
         return defaultWaitStrategy;
     }
 
+    /**
+     * To configure the default value for DisruptorWaitStrategy
+     * <p/>
+     * The default value is Blocking.
+     */
     public void setDefaultWaitStrategy(final DisruptorWaitStrategy defaultWaitStrategy) {
         this.defaultWaitStrategy = defaultWaitStrategy;
     }
@@ -209,22 +220,31 @@ public class DisruptorComponent extends DefaultComponent {
         return defaultBlockWhenFull;
     }
 
+    /**
+     * To configure the default value for block when full
+     * <p/>
+     * The default value is true.
+     */
     public void setDefaultBlockWhenFull(boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
     }
 
+    /**
+     * To configure the ring buffer size
+     */
     @Deprecated
     public void setQueueSize(final int size) {
-        LOGGER.warn("Using deprecated queueSize parameter for SEDA compatibility, use bufferSize instead");
         queueSize = size;
     }
 
     @Deprecated
     public int getQueueSize() {
-        LOGGER.warn("Using deprecated queueSize parameter for SEDA compatibility, use bufferSize instead");
         return queueSize;
     }
 
+    /**
+     * To configure the ring buffer size
+     */
     public void setBufferSize(final int size) {
         bufferSize = size;
     }

@@ -18,22 +18,18 @@ package org.apache.camel.component.ldap;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link LdapEndpoint}(s).
  *
  * @version
  */
-public class LdapComponent extends DefaultComponent {
+public class LdapComponent extends UriEndpointComponent {
 
     public LdapComponent() {
-    }
-
-    public LdapComponent(CamelContext context) {
-        super(context);
+        super(LdapEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

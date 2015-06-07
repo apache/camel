@@ -30,14 +30,16 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.TryProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
- * Represents an XML &lt;try/&gt; element
+ * Marks the beginning of a try, catch, finally block
  *
  * @version 
  */
+@Metadata(label = "error")
 @XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryDefinition extends OutputDefinition<TryDefinition> {
@@ -56,11 +58,6 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @Override
     public String toString() {
         return "DoTry[" + getOutputs() + "]";
-    }
-
-    @Override
-    public String getShortName() {
-        return "doTry";
     }
 
     @Override

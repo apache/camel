@@ -40,7 +40,7 @@ public class HttpConsumer extends DefaultConsumer {
     }
 
     public HttpBinding getBinding() {
-        return getEndpoint().getBinding();
+        return getEndpoint().getHttpBinding();
     }
 
     public String getPath() {

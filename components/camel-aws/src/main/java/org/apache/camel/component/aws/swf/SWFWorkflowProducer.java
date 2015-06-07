@@ -128,7 +128,7 @@ public class SWFWorkflowProducer extends DefaultProducer {
         return exchange.getIn().getHeader(SWFConstants.RUN_ID, String.class);
     }
 
-    private Class getResultType(Exchange exchange) throws ClassNotFoundException {
+    private Class<?> getResultType(Exchange exchange) throws ClassNotFoundException {
         String type = exchange.getIn().getHeader(SWFConstants.STATE_RESULT_TYPE, String.class);
         if (type == null) {
             type = configuration.getStateResultType();

@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Base class for sending to an endpoint with an optional {@link ExchangePattern}
+ * Sends the message to an endpoint
  *
  * @version 
  */
@@ -39,6 +39,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     @XmlAttribute
     protected String uri;
     @XmlAttribute
+    @Deprecated
     protected String ref;
     @XmlTransient
     protected Endpoint endpoint;
@@ -78,6 +79,13 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         return ref;
     }
 
+    /**
+     * Sets the reference of the endpoint to send to.
+     *
+     * @param ref the reference of the endpoint
+     * @deprecated use uri with ref:uri instead
+     */
+    @Deprecated
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -86,6 +94,11 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         return uri;
     }
 
+    /**
+     * Sets the uri of the endpoint to send to.
+     *
+     * @param uri the uri of the endpoint
+     */
     @Required
     public void setUri(String uri) {
         this.uri = uri;

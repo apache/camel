@@ -63,7 +63,7 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
     }
 
     protected void sendExchange(PaxLoggingEvent paxLoggingEvent) {
-        MDC.put(PaxLoggingConsumer.class.getName(), endpoint.getName());
+        MDC.put(PaxLoggingConsumer.class.getName(), endpoint.getAppender());
         if (paxLoggingEvent.getProperties().containsKey(PaxLoggingConsumer.class.getName())) {
             return;
         }
@@ -73,7 +73,7 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
         exchange.getIn().setBody(paxLoggingEvent);
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("PaxLogging {} is firing", endpoint.getName());
+            LOG.trace("PaxLogging {} is firing", endpoint.getAppender());
         }
         try {
             getProcessor().process(exchange);
@@ -89,10 +89,13 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        Dictionary<String, String> props = new Hashtable<String, String>();
-        props.put("org.ops4j.pax.logging.appender.name", endpoint.getName());
-        registration = endpoint.getComponent().getBundleContext().registerService(PaxAppender.class.getName(), this, props);
+
+        // start the executor before the registration
         executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "PaxLoggingEventTask");
+
+        Dictionary<String, String> props = new Hashtable<String, String>();
+        props.put("org.ops4j.pax.logging.appender.name", endpoint.getAppender());
+        registration = endpoint.getComponent().getBundleContext().registerService(PaxAppender.class.getName(), this, props);
     }
 
     @Override

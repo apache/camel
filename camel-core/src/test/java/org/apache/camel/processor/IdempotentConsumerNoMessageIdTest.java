@@ -16,35 +16,69 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
-import org.apache.camel.processor.idempotent.NoMessageIdException;
 
 /**
  * @version 
  */
 public class IdempotentConsumerNoMessageIdTest extends ContextTestSupport {
-
-    public void testNoMessageId() throws Exception {
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(NoMessageIdException.class, e.getCause());
-        }
-    }
+    protected Endpoint startEndpoint;
+    protected MockEndpoint resultEndpoint;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    public void testNoMessageId() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:dead"));
+
                 from("direct:start").idempotentConsumer(
                         header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
                 ).to("mock:result");
             }
-        };
+        });
+        context.start();
+
+        resultEndpoint.expectedBodiesReceived("one", "two");
+
+        getMockEndpoint("mock:dead").expectedBodiesReceived("Hello World");
+
+        sendMessage("1", "one");
+        template.sendBody("direct:start", "Hello World");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+
+        assertMockEndpointsSatisfied();
     }
+
+    protected void sendMessage(final Object messageId, final Object body) {
+        template.send(startEndpoint, new Processor() {
+            public void process(Exchange exchange) {
+                // now lets fire in a message
+                Message in = exchange.getIn();
+                in.setBody(body);
+                in.setHeader("messageId", messageId);
+            }
+        });
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        startEndpoint = resolveMandatoryEndpoint("direct:start");
+        resultEndpoint = getMockEndpoint("mock:result");
+    }
+
 }

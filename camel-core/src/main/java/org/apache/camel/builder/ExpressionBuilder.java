@@ -525,7 +525,9 @@ public final class ExpressionBuilder {
      *
      * @param propertyName the name of the property the expression will return
      * @return an expression object which will return the property value
+     * @deprecated use {@link #exchangePropertyExpression(String)} instead
      */
+    @Deprecated
     public static Expression propertyExpression(final String propertyName) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -534,11 +536,30 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "property(" + propertyName + ")";
+                return "exchangeProperty(" + propertyName + ")";
             }
         };
     }
     
+    /**
+     * Returns an expression for the property value of exchange with the given name
+     *
+     * @param propertyName the name of the property the expression will return
+     * @return an expression object which will return the property value
+     */
+    public static Expression exchangePropertyExpression(final String propertyName) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getProperty(propertyName);
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeProperty(" + propertyName + ")";
+            }
+        };
+    }
+
     /**
      * Returns an expression for the property value of exchange with the given name invoking methods defined
      * in a simple OGNL notation
@@ -856,7 +877,7 @@ public final class ExpressionBuilder {
      * Returns the expression for the exchanges camelContext invoking methods defined
      * in a simple OGNL notation
      *
-     * @param ognl  methods to invoke on the body in a simple OGNL syntax
+     * @param ognl  methods to invoke on the context in a simple OGNL syntax
      */
     public static Expression camelContextOgnlExpression(final String ognl) {
         return new ExpressionAdapter() {
@@ -871,6 +892,25 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "camelContextOgnl(" + ognl + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchange invoking methods defined
+     * in a simple OGNL notation
+     *
+     * @param ognl  methods to invoke on the exchange in a simple OGNL syntax
+     */
+    public static Expression exchangeOgnlExpression(final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return new MethodCallExpression(exchange, ognl).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeOgnl(" + ognl + ")";
             }
         };
     }
@@ -1001,9 +1041,14 @@ public final class ExpressionBuilder {
                     }
 
                     // if its a bean invocation then if it has no arguments then it should be threaded as null body allowed
-                    BeanInvocation bi = exchange.getIn().getBody(BeanInvocation.class);
-                    if (bi != null && (bi.getArgs() == null || bi.getArgs().length == 0 || bi.getArgs()[0] == null)) {
-                        return null;
+                    if (exchange.getIn().getBody() instanceof BeanInvocation) {
+                        // BeanInvocation would be stored directly as the message body
+                        // do not force any type conversion attempts as it would just be unnecessary and cost a bit performance
+                        // so a regular instanceof check is sufficient
+                        BeanInvocation bi = (BeanInvocation) exchange.getIn().getBody();
+                        if (bi.getArgs() == null || bi.getArgs().length == 0 || bi.getArgs()[0] == null) {
+                            return null;
+                        }
                     }
                 }
 
@@ -1084,7 +1129,8 @@ public final class ExpressionBuilder {
     public static Expression faultBodyExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getOut().isFault() ? exchange.getOut().getBody() : null;
+                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                return msg.isFault() ? msg.getBody() : null;
             }
 
             @Override
@@ -1101,7 +1147,8 @@ public final class ExpressionBuilder {
     public static <T> Expression faultBodyExpression(final Class<T> type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getOut().isFault() ? exchange.getOut().getBody(type) : null;
+                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                return msg.isFault() ? msg.getBody(type) : null;
             }
 
             @Override
@@ -1294,7 +1341,7 @@ public final class ExpressionBuilder {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
-                return new GroupIterator(exchange.getContext(), it, token, group);
+                return new GroupIterator(exchange, it, token, group);
             }
 
             @Override
@@ -1698,11 +1745,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-                if (name != null) {
-                    return name.substring(name.lastIndexOf('.') + 1);
-                } else {
-                    return null;
-                }
+                return FileUtil.onlyExt(name);
             }
 
             @Override

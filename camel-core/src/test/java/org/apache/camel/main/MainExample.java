@@ -44,6 +44,8 @@ public class MainExample {
         main.bind("foo", new MyBean());
         // add routes
         main.addRouteBuilder(new MyRouteBuilder());
+        // add event listener
+        main.addMainListener(new Events());
 
         // run until you terminate the JVM
         System.out.println("Starting Camel. Use ctrl + c to terminate the JVM.\n");
@@ -59,13 +61,26 @@ public class MainExample {
                         System.out.println("Invoked timer at " + new Date());
                     }
                 })
-                .beanRef("foo");
+                .bean("foo");
         }
     }
 
     public static class MyBean {
         public void callMe() {
             System.out.println("MyBean.calleMe method has been called");
+        }
+    }
+
+    public static class Events extends MainListenerSupport {
+
+        @Override
+        public void afterStart(MainSupport main) {
+            System.out.println("MainExample with Camel is now started!");
+        }
+
+        @Override
+        public void beforeStop(MainSupport main) {
+            System.out.println("MainExample with Camel is now being stopped!");
         }
     }
 }

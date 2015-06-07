@@ -70,6 +70,7 @@ public class JpaBlueprintRouteTest extends OSGiBlueprintTestSupport {
                     .build()),
                
                 scanFeatures(getKarafEnterpriseFeatureUrl(), "jndi", "jpa", "transaction"),
+                mavenBundle("org.apache.openjpa", "openjpa", "2.3.0"),
                 mavenBundle("org.apache.derby", "derby", "10.4.2.0"),
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),

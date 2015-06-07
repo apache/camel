@@ -24,17 +24,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.RouteContext;
-
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a Barcode DataFormat {@link org.apache.camel.spi.DataFormat}
+ * Barcode data format
  *
  * @version 
  */
+@Metadata(label = "dataformat,transformation", title = "Barcode")
 @XmlRootElement(name = "barcode")
 @XmlAccessorType(XmlAccessType.FIELD)
-
 public class BarcodeDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Integer width;
@@ -50,13 +49,6 @@ public class BarcodeDataFormat extends DataFormatDefinition {
     }
     
     @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
-        DataFormat barcodeFormat = super.createDataFormat(routeContext);
-
-        return barcodeFormat;
-    }
-
-    @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (width != null) {
             setProperty(camelContext, dataFormat, "width", width);
@@ -71,15 +63,17 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         }
 
         if (barcodeFormat != null) {
-            setProperty(camelContext, dataFormat, "barcodeDataFormat", barcodeFormat);
+            setProperty(camelContext, dataFormat, "barcodeFormat", barcodeFormat);
         }
-       
     }
     
     public Integer getWidth() {
         return width;
     }
 
+    /**
+     * Width of the barcode
+     */
     public void setWidth(Integer width) {
         this.width = width;
     }
@@ -88,6 +82,9 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return height;
     }
 
+    /**
+     * Height of the barcode
+     */
     public void setHeight(Integer height) {
         this.height = height;
     }
@@ -96,6 +93,9 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return imageType;
     }
 
+    /**
+     * Image type of the barcode such as png
+     */
     public void setImageType(String imageType) {
         this.imageType = imageType;
     }
@@ -104,6 +104,9 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return barcodeFormat;
     }
 
+    /**
+     * Barcode format such as QR-Code
+     */
     public void setBarcodeFormat(String barcodeFormat) {
         this.barcodeFormat = barcodeFormat;
     }

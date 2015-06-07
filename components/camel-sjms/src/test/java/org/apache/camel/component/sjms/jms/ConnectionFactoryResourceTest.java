@@ -24,6 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -88,4 +89,18 @@ public class ConnectionFactoryResourceTest {
         pool.drainPool();
     }
 
+    @Test
+    public void testRoundRobbin() throws Exception {
+        ConnectionFactoryResource pool = new ConnectionFactoryResource(2, connectionFactory);
+        pool.fillPool();
+        assertNotNull(pool);
+        ActiveMQConnection connection = (ActiveMQConnection) pool.borrowConnection();
+        assertNotNull(connection);
+        assertTrue(connection.isStarted());
+        pool.returnConnection(connection);
+        ActiveMQConnection connection2 = (ActiveMQConnection) pool.borrowConnection();
+        assertNotNull(connection2);
+        assertNotEquals(connection, connection2);
+        pool.drainPool();
+    }
 }

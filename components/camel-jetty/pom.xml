@@ -21,123 +21,27 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.15-SNAPSHOT</version>
+        <version>2.16-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jetty</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Jetty</name>
-    <description>Camel Jetty support</description>
+    <description>Camel Jetty Component</description>
 
     <properties>
         <camel.osgi.import.before.defaults>
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
-        <camel.osgi.export.pkg>org.apache.camel.component.jetty.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.component.jetty8</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jetty</camel.osgi.export.service>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-http</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_3.0_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <exclusions>
-               <exclusion>
-                   <groupId>javax.servlet</groupId>
-                   <artifactId>servlet-api</artifactId>
-               </exclusion>
-               <exclusion>
-                   <groupId>org.eclipse.jetty.orbit</groupId>
-                   <artifactId>javax.servlet</artifactId>
-               </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-jmx</artifactId>
-        </dependency>
-        
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <optional>true</optional>
-            <scope>test</scope>
-        </dependency>
-        <!-- for testing rest-dsl -->
-        <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-jackson</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-jaxb</artifactId>
-          <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
+            <artifactId>camel-jetty8</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <!-- use per test fork mode to avoid side effects -->
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkMode>pertest</forkMode>
-                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

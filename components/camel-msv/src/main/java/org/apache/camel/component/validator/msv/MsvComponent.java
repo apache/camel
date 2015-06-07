@@ -17,12 +17,10 @@
 package org.apache.camel.component.validator.msv;
 
 import java.util.Map;
-import javax.xml.XMLConstants;
+import javax.xml.validation.SchemaFactory;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.component.validator.ValidatorComponent;
-import org.apache.camel.processor.validation.ValidatingProcessor;
-import org.iso_relax.verifier.VerifierConfigurationException;
-import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
 
 /**
  * The <a href="http://camel.apache.org/msv.html">MSV Component</a> uses the
@@ -31,25 +29,29 @@ import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
  * @version 
  */
 public class MsvComponent extends ValidatorComponent {
-    private RELAXNGSchemaFactoryImpl schemaFactory;
+    private SchemaFactory schemaFactory;
 
-    public RELAXNGSchemaFactoryImpl getSchemaFactory() throws VerifierConfigurationException {
-        if (schemaFactory == null) {
-            schemaFactory = new RELAXNGSchemaFactoryImpl();
-        }
-        return schemaFactory;
-    }
-
-    public void setSchemaFactory(RELAXNGSchemaFactoryImpl schemaFactory) {
-        this.schemaFactory = schemaFactory;
+    public MsvComponent() {
+        super(MsvEndpoint.class);
     }
 
     @Override
-    protected void configureValidator(ValidatingProcessor validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        validator.setSchemaLanguage(XMLConstants.RELAXNG_NS_URI);
-        validator.setSchemaFactory(getSchemaFactory());
-        // must use Dom for Msv to work
-        validator.setUseDom(true);
-        super.configureValidator(validator, uri, remaining, parameters);
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        MsvEndpoint endpoint = new MsvEndpoint(uri, this, remaining);
+        endpoint.setSchemaFactory(getSchemaFactory());
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
+
+    public SchemaFactory getSchemaFactory() {
+        return schemaFactory;
+    }
+
+    /**
+     * To use the {@link javax.xml.validation.SchemaFactory}.
+     */
+    public void setSchemaFactory(SchemaFactory schemaFactory) {
+        this.schemaFactory = schemaFactory;
+    }
+
 }

@@ -16,22 +16,21 @@
  */
 package org.apache.camel.spring.javaconfig.autowire;
 
-import static junit.framework.Assert.assertNotNull;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.javaconfig.test.JavaConfigContextLoader;
+import org.apache.camel.spring.javaconfig.CamelConfiguration;
+import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
 import org.junit.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
+import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration(
-        locations = {"org.apache.camel.spring.javaconfig.CamelConfiguration",
-        "org.apache.camel.spring.javaconfig.autowire.AdditionalRouteConfiguration"},
-        loader = JavaConfigContextLoader.class)
+        classes = {CamelConfiguration.class, AdditionalRouteConfiguration.class}, 
+        loader = CamelSpringDelegatingTestContextLoader.class)
 public class LoadingRawCamelConfigurationTest extends AbstractJUnit4SpringContextTests {
 
     @EndpointInject(uri = "mock:rawConfigTest")

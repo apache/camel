@@ -22,12 +22,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;topic/&gt; element
- * 
+ * Topic load balancer
+ *
+ * The topic load balancer sends to all destinations (rather like JMS Topics)
  */
+@Metadata(label = "configuration,loadbalance")
 @XmlRootElement(name = "topic")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TopicLoadBalancerDefinition extends LoadBalancerDefinition {

@@ -17,6 +17,7 @@
 package org.apache.camel.converter.dozer;
 
 import java.lang.reflect.Field;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -104,16 +105,14 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
     public DozerTypeConverterLoader(CamelContext camelContext, DozerBeanMapperConfiguration configuration) {
         GlobalSettings settings = GlobalSettings.getInstance();
         try {
-            log.info("Configuring GlobalSettings to use Camel classloader: {}", CamelToDozerClassResolverAdapter.class.getName());
+            log.info("Configuring GlobalSettings to use Camel classloader: {}", DozerThreadContextClassLoader.class.getName());
             Field field = settings.getClass().getDeclaredField("classLoaderBeanName");
-            ReflectionHelper.setField(field, settings, CamelToDozerClassResolverAdapter.class.getName());
+            ReflectionHelper.setField(field, settings, DozerThreadContextClassLoader.class.getName());
         } catch (Exception e) {
             throw new IllegalStateException("Cannot configure Dozer GlobalSettings to use CamelToDozerClassResolverAdapter as classloader due " + e.getMessage(), e);
         }
 
-        // must set class loader before we create bean mapper
-        CamelToDozerClassResolverAdapter adapter = new CamelToDozerClassResolverAdapter(camelContext);
-        BeanContainer.getInstance().setClassLoader(adapter);
+        switchClassloader();
 
         log.info("Using DozerBeanMapperConfiguration: {}", configuration);
         DozerBeanMapper mapper = createDozerBeanMapper(configuration);
@@ -164,8 +163,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
             this.mapper = mapper;
         }
 
-        CamelToDozerClassResolverAdapter adapter = new CamelToDozerClassResolverAdapter(camelContext);
-        BeanContainer.getInstance().setClassLoader(adapter);
+        switchClassloader();
 
         Map<String, DozerBeanMapper> mappers = lookupDozerBeanMappers();
         // only add if we do not already have it
@@ -228,7 +226,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
      * @param configuration  the dozer bean mapper configuration.
      * @return the created mapper
      */
-    protected DozerBeanMapper createDozerBeanMapper(DozerBeanMapperConfiguration configuration) {
+    public static DozerBeanMapper createDozerBeanMapper(DozerBeanMapperConfiguration configuration) {
         DozerBeanMapper mapper;
         if (configuration.getMappingFiles() != null) {
             mapper = new DozerBeanMapper(configuration.getMappingFiles());
@@ -361,6 +359,22 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
         this.mapper = mapper;
     }
 
+    protected void switchClassloader() {
+        // must set class loader before we create bean mapper
+        DozerClassLoader oldCl = BeanContainer.getInstance().getClassLoader();
+        log.info("Current Dozer container-wide classloader: {}.", oldCl);
+        
+        // if the classloader we're replacing is not a ThreadContextClassLoader, pass it on as delegate target
+        // otherwise, don't do anything as we have
+        if (!(oldCl instanceof DozerThreadContextClassLoader)) {
+            DozerThreadContextClassLoader newCl = new DozerThreadContextClassLoader(oldCl);
+            BeanContainer.getInstance().setClassLoader(newCl);
+            log.info("Switched Dozer container-wide classloader from: {} to {} (where the latter delegates to former).", oldCl, newCl);
+        } else {
+            log.info("Dozer container-wide classloader already set: {}. No switch necessary.", oldCl);
+        }
+    }
+    
     protected static URL loadMappingFile(ClassResolver classResolver, String mappingFile) {
         URL url = null;
         try {

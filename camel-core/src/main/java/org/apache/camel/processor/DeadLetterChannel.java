@@ -48,15 +48,19 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      * @param exceptionPolicyStrategy   strategy for onException handling
      * @param deadLetter                the failure processor to send failed exchanges to
      * @param deadLetterUri             an optional uri for logging purpose
+     * @param deadLetterHandleException whether dead letter channel should handle (and ignore) exceptions which may be thrown during sending the message to the dead letter endpoint
      * @param useOriginalBodyPolicy     should the original IN body be moved to the dead letter queue or the current exchange IN body?
      * @param retryWhile                retry while
      * @param executorService           the {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
+     * @param onPrepare                 a custom {@link org.apache.camel.Processor} to prepare the {@link org.apache.camel.Exchange} before
+     *                                  handled by the failure processor / dead letter channel.
      */
     public DeadLetterChannel(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
-            ExceptionPolicyStrategy exceptionPolicyStrategy, Processor deadLetter, String deadLetterUri, boolean useOriginalBodyPolicy, Predicate retryWhile,
-            ScheduledExecutorService executorService) {
+            ExceptionPolicyStrategy exceptionPolicyStrategy, Processor deadLetter, String deadLetterUri, boolean deadLetterHandleException,
+            boolean useOriginalBodyPolicy, Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepare) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, deadLetter, deadLetterUri, useOriginalBodyPolicy, retryWhile, executorService);
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, deadLetter, deadLetterUri, deadLetterHandleException,
+                useOriginalBodyPolicy, retryWhile, executorService, onPrepare);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
@@ -72,12 +76,6 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
             return "";
         }
         return "DeadLetterChannel[" + output + ", " + (deadLetterUri != null ? deadLetterUri : deadLetter) + "]";
-    }
-
-    @Override
-    protected Predicate getDefaultHandledPredicate() {
-        // DeadLetterChannel handles errors before sending to DLQ
-        return ExpressionToPredicateAdapter.toPredicate(ExpressionBuilder.constantExpression(true));
     }
 
     @Override

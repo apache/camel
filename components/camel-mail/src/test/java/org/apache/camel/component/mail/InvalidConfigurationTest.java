@@ -18,7 +18,6 @@ package org.apache.camel.component.mail;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -48,17 +47,6 @@ public class InvalidConfigurationTest extends CamelTestSupport {
             fail("Should have thrown NoSuchProviderException as stmp protocol cannot be used for consuming mails");
         } catch (IllegalArgumentException e) {
             // expected
-        }
-    }
-
-    @Test
-    public void testNNTPNotSupported() throws Exception {
-        try {
-            context.getEndpoint("nntp://localhost?username=james");
-            fail("Should have thrown UnsupportedOperationException");
-        } catch (ResolveEndpointFailedException e) {
-            // expected
-            assertTrue(e.getCause() instanceof UnsupportedOperationException);
         }
     }
 

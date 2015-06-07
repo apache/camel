@@ -1,0 +1,220 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.paho;
+
+import java.util.Set;
+
+import static java.lang.System.nanoTime;
+
+import org.apache.camel.Component;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.paho.PahoPersistence.MEMORY;
+
+@UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
+public class PahoEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
+
+    // Constants
+
+    private static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
+
+    private static final int DEFAULT_QOS = 2;
+
+    private static final String DEFAULT_QOS_STRING = DEFAULT_QOS + "";
+
+    // Configuration members
+
+    @UriPath @Metadata(required = "true")
+    private String topic;
+    @UriParam
+    private String clientId = "camel-" + nanoTime();
+    @UriParam(defaultValue = DEFAULT_BROKER_URL)
+    private String brokerUrl = DEFAULT_BROKER_URL;
+    @UriParam(defaultValue = DEFAULT_QOS_STRING)
+    private int qos = DEFAULT_QOS;
+    @UriParam(defaultValue = "MEMORY")
+    private PahoPersistence persistence = MEMORY;
+
+    // Collaboration members
+    @UriParam
+    private MqttConnectOptions connectOptions;
+
+    // Auto-configuration members
+
+    private transient MqttClient client;
+
+    public PahoEndpoint(String uri, Component component) {
+        super(uri, component);
+        if (topic == null) {
+            topic = uri.substring(7);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        client = new MqttClient(getBrokerUrl(), getClientId(), resolvePersistence());
+        client.connect(resolveMqttConnectOptions());
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (getClient().isConnected()) {
+            getClient().disconnect();
+        }
+        super.doStop();
+    }
+
+    @Override
+    public Producer createProducer() throws Exception {
+        return new PahoProducer(this);
+    }
+
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        return new PahoConsumer(this, processor);
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+    @Override
+    public PahoComponent getComponent() {
+        return (PahoComponent) super.getComponent();
+    }
+
+    // Resolvers
+
+    protected MqttClientPersistence resolvePersistence() {
+        return persistence == MEMORY ? new MemoryPersistence() : new MqttDefaultFilePersistence();
+    }
+
+    protected MqttConnectOptions resolveMqttConnectOptions() {
+        if (connectOptions != null) {
+            return connectOptions;
+        }
+        Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
+        if (connectOptions.size() == 1) {
+            LOG.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
+            return connectOptions.iterator().next();
+        } else if (connectOptions.size() > 1) {
+            LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
+                            + "Please use 'connectOptions' endpoint option to select one.",
+                    connectOptions.size());
+        }
+        return new MqttConnectOptions();
+    }
+
+    // Configuration getters & setters
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    /**
+     * MQTT client identifier.
+     */
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getBrokerUrl() {
+        return brokerUrl;
+    }
+
+    /**
+     * The URL of the MQTT broker.
+     */
+    public void setBrokerUrl(String brokerUrl) {
+        this.brokerUrl = brokerUrl;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    /**
+     * Name of the topic
+     */
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public int getQos() {
+        return qos;
+    }
+
+    /**
+     * Client quality of service level (0-2).
+     */
+    public void setQos(int qos) {
+        this.qos = qos;
+    }
+
+    // Auto-configuration getters & setters
+
+    public PahoPersistence getPersistence() {
+        return persistence;
+    }
+
+    /**
+     * Client persistence to be used - memory or file.
+     */
+    public void setPersistence(PahoPersistence persistence) {
+        this.persistence = persistence;
+    }
+
+    public MqttClient getClient() {
+        return client;
+    }
+
+    /**
+     * To use the existing MqttClient instance as client.
+     */
+    public void setClient(MqttClient client) {
+        this.client = client;
+    }
+
+    public MqttConnectOptions getConnectOptions() {
+        return connectOptions;
+    }
+
+    /**
+     * Client connection options
+     */
+    public void setConnectOptions(MqttConnectOptions connOpts) {
+        this.connectOptions = connOpts;
+    }
+}

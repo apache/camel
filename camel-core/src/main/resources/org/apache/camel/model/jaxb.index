@@ -53,11 +53,14 @@ PipelineDefinition
 PolicyDefinition
 PollEnrichDefinition
 ProcessDefinition
+PropertiesDefinition
+PropertyDefinition
 RecipientListDefinition
 RedeliveryPolicyDefinition
 RemoveHeaderDefinition
 RemoveHeadersDefinition
 RemovePropertyDefinition
+RemovePropertiesDefinition
 ResequenceDefinition
 RestContextRefDefinition
 RollbackDefinition

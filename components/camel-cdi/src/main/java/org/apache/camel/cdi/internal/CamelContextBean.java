@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanAttributes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
@@ -38,8 +37,7 @@ import org.apache.deltaspike.core.api.literal.DefaultLiteral;
 /**
  * Description of camel context bean.
  */
-@SuppressWarnings("unchecked")
-public class CamelContextBean implements Bean<CdiCamelContext>, BeanAttributes<CdiCamelContext> {
+public class CamelContextBean implements Bean<CdiCamelContext> {
 
     private final BeanManager beanManager;
     private final String name;

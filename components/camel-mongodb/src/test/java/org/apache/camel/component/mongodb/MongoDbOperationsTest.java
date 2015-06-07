@@ -19,12 +19,15 @@ package org.apache.camel.component.mongodb;
 import java.util.Formatter;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import com.mongodb.util.JSON;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.bson.types.ObjectId;
 import org.junit.Test;
 
 public class MongoDbOperationsTest extends AbstractMongoDbTest {
@@ -51,7 +54,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals("Dynamic collection should contain 1 record", 1L, result);
         
     }
-    
+
     @Test
     public void testInsertString() throws Exception {
         assertEquals(0, testCollection.count());
@@ -60,19 +63,23 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         DBObject b = testCollection.findOne("testInsertString");
         assertNotNull("No record with 'testInsertString' _id", b);
     }
-    
+
     @Test
-    public void testInsertArrayStrings() throws Exception {
-        assertEquals(0, testCollection.count());
-        Object[] req = new Object[] {"{\"_id\":\"testInsertArrayStrings\", \"scientist\":\"Einstein\"}", "{\"_id\":\"testInsertArrayStrings2\", \"scientist\":\"Copernicus\"}"};
-        Object result = template.requestBody("direct:insert", req);
-        assertTrue(result instanceof WriteResult);
-        DBObject b = testCollection.findOne("testInsertArrayStrings");
-        assertNotNull("No record with 'testInsertArrayStrings' _id", b);
-        b = testCollection.findOne("testInsertArrayStrings2");
-        assertNotNull("No record with 'testInsertArrayStrings2' _id", b);
+    public void testStoreOidOnInsert() throws Exception {
+        DBObject dbObject = new BasicDBObject();
+        ObjectId oid = template.requestBody("direct:testStoreOidOnInsert", dbObject, ObjectId.class);
+        assertEquals(dbObject.get("_id"), oid);
     }
-    
+
+    @Test
+    public void testStoreOidsOnInsert() throws Exception {
+        DBObject firstDbObject = new BasicDBObject();
+        DBObject secondDbObject = new BasicDBObject();
+        List<?> oids = template.requestBody("direct:testStoreOidOnInsert", asList(firstDbObject, secondDbObject), List.class);
+        assertTrue(oids.contains(firstDbObject.get("_id")));
+        assertTrue(oids.contains(secondDbObject.get("_id")));
+    }
+
     @Test
     public void testSave() throws Exception {
         // Prepare test
@@ -93,6 +100,13 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         record1 = testCollection.findOne("testSave1");
         assertEquals("Scientist field of 'testSave1' must equal 'Darwin' after save operation", "Darwin", record1.get("scientist"));
 
+    }
+
+    @Test
+    public void testStoreOidOnSave() throws Exception {
+        DBObject dbObject = new BasicDBObject();
+        ObjectId oid = template.requestBody("direct:testStoreOidOnSave", dbObject, ObjectId.class);
+        assertEquals(dbObject.get("_id"), oid);
     }
     
     @Test
@@ -199,7 +213,17 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertTrue("Result is not of type DBObject", result instanceof DBObject);
         assertTrue("The result should contain keys", ((DBObject) result).keySet().size() > 0);
     }
-    
+
+    @Test
+    public void testCommand() throws Exception {
+        //Call hostInfo, command working with every configuration
+        Object result = template
+                .requestBody("direct:command",
+                        "{\"hostInfo\":\"1\"}");
+        assertTrue("Result is not of type DBObject", result instanceof DBObject);
+        assertTrue("The result should contain keys", ((DBObject) result).keySet().size() > 0);
+    }
+
     @Test
     public void testOperationHeader() throws Exception {
         // Test that the collection has 0 documents in it
@@ -225,13 +249,17 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
                 
                 from("direct:count").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
                 from("direct:insert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE");
+                from("direct:testStoreOidOnInsert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE").
+                    setBody().header(MongoDbConstants.OID);
                 from("direct:save").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeConcern=SAFE");
+                from("direct:testStoreOidOnSave").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeConcern=SAFE").
+                    setBody().header(MongoDbConstants.OID);
                 from("direct:update").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update&writeConcern=SAFE");
                 from("direct:remove").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=remove&writeConcern=SAFE");
                 from("direct:aggregate").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate&writeConcern=SAFE");
-                from("direct:getDbStats").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getDbStats");
+                from("direct:getDbStats").to("mongodb:myDb?database={{mongodb.testDb}}&operation=getDbStats");
                 from("direct:getColStats").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getColStats");
-
+                from("direct:command").to("mongodb:myDb?database={{mongodb.testDb}}&operation=command");
 
             }
         };

@@ -66,6 +66,7 @@ public class HttpProducer extends DefaultProducer {
     private HttpClient httpClient;
     private boolean throwException;
     private boolean transferException;
+    private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
@@ -83,7 +84,7 @@ public class HttpProducer extends DefaultProducer {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
             String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
-                skipRequestHeaders = URISupport.parseQuery(queryString);
+                skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
             // Need to remove the Host key as it should be not used 
             exchange.getIn().getHeaders().remove("host");
@@ -193,7 +194,8 @@ public class HttpProducer extends DefaultProducer {
 
         // preserve headers from in by copying any non existing headers
         // to avoid overriding existing headers with old values
-        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
+        // Just filter the http protocol headers 
+        MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
     }
 
     protected Exception populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException, ClassNotFoundException {
@@ -294,7 +296,7 @@ public class HttpProducer extends DefaultProducer {
         InputStream response = doExtractResponseBodyAsStream(is, exchange);
         // if content type is a serialized java object then de-serialize it back to a Java object
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            return HttpHelper.deserializeJavaObjectFromStream(response);
+            return HttpHelper.deserializeJavaObjectFromStream(response, exchange.getContext());
         } else {
             return response;
         }

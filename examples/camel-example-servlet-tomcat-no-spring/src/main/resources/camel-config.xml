@@ -30,9 +30,7 @@
         <!-- is there a header with the key name? -->
         <header>name</header>
         <!-- yes so return back a message to the user -->
-        <transform>
-          <simple>Hello ${header.name} how are you?</simple>
-        </transform>
+        <to uri="bean:myBean"/>
       </when>
       <otherwise>
         <!-- if no name parameter then output a syntax to the user -->

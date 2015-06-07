@@ -27,16 +27,19 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.rabbitmq.pool.PoolableChannelFactory;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.pool.ObjectPool;
+import org.apache.commons.pool.impl.GenericObjectPool;
 
 public class RabbitMQProducer extends DefaultProducer {
 
-    private int closeTimeout = 30 * 1000;
     private Connection conn;
-    private Channel channel;
+    private ObjectPool<Channel> channelPool;
     private ExecutorService executorService;
-   
+    private int closeTimeout = 30 * 1000;
+
     public RabbitMQProducer(RabbitMQEndpoint endpoint) throws IOException {
         super(endpoint);
     }
@@ -45,20 +48,46 @@ public class RabbitMQProducer extends DefaultProducer {
     public RabbitMQEndpoint getEndpoint() {
         return (RabbitMQEndpoint) super.getEndpoint();
     }
+
     /**
-     * Open connection and channel
+     * Channel callback (similar to Spring JDBC ConnectionCallback)
      */
-    private void openConnectionAndChannel() throws IOException {
+    private interface ChannelCallback<T> {
+        T doWithChannel(Channel channel) throws Exception;
+    }
+
+    /**
+     * Do something with a pooled channel (similar to Spring JDBC TransactionTemplate#execute)
+     */
+    private <T> T execute(ChannelCallback<T> callback) throws Exception {
+        Channel channel = channelPool.borrowObject();
+        try {
+            return callback.doWithChannel(channel);
+        } finally {
+            channelPool.returnObject(channel);
+        }
+    }
+
+    /**
+     * Open connection and initialize channel pool
+     */
+    private void openConnectionAndChannelPool() throws Exception {
         log.trace("Creating connection...");
         this.conn = getEndpoint().connect(executorService);
         log.debug("Created connection: {}", conn);
 
-        log.trace("Creating channel...");
-        this.channel = conn.createChannel();
-        log.debug("Created channel: {}", channel);
+        log.trace("Creating channel pool...");
+        channelPool = new GenericObjectPool<Channel>(new PoolableChannelFactory(this.conn), getEndpoint().getChannelPoolMaxSize(),
+                GenericObjectPool.WHEN_EXHAUSTED_BLOCK, getEndpoint().getChannelPoolMaxWait());
         if (getEndpoint().isDeclare()) {
-            getEndpoint().declareExchangeAndQueue(this.channel);
-        }        
+            execute(new ChannelCallback<Void>() {
+                @Override
+                public Void doWithChannel(Channel channel) throws Exception {
+                    getEndpoint().declareExchangeAndQueue(channel);
+                    return null;
+                }
+            });
+        }
     }
 
     @Override
@@ -66,7 +95,7 @@ public class RabbitMQProducer extends DefaultProducer {
         this.executorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "CamelRabbitMQProducer[" + getEndpoint().getQueue() + "]");
 
         try {
-            openConnectionAndChannel();
+            openConnectionAndChannelPool();
         } catch (IOException e) {
             log.warn("Failed to create connection", e);
         }
@@ -75,12 +104,8 @@ public class RabbitMQProducer extends DefaultProducer {
     /**
      * If needed, close Connection and Channel
      */
-    private void closeConnectionAndChannel() throws IOException {
-        if (channel != null) {
-            log.debug("Closing channel: {}", channel);
-            channel.close();
-            channel = null;
-        }
+    private void closeConnectionAndChannel() throws Exception {
+        channelPool.close();
         if (conn != null) {
             log.debug("Closing connection: {} with timeout: {} ms.", conn, closeTimeout);
             conn.close(closeTimeout);
@@ -113,13 +138,36 @@ public class RabbitMQProducer extends DefaultProducer {
             throw new IllegalArgumentException("ExchangeName and RoutingKey is not provided in the endpoint: " + getEndpoint());
         }
         byte[] messageBodyBytes = exchange.getIn().getMandatoryBody(byte[].class);
-        AMQP.BasicProperties.Builder properties = buildProperties(exchange);
+        AMQP.BasicProperties properties = buildProperties(exchange).build();
+        Boolean mandatory = exchange.getIn().getHeader(RabbitMQConstants.MANDATORY, getEndpoint().isMandatory(), Boolean.class);
+        Boolean immediate = exchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE, getEndpoint().isImmediate(), Boolean.class);
+        
+        basicPublish(exchangeName, key, mandatory, immediate, properties, messageBodyBytes);
+    }
 
-        if (channel == null) {
+    /**
+     * Send a message borrowing a channel from the pool.
+     *
+     * @param exchange   Target exchange
+     * @param routingKey Routing key
+     * @param mandatory  This flag tells the server how to react if the message cannot be routed to a queue.
+     * @param immediate  This flag tells the server how to react if the message cannot be routed to a queue consumer immediately.
+     * @param properties Header properties
+     * @param body       Body content
+     */
+    private void basicPublish(final String exchange, final String routingKey, final boolean mandatory, final boolean immediate,  
+                              final AMQP.BasicProperties properties, final byte[] body) throws Exception {
+        if (channelPool == null) {
             // Open connection and channel lazily
-            openConnectionAndChannel();
+            openConnectionAndChannelPool();
         }
-        channel.basicPublish(exchangeName, key, properties.build(), messageBodyBytes);
+        execute(new ChannelCallback<Void>() {
+            @Override
+            public Void doWithChannel(Channel channel) throws Exception {
+                channel.basicPublish(exchange, routingKey, mandatory, immediate, properties, body);
+                return null;
+            }
+        });
     }
 
     AMQP.BasicProperties.Builder buildProperties(Exchange exchange) {
@@ -129,7 +177,7 @@ public class RabbitMQProducer extends DefaultProducer {
         if (contentType != null) {
             properties.contentType(contentType.toString());
         }
-        
+
         final Object priority = exchange.getIn().getHeader(RabbitMQConstants.PRIORITY);
         if (priority != null) {
             properties.priority(Integer.parseInt(priority.toString()));
@@ -218,8 +266,8 @@ public class RabbitMQProducer extends DefaultProducer {
     /**
      * Strategy to test if the given header is valid
      *
-     * @param headerValue  the header value
-     * @return  the value to use, <tt>null</tt> to ignore this header
+     * @param headerValue the header value
+     * @return the value to use, <tt>null</tt> to ignore this header
      * @see com.rabbitmq.client.impl.Frame#fieldValueSize
      */
     private Object getValidRabbitMQHeaderValue(Object headerValue) {
@@ -246,4 +294,5 @@ public class RabbitMQProducer extends DefaultProducer {
     public void setCloseTimeout(int closeTimeout) {
         this.closeTimeout = closeTimeout;
     }
+
 }

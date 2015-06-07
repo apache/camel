@@ -15,24 +15,21 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-           xmlns:camel="http://camel.apache.org/schema/blueprint">
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <camelContext trace="true" xmlns="http://camel.apache.org/schema/blueprint">
-        <endpoint id="traced" uri="mock:traced"/>
-        <route>
-            <from uri="direct:start"/>
-            <to uri="mock:result"/>
-        </route>
-    </camelContext>
+  <camelContext trace="true" xmlns="http://camel.apache.org/schema/blueprint">
+    <route>
+      <from uri="direct:start" />
+      <to uri="mock:result" />
+    </route>
+  </camelContext>
 
-    <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
-        <property name="traceExceptions" value="false"/>
-        <property name="traceInterceptors" value="true"/>
-        <property name="traceExceptions" value="true"/>
-        <property name="logLevel" value="INFO"/>
-        <property name="logName" value="org.apache.camel.blueprint.log"/>
-        <property name="destination" ref="traced"/>
-    </bean>
+  <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
+    <property name="traceInterceptors" value="true" />
+    <property name="traceExceptions" value="true" />
+    <property name="logLevel" value="INFO" />
+    <property name="logName" value="org.apache.camel.blueprint.log" />
+    <property name="destinationUri" value="mock:traced" />
+  </bean>
 
 </blueprint>

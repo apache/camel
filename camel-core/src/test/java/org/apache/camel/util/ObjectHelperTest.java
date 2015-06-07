@@ -41,7 +41,6 @@ import org.apache.camel.component.bean.MyStaticClass;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 
-
 /**
  * @version 
  */
@@ -688,6 +687,15 @@ public class ObjectHelperTest extends TestCase {
         assertEquals(null, ObjectHelper.between("Hello ${foo bar} how are you", "'", "'"));
     }
 
+    public void testBetweenOuterPair() {
+        assertEquals("bar(baz)123", ObjectHelper.betweenOuterPair("foo(bar(baz)123)", '(', ')'));
+        assertEquals(null, ObjectHelper.betweenOuterPair("foo(bar(baz)123))", '(', ')'));
+        assertEquals(null, ObjectHelper.betweenOuterPair("foo(bar(baz123", '(', ')'));
+        assertEquals(null, ObjectHelper.betweenOuterPair("foo)bar)baz123", '(', ')'));
+        assertEquals("bar", ObjectHelper.betweenOuterPair("foo(bar)baz123", '(', ')'));
+        assertEquals("'bar', 'baz()123', 123", ObjectHelper.betweenOuterPair("foo('bar', 'baz()123', 123)", '(', ')'));
+    }
+
     public void testIsJavaIdentifier() {
         assertEquals(true, ObjectHelper.isJavaIdentifier("foo"));
         assertEquals(false, ObjectHelper.isJavaIdentifier("foo.bar"));
@@ -707,6 +715,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("java.lang.Short", ObjectHelper.convertPrimitiveTypeToWrapperType(short.class).getName());
         assertEquals("java.lang.Byte", ObjectHelper.convertPrimitiveTypeToWrapperType(byte.class).getName());
         assertEquals("java.lang.Boolean", ObjectHelper.convertPrimitiveTypeToWrapperType(boolean.class).getName());
+        assertEquals("java.lang.Character", ObjectHelper.convertPrimitiveTypeToWrapperType(char.class).getName());
         // non primitive just fall through
         assertEquals("java.lang.Object", ObjectHelper.convertPrimitiveTypeToWrapperType(Object.class).getName());
     }

@@ -16,9 +16,11 @@
  */
 package org.apache.camel.core.xml;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
@@ -34,6 +36,9 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
 
     @XmlAttribute(required = true)
     private String location;
+
+    @XmlAttribute
+    private String encoding;
 
     @XmlAttribute
     private Boolean cache;
@@ -62,12 +67,23 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     @XmlAttribute
     private String suffixToken;
 
+    @XmlElement(name = "propertiesFunction")
+    private List<CamelPropertyPlaceholderFunctionDefinition> functions;
+
     public String getLocation() {
         return location;
     }
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     public Boolean isCache() {
@@ -140,5 +156,13 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
 
     public void setSuffixToken(String suffixToken) {
         this.suffixToken = suffixToken;
+    }
+
+    public List<CamelPropertyPlaceholderFunctionDefinition> getFunctions() {
+        return functions;
+    }
+
+    public void setFunctions(List<CamelPropertyPlaceholderFunctionDefinition> functions) {
+        this.functions = functions;
     }
 }

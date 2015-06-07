@@ -19,12 +19,10 @@ package org.apache.camel.component.dns;
 
 public class DnsConstants {
 
-    public static final String OPERATION_DIG = "dig";
-
-    public static final String OPERATION_IP = "ip";
-    public static final String OPERATION_LOOKUP = "lookup";
-
-    public static final String OPERATION_WIKIPEDIA = "wikipedia";
+    public static final String OPERATION_DIG = DnsType.dig.name();
+    public static final String OPERATION_IP = DnsType.ip.name();
+    public static final String OPERATION_LOOKUP = DnsType.lookup.name();
+    public static final String OPERATION_WIKIPEDIA = DnsType.wikipedia.name();
 
     public static final String DNS_CLASS = "dns.class";
 

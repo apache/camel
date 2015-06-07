@@ -25,12 +25,18 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
+import org.snmp4j.security.SecurityLevel;
 
+@UriEndpoint(scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";
@@ -41,15 +47,43 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(SnmpEndpoint.class);
 
     private OIDList oids = new OIDList();
-    private String address;
-    private String protocol = "udp";
-    private int retries = DEFAULT_SNMP_RETRIES;
-    private int timeout = DEFAULT_SNMP_TIMEOUT;
-    private int snmpVersion = DEFAULT_SNMP_VERSION;
-    private String snmpCommunity = DEFAULT_COMMUNITY;
-    private SnmpActionType type;
-    private int delay = 60;
 
+    private transient String address;
+
+    @UriPath(description = "Hostname of the SNMP enabled device") @Metadata(required = "true")
+    private String host;
+    @UriPath(description = "Port number of the SNMP enabled device") @Metadata(required = "true")
+    private Integer port;
+    @UriParam(defaultValue = "udp", enums = "tcp,udp")
+    private String protocol = "udp";
+    @UriParam(defaultValue = "" + DEFAULT_SNMP_RETRIES)
+    private int retries = DEFAULT_SNMP_RETRIES;
+    @UriParam(defaultValue = "" + DEFAULT_SNMP_TIMEOUT)
+    private int timeout = DEFAULT_SNMP_TIMEOUT;
+    @UriParam(defaultValue = "" + DEFAULT_SNMP_VERSION, enums = "0,1,3")
+    private int snmpVersion = DEFAULT_SNMP_VERSION;
+    @UriParam(defaultValue = DEFAULT_COMMUNITY)
+    private String snmpCommunity = DEFAULT_COMMUNITY;
+    @UriParam
+    private SnmpActionType type;
+    @UriParam(label = "consumer", defaultValue = "60000")
+    private long delay = 60000;
+    @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3")
+    private int securityLevel = SecurityLevel.AUTH_PRIV;
+    @UriParam
+    private String securityName;
+    @UriParam(enums = "MD5,SHA1")
+    private String authenticationProtocol;
+    @UriParam
+    private String authenticationPassphrase;
+    @UriParam
+    private String privacyProtocol;
+    @UriParam
+    private String privacyPassphrase;
+    @UriParam
+    private String snmpContextName;
+    @UriParam
+    private String snmpContextEngineId;
     /**
      * creates a snmp endpoint
      *
@@ -63,7 +97,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         if (this.type == SnmpActionType.TRAP) {
             SnmpTrapConsumer answer = new SnmpTrapConsumer(this, processor);
-            configureConsumer(answer);
+            // As the SnmpTrapConsumer is not a polling consumer we don't need to call the configureConsumer here.
             return answer;
         } else if (this.type == SnmpActionType.POLL) {
             SnmpOIDPoller answer = new SnmpOIDPoller(this, processor);
@@ -134,8 +168,120 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      * creates and configures the endpoint
      *
      * @throws Exception if unable to setup connection
+     * @deprecated use {@link #start()} instead
      */
+    @Deprecated
     public void initiate() throws Exception {
+        // noop
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    /**
+     * Sets update rate in seconds
+     *
+     * @param updateEvery the update rate in seconds
+     */
+    @Override
+    public void setDelay(long updateEvery) {
+        this.delay = updateEvery;
+    }
+
+    public SnmpActionType getType() {
+        return this.type;
+    }
+
+    /**
+     * Which operation to perform such as poll, trap, etc.
+     */
+    public void setType(SnmpActionType type) {
+        this.type = type;
+    }
+
+    public OIDList getOids() {
+        return this.oids;
+    }
+
+    /**
+     * Defines which values you are interested in. Please have a look at the Wikipedia to get a better understanding.
+     * You may provide a single OID or a coma separated list of OIDs.
+     * Example: oids="1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1"
+     */
+    public void setOids(OIDList oids) {
+        this.oids = oids;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public int getRetries() {
+        return this.retries;
+    }
+
+    /**
+     * Defines how often a retry is made before canceling the request.
+     */
+    public void setRetries(int retries) {
+        this.retries = retries;
+    }
+
+    public int getTimeout() {
+        return this.timeout;
+    }
+
+    /**
+     * Sets the timeout value for the request in millis.
+     */
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    public int getSnmpVersion() {
+        return this.snmpVersion;
+    }
+
+    /**
+     * Sets the snmp version for the request.
+     * <p/>
+     * The value 0 means SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3
+     */
+    public void setSnmpVersion(int snmpVersion) {
+        this.snmpVersion = snmpVersion;
+    }
+
+    public String getSnmpCommunity() {
+        return this.snmpCommunity;
+    }
+
+    /**
+     * Sets the community octet string for the snmp request.
+     */
+    public void setSnmpCommunity(String snmpCommunity) {
+        this.snmpCommunity = snmpCommunity;
+    }
+
+    public String getProtocol() {
+        return this.protocol;
+    }
+
+    /**
+     * Here you can select which protocol to use. You can use either udp or tcp.
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
         URI uri = URI.create(getEndpointUri());
         String host = uri.getHost();
         int port = uri.getPort();
@@ -157,81 +303,105 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         setAddress(address);
     }
 
-    public int getDelay() {
-        return delay;
+    public int getSecurityLevel() {
+        return securityLevel;
     }
 
     /**
-     * Sets update rate in seconds
-     *
-     * @param updateEvery the update rate in seconds
+     * Sets the security level for this target. The supplied security level must
+     * be supported by the security model dependent information associated with
+     * the security name set for this target.
+     * <p/>
+     * The value 1 means: No authentication and no encryption. Anyone can create and read messages with this security level
+     * The value 2 means: Authentication and no encryption. Only the one with the right authentication key can create
+     * messages with this security level, but anyone can read the contents of the message.
+     * The value 3 means: Authentication and encryption. Only the one with the right authentication key can create messages
+     * with this security level, and only the one with the right encryption/decryption key can read the contents of the message.
      */
-    public void setDelay(int updateEvery) {
-        this.delay = updateEvery;
+    public void setSecurityLevel(int securityLevel) {
+        this.securityLevel = securityLevel;
     }
 
-    public SnmpActionType getType() {
-        return this.type;
+    public String getSecurityName() {
+        return securityName;
     }
 
-    public void setType(SnmpActionType type) {
-        this.type = type;
+    /**
+     * Sets the security name to be used with this target.
+     */
+    public void setSecurityName(String securityName) {
+        this.securityName = securityName;
     }
 
-    public OIDList getOids() {
-        return this.oids;
+    public String getAuthenticationProtocol() {
+        return authenticationProtocol;
     }
 
-    public void setOids(OIDList oids) {
-        this.oids = oids;
+    /**
+     * Authentication protocol to use if security level is set to enable authentication
+     * The possible values are: MD5, SHA1
+     */
+    public void setAuthenticationProtocol(String authenticationProtocol) {
+        this.authenticationProtocol = authenticationProtocol;
     }
 
-    public String getAddress() {
-        return this.address;
+    public String getAuthenticationPassphrase() {
+        return authenticationPassphrase;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    /**
+     * The authentication passphrase. If not <code>null</code>, <code>authenticationProtocol</code> must also be not
+     * <code>null</code>. RFC3414 11.2 requires passphrases to have a minimum length of 8 bytes.
+     * If the length of <code>authenticationPassphrase</code> is less than 8 bytes an <code>IllegalArgumentException</code> is thrown.
+     */
+    public void setAuthenticationPassphrase(String authenticationPassphrase) {
+        this.authenticationPassphrase = authenticationPassphrase;
     }
 
-    public int getRetries() {
-        return this.retries;
+    public String getPrivacyProtocol() {
+        return privacyProtocol;
     }
 
-    public void setRetries(int retries) {
-        this.retries = retries;
+    /**
+     * The privacy protocol ID to be associated with this user. If set to <code>null</code>, this user only supports unencrypted messages.
+     */
+    public void setPrivacyProtocol(String privacyProtocol) {
+        this.privacyProtocol = privacyProtocol;
     }
 
-    public int getTimeout() {
-        return this.timeout;
+    public String getPrivacyPassphrase() {
+        return privacyPassphrase;
     }
 
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
+    /**
+     * The privacy passphrase. If not <code>null</code>, <code>privacyProtocol</code> must also be not <code>null</code>.
+     * RFC3414 11.2 requires passphrases to have a minimum length of 8 bytes. If the length of
+     * <code>authenticationPassphrase</code> is less than 8 bytes an <code>IllegalArgumentException</code> is thrown.
+     */
+    public void setPrivacyPassphrase(String privacyPassphrase) {
+        this.privacyPassphrase = privacyPassphrase;
     }
 
-    public int getSnmpVersion() {
-        return this.snmpVersion;
+    public String getSnmpContextName() {
+        return snmpContextName;
     }
 
-    public void setSnmpVersion(int snmpVersion) {
-        this.snmpVersion = snmpVersion;
+    /**
+     * Sets the context name field of this scoped PDU.
+     */
+    public void setSnmpContextName(String snmpContextName) {
+        this.snmpContextName = snmpContextName;
     }
 
-    public String getSnmpCommunity() {
-        return this.snmpCommunity;
+    public String getSnmpContextEngineId() {
+        return snmpContextEngineId;
     }
 
-    public void setSnmpCommunity(String snmpCommunity) {
-        this.snmpCommunity = snmpCommunity;
-    }
-
-    public String getProtocol() {
-        return this.protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
+    /**
+     * Sets the context engine ID field of the scoped PDU.
+     */
+    public void setSnmpContextEngineId(String snmpContextEngineId) {
+        this.snmpContextEngineId = snmpContextEngineId;
     }
 
     @Override

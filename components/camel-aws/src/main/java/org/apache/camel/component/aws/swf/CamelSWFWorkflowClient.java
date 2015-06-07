@@ -46,7 +46,7 @@ public class CamelSWFWorkflowClient {
         dynamicWorkflowClientExternal.signalWorkflowExecution(signalName, toArray(arguments));
     }
 
-    public Object getWorkflowExecutionState(String workflowId, String runId, Class aClass) throws Throwable {
+    public Object getWorkflowExecutionState(String workflowId, String runId, Class<?> aClass) throws Throwable {
         DynamicWorkflowClientExternal dynamicWorkflowClientExternal = getDynamicWorkflowClient(workflowId, runId);
         return dynamicWorkflowClientExternal.getWorkflowExecutionState(aClass);
     }
@@ -103,7 +103,7 @@ public class CamelSWFWorkflowClient {
         WorkflowExecution workflowExecution = new WorkflowExecution();
         workflowExecution.setWorkflowId(workflowId != null ? workflowId : genericClient.generateUniqueId());
         workflowExecution.setRunId(runId);
-        return new DynamicWorkflowClientExternalImpl(workflowExecution, null, endpoint.getStartWorkflowOptions(), null, genericClient);
+        return new DynamicWorkflowClientExternalImpl(workflowExecution, null, endpoint.getStartWorkflowOptions(), configuration.getDataConverter(), genericClient);
     }
 
     private Object[] toArray(Object input) {

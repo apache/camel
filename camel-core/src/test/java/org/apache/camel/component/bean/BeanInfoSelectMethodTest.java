@@ -60,9 +60,9 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").logStackTrace(false).maximumRedeliveries(3));
 
-                onException(Exception.class).handled(true).beanRef("foo", "handleFailure").to("mock:result");
+                onException(Exception.class).handled(true).bean("foo", "handleFailure").to("mock:result");
 
-                from("direct:a").beanRef("foo").to("mock:result");
+                from("direct:a").bean("foo").to("mock:result");
 
                 from("direct:b").to("mock:foo");
             }

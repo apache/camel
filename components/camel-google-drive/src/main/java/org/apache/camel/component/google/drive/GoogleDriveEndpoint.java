@@ -19,7 +19,6 @@ package org.apache.camel.component.google.drive;
 import java.util.Map;
 
 import com.google.api.services.drive.Drive;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,6 +27,7 @@ import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.component.google.drive.internal.GoogleDriveConstants;
 import org.apache.camel.component.google.drive.internal.GoogleDrivePropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
@@ -35,13 +35,18 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a GoogleDrive endpoint.
  */
-@UriEndpoint(scheme = "google-drive", consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer")
+@UriEndpoint(scheme = "google-drive", title = "Google Drive", syntax = "google:drive:apiName/methodName",
+consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer", label = "api,cloud,file")
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
     private Object apiProxy;
-    
+
+    @UriParam
+    private GoogleDriveConfiguration configuration;
+
     public GoogleDriveEndpoint(String uri, GoogleDriveComponent component,
                          GoogleDriveApiName apiName, String methodName, GoogleDriveConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, GoogleDriveApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+        this.configuration = endpointConfiguration;
     }
 
     public Producer createProducer() throws Exception {
@@ -70,7 +75,7 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
     
     @Override
     protected void afterConfigureProperties() {
-        switch ((GoogleDriveApiName)apiName) {
+        switch (apiName) {
         case DRIVE_FILES:
             apiProxy = getClient().files();
             break;
@@ -79,6 +84,9 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
             break;
         case DRIVE_APPS:
             apiProxy = getClient().apps();
+            break;
+        case DRIVE_CHANNELS:
+            apiProxy = getClient().channels();
             break;
         case DRIVE_CHANGES:
             apiProxy = getClient().changes();
@@ -91,6 +99,9 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
             break;
         case DRIVE_PROPERTIES:
             apiProxy = getClient().properties();
+            break;
+        case DRIVE_REALTIME:
+            apiProxy = getClient().realtime();
             break;
         case DRIVE_REPLIES:
             apiProxy = getClient().replies();
@@ -118,5 +129,11 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
         return apiProxy;
     }
 
+    public GoogleDriveClientFactory getClientFactory() {
+        return ((GoogleDriveComponent)getComponent()).getClientFactory();
+    }
 
+    public void setClientFactory(GoogleDriveClientFactory clientFactory) {
+        ((GoogleDriveComponent)getComponent()).setClientFactory(clientFactory);
+    }
 }

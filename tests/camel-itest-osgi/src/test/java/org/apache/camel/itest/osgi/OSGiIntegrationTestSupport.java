@@ -88,8 +88,8 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         mavenOption.versionAsInProject().start(true).startLevel(10);
         return mavenOption;
     }
-    public static UrlReference getCamelKarafFeatureUrl(String version) {
 
+    public static UrlReference getCamelKarafFeatureUrl(String version) {
         String type = "xml/features";
         MavenArtifactProvisionOption mavenOption = mavenBundle().groupId("org.apache.camel.karaf").artifactId("apache-camel");
         if (version == null) {
@@ -160,7 +160,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "2.3.7";
+            karafVersion = "2.4.2";
         }
         return karafVersion;
     }
@@ -187,6 +187,8 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
                       //KarafDistributionOption.keepRuntimeFolder(),
                       // override the config.properties (to fix pax-exam bug)
                       // KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
+                      // Need to override the jre setting
+                      KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/org/apache/camel/itest/karaf/jre.properties")),
                       KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
                       KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
                

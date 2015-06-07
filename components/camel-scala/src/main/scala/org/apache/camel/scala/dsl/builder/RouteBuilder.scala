@@ -36,7 +36,10 @@ import org.slf4j.{Logger, LoggerFactory}
 
 /**
  * Scala RouteBuilder implementation
+ *
+ * @deprecated use ScalaRouteBuilder
  */
+@Deprecated
 class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages with Functions {
 
   val builder = new org.apache.camel.builder.RouteBuilder {
@@ -150,6 +153,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def loop(expression: Exchange => Any) = stack.top.loop(expression)
 
   def marshal(format: DataFormatDefinition) = stack.top.marshal(format)
+  def marshal(dataFormatRef: String) = stack.top.marshal(dataFormatRef)
   def multicast = stack.top.multicast
 
   def onCompletion = {
@@ -173,6 +177,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
   def rollback = stack.top.rollback
   def routeId(id: String) = stack.top.routeId(id)
+  def routeDescription(description: String) = stack.top.routeDescription(description)
   def routingSlip(header: String) = stack.top.routingSlip(header)
   def routingSlip(header: String, separator: String) = stack.top.routingSlip(header, separator)
   def routingSlip(expression: Exchange => Any) = stack.top.routingSlip(expression)
@@ -195,6 +200,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def transform(expression: Exchange => Any) = stack.top.transform(expression)
 
   def unmarshal(format: DataFormatDefinition) = stack.top.unmarshal(format)
+  def unmarshal(dataFormatRef: String) = stack.top.unmarshal(dataFormatRef)
 
   def validate(expression: (Exchange) => Any) = stack.top.validate(expression)
 

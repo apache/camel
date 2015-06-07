@@ -25,16 +25,18 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a avro DataFormat {@link org.apache.camel.spi.DataFormat}
+ * Avro data format
  *
  * @version 
  */
+@Metadata(label = "dataformat,transformation", title = "Avro")
 @XmlRootElement(name = "avro")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AvroDataFormat extends DataFormatDefinition {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String instanceClassName;
     @XmlTransient
     private Object schema;
@@ -52,6 +54,9 @@ public class AvroDataFormat extends DataFormatDefinition {
         return instanceClassName;
     }
 
+    /**
+     * Class name to use for marshal and unmarshalling
+     */
     public void setInstanceClassName(String instanceClassName) {
         this.instanceClassName = instanceClassName;
     }
@@ -67,7 +72,7 @@ public class AvroDataFormat extends DataFormatDefinition {
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (this.instanceClassName != null) {
-            setProperty(camelContext, dataFormat, "instanceClass", instanceClassName);
+            setProperty(camelContext, dataFormat, "instanceClassName", instanceClassName);
         }
         if (this.schema != null) {
             setProperty(camelContext, dataFormat, "schema", schema);

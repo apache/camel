@@ -32,7 +32,7 @@ public class MyRouteBuilder extends RouteBuilder {
         from("jms:test.MyQueue").to("file://target/routeOutput");
 
         // set up a listener on the file component
-        from("file://target/routeOutput?noop=true").beanRef("myBean");
+        from("file://target/routeOutput?noop=true").bean("myBean");
     }
 
 }

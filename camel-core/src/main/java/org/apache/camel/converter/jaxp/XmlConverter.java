@@ -245,9 +245,7 @@ public class XmlConverter {
      */
     @Converter
     public byte[] toByteArray(Source source, Exchange exchange) throws TransformerException {
-        if (source == null) {
-            return null;
-        } else if (source instanceof BytesSource) {
+        if (source instanceof BytesSource) {
             return ((BytesSource)source).getData();
         } else {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -320,11 +318,7 @@ public class XmlConverter {
     @Converter
     public DOMSource toDOMSource(String text) throws ParserConfigurationException, IOException, SAXException, TransformerException {
         Source source = toSource(text);
-        if (source != null) {
-            return toDOMSourceFromStream((StreamSource) source);
-        } else {
-            return null;
-        }
+        return toDOMSourceFromStream((StreamSource) source);
     }
 
     /**
@@ -574,7 +568,7 @@ public class XmlConverter {
      */
     @Deprecated
     public SAXSource toSAXSourceFromStream(StreamSource source) throws SAXException {
-        return toSAXSourceFromStream(source, (Exchange) null);
+        return toSAXSourceFromStream(source, null);
     }
     
     @Converter
@@ -602,7 +596,14 @@ public class XmlConverter {
                 } catch (Exception e) {
                     LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
                 }
+                try {
+                    sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                } catch (SAXException e) {
+                    LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}."
+                            , new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});                
+                }
             }
+            sfactory.setNamespaceAware(true);
             SAXParser parser = sfactory.newSAXParser();
             xmlReader = parser.getXMLReader();
         } catch (Exception ex) {
@@ -634,7 +635,7 @@ public class XmlConverter {
     */
     @Deprecated
     public DOMSource toDOMSource(InputStream is) throws ParserConfigurationException, IOException, SAXException {
-        return toDOMSource(is, (Exchange)null);
+        return toDOMSource(is, null);
     }
     
     @Converter
@@ -651,7 +652,7 @@ public class XmlConverter {
      */
     @Deprecated
     public DOMSource toDOMSource(File file) throws ParserConfigurationException, IOException, SAXException {
-        return toDOMSource(file, (Exchange)null);
+        return toDOMSource(file, null);
     }
     
     @Converter
@@ -660,13 +661,12 @@ public class XmlConverter {
         return toDOMSource(is, exchange);
     }
 
-
     /**
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
     @Deprecated
     public DOMSource toDOMSourceFromStream(StreamSource source) throws ParserConfigurationException, IOException, SAXException {
-        return toDOMSourceFromStream(source, (Exchange)null);
+        return toDOMSourceFromStream(source, null);
     }
     
     @Converter
@@ -812,7 +812,7 @@ public class XmlConverter {
      */
     @Deprecated
     public Document toDOMDocument(byte[] data) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(data, (Exchange)null);
+        return toDOMDocument(data, null);
     }
     
     /**
@@ -837,7 +837,7 @@ public class XmlConverter {
      */
     @Deprecated
     public Document toDOMDocument(InputStream in) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(in, (Exchange)null);
+        return toDOMDocument(in, null);
     }
     
     /**
@@ -935,7 +935,7 @@ public class XmlConverter {
      */
     @Deprecated
     public Document toDOMDocument(File file) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(file, (Exchange)null);
+        return toDOMDocument(file, null);
     }
     
     /**
@@ -1077,7 +1077,7 @@ public class XmlConverter {
             }
         }
         if (features.size() > 0) {
-            StringBuffer featureString = new StringBuffer();
+            StringBuilder featureString = new StringBuilder();
             // just log the configured feature
             for (String feature : features) {
                 if (featureString.length() != 0) {

@@ -117,6 +117,8 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
         if (typeHints == TypeHintsEnum.YES || typeHints == TypeHintsEnum.WITH_PREFIX) {
             serializer.setTypeHintsEnabled(true);
             if (typeHints == TypeHintsEnum.WITH_PREFIX) {
+                serializer.setTypeHintsCompatibility(false);
+            } else {
                 serializer.setTypeHintsCompatibility(true);
             }
         } else {

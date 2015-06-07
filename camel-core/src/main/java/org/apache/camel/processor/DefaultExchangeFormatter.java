@@ -389,7 +389,18 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
         }
 
-        return MessageHelper.extractBodyForLogging(message, "", isShowStreams(), isShowFiles(), getMaxChars());
+        return MessageHelper.extractBodyForLogging(message, "", isShowStreams(), isShowFiles(), getMaxChars(message));
+    }
+
+    private int getMaxChars(Message message) {
+        int maxChars = getMaxChars();
+        if (message.getExchange() != null) {
+            String property = message.getExchange().getContext().getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
+            if (property != null) {
+                maxChars = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
+            }
+        }
+        return maxChars;
     }
 
     protected String getBodyTypeAsString(Message message) {

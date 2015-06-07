@@ -54,7 +54,7 @@ public final class TestKeystore {
         return "abcd1234".toCharArray();
     }
 
-    private static KeyStore getKeyStore() throws GeneralSecurityException, IOException {
+    public static KeyStore getKeyStore() throws GeneralSecurityException, IOException {
 
         KeyStore ks = KeyStore.getInstance("JKS");
         InputStream is = TestKeystore.class.getClassLoader().getResourceAsStream("org/apache/camel/component/xmlsecurity/keystore.jks");

@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.rest;
 
+import java.util.Arrays;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestParamType;
 
 public class FromRestIdAndDescriptionTest extends FromRestGetTest {
 
@@ -45,11 +48,20 @@ public class FromRestIdAndDescriptionTest extends FromRestGetTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                restConfiguration().host("localhost");
                 rest("/say/hello").id("hello").description("Hello Service")
                         .get().id("get-say").description("Says hello to you").to("direct:hello");
 
                 rest("/say/bye").description("bye", "Bye Service", "en")
-                        .get().description("Says bye to you").consumes("application/json").to("direct:bye")
+                        .get().description("Says bye to you").consumes("application/json")
+                        .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
+                        .defaultValue("1").allowMultiple(false).name("header_count").required(true).paramAccess("acc1")
+                        .endParam().
+                        param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
+                        .defaultValue("b").allowMultiple(true).name("header_letter").required(false).paramAccess("acc2")
+                        .endParam()
+                        .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
+                        .to("direct:bye")
                         .post().description("Updates the bye message").to("mock:update");
 
                 from("direct:hello")

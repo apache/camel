@@ -20,15 +20,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
+
+import com.sun.mail.imap.SortTerm;
 
 import org.apache.camel.Converter;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -178,6 +182,44 @@ public final class MailConverters {
         return builder.build();
     }
 
+    /*
+     * Converts from comma separated list of sort terms to SortTerm obj array
+     */
+    @Converter
+    public static SortTerm[] toSortTerm(String sortTerm) {
+        ArrayList<SortTerm> result = new ArrayList<SortTerm>();
+        
+        if (sortTerm == null) {
+            return null;
+        }
+        
+        String[] sortTerms = sortTerm.split(",");
+        for (String key : sortTerms) {          
+            if ("arrival".equals(key)) {
+                result.add(SortTerm.ARRIVAL);
+            } else if ("cc".equals(key)) {
+                result.add(SortTerm.CC);
+            } else if ("date".equals(key)) {
+                result.add(SortTerm.DATE);
+            } else if ("from".equals(key)) {
+                result.add(SortTerm.FROM);
+            } else if ("reverse".equals(key)) {
+                result.add(SortTerm.REVERSE);
+            } else if ("size".equals(key)) {
+                result.add(SortTerm.SIZE);
+            } else if ("subject".equals(key)) {
+                result.add(SortTerm.SUBJECT);
+            } else if ("to".equals(key)) {
+                result.add(SortTerm.TO);
+            }
+        }
+        if (result.size() > 0) {
+            return result.toArray(new SortTerm[result.size()]);
+        } else {
+            return null;
+        }
+    }
+    
     private static long extractOffset(String now, TypeConverter typeConverter) throws NoTypeConversionAvailableException {
         Matcher matcher = NOW_PATTERN.matcher(now);
         if (matcher.matches()) {

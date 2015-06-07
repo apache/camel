@@ -40,18 +40,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CsvRouteCharsetTest extends CamelTestSupport {
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testUnMarshal() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:daltons");
         endpoint.expectedMessageCount(1);
         endpoint.assertIsSatisfied();
-        
+
         Exchange exchange = endpoint.getExchanges().get(0);
         List<List<String>> data = (List<List<String>>) exchange.getIn().getBody();
         assertEquals("Jäck Dalton", data.get(0).get(0));
@@ -63,8 +60,8 @@ public class CsvRouteCharsetTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("file:src/test/resources/?fileName=daltons-utf-8.csv&noop=true").
-                    unmarshal().csv().
-                    to("mock:daltons");
+                        unmarshal().csv().
+                        to("mock:daltons");
             }
         };
     }

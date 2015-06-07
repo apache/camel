@@ -62,6 +62,7 @@ trait DSL {
   def loop(expression: Exchange => Any) : SLoopDefinition
 
   def marshal(format : DataFormatDefinition) : DSL
+  def marshal(dataFormatRef: String) : DSL
   def multicast : SMulticastDefinition
 
   def onCompletion : SOnCompletionDefinition
@@ -80,6 +81,7 @@ trait DSL {
   def resequence(expression: Exchange => Any) : SResequenceDefinition
   def rollback : DSL
   def routeId(id: String) : DSL
+  def routeDescription(description: String): DSL
   def routingSlip(header: String) : DSL
   def routingSlip(header: String, separator: String) : DSL
   def routingSlip(expression: Exchange => Any) : DSL
@@ -103,6 +105,7 @@ trait DSL {
   def transform(expression: Exchange => Any) : DSL
 
   def unmarshal(format: DataFormatDefinition) : DSL
+  def unmarshal(dataFormatRef: String) : DSL
 
   def validate(expression: Exchange => Any) : DSL
 

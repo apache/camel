@@ -24,15 +24,20 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
  */
+@UriEndpoint(scheme = "nagios", title = "Nagios", syntax = "nagios:host:port", producerOnly = true, label = "monitoring")
 public class NagiosEndpoint extends DefaultEndpoint {
 
     private INagiosPassiveCheckSender sender;
+    @UriParam
     private NagiosConfiguration configuration;
+    @UriParam(defaultValue = "true")
     private boolean sendSync = true;
 
     public NagiosEndpoint() {
@@ -67,6 +72,10 @@ public class NagiosEndpoint extends DefaultEndpoint {
         return sendSync;
     }
 
+    /**
+     * Whether or not to use synchronous when sending a passive check.
+     * Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously.
+     */
     public void setSendSync(boolean sendSync) {
         this.sendSync = sendSync;
     }

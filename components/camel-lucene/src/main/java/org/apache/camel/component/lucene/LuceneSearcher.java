@@ -59,18 +59,21 @@ public class LuceneSearcher {
     }
     
     public Hits search(String searchPhrase, int maxNumberOfHits) throws Exception {
-        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_46);
+        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_4_10_3, false);
     }
 
-    public Hits search(String searchPhrase, int maxNumberOfHits, Version luenceVersion) throws Exception {
+    public Hits search(String searchPhrase, int maxNumberOfHits, Version luceneVersion, boolean returnLuceneDocs) throws Exception {
         Hits searchHits = new Hits();
 
-        int numberOfHits = doSearch(searchPhrase, maxNumberOfHits, luenceVersion);
+        int numberOfHits = doSearch(searchPhrase, maxNumberOfHits, luceneVersion);
         searchHits.setNumberOfHits(numberOfHits);
 
         for (ScoreDoc hit : hits) {
             Document selectedDocument = indexSearcher.doc(hit.doc);
             Hit aHit = new Hit();
+            if (returnLuceneDocs) {
+                aHit.setDocument(selectedDocument);
+            }
             aHit.setHitLocation(hit.doc);
             aHit.setScore(hit.score);
             aHit.setData(selectedDocument.get("contents"));
@@ -80,10 +83,10 @@ public class LuceneSearcher {
         return searchHits;
     }
                 
-    private int doSearch(String searchPhrase, int maxNumberOfHits, Version luenceVersion) throws NullPointerException, ParseException, IOException {
+    private int doSearch(String searchPhrase, int maxNumberOfHits, Version luceneVersion) throws NullPointerException, ParseException, IOException {
         LOG.trace("*** Search Phrase: {} ***", searchPhrase);
 
-        QueryParser parser = new QueryParser(luenceVersion, "contents", analyzer);
+        QueryParser parser = new QueryParser("contents", analyzer);
         Query query = parser.parse(searchPhrase);
         TopScoreDocCollector collector = TopScoreDocCollector.create(maxNumberOfHits, true);
         indexSearcher.search(query, collector);

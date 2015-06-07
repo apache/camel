@@ -30,16 +30,22 @@ import org.apache.camel.Traceable;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 
 public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements Traceable, CamelContextAware {
+    private static final int STATE_CLOSED = 0;
+    private static final int STATE_HALF_OPEN = 1;
+    private static final int STATE_OPEN = 2;
+
     private final List<Class<?>> exceptions;
     private CamelContext camelContext;
     private int threshold;
     private long halfOpenAfter;
     private long lastFailure;
     private AtomicInteger failures = new AtomicInteger();
+    private AtomicInteger state = new AtomicInteger(STATE_CLOSED);
 
     public CircuitBreakerLoadBalancer(List<Class<?>> exceptions) {
         this.exceptions = exceptions;
     }
+
     public CircuitBreakerLoadBalancer() {
         this.exceptions = null;
     }
@@ -105,32 +111,95 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
             return true;
         }
 
-        if (failures.get() >= threshold && System.currentTimeMillis() - lastFailure < halfOpenAfter) {
-            exchange.setException(new RejectedExecutionException("CircuitBreaker Open: failures: " + failures + ", lastFailure: " + lastFailure));
+        return calculateState(exchange, callback);
+    }
+
+    private boolean calculateState(final Exchange exchange, final AsyncCallback callback) {
+        boolean output = false;
+        if (state.get() == STATE_HALF_OPEN) {
+            if (failures.get() == 0) {
+                output = closeCircuit(exchange, callback);
+            } else {
+                output = openCircuit(exchange, callback);
+            }
+        } else if (state.get() == STATE_OPEN) {
+            if (failures.get() >= threshold && System.currentTimeMillis() - lastFailure < halfOpenAfter) {
+                output = openCircuit(exchange, callback);
+            } else {
+                output = halfOpenCircuit(exchange, callback);
+            }
+        } else if (state.get() == STATE_CLOSED) {
+            if (failures.get() >= threshold && System.currentTimeMillis() - lastFailure < halfOpenAfter) {
+                output = openCircuit(exchange, callback);
+            } else if (failures.get() >= threshold && System.currentTimeMillis() - lastFailure >= halfOpenAfter) {
+                output = halfOpenCircuit(exchange, callback);
+            } else {
+                output = closeCircuit(exchange, callback);
+            }
+        } else {
+            throw new IllegalStateException("Unrecognised circuitBreaker state " + state.get());
         }
+        return output;
+    }
+
+    private boolean openCircuit(final Exchange exchange, final AsyncCallback callback) {
+        boolean output = rejectExchange(exchange, callback);
+        state.set(STATE_OPEN);
+        logState();
+        return output;
+    }
+
+    private boolean halfOpenCircuit(final Exchange exchange, final AsyncCallback callback) {
+        boolean output = executeProcessor(exchange, callback);
+        state.set(STATE_HALF_OPEN);
+        logState();
+        return output;
+    }
+
+    private boolean closeCircuit(final Exchange exchange, final AsyncCallback callback) {
+        boolean output = executeProcessor(exchange, callback);
+        state.set(STATE_CLOSED);
+        logState();
+        return output;
+    }
+
+    private void logState() {
+        log.debug("State {}, failures {}, closed since {}", new Object[]{state.get(), failures.get(), System.currentTimeMillis() - lastFailure});
+    }
+
+    private boolean executeProcessor(final Exchange exchange, final AsyncCallback callback) {
         Processor processor = getProcessors().get(0);
         if (processor == null) {
             throw new IllegalStateException("No processors could be chosen to process CircuitBreaker");
         }
 
         AsyncProcessor albp = AsyncProcessorConverterHelper.convert(processor);
-        boolean sync = albp.process(exchange, callback);
+        // Added a callback for processing the exchange in the callback
+        boolean sync = albp.process(exchange, new CircuitBreakerCallback(exchange, callback));
 
-        boolean failed = hasFailed(exchange);
-
-        if (!failed) {
-            failures.set(0);
+        // We need to check the exception here as albp is use sync call
+        if (sync) {
+            boolean failed = hasFailed(exchange);
+            if (!failed) {
+                failures.set(0);
+            } else {
+                failures.incrementAndGet();
+                lastFailure = System.currentTimeMillis();
+            }
         } else {
-            failures.incrementAndGet();
-            lastFailure = System.currentTimeMillis();
-        }
-
-        if (!sync) {
+            // CircuitBreakerCallback can take care of failure check of the
+            // exchange
             log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
             return false;
         }
 
         log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+        callback.done(true);
+        return true;
+    }
+
+    private boolean rejectExchange(final Exchange exchange, final AsyncCallback callback) {
+        exchange.setException(new RejectedExecutionException("CircuitBreaker Open: failures: " + failures + ", lastFailure: " + lastFailure));
         callback.done(true);
         return true;
     }
@@ -141,5 +210,30 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
 
     public String getTraceLabel() {
         return "circuitbreaker";
+    }
+
+    class CircuitBreakerCallback implements AsyncCallback {
+        private final AsyncCallback callback;
+        private final Exchange exchange;
+
+        CircuitBreakerCallback(Exchange exchange, AsyncCallback callback) {
+            this.callback = callback;
+            this.exchange = exchange;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            if (!doneSync) {
+                boolean failed = hasFailed(exchange);
+                if (!failed) {
+                    failures.set(0);
+                } else {
+                    failures.incrementAndGet();
+                    lastFailure = System.currentTimeMillis();
+                }
+            }
+            callback.done(doneSync);
+        }
+
     }
 }

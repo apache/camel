@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -35,9 +34,11 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesFunction;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.management.DefaultManagementAgent;
@@ -53,6 +54,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
+import org.apache.camel.model.PropertiesDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
@@ -60,7 +62,6 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
-import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestContainer;
@@ -69,6 +70,7 @@ import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
@@ -81,6 +83,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
@@ -204,6 +207,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.info("Using custom InflightRepository: {}", inflightRepository);
             getContext().setInflightRepository(inflightRepository);
         }
+        AsyncProcessorAwaitManager asyncProcessorAwaitManager = getBeanForType(AsyncProcessorAwaitManager.class);
+        if (asyncProcessorAwaitManager != null) {
+            LOG.info("Using custom AsyncProcessorAwaitManager: {}", asyncProcessorAwaitManager);
+            getContext().setAsyncProcessorAwaitManager(asyncProcessorAwaitManager);
+        }
         ManagementStrategy managementStrategy = getBeanForType(ManagementStrategy.class);
         if (managementStrategy != null) {
             LOG.info("Using custom ManagementStrategy: {}", managementStrategy);
@@ -228,6 +236,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (runtimeEndpointRegistry != null) {
             LOG.info("Using custom RuntimeEndpointRegistry: {}", runtimeEndpointRegistry);
             getContext().setRuntimeEndpointRegistry(runtimeEndpointRegistry);
+        }
+        // custom type converters defined as <bean>s
+        Map<String, TypeConverters> typeConverters = getContext().getRegistry().findByTypeWithName(TypeConverters.class);
+        if (typeConverters != null && !typeConverters.isEmpty()) {
+            for (Entry<String, TypeConverters> entry : typeConverters.entrySet()) {
+                TypeConverters converter = entry.getValue();
+                LOG.info("Adding custom TypeConverters with id: {} and implementation: {}", entry.getKey(), converter);
+                getContext().getTypeConverterRegistry().addTypeConverters(converter);
+            }
         }
         // set the event notifier strategies if defined
         Map<String, EventNotifier> eventNotifiers = getContext().getRegistry().findByTypeWithName(EventNotifier.class);
@@ -316,6 +333,21 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // must init route refs before we prepare the routes below
             initRouteRefs();
 
+            // must init rest refs before we add the rests
+            initRestRefs();
+
+            // and add the rests
+            getContext().addRestDefinitions(getRests());
+
+            // convert rests into routes so we reuse routes for runtime
+            for (RestDefinition rest : getRests()) {
+                List<RouteDefinition> routes = rest.asRouteDefinition(getContext());
+                for (RouteDefinition route : routes) {
+                    getRoutes().add(route);
+                }
+            }
+
+
             // do special preparation for some concepts such as interceptors and policies
             // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
             // using route builders. So we have here a little custom code to fix the JAXB gaps
@@ -328,12 +360,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             findRouteBuilders();
             installRoutes();
-
-            // must init rest refs before we add the rests
-            initRestRefs();
-
-            // and add the rests
-            getContext().addRestDefinitions(getRests());
 
             // and we are now finished setting up the routes
             getContext().setupRoutes(true);
@@ -493,6 +519,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             PropertiesComponent pc = new PropertiesComponent();
             pc.setLocation(def.getLocation());
+            pc.setEncoding(def.getEncoding());
 
             if (def.isCache() != null) {
                 pc.setCache(def.isCache());
@@ -525,6 +552,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             
             pc.setPrefixToken(def.getPrefixToken());
             pc.setSuffixToken(def.getSuffixToken());
+
+            if (def.getFunctions() != null && !def.getFunctions().isEmpty()) {
+                for (CamelPropertyPlaceholderFunctionDefinition function : def.getFunctions()) {
+                    String ref = function.getRef();
+                    PropertiesFunction pf = CamelContextHelper.mandatoryLookup(getContext(), ref, PropertiesFunction.class);
+                    pc.addFunction(pf);
+                }
+            }
 
             // register the properties component
             getContext().addComponent("properties", pc);
@@ -783,6 +818,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         answer.setMaxPoolSize(CamelContextHelper.parseInteger(context, definition.getMaxPoolSize()));
         answer.setKeepAliveTime(CamelContextHelper.parseLong(context, definition.getKeepAliveTime()));
         answer.setMaxQueueSize(CamelContextHelper.parseInteger(context, definition.getMaxQueueSize()));
+        answer.setAllowCoreThreadTimeOut(CamelContextHelper.parseBoolean(context, definition.getAllowCoreThreadTimeOut()));
         answer.setRejectedPolicy(definition.getRejectedPolicy());
         answer.setTimeUnit(definition.getTimeUnit());
         return answer;
@@ -899,6 +935,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     }
 
     private void setupCustomServices() {
+        ModelJAXBContextFactory modelJAXBContextFactory = getBeanForType(ModelJAXBContextFactory.class);
+        if (modelJAXBContextFactory != null) {
+            LOG.info("Using custom ModelJAXBContextFactory: {}", modelJAXBContextFactory);
+            getContext().setModelJAXBContextFactory(modelJAXBContextFactory);
+        }
         ClassResolver classResolver = getBeanForType(ClassResolver.class);
         if (classResolver != null) {
             LOG.info("Using custom ClassResolver: {}", classResolver);

@@ -55,14 +55,13 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A processor which validates the XML version of the inbound message body
  * against some schema either in XSD or RelaxNG
  */
 public class ValidatingProcessor implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ValidatingProcessor.class);
-    private XmlConverter converter = new XmlConverter();
+    private final XmlConverter converter = new XmlConverter();
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
     private volatile Schema schema;
     private Source schemaSource;

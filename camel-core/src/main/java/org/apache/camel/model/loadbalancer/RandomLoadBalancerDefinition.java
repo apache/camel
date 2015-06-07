@@ -22,11 +22,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;random/&gt; element
+ * Random load balancer
+ *
+ * The random load balancer selects a random endpoint for each exchange.
  */
+@Metadata(label = "configuration,loadbalance")
 @XmlRootElement(name = "random")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RandomLoadBalancerDefinition extends LoadBalancerDefinition {

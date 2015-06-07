@@ -25,21 +25,23 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "rest")
+@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,http,rest")
 public class RestEndpoint extends DefaultEndpoint {
 
-    @UriParam
+    @UriPath(enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
     private String method;
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String path;
-    @UriParam
+    @UriPath
     private String uriTemplate;
     @UriParam
     private String consumes;
@@ -47,6 +49,14 @@ public class RestEndpoint extends DefaultEndpoint {
     private String produces;
     @UriParam
     private String componentName;
+    @UriParam
+    private String inType;
+    @UriParam
+    private String outType;
+    @UriParam
+    private String routeId;
+    @UriParam
+    private String description;
 
     private Map<String, Object> parameters;
 
@@ -63,6 +73,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return method;
     }
 
+    /**
+     * HTTP method to use.
+     */
     public void setMethod(String method) {
         this.method = method;
     }
@@ -71,6 +84,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return path;
     }
 
+    /**
+     * The base path
+     */
     public void setPath(String path) {
         this.path = path;
     }
@@ -79,6 +95,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return uriTemplate;
     }
 
+    /**
+     * The uri template
+     */
     public void setUriTemplate(String uriTemplate) {
         this.uriTemplate = uriTemplate;
     }
@@ -87,6 +106,10 @@ public class RestEndpoint extends DefaultEndpoint {
         return consumes;
     }
 
+    /**
+     * Media type such as: 'text/xml', or 'application/json' this REST service accepts.
+     * By default we accept all kinds of types.
+     */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
     }
@@ -95,6 +118,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return produces;
     }
 
+    /**
+     * Media type such as: 'text/xml', or 'application/json' this REST service returns.
+     */
     public void setProduces(String produces) {
         this.produces = produces;
     }
@@ -103,14 +129,67 @@ public class RestEndpoint extends DefaultEndpoint {
         return componentName;
     }
 
+    /**
+     * The Camel Rest component to use for the REST transport, such as restlet, spark-rest.
+     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
+     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry.
+     * If either one is found, then that is being used.
+     */
     public void setComponentName(String componentName) {
         this.componentName = componentName;
+    }
+
+    public String getInType() {
+        return inType;
+    }
+
+    /**
+     * To declare the incoming POJO binding type as a FQN class name
+     */
+    public void setInType(String inType) {
+        this.inType = inType;
+    }
+
+    public String getOutType() {
+        return outType;
+    }
+
+    /**
+     * To declare the outgoing POJO binding type as a FQN class name
+     */
+    public void setOutType(String outType) {
+        this.outType = outType;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    /**
+     * Name of the route this REST services creates
+     */
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Human description to document this REST service
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Map<String, Object> getParameters() {
         return parameters;
     }
 
+    /**
+     * Additional parameters to configure the consumer of the REST transport for this REST service
+     */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
@@ -224,15 +303,11 @@ public class RestEndpoint extends DefaultEndpoint {
                 }
             }
 
-            // optional binding type information
-            String inType = (String) getParameters().get("inType");
-            String outType = (String) getParameters().get("outType");
-
             // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
             // the rest registry will automatic keep track when the consumer is removed,
             // and un-register the REST service from the registry
-            getCamelContext().getRestRegistry().addRestService(consumer, url, baseUrl, getPath(), getUriTemplate(), getMethod(), getConsumes(), getProduces(), inType, outType);
-
+            getCamelContext().getRestRegistry().addRestService(consumer, url, baseUrl, getPath(), getUriTemplate(), getMethod(),
+                    getConsumes(), getProduces(), getInType(), getOutType(), getRouteId(), getDescription());
             return consumer;
         } else {
             throw new IllegalStateException("Cannot find RestConsumerFactory in Registry or as a Component to use");

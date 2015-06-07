@@ -39,6 +39,6 @@ public class XmlRoutesFromURLTest extends XmlRoutesFromClassPathTest {
         }
         assertTrue("The file " + file.getPath() + " does not exist", file.exists());
         URL url = file.toURI().toURL();
-        return RoutesXml.loadRoutesFromURL(url);
+        return RoutesXml.loadRoutesFromURL(new CdiCamelContext(), url);
     }
 }

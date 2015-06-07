@@ -16,11 +16,16 @@
  */
 package org.apache.camel.util;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  *
@@ -28,12 +33,15 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class GroupIteratorTest extends TestSupport {
 
     private CamelContext context;
+    private Exchange exchange;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         context = new DefaultCamelContext();
         context.start();
+        exchange = new DefaultExchange(context);
+
     }
 
     @Override
@@ -47,12 +55,36 @@ public class GroupIteratorTest extends TestSupport {
         Scanner scanner = new Scanner(s);
         scanner.useDelimiter("\n");
 
-        GroupIterator gi = new GroupIterator(context, scanner, "\n", 3);
+        GroupIterator gi = new GroupIterator(exchange, scanner, "\n", 3);
 
         assertTrue(gi.hasNext());
         assertEquals("ABC\nDEF\nGHI", gi.next());
         assertEquals("JKL\nMNO\nPQR", gi.next());
         assertEquals("STU\nVW", gi.next());
+        assertFalse(gi.hasNext());
+
+        IOHelper.close(gi);
+    }
+
+    public void testGroupIteratorWithDifferentEncodingFromDefault() throws Exception {
+        if (Charset.defaultCharset() == StandardCharsets.UTF_8) {
+            // can't think of test case where having default charset set to UTF-8 is affected
+            return;
+        }
+
+        byte[] buf = "\u00A31\n\u00A32\n".getBytes(StandardCharsets.UTF_8);
+
+        ByteArrayInputStream in = new ByteArrayInputStream(buf);
+
+        Scanner scanner = new Scanner(in, StandardCharsets.UTF_8.displayName());
+        scanner.useDelimiter("\n");
+
+        exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.displayName());
+        GroupIterator gi = new GroupIterator(exchange, scanner, "\n", 1);
+
+        assertTrue(gi.hasNext());
+        assertEquals("\u00A31", gi.next());
+        assertEquals("\u00A32", gi.next());
         assertFalse(gi.hasNext());
 
         IOHelper.close(gi);

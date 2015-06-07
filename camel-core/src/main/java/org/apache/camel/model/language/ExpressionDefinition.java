@@ -17,7 +17,6 @@
 package org.apache.camel.model.language;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,11 +28,13 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -43,11 +44,10 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A useful base class for an expression
- *
- * @version 
  */
+@Metadata(label = "language", title = "Expression")
 @XmlRootElement
-@XmlType(name = "expression")
+@XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionDefinition implements Expression, Predicate {
     @XmlAttribute
@@ -56,7 +56,7 @@ public class ExpressionDefinition implements Expression, Predicate {
     private String id;
     @XmlValue
     private String expression;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean trim;
     @XmlTransient
     private Predicate predicate;
@@ -153,8 +153,10 @@ public class ExpressionDefinition implements Expression, Predicate {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
                 String exp = getExpression();
+                // should be true by default
+                boolean isTrim = getTrim() == null || getTrim();
                 // trim if configured to trim
-                if (exp != null && isTrim()) {
+                if (exp != null && isTrim) {
                     exp = exp.trim();
                 }
                 predicate = language.createPredicate(exp);
@@ -176,8 +178,10 @@ public class ExpressionDefinition implements Expression, Predicate {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
                 String exp = getExpression();
+                // should be true by default
+                boolean isTrim = getTrim() == null || getTrim();
                 // trim if configured to trim
-                if (exp != null && isTrim()) {
+                if (exp != null && isTrim) {
                     exp = exp.trim();
                 }
                 setExpressionValue(language.createExpression(exp));
@@ -191,20 +195,20 @@ public class ExpressionDefinition implements Expression, Predicate {
         return expression;
     }
 
+    /**
+     * The expression value in your chosen language syntax
+     */
     @Required
     public void setExpression(String expression) {
         this.expression = expression;
     }
 
-    /**
-     * Gets the value of the id property.
-     */
     public String getId() {
         return id;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the id of this node
      */
     public void setId(String value) {
         this.id = value;
@@ -230,13 +234,11 @@ public class ExpressionDefinition implements Expression, Predicate {
         return trim;
     }
 
+    /**
+     * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+     */
     public void setTrim(Boolean trim) {
         this.trim = trim;
-    }
-
-    public boolean isTrim() {
-        // trim by default
-        return trim == null || trim;
     }
 
     /**
@@ -264,10 +266,22 @@ public class ExpressionDefinition implements Expression, Predicate {
         this.expressionType = expressionType;
     }
 
+    @SuppressWarnings("unchecked")
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
+        // allows to perform additional logic after the properties has been configured which may be needed
+        // in the various camel components outside camel-core
+        if (predicate instanceof AfterPropertiesConfigured) {
+            ((AfterPropertiesConfigured) predicate).afterPropertiesConfigured(camelContext);
+        }
     }
 
+    @SuppressWarnings("unchecked")
     protected void configureExpression(CamelContext camelContext, Expression expression) {
+        // allows to perform additional logic after the properties has been configured which may be needed
+        // in the various camel components outside camel-core
+        if (expression instanceof AfterPropertiesConfigured) {
+            ((AfterPropertiesConfigured) expression).afterPropertiesConfigured(camelContext);
+        }
     }
 
     /**

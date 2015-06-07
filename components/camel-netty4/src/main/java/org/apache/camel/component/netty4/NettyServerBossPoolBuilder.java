@@ -61,7 +61,7 @@ public final class NettyServerBossPoolBuilder {
     /**
      * Creates a new boss pool.
      */
-    EventLoopGroup build() {
+    public EventLoopGroup build() {
         return new NioEventLoopGroup(bossCount, new CamelThreadFactory(pattern, name, false));
     }
 }

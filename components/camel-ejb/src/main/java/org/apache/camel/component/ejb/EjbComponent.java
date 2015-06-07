@@ -23,9 +23,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanComponent;
-import org.apache.camel.component.bean.BeanEndpoint;
+import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 
@@ -39,27 +38,31 @@ public class EjbComponent extends BeanComponent {
     private Context context;
     private Properties properties;
 
+    public EjbComponent() {
+        super(EjbEndpoint.class);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        BeanEndpoint answer = new BeanEndpoint(uri, this);
+        EjbEndpoint answer = new EjbEndpoint(uri, this);
         answer.setBeanName(remaining);
 
         // plugin registry to lookup in jndi for the EJBs
         Registry registry = new JndiRegistry(getContext());
-        answer.setBeanHolder(new EjbRegistryBean(registry, getCamelContext(), answer.getBeanName()));
+        // and register the bean as a holder on the endpoint
+        BeanHolder holder = new EjbRegistryBean(registry, getCamelContext(), answer.getBeanName());
+        answer.setBeanHolder(holder);
 
-        Processor processor = answer.getProcessor();
-        setProperties(processor, parameters);
         return answer;
     }
 
-    public synchronized Context getContext() throws NamingException {
-        if (context == null && properties != null) {
-            context = new InitialContext(getProperties());
-        }
+    public Context getContext() throws NamingException {
         return context;
     }
 
+    /**
+     * The Context to use for looking up the EJBs
+     */
     public void setContext(Context context) {
         this.context = context;
     }
@@ -68,7 +71,19 @@ public class EjbComponent extends BeanComponent {
         return properties;
     }
 
+    /**
+     * Properties for creating javax.naming.Context if a context has not been configured.
+     */
     public void setProperties(Properties properties) {
         this.properties = properties;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (context == null && properties != null) {
+            context = new InitialContext(getProperties());
+        }
     }
 }

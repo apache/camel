@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.ahc.ws;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayReader;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,35 +25,35 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.AsyncHttpProvider;
 import com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketByteListener;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
-
+import com.ning.http.client.ws.WebSocket;
+import com.ning.http.client.ws.WebSocketByteListener;
+import com.ning.http.client.ws.WebSocketTextListener;
+import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ahc.AhcEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
+@UriEndpoint(scheme = "ahc-ws,ahc-wss", title = "AHC Websocket,AHC Secure Websocket", syntax = "ahc-ws:httpUri", consumerClass = WsConsumer.class, label = "http,websocket")
 public class WsEndpoint extends AhcEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);
 
     // for using websocket streaming/fragments
     private static final boolean GRIZZLY_AVAILABLE = 
         probeClass("com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider");
-    
+
+    private final Set<WsConsumer> consumers  = new HashSet<WsConsumer>();
+
     private WebSocket websocket;
-    private Set<WsConsumer> consumers;
+    @UriParam
     private boolean useStreaming;
     
     public WsEndpoint(String endpointUri, WsComponent component) {
         super(endpointUri, component, null);
-        this.consumers = new HashSet<WsConsumer>();
     }
 
     private static boolean probeClass(String name) {
@@ -100,23 +97,17 @@ public class WsEndpoint extends AhcEndpoint {
         this.websocket = websocket;
     }
 
-    /**
-     * @return the useStreaming
-     */
     public boolean isUseStreaming() {
         return useStreaming;
     }
 
     /**
-     * @param useStreaming the useStreaming to set
+     * To enable streaming to send data as multiple text fragments.
      */
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.ahc.AhcEndpoint#createClient(com.ning.http.client.AsyncHttpClientConfig)
-     */
     @Override
     protected AsyncHttpClient createClient(AsyncHttpClientConfig config) {
         AsyncHttpClient client;
@@ -155,17 +146,15 @@ public class WsEndpoint extends AhcEndpoint {
     }
     
     class WsListener implements WebSocketTextListener, WebSocketByteListener {
-        private ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        private StringBuffer textBuffer = new StringBuffer();
-        
+                
         @Override
         public void onOpen(WebSocket websocket) {
-            LOG.info("websocket opened");
+            LOG.debug("websocket opened");
         }
 
         @Override
         public void onClose(WebSocket websocket) {
-            LOG.info("websocket closed");
+            LOG.debug("websocket closed");
         }
 
         @Override
@@ -175,66 +164,20 @@ public class WsEndpoint extends AhcEndpoint {
 
         @Override
         public void onMessage(byte[] message) {
-            LOG.info("received message --> {}", message);
+            LOG.debug("received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
             }
         }
-
-        @Override
-        public void onFragment(byte[] fragment, boolean last) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("received fragment({}) --> {}", last, fragment);
-            }
-            // for now, construct a memory based stream. In future, we provide a fragmented stream that can
-            // be consumed before the final fragment is added.
-            synchronized (byteBuffer) {
-                try {
-                    byteBuffer.write(fragment);
-                } catch (IOException e) {
-                    //ignore
-                }
-                if (last) {
-                    //REVIST avoid using baos/bais that waste memory
-                    byte[] msg = byteBuffer.toByteArray();
-                    for (WsConsumer consumer : consumers) {
-                        consumer.sendMessage(new ByteArrayInputStream(msg));
-                    }
-                    byteBuffer.reset();
-                }
-            }
-        }
-
 
         @Override
         public void onMessage(String message) {
-            LOG.info("received message --> {}", message);
+            LOG.debug("received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
             }
         }
 
-        @Override
-        public void onFragment(String fragment, boolean last) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("received fragment({}) --> {}", last, fragment);
-            }
-            // for now, construct a memory based stream. In future, we provide a fragmented stream that can
-            // be consumed before the final fragment is added.
-            synchronized (textBuffer) {
-                textBuffer.append(fragment);
-                if (last) {
-                    //REVIST avoid using sb/car that waste memory
-                    char[] msg = new char[textBuffer.length()];
-                    textBuffer.getChars(0, msg.length, msg, 0);
-                    for (WsConsumer consumer : consumers) {
-                        consumer.sendMessage(new CharArrayReader(msg));
-                    }
-                    textBuffer.setLength(0);
-                }
-            }
-        }
-        
     }
     
     protected AsyncHttpProvider getAsyncHttpProvider(AsyncHttpClientConfig config) {

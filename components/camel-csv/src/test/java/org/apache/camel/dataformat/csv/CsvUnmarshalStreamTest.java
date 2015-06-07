@@ -30,7 +30,6 @@ import org.junit.Test;
 
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>
- * @version 
  */
 public class CsvUnmarshalStreamTest extends CamelTestSupport {
 
@@ -47,7 +46,7 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
 
         String message = "";
         for (int i = 0; i < EXPECTED_COUNT; ++i) {
-            message += i + "|\"" + i + "\n" + i + "\"\n";
+            message += i + "|\"" + i + LS + i + "\"\n";
         }
 
         template.sendBody("direct:start", message);
@@ -59,17 +58,17 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
                     .getIn().getBody(List.class);
             assertEquals(2, body.size());
             assertEquals(String.valueOf(i), body.get(0));
-            assertEquals(String.format("%d\n%d", i, i), body.get(1));
+            assertEquals(String.format("%d%s%d", i, LS, i), body.get(1));
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testCsvUnMarshalWithFile() throws Exception {
         result.reset();
         result.expectedMessageCount(EXPECTED_COUNT);
 
-        
+
         template.sendBody("direct:start", new MyFileInputStream(new File("src/test/resources/data.csv")));
 
         assertMockEndpointsSatisfied();
@@ -79,31 +78,31 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
                     .getIn().getBody(List.class);
             assertEquals(2, body.size());
             assertEquals(String.valueOf(i), body.get(0));
-            assertEquals(String.format("%d\n%d", i, i), body.get(1));
+            assertEquals(String.format("%d%s%d", i, LS, i), body.get(1));
         }
     }
-    
+
     class MyFileInputStream extends FileInputStream {
 
         public MyFileInputStream(File file) throws FileNotFoundException {
             super(file);
         }
-        
+
         public void close() throws IOException {
             // Use this to find out how camel close the FileInputStream
             super.close();
         }
-        
+
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                CsvDataFormat csv = new CsvDataFormat();
-                csv.setLazyLoad(true);
-                csv.setDelimiter("|");
+                CsvDataFormat csv = new CsvDataFormat()
+                        .setLazyLoad(true)
+                        .setDelimiter('|');
 
                 from("direct:start")
                         .unmarshal(csv)

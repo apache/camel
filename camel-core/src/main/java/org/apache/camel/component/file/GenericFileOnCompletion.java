@@ -17,9 +17,9 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,10 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         this.operations = operations;
         this.file = file;
         this.absoluteFileName = absoluteFileName;
-        this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
+        this.exceptionHandler = endpoint.getOnCompletionExceptionHandler();
+        if (this.exceptionHandler == null) {
+            this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
+        }
     }
 
     public void onComplete(Exchange exchange) {

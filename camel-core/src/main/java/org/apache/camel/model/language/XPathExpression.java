@@ -27,33 +27,37 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * For XPath expressions and predicates
  */
+@Metadata(label = "language", title = "XPath")
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {
+    @XmlAttribute(name = "documentType")
+    private String documentTypeName;
     @XmlAttribute(name = "resultType")
     private String resultTypeName;
-    @XmlAttribute(name = "saxon")
+    @XmlAttribute
     private Boolean saxon;
-    @XmlAttribute(name = "factoryRef")
+    @XmlAttribute
     private String factoryRef;
-    @XmlAttribute(name = "objectModel")
+    @XmlAttribute
     private String objectModel;
-    @XmlAttribute(name = "logNamespaces")
+    @XmlAttribute
     private Boolean logNamespaces;
-    @XmlAttribute(name = "headerName")
+    @XmlAttribute
     private String headerName;
-    
+    @XmlTransient
+    private Class<?> documentType;
     @XmlTransient
     private Class<?> resultType;
     @XmlTransient
     private XPathFactory xpathFactory;
     
-
     public XPathExpression() {
     }
 
@@ -69,10 +73,41 @@ public class XPathExpression extends NamespaceAwareExpression {
         return "xpath";
     }
 
+    public Class<?> getDocumentType() {
+        return documentType;
+    }
+
+    /**
+     * Class for document type to use
+     * <p/>
+     * The default value is org.w3c.dom.Document
+     */
+    public void setDocumentType(Class<?> documentType) {
+        this.documentType = documentType;
+    }
+
+    public String getDocumentTypeName() {
+        return documentTypeName;
+    }
+
+    /**
+     * Name of class for document type
+     * <p/>
+     * The default value is org.w3c.dom.Document
+     */
+    public void setDocumentTypeName(String documentTypeName) {
+        this.documentTypeName = documentTypeName;
+    }
+
     public Class<?> getResultType() {
         return resultType;
     }
 
+    /**
+     * Sets the class of the result type (type from output).
+     * <p/>
+     * The default result type is NodeSet
+     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }
@@ -81,10 +116,18 @@ public class XPathExpression extends NamespaceAwareExpression {
         return resultTypeName;
     }
 
+    /**
+     * Sets the class name of the result type (type from output)
+     * <p/>
+     * The default result type is NodeSet
+     */
     public void setResultTypeName(String resultTypeName) {
         this.resultTypeName = resultTypeName;
     }
 
+    /**
+     * Whether to use Saxon.
+     */
     public void setSaxon(Boolean saxon) {
         this.saxon = saxon;
     }
@@ -93,10 +136,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         return saxon;
     }
 
-    public boolean isSaxon() {
-        return saxon != null && saxon;
-    }
-
+    /**
+     * References to a custom XPathFactory to lookup in the registry
+     */
     public void setFactoryRef(String factoryRef) {
         this.factoryRef = factoryRef;
     }
@@ -105,6 +147,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         return factoryRef;
     }
 
+    /**
+     * The XPath object model to use
+     */
     public void setObjectModel(String objectModel) {
         this.objectModel = objectModel;
     }
@@ -113,6 +158,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         return objectModel;
     }
 
+    /**
+     * Whether to log namespaces which can assist during trouble shooting
+     */
     public void setLogNamespaces(Boolean logNamespaces) {
         this.logNamespaces = logNamespaces;
     }
@@ -121,20 +169,26 @@ public class XPathExpression extends NamespaceAwareExpression {
         return logNamespaces;
     }
 
-    public boolean isLogNamespaces() {
-        return logNamespaces != null && logNamespaces;
-    }
-    
     public String getHeaderName() {
         return headerName;
     }
 
+    /**
+     * Name of header to use as input, instead of the message body
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
+        if (documentType == null && documentTypeName != null) {
+            try {
+                documentType = camelContext.getClassResolver().resolveMandatoryClass(documentTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
         if (resultType == null && resultTypeName != null) {
             try {
                 resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
@@ -154,10 +208,16 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
+        boolean isSaxon = getSaxon() != null && getSaxon();
+        boolean isLogNamespaces = getLogNamespaces() != null && getLogNamespaces();
+
+        if (documentType != null) {
+            setProperty(expression, "documentType", documentType);
+        }
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
-        if (isSaxon()) {
+        if (isSaxon) {
             ObjectHelper.cast(XPathBuilder.class, expression).enableSaxon();
         }
         if (xpathFactory != null) {
@@ -166,7 +226,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         if (objectModel != null) {
             setProperty(expression, "objectModelUri", objectModel);
         }
-        if (isLogNamespaces()) {
+        if (isLogNamespaces) {
             ObjectHelper.cast(XPathBuilder.class, expression).setLogNamespaces(true);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
@@ -174,15 +234,20 @@ public class XPathExpression extends NamespaceAwareExpression {
         }
         // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
         super.configureExpression(camelContext, expression);
-
     }
 
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
+        boolean isSaxon = getSaxon() != null && getSaxon();
+        boolean isLogNamespaces = getLogNamespaces() != null && getLogNamespaces();
+
+        if (documentType != null) {
+            setProperty(predicate, "documentType", documentType);
+        }
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
         }
-        if (isSaxon()) {
+        if (isSaxon) {
             ObjectHelper.cast(XPathBuilder.class, predicate).enableSaxon();
         }
         if (xpathFactory != null) {
@@ -191,7 +256,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         if (objectModel != null) {
             setProperty(predicate, "objectModelUri", objectModel);
         }
-        if (isLogNamespaces()) {
+        if (isLogNamespaces) {
             ObjectHelper.cast(XPathBuilder.class, predicate).setLogNamespaces(true);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {

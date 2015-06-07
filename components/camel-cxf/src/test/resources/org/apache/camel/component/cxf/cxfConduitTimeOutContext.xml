@@ -35,6 +35,9 @@
    <http-conf:conduit name="*.http-conduit">
 		<http-conf:client ReceiveTimeout="100" />
    </http-conf:conduit>
+   
+   <!-- setup the CxfEndpointConfigurer bean here -->
+   <bean id="myConfigurer" class="org.apache.camel.component.cxf.CxfTimeoutTest$MyCxfEndpointConfigurer" />
 
    <cxf:cxfEndpoint id="springEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfTimeoutTest/SoapContext/SoapPort"
     		serviceClass="org.apache.hello_world_soap_http.Greeter"/>

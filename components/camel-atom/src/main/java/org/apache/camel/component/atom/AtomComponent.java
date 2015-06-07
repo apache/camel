@@ -33,6 +33,10 @@ import org.apache.camel.util.URISupport;
  */
 public class AtomComponent extends FeedComponent {
 
+    public AtomComponent() {
+        super(AtomEndpoint.class);
+    }
+
     @Override
     protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         return new AtomEndpoint(uri, this, null);

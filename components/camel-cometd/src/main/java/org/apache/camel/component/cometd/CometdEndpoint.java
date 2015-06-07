@@ -24,26 +24,52 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Endpoint for Camel Cometd.
  */
+@UriEndpoint(scheme = "cometd,cometds", title = "CometD", syntax = "cometd:protocol:host:port/channelName", consumerClass = CometdConsumer.class, label = "http,websocket")
 public class CometdEndpoint extends DefaultEndpoint {
 
-    private String baseResource;
-    private int timeout = 240000;
-    private int interval;
-    private int maxInterval = 30000;
-    private int multiFrameInterval = 1500;
-    private boolean jsonCommented = true;
-    private boolean sessionHeadersEnabled;
-    private int logLevel = 1;
-    private URI uri;
     private CometdComponent component;
+
+    private URI uri;
+    @UriPath @Metadata(required = "true")
+    private String protocol;
+    @UriPath @Metadata(required = "true")
+    private String host;
+    @UriPath @Metadata(required = "true")
+    private int port;
+    @UriPath @Metadata(required = "true")
+    private String channelName;
+    @UriParam
+    private String baseResource;
+    @UriParam(defaultValue = "240000")
+    private int timeout = 240000;
+    @UriParam
+    private int interval;
+    @UriParam(defaultValue = "30000")
+    private int maxInterval = 30000;
+    @UriParam(defaultValue = "1500")
+    private int multiFrameInterval = 1500;
+    @UriParam(defaultValue = "true")
+    private boolean jsonCommented = true;
+    @UriParam
+    private boolean sessionHeadersEnabled;
+    @UriParam(defaultValue = "1")
+    private int logLevel = 1;
+    @UriParam
     private boolean crossOriginFilterOn;
+    @UriParam
     private String allowedOrigins;
+    @UriParam
     private String filterPath;
+    @UriParam(defaultValue = "true")
     private boolean disconnectLocalSession = true;
 
     public CometdEndpoint(CometdComponent component, String uri, String remaining, Map<String, Object> parameters) {
@@ -51,6 +77,10 @@ public class CometdEndpoint extends DefaultEndpoint {
         this.component = component;
         try {
             this.uri = new URI(uri);
+            this.protocol = this.uri.getScheme();
+            this.host = this.uri.getHost();
+            this.port = this.uri.getPort();
+            this.channelName = remaining;
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }

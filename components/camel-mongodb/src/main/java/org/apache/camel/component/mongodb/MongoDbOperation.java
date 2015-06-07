@@ -39,6 +39,7 @@ public enum MongoDbOperation {
     // others
     getDbStats, 
     getColStats, 
-    count, 
+    count,
+    command
     
 }

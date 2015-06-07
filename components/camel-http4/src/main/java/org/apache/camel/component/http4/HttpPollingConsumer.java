@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -39,7 +40,7 @@ import org.apache.http.util.EntityUtils;
  *
  * @version 
  */
-public class HttpPollingConsumer extends PollingConsumerSupport {
+public class HttpPollingConsumer extends PollingConsumerSupport implements ServicePoolAware {
     private final HttpEndpoint endpoint;
     private HttpClient httpClient;
 

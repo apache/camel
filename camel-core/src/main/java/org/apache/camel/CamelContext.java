@@ -25,16 +25,22 @@ import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
@@ -47,6 +53,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
@@ -90,6 +97,17 @@ import org.apache.camel.util.LoadPropertiesException;
  * @version 
  */
 public interface CamelContext extends SuspendableService, RuntimeConfiguration {
+
+    /**
+     * Adapts this {@link org.apache.camel.CamelContext} to the specialized type.
+     * <p/>
+     * For example to adapt to {@link org.apache.camel.model.ModelCamelContext},
+     * or <tt>SpringCamelContext</tt>, or <tt>CdiCamelContext</tt>, etc.
+     *
+     * @param type the type to adapt to
+     * @return this {@link org.apache.camel.CamelContext} adapted to the given type
+     */
+    <T extends CamelContext> T adapt(Class<T> type);
 
     /**
      * Starts the {@link CamelContext} (<b>important:</b> the start method is not blocked, see more details
@@ -205,10 +223,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * If the option <tt>closeOnShutdown</tt> is <tt>false</tt> then this context will not stop the service when the context stops.
      *
      * @param object the service
-     * @param closeOnShutdown whether to close the service when this CamelContext shutdown.
+     * @param stopOnShutdown whether to stop the service when this CamelContext shutdown.
      * @throws Exception can be thrown when starting the service
      */
-    void addService(Object object, boolean closeOnShutdown) throws Exception;
+    void addService(Object object, boolean stopOnShutdown) throws Exception;
 
     /**
      * Removes a service from this context.
@@ -237,6 +255,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the service instance or <tt>null</tt> if not already added.
      */
     <T> T hasService(Class<T> type);
+
+    /**
+     * Defers starting the service until {@link CamelContext} is started and has initialized all its prior services and routes.
+     * <p/>
+     * If {@link CamelContext} is already started then the service is started immediately.
+     *
+     * @param object the service
+     * @param stopOnShutdown whether to stop the service when this CamelContext shutdown. Setting this to <tt>true</tt> will keep a reference to the service in
+     *                       this {@link CamelContext} until the context is stopped. So do not use it for short lived services.
+     * @throws Exception can be thrown when starting the service, which is only attempted if {@link CamelContext} has already been started when calling this method.
+     */
+    void deferStartService(Object object, boolean stopOnShutdown) throws Exception;
 
     /**
      * Adds the given listener to be invoked when {@link CamelContext} have just been started.
@@ -318,9 +348,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     //-----------------------------------------------------------------------
 
     /**
+     * Gets the {@link org.apache.camel.spi.EndpointRegistry}
+     */
+    EndpointRegistry<String> getEndpointRegistry();
+
+    /**
      * Resolves the given name to an {@link Endpoint} of the specified type.
      * If the name has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@link Endpoint} is created and registered.
+     * Otherwise, a new {@link Endpoint} is created and registered in the {@link org.apache.camel.spi.EndpointRegistry}.
      *
      * @param uri the URI of the endpoint
      * @return the endpoint
@@ -330,7 +365,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type.
      * If the name has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@link Endpoint} is created and registered.
+     * Otherwise, a new {@link Endpoint} is created and registered in the {@link org.apache.camel.spi.EndpointRegistry}.
      *
      * @param name         the name of the endpoint
      * @param endpointType the expected type
@@ -339,22 +374,21 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType);
 
     /**
-     * Returns the collection of all registered endpoints.
+     * Returns a new {@link Collection} of all of the endpoints from the {@link org.apache.camel.spi.EndpointRegistry}
      *
      * @return all endpoints
      */
     Collection<Endpoint> getEndpoints();
 
     /**
-     * Returns a new Map containing all of the active endpoints with the key of the map being their
-     * unique key.
+     * Returns a new {@link Map} containing all of the endpoints from the {@link org.apache.camel.spi.EndpointRegistry}
      *
-     * @return map of active endpoints
+     * @return map of endpoints
      */
     Map<String, Endpoint> getEndpointMap();
 
     /**
-     * Is the given endpoint already registered?
+     * Is the given endpoint already registered in the {@link org.apache.camel.spi.EndpointRegistry}
      *
      * @param uri the URI of the endpoint
      * @return the registered endpoint or <tt>null</tt> if not registered
@@ -362,30 +396,40 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Endpoint hasEndpoint(String uri);
 
     /**
-     * Adds the endpoint to the context using the given URI.
+     * Adds the endpoint to the {@link org.apache.camel.spi.EndpointRegistry} using the given URI.
      *
      * @param uri      the URI to be used to resolve this endpoint
-     * @param endpoint the endpoint to be added to the context
+     * @param endpoint the endpoint to be added to the registry
      * @return the old endpoint that was previously registered or <tt>null</tt> if none was registered
      * @throws Exception if the new endpoint could not be started or the old endpoint could not be stopped
      */
     Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception;
 
     /**
-     * Removes all endpoints with the given URI.
+     * Removes the endpoint from the {@link org.apache.camel.spi.EndpointRegistry}.
+     * <p/>
+     * The endpoint being removed will be stopped first.
+     *
+     * @param endpoint  the endpoint
+     * @throws Exception if the endpoint could not be stopped
+     */
+    void removeEndpoint(Endpoint endpoint) throws Exception;
+
+    /**
+     * Removes all endpoints with the given URI from the {@link org.apache.camel.spi.EndpointRegistry}.
      * <p/>
      * The endpoints being removed will be stopped first.
      *
      * @param pattern an uri or pattern to match
      * @return a collection of endpoints removed which could be empty if there are no endpoints found for the given <tt>pattern</tt>
      * @throws Exception if at least one endpoint could not be stopped
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(CamelContext, String, String)  for pattern
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(CamelContext, String, String) for pattern
      */
     Collection<Endpoint> removeEndpoints(String pattern) throws Exception;
 
     /**
      * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom
-     * logic when an {@link Endpoint} is about to be registered to the {@link CamelContext} endpoint registry.
+     * logic when an {@link Endpoint} is about to be registered to the {@link org.apache.camel.spi.EndpointRegistry}.
      * <p/>
      * When a callback is added it will be executed on the already registered endpoints allowing you to catch-up
      *
@@ -408,9 +452,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Returns a list of the current route definitions
      *
      * @return list of the current route definitions
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#getRouteDefinitions()}
      */
-    @Deprecated
     List<RouteDefinition> getRouteDefinitions();
 
     /**
@@ -418,27 +460,21 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param id id of the route
      * @return the route definition or <tt>null</tt> if not found
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#getRouteDefinition(String)}
      */
-    @Deprecated
     RouteDefinition getRouteDefinition(String id);
 
     /**
      * Returns a list of the current REST definitions
      *
      * @return list of the current REST definitions
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#getRestDefinitions()}
      */
-    @Deprecated
     List<RestDefinition> getRestDefinitions();
 
     /**
      * Adds a collection of rest definitions to the context
      *
      * @param restDefinitions the rest(s) definition to add
-     * @throws Exception if the rest definitions could not be created for whatever reason
      */
-    @Deprecated
     void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception;
 
     /**
@@ -481,6 +517,67 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Route getRoute(String id);
 
     /**
+     * Gets the processor from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @return the processor or <tt>null</tt> if not found
+     */
+    Processor getProcessor(String id);
+
+    /**
+     * Gets the processor from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @param type the processor type
+     * @return the processor or <tt>null</tt> if not found
+     * @throws java.lang.ClassCastException is thrown if the type is not correct type
+     */
+    <T extends Processor> T getProcessor(String id, Class<T> type);
+
+    /**
+     * Gets the managed processor client api from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @param type the managed processor type from the {@link org.apache.camel.api.management.mbean} package.
+     * @return the processor or <tt>null</tt> if not found
+     * @throws IllegalArgumentException if the type is not compliant
+     */
+    <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type);
+
+    /**
+     * Gets the managed route client api with the given route id
+     *
+     * @param routeId id of the route
+     * @param type the managed route type from the {@link org.apache.camel.api.management.mbean} package.
+     * @return the route or <tt>null</tt> if not found
+     * @throws IllegalArgumentException if the type is not compliant
+     */
+    <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type);
+
+    /**
+     * Gets the managed Camel context client api
+     */
+    ManagedCamelContextMBean getManagedCamelContext();
+
+    /**
+     * Gets the processor definition from any of the routes which with the given id
+     *
+     * @param id id of the processor definition
+     * @return the processor definition or <tt>null</tt> if not found
+     */
+    ProcessorDefinition getProcessorDefinition(String id);
+
+    /**
+     * Gets the processor definition from any of the routes which with the given id
+     *
+     * @param id id of the processor definition
+     * @param type the processor definition type
+     * @return the processor definition or <tt>null</tt> if not found
+     * @throws java.lang.ClassCastException is thrown if the type is not correct type
+     */
+    <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type);
+
+    /**
      * Adds a collection of routes to this context using the given builder
      * to build them.
      * <p/>
@@ -503,9 +600,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param is input stream with the route(s) definition to add
      * @throws Exception if the route definitions could not be loaded for whatever reason
      * @return the route definitions
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#loadRoutesDefinition(java.io.InputStream)}
      */
-    @Deprecated
     RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
 
     /**
@@ -513,9 +608,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param routeDefinitions the route(s) definition to add
      * @throws Exception if the route definitions could not be created for whatever reason
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#addRouteDefinitions(java.util.Collection)}
      */
-    @Deprecated
     void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
@@ -523,9 +616,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param routeDefinition the route definition to add
      * @throws Exception if the route definition could not be created for whatever reason
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#addRouteDefinition(org.apache.camel.model.RouteDefinition)}
      */
-    @Deprecated
     void addRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
     /**
@@ -534,9 +625,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param routeDefinitions route(s) definitions to remove
      * @throws Exception if the route definitions could not be removed for whatever reason
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#removeRouteDefinitions(java.util.Collection)}
      */
-    @Deprecated
     void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
@@ -545,9 +634,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param routeDefinition route definition to remove
      * @throws Exception if the route definition could not be removed for whatever reason
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#removeRouteDefinition(org.apache.camel.model.RouteDefinition)}
      */
-    @Deprecated
     void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
     /**
@@ -555,7 +642,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param route the route to start
      * @throws Exception is thrown if the route could not be started for whatever reason
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#startRoute(org.apache.camel.model.RouteDefinition)}
+     * @deprecated favor using {@link CamelContext#startRoute(String)}
      */
     @Deprecated
     void startRoute(RouteDefinition route) throws Exception;
@@ -580,7 +667,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param route the route to stop
      * @throws Exception is thrown if the route could not be stopped for whatever reason
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#stopRoute(org.apache.camel.model.RouteDefinition)}
+     * @deprecated favor using {@link CamelContext#stopRoute(String)}
      */
     @Deprecated
     void stopRoute(RouteDefinition route) throws Exception;
@@ -644,10 +731,19 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Removes the given route (the route <b>must</b> be stopped before it can be removed).
      * <p/>
-     * <br/>A route which is removed will be unregistered from JMX, have its services stopped/shutdown and the route
+     * A route which is removed will be unregistered from JMX, have its services stopped/shutdown and the route
      * definition etc. will also be removed. All the resources related to the route will be stopped and cleared.
      * <p/>
-     * <br/>End users can use this method to remove unwanted routes or temporary routes which no longer is in demand.
+     * <b>Important:</b> When removing a route, the {@link Endpoint}s which are in the static cache of
+     * {@link org.apache.camel.spi.EndpointRegistry} and are <b>only</b> used by the route (not used by other routes)
+     * will also be removed. But {@link Endpoint}s which may have been created as part of routing messages by the route,
+     * and those endpoints are enlisted in the dynamic cache of {@link org.apache.camel.spi.EndpointRegistry} are
+     * <b>not</b> removed. To remove those dynamic kind of endpoints, use the {@link #removeEndpoints(String)} method.
+     * If not removing those endpoints, they will be kept in the dynamic cache of {@link org.apache.camel.spi.EndpointRegistry},
+     * but my eventually be removed (evicted) when they have not been in use for a longer period of time; and the
+     * dynamic cache upper limit is hit, and it evicts the least used endpoints.
+     * <p/>
+     * End users can use this method to remove unwanted routes or temporary routes which no longer is in demand.
      *
      * @param routeId the route id
      * @return <tt>true</tt> if the route was removed, <tt>false</tt> if the route could not be removed because its not stopped
@@ -915,9 +1011,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets the default error handler builder which is inherited by the routes
-     * @deprecated The return type will be switched to {@link ErrorHandlerFactory} in Camel 3.0
      *
      * @return the builder
+     * @deprecated The return type will be switched to {@link ErrorHandlerFactory} in Camel 3.0
      */
     @Deprecated
     ErrorHandlerBuilder getErrorHandlerBuilder();
@@ -939,18 +1035,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets the data formats that can be referenced in the routes.
      *
      * @param dataFormats the data formats
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#setDataFormats(java.util.Map)}
      */
-    @Deprecated
     void setDataFormats(Map<String, DataFormatDefinition> dataFormats);
 
     /**
      * Gets the data formats that can be referenced in the routes.
      *
      * @return the data formats available
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#getDataFormats()}
      */
-    @Deprecated
     Map<String, DataFormatDefinition> getDataFormats();
 
     /**
@@ -966,9 +1058,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param name the data format definition name or a reference to it in the {@link Registry}
      * @return the resolved data format definition, or <tt>null</tt> if not found
-     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#resolveDataFormatDefinition(String)}
      */
-    @Deprecated
     DataFormatDefinition resolveDataFormatDefinition(String name);
 
     /**
@@ -1070,7 +1160,21 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the service pool
      */
     ServicePool<Endpoint, Producer> getProducerServicePool();
+    
+    /**
+     * Sets a pluggable service pool to use for {@link PollingConsumer} pooling.
+     *
+     * @param servicePool the pool
+     */
+    void setPollingConsumerServicePool(ServicePool<Endpoint, PollingConsumer> servicePool);
 
+    /**
+     * Gets the service pool for {@link Producer} pooling.
+     *
+     * @return the service pool
+     */
+    ServicePool<Endpoint, PollingConsumer> getPollingConsumerServicePool();
+    
     /**
      * Uses a custom node id factory when generating auto assigned ids to the nodes in the route definitions
      *
@@ -1172,6 +1276,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param repository the repository
      */
     void setInflightRepository(InflightRepository repository);
+
+    /**
+     * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
+     *
+     * @return the manager
+     */
+    AsyncProcessorAwaitManager getAsyncProcessorAwaitManager();
+
+    /**
+     * Sets a custom  {@link org.apache.camel.AsyncProcessor} await manager.
+     *
+     * @param manager the manager
+     */
+    void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
 
     /**
      * Gets the the application context class loader which may be helpful for running camel in other containers
@@ -1337,6 +1455,17 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setUseBreadcrumb(Boolean useBreadcrumb);
 
     /**
+     * Resolves a component's default name from its java type.
+     * <p/>
+     * A component may be used with a non default name such as <tt>activemq</tt>, <tt>wmq</tt> for the JMS component.
+     * This method can resolve the default component name by its java type.
+     *
+     * @param javaType the FQN name of the java type
+     * @return the default component name.
+     */
+    String resolveComponentDefaultName(String javaType);
+
+    /**
      * Find information about all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
      *
      * @return a map with the component name, and value with component details.
@@ -1346,9 +1475,75 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Map<String, Properties> findComponents() throws LoadPropertiesException, IOException;
 
     /**
-     * Returns the HTML documentation for the given camel component
+     * Find information about all the EIPs from camel-core.
+     *
+     * @return a map with node id, and value with EIP details.
+     * @throws LoadPropertiesException is thrown if error during classpath discovery of the EIPs
+     * @throws IOException is thrown if error during classpath discovery of the EIPs
+     */
+    Map<String, Properties> findEips() throws LoadPropertiesException, IOException;
+
+    /**
+     * Returns the HTML documentation for the given Camel component
+     *
+     * @return the HTML or <tt>null</tt> if the component is <b>not</b> built with HTML document included.
      */
     String getComponentDocumentation(String componentName) throws IOException;
+
+    /**
+     * Returns the JSON schema representation of the component and endpoint parameters for the given component name.
+     *
+     * @return the json or <tt>null</tt> if the component is <b>not</b> built with JSon schema support
+     */
+    String getComponentParameterJsonSchema(String componentName) throws IOException;
+
+    /**
+     * Returns the JSON schema representation of the {@link DataFormat} parameters for the given data format name.
+     *
+     * @return the json or <tt>null</tt> if the data format does not exist
+     */
+    String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException;
+
+    /**
+     * Returns the JSON schema representation of the {@link Language} parameters for the given language name.
+     *
+     * @return the json or <tt>null</tt> if the language does not exist
+     */
+    String getLanguageParameterJsonSchema(String languageName) throws IOException;
+
+    /**
+     * Returns the JSON schema representation of the EIP parameters for the given EIP name.
+     *
+     * @return the json or <tt>null</tt> if the EIP does not exist
+     */
+    String getEipParameterJsonSchema(String eipName) throws IOException;
+
+    /**
+     * Returns a JSON schema representation of the EIP parameters for the given EIP by its id.
+     *
+     * @param nameOrId the name of the EIP ({@link NamedNode#getShortName()} or a node id to refer to a specific node from the routes.
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json or <tt>null</tt> if the eipName or the id was not found
+     */
+    String explainEipJson(String nameOrId, boolean includeAllOptions);
+
+    /**
+     * Returns a JSON schema representation of the component parameters (not endpoint parameters) for the given component by its id.
+     *
+     * @param componentName the name of the component.
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json or <tt>null</tt> if the component was not found
+     */
+    String explainComponentJson(String componentName, boolean includeAllOptions);
+
+    /**
+     * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri.
+     *
+     * @param uri the endpoint uri
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json or <tt>null</tt> if uri parameters is invalid, or the component is <b>not</b> built with JSon schema support
+     */
+    String explainEndpointJson(String uri, boolean includeAllOptions);
 
     /**
      * Creates a JSON representation of all the <b>static</b> and <b>dynamic</b> configured endpoints defined in the given route(s).
@@ -1420,5 +1615,19 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the list of current route policy factories
      */
     List<RoutePolicyFactory> getRoutePolicyFactories();
+
+    /**
+     * Returns the JAXB Context factory used to create Models.
+     *
+     * @return the JAXB Context factory used to create Models.
+     */
+    ModelJAXBContextFactory getModelJAXBContextFactory();
+
+    /**
+     * Sets a custom JAXB Context factory to be used
+     *
+     * @param modelJAXBContextFactory a JAXB Context factory
+     */
+    void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory);
 
 }

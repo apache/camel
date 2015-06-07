@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model.rest;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +31,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * Represents an XML &lt;rest/&gt; element
+ * Defines a rest service using the rest-dsl
  */
+@Metadata(label = "rest")
 @XmlRootElement(name = "rest")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition> {
@@ -48,8 +53,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     private String produces;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
+
+    @XmlAttribute
+    private Boolean skipBindingOnErrorCode;
+
+    @XmlAttribute
+    private Boolean enableCORS;
 
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
@@ -63,6 +74,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return path;
     }
 
+    /**
+     * Path of the rest service, such as "/foo"
+     */
     public void setPath(String path) {
         this.path = path;
     }
@@ -71,6 +85,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return consumes;
     }
 
+    /**
+     * To define the content type what the REST service consumes (accept as input), such as application/xml or application/json.
+     * This option will override what may be configured on a parent level
+     */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
     }
@@ -79,6 +97,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return produces;
     }
 
+    /**
+     * To define the content type what the REST service produces (uses for output), such as application/xml or application/json
+     * This option will override what may be configured on a parent level
+     */
     public void setProduces(String produces) {
         this.produces = produces;
     }
@@ -87,6 +109,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return bindingMode;
     }
 
+    /**
+     * Sets the binding mode to use.
+     * This option will override what may be configured on a parent level
+     * <p/>
+     * The default value is auto
+     */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
     }
@@ -95,12 +123,43 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return verbs;
     }
 
+    /**
+     * The HTTP verbs this REST service accepts and uses
+     */
     public void setVerbs(List<VerbDefinition> verbs) {
         this.verbs = verbs;
     }
 
+    public Boolean getSkipBindingOnErrorCode() {
+        return skipBindingOnErrorCode;
+    }
+
+    /**
+     * Whether to skip binding on output if there is a custom HTTP error code header.
+     * This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.
+     * This option will override what may be configured on a parent level
+     */
+    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getEnableCORS() {
+        return enableCORS;
+    }
+
+    /**
+     * Whether to enable CORS headers in the HTTP response.
+     * This option will override what may be configured on a parent level
+     * <p/>
+     * The default value is false.
+     */
+    public void setEnableCORS(Boolean enableCORS) {
+        this.enableCORS = enableCORS;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
+
 
     /**
      * To set the base path of this REST service
@@ -209,6 +268,30 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestOperationParamDefinition param() {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        return param(verb);
+    }
+
+    public RestOperationParamDefinition param(VerbDefinition verb) {
+        return new RestOperationParamDefinition(verb);
+    }
+
+    public RestOperationResponseMsgDefinition responseMessage() {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        return responseMessage(verb);
+    }
+
+    public RestOperationResponseMsgDefinition responseMessage(VerbDefinition verb) {
+        return new RestOperationResponseMsgDefinition(verb);
+    }
+
     public RestDefinition produces(String mediaType) {
         if (getVerbs().isEmpty()) {
             this.produces = mediaType;
@@ -279,6 +362,30 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
+        if (getVerbs().isEmpty()) {
+            this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
+        }
+
+        return this;
+    }
+
+    public RestDefinition enableCORS(boolean enableCORS) {
+        if (getVerbs().isEmpty()) {
+            this.enableCORS = enableCORS;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setEnableCORS(enableCORS);
+        }
+
+        return this;
+    }
+
     /**
      * Routes directly to the given endpoint.
      * <p/>
@@ -334,10 +441,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             answer = new VerbDefinition();
             answer.setMethod(verb);
         }
-
+        getVerbs().add(answer);
         answer.setRest(this);
         answer.setUri(uri);
-        getVerbs().add(answer);
         return this;
     }
 
@@ -346,7 +452,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * Camel routing engine can add and run. This allows us to define REST services using this
      * REST DSL and turn those into regular Camel routes.
      */
-    public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) throws Exception {
+    public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) {
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
 
         for (VerbDefinition verb : getVerbs()) {
@@ -379,6 +485,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setBindingMode(getBindingMode());
             }
+            if (verb.getSkipBindingOnErrorCode() != null) {
+                binding.setSkipBindingOnErrorCode(verb.getSkipBindingOnErrorCode());
+            } else {
+                binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
+            }
+            if (verb.getEnableCORS() != null) {
+                binding.setEnableCORS(verb.getEnableCORS());
+            } else {
+                binding.setEnableCORS(getEnableCORS());
+            }
             route.getOutputs().add(0, binding);
 
             // create the from endpoint uri which is using the rest component
@@ -407,10 +523,81 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             if (outType != null) {
                 options.put("outType", outType);
             }
+            // if no route id has been set, then use the verb id as route id
+            if (!route.hasCustomIdAssigned()) {
+                // use id of verb as route id
+                String id = verb.getId();
+                if (id != null) {
+                    route.setId(id);
+                }
+            }
+            String routeId = route.idOrCreate(camelContext.getNodeIdFactory());
+            options.put("routeId", routeId);
+
+            // include optional description, which we favor from 1) to/route description 2) verb description 3) rest description
+            // this allows end users to define general descriptions and override then per to/route or verb
+            String description = verb.getTo() != null ? verb.getTo().getDescriptionText() : route.getDescriptionText();
+            if (description == null) {
+                description = verb.getDescriptionText();
+            }
+            if (description == null) {
+                description = getDescriptionText();
+            }
+            if (description != null) {
+                options.put("description", description);
+            }
+
             if (!options.isEmpty()) {
-                String query = URISupport.createQueryString(options);
+                String query;
+                try {
+                    query = URISupport.createQueryString(options);
+                } catch (URISyntaxException e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
                 from = from + "?" + query;
             }
+
+            String path = getPath();
+            String s1 = FileUtil.stripTrailingSeparator(path);
+            String s2 = FileUtil.stripLeadingSeparator(verb.getUri());
+            String allPath;
+            if (s1 != null && s2 != null) {
+                allPath = s1 + "/" + s2;
+            } else if (path != null) {
+                allPath = path;
+            } else {
+                allPath = verb.getUri();
+            }
+
+            // each {} is a parameter
+            String[] arr = allPath.split("\\/");
+            for (String a : arr) {
+                if (a.startsWith("{") && a.endsWith("}")) {
+                    String key = a.substring(1, a.length() - 1);
+                    //  merge if exists
+                    boolean found = false;
+                    for (RestOperationParamDefinition param : verb.getParams()) {
+                        if (param.getName().equalsIgnoreCase(key)) {
+                            param.type(RestParamType.path);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        param(verb).name(key).type(RestParamType.path).endParam();
+                    }
+                }
+            }
+
+            if (verb.getType() != null) {
+                String bodyType = verb.getType();
+                if (bodyType.endsWith("[]")) {
+                    bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
+                }
+                param(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
+            }
+
+
 
             // the route should be from this rest endpoint
             route.fromRest(from);

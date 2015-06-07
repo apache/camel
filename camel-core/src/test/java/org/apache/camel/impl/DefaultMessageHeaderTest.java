@@ -128,23 +128,6 @@ public class DefaultMessageHeaderTest extends TestCase {
         assertTrue(msg.getHeaders().isEmpty());
     }
 
-    public void testRemoveHeaderWithNullArg() {
-        Message msg = new DefaultMessage();
-        assertNull(msg.getHeader("foo"));
-
-        msg.setHeader("tick", "bla");
-        msg.setHeader("tack", "blaa");
-        msg.setHeader("tock", "blaaa");
-
-        assertEquals("bla", msg.getHeader("tick"));
-        assertEquals("blaa", msg.getHeader("tack"));
-        assertEquals("blaaa", msg.getHeader("tock"));
-
-        msg.removeHeader(null);
-
-        assertFalse(msg.getHeaders().isEmpty());
-    }
-
     public void testRemoveHeaderWithNullValue() {
         Message msg = new DefaultMessage();
         assertNull(msg.getHeader("foo"));

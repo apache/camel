@@ -25,7 +25,6 @@ import javax.security.cert.X509Certificate;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslHandler;
-import io.netty.util.Timer;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -38,7 +37,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "netty4", consumerClass = NettyConsumer.class)
+@UriEndpoint(scheme = "netty4", title = "Netty4", syntax = "netty4:protocol:host:port", consumerClass = NettyConsumer.class, label = "networking,tcp,udp")
 public class NettyEndpoint extends DefaultEndpoint {
     @UriParam
     private NettyConfiguration configuration;

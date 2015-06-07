@@ -25,12 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents the JiBX XML {@link org.apache.camel.spi.DataFormat}
+ * JiBX data format
  */
+@Metadata(label = "dataformat,transformation", title = "JiBX")
 @XmlRootElement(name = "jibx")
 @XmlAccessorType(XmlAccessType.NONE)
 public class JibxDataFormat extends DataFormatDefinition {
@@ -54,6 +56,9 @@ public class JibxDataFormat extends DataFormatDefinition {
         return unmarshallClass;
     }
 
+    /**
+     * Class use when unmarshalling from XML to Java.
+     */
     public void setUnmarshallClass(Class<?> unmarshallClass) {
         this.unmarshallClass = unmarshallClass;
     }
@@ -62,6 +67,9 @@ public class JibxDataFormat extends DataFormatDefinition {
         return unmarshallTypeName;
     }
 
+    /**
+     * Class name to use when unmarshalling from XML to Java.
+     */
     public void setUnmarshallTypeName(String unmarshallTypeName) {
         this.unmarshallTypeName = unmarshallTypeName;
     }
@@ -70,6 +78,9 @@ public class JibxDataFormat extends DataFormatDefinition {
         return bindingName;
     }
 
+    /**
+     * To use a custom binding factory
+     */
     public void setBindingName(String bindingName) {
         this.bindingName = bindingName;
     }

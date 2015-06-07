@@ -17,29 +17,13 @@
 package org.apache.camel.dataformat.csv;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Arrays;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVStrategy;
-import org.apache.commons.csv.writer.CSVConfig;
-import org.apache.commons.csv.writer.CSVField;
-import org.apache.commons.csv.writer.CSVWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.QuoteMode;
 
 /**
  * CSV Data format.
@@ -49,214 +33,665 @@ import org.slf4j.LoggerFactory;
  * the end of the line. Thus, field order is the same from message to message.
  * Autogeneration can be disabled. In this case, only the fields defined in
  * csvConfig are written on the output.
- *
- * @version
  */
 public class CsvDataFormat implements DataFormat {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CsvDataFormat.class);
+    // CSV format options
+    private CSVFormat format = CSVFormat.DEFAULT;
+    private boolean commentMarkerDisabled;
+    private Character commentMarker;
+    private Character delimiter;
+    private boolean escapeDisabled;
+    private Character escape;
+    private boolean headerDisabled;
+    private String[] header;
+    private Boolean allowMissingColumnNames;
+    private Boolean ignoreEmptyLines;
+    private Boolean ignoreSurroundingSpaces;
+    private boolean nullStringDisabled;
+    private String nullString;
+    private boolean quoteDisabled;
+    private Character quote;
+    private QuoteMode quoteMode;
+    private boolean recordSeparatorDisabled;
+    private String recordSeparator;
+    private Boolean skipHeaderRecord;
 
-    private CSVStrategy strategy = cloneCSVStrategyIfNecessary(CSVStrategy.DEFAULT_STRATEGY);
-    private CSVConfig config = new CSVConfig();
-    private boolean autogenColumns = true;
-    private String delimiter;
-    private boolean skipFirstLine;
-    /**
-     * Lazy row loading with iterator for big files.
-     */
+    // Unmarshal options
     private boolean lazyLoad;
     private boolean useMaps;
+    private CsvRecordConverter<?> recordConverter;
 
-    private static CSVStrategy cloneCSVStrategyIfNecessary(CSVStrategy csvStrategy) {
-        for (Field field : CSVStrategy.class.getFields()) {
-            try {
-                if (field.get(null) == csvStrategy) {
-                    // return a safe copy of the declared static constant so that we don't cause any side effect
-                    // by (potentially) other CsvDataFormat objects in use, as we change the properties of the
-                    // strategy itself (e.g. it's set delimiter through the #unmarshal() method below)
-                    LOGGER.debug("Returning a clone of {} as it is the declared constant {} by the CSVStrategy class", csvStrategy, field.getName());
+    private volatile CsvMarshaller marshaller;
+    private volatile CsvUnmarshaller unmarshaller;
 
-                    return (CSVStrategy) csvStrategy.clone();
-                }
-            } catch (Exception e) {
-                ObjectHelper.wrapRuntimeCamelException(e);
-            }
-        }
+    public CsvDataFormat() {
+    }
 
-        // not a declared static constant of CSVStrategy so return it as is
-        return csvStrategy;
+    public CsvDataFormat(CSVFormat format) {
+        setFormat(format);
     }
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-        if (delimiter != null) {
-            config.setDelimiter(delimiter.charAt(0));
+        if (marshaller == null) {
+            marshaller = CsvMarshaller.create(getActiveFormat(), this);
         }
-
-        OutputStreamWriter out = new OutputStreamWriter(outputStream, IOHelper.getCharsetName(exchange));
-        CSVWriter csv = new CSVWriter(config);
-        csv.setWriter(out);
-
-        try {
-            List<?> list = ExchangeHelper.convertToType(exchange, List.class, object);
-            if (list != null) {
-                for (Object child : list) {
-                    Map<?, ?> row = ExchangeHelper.convertToMandatoryType(exchange, Map.class, child);
-                    doMarshalRecord(exchange, row, out, csv);
-                }
-            } else {
-                Map<?, ?> row = ExchangeHelper.convertToMandatoryType(exchange, Map.class, object);
-                doMarshalRecord(exchange, row, out, csv);
-            }
-        } finally {
-            IOHelper.close(out);
-        }
-    }
-
-    private void doMarshalRecord(Exchange exchange, Map<?, ?> row, Writer out, CSVWriter csv) throws Exception {
-        if (autogenColumns) {
-            // no specific config has been set so lets add fields
-            Set<?> set = row.keySet();
-            updateFieldsInConfig(set, exchange);
-        }
-        csv.writeRecord(row);
+        marshaller.marshal(exchange, object, outputStream);
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
+        if (unmarshaller == null) {
+            unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
+        }
+        return unmarshaller.unmarshal(exchange, inputStream);
+    }
+
+    CSVFormat getActiveFormat() {
+        CSVFormat answer = format;
+
+        if (commentMarkerDisabled) {
+            answer = answer.withCommentMarker(null); // null disables the comment marker
+        } else if (commentMarker != null) {
+            answer = answer.withCommentMarker(commentMarker);
+        }
+
         if (delimiter != null) {
-            config.setDelimiter(delimiter.charAt(0));
+            answer = answer.withDelimiter(delimiter);
         }
-        strategy.setDelimiter(config.getDelimiter());
 
-        Reader reader = null;
-        boolean error = false;
-        try {
-            reader = IOHelper.buffered(new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange)));
-            CSVParser parser = new CSVParser(reader, strategy);
-            if (skipFirstLine) {
-                // read one line ahead and skip it
-                parser.getLine();
-            }
-            CsvLineConverter<?> lineConverter;
-            if (useMaps) {
-                final CSVField[] fields = this.config.getFields();
-                final String[] fieldS;
-                if (fields != null && fields.length > 0) {
-                    fieldS = new String[fields.length];
-                    for (int i = 0; i < fields.length; i++) {
-                        fieldS[i] = fields[i].getName();
-                    }
-                } else {
-                    fieldS = parser.getLine();
-                }
-                lineConverter = CsvLineConverters.getMapLineConverter(fieldS);
-            } else {
-                lineConverter = CsvLineConverters.getListConverter();
-            }
-
-            @SuppressWarnings({"unchecked", "rawtypes"}) CsvIterator<?> csvIterator = new CsvIterator(parser, reader, lineConverter);
-            return lazyLoad ? csvIterator : loadAllAsList(csvIterator);
-        } catch (Exception e) {
-            error = true;
-            throw e;
-        } finally {
-            if (error) {
-                IOHelper.close(reader);
-            }
+        if (escapeDisabled) {
+            answer = answer.withEscape(null); // null disables the escape
+        } else if (escape != null) {
+            answer = answer.withEscape(escape);
         }
-    }
 
-    private <T> List<T> loadAllAsList(CsvIterator<T> iter) {
-        try {
-            List<T> list = new ArrayList<T>();
-            while (iter.hasNext()) {
-                list.add(iter.next());
-            }
-            return list;
-        } finally {
-            // close the iterator (which would also close the reader) as we've loaded all the data upfront
-            IOHelper.close(iter);
+        if (headerDisabled) {
+            answer = answer.withHeader((String[]) null); // null disables the header
+        } else if (header != null) {
+            answer = answer.withHeader(header);
         }
-    }
 
-    public String getDelimiter() {
-        return delimiter;
-    }
-
-    public void setDelimiter(String delimiter) {
-        if (delimiter != null && delimiter.length() > 1) {
-            throw new IllegalArgumentException("Delimiter must have a length of one!");
+        if (allowMissingColumnNames != null) {
+            answer = answer.withAllowMissingColumnNames(allowMissingColumnNames);
         }
-        this.delimiter = delimiter;
+
+        if (ignoreEmptyLines != null) {
+            answer = answer.withIgnoreEmptyLines(ignoreEmptyLines);
+        }
+
+        if (ignoreSurroundingSpaces != null) {
+            answer = answer.withIgnoreSurroundingSpaces(ignoreSurroundingSpaces);
+        }
+
+        if (nullStringDisabled) {
+            answer = answer.withNullString(null); // null disables the null string replacement
+        } else if (nullString != null) {
+            answer = answer.withNullString(nullString);
+        }
+
+        if (quoteDisabled) {
+            answer = answer.withQuote(null); // null disables quotes
+        } else if (quote != null) {
+            answer = answer.withQuote(quote);
+        }
+
+        if (quoteMode != null) {
+            answer = answer.withQuoteMode(quoteMode);
+        }
+
+        if (recordSeparatorDisabled) {
+            answer = answer.withRecordSeparator(null); // null disables the record separator
+        } else if (recordSeparator != null) {
+            answer = answer.withRecordSeparator(recordSeparator);
+        }
+
+        if (skipHeaderRecord != null) {
+            answer = answer.withSkipHeaderRecord(skipHeaderRecord);
+        }
+
+        return answer;
     }
 
-    public CSVConfig getConfig() {
-        return config;
+    private void reset() {
+        marshaller = null;
+        unmarshaller = null;
     }
 
-    public void setConfig(CSVConfig config) {
-        this.config = config;
-    }
+    //region Getters/Setters
 
-    public CSVStrategy getStrategy() {
-        return strategy;
-    }
-
-    public void setStrategy(CSVStrategy strategy) {
-        this.strategy = cloneCSVStrategyIfNecessary(strategy);
-    }
-
-    public boolean isAutogenColumns() {
-        return autogenColumns;
+    /**
+     * Gets the CSV format before applying any changes.
+     * It cannot be {@code null}, the default one is {@link org.apache.commons.csv.CSVFormat#DEFAULT}.
+     *
+     * @return CSV format
+     */
+    public CSVFormat getFormat() {
+        return format;
     }
 
     /**
-     * Auto generate columns.
+     * Sets the CSV format before applying any changes.
+     * If {@code null}, then {@link org.apache.commons.csv.CSVFormat#DEFAULT} is used instead.
      *
-     * @param autogenColumns set to false to disallow column autogeneration (default true)
+     * @param format CSV format
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat
+     * @see org.apache.commons.csv.CSVFormat#DEFAULT
      */
-    public void setAutogenColumns(boolean autogenColumns) {
-        this.autogenColumns = autogenColumns;
+    public CsvDataFormat setFormat(CSVFormat format) {
+        this.format = (format == null) ? CSVFormat.DEFAULT : format;
+        reset();
+        return this;
     }
 
-    public boolean isSkipFirstLine() {
-        return skipFirstLine;
+    /**
+     * Sets the CSV format by name before applying any changes.
+     *
+     * @param name CSV format name
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see #setFormat(org.apache.commons.csv.CSVFormat)
+     * @see org.apache.commons.csv.CSVFormat
+     */
+    public CsvDataFormat setFormatName(String name) {
+        if (name == null) {
+            setFormat(null);
+        } else if ("DEFAULT".equals(name)) {
+            setFormat(CSVFormat.DEFAULT);
+        } else if ("RFC4180".equals(name)) {
+            setFormat(CSVFormat.RFC4180);
+        } else if ("EXCEL".equals(name)) {
+            setFormat(CSVFormat.EXCEL);
+        } else if ("TDF".equals(name)) {
+            setFormat(CSVFormat.TDF);
+        } else if ("MYSQL".equals(name)) {
+            setFormat(CSVFormat.MYSQL);
+        } else {
+            throw new IllegalArgumentException("Unsupported format");
+        }
+        return this;
     }
 
-    public void setSkipFirstLine(boolean skipFirstLine) {
-        this.skipFirstLine = skipFirstLine;
+    /**
+     * Indicates whether or not the comment markers are disabled.
+     *
+     * @return {@code true} if the comment markers are disabled, {@code false} otherwise
+     */
+    public boolean isCommentMarkerDisabled() {
+        return commentMarkerDisabled;
     }
 
+    /**
+     * Sets whether or not the comment markers are disabled.
+     *
+     * @param commentMarkerDisabled {@code true} if the comment markers are disabled, {@code false} otherwise
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withCommentMarker(java.lang.Character)
+     */
+    public CsvDataFormat setCommentMarkerDisabled(boolean commentMarkerDisabled) {
+        this.commentMarkerDisabled = commentMarkerDisabled;
+        reset();
+        return this;
+    }
+
+    /**
+     * Gets the comment marker.
+     * If {@code null} then the default one of the format used.
+     *
+     * @return Comment marker
+     */
+    public Character getCommentMarker() {
+        return commentMarker;
+    }
+
+    /**
+     * Sets the comment marker to use.
+     * If {@code null} then the default one of the format used.
+     *
+     * @param commentMarker Comment marker
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withCommentMarker(Character)
+     */
+    public CsvDataFormat setCommentMarker(Character commentMarker) {
+        this.commentMarker = commentMarker;
+        reset();
+        return this;
+    }
+
+    /**
+     * Gets the delimiter.
+     * If {@code null} then the default one of the format used.
+     *
+     * @return Delimiter
+     */
+    public Character getDelimiter() {
+        return delimiter;
+    }
+
+    /**
+     * Sets the delimiter.
+     * If {@code null} then the default one of the format used.
+     *
+     * @param delimiter Delimiter
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withDelimiter(char)
+     */
+    public CsvDataFormat setDelimiter(Character delimiter) {
+        this.delimiter = delimiter;
+        reset();
+        return this;
+    }
+
+    /**
+     * Indicates whether or not the escaping is disabled.
+     *
+     * @return {@code true} if the escaping is disabled, {@code false} otherwise
+     */
+    public boolean isEscapeDisabled() {
+        return escapeDisabled;
+    }
+
+    /**
+     * Sets whether or not the escaping is disabled.
+     *
+     * @param escapeDisabled {@code true} if the escaping is disabled, {@code false} otherwise
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withEscape(Character)
+     */
+    public CsvDataFormat setEscapeDisabled(boolean escapeDisabled) {
+        this.escapeDisabled = escapeDisabled;
+        reset();
+        return this;
+    }
+
+    /**
+     * Gets the escape character.
+     * If {@code null} then the default one of the format used.
+     *
+     * @return Escape character
+     */
+    public Character getEscape() {
+        return escape;
+    }
+
+    /**
+     * Sets the escape character.
+     * If {@code null} then the default one of the format used.
+     *
+     * @param escape Escape character
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withEscape(Character)
+     */
+    public CsvDataFormat setEscape(Character escape) {
+        this.escape = escape;
+        reset();
+        return this;
+    }
+
+    /**
+     * Indicates whether or not the headers are disabled.
+     *
+     * @return {@code true} if the headers are disabled, {@code false} otherwise
+     */
+    public boolean isHeaderDisabled() {
+        return headerDisabled;
+    }
+
+    /**
+     * Sets whether or not the headers are disabled.
+     *
+     * @param headerDisabled {@code true} if the headers are disabled, {@code false} otherwise
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withHeader(String...)
+     */
+    public CsvDataFormat setHeaderDisabled(boolean headerDisabled) {
+        this.headerDisabled = headerDisabled;
+        reset();
+        return this;
+    }
+
+    /**
+     * Gets the header.
+     * If {@code null} then the default one of the format used. If empty then it will be automatically handled.
+     *
+     * @return Header
+     */
+    public String[] getHeader() {
+        return header;
+    }
+
+    /**
+     * Gets the header.
+     * If {@code null} then the default one of the format used. If empty then it will be automatically handled.
+     *
+     * @param header Header
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withHeader(String...)
+     */
+    public CsvDataFormat setHeader(String[] header) {
+        this.header = Arrays.copyOf(header, header.length);
+        reset();
+        return this;
+    }
+
+    /**
+     * Indicates whether or not missing column names are allowed.
+     * If {@code null} then the default value of the format used.
+     *
+     * @return Whether or not missing column names are allowed
+     */
+    public Boolean getAllowMissingColumnNames() {
+        return allowMissingColumnNames;
+    }
+
+    /**
+     * Sets whether or not missing column names are allowed.
+     * If {@code null} then the default value of the format used.
+     *
+     * @param allowMissingColumnNames Whether or not missing column names are allowed
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withAllowMissingColumnNames(boolean)
+     */
+    public CsvDataFormat setAllowMissingColumnNames(Boolean allowMissingColumnNames) {
+        this.allowMissingColumnNames = allowMissingColumnNames;
+        reset();
+        return this;
+    }
+
+    /**
+     * Indicates whether or not empty lines must be ignored.
+     * If {@code null} then the default value of the format used.
+     *
+     * @return Whether or not empty lines must be ignored
+     */
+    public Boolean getIgnoreEmptyLines() {
+        return ignoreEmptyLines;
+    }
+
+    /**
+     * Sets whether or not empty lines must be ignored.
+     * If {@code null} then the default value of the format used.
+     *
+     * @param ignoreEmptyLines Whether or not empty lines must be ignored
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withIgnoreEmptyLines(boolean)
+     */
+    public CsvDataFormat setIgnoreEmptyLines(Boolean ignoreEmptyLines) {
+        this.ignoreEmptyLines = ignoreEmptyLines;
+        reset();
+        return this;
+    }
+
+    /**
+     * Indicates whether or not surrounding spaces must be ignored.
+     * If {@code null} then the default value of the format used.
+     *
+     * @return Whether or not surrounding spaces must be ignored
+     */
+    public Boolean getIgnoreSurroundingSpaces() {
+        return ignoreSurroundingSpaces;
+    }
+
+    /**
+     * Sets whether or not surrounding spaces must be ignored.
+     * If {@code null} then the default value of the format used.
+     *
+     * @param ignoreSurroundingSpaces Whether or not surrounding spaces must be ignored
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withIgnoreSurroundingSpaces(boolean)
+     */
+    public CsvDataFormat setIgnoreSurroundingSpaces(Boolean ignoreSurroundingSpaces) {
+        this.ignoreSurroundingSpaces = ignoreSurroundingSpaces;
+        reset();
+        return this;
+    }
+
+    /**
+     * Indicates whether or not the null string replacement is disabled.
+     *
+     * @return {@code true} if the null string replacement is disabled, {@code false} otherwise
+     */
+    public boolean isNullStringDisabled() {
+        return nullStringDisabled;
+    }
+
+    /**
+     * Sets whether or not the null string replacement is disabled.
+     *
+     * @param nullStringDisabled {@code true} if the null string replacement is disabled, {@code false} otherwise
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withNullString(String)
+     */
+    public CsvDataFormat setNullStringDisabled(boolean nullStringDisabled) {
+        this.nullStringDisabled = nullStringDisabled;
+        reset();
+        return this;
+    }
+
+    /**
+     * Gets the null string replacement.
+     * If {@code null} then the default one of the format used.
+     *
+     * @return Null string replacement
+     */
+    public String getNullString() {
+        return nullString;
+    }
+
+    /**
+     * Sets the null string replacement.
+     * If {@code null} then the default one of the format used.
+     *
+     * @param nullString Null string replacement
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withNullString(String)
+     */
+    public CsvDataFormat setNullString(String nullString) {
+        this.nullString = nullString;
+        reset();
+        return this;
+    }
+
+    /**
+     * Indicates whether or not quotes are disabled.
+     *
+     * @return {@code true} if quotes are disabled, {@code false} otherwise
+     */
+    public boolean isQuoteDisabled() {
+        return quoteDisabled;
+    }
+
+    /**
+     * Sets whether or not quotes are disabled
+     *
+     * @param quoteDisabled {@code true} if quotes are disabled, {@code false} otherwise
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withQuote(Character)
+     */
+    public CsvDataFormat setQuoteDisabled(boolean quoteDisabled) {
+        this.quoteDisabled = quoteDisabled;
+        reset();
+        return this;
+    }
+
+    /**
+     * Gets the quote character.
+     * If {@code null} then the default one of the format used.
+     *
+     * @return Quote character
+     */
+    public Character getQuote() {
+        return quote;
+    }
+
+    /**
+     * Sets the quote character.
+     * If {@code null} then the default one of the format used.
+     *
+     * @param quote Quote character
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withQuote(Character)
+     */
+    public CsvDataFormat setQuote(Character quote) {
+        this.quote = quote;
+        reset();
+        return this;
+    }
+
+    /**
+     * Gets the quote mode.
+     * If {@code null} then the default one of the format used.
+     *
+     * @return Quote mode
+     */
+    public QuoteMode getQuoteMode() {
+        return quoteMode;
+    }
+
+    /**
+     * Sets the quote mode.
+     * If {@code null} then the default one of the format used.
+     *
+     * @param quoteMode Quote mode
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withQuoteMode(org.apache.commons.csv.QuoteMode)
+     */
+    public CsvDataFormat setQuoteMode(QuoteMode quoteMode) {
+        this.quoteMode = quoteMode;
+        reset();
+        return this;
+    }
+
+    /**
+     * Indicates whether or not the record separator is disabled.
+     *
+     * @return {@code true} if the record separator disabled, {@code false} otherwise
+     */
+    public boolean isRecordSeparatorDisabled() {
+        return recordSeparatorDisabled;
+    }
+
+    /**
+     * Sets whether or not the record separator is disabled.
+     *
+     * @param recordSeparatorDisabled {@code true} if the record separator disabled, {@code false} otherwise
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withRecordSeparator(String)
+     */
+    public CsvDataFormat setRecordSeparatorDisabled(boolean recordSeparatorDisabled) {
+        this.recordSeparatorDisabled = recordSeparatorDisabled;
+        reset();
+        return this;
+    }
+
+    /**
+     * Gets the record separator.
+     * If {@code null} then the default one of the format used.
+     *
+     * @return Record separator
+     */
+    public String getRecordSeparator() {
+        return recordSeparator;
+    }
+
+    /**
+     * Sets the record separator.
+     * If {@code null} then the default one of the format used.
+     *
+     * @param recordSeparator Record separator
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withRecordSeparator(String)
+     */
+    public CsvDataFormat setRecordSeparator(String recordSeparator) {
+        this.recordSeparator = recordSeparator;
+        reset();
+        return this;
+    }
+
+    /**
+     * Indicates whether or not header record must be skipped.
+     * If {@code null} then the default value of the format used.
+     *
+     * @return Whether or not header record must be skipped
+     */
+    public Boolean getSkipHeaderRecord() {
+        return skipHeaderRecord;
+    }
+
+    /**
+     * Sets whether or not header record must be skipped.
+     * If {@code null} then the default value of the format used.
+     *
+     * @param skipHeaderRecord Whether or not header record must be skipped
+     * @return Current {@code CsvDataFormat}, fluent API
+     * @see org.apache.commons.csv.CSVFormat#withSkipHeaderRecord(boolean)
+     */
+    public CsvDataFormat setSkipHeaderRecord(Boolean skipHeaderRecord) {
+        this.skipHeaderRecord = skipHeaderRecord;
+        reset();
+        return this;
+    }
+
+    /**
+     * Indicates whether or not the unmarshalling should lazily load the records.
+     *
+     * @return {@code true} for lazy loading, {@code false} otherwise
+     */
     public boolean isLazyLoad() {
         return lazyLoad;
     }
 
-    public void setLazyLoad(boolean lazyLoad) {
+    /**
+     * Indicates whether or not the unmarshalling should lazily load the records.
+     *
+     * @param lazyLoad {@code true} for lazy loading, {@code false} otherwise
+     * @return Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setLazyLoad(boolean lazyLoad) {
         this.lazyLoad = lazyLoad;
+        return this;
     }
 
+    /**
+     * Indicates whether or not the unmarshalling should produce maps instead of lists.
+     *
+     * @return {@code true} for maps, {@code false} for lists
+     */
     public boolean isUseMaps() {
         return useMaps;
     }
 
     /**
-     * Sets whether or not the result of the unmarshalling should be a {@code java.util.Map} instead of a {@code java.util.List}. It uses the first line as a
-     * header line and uses it as keys of the maps.
+     * Sets whether or not the unmarshalling should produce maps instead of lists.
      *
-     * @param useMaps {@code true} in order to use {@code java.util.Map} instead of {@code java.util.List}, {@code false} otherwise.
+     * @param useMaps {@code true} for maps, {@code false} for lists
+     * @return Current {@code CsvDataFormat}, fluent API
      */
-    public void setUseMaps(boolean useMaps) {
+    public CsvDataFormat setUseMaps(boolean useMaps) {
         this.useMaps = useMaps;
+        return this;
     }
 
-    private synchronized void updateFieldsInConfig(Set<?> set, Exchange exchange) {
-        for (Object value : set) {
-            if (value != null) {
-                String text = exchange.getContext().getTypeConverter().convertTo(String.class, value);
-                // do not add field twice
-                if (config.getField(text) == null) {
-                    CSVField field = new CSVField(text);
-                    config.addField(field);
-                }
-            }
-        }
+    /**
+     * Gets the record converter to use. If {@code null} then it will use {@link CsvDataFormat#isUseMaps()} for finding
+     * the proper converter.
+     *
+     * @return Record converter to use
+     */
+    public CsvRecordConverter<?> getRecordConverter() {
+        return recordConverter;
     }
+
+    /**
+     * Sets the record converter to use. If {@code null} then it will use {@link CsvDataFormat#isUseMaps()} for finding
+     * the proper converter.
+     *
+     * @param recordConverter Record converter to use
+     * @return Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setRecordConverter(CsvRecordConverter<?> recordConverter) {
+        this.recordConverter = recordConverter;
+        return this;
+    }
+
+    //endregion
+
 }

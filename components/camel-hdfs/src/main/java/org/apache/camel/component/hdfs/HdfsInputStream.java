@@ -28,6 +28,7 @@ public class HdfsInputStream implements Closeable {
     private HdfsFileType fileType;
     private String actualPath;
     private String suffixedPath;
+    private String suffixedReadPath;
     private Closeable in;
     private boolean opened;
     private int chunkSize;
@@ -42,11 +43,15 @@ public class HdfsInputStream implements Closeable {
         ret.fileType = configuration.getFileType();
         ret.actualPath = hdfsPath;
         ret.suffixedPath = ret.actualPath + '.' + configuration.getOpenedSuffix();
+        ret.suffixedReadPath = ret.actualPath + '.' + configuration.getReadSuffix();
         ret.chunkSize = configuration.getChunkSize();
         HdfsInfo info = HdfsInfoFactory.newHdfsInfo(ret.actualPath);
-        info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath));
-        ret.in = ret.fileType.createInputStream(ret.suffixedPath, configuration);
-        ret.opened = true;
+        if (info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath))) {
+            ret.in = ret.fileType.createInputStream(ret.suffixedPath, configuration);
+            ret.opened = true;
+        } else {
+            ret.opened = false;
+        }
         return ret;
     }
 
@@ -55,18 +60,25 @@ public class HdfsInputStream implements Closeable {
         if (opened) {
             IOUtils.closeStream(in);
             HdfsInfo info = HdfsInfoFactory.newHdfsInfo(actualPath);
-            info.getFileSystem().rename(new Path(suffixedPath), new Path(actualPath + '.' + HdfsConstants.DEFAULT_READ_SUFFIX));
+            info.getFileSystem().rename(new Path(suffixedPath), new Path(suffixedReadPath));
             opened = false;
         }
     }
 
     public final long next(Holder<Object> key, Holder<Object> value) {
         long nb = fileType.next(this, key, value);
-        if (nb > 0) {
+        // when zero bytes was read from given type of file, we may still have a record (e.g., empty file)
+        // null value.value is the only indication that no (new) record/chunk was read
+        if (nb == 0 && numOfReadMessages.get() > 0) {
+            // we've read all chunks from file, which size is exact multiple the chunk size
+            return -1;
+        }
+        if (value.value != null) {
             numOfReadBytes.addAndGet(nb);
             numOfReadMessages.incrementAndGet();
+            return nb;
         }
-        return nb;
+        return -1;
     }
 
     public final long getNumOfReadBytes() {
@@ -87,6 +99,10 @@ public class HdfsInputStream implements Closeable {
 
     public final Closeable getIn() {
         return in;
+    }
+
+    public boolean isOpened() {
+        return opened;
     }
 
 }

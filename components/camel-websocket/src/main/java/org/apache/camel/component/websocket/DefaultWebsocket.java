@@ -20,11 +20,12 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.WebSocket.OnBinaryMessage;
 import org.eclipse.jetty.websocket.WebSocket.OnTextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultWebsocket implements WebSocket, OnTextMessage, Serializable {
+public class DefaultWebsocket implements WebSocket, OnTextMessage, OnBinaryMessage, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(DefaultWebsocket.class);
 
@@ -62,6 +63,19 @@ public class DefaultWebsocket implements WebSocket, OnTextMessage, Serializable 
         }
     }
 
+
+    @Override
+    public void onMessage(byte[] data, int offset, int length) {
+        LOG.debug("onMessage: byte[]");
+        if (this.consumer != null) {
+            byte[] message = new byte[length];
+            System.arraycopy(data, offset, message, 0, length);
+            this.consumer.sendMessage(this.connectionKey, message);
+        } else {
+            LOG.debug("No consumer to handle message received: byte[]");
+        }
+    }
+
     public Connection getConnection() {
         return connection;
     }
@@ -77,5 +91,4 @@ public class DefaultWebsocket implements WebSocket, OnTextMessage, Serializable 
     public void setConnectionKey(String connectionKey) {
         this.connectionKey = connectionKey;
     }
-
 }

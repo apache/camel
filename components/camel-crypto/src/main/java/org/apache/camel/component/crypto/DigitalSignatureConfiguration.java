@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.crypto;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -26,31 +28,55 @@ import java.security.cert.Certificate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 
-
+@UriParams
 public class DigitalSignatureConfiguration implements Cloneable, CamelContextAware {
 
-    private PrivateKey privateKey;
-    private KeyStore keystore;
-    private SecureRandom secureRandom;
-    private String algorithm = "SHA1WithDSA";
-    private Integer bufferSize = Integer.valueOf(2048);
-    private String provider;
-    private String signatureHeaderName;
-    private String alias;
-    private char[] password;
-    private PublicKey publicKey;
-    private Certificate certificate;
     private CamelContext context;
 
+    @UriPath @Metadata(required = "true")
+    private CryptoOperation cryptoOperation;
+    @UriParam
+    private PrivateKey privateKey;
+    @UriParam
+    private KeyStore keystore;
+    @UriParam
+    private SecureRandom secureRandom;
+    @UriParam(defaultValue = "SHA1WithDSA")
+    private String algorithm = "SHA1WithDSA";
+    @UriParam(defaultValue = "" + 2048)
+    private Integer bufferSize = 2048;
+    @UriParam
+    private String provider;
+    @UriParam
+    private String signatureHeaderName;
+    @UriParam
+    private String alias;
+    @UriParam
+    private char[] password;
+    @UriParam
+    private PublicKey publicKey;
+    @UriParam
+    private Certificate certificate;
+
     /** references that should be resolved when the context changes */
+    @UriParam
     private String publicKeyName;
+    @UriParam
     private String certificateName;
+    @UriParam
     private String privateKeyName;
+    @UriParam
     private String keystoreName;
-    private String randomName;
+    @UriParam
+    private String secureRandomName;
+    @UriParam(defaultValue = "true")
     private boolean clearHeaders = true;
-    private String operation;
 
     public DigitalSignatureConfiguration copy() {
         try {
@@ -65,13 +91,14 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     public void setCamelContext(CamelContext camelContext) {
+        // TODO: this is wrong a configuration should not have CamelContext
         this.context = camelContext;
         // try to retrieve the references once the context is available.
-        setKeystore(keystoreName);
-        setPublicKey(publicKeyName);
-        setPrivateKey(privateKeyName);
-        setCertificate(certificateName);
-        setSecureRandom(randomName);
+        setKeystoreName(keystoreName);
+        setPublicKeyName(publicKeyName);
+        setPrivateKeyName(privateKeyName);
+        setCertificateName(certificateName);
+        setSecureRandomName(secureRandomName);
     }
 
     /**
@@ -152,7 +179,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     /**
      * Sets the reference name for a PrivateKey that can be fond in the registry.
      */
-    public void setPrivateKey(String privateKeyName) {
+    public void setPrivateKeyName(String privateKeyName) {
         if (context != null && privateKeyName != null) {
             PrivateKey pk = context.getRegistry().lookupByNameAndType(privateKeyName, PrivateKey.class);
             if (pk != null) {
@@ -174,7 +201,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     /**
      * Sets the reference name for a publicKey that can be fond in the registry.
      */
-    public void setPublicKey(String publicKeyName) {
+    public void setPublicKeyName(String publicKeyName) {
         if (context != null && publicKeyName != null) {
             PublicKey pk = context.getRegistry().lookupByNameAndType(publicKeyName, PublicKey.class);
             if (pk != null) {
@@ -226,14 +253,13 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      * exchange based on its payload.
      */
     public void setCertificate(Certificate certificate) {
-
         this.certificate = certificate;
     }
 
     /**
      * Sets the reference name for a PrivateKey that can be fond in the registry.
      */
-    public void setCertificate(String certificateName) {
+    public void setCertificateName(String certificateName) {
         if (context != null && certificateName != null) {
             Certificate certificate = context.getRegistry().lookupByNameAndType(certificateName, Certificate.class);
             if (certificate != null) {
@@ -272,7 +298,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     /**
      * Sets the reference name for a Keystore that can be fond in the registry.
      */
-    public void setKeystore(String keystoreName) {
+    public void setKeystoreName(String keystoreName) {
         if (context != null && keystoreName != null) {
             KeyStore keystore = context.getRegistry().lookupByNameAndType(keystoreName, KeyStore.class);
             if (keystore != null) {
@@ -297,6 +323,13 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     public void setPassword(char[] password) {
         this.password = password;
     }
+    
+    public void setKeyStoreParameters(KeyStoreParameters parameters) 
+        throws GeneralSecurityException, IOException {
+        if (parameters != null) {
+            this.keystore = parameters.createKeyStore();
+        }
+    }
 
     /**
      * Get the SecureRandom used to initialize the Signature service
@@ -308,7 +341,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     /**
      * Sets the reference name for a SecureRandom that can be fond in the registry.
      */
-    public void setSecureRandom(String randomName) {
+    public void setSecureRandomName(String randomName) {
         if (context != null && randomName != null) {
             SecureRandom random = context.getRegistry().lookupByNameAndType(randomName, SecureRandom.class);
             if (keystore != null) {
@@ -316,7 +349,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
             }
         }
         if (randomName != null) {
-            this.randomName = randomName;
+            this.secureRandomName = randomName;
         }
     }
 
@@ -365,7 +398,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      * Get the name of the message header that should be used to store the
      * base64 encoded signature. This defaults to 'CamelDigitalSignature'
      */
-    public String getSignatureHeader() {
+    public String getSignatureHeaderName() {
         return signatureHeaderName != null ? signatureHeaderName : DigitalSignatureConstants.SIGNATURE;
     }
 
@@ -373,7 +406,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      * Set the name of the message header that should be used to store the
      * base64 encoded signature. This defaults to 'CamelDigitalSignature'
      */
-    public void setSignatureHeader(String signatureHeaderName) {
+    public void setSignatureHeaderName(String signatureHeaderName) {
         this.signatureHeaderName = signatureHeaderName;
     }
 
@@ -385,7 +418,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      *
      * @return true if the Signature headers should be unset, false otherwise
      */
-    public boolean getClearHeaders() {
+    public boolean isClearHeaders() {
         return clearHeaders;
     }
 
@@ -406,13 +439,18 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      * @param operation the operation supplied after the crypto scheme
      */
     public void setCryptoOperation(String operation) {
-        this.operation = operation;
+        this.cryptoOperation = CryptoOperation.valueOf(operation);
+    }
+
+    public void setCryptoOperation(CryptoOperation operation) {
+        this.cryptoOperation = operation;
     }
 
     /**
      * Gets the Crypto operation that was supplied in the the crypto scheme in the endpoint uri
      */
-    public String getCryptoOperation() {
-        return operation;
+    public CryptoOperation getCryptoOperation() {
+        return cryptoOperation;
     }
+
 }

@@ -24,6 +24,11 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * The <a href="http://camel.apache.org/dataformat-component.html">Data Format Component</a> enables using <a href="https://camel.apache.org/data-format.html">Data Format</a> as a component.
+ *
+ * @version
+ */
 public class DataFormatComponent extends UriEndpointComponent {
 
     public DataFormatComponent() {

@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents an expression sub element
  */
-@XmlRootElement(name = "expression")
+@XmlRootElement(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionSubElementDefinition {
     @XmlElementRef

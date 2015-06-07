@@ -28,6 +28,7 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.dto.LoginError;
 import org.apache.camel.component.salesforce.internal.dto.LoginToken;
+import org.apache.camel.util.ObjectHelper;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
@@ -56,18 +57,18 @@ public class SalesforceSession implements Service {
     private final ObjectMapper objectMapper;
     private final Set<SalesforceSessionListener> listeners;
 
-    private String accessToken;
-    private String instanceUrl;
+    private volatile String accessToken;
+    private volatile String instanceUrl;
 
     public SalesforceSession(HttpClient httpClient, SalesforceLoginConfig config) {
         // validate parameters
-        assertNotNull("Null httpClient", httpClient);
-        assertNotNull("Null SalesforceLoginConfig", config);
-        assertNotNull("Null loginUrl", config.getLoginUrl());
-        assertNotNull("Null clientId", config.getClientId());
-        assertNotNull("Null clientSecret", config.getClientSecret());
-        assertNotNull("Null userName", config.getUserName());
-        assertNotNull("Null password", config.getPassword());
+        ObjectHelper.notNull(httpClient, "httpClient");
+        ObjectHelper.notNull(config, "SalesforceLoginConfig");
+        ObjectHelper.notNull(config.getLoginUrl(), "loginUrl");
+        ObjectHelper.notNull(config.getClientId(), "clientId");
+        ObjectHelper.notNull(config.getClientSecret(), "clientSecret");
+        ObjectHelper.notNull(config.getUserName(), "userName");
+        ObjectHelper.notNull(config.getPassword(), "password");
 
         this.httpClient = httpClient;
         this.config = config;
@@ -78,12 +79,6 @@ public class SalesforceSession implements Service {
 
         this.objectMapper = new ObjectMapper();
         this.listeners = new CopyOnWriteArraySet<SalesforceSessionListener>();
-    }
-
-    private void assertNotNull(String s, Object o) {
-        if (o == null) {
-            throw new IllegalArgumentException(s);
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -121,7 +116,7 @@ public class SalesforceSession implements Service {
 
             try {
 
-                LOG.info("Logging clientId: {} into Salesforce url: {}", config.getClientId(), url);
+                LOG.info("Login user {} at Salesforce url: {}", config.getUserName(), url);
 
                 // set form content
                 loginPost.setRequestContent(new ByteArrayBuffer(
@@ -198,7 +193,7 @@ public class SalesforceSession implements Service {
         return accessToken;
     }
 
-    public void logout() throws SalesforceException {
+    public synchronized void logout() throws SalesforceException {
         if (accessToken == null) {
             return;
         }
@@ -236,7 +231,7 @@ public class SalesforceSession implements Service {
                 throw new SalesforceException("Logout request TIMEOUT!", null);
 
             default:
-                throw new SalesforceException("Unknow status: " + done, null);
+                throw new SalesforceException("Unknown status: " + done, null);
             }
         } catch (SalesforceException e) {
             throw e;
@@ -247,7 +242,7 @@ public class SalesforceSession implements Service {
             // reset session
             accessToken = null;
             instanceUrl = null;
-            // notify all session listeners of the new access token and instance url
+            // notify all session listeners about logout
             for (SalesforceSessionListener listener : listeners) {
                 try {
                     listener.onLogout();

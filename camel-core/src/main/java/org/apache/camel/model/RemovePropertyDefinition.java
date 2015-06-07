@@ -22,13 +22,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.processor.RemovePropertyProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;removeProperty/&gt; element
+ * Removes a named property from the message exchange
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "removeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyDefinition> {
@@ -48,11 +50,6 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
     }
 
     @Override
-    public String getShortName() {
-        return "removeProperty";
-    }
-    
-    @Override
     public String getLabel() {
         return "removeProperty[" + getPropertyName() + "]";
     }
@@ -60,9 +57,12 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getPropertyName(), "propertyName", this);
-        return ProcessorBuilder.removeProperty(getPropertyName());
+        return new RemovePropertyProcessor(getPropertyName());
     }
 
+    /**
+     * Name of property to remove
+     */
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }

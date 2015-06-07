@@ -19,15 +19,68 @@ package org.apache.camel.component.sjms.jms;
 /**
  * JMS constants
  */
-public final class JmsConstants {
+public interface JmsConstants {
 
-    public static final String JMS_DESTINATION = "CamelJmsDestination";
-    public static final String JMS_DESTINATION_NAME = "CamelJmsDestinationName";
-    public static final String JMS_MESSAGE_TYPE = "CamelJmsMessageType";
-    public static final String JMS_DELIVERY_MODE = "CamelJmsDeliveryMode";
+    /**
+     * Set by the publishing Client
+     */
+    String JMS_CORRELATION_ID = "JMSCorrelationID";
 
-    private JmsConstants() {
-        // utility class
-    }
+    /**
+     * Set on the send or publish event
+     */
+    String JMS_DELIVERY_MODE = "JMSDeliveryMode";
+
+    /**
+     * Set on the send or publish event
+     */
+    String JMS_DESTINATION = "JMSDestination";
+
+    /**
+     * Set on the send or publish event
+     */
+    String JMS_EXPIRATION = "JMSExpiration";
+
+    /**
+     * Set on the send or publish event
+     */
+    String JMS_MESSAGE_ID = "JMSMessageID";
+
+    /**
+     * Set on the send or publish event
+     */
+    String JMS_PRIORITY = "JMSPriority";
+
+    /**
+     * A redelivery flag set by the JMS provider
+     */
+    String JMS_REDELIVERED = "JMSRedelivered";
+
+    /**
+     * The JMS Reply To {@link javax.jms.Destination} set by the publishing Client
+     */
+    String JMS_REPLY_TO = "JMSReplyTo";
+
+    /**
+     * Set on the send or publish event
+     */
+    String JMS_TIMESTAMP = "JMSTimestamp";
+
+    /**
+     * Set by the publishing Client
+     */
+    String JMS_TYPE = "JMSType";
+
+    /**
+     * Custom headers
+     */
+    String JMSX_GROUP_ID = "JMSXGroupID";
+
+    /**
+     * String representation of JMS delivery modes.
+     */
+    String JMS_DELIVERY_MODE_PERSISTENT = "PERSISTENT";
+
+    String JMS_DELIVERY_MODE_NON_PERSISTENT = "NON_PERSISTENT";
 
 }

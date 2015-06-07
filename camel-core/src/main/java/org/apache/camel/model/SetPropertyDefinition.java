@@ -24,15 +24,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.processor.SetPropertyProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;setProperty/&gt; element
+ * Sets a named property on the message exchange
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetPropertyDefinition extends NoOutputExpressionNode {
@@ -68,17 +70,24 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "setProperty";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getPropertyName(), "propertyName", this);
         Expression expr = getExpression().createExpression(routeContext);
-        return ProcessorBuilder.setProperty(getPropertyName(), expr);
+        return new SetPropertyProcessor(getPropertyName(), expr);
     }
 
+    /**
+     * Expression to return the value of the message exchange property
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
+    /**
+     * Name of exchange property to set a new value
+     */
     @Required
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;

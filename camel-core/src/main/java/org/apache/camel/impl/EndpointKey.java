@@ -20,7 +20,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ValueHolder;
 
 /**
- * Key used in {@link EndpointRegistry} in {@link DefaultCamelContext},
+ * Key used in {@link DefaultEndpointRegistry} in {@link DefaultCamelContext},
  * to ensure a consistent lookup.
  */
 final class EndpointKey extends ValueHolder<String> {

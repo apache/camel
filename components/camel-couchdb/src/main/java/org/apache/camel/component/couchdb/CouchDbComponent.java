@@ -19,15 +19,16 @@ package org.apache.camel.component.couchdb;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-public class CouchDbComponent extends DefaultComponent {
+public class CouchDbComponent extends UriEndpointComponent {
 
     public CouchDbComponent() {
+        super(CouchDbEndpoint.class);
     }
 
     public CouchDbComponent(CamelContext context) {
-        super(context);
+        super(context, CouchDbEndpoint.class);
     }
 
     @Override

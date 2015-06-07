@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -41,18 +39,6 @@ public class ElasticsearchComponentConfigurationAndDocumentationTest extends Cam
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"indexName\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"local\": { \"type\": \"boolean\" }"));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("elasticsearch");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
-        assertTrue("Expected entry for clusterName", html.contains("<td>clusterName</td>"));
-        assertTrue("Expected entry for protocolType", html.contains("<td>protocolType</td>"));
     }
 
 }

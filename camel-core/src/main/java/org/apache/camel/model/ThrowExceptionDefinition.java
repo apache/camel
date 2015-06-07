@@ -24,12 +24,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ThrowExceptionProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;throwException/&gt; element
+ * Throws an exception
  */
+@Metadata(label = "error")
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionDefinition> {
@@ -40,11 +42,6 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
     private Exception exception;
 
     public ThrowExceptionDefinition() {
-    }
-
-    @Override
-    public String getShortName() {
-        return "throwException";
     }
 
     @Override
@@ -75,6 +72,9 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return ref;
     }
 
+    /**
+     * Reference to the exception instance to lookup from the registry to throw
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }

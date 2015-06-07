@@ -52,11 +52,7 @@
     <route>
        <!-- Jetty server can be used to proxy the request to cxfrs client -->
        <from uri="jetty://http://localhost:{{CXFTestSupport.port5}}/CxfRsRouterTest/route?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
-       <!-- We can remove this configure as the CXFRS producer is using the HttpAPI by default -->
-       <setHeader headerName="CamelCxfRsUsingHttpAPI">
-         <constant>True</constant>        
-       </setHeader>
-       <to uri="cxfrs://bean://rsClient"/>
+       <to uri="cxfrs://bean://rsClient?ignoreDeleteMethodMessageBody=true"/>
     </route>
   </camelContext>
   

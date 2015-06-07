@@ -16,34 +16,19 @@
  */
 package org.apache.camel.karaf.commands;
 
-import java.util.List;
-
-import org.apache.camel.model.ModelHelper;
-import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.commands.RestShowCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to show the REST marshaled in XML.
- */
-@Command(scope = "camel", name = "rest-show", description = "Display the Camel REST definition in XML.")
+@Command(scope = "camel", name = "rest-show", description = "Display the Camel REST definition in XML")
 public class RestShow extends CamelCommandSupport {
 
     @Argument(index = 0, name = "context", description = "The Camel context name.", required = true, multiValued = false)
     String context;
 
     public Object doExecute() throws Exception {
-        List<RestDefinition> rests = camelController.getRestDefinitions(context);
-        if (rests == null || rests.isEmpty()) {
-            System.out.print("There are no REST services in CamelContext with name: " + context);
-            return null;
-        }
-        // use a routes definition to dump the rests
-        RestsDefinition def = new RestsDefinition();
-        def.setRests(rests);
-        System.out.println(ModelHelper.dumpModelAsXml(def));
-        return null;
+        RestShowCommand command = new RestShowCommand(context);
+        return command.execute(camelController, System.out, System.err);
     }
 
 }

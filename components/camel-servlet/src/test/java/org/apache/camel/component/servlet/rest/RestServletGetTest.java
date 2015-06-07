@@ -24,9 +24,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
+import org.apache.camel.component.servlet.ServletRestHttpBinding;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class RestServletGetTest extends ServletCamelRouterTestSupport {
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myBinding", new ServletRestHttpBinding());
+        return jndi;
+    }
 
     @Test
     public void testServletProducerGet() throws Exception {
@@ -46,8 +55,8 @@ public class RestServletGetTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 // configure to use servlet on localhost
-                restConfiguration().component("servlet").host("localhost");
-
+                restConfiguration().component("servlet").host("localhost").endpointProperty("httpBindingRef", "#myBinding");
+                
                 // use the rest DSL to define the rest services
                 rest("/users/")
                     .get("{id}/basic")

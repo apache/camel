@@ -50,8 +50,8 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 /**
- * 
- * @version 
+ *
+ * @version
  */
 public class HttpCompressionTest extends BaseHttpTest {
 
@@ -72,7 +72,6 @@ public class HttpCompressionTest extends BaseHttpTest {
 
         Map<String, Object> headers = out.getHeaders();
         assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("gzip", headers.get("Content-Encoding"));
 
         assertBody(out.getBody(String.class));
     }
@@ -132,7 +131,7 @@ public class HttpCompressionTest extends BaseHttpTest {
             public long getContentLength() {
                 return -1;
             }
-            
+
             @Override
             public boolean isStreaming() {
                 return false;
@@ -170,7 +169,7 @@ public class HttpCompressionTest extends BaseHttpTest {
             public long getContentLength() {
                 return -1;
             }
-            
+
             @Override
             public boolean isStreaming() {
                 return false;

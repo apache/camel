@@ -47,6 +47,11 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
     }
 
     @Override
+    public TimerEndpoint getEndpoint() {
+        return (TimerEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         task = new TimerTask() {
             // counter
@@ -81,7 +86,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
         // only configure task if CamelContext already started, otherwise the StartupListener
         // is configuring the task later
         if (!configured && endpoint.getCamelContext().getStatus().isStarted()) {
-            Timer timer = endpoint.getTimer();
+            Timer timer = endpoint.getTimer(this);
             configureTask(task, timer);
         }
     }
@@ -93,12 +98,15 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
         }
         task = null;
         configured = false;
+
+        // remove timer
+        endpoint.removeTimer(this);
     }
 
     @Override
     public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
         if (task != null && !configured) {
-            Timer timer = endpoint.getTimer();
+            Timer timer = endpoint.getTimer(this);
             configureTask(task, timer);
         }
     }

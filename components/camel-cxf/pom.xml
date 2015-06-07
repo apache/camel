@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.16-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-cxf</artifactId>
@@ -47,6 +47,8 @@
       javax.xml.stream*;version="[0.0,2)",
       javax.xml.ws*;version="[0.0,3.0)",
       org.apache.camel.*;${camel.osgi.import.camel.version},
+      org.apache.camel.spring.*;${camel.osgi.import.camel.version};resolution:=optional,
+      org.springframework*;version="${spring-version-range}";resolution:=optional,
       ${camel.osgi.import.defaults},
       ${camel.osgi.import.additional},
       org.osgi.service.blueprint;resolution:=optional,
@@ -56,7 +58,6 @@
       org.apache.aries.blueprint.reflect;version="[1.0,2.0)";resolution:=optional,
       org.apache.aries.blueprint.mutable;version="[1.0,2.0)";resolution:=optional,
       org.apache.camel.blueprint;resolution:=optional,
-      org.osgi.framework;resolution:=optional,
       *
     </camel.osgi.import>
 
@@ -209,7 +210,7 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty</artifactId>
+      <artifactId>camel-jetty8</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -304,7 +305,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <childDelegation>false</childDelegation>
-          <forkMode>once</forkMode>
+          <forkCount>1</forkCount>
+	  <reuseForks>true</reuseForks>
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <reportFormat>brief</reportFormat>
           <useFile>false</useFile>

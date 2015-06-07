@@ -16,11 +16,18 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -34,6 +41,7 @@ import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.Component;
 import org.restlet.Restlet;
 import org.restlet.Server;
@@ -49,7 +57,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Camel component embedded Restlet that produces and consumes exchanges.
- * 
+ *
  * @version
  */
 public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory {
@@ -77,6 +85,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private Boolean reuseAddress;
     private boolean disableStreamCache;
     private int port;
+    private Boolean synchronous;
 
     public RestletComponent() {
         this(new Component());
@@ -92,6 +101,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RestletEndpoint result = new RestletEndpoint(this, remaining);
+        if (synchronous != null) {
+            result.setSynchronous(synchronous);
+        }
         result.setDisableStreamCache(isDisableStreamCache());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
@@ -131,7 +143,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         // configure component options
         RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("restle"))) {
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
             // configure additional options on spark configuration
             if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
                 setProperties(this, config.getComponentProperties());
@@ -166,7 +178,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         // see http://restlet.tigris.org/issues/show_bug.cgi?id=988
         String offsetPath = (String) this.component.getContext()
                 .getAttributes().get("org.restlet.ext.servlet.offsetPath");
-        
+
         if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
             attachUriPatternToRestlet(offsetPath, endpoint.getUriPattern(), endpoint, consumer.getRestlet());
         }
@@ -185,12 +197,18 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         String pattern = decodePattern(endpoint.getUriPattern());
         if (pattern != null && !pattern.isEmpty()) {
-            routesToRemove.add(getMethodRouter(pattern, false));
+            MethodBasedRouter methodRouter = getMethodRouter(pattern, false);
+            if (methodRouter != null) {
+                routesToRemove.add(methodRouter);
+            }
         }
 
         if (endpoint.getRestletUriPatterns() != null) {
             for (String uriPattern : endpoint.getRestletUriPatterns()) {
-                routesToRemove.add(getMethodRouter(uriPattern, false));
+                MethodBasedRouter methodRouter = getMethodRouter(uriPattern, false);
+                if (methodRouter != null) {
+                    routesToRemove.add(methodRouter);
+                }
             }
         }
 
@@ -231,9 +249,70 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             return result;
         }
     }
-    
+
     protected Server createServer(RestletEndpoint endpoint) {
         return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+    }
+
+    protected String stringArrayToString(String[] strings) {
+        StringBuffer result = new StringBuffer();
+        for (String str : strings) {
+            result.append(str);
+            result.append(" ");
+        }
+        return result.toString();
+    }
+
+    protected void setupServerWithSSLContext(Series<Parameter> params, SSLContextParameters scp) throws GeneralSecurityException, IOException {
+        // set the SSLContext parameters
+        params.add("sslContextFactory",
+            "org.restlet.engine.ssl.DefaultSslContextFactory");
+
+        SSLContext context = scp.createSSLContext();
+        SSLEngine engine = context.createSSLEngine();
+
+        params.add("enabledProtocols", stringArrayToString(engine.getEnabledProtocols()));
+        params.add("enabledCipherSuites", stringArrayToString(engine.getEnabledCipherSuites()));
+
+        if (scp.getSecureSocketProtocol() != null) {
+            params.add("protocol", scp.getSecureSocketProtocol());
+        }
+        if (scp.getServerParameters() != null && scp.getServerParameters().getClientAuthentication() != null) {
+            boolean b = !scp.getServerParameters().getClientAuthentication().equals("NONE");
+            params.add("needClientAuthentication", String.valueOf(b));
+        }
+        if (scp.getKeyManagers() != null) {
+            if (scp.getKeyManagers().getAlgorithm() != null) {
+                params.add("keyManagerAlgorithm", scp.getKeyManagers().getAlgorithm());
+            }
+            if (scp.getKeyManagers().getKeyPassword() != null) {
+                params.add("keyPassword", scp.getKeyManagers().getKeyPassword());
+            }
+            if (scp.getKeyManagers().getKeyStore().getResource() != null) {
+                params.add("keyStorePath", scp.getKeyManagers().getKeyStore().getResource());
+            }
+            if (scp.getKeyManagers().getKeyStore().getPassword() != null) {
+                params.add("keyStorePassword", scp.getKeyManagers().getKeyStore().getPassword());
+            }
+            if (scp.getKeyManagers().getKeyStore().getType() != null) {
+                params.add("keyStoreType", scp.getKeyManagers().getKeyStore().getType());
+            }
+        }
+
+        if (scp.getTrustManagers() != null) {
+            if (scp.getTrustManagers().getAlgorithm() != null) {
+                params.add("trustManagerAlgorithm", scp.getKeyManagers().getAlgorithm());
+            }
+            if (scp.getTrustManagers().getKeyStore().getResource() != null) {
+                params.add("trustStorePath", scp.getTrustManagers().getKeyStore().getResource());
+            }
+            if (scp.getTrustManagers().getKeyStore().getPassword() != null) {
+                params.add("trustStorePassword", scp.getTrustManagers().getKeyStore().getPassword());
+            }
+            if (scp.getTrustManagers().getKeyStore().getType() != null) {
+                params.add("trustStoreType", scp.getTrustManagers().getKeyStore().getType());
+            }
+        }
     }
 
     protected void addServerIfNecessary(RestletEndpoint endpoint) throws Exception {
@@ -247,6 +326,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
                 // Add any Restlet server parameters that were included
                 Series<Parameter> params = server.getContext().getParameters();
+
+                if ("https".equals(endpoint.getProtocol())) {
+                    SSLContextParameters scp = endpoint.getSslContextParameters();
+                    if (endpoint.getSslContextParameters() == null) {
+                        throw new InvalidParameterException("Need to specify the SSLContextParameters option here!");
+                    }
+                    setupServerWithSSLContext(params, scp);
+                }
 
                 if (getControllerDaemon() != null) {
                     params.add("controllerDaemon", getControllerDaemon().toString());
@@ -293,7 +380,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
                 if (getReuseAddress() != null) {
                     params.add("reuseAddress", getReuseAddress().toString());
                 }
-                
+
                 LOG.debug("Setting parameters: {} to server: {}", params, server);
                 server.getContext().setParameters(params);
 
@@ -361,7 +448,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         // it was most likely encoded by normalizeEndpointUri in DefaultCamelContext.getEndpoint(String)
         return UnsafeUriCharactersEncoder.encode(uri.replaceAll("%7B", "(").replaceAll("%7D", ")"));
     }
-    
+
     private static String decodePattern(String pattern) {
         return pattern == null ? null : pattern.replaceAll("\\(", "{").replaceAll("\\)", "}");
     }
@@ -370,6 +457,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return controllerDaemon;
     }
 
+    /**
+     * Indicates if the controller thread should be a daemon (not blocking JVM exit).
+     */
     public void setControllerDaemon(Boolean controllerDaemon) {
         this.controllerDaemon = controllerDaemon;
     }
@@ -378,6 +468,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return controllerSleepTimeMs;
     }
 
+    /**
+     * Time for the controller thread to sleep between each control.
+     */
     public void setControllerSleepTimeMs(Integer controllerSleepTimeMs) {
         this.controllerSleepTimeMs = controllerSleepTimeMs;
     }
@@ -386,6 +479,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return inboundBufferSize;
     }
 
+    /**
+     * The size of the buffer when reading messages.
+     */
     public void setInboundBufferSize(Integer inboundBufferSize) {
         this.inboundBufferSize = inboundBufferSize;
     }
@@ -394,6 +490,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return maxConnectionsPerHost;
     }
 
+    /**
+     * Maximum number of concurrent connections per host (IP address).
+     */
     public void setMaxConnectionsPerHost(Integer maxConnectionsPerHost) {
         this.maxConnectionsPerHost = maxConnectionsPerHost;
     }
@@ -402,14 +501,20 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return maxThreads;
     }
 
+    /**
+     * Maximum threads that will service requests.
+     */
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
     }
-    
+
     public Integer getLowThreads() {
         return lowThreads;
     }
 
+    /**
+     * Number of worker threads determining when the connector is considered overloaded.
+     */
     public void setLowThreads(Integer lowThreads) {
         this.lowThreads = lowThreads;
     }
@@ -418,6 +523,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return maxTotalConnections;
     }
 
+    /**
+     * Maximum number of concurrent connections in total.
+     */
     public void setMaxTotalConnections(Integer maxTotalConnections) {
         this.maxTotalConnections = maxTotalConnections;
     }
@@ -426,6 +534,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return minThreads;
     }
 
+    /**
+     * Minimum threads waiting to service requests.
+     */
     public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
     }
@@ -434,6 +545,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return outboundBufferSize;
     }
 
+    /**
+     * The size of the buffer when writing messages.
+     */
     public void setOutboundBufferSize(Integer outboundBufferSize) {
         this.outboundBufferSize = outboundBufferSize;
     }
@@ -442,6 +556,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return persistingConnections;
     }
 
+    /**
+     * Indicates if connections should be kept alive after a call.
+     */
     public void setPersistingConnections(Boolean persistingConnections) {
         this.persistingConnections = persistingConnections;
     }
@@ -450,6 +567,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return pipeliningConnections;
     }
 
+    /**
+     * Indicates if pipelining connections are supported.
+     */
     public void setPipeliningConnections(Boolean pipeliningConnections) {
         this.pipeliningConnections = pipeliningConnections;
     }
@@ -458,6 +578,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return threadMaxIdleTimeMs;
     }
 
+    /**
+     * Time for an idle thread to wait for an operation before being collected.
+     */
     public void setThreadMaxIdleTimeMs(Integer threadMaxIdleTimeMs) {
         this.threadMaxIdleTimeMs = threadMaxIdleTimeMs;
     }
@@ -466,6 +589,11 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return useForwardedForHeader;
     }
 
+    /**
+     * Lookup the "X-Forwarded-For" header supported by popular proxies and caches and uses it to populate the Request.getClientAddresses()
+     * method result. This information is only safe for intermediary components within your local network.
+     * Other addresses could easily be changed by setting a fake header and should not be trusted for serious security checks.
+     */
     public void setUseForwardedForHeader(Boolean useForwardedForHeader) {
         this.useForwardedForHeader = useForwardedForHeader;
     }
@@ -474,6 +602,10 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return reuseAddress;
     }
 
+    /**
+     * Enable/disable the SO_REUSEADDR socket option.
+     * See java.io.ServerSocket#reuseAddress property for additional details.
+     */
     public void setReuseAddress(Boolean reuseAddress) {
         this.reuseAddress = reuseAddress;
     }
@@ -482,6 +614,11 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return maxQueued;
     }
 
+    /**
+     * Maximum number of calls that can be queued if there aren't any worker thread available to service them.
+     * If the value is '0', then no queue is used and calls are rejected if no worker thread is immediately available.
+     * If the value is '-1', then an unbounded queue is used and calls are never rejected.
+     */
     public void setMaxQueued(Integer maxQueued) {
         this.maxQueued = maxQueued;
     }
@@ -490,6 +627,15 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return disableStreamCache;
     }
 
+    /**
+     * Determines whether or not the raw input stream from Restlet is cached or not
+     * (Camel will read the stream into a in memory/overflow to file, Stream caching) cache.
+     * By default Camel will cache the Restlet input stream to support reading it multiple times to ensure Camel
+     * can retrieve all data from the stream. However you can set this option to true when you for example need
+     * to access the raw stream, such as streaming it directly to a file or other persistent store.
+     * DefaultRestletBinding will copy the request input stream into a stream cache and put it into message body
+     * if this option is false to support reading the stream multiple times.
+     */
     public void setDisableStreamCache(boolean disableStreamCache) {
         this.disableStreamCache = disableStreamCache;
     }
@@ -498,8 +644,24 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return port;
     }
 
+    /**
+     * To configure the port number for the restlet consumer routes.
+     * This allows to configure this once to reuse the same port for these consumers.
+     */
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public Boolean getSynchronous() {
+        return synchronous;
+    }
+
+    /**
+     * Whether to use synchronous Restlet Client for the producer. Setting this option to true can yield faster performance
+     * as it seems the Restlet synchronous Client works better.
+     */
+    public void setSynchronous(Boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     @Override
@@ -519,7 +681,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         String scheme = "http";
         String host = "";
-        int port = 0;
+        // use the component's port as the default value
+        int port = this.getPort();
 
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = getCamelContext().getRestConfiguration();
@@ -556,13 +719,22 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         String query = URISupport.createQueryString(map);
 
-        String url = "restlet:%s://%s:%s/%s?restletMethod=%s";
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
+        String url;
+        // must use upper case for restrict
+        String restrict = verb.toUpperCase(Locale.US);
 
+        if (port > 0) {
+            url = "restlet:%s://%s:%s/%s?restletMethod=%s";
+            url = String.format(url, scheme, host, port, path, restrict);
+        } else {
+            // It could use the restlet servlet transport
+            url = "restlet:/%s?restletMethod=%s";
+            url = String.format(url, path, restrict);
+        }
+        if (!query.isEmpty()) {
+            url = url + "&" + query;
+        }
         // get the endpoint
-        url = String.format(url, scheme, host, port, path, verb);
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         setProperties(endpoint, parameters);
 

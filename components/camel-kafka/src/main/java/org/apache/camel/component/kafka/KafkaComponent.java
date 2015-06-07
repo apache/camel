@@ -19,25 +19,28 @@ package org.apache.camel.component.kafka;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- *
- */
-public class KafkaComponent extends DefaultComponent {
+public class KafkaComponent extends UriEndpointComponent {
 
     public KafkaComponent() {
+        super(KafkaEndpoint.class);
     }
 
     public KafkaComponent(CamelContext context) {
-        super(context);
+        super(context, KafkaEndpoint.class);
     }
 
     @Override
     protected KafkaEndpoint createEndpoint(String uri,
                                            String remaining,
                                            Map<String, Object> params) throws Exception {
-        KafkaEndpoint endpoint = new KafkaEndpoint(uri, remaining, this);
+
+        KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
+        String brokers = remaining.split("\\?")[0];
+        if (brokers != null) {
+            endpoint.getConfiguration().setBrokers(brokers);
+        }
         setProperties(endpoint, params);
         return endpoint;
     }

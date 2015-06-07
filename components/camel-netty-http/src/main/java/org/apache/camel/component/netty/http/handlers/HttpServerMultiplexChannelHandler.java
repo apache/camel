@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.netty.http.handlers;
 
+import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +42,6 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -72,7 +73,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         String rawPath = consumer.getConfiguration().getPath();
         String path = pathAsKey(consumer.getConfiguration().getPath());
         // use rest path matcher in case Rest DSL is in use
-        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getConfiguration().isMatchOnUriPrefix());
+        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getEndpoint().getHttpMethodRestrict(), consumer.getConfiguration().isMatchOnUriPrefix());
         consumers.put(matcher, new HttpServerChannelHandler(consumer));
     }
 
@@ -80,7 +81,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         String rawPath = consumer.getConfiguration().getPath();
         String path = pathAsKey(consumer.getConfiguration().getPath());
         // use rest path matcher in case Rest DSL is in use
-        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getConfiguration().isMatchOnUriPrefix());
+        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getEndpoint().getHttpMethodRestrict(), consumer.getConfiguration().isMatchOnUriPrefix());
         consumers.remove(matcher);
     }
 
@@ -114,7 +115,9 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
-            messageEvent.getChannel().write(response);
+            messageEvent.getChannel().write(response).syncUninterruptibly();
+            // close the channel after send error message
+            messageEvent.getChannel().close();
         }
     }
 
@@ -124,15 +127,23 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         if (handler != null) {
             handler.exceptionCaught(ctx, e);
         } else {
-            // we cannot throw the exception here
-            LOG.warn("HttpServerChannelHandler is not found as attachment to handle exception, send 404 back to the client.", e.getCause());
-            // Now we just send 404 back to the client
-            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
-            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
-            response.headers().set(Exchange.CONTENT_LENGTH, 0);
-            // Here we don't want to expose the exception detail to the client
-            response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
-            ctx.getChannel().write(response);
+            if (e.getCause() instanceof ClosedChannelException) {
+                // The channel is closed so we do nothing here
+                LOG.debug("Channel already closed. Ignoring this exception.");
+                return;
+            } else {
+                // we cannot throw the exception here
+                LOG.warn("HttpServerChannelHandler is not found as attachment to handle exception, send 404 back to the client.", e.getCause());
+                // Now we just send 404 back to the client
+                HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
+                response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+                response.headers().set(Exchange.CONTENT_LENGTH, 0);
+                // Here we don't want to expose the exception detail to the client
+                response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
+                ctx.getChannel().write(response).syncUninterruptibly();
+                // close the channel after send error message
+                ctx.getChannel().close();
+            }
         }
     }
 
@@ -166,18 +177,26 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         }
 
         // then see if we got a direct match
-        Iterator<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> it = candidates.iterator();
-        while (it.hasNext()) {
-            Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
+        List<HttpServerChannelHandler> directMatches = new LinkedList<HttpServerChannelHandler>();
+        for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : candidates) {
             if (entry.getKey().matchesRest(path, false)) {
-                answer = entry.getValue();
-                break;
+                directMatches.add(entry.getValue());
+            }
+        }
+        if (directMatches.size() == 1) { // Single match found, just return it without any further analysis.
+            answer = directMatches.get(0);
+        } else if (directMatches.size() > 1) { // possible if the prefix match occurred
+            List<HttpServerChannelHandler> directMatchesWithOptions = handlersWithExplicitOptionsMethod(directMatches);
+            if (!directMatchesWithOptions.isEmpty()) { // prefer options matches
+                answer = handlerWithTheLongestMatchingPrefix(directMatchesWithOptions);
+            } else {
+                answer = handlerWithTheLongestMatchingPrefix(directMatches);
             }
         }
 
         // then match by non wildcard path
         if (answer == null) {
-            it = candidates.iterator();
+            Iterator<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> it = candidates.iterator();
             while (it.hasNext()) {
                 Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
                 if (!entry.getKey().matchesRest(path, true)) {
@@ -222,6 +241,29 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         }
 
         return UnsafeUriCharactersEncoder.encodeHttpURI(path);
+    }
+
+    private static List<HttpServerChannelHandler> handlersWithExplicitOptionsMethod(Iterable<HttpServerChannelHandler> handlers) {
+        List<HttpServerChannelHandler> handlersWithOptions = new LinkedList<HttpServerChannelHandler>();
+        for (HttpServerChannelHandler handler : handlers) {
+            String consumerMethod = handler.getConsumer().getEndpoint().getHttpMethodRestrict();
+            if (consumerMethod != null && consumerMethod.contains("OPTIONS")) {
+                handlersWithOptions.add(handler);
+            }
+        }
+        return handlersWithOptions;
+    }
+
+    private static HttpServerChannelHandler handlerWithTheLongestMatchingPrefix(Iterable<HttpServerChannelHandler> handlers) {
+        HttpServerChannelHandler handlerWithTheLongestPrefix = handlers.iterator().next();
+        for (HttpServerChannelHandler handler : handlers) {
+            String consumerPath = handler.getConsumer().getConfiguration().getPath();
+            String longestPath = handlerWithTheLongestPrefix.getConsumer().getConfiguration().getPath();
+            if (consumerPath.length() > longestPath.length()) {
+                handlerWithTheLongestPrefix = handler;
+            }
+        }
+        return handlerWithTheLongestPrefix;
     }
 
 }

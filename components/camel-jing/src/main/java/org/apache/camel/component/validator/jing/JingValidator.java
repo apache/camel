@@ -16,33 +16,24 @@
  */
 package org.apache.camel.component.validator.jing;
 
-import java.io.IOException;
-import java.io.InputStream;
-import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import com.thaiopensource.relaxng.SchemaFactory;
 import com.thaiopensource.util.PropertyMap;
 import com.thaiopensource.util.PropertyMapBuilder;
-import com.thaiopensource.validate.IncorrectSchemaException;
 import com.thaiopensource.validate.Schema;
 import com.thaiopensource.validate.ValidateProperty;
 import com.thaiopensource.validate.Validator;
 import com.thaiopensource.xml.sax.Jaxp11XMLReaderCreator;
-
-import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.processor.validation.DefaultValidationErrorHandler;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 
 /**
  * A validator which uses the <a
@@ -51,17 +42,11 @@ import org.apache.camel.util.ResourceHelper;
  * 
  * @version 
  */
-public class JingValidator implements Processor {
-    private final CamelContext camelContext;
+public class JingValidator extends DefaultProducer {
     private Schema schema;
-    private SchemaFactory schemaFactory;
-    private String schemaNamespace = XMLConstants.RELAXNG_NS_URI;
-    private String resourceUri;
-    private InputSource inputSource;
-    private boolean compactSyntax;
 
-    public JingValidator(CamelContext camelContext) {
-        this.camelContext = camelContext;
+    public JingValidator(Endpoint endpoint) {
+        super(endpoint);
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -97,65 +82,11 @@ public class JingValidator implements Processor {
     // -------------------------------------------------------------------------
 
 
-    public String getResourceUri() {
-        return resourceUri;
-    }
-
-    public void setResourceUri(String resourceUri) {
-        this.resourceUri = resourceUri;
-    }
-
-    public Schema getSchema() throws IOException, IncorrectSchemaException, SAXException {
-        if (schema == null) {
-            SchemaFactory factory = getSchemaFactory();
-            schema = factory.createSchema(getInputSource());
-        }
+    public Schema getSchema() {
         return schema;
     }
 
     public void setSchema(Schema schema) {
         this.schema = schema;
-    }
-
-    public InputSource getInputSource() throws IOException {
-        if (inputSource == null) {
-            ObjectHelper.notEmpty(resourceUri, "resourceUri", this);
-            InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), resourceUri);
-            inputSource = new InputSource(inputStream);
-        }
-        return inputSource;
-    }
-
-    public void setInputSource(InputSource inputSource) {
-        this.inputSource = inputSource;
-    }
-
-    public SchemaFactory getSchemaFactory() {
-        if (schemaFactory == null) {
-            schemaFactory = new SchemaFactory();
-            schemaFactory.setCompactSyntax(compactSyntax);
-            schemaFactory.setXMLReaderCreator(new Jaxp11XMLReaderCreator());
-        }
-        return schemaFactory;
-    }
-
-    public void setSchemaFactory(SchemaFactory schemaFactory) {
-        this.schemaFactory = schemaFactory;
-    }
-
-    public String getSchemaNamespace() {
-        return schemaNamespace;
-    }
-
-    public void setSchemaNamespace(String schemaNamespace) {
-        this.schemaNamespace = schemaNamespace;
-    }
-
-    public boolean isCompactSyntax() {
-        return compactSyntax;
-    }
-
-    public void setCompactSyntax(boolean compactSyntax) {
-        this.compactSyntax = compactSyntax;
     }
 }

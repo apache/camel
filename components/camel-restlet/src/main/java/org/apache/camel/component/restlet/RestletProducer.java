@@ -66,8 +66,43 @@ public class RestletProducer extends DefaultAsyncProducer {
     }
 
     @Override
+    public void process(Exchange exchange) throws Exception {
+        RestletEndpoint endpoint = (RestletEndpoint) getEndpoint();
+
+        final RestletBinding binding = endpoint.getRestletBinding();
+        Request request;
+        String resourceUri = buildUri(endpoint, exchange);
+        request = new Request(endpoint.getRestletMethod(), resourceUri);
+        binding.populateRestletRequestFromExchange(request, exchange);
+
+        LOG.debug("Sending request synchronously: {} for exchangeId: {}", request, exchange.getExchangeId());
+        Response response = client.handle(request);
+        LOG.debug("Received response synchronously: {} for exchangeId: {}", response, exchange.getExchangeId());
+        if (response != null) {
+            Integer respCode = response.getStatus().getCode();
+            if (respCode > 207 && throwException) {
+                exchange.setException(populateRestletProducerException(exchange, response, respCode));
+            } else {
+                binding.populateExchangeFromRestletResponse(exchange, response);
+            }
+        }
+    }
+
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         RestletEndpoint endpoint = (RestletEndpoint) getEndpoint();
+
+        // force processing synchronously using different api
+        if (endpoint.isSynchronous()) {
+            try {
+                process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+            return true;
+        }
+
+        LOG.trace("Processing asynchronously");
 
         final RestletBinding binding = endpoint.getRestletBinding();
         Request request;
@@ -83,11 +118,11 @@ public class RestletProducer extends DefaultAsyncProducer {
         }
 
         // process the request asynchronously
-        LOG.debug("Sending request: {} for exchangeId: {}", request, exchange.getExchangeId());
+        LOG.debug("Sending request asynchronously: {} for exchangeId: {}", request, exchange.getExchangeId());
         client.handle(request, new Uniform() {
             @Override
             public void handle(Request request, Response response) {
-                LOG.debug("Received response: {} for exchangeId: {}", response, exchange.getExchangeId());
+                LOG.debug("Received response asynchronously: {} for exchangeId: {}", response, exchange.getExchangeId());
                 try {
                     if (response != null) {
                         Integer respCode = response.getStatus().getCode();

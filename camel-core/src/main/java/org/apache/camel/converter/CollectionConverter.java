@@ -51,9 +51,6 @@ public final class CollectionConverter {
      */
     @Converter
     public static Object[] toArray(Collection<?> value) {
-        if (value == null) {
-            return null;
-        }
         return value.toArray();
     }
 

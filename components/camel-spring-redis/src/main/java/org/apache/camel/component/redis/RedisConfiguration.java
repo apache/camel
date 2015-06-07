@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.redis;
 
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,23 +27,38 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
+@UriParams
 public class RedisConfiguration {
-    private String command;
-    private String channels;
-    private String host;
-    private Integer port;
-    private RedisTemplate redisTemplate;
-    private RedisMessageListenerContainer listenerContainer;
-    private RedisConnectionFactory connectionFactory;
-    private RedisSerializer serializer;
     private boolean managedListenerContainer;
     private boolean managedConnectionFactory;
 
-    public String getCommand() {
+    @UriPath @Metadata(required = "true")
+    private String host;
+    @UriPath @Metadata(required = "true")
+    private Integer port;
+    @UriParam(defaultValue = "SET")
+    private Command command = Command.SET;
+    @UriParam
+    private String channels;
+    @UriParam
+    private RedisTemplate redisTemplate;
+    @UriParam
+    private RedisMessageListenerContainer listenerContainer;
+    @UriParam
+    private RedisConnectionFactory connectionFactory;
+    @UriParam
+    private RedisSerializer serializer;
+
+    public Command getCommand() {
         return command;
     }
 
-    public void setCommand(String command) {
+    /**
+     * Default command, which can be overridden by message header.
+     * <p/>
+     * Notice the consumer only supports the following commands: PSUBSCRIBE and SUBSCRIBE
+     */
+    public void setCommand(Command command) {
         this.command = command;
     }
 
@@ -47,6 +66,9 @@ public class RedisConfiguration {
         return port;
     }
 
+    /**
+     * Redis server port number
+     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -55,6 +77,9 @@ public class RedisConfiguration {
         return host;
     }
 
+    /**
+     * The host where Redis server is running.
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -63,6 +88,9 @@ public class RedisConfiguration {
         return redisTemplate != null ? redisTemplate : createDefaultTemplate();
     }
 
+    /**
+     * Reference to a pre-configured RedisTemplate instance to use.
+     */
     public void setRedisTemplate(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -71,6 +99,9 @@ public class RedisConfiguration {
         return listenerContainer != null ? listenerContainer : createDefaultListenerContainer();
     }
 
+    /**
+     * Reference to a pre-configured RedisMessageListenerContainer instance to use.
+     */
     public void setListenerContainer(RedisMessageListenerContainer listenerContainer) {
         this.listenerContainer = listenerContainer;
     }
@@ -79,10 +110,16 @@ public class RedisConfiguration {
         return channels;
     }
 
+    /**
+     * List of topic names or name patterns to subscribe to. Multiple names can be separated by comma.
+     */
     public void setChannels(String channels) {
         this.channels = channels;
     }
 
+    /**
+     * Reference to a pre-configured RedisConnectionFactory instance to use.
+     */
     public void setConnectionFactory(RedisConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
@@ -95,6 +132,9 @@ public class RedisConfiguration {
         return serializer != null ? serializer : createDefaultSerializer();
     }
 
+    /**
+     * Reference to a pre-configured RedisSerializer instance to use.
+     */
     public void setSerializer(RedisSerializer serializer) {
         this.serializer = serializer;
     }

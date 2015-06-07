@@ -90,6 +90,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
 
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> result = new HashMap<String, T>();
+        int count = 0;
         try {
             ServiceReference<?>[] refs = bundleContext.getAllServiceReferences(type.getName(), null);
             if (refs != null) {
@@ -101,6 +102,10 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                             String name = (String)sr.getProperty("name");
                             if (name != null) {
                                 result.put(name , type.cast(service));
+                            } else {
+                                // generate a unique name for it
+                                result.put(type.getSimpleName() + count, type.cast(service));
+                                count++;
                             }
                         }
                     }

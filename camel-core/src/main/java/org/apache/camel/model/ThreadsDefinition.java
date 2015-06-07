@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,14 +34,16 @@ import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
- * Represents an XML &lt;threads/&gt; element
+ * Specifies that all steps after this node are processed asynchronously
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
@@ -65,10 +66,12 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     @XmlAttribute
     private Integer maxQueueSize;
     @XmlAttribute
+    private Boolean allowCoreThreadTimeOut;
+    @XmlAttribute @Metadata(defaultValue = "Threads")
     private String threadName;
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean callerRunsWhenRejected;
     
     public ThreadsDefinition() {
@@ -92,6 +95,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
                     .keepAliveTime(getKeepAliveTime(), getTimeUnit())
                     .maxQueueSize(getMaxQueueSize())
                     .rejectedPolicy(getRejectedPolicy())
+                    .allowCoreThreadTimeOut(getAllowCoreThreadTimeOut())
                     .build();
             threadPool = manager.newThreadPool(this, name, profile);
             shutdownThreadPool = true;
@@ -113,6 +117,9 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
             }
             if (getRejectedPolicy() != null) {
                 throw new IllegalArgumentException("RejectedPolicy and executorServiceRef options cannot be used together.");
+            }
+            if (getAllowCoreThreadTimeOut() != null) {
+                throw new IllegalArgumentException("AllowCoreThreadTimeOut and executorServiceRef options cannot be used together.");
             }
         }
 
@@ -154,27 +161,28 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     }
 
     @Override
-    public String getShortName() {
-        return "threads";
-    }
-
-    @Override
     public String toString() {
         return "Threads[" + getOutputs() + "]";
     }
 
+    /**
+     * To use a custom thread pool
+     */
     public ThreadsDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
+    /**
+     * To refer to a custom thread pool or use a thread pool profile (as overlay)
+     */
     public ThreadsDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }
 
     /**
-     * Sets the core pool size for the underlying {@link java.util.concurrent.ExecutorService}.
+     * Sets the core pool size
      *
      * @param poolSize the core pool size to keep minimum in the pool
      * @return the builder
@@ -185,7 +193,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     }
 
     /**
-     * Sets the maximum pool size for the underlying {@link java.util.concurrent.ExecutorService}.
+     * Sets the maximum pool size
      *
      * @param maxPoolSize the maximum pool size
      * @return the builder
@@ -263,6 +271,19 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
      */
     public ThreadsDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
         setCallerRunsWhenRejected(callerRunsWhenRejected);
+        return this;
+    }
+
+    /**
+     * Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size
+     * <p/>
+     * Is by default <tt>false</tt>
+     *
+     * @param allowCoreThreadTimeOut <tt>true</tt> to allow timeout
+     * @return the builder
+     */
+    public ThreadsDefinition allowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
+        setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
         return this;
     }
 
@@ -344,5 +365,13 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
 
     public void setCallerRunsWhenRejected(Boolean callerRunsWhenRejected) {
         this.callerRunsWhenRejected = callerRunsWhenRejected;
+    }
+
+    public Boolean getAllowCoreThreadTimeOut() {
+        return allowCoreThreadTimeOut;
+    }
+
+    public void setAllowCoreThreadTimeOut(Boolean allowCoreThreadTimeOut) {
+        this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
     }
 }

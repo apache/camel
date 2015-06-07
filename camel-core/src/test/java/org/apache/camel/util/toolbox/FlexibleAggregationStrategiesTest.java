@@ -85,7 +85,7 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
     @Test @SuppressWarnings("unchecked")
     public void testFlexibleAggregationStrategyStoreInPropertyHashSet() throws Exception {
         getMockEndpoint("mock:result2").expectedMessageCount(1);
-        getMockEndpoint("mock:result2").message(0).property("AggregationResult").isInstanceOf(HashSet.class);
+        getMockEndpoint("mock:result2").message(0).exchangeProperty("AggregationResult").isInstanceOf(HashSet.class);
         
         template.sendBodyAndHeader("direct:start2", "ignored body", "input", "AGGREGATE1");
         template.sendBodyAndHeader("direct:start2", "ignored body", "input", "DISCARD");
@@ -168,7 +168,7 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
     public void testFlexibleAggregationStrategyTimeoutCompletionMixins() throws Exception {
         getMockEndpoint("mock:result.timeoutAndCompletionAware").expectedMessageCount(2);
         getMockEndpoint("mock:result.timeoutAndCompletionAware").message(0).body().isEqualTo("AGGREGATE1");
-        getMockEndpoint("mock:result.timeoutAndCompletionAware").message(0).property("Timeout").isEqualTo(true);
+        getMockEndpoint("mock:result.timeoutAndCompletionAware").message(0).exchangeProperty("Timeout").isEqualTo(true);
         getMockEndpoint("mock:result.timeoutAndCompletionAware").message(1).body().isEqualTo("AGGREGATE3");
 
         template.sendBody("direct:start.timeoutAndCompletionAware", "AGGREGATE1");

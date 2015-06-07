@@ -21,6 +21,7 @@ import java.util.zip.Deflater;
 
 import org.w3c.dom.Node;
 
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
@@ -28,11 +29,13 @@ import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
+import org.apache.camel.model.dataformat.BoonDataFormat;
 import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
+import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
@@ -161,6 +164,17 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the Boon data format
+     *
+     * @param classType the POJO class type
+     */
+    public T boon(Class<?> classType) {
+        BoonDataFormat boon = new BoonDataFormat();
+        boon.setUnmarshalType(classType);
+        return dataFormat(boon);
+    }
+
+    /**
      * Uses the CSV data format
      */
     public T csv() {
@@ -244,7 +258,16 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         HL7DataFormat hl7 = new HL7DataFormat();
         hl7.setParser(parser);
         return dataFormat(hl7);
-    }    
+    }
+
+    /**
+     * Uses the iCal data format
+     */
+    public T ical(boolean validating) {
+        IcalDataFormat ical = new IcalDataFormat();
+        ical.setValidating(validating);
+        return dataFormat(ical);
+    }
 
     /**
      * Uses the PGP data format
@@ -325,6 +348,17 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the JSON data format using the XStream json library turning pretty printing on or off
+     * 
+     * @param prettyPrint turn pretty printing on or off
+     */
+    public T json(boolean prettyPrint) {
+        JsonDataFormat json = new JsonDataFormat();
+        json.setPrettyPrint(prettyPrint);
+        return dataFormat(json);
+    }
+
+    /**
      * Uses the JSON data format
      *
      * @param library the json library to use
@@ -336,12 +370,38 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the JSON data format
      *
+     * @param library     the json library to use
+     * @param prettyPrint turn pretty printing on or off
+     */
+    public T json(JsonLibrary library, boolean prettyPrint) {
+        JsonDataFormat json = new JsonDataFormat(library);
+        json.setPrettyPrint(prettyPrint);
+        return dataFormat(json);
+    }
+
+    /**
+     * Uses the JSON data format
+     *
      * @param type          the json type to use
      * @param unmarshalType unmarshal type for json jackson type
      */
     public T json(JsonLibrary type, Class<?> unmarshalType) {
         JsonDataFormat json = new JsonDataFormat(type);
         json.setUnmarshalType(unmarshalType);
+        return dataFormat(json);
+    }
+
+    /**
+     * Uses the JSON data format
+     *
+     * @param type          the json type to use
+     * @param unmarshalType unmarshal type for json jackson type
+     * @param prettyPrint   turn pretty printing on or off
+     */
+    public T json(JsonLibrary type, Class<?> unmarshalType, boolean prettyPrint) {
+        JsonDataFormat json = new JsonDataFormat(type);
+        json.setUnmarshalType(unmarshalType);
+        json.setPrettyPrint(prettyPrint);
         return dataFormat(json);
     }
 
@@ -363,6 +423,21 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *
      * @param unmarshalType unmarshal type for json jackson type
      * @param jsonView      the view type for json jackson type
+     * @param prettyPrint   turn pretty printing on or off
+     */
+    public T json(Class<?> unmarshalType, Class<?> jsonView, boolean prettyPrint) {
+        JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
+        json.setUnmarshalType(unmarshalType);
+        json.setJsonView(jsonView);
+        json.setPrettyPrint(prettyPrint);
+        return dataFormat(json);
+    }
+
+    /**
+     * Uses the Jackson JSON data format
+     *
+     * @param unmarshalType unmarshal type for json jackson type
+     * @param jsonView      the view type for json jackson type
      * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView, String include) {
@@ -370,6 +445,23 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         json.setUnmarshalType(unmarshalType);
         json.setJsonView(jsonView);
         json.setInclude(include);
+        return dataFormat(json);
+    }
+
+    /**
+     * Uses the Jackson JSON data format
+     *
+     * @param unmarshalType unmarshal type for json jackson type
+     * @param jsonView      the view type for json jackson type
+     * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+      * @param prettyPrint  turn pretty printing on or off
+     */
+    public T json(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {
+        JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
+        json.setUnmarshalType(unmarshalType);
+        json.setJsonView(jsonView);
+        json.setInclude(include);
+        json.setPrettyPrint(prettyPrint);
         return dataFormat(json);
     }
 

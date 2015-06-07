@@ -1,0 +1,6 @@
+CREATE TABLE CAMEL_AGGREGATION (
+  KEY varchar,
+  EXCHANGE_ID varchar,
+  EXCHANGE blob,
+  PRIMARY KEY (KEY)
+);

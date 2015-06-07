@@ -32,7 +32,6 @@ import java.util.Map;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -46,6 +45,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -179,7 +179,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // add uri parameters as headers to the Camel message
         if (request.getUri().contains("?")) {
             String query = ObjectHelper.after(request.getUri(), "?");
-            Map<String, Object> uriParameters = URISupport.parseQuery(query);
+            Map<String, Object> uriParameters = URISupport.parseQuery(query, false, true);
 
             for (Map.Entry<String, Object> entry : uriParameters.entrySet()) {
                 String name = entry.getKey();
@@ -410,6 +410,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // configure connection to accordingly to keep alive configuration
         // favor using the header from the message
         String connection = message.getHeader(HttpHeaders.Names.CONNECTION, String.class);
+        // Read the connection header from the exchange property
+        if (connection == null) {
+            connection = message.getExchange().getProperty(HttpHeaders.Names.CONNECTION, String.class);
+        }
         if (connection == null) {
             // fallback and use the keep alive from the configuration
             if (configuration.isKeepAlive()) {
@@ -419,6 +423,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
         }
         response.headers().set(HttpHeaders.Names.CONNECTION, connection);
+        // Just make sure we close the channel when the connection value is close
+        if (connection.equalsIgnoreCase(HttpHeaders.Values.CLOSE)) {
+            message.setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+        }
         LOG.trace("Connection: {}", connection);
 
         return response;
@@ -434,7 +442,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         }
 
         // just assume GET for now, we will later change that to the actual method to use
-        HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri);
+        HttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri);
         
         Object body = message.getBody();
         if (body != null) {
@@ -475,7 +483,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         if (configuration.isBridgeEndpoint()) {
             String queryString = message.getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
-                skipRequestHeaders = URISupport.parseQuery(queryString);
+                skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
             // Need to remove the Host key as it should be not used
             message.getHeaders().remove("host");

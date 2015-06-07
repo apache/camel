@@ -21,12 +21,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Represents a parameterised language expression which can support any language
  * at runtime using the language attribute.
  *
  * @version 
  */
+@Metadata(label = "language", title = "Language")
 @XmlRootElement(name = "language")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LanguageExpression extends ExpressionDefinition {
@@ -45,6 +48,9 @@ public class LanguageExpression extends ExpressionDefinition {
         return language;
     }
 
+    /**
+     * The name of the language to use
+     */
     public void setLanguage(String language) {
         this.language = language;
     }

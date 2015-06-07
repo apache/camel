@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
@@ -31,12 +32,15 @@ import org.apache.camel.component.facebook.config.FacebookNameStyle;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToGetMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToSearchMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.getCandidateMethods;
@@ -46,30 +50,30 @@ import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.
 /**
  * Represents a Facebook endpoint.
  */
-@UriEndpoint(scheme = "facebook", consumerClass = FacebookConsumer.class)
+@UriEndpoint(scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", consumerClass = FacebookConsumer.class, label = "social")
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
 
-    @UriParam
-    private FacebookEndpointConfiguration configuration;
-
-    // property name for Exchange 'In' message body
-    @UriParam
-    private String inBody;
+    private FacebookNameStyle nameStyle;
+    private String method;
 
     // Facebook4J method name
-    private final String methodName;
-    private FacebookNameStyle nameStyle;
+    @UriPath(description = "What operation to perform") @Metadata(required = "true")
+    private FacebookMethodsType methodName;
+    @UriParam
+    private FacebookEndpointConfiguration configuration;
+    @UriParam
+    private String inBody;
 
     // candidate methods based on method name and endpoint configuration
     private List<FacebookMethodsType> candidates;
 
     public FacebookEndpoint(String uri, FacebookComponent facebookComponent,
-                            String remaining, FacebookEndpointConfiguration configuration) {
+                            String remaining, FacebookEndpointConfiguration configuration) throws NoTypeConversionAvailableException {
         super(uri, facebookComponent);
         this.configuration = configuration;
-        this.methodName = remaining;
+        this.method = remaining;
     }
 
     public Producer createProducer() throws Exception {
@@ -126,7 +130,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         final String[] argNames = arguments.toArray(new String[arguments.size()]);
 
         candidates = new ArrayList<FacebookMethodsType>();
-        candidates.addAll(getCandidateMethods(methodName, argNames));
+        candidates.addAll(getCandidateMethods(method, argNames));
         if (!candidates.isEmpty()) {
             // found an exact name match, allows disambiguation if needed
             this.nameStyle = FacebookNameStyle.EXACT;
@@ -135,17 +139,17 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
             // also search for long forms of method name, both get* and search*
             // Note that this set will be further sorted by Producers and Consumers
             // producers will prefer get* forms, and consumers should prefer search* forms
-            candidates.addAll(getCandidateMethods(convertToGetMethod(methodName), argNames));
+            candidates.addAll(getCandidateMethods(convertToGetMethod(method), argNames));
             if (!candidates.isEmpty()) {
                 this.nameStyle = FacebookNameStyle.GET;
             }
 
             int nGetMethods = candidates.size();
-            candidates.addAll(getCandidateMethods(convertToSearchMethod(methodName), argNames));
+            candidates.addAll(getCandidateMethods(convertToSearchMethod(method), argNames));
             // error if there are no candidates
             if (candidates.isEmpty()) {
                 throw new IllegalArgumentException(
-                    String.format("No matching operation for %s, with arguments %s", methodName, arguments));
+                    String.format("No matching operation for %s, with arguments %s", method, arguments));
             }
 
             if (nameStyle == null) {
@@ -159,23 +163,15 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
 
         // log missing/extra properties for debugging
         if (LOG.isDebugEnabled()) {
-            final Set<String> missing = getMissingProperties(methodName, nameStyle, arguments);
+            final Set<String> missing = getMissingProperties(method, nameStyle, arguments);
             if (!missing.isEmpty()) {
-                LOG.debug("Method {} could use one or more properties from {}", methodName, missing);
+                LOG.debug("Method {} could use one or more properties from {}", method, missing);
             }
         }
     }
 
     public FacebookEndpointConfiguration getConfiguration() {
         return configuration;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public FacebookNameStyle getNameStyle() {
-        return nameStyle;
     }
 
     public List<FacebookMethodsType> getCandidates() {
@@ -186,6 +182,17 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         return inBody;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
+    public FacebookNameStyle getNameStyle() {
+        return nameStyle;
+    }
+
+    /**
+     * Sets the name of a parameter to be passed in the exchange In Body
+     */
     public void setInBody(String inBody) {
         // validate property name
         ObjectHelper.notNull(inBody, "inBody");
@@ -195,4 +202,8 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         this.inBody = inBody;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+    }
 }

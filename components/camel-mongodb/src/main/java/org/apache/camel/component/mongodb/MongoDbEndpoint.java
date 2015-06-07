@@ -38,43 +38,64 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Represents a MongoDb endpoint. 
- * It is responsible for creating {@link MongoDbProducer} and {@link MongoDbTailableCursorConsumer} instances.
- * It accepts a number of options to customise the behaviour of consumers and producers.
- */
+@UriEndpoint(scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean", consumerClass = MongoDbTailableCursorConsumer.class, label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
+
     private Mongo mongoConnection;
+
+    @UriPath @Metadata(required = "true")
+    private String connectionBean;
+    @UriParam
     private String database;
+    @UriParam
     private String collection;
+    @UriParam
     private String collectionIndex;
+    @UriParam
     private MongoDbOperation operation;
+    @UriParam(defaultValue = "true")
     private boolean createCollection = true;
-    private boolean invokeGetLastError; // = false
+    @UriParam
     private WriteConcern writeConcern;
     private WriteConcern writeConcernRef;
+    @UriParam
     private ReadPreference readPreference;
-    private boolean dynamicity; // = false
-    private boolean writeResultAsHeader; // = false
+    @UriParam
+    private boolean dynamicity;
+    @UriParam
+    private boolean writeResultAsHeader;
     // tailable cursor consumer by default
     private MongoDbConsumerType consumerType;
+    @UriParam(defaultValue = "1000")
     private long cursorRegenerationDelay = 1000L;
+    @UriParam
     private String tailTrackIncreasingField;
 
     // persitent tail tracking
-    private boolean persistentTailTracking; // = false;
+    @UriParam
+    private boolean persistentTailTracking;
+    @UriParam
     private String persistentId;
+    @UriParam
     private String tailTrackDb;
+    @UriParam
     private String tailTrackCollection;
+    @UriParam
     private String tailTrackField;
-
     private MongoDbTailTrackingConfig tailTrackingConfig;
+
+    @UriParam
+    private MongoDbOutputType outputType;
 
     private DBCollection dbCollection;
     private DB db;
@@ -123,6 +144,23 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
+    /**
+     * Check if outputType is compatible with operation. DbCursor and DBObjectList applies to findAll. DBObject applies to others.
+     */
+    private void validateOutputType() {
+        if (!ObjectHelper.isEmpty(outputType)) {
+            if (MongoDbOutputType.DBObjectList.equals(outputType) && !(MongoDbOperation.findAll.equals(operation))) {
+                throw new IllegalArgumentException("outputType DBObjectList is only compatible with operation findAll");
+            }
+            if (MongoDbOutputType.DBCursor.equals(outputType) && !(MongoDbOperation.findAll.equals(operation))) {
+                throw new IllegalArgumentException("outputType DBCursor is only compatible with operation findAll");
+            }
+            if (MongoDbOutputType.DBObject.equals(outputType) && (MongoDbOperation.findAll.equals(operation))) {
+                throw new IllegalArgumentException("outputType DBObject is not compatible with operation findAll");
+            }
+        }
+    }
+
     private void validateOptions(char role) throws IllegalArgumentException {
         // make our best effort to validate, options with defaults are checked against their defaults, which is not always a guarantee that
         // they haven't been explicitly set, but it is enough
@@ -133,11 +171,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             }
         } else if (role == 'C') {
             if (!ObjectHelper.isEmpty(operation) || !ObjectHelper.isEmpty(writeConcern) || writeConcernRef != null
-                    || readPreference != null || dynamicity || invokeGetLastError) {
-                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, readPreference, dynamicity, invokeGetLastError "
+                   || dynamicity || outputType != null) {
+                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, dynamicity, outputType "
                         + "options cannot appear on a consumer endpoint");
             }
-
             if (consumerType == MongoDbConsumerType.tailable) {
                 if (tailTrackIncreasingField == null) {
                     throw new IllegalArgumentException("tailTrackIncreasingField option must be set for tailable cursor MongoDB consumer endpoint");
@@ -163,27 +200,29 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      */
     public void initializeConnection() throws CamelMongoDbException {
         LOG.info("Initialising MongoDb endpoint: {}", this.toString());
-        if (database == null || collection == null) {
+        if (database == null || (collection == null && !(MongoDbOperation.getDbStats.equals(operation) || MongoDbOperation.command.equals(operation)))) {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }
         db = mongoConnection.getDB(database);
         if (db == null) {
             throw new CamelMongoDbException("Could not initialise MongoDbComponent. Database " + database + " does not exist.");
         }
-        if (!createCollection && !db.collectionExists(collection)) {
-            throw new CamelMongoDbException("Could not initialise MongoDbComponent. Collection " + collection + " and createCollection is false.");
-        }
-        dbCollection = db.getCollection(collection);
-
-        LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
-                new Object[]{mongoConnection.getAllAddress().toString(), db.getName(), dbCollection.getName()});
-
-        try {
-            if (ObjectHelper.isNotEmpty(collectionIndex)) {
-                ensureIndex(dbCollection, createIndex());
+        if (collection != null) {
+            if (!createCollection && !db.collectionExists(collection)) {
+                throw new CamelMongoDbException("Could not initialise MongoDbComponent. Collection " + collection + " and createCollection is false.");
             }
-        } catch (Exception e) {
-            throw new CamelMongoDbException("Error creating index", e);
+            dbCollection = db.getCollection(collection);
+
+            LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
+                    new Object[]{mongoConnection.getAllAddress().toString(), db.getName(), dbCollection.getName()});
+
+            try {
+                if (ObjectHelper.isNotEmpty(collectionIndex)) {
+                    ensureIndex(dbCollection, createIndex());
+                }
+            } catch (Exception e) {
+                throw new CamelMongoDbException("Error creating index", e);
+            }
         }
     }
 
@@ -193,7 +232,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * @param collection
      */
     public void ensureIndex(DBCollection collection, List<DBObject> dynamicIndex) {
-        collection.dropIndexes();
         if (dynamicIndex != null && !dynamicIndex.isEmpty()) {
             for (DBObject index : dynamicIndex) {
                 LOG.debug("create BDObject Index {}", index);
@@ -270,10 +308,22 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     
     
     // ======= Getters and setters ===============================================
-    
+
+
+    public String getConnectionBean() {
+        return connectionBean;
+    }
+
+    /**
+     * Name of {@link com.mongodb.Mongo} to use.
+     */
+    public void setConnectionBean(String connectionBean) {
+        this.connectionBean = connectionBean;
+    }
+
     /**
      * Sets the name of the MongoDB collection to bind to this endpoint
-     * 
+     *
      * @param collection collection name
      */
     public void setCollection(String collection) {
@@ -297,8 +347,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the operation this endpoint will execute against MongoDB. For possible values, see {@link MongoDbOperation}.
+     *
      * @param operation name of the operation as per catalogued values
-     * 
      * @throws CamelMongoDbException
      */
     public void setOperation(String operation) throws CamelMongoDbException {
@@ -373,21 +423,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public WriteConcern getWriteConcern() {
         return writeConcern;
-    }
-
-    /**
-     * Instructs this endpoint to invoke {@link WriteResult#getLastError()} with every operation. By default, MongoDB does not wait
-     * for the write operation to occur before returning. If set to true, each exchange will only return after the write operation 
-     * has actually occurred in MongoDB.
-     * 
-     * @param invokeGetLastError true or false
-     */
-    public void setInvokeGetLastError(boolean invokeGetLastError) {
-        this.invokeGetLastError = invokeGetLastError;
-    }
-
-    public boolean isInvokeGetLastError() {
-        return invokeGetLastError;
     }
 
     /**
@@ -589,4 +624,17 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         this.writeResultAsHeader = writeResultAsHeader;
     }
 
+    public MongoDbOutputType getOutputType() {
+        return outputType;
+    }
+
+    /**
+     * Convert the output of the producer to the selected type : "DBObjectList", "DBObject" or "DBCursor".
+     * DBObjectList or DBObject applies to findAll.
+     * DBCursor applies to all other operations.
+     * @param outputType
+     */
+    public void setOutputType(MongoDbOutputType outputType) {
+        this.outputType = outputType;
+    }
 }

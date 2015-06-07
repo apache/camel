@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.16-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-mongodb</artifactId>
@@ -72,15 +72,31 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>de.flapdoodle.embed</groupId>
+      <artifactId>de.flapdoodle.embed.mongo</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
-    <!-- skip tests on AIX -->
+    <!-- skip tests on AIX and HP-UX -->
     <profiles>
         <profile>
             <id>aix</id>
             <activation>
                 <os>
                     <family>AIX</family>
+                </os>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+        <profile>
+            <id>hpux</id>
+            <activation>
+                <os>
+                    <family>HP-UX</family>
                 </os>
             </activation>
             <properties>

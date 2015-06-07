@@ -41,15 +41,15 @@ public class TestComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"retainFirst\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"type\": \"integer\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("test");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

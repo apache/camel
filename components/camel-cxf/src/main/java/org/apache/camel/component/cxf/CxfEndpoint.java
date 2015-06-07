@@ -60,6 +60,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -110,15 +111,20 @@ import org.slf4j.LoggerFactory;
  * {@link CxfBinding}, and {@link HeaderFilterStrategy}.  The default DataFormat
  * mode is {@link DataFormat#POJO}.
  */
-@UriEndpoint(scheme = "cxf", consumerClass = CxfConsumer.class)
+@UriEndpoint(scheme = "cxf", title = "CXF", syntax = "cxf:beanId:address", consumerClass = CxfConsumer.class, label = "http,soap,webservice")
 public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
 
     protected Bus bus;
+
+    @UriPath(description = "To lookup an existing configured CxfEndpoint. Must used bean: as prefix.")
+    private String beanId;
+    @UriPath
+    private String address;
+
     @UriParam
     private boolean createBus;
-
     @UriParam
     private String wsdlURL;
     private Class<?> serviceClass;
@@ -140,15 +146,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private Boolean wrappedStyle;
     @UriParam
     private Boolean allowStreaming;
-    @UriParam
+    @UriParam(defaultValue = "POJO")
     private DataFormat dataFormat = DataFormat.POJO;
     @UriParam
     private String publishedEndpointUrl;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean inOut = true;
     private CxfBinding cxfBinding;
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
     @UriParam
     private boolean isSetDefaultBus;
@@ -156,8 +161,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean loggingFeatureEnabled;
     @UriParam
     private int loggingSizeLimit;
-    @UriParam
-    private String address;
     @UriParam
     private boolean mtomEnabled;
     @UriParam
@@ -187,7 +190,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private CxfEndpointConfigurer configurer;
     
     // The continuation timeout value for CXF continuation to use
-    @UriParam
+    @UriParam(defaultValue = "30000")
     private long continuationTimeout = 30000;
     
     // basic authentication option for the CXF client
@@ -699,6 +702,15 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     // Properties
     // -------------------------------------------------------------------------
 
+
+    public String getBeanId() {
+        return beanId;
+    }
+
+    public void setBeanId(String beanId) {
+        this.beanId = beanId;
+    }
+
     public DataFormat getDataFormat() {
         return dataFormat;
     }
@@ -819,6 +831,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setAllowStreaming(Boolean b) {
         allowStreaming = b;
     }
+
     public Boolean getAllowStreaming() {
         return allowStreaming;
     }

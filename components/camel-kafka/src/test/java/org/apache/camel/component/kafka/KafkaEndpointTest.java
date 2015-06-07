@@ -32,7 +32,8 @@ public class KafkaEndpointTest {
 
     @Test
     public void testCreatingKafkaExchangeSetsHeaders() throws URISyntaxException {
-        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:localhost", "localhost", new KafkaComponent());
+        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:localhost", new KafkaComponent());
+        endpoint.setBrokers("localhost");
 
         Message message = new Message("mymessage".getBytes(), "somekey".getBytes());
         DefaultDecoder decoder = new DefaultDecoder(null);
@@ -47,7 +48,8 @@ public class KafkaEndpointTest {
 
     @Test
     public void assertSingleton() throws URISyntaxException {
-        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:localhost", "localhost", new KafkaComponent());
+        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:localhost", new KafkaComponent());
+        endpoint.setBrokers("localhost");
         assertTrue(endpoint.isSingleton());
     }
 

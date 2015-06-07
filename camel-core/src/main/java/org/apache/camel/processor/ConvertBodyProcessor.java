@@ -21,8 +21,10 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -33,7 +35,8 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor {
+public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
+    private String id;
     private final Class<?> type;
     private final String charset;
 
@@ -54,14 +57,24 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         return "convertBodyTo[" + type.getCanonicalName() + "]";
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        Message in = exchange.getIn();
-        if (in.getBody() == null) {
+        boolean out = exchange.hasOut();
+        Message old = out ? exchange.getOut() : exchange.getIn();
+
+        if (old.getBody() == null) {
             // only convert if the is a body
             callback.done(true);
             return true;
@@ -75,7 +88,7 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         // use mandatory conversion
         Object value;
         try {
-            value = in.getMandatoryBody(type);
+            value = old.getMandatoryBody(type);
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -83,14 +96,19 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         }
 
         // create a new message container so we do not drag specialized message objects along
-        Message msg = new DefaultMessage();
-        msg.copyFrom(in);
-        msg.setBody(value);
+        // but that is only needed if the old message is a specialized message
+        boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
 
-        if (exchange.getPattern().isOutCapable()) {
-            exchange.setOut(msg);
+        if (copyNeeded) {
+            Message msg = new DefaultMessage();
+            msg.copyFrom(old);
+            msg.setBody(value);
+
+            // replace message on exchange
+            ExchangeHelper.replaceMessage(exchange, msg, false);
         } else {
-            exchange.setIn(msg);
+            // no copy needed so set replace value directly
+            old.setBody(value);
         }
 
         // remove charset when we are done as we should not propagate that,

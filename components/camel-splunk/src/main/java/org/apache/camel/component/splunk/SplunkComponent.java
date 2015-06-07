@@ -19,17 +19,22 @@ package org.apache.camel.component.splunk;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link SplunkEndpoint}.
  */
-public class SplunkComponent extends DefaultComponent {
+public class SplunkComponent extends UriEndpointComponent {
 
     private SplunkConfigurationFactory splunkConfigurationFactory = new DefaultSplunkConfigurationFactory();
 
+    public SplunkComponent() {
+        super(SplunkEndpoint.class);
+    }
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SplunkConfiguration configuration = splunkConfigurationFactory.parseMap(parameters);
+        configuration.setName(remaining);
         setProperties(configuration, parameters);
         return new SplunkEndpoint(uri, this, configuration);
     }
@@ -38,7 +43,10 @@ public class SplunkComponent extends DefaultComponent {
         return splunkConfigurationFactory;
     }
 
-    public void setSplunkConfigurationFactory(DefaultSplunkConfigurationFactory splunkConfigurationFactory) {
+    /**
+     * To use the {@link SplunkConfigurationFactory}
+     */
+    public void setSplunkConfigurationFactory(SplunkConfigurationFactory splunkConfigurationFactory) {
         this.splunkConfigurationFactory = splunkConfigurationFactory;
     }
 

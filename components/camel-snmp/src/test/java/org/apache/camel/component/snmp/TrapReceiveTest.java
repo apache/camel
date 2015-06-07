@@ -45,12 +45,17 @@ public class TrapReceiveTest extends CamelTestSupport {
             }
         }
     }
+    
+    @Test
+    public void testStartRoute() throws Exception {
+        // do nothing here , just make sure the camel route can started.
+    }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("snmp:0.0.0.0:1662?protocol=udp&type=TRAP").transform(body().convertToString()).to("mock:result");
+                from("snmp:0.0.0.0:1662?protocol=udp&type=TRAP").id("route1").transform(body().convertToString()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

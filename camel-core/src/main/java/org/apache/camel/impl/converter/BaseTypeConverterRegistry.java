@@ -35,6 +35,8 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterLoaderException;
+import org.apache.camel.TypeConverters;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -65,6 +67,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
     protected final Statistics statistics = new UtilizationStatistics();
+    protected final AtomicLong noopCounter = new AtomicLong();
     protected final AtomicLong attemptCounter = new AtomicLong();
     protected final AtomicLong missCounter = new AtomicLong();
     protected final AtomicLong hitCounter = new AtomicLong();
@@ -108,9 +111,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            if (statistics.isStatisticsEnabled()) {
-                attemptCounter.incrementAndGet();
-            }
             answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
             if (statistics.isStatisticsEnabled()) {
@@ -159,9 +159,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            if (statistics.isStatisticsEnabled()) {
-                attemptCounter.incrementAndGet();
-            }
             answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
             if (statistics.isStatisticsEnabled()) {
@@ -202,9 +199,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            if (statistics.isStatisticsEnabled()) {
-                attemptCounter.incrementAndGet();
-            }
             answer = doConvertTo(type, exchange, value, true);
         } catch (Exception e) {
             if (statistics.isStatisticsEnabled()) {
@@ -234,6 +228,10 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
 
         if (value == null) {
+            // no type conversion was needed
+            if (statistics.isStatisticsEnabled()) {
+                noopCounter.incrementAndGet();
+            }
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class.isAssignableFrom(type)) {
                 return Boolean.FALSE;
@@ -243,18 +241,19 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         // same instance type
         if (type.isInstance(value)) {
+            // no type conversion was needed
+            if (statistics.isStatisticsEnabled()) {
+                noopCounter.incrementAndGet();
+            }
             return type.cast(value);
         }
 
-        // check if we have tried it before and if its a miss
-        TypeMapping key = new TypeMapping(type, value.getClass());
-        if (misses.containsKey(key)) {
-            // we have tried before but we cannot convert this one
-            return Void.TYPE;
-        }
-        
         // special for NaN numbers, which we can only convert for floating numbers
         if (ObjectHelper.isNaN(value)) {
+            // no type conversion was needed
+            if (statistics.isStatisticsEnabled()) {
+                noopCounter.incrementAndGet();
+            }
             if (Float.class.isAssignableFrom(type)) {
                 return Float.NaN;
             } else if (Double.class.isAssignableFrom(type)) {
@@ -265,8 +264,20 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             }
         }
 
+        // okay we need to attempt to convert
+        if (statistics.isStatisticsEnabled()) {
+            attemptCounter.incrementAndGet();
+        }
+
+        // check if we have tried it before and if its a miss
+        TypeMapping key = new TypeMapping(type, value.getClass());
+        if (misses.containsKey(key)) {
+            // we have tried before but we cannot convert this one
+            return Void.TYPE;
+        }
+        
         // try to find a suitable type converter
-        TypeConverter converter = getOrFindTypeConverter(type, value);
+        TypeConverter converter = getOrFindTypeConverter(key);
         if (converter != null) {
             log.trace("Using converter: {} to convert {}", converter, key);
             Object rc;
@@ -287,7 +298,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             Class<?> primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
             if (primitiveType != type) {
                 Class<?> fromType = value.getClass();
-                TypeConverter tc = getOrFindTypeConverter(primitiveType, value);
+                TypeConverter tc = getOrFindTypeConverter(new TypeMapping(primitiveType, fromType));
                 if (tc != null) {
                     // add the type as a known type converter as we can convert from primitive to object converter
                     addTypeConverter(type, fromType, tc);
@@ -374,6 +385,18 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     @Override
+    public void addTypeConverters(TypeConverters typeConverters) {
+        log.trace("Adding type converters: {}", typeConverters);
+        try {
+            // scan the class for @Converter and load them into this registry
+            TypeConvertersLoader loader = new TypeConvertersLoader(typeConverters);
+            loader.load(this);
+        } catch (TypeConverterLoaderException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
+    @Override
     public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
         log.trace("Removing type converter from: {} to: {}", fromType, toType);
         TypeMapping key = new TypeMapping(toType, fromType);
@@ -390,6 +413,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         log.trace("Adding fallback type converter: {} which can promote: {}", typeConverter, canPromote);
 
         // add in top of fallback as the toString() fallback will nearly always be able to convert
+        // the last one which is add to the FallbackTypeConverter will be called at the first place
         fallbackConverters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
@@ -435,16 +459,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return typeMappings;
     }
 
-    protected <T> TypeConverter getOrFindTypeConverter(Class<?> toType, Object value) {
-        Class<?> fromType = null;
-        if (value != null) {
-            fromType = value.getClass();
-        }
-        TypeMapping key = new TypeMapping(toType, fromType);
+    protected <T> TypeConverter getOrFindTypeConverter(TypeMapping key) {
         TypeConverter converter = typeMappings.get(key);
         if (converter == null) {
             // converter not found, try to lookup then
-            converter = lookup(toType, fromType);
+            converter = lookup(key.getToType(), key.getFromType());
             if (converter != null) {
                 typeMappings.putIfAbsent(key, converter);
             }
@@ -603,6 +622,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         private boolean statisticsEnabled;
 
         @Override
+        public long getNoopCounter() {
+            return noopCounter.get();
+        }
+
+        @Override
         public long getAttemptCounter() {
             return attemptCounter.get();
         }
@@ -624,6 +648,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         @Override
         public void reset() {
+            noopCounter.set(0);
             attemptCounter.set(0);
             hitCounter.set(0);
             missCounter.set(0);
@@ -642,8 +667,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         @Override
         public String toString() {
-            return String.format("TypeConverterRegistry utilization[attempts=%s, hits=%s, misses=%s, failures=%s]",
-                    getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter());
+            return String.format("TypeConverterRegistry utilization[noop=%s, attempts=%s, hits=%s, misses=%s, failures=%s]",
+                    getNoopCounter(), getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter());
         }
     }
 

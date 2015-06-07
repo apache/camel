@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xmpp;
 
+import java.io.IOException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultProducer;
@@ -23,6 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
@@ -58,7 +61,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             if (!connection.isConnected()) {
                 this.reconnect();
             }
-        } catch (XMPPException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Could not connect to XMPP server.", e);
         }
 
@@ -70,7 +73,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             thread = "Chat:" + participant + ":" + endpoint.getUser();
         }
 
-        ChatManager chatManager = connection.getChatManager();
+        ChatManager chatManager = ChatManager.getInstanceFor(connection);
         Chat chat = getOrCreateChat(chatManager, participant, thread);
         Message message = null;
         try {
@@ -86,9 +89,6 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                 LOG.debug("Sending XMPP message to {} from {} : {}", new Object[]{participant, endpoint.getUser(), message.getBody()});
             }
             chat.sendMessage(message);
-        } catch (XMPPException xmppe) {
-            throw new RuntimeExchangeException("Could not send XMPP message: to " + participant + " from " + endpoint.getUser() + " : " + message
-                    + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
         } catch (Exception e) {
             throw new RuntimeExchangeException("Could not send XMPP message to " + participant + " from " + endpoint.getUser() + " : " + message
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
@@ -117,7 +117,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         return chat;
     }
     
-    private synchronized void reconnect() throws XMPPException {
+    private synchronized void reconnect() throws XMPPException, SmackException, IOException {
         if (!connection.isConnected()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
@@ -131,11 +131,11 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         if (connection == null) {
             try {
                 connection = endpoint.createConnection();
-            } catch (XMPPException e) {
+            } catch (SmackException e) {
                 if (endpoint.isTestConnectionOnStartup()) {
                     throw new RuntimeException("Could not establish connection to XMPP server:  " + endpoint.getConnectionDescription(), e);
                 } else {
-                    LOG.warn("Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.", XmppEndpoint.getXmppExceptionLogMessage(e));
+                    LOG.warn("Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.", e.getMessage());
                 }
             }
         }
