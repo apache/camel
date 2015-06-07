@@ -98,12 +98,10 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
     }
 
     private void get(Integer pos, Exchange exchange) {
-        // TODO: this operation is currently not supported by hazelcast
         exchange.getOut().setBody(this.list.get(pos));
     }
 
     private void set(Integer pos, Exchange exchange) {
-        // TODO: this operation is currently not supported by hazelcast
         if (null == pos) {
             throw new IllegalArgumentException("Empty position for set operation.");
         } else {
@@ -118,7 +116,6 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
             final Object body = exchange.getIn().getBody();
             list.remove(body);
         } else {
-            // TODO: this operation is currently not supported by hazelcast
             // removes the element at the specified position
             int position = pos;
             list.remove(position);
