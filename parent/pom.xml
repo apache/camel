@@ -362,7 +362,7 @@
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.2.0</openwebbeans-version>
-    <olingo2-version>2.0.0</olingo2-version>
+    <olingo2-version>2.0.4</olingo2-version>
     <olingo-odata2-core-bundle-version>2.0.0_1</olingo-odata2-core-bundle-version>
     <ognl-version>3.0.9</ognl-version>
     <ognl-bundle-version>3.0.9_1</ognl-bundle-version>
