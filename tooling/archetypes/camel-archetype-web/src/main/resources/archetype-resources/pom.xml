@@ -49,7 +49,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-stream</artifactId>
+      <artifactId>camel-servlet</artifactId>
       <version>${camel-version}</version>
     </dependency>
 
