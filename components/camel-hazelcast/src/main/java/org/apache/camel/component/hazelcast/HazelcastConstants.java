@@ -62,9 +62,11 @@ public final class HazelcastConstants {
     public static final int GET_ALL_OPERATION = 6;
     public static final int CLEAR_OPERATION = 7;
     public static final int PUT_IF_ABSENT_OPERATION = 8;
+    public static final int ADD_ALL_OPERATION = 9;
+    public static final int REMOVE_ALL_OPERATION = 10;
 
     // multimap
-    public static final int REMOVEVALUE_OPERATION = 10;
+    public static final int REMOVEVALUE_OPERATION = 11;
 
     // atomic numbers
     public static final int INCREMENT_OPERATION = 20;
