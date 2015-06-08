@@ -19,7 +19,9 @@ package org.apache.camel.component.aws.ec2;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
+import com.amazonaws.services.ec2.model.InstanceState;
 import com.amazonaws.services.ec2.model.InstanceStateName;
 import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -217,6 +219,45 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertEquals(resultGet.getReservations().get(0).getInstances().size(), 1);
     }
     
+    @Test
+    public void ec2DescribeInstancesStatusTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:describeStatus", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        DescribeInstanceStatusResult resultGet = (DescribeInstanceStatusResult) exchange.getIn().getBody();
+        assertEquals(resultGet.getInstanceStatuses().size(), 2);
+    }
+    
+    @Test
+    public void ec2DescribeStatusSpecificInstancesTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:describeStatus", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        DescribeInstanceStatusResult resultGet = (DescribeInstanceStatusResult) exchange.getIn().getBody();
+        assertEquals(resultGet.getInstanceStatuses().size(), 1);
+        assertEquals(resultGet.getInstanceStatuses().get(0).getInstanceState().getName(), InstanceStateName.Running.toString());
+    }
+    
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -247,6 +288,9 @@ public class EC2ProducerTest extends CamelTestSupport {
                     .to("mock:result");
                 from("direct:describe")
                     .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=describeInstances")
+                    .to("mock:result");
+                from("direct:describeStatus")
+                    .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=describeInstancesStatus")
                     .to("mock:result");
             }
         };

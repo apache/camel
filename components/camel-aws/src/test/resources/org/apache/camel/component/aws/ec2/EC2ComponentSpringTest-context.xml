@@ -41,6 +41,10 @@
             <from uri="direct:describe"/>
             <to uri="aws-ec2://Test?amazonEc2Client=#amazonEc2Client&amp;operation=describeInstances"/>
         </route>
+        <route>
+            <from uri="direct:describeStatus"/>
+            <to uri="aws-ec2://Test?amazonEc2Client=#amazonEc2Client&amp;operation=describeInstancesStatus"/>
+        </route>
     </camelContext>
 
     <bean id="amazonEc2Client" class="org.apache.camel.component.aws.ec2.AmazonEC2ClientMock"/>

@@ -20,6 +20,8 @@ import java.util.Collection;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceType;
@@ -69,6 +71,9 @@ public class EC2Producer extends DefaultProducer {
             break;
         case describeInstances:
             describeInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case describeInstancesStatus:
+            describeInstancesStatus(getEndpoint().getEc2Client(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -226,6 +231,23 @@ public class EC2Producer extends DefaultProducer {
             result = ec2Client.describeInstances(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Describe Instances command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        exchange.getIn().setBody(result);        
+    }
+    
+    private void describeInstancesStatus(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        DescribeInstanceStatusRequest request = new DescribeInstanceStatusRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withInstanceIds(instanceIds);
+        } 
+        DescribeInstanceStatusResult result;
+        try {
+            result = ec2Client.describeInstanceStatus(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Describe Instances Status command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         exchange.getIn().setBody(result);        

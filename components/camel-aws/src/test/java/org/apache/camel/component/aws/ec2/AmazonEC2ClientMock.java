@@ -22,6 +22,8 @@ import java.util.Collection;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.GroupIdentifier;
@@ -29,6 +31,7 @@ import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.InstanceState;
 import com.amazonaws.services.ec2.model.InstanceStateChange;
 import com.amazonaws.services.ec2.model.InstanceStateName;
+import com.amazonaws.services.ec2.model.InstanceStatus;
 import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
@@ -191,6 +194,36 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
                 result.setReservations(list); 
             }
         }
+        return result;
+    }
+    
+    @Override
+    public DescribeInstanceStatusResult describeInstanceStatus(DescribeInstanceStatusRequest describeInstanceStatusRequest) {
+        DescribeInstanceStatusResult result = new DescribeInstanceStatusResult();
+        Collection<InstanceStatus> instanceStatuses = new ArrayList();
+        if (describeInstanceStatusRequest.getInstanceIds().isEmpty()) {
+            InstanceStatus status = new InstanceStatus();
+            status.setInstanceId("test-1");
+            status.setInstanceState(new InstanceState().withName(InstanceStateName.Running));
+            instanceStatuses.add(status);
+            status.setInstanceId("test-2");
+            status.setInstanceState(new InstanceState().withName(InstanceStateName.Stopped));
+            instanceStatuses.add(status);
+        } else {
+            if (describeInstanceStatusRequest.getInstanceIds().contains("test-1")) {
+                InstanceStatus status = new InstanceStatus();
+                status.setInstanceId("test-1");
+                status.setInstanceState(new InstanceState().withName(InstanceStateName.Running));
+                instanceStatuses.add(status);
+            }
+            if (describeInstanceStatusRequest.getInstanceIds().contains("test-2")) {
+                InstanceStatus status = new InstanceStatus();
+                status.setInstanceId("test-2");
+                status.setInstanceState(new InstanceState().withName(InstanceStateName.Stopped));
+                instanceStatuses.add(status);
+            }
+        }
+        result.setInstanceStatuses(instanceStatuses);
         return result;
     }
 }
