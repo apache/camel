@@ -34,8 +34,6 @@ import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
-import com.amazonaws.services.opsworks.model.RebootInstanceRequest;
-import com.amazonaws.services.opsworks.model.StartInstanceRequest;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
