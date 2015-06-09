@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.rabbitmq.reply;
 
+import com.rabbitmq.client.AMQP;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.rabbitmq.RabbitMQConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rabbitmq.client.AMQP;
 
 /**
  * {@link ReplyHandler} to handle processing replies when using temporary queues.
@@ -31,8 +31,8 @@ import com.rabbitmq.client.AMQP;
  */
 public class TemporaryQueueReplyHandler implements ReplyHandler {
 
-	protected final Logger log = LoggerFactory.getLogger(TemporaryQueueReplyHandler.class);
-	
+    protected final Logger log = LoggerFactory.getLogger(TemporaryQueueReplyHandler.class);
+
     // task queue to add the holder so we can process the reply
     protected final ReplyManager replyManager;
     protected final Exchange exchange;
@@ -54,7 +54,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
 
     public void onReply(String correlationId, AMQP.BasicProperties properties, byte[] reply) {
         // create holder object with the the reply
-    	log.info("in onReply with correlationId= {}", correlationId);
+        log.info("in onReply with correlationId= {}", correlationId);
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, properties, reply);
         // process the reply
         replyManager.processReply(holder);
@@ -62,7 +62,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
 
     public void onTimeout(String correlationId) {
         // create holder object without the reply which means a timeout occurred
-    	log.info("in onTimeout with correlationId= {}", correlationId);
+        log.info("in onTimeout with correlationId= {}", correlationId);
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, timeout);
         // process timeout
         replyManager.processReply(holder);

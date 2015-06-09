@@ -22,14 +22,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.LongString;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.LongString;
 
 public class RabbitMQMessageConverter {
     protected static final Logger LOG = LoggerFactory.getLogger(RabbitMQMessageConverter.class);
@@ -167,7 +167,9 @@ public class RabbitMQMessageConverter {
                     LOG.debug("Ignoring header: {} with null value", header.getKey());
                 } else {
                     LOG.debug("Ignoring header: {} of class: {} with value: {}",
-                                    new Object[] { header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue() });
+                                    new Object[] {
+                                                    header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue()
+                                    });
                 }
             }
         }

@@ -26,23 +26,23 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Address;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.impl.LongStringHelper;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
+import org.mockito.Mockito;
+
 public class RabbitMQEndpointTest extends CamelTestSupport {
 
     private Envelope envelope = Mockito.mock(Envelope.class);
     private AMQP.BasicProperties properties = Mockito.mock(AMQP.BasicProperties.class);
-    
+
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
         registry.bind("argsConfigurer", new ArgsConfigurer() {
@@ -75,7 +75,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals(tag, exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_TAG));
         assertEquals(body, exchange.getIn().getBody());
     }
-    
+
     @Test
     public void testExchangeNameIsOptional() throws Exception {
         RabbitMQEndpoint endpoint1 = context.getEndpoint("rabbitmq:localhost/", RabbitMQEndpoint.class);
@@ -83,7 +83,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
         RabbitMQEndpoint endpoint2 = context.getEndpoint("rabbitmq:localhost?autoAck=false", RabbitMQEndpoint.class);
         assertEquals("Get a wrong exchange name", "", endpoint2.getExchangeName());
-        
+
         RabbitMQEndpoint endpoint3 = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
         assertEquals("Get a wrong exchange name", "exchange", endpoint3.getExchangeName());
     }
@@ -156,7 +156,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
         assertTrue(endpoint.isSingleton());
     }
-    
+
     @Test
     public void testArgConfigurer() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?queueArgsConfigurer=#argsConfigurer", RabbitMQEndpoint.class);

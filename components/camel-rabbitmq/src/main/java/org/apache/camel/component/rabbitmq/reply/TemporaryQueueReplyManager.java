@@ -17,11 +17,6 @@
 package org.apache.camel.component.rabbitmq.reply;
 
 import java.io.IOException;
-import java.util.Map.Entry;
-
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.Queue.DeclareOk;
@@ -29,6 +24,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 
 /**
  * A {@link ReplyManager} when using temporary queues.
@@ -36,13 +34,13 @@ import com.rabbitmq.client.Envelope;
  * @version 
  */
 public class TemporaryQueueReplyManager extends ReplyManagerSupport {
-    
+
     private RabbitConsumer consumer;
 
     public TemporaryQueueReplyManager(CamelContext camelContext) {
         super(camelContext);
     }
-    
+
     protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                               String originalCorrelationId, String correlationId, long requestTimeout) {
         return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
@@ -85,7 +83,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         // setup the basicQos
         if (endpoint.isPrefetchEnabled()) {
             channel.basicQos(endpoint.getPrefetchSize(), endpoint.getPrefetchCount(),
-                    endpoint.isPrefetchGlobal());
+                            endpoint.isPrefetchGlobal());
         }
 
         //Let the server pick a random name for us
@@ -99,16 +97,16 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         consumer = new RabbitConsumer(this, channel);
         consumer.start();
 
-    	return conn;
+        return conn;
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
         consumer.stop();
     }
 
-	//TODO combine with class in RabbitMQConsumer
+    //TODO combine with class in RabbitMQConsumer
     class RabbitConsumer extends com.rabbitmq.client.DefaultConsumer {
 
         private final TemporaryQueueReplyManager consumer;
@@ -131,9 +129,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         public void handleDelivery(String consumerTag, Envelope envelope,
                                    AMQP.BasicProperties properties, byte[] body) throws IOException {
 
-        	consumer.onMessage(properties, body);
+            consumer.onMessage(properties, body);
         }
-        
+
         /**
          * Bind consumer to channel
          */
@@ -147,9 +145,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         private void stop() throws IOException {
             if (channel.isOpen()) {
                 if (tag != null) {
-                channel.basicCancel(tag);
-            }
-            channel.close();
+                    channel.basicCancel(tag);
+                }
+                channel.close();
             }
         }
     }

@@ -216,14 +216,12 @@ public class RabbitMQConsumer extends DefaultConsumer {
                     log.trace("Acknowledging receipt [delivery_tag={}]", deliveryTag);
                     channel.basicAck(deliveryTag, false);
                 }
-            }
-            else if (endpoint.isTransferException() && exchange.getPattern().isOutCapable()) {
+            } else if (endpoint.isTransferException() && exchange.getPattern().isOutCapable()) {
                 // the inOut exchange failed so put the exception in the body and send back
                 msg.setBody(exchange.getException());
                 exchange.setOut(msg);
                 endpoint.publishExchangeToChannel(exchange, channel, properties.getReplyTo());
-            }
-            else {
+            } else {
                 boolean isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE, false, boolean.class);
                 // processing failed, then reject and handle the exception
                 if (deliveryTag != 0 && !consumer.endpoint.isAutoAck()) {

@@ -224,7 +224,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
         if (hasSerializeHeader(properties)) {
             Object messageBody = null;
-            try (InputStream b = new ByteArrayInputStream(body); ObjectInputStream o = new ObjectInputStream(b)) {
+            try (InputStream b = new ByteArrayInputStream(body);
+                            ObjectInputStream o = new ObjectInputStream(b);) {
                 messageBody = o.readObject();
             } catch (IOException | ClassNotFoundException e) {
                 LOG.warn("Could not deserialize the object");
@@ -287,7 +288,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
                 properties = getMessageConverter().buildProperties(camelExchange).build();
 
-                try (ByteArrayOutputStream b = new ByteArrayOutputStream(); ObjectOutputStream o = new ObjectOutputStream(b)) {
+                try (ByteArrayOutputStream b = new ByteArrayOutputStream(); ObjectOutputStream o = new ObjectOutputStream(b);) {
                     o.writeObject(msg.getBody());
                     body = b.toByteArray();
                 }

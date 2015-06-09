@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.rabbitmq.reply;
 
+import com.rabbitmq.client.AMQP;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-
-import com.rabbitmq.client.AMQP;
 
 /**
  * Holder which contains the {@link Exchange} and {@link org.apache.camel.AsyncCallback} to be used
@@ -41,7 +41,7 @@ public class ReplyHolder {
      * Constructor to use when a reply message was received
      */
     public ReplyHolder(Exchange exchange, AsyncCallback callback, String originalCorrelationId,
-                       String correlationId,AMQP.BasicProperties properties, byte[] message) {
+                    String correlationId, AMQP.BasicProperties properties, byte[] message) {
         this.exchange = exchange;
         this.callback = callback;
         this.originalCorrelationId = originalCorrelationId;
@@ -54,7 +54,7 @@ public class ReplyHolder {
      * Constructor to use when a timeout occurred
      */
     public ReplyHolder(Exchange exchange, AsyncCallback callback, String originalCorrelationId,
-                       String correlationId, long timeout) {
+                    String correlationId, long timeout) {
         this(exchange, callback, originalCorrelationId, correlationId, null, null);
         this.timeout = timeout;
     }
@@ -112,12 +112,12 @@ public class ReplyHolder {
     public long getRequestTimeout() {
         return timeout;
     }
-    
+
     /**
      * The message properties
      * @return
      */
-    public AMQP.BasicProperties getProperties(){
-    	return properties;
+    public AMQP.BasicProperties getProperties() {
+        return properties;
     }
 }

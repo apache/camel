@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.rabbitmq.reply;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,7 +31,7 @@ import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
  */
 public interface ReplyManager {
 
-	/**
+    /**
      * Sets the belonging {@link org.apache.camel.component.jms.JmsEndpoint}.
      */
     void setEndpoint(RabbitMQEndpoint endpoint);
@@ -26,13 +42,13 @@ public interface ReplyManager {
      * The queue is either a temporary or a persistent queue.
      */
     void setReplyTo(String replyTo);
-    
+
     /**
      * Gets the reply to queue being used
      */
     String getReplyTo();
-    
-	/**
+
+    /**
      * Register a reply
      *
      * @param replyManager    the reply manager being used
@@ -45,12 +61,11 @@ public interface ReplyManager {
      */
     String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                          String originalCorrelationId, String correlationId, long requestTimeout);
-    
+
     /**
      * Sets the scheduled to use when checking for timeouts (no reply received within a given time period)
      */
     void setScheduledExecutorService(ScheduledExecutorService executorService);
-
 
     /**
      * Updates the correlation id to the new correlation id.
@@ -65,7 +80,6 @@ public interface ReplyManager {
      * @param requestTimeout    the timeout
      */
     void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout);
-    
 
     /**
      * Process the reply

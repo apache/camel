@@ -1,8 +1,27 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.rabbitmq.reply;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Connection;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -17,23 +36,20 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Connection;
-
-
-public abstract class ReplyManagerSupport extends ServiceSupport implements ReplyManager{
-
-	protected final Logger log = LoggerFactory.getLogger(ReplyManagerSupport.class);
+public abstract class ReplyManagerSupport extends ServiceSupport implements ReplyManager {
+    protected final Logger log = LoggerFactory.getLogger(ReplyManagerSupport.class);
     protected final CamelContext camelContext;
-    
+    protected final CountDownLatch replyToLatch = new CountDownLatch(1);
+    protected final long replyToTimeout = 1000;
+
     protected ScheduledExecutorService executorService;
     protected RabbitMQEndpoint endpoint;
     protected String replyTo;
     protected Connection listenerContainer;
-    private int closeTimeout = 30 * 1000;
-    protected final CountDownLatch replyToLatch = new CountDownLatch(1);
-    protected final long replyToTimeout = 1000;
+
     protected CorrelationTimeoutMap correlation;
+
+    private int closeTimeout = 30 * 1000;
 
     public ReplyManagerSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -74,10 +90,9 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         }
         return replyTo;
     }
-    
+
     public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout) {
-    	log.debug("in registerReply");
         // add to correlation map
         QueueReplyHandler handler = new QueueReplyHandler(replyManager, exchange, callback,
                 originalCorrelationId, correlationId, requestTimeout);
@@ -89,8 +104,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         }
         return correlationId;
     }
-    
-    
+
     protected abstract ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                                        String originalCorrelationId, String correlationId, long requestTimeout);
 
@@ -109,7 +123,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     }
 
     public void processReply(ReplyHolder holder) {
-    	log.info("in processReply");
+        log.info("in processReply");
         if (holder != null && isRunAllowed()) {
             try {
                 Exchange exchange = holder.getExchange();
@@ -127,19 +141,17 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     String msg = "reply message with correlationID: " + holder.getCorrelationId() + " not received on destination: " + replyTo;
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
-                	
-                	endpoint.setRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage());
-                	
-                	// restore correlation id in case the remote server messed with it
+                    
+                    endpoint.setRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage());
+
+                    // restore correlation id in case the remote server messed with it
                     if (holder.getOriginalCorrelationId() != null) {
-                    	if(exchange.getOut() != null){
+                        if (exchange.getOut() != null) {
                             exchange.getOut().setHeader(RabbitMQConstants.CORRELATIONID, holder.getOriginalCorrelationId());
-                    	}
-                    	else{
+                        } else {
                             exchange.getIn().setHeader(RabbitMQConstants.CORRELATIONID, holder.getOriginalCorrelationId());
-                    	}
+                        }
                     }
-                	
                 }
             } finally {
                 // notify callback
@@ -148,8 +160,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             }
         }
     }
-    
-    
 
     protected abstract void handleReplyMessage(String correlationID, AMQP.BasicProperties properties, byte[] message);
 
@@ -216,7 +226,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         log.debug("Using executor {}", executorService);
         
     }
-   
 
     @Override
     protected void doStop() throws Exception {
@@ -227,12 +236,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             listenerContainer.close(closeTimeout);
             listenerContainer = null;
         }
-       
+
         // must also stop executor service
         if (executorService != null) {
             camelContext.getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
         }
     }
-
 }

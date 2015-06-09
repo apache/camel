@@ -40,6 +40,7 @@ import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
 public class RabbitMQProducer extends DefaultAsyncProducer {
+    private static final String GENERATED_CORRELATION_ID_PREFIX = "Camel-";
 
     private Connection conn;
     private ObjectPool<Channel> channelPool;
@@ -47,7 +48,6 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
     private int closeTimeout = 30 * 1000;
     private final AtomicBoolean started = new AtomicBoolean(false);
 
-    private static final String GENERATED_CORRELATION_ID_PREFIX = "Camel-";
     private ReplyManager replyManager;
 
     public RabbitMQProducer(RabbitMQEndpoint endpoint) throws IOException {

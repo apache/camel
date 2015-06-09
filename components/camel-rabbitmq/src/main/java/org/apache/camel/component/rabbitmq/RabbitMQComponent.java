@@ -21,12 +21,12 @@ import java.util.Map;
 
 import javax.net.ssl.TrustManager;
 
+import com.rabbitmq.client.ConnectionFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.rabbitmq.client.ConnectionFactory;
 
 public class RabbitMQComponent extends UriEndpointComponent {
 

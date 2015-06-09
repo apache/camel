@@ -108,7 +108,7 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
 
     @Test
     public void headerTest() throws InterruptedException, IOException {
-        Map<String, Object> headers = new HashMap<>();
+        Map<String, Object> headers = new HashMap<String, Object>();
 
         TestSerializableObject testObject = new TestSerializableObject();
         testObject.setName("header");
@@ -124,8 +124,8 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
         headers.put("CamelSerialize", true);
 
         // populate a map and an arrayList
-        Map<Object, Object> tmpMap = new HashMap<>();
-        List<String> tmpList = new ArrayList<>();
+        Map<Object, Object> tmpMap = new HashMap<Object, Object>();
+        List<String> tmpList = new ArrayList<String>();
         for (int i = 0; i < 3; i++) {
             String name = "header" + i;
             tmpList.add(name);
@@ -156,13 +156,13 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
         foo.setName("foobar");
 
         byte[] body = null;
-        try (ByteArrayOutputStream b = new ByteArrayOutputStream(); ObjectOutputStream o = new ObjectOutputStream(b)) {
+        try (ByteArrayOutputStream b = new ByteArrayOutputStream(); ObjectOutputStream o = new ObjectOutputStream(b);) {
             o.writeObject(foo);
             body = b.toByteArray();
         }
 
         TestSerializableObject newFoo = null;
-        try (InputStream b = new ByteArrayInputStream(body); ObjectInputStream o = new ObjectInputStream(b)) {
+        try (InputStream b = new ByteArrayInputStream(body); ObjectInputStream o = new ObjectInputStream(b);) {
             newFoo = (TestSerializableObject) o.readObject();
         } catch (IOException | ClassNotFoundException e) {
         }
