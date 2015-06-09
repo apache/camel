@@ -168,6 +168,21 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
         assertEquals(resultGet.getInstanceStatuses().get(0).getInstanceState().getName(), InstanceStateName.Running.toString());
     }
     
+    @Test
+    public void ec2RebootInstancesTest() throws Exception {
+
+        Exchange exchange = template.request("direct:reboot", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+    }
+    
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(

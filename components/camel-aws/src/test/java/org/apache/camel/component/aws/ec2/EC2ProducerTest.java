@@ -258,6 +258,23 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertEquals(resultGet.getInstanceStatuses().get(0).getInstanceState().getName(), InstanceStateName.Running.toString());
     }
     
+    @Test
+    public void ec2RebootInstancesTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:reboot", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+    }
+    
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -291,6 +308,9 @@ public class EC2ProducerTest extends CamelTestSupport {
                     .to("mock:result");
                 from("direct:describeStatus")
                     .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=describeInstancesStatus")
+                    .to("mock:result");
+                from("direct:reboot")
+                    .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=rebootInstances")
                     .to("mock:result");
             }
         };

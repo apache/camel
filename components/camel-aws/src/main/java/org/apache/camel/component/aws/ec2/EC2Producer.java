@@ -25,6 +25,7 @@ import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceType;
+import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.StartInstancesRequest;
@@ -33,6 +34,7 @@ import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
+import com.amazonaws.services.opsworks.model.RebootInstanceRequest;
 import com.amazonaws.services.opsworks.model.StartInstanceRequest;
 
 import org.apache.camel.Endpoint;
@@ -75,6 +77,9 @@ public class EC2Producer extends DefaultProducer {
         case describeInstancesStatus:
             describeInstancesStatus(getEndpoint().getEc2Client(), exchange);
             break;
+        case rebootInstances:
+            rebootInstances(getEndpoint().getEc2Client(), exchange);
+            break;            
         default:
             throw new IllegalArgumentException("Unsupported operation");
         }
@@ -251,5 +256,22 @@ public class EC2Producer extends DefaultProducer {
             throw ase;
         }
         exchange.getIn().setBody(result);        
+    }
+    
+    private void rebootInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        RebootInstancesRequest request = new RebootInstancesRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withInstanceIds(instanceIds);
+        } else {
+            throw new IllegalArgumentException("Instances Ids must be specified");
+        }
+        try {
+            ec2Client.rebootInstances(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Describe Instances Status command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
     }
 }

@@ -23,5 +23,6 @@ public enum EC2Operations {
     stopInstances,
     terminateInstances,
     describeInstances,
-    describeInstancesStatus
+    describeInstancesStatus,
+    rebootInstances
 }

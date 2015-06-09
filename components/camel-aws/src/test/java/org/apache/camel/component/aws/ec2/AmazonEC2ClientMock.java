@@ -33,6 +33,7 @@ import com.amazonaws.services.ec2.model.InstanceStateChange;
 import com.amazonaws.services.ec2.model.InstanceStateName;
 import com.amazonaws.services.ec2.model.InstanceStatus;
 import com.amazonaws.services.ec2.model.InstanceType;
+import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -225,5 +226,10 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
         }
         result.setInstanceStatuses(instanceStatuses);
         return result;
+    }
+
+    @Override
+    public void rebootInstances(RebootInstancesRequest rebootInstancesRequest) {
+        return;
     }
 }
