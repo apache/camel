@@ -128,6 +128,15 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
         template.sendBody("direct:removeAll", t);
         verify(list).removeAll(t);
     }
+    
+    @Test
+    public void retainAll() throws InterruptedException {
+        Collection t = new ArrayList();
+        t.add("test1");
+        t.add("test2");
+        template.sendBody("direct:retainAll", t);
+        verify(list).retainAll(t);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -153,6 +162,9 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
                         String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
                 
                 from("direct:removeAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVE_ALL_OPERATION)).to(
+                        String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                
+                from("direct:retainAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.RETAIN_ALL_OPERATION)).to(
                         String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
                 
                 from("direct:addWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.LIST_PREFIX, HazelcastConstants.ADD_OPERATION);
