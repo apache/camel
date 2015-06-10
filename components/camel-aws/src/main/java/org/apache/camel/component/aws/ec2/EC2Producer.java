@@ -25,6 +25,8 @@ import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceType;
+import com.amazonaws.services.ec2.model.MonitorInstancesRequest;
+import com.amazonaws.services.ec2.model.MonitorInstancesResult;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -34,6 +36,8 @@ import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesRequest;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -77,7 +81,13 @@ public class EC2Producer extends DefaultProducer {
             break;
         case rebootInstances:
             rebootInstances(getEndpoint().getEc2Client(), exchange);
-            break;            
+            break;
+        case monitorInstances:
+            monitorInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case unmonitorInstances:
+            unmonitorInstances(getEndpoint().getEc2Client(), exchange);
+            break; 
         default:
             throw new IllegalArgumentException("Unsupported operation");
         }
@@ -271,5 +281,43 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Describe Instances Status command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
+    }
+    
+    private void monitorInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        MonitorInstancesRequest request = new MonitorInstancesRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withInstanceIds(instanceIds);
+        } else {
+            throw new IllegalArgumentException("Instances Ids must be specified");
+        }
+        MonitorInstancesResult result;
+        try {
+            result = ec2Client.monitorInstances(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Monitor Instances command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        exchange.getIn().setBody(result); 
+    }
+    
+    private void unmonitorInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        UnmonitorInstancesRequest request = new UnmonitorInstancesRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withInstanceIds(instanceIds);
+        } else {
+            throw new IllegalArgumentException("Instances Ids must be specified");
+        }
+        UnmonitorInstancesResult result;
+        try {
+            result = ec2Client.unmonitorInstances(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Unmonitor Instances command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        exchange.getIn().setBody(result); 
     }
 }

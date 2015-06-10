@@ -24,5 +24,7 @@ public enum EC2Operations {
     terminateInstances,
     describeInstances,
     describeInstancesStatus,
-    rebootInstances
+    rebootInstances,
+    monitorInstances,
+    unmonitorInstances
 }

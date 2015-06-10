@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.ec2;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -28,11 +29,16 @@ import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.GroupIdentifier;
 import com.amazonaws.services.ec2.model.Instance;
+import com.amazonaws.services.ec2.model.InstanceMonitoring;
 import com.amazonaws.services.ec2.model.InstanceState;
 import com.amazonaws.services.ec2.model.InstanceStateChange;
 import com.amazonaws.services.ec2.model.InstanceStateName;
 import com.amazonaws.services.ec2.model.InstanceStatus;
 import com.amazonaws.services.ec2.model.InstanceType;
+import com.amazonaws.services.ec2.model.MonitorInstancesRequest;
+import com.amazonaws.services.ec2.model.MonitorInstancesResult;
+import com.amazonaws.services.ec2.model.Monitoring;
+import com.amazonaws.services.ec2.model.MonitoringState;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
@@ -43,6 +49,8 @@ import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesRequest;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
 public class AmazonEC2ClientMock extends AmazonEC2Client {
 
@@ -231,5 +239,45 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
     @Override
     public void rebootInstances(RebootInstancesRequest rebootInstancesRequest) {
         return;
+    }
+    
+    @Override
+    public MonitorInstancesResult monitorInstances(MonitorInstancesRequest monitorInstancesRequest) {
+        MonitorInstancesResult result = new MonitorInstancesResult();
+        if (!monitorInstancesRequest.getInstanceIds().isEmpty()) {
+            Collection<InstanceMonitoring> coll = new ArrayList();
+            Iterator it = monitorInstancesRequest.getInstanceIds().iterator();
+            while (it.hasNext()) {
+                String id = (String) it.next();
+                InstanceMonitoring mon = new InstanceMonitoring();
+                mon.setInstanceId(id);
+                Monitoring monitoring = new Monitoring();
+                monitoring.setState(MonitoringState.Enabled);
+                mon.setMonitoring(monitoring); 
+                coll.add(mon);
+            }
+            result.setInstanceMonitorings(coll);
+        }
+        return result;
+    }
+    
+    @Override
+    public UnmonitorInstancesResult unmonitorInstances(UnmonitorInstancesRequest unmonitorInstancesRequest) {
+        UnmonitorInstancesResult result = new UnmonitorInstancesResult();
+        if (!unmonitorInstancesRequest.getInstanceIds().isEmpty()) {
+            Collection<InstanceMonitoring> coll = new ArrayList();
+            Iterator it = unmonitorInstancesRequest.getInstanceIds().iterator();
+            while (it.hasNext()) {
+                String id = (String) it.next();
+                InstanceMonitoring mon = new InstanceMonitoring();
+                mon.setInstanceId(id);
+                Monitoring monitoring = new Monitoring();
+                monitoring.setState(MonitoringState.Disabled);
+                mon.setMonitoring(monitoring); 
+                coll.add(mon);
+            }
+            result.setInstanceMonitorings(coll);
+        }
+        return result;
     }
 }

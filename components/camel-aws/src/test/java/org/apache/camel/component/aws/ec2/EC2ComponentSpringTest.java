@@ -23,10 +23,13 @@ import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceStateName;
 import com.amazonaws.services.ec2.model.InstanceType;
+import com.amazonaws.services.ec2.model.MonitorInstancesResult;
+import com.amazonaws.services.ec2.model.MonitoringState;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.StartInstancesResult;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -172,6 +175,46 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
         
+    }
+    
+    @Test
+    public void ec2MonitorInstancesTest() throws Exception {
+
+        Exchange exchange = template.request("direct:monitor", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        MonitorInstancesResult resultGet = (MonitorInstancesResult) exchange.getIn().getBody();
+        
+        assertEquals(resultGet.getInstanceMonitorings().size(), 1);
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Enabled.toString());
+    }
+    
+    @Test
+    public void ec2UnmonitorInstancesTest() throws Exception {
+
+        Exchange exchange = template.request("direct:unmonitor", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        UnmonitorInstancesResult resultGet = (UnmonitorInstancesResult) exchange.getIn().getBody();
+        
+        assertEquals(resultGet.getInstanceMonitorings().size(), 1);
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Disabled.toString());
     }
     
     @Override
