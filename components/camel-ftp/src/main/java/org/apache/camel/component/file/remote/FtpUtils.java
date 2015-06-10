@@ -120,8 +120,8 @@ public final class FtpUtils {
     public static void ensureRelativeFtpDirectory(Component ftpComponent, RemoteFileConfiguration configuration) {
         if (FileUtil.hasLeadingSeparator(configuration.getDirectoryName())) {
             String relativePath = FileUtil.stripLeadingSeparator(configuration.getDirectoryName());
-            LOG.warn(String.format("%s doesn't support absolute paths, \"%s\" will be converted to \"%s\". " +
-                            "After Camel 2.16, absolute paths will be invalid.",
+            LOG.warn(String.format("%s doesn't support absolute paths, \"%s\" will be converted to \"%s\". "
+                    + "After Camel 2.16, absolute paths will be invalid.",
                     ftpComponent.getClass().getSimpleName(),
                     configuration.getDirectoryName(),
                     relativePath));
