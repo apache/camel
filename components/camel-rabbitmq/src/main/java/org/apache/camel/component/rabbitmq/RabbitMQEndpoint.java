@@ -62,6 +62,8 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:hostname:portNumber/exchangeName", consumerClass = RabbitMQConsumer.class, label = "messaging")
 public class RabbitMQEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQEndpoint.class);
+    // header to indicate that the message body needs to be de-serialized
+    private static final String SERIALIZE_HEADER = "CamelSerialize";
 
     @UriPath @Metadata(required = "true")
     private String hostname;
@@ -153,18 +155,16 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     @UriParam
     private long requestTimeoutCheckerInterval = 1000;
     @UriParam
-    private boolean transferException = false;
+    private boolean transferException;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private String replyToType = ReplyToType.Temporary.name();
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
-    private String replyTo = null;
+    private String replyTo;
 
     private RabbitMQMessageConverter messageConverter = new RabbitMQMessageConverter();
-
-    // header to indicate that the message body needs to be de-serialized
-    private static final String SERIALIZE_HEADER = "CamelSerialize";
+    
 
     public RabbitMQEndpoint() {
     }
@@ -198,8 +198,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         if (camelExchange.getIn() != null) {
             // Use the existing message so we keep the headers
             message = camelExchange.getIn();
-        }
-        else {
+        } else {
             message = new DefaultMessage();
             camelExchange.setIn(message);
         }
@@ -292,12 +291,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
                     o.writeObject(msg.getBody());
                     body = b.toByteArray();
                 }
-            }
-            else if (msg.getBody() == null) {
+            } else if (msg.getBody() == null) {
                 properties = getMessageConverter().buildProperties(camelExchange).build();
                 body = null;
-            }
-            else {
+            } else {
                 LOG.warn("Could not convert {} to byte[]", msg.getBody());
                 throw new IOException(e);
             }

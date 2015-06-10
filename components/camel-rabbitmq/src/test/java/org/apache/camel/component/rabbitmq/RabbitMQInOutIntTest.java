@@ -40,10 +40,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class RabbitMQInOutIntTest extends CamelTestSupport {
-
-    private static final String EXCHANGE = "ex5";
+    
     public static final String ROUTING_KEY = "rk5";
     public static final long TIMEOUT_MS = 2000;
+    private static final String EXCHANGE = "ex5";
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
@@ -69,9 +69,7 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
                         if (exchange.getIn().getBody(TestSerializableObject.class) != null) {
                             TestSerializableObject foo = exchange.getIn().getBody(TestSerializableObject.class);
                             foo.setDescription("foobar");
-                        }
-
-                        else if (exchange.getIn().getBody(String.class) != null) {
+                        } else if (exchange.getIn().getBody(String.class) != null) {
                             if (exchange.getIn().getBody(String.class).contains("header")) {
                                 assertEquals(exchange.getIn().getHeader("String"), "String");
                                 assertEquals(exchange.getIn().getHeader("routeHeader"), "routeHeader");
