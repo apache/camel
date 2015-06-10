@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.test.blueprint.component.rest;
+import java.util.Arrays;
 
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 public class FromRestGetTest extends CamelBlueprintTestSupport {
 
@@ -63,7 +62,7 @@ public class FromRestGetTest extends CamelBlueprintTestSupport {
         assertEquals("integer", rest.getVerbs().get(0).getParams().get(0).getDataType());
         assertEquals("string", rest.getVerbs().get(0).getParams().get(1).getDataType());
         assertEquals(Arrays.asList("1", "2", "3", "4"), rest.getVerbs().get(0).getParams().get(0).getAllowableValues());
-        assertEquals(Arrays.asList("a","b","c","d"), rest.getVerbs().get(0).getParams().get(1).getAllowableValues());
+        assertEquals(Arrays.asList("a", "b", "c", "d"), rest.getVerbs().get(0).getParams().get(1).getAllowableValues());
         assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getDefaultValue());
         assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getDefaultValue());
 
