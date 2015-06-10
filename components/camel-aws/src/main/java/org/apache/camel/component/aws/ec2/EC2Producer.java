@@ -278,7 +278,7 @@ public class EC2Producer extends DefaultProducer {
         try {
             ec2Client.rebootInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Describe Instances Status command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Reboot Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
     }
