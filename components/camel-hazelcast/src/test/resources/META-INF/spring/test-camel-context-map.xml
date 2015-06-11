@@ -64,7 +64,49 @@
 			<to uri="hazelcast:map:foo" />
 			<to uri="seda:out" />
 		</route>
+		
+		<route>
+			<from uri="direct:putIfAbsent" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>putIfAbsent</constant>
+			</setHeader>
+			<to uri="hazelcast:map:foo" />
+		</route>
 
+		<route>
+			<from uri="direct:getAll" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>getAll</constant>
+			</setHeader>
+			<to uri="hazelcast:map:foo" />
+			<to uri="seda:out" />
+		</route>
+	
+		<route>
+			<from uri="direct:clear" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>clear</constant>
+			</setHeader>
+			<to uri="hazelcast:map:foo" />
+		</route>
+		
+		<route>
+			<from uri="direct:evict" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>evict</constant>
+			</setHeader>
+			<to uri="hazelcast:map:foo" />
+			<to uri="seda:out" />
+		</route>
+
+		<route>
+			<from uri="direct:evictAll" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>evictAll</constant>
+			</setHeader>
+			<to uri="hazelcast:map:foo" />
+			<to uri="seda:out" />
+		</route>		
 	</camelContext>
 
 </beans>

@@ -18,13 +18,17 @@ package org.apache.camel.component.hazelcast;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-
 import com.hazelcast.query.SqlPredicate;
-import org.apache.camel.component.hazelcast.testutil.Dummy;
 
+import org.apache.camel.component.hazelcast.testutil.Dummy;
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -32,6 +36,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -105,5 +110,70 @@ public class HazelcastMapProducerForSpringTest extends HazelcastCamelSpringTestS
         assertNotNull(b1);
         assertEquals(2, b1.size());
     }
+    
+    @Test
+    public void testPutIfAbsent() throws InterruptedException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
+        verify(map).putIfAbsent("4711", "replaced");
+    }
+    
+    @Test
+    public void testPutIfAbsentWithTtl() throws InterruptedException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(HazelcastConstants.OBJECT_ID, "4711");
+        headers.put(HazelcastConstants.TTL_VALUE, new Long(1));
+        headers.put(HazelcastConstants.TTL_UNIT, TimeUnit.MINUTES);
+        template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
+        verify(map).putIfAbsent("4711", "replaced", new Long(1), TimeUnit.MINUTES);
+    }
+    
+    @Test
+    public void testGetAllEmptySet() {
+        Set<Object> l = new HashSet<Object>();
+        Map t = new HashMap();
+        t.put("key1", "value1");
+        t.put("key2", "value2");
+        t.put("key3", "value3");
+        when(map.getAll(anySet())).thenReturn(t);
+        template.sendBodyAndHeader("direct:getAll", null, HazelcastConstants.OBJECT_ID, l);
+        String body = consumer.receiveBody("seda:out", 5000, String.class);
+        verify(map).getAll(l);
+        assertEquals("{key3=value3, key2=value2, key1=value1}", body);
+    }
 
+    @Test
+    public void testGetAllOnlyOneKey() {
+        Set<Object> l = new HashSet<Object>();
+        l.add("key1");
+        Map t = new HashMap();
+        t.put("key1", "value1");
+        when(map.getAll(l)).thenReturn(t);
+        template.sendBodyAndHeader("direct:getAll", null, HazelcastConstants.OBJECT_ID, l);
+        String body = consumer.receiveBody("seda:out", 5000, String.class);
+        verify(map).getAll(l);
+        assertEquals("{key1=value1}", body);
+    }
+    
+    @Test
+    public void testClear() throws InterruptedException {
+        template.sendBody("direct:clear", "test");
+        verify(map).clear();
+    }
+    
+    @Test
+    public void testEvict() throws InterruptedException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeaders("direct:evict", "", headers);
+        verify(map).evict("4711");
+    }
+    
+    @Test
+    public void testEvictAll() throws InterruptedException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        template.sendBodyAndHeaders("direct:evictAll", "", headers);
+        verify(map).evictAll();
+    }
 }
