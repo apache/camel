@@ -81,9 +81,9 @@ public class JpaProducerRemoveTest extends AbstractJpaTest {
         return "org/apache/camel/processor/jpa/springJpaRouteTest.xml";
     }
 
-	@Override
-	protected String selectAllString() {
-		return SELECT_ALL_STRING;
-	}
+    @Override
+    protected String selectAllString() {
+        return SELECT_ALL_STRING;
+    }
 
 }
