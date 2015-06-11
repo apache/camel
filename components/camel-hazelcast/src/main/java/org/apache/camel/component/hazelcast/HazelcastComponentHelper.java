@@ -94,6 +94,12 @@ public final class HazelcastComponentHelper {
         addMapping("query", HazelcastConstants.QUERY_OPERATION);
         addMapping("getAll", HazelcastConstants.GET_ALL_OPERATION);
         addMapping("clear", HazelcastConstants.CLEAR_OPERATION);
+        addMapping("evict", HazelcastConstants.EVICT_OPERATION);
+        addMapping("evictAll", HazelcastConstants.EVICT_ALL_OPERATION);
+        addMapping("putIfAbsent", HazelcastConstants.PUT_IF_ABSENT_OPERATION);
+        addMapping("addAll", HazelcastConstants.ADD_ALL_OPERATION);
+        addMapping("removeAll", HazelcastConstants.REMOVE_ALL_OPERATION);
+        addMapping("retainAll", HazelcastConstants.RETAIN_ALL_OPERATION);
 
         // multimap
         addMapping("removevalue", HazelcastConstants.REMOVEVALUE_OPERATION);
