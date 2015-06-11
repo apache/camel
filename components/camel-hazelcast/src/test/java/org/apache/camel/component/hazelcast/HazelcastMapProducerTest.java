@@ -198,6 +198,14 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     }
     
     @Test
+    public void testEvict() throws InterruptedException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeaders("direct:evict", "", headers);
+        verify(map).evict("4711");
+    }
+    
+    @Test
     public void testClear() throws InterruptedException {
         template.sendBody("direct:clear", "test");
         verify(map).clear();
@@ -230,6 +238,9 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
                         .to("seda:out");
 
                 from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
+ 
+                from("direct:evict").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.EVICT_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
+                        .to("seda:out");
                 
                 from("direct:putWithOperationNumber").toF("hazelcast:%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX, HazelcastConstants.PUT_OPERATION);
                 from("direct:putWithOperationName").toF("hazelcast:%sfoo?operation=put", HazelcastConstants.MAP_PREFIX);

@@ -118,6 +118,10 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
             this.clear(exchange);
             break;
             
+        case HazelcastConstants.EVICT_OPERATION:
+            this.evict(oid);
+            break;
+            
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MAP cache.", operation, HazelcastConstants.OPERATION));
         }
@@ -218,5 +222,12 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
      */
     private void clear(Exchange exchange) {
         this.cache.clear();
+    }
+    
+    /**
+     * Eviction operation for a specific key
+     */
+    private void evict(Object oid) {
+        this.cache.evict(oid);
     }
 }
