@@ -296,6 +296,9 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         return remove;
     }
 
+    /**
+     * Indicates to use entityManager.remove(entity).
+     */
     public void setRemove(boolean isRemove) {
         this.remove = isRemove;
     }
