@@ -66,7 +66,8 @@ public final class HazelcastConstants {
     public static final int REMOVE_ALL_OPERATION = 10;
     public static final int RETAIN_ALL_OPERATION = 11;
     public static final int EVICT_OPERATION = 12;
-
+    public static final int EVICT_ALL_OPERATION = 13;
+    
     // multimap
     public static final int REMOVEVALUE_OPERATION = 14;
 
