@@ -125,7 +125,8 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
 
                 from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
                 
-                from("direct:valueCount").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.VALUE_COUNT_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                from("direct:valueCount").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.VALUE_COUNT_OPERATION))
+                        .to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
                 
                 from("direct:putWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.MULTIMAP_PREFIX, HazelcastConstants.PUT_OPERATION);
                 from("direct:putWithOperationName").toF("hazelcast:%sbar?operation=put", HazelcastConstants.MULTIMAP_PREFIX);
