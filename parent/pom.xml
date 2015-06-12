@@ -182,7 +182,7 @@
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
     <gmaven-plugin-version>1.4</gmaven-plugin-version>
     <gmetric4j-version>1.0.10</gmetric4j-version>
-    <google-app-engine-version>1.9.21</google-app-engine-version>
+    <google-app-engine-version>1.9.22</google-app-engine-version>
     <google-app-engine-bundle-version>1.9.19_1</google-app-engine-bundle-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
     <google-gdata-bundle-version>1.41.1_1</google-gdata-bundle-version>
