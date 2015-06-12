@@ -98,6 +98,12 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
         template.sendBody("direct:clear", "test");
         verify(map).clear();
     }
+    
+    @Test
+    public void testValueCount() {
+        template.sendBodyAndHeader("direct:valueCount", "test", HazelcastConstants.OBJECT_ID, "4711");
+        verify(map).valueCount("4711");
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -118,6 +124,8 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
                 from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DELETE_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
                 from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                
+                from("direct:valueCount").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.VALUE_COUNT_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
                 
                 from("direct:putWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.MULTIMAP_PREFIX, HazelcastConstants.PUT_OPERATION);
                 from("direct:putWithOperationName").toF("hazelcast:%sbar?operation=put", HazelcastConstants.MULTIMAP_PREFIX);
