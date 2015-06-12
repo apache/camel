@@ -26,6 +26,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -39,6 +40,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
@@ -70,7 +72,7 @@ import org.slf4j.LoggerFactory;
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
  * along with a {@link org.apache.camel.ProducerTemplate} for use in the test case
  *
- * @version 
+ * @version
  */
 public abstract class CamelTestSupport extends TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
@@ -319,8 +321,8 @@ public abstract class CamelTestSupport extends TestSupport {
         postProcessTest();
 
         if (isUseRouteBuilder()) {
-            RouteBuilder[] builders = createRouteBuilders();
-            for (RouteBuilder builder : builders) {
+            RoutesBuilder[] builders = createRouteBuilders();
+            for (RoutesBuilder builder : builders) {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
@@ -578,8 +580,9 @@ public abstract class CamelTestSupport extends TestSupport {
      * Factory method which derived classes can use to create a {@link RouteBuilder}
      * to define the routes for testing
      */
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 // no routes added by default
             }
@@ -592,8 +595,8 @@ public abstract class CamelTestSupport extends TestSupport {
      *
      * @see #createRouteBuilder()
      */
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {createRouteBuilder()};
+    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+        return new RoutesBuilder[] {createRouteBuilder()};
     }
 
     /**
@@ -655,6 +658,7 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected void sendBody(String endpointUri, final Object body) {
         template.send(endpointUri, new Processor() {
+            @Override
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(body);
@@ -671,6 +675,7 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected void sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
         template.send(endpointUri, new Processor() {
+            @Override
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(body);
