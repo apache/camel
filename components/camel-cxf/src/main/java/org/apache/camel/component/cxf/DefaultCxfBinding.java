@@ -690,7 +690,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         if (transportHeaders.size() > 0) {
             cxfContext.put(Message.PROTOCOL_HEADERS, transportHeaders);
-        }        
+        } else {
+            // no propagated transport headers does really mean no headers, not the ones
+            // from the previous request or response propagated with the invocation context
+            cxfContext.remove(Message.PROTOCOL_HEADERS);
+        }
     }
 
     protected static Object getContentFromCxf(Message message, DataFormat dataFormat) {
