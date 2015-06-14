@@ -21,11 +21,8 @@ import javax.net.ssl.SSLContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpResponseFactory;
-import org.apache.http.localserver.LocalTestServer;
 import org.apache.http.protocol.HttpExpectationVerifier;
 import org.apache.http.protocol.HttpProcessor;
-import org.junit.After;
-import org.junit.Before;
 
 /**
  * Abstract base class for unit testing using a http server.
@@ -35,35 +32,6 @@ import org.junit.Before;
  * @version
  */
 public abstract class HttpServerTestSupport extends CamelTestSupport {
-
-    protected LocalTestServer localServer;
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        localServer = new LocalTestServer(
-                getBasicHttpProcessor(),
-                getConnectionReuseStrategy(),
-                getHttpResponseFactory(),
-                getHttpExpectationVerifier(),
-                getSSLContext(),
-                false,
-                new String[]{"TLSv1.2"});
-        registerHandler(localServer);
-        localServer.start();
-
-        super.setUp();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        if (localServer != null) {
-            localServer.stop();
-        }
-    }
 
     /**
      * Returns the org.apache.http.protocol.BasicHttpProcessor which should be
@@ -113,32 +81,5 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
      */
     protected SSLContext getSSLContext() throws Exception {
         return null;
-    }
-
-    /**
-     * Register the org.apache.http.protocol.HttpRequestHandler which handles
-     * the request and set the proper response (headers and content).
-     *
-     * @param server
-     */
-    protected void registerHandler(LocalTestServer server) {
-    }
-
-    /**
-     * Obtains the host name of the local test server.
-     *
-     * @return hostName
-     */
-    protected String getHostName() {
-        return localServer.getServiceAddress().getHostName();
-    }
-
-    /**
-     * Obtains the port of the local test server.
-     *
-     * @return port
-     */
-    protected int getPort() {
-        return localServer.getServiceAddress().getPort();
     }
 }
