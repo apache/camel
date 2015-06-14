@@ -91,8 +91,8 @@ public final class DocumentationHelper {
     }
 
     private static File jsonFile(String scheme, String extendsScheme) {
-        // TODO: scan components for each component and find component name from extendsScheme
-        // and then find the package name where the json file is
+        // we cannot use classloader to load external resources from other JARs during apt plugin,
+        // so load these resources using the file system
 
         if ("file".equals(extendsScheme)) {
             return new File("../../camel-core/target/classes/org/apache/camel/component/file/file.json");
