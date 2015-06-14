@@ -115,6 +115,6 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
     }
     
     private void remainingCapacity(Exchange exchange) {
-    	exchange.getOut().setBody(this.queue.remainingCapacity());
+        exchange.getOut().setBody(this.queue.remainingCapacity());
     }
 }
