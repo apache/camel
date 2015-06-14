@@ -50,11 +50,16 @@ public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSup
 
     private OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding;
     private InboundBinding<GTaskEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding;
+    private Queue queue;
+
     @UriPath @Metadata(required = "true")
     private String queueName;
-    private Queue queue;
-    @UriParam
+    @UriParam(label = "producer", defaultValue = "worker")
     private String workerRoot;
+    @UriParam(label = "consumer")
+    private String inboundBindingRef;
+    @UriParam(label = "producer")
+    private String outboundBindingRef;
 
     public GTaskEndpoint(String endpointUri, ServletComponent component,
             URI httpUri, HttpClientParams params,
@@ -94,20 +99,13 @@ public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSup
                         this, super.getBinding(), getInboundBinding()));
     }
 
-    /**
-     * @see #setWorkerRoot(String)
-     */
     public String getWorkerRoot() {
         return workerRoot;
     }
 
     /**
-     * Sets the web hook path root. 
-     *
-     * @param workerRoot the assumed web hook path root. The default is <code>worker</code>.
-     *                   The servlet handling the callback from the task queueing service should have
-     *                   a <code>/worker/*</code> servlet mapping in this case. If another servlet mapping
-     *                   is used it must be set here accordingly.
+     * The servlet mapping for callback handlers. By default, this component requires a callback servlet mapping of /worker/*.
+     * If another servlet mapping is used e.g. /myworker/* it must be set as option on the producer side: to("gtask:myqueue?workerRoot=myworker").
      */
     public void setWorkerRoot(String workerRoot) {
         this.workerRoot = workerRoot;
@@ -125,8 +123,35 @@ public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSup
         return queueName;
     }
 
+    /**
+     * Name of queue
+     */
     public void setQueueName(String queueName) {
         this.queueName = queueName;
+    }
+
+    public String getInboundBindingRef() {
+        return inboundBindingRef;
+    }
+
+    /**
+     * Reference to an InboundBinding<GTaskEndpoint, HttpServletRequest, HttpServletResponse> in the Registry for
+     * customizing the binding of an Exchange to the Servlet API.
+     * The referenced binding is used as post-processor to org.apache.camel.component.http.HttpBinding.
+     */
+    public void setInboundBindingRef(String inboundBindingRef) {
+        this.inboundBindingRef = inboundBindingRef;
+    }
+
+    public String getOutboundBindingRef() {
+        return outboundBindingRef;
+    }
+
+    /**
+     * Reference to an OutboundBinding<GTaskEndpoint, TaskOptions, void> in the Registry for customizing the binding of an Exchange to the task queueing service.
+     */
+    public void setOutboundBindingRef(String outboundBindingRef) {
+        this.outboundBindingRef = outboundBindingRef;
     }
 
     public Producer createProducer() throws Exception {

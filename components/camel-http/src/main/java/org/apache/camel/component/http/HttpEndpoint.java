@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri", producerOnly = true, label = "http")
 public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
-    // Note: all consumer options must be documented with description in annotations so extended components can access the documentation
+    // Note: all options must be documented with description in annotations so extended components can access the documentation
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
@@ -59,20 +59,24 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private HttpConnectionManager httpConnectionManager;
     private UrlRewrite urlRewrite;
 
-    @UriPath(label = "producer") @Metadata(required = "true")
+    @UriPath(label = "producer", description = "The url of the HTTP endpoint to call.") @Metadata(required = "true")
     private URI httpUri;
-    @UriParam
+    @UriParam(description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    @UriParam
+    @UriParam(description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     private HttpBinding binding;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true",
+            description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
+                    + " This allows you to get all responses regardless of the HTTP status code.")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+            description = "If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request."
+                    + " You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.")
     private boolean bridgeEndpoint;
     @UriParam(label = "consumer",
             description = "Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.")
     private boolean matchOnUriPrefix;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", description = "If this option is false Jetty servlet will disable the HTTP streaming and set the content-length header on the response")
     private boolean chunked = true;
     @UriParam(label = "consumer",
             description = "Determines whether or not the raw input stream from Jetty is cached or not"
@@ -85,11 +89,11 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                     + " If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,"
                     + " in case you do not need to read the message payload multiple times.")
     private boolean disableStreamCache;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", description = "The proxy host name")
     private String proxyHost;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", description = "The proxy port number")
     private int proxyPort;
-    @UriParam(label = "producer", enums = "Basic,Digest,NTLM")
+    @UriParam(label = "producer", enums = "Basic,Digest,NTLM", description = "Authentication method for proxy, either as Basic, Digest or NTLM.")
     private String authMethodPriority;
     @UriParam
     private boolean transferException;
