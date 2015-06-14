@@ -116,6 +116,7 @@ public final class HazelcastComponentHelper {
         addMapping("offer", HazelcastConstants.OFFER_OPERATION);
         addMapping("peek", HazelcastConstants.PEEK_OPERATION);
         addMapping("poll", HazelcastConstants.POLL_OPERATION);
+        addMapping("remainingCapacity", HazelcastConstants.REMAINING_CAPACITY_OPERATION);
 
         // topic
         addMapping("publish", HazelcastConstants.PUBLISH_OPERATION);
