@@ -75,6 +75,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
         if (uriEndpoint != null) {
             String scheme = uriEndpoint.scheme();
+            String extendsScheme = uriEndpoint.extendsScheme();
             String title = uriEndpoint.title();
             final String label = uriEndpoint.label();
             if (!isNullOrEmpty(scheme)) {
@@ -82,8 +83,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 // for example camel-mail has a bunch of component schema names that does that
                 String[] schemes = scheme.split(",");
                 String[] titles = title.split(",");
+                String[] extendsSchemes = extendsScheme != null ? extendsScheme.split(",") : null;
                 for (int i = 0; i < schemes.length; i++) {
                     final String alias = schemes[i];
+                    final String extendsAlias = extendsSchemes != null ? (i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0]) : null;
                     final String aliasTitle = i < titles.length ? titles[i] : titles[0];
                     // write html documentation
                     String name = canonicalClassName(classElement.getQualifiedName().toString());
@@ -103,7 +106,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     handler = new Func1<PrintWriter, Void>() {
                         @Override
                         public Void call(PrintWriter writer) {
-                            writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, label);
+                            writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label);
                             return null;
                         }
                     };
@@ -162,9 +165,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
-                                                String title, String scheme, String label) {
+                                                String title, String scheme, final String extendsScheme, String label) {
         // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, title, scheme, label);
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, title, scheme, extendsScheme, label);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
@@ -369,13 +372,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint,
-                                                     String title, String scheme, String label) {
+                                                     String title, String scheme, String extendsScheme, String label) {
         ComponentModel model = new ComponentModel(scheme);
 
         // if the scheme is an alias then replace the scheme name from the syntax with the alias
         String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");
 
-        model.setExtendsScheme(uriEndpoint.extendsScheme());
+        model.setExtendsScheme(extendsScheme);
         model.setSyntax(syntax);
         model.setTitle(title);
         model.setLabel(label);
