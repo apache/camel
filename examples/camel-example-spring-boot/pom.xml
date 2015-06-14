@@ -75,6 +75,10 @@
   </dependencies>
 
   <build>
+
+    <!-- we do not want version in the WAR name -->
+ 	<finalName>${project.artifactId}</finalName>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
