@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.management.MBeanServer;
 import javax.servlet.Filter;
 import javax.servlet.RequestDispatcher;
@@ -362,7 +361,6 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
             connectorRef.servlet.connect(consumer);
         }
     }
-    
 
     private void enableJmx(Server server) {
         MBeanContainer containerToRegister = getMbContainer();
@@ -500,7 +498,6 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return sslKeystore;
     }
 
-    
     public ErrorHandler getErrorHandler() {
         return errorHandler;
     }
@@ -542,7 +539,6 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         
     protected Connector createConnector(Server server, JettyHttpEndpoint endpoint) {
 
-        
         // now we just use the SelectChannelConnector as the default connector
         SslContextFactory sslcf = null;
         
@@ -627,7 +623,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
      * Creates a new {@link HttpClient} and configures its proxy/thread pool and SSL based on this
      * component settings.
      *
-     * @Param endpoint   the instance of JettyHttpEndpoint
+     * @param endpoint   the instance of JettyHttpEndpoint
      * @param minThreads optional minimum number of threads in client thread pool
      * @param maxThreads optional maximum number of threads in client thread pool
      * @param ssl        option SSL parameters
@@ -873,7 +869,6 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
     // Implementation methods
     // -------------------------------------------------------------------------
 
-
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
@@ -1014,7 +1009,6 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
                 }
             }
         }
-        
     }
     
     protected Server createServer() {
