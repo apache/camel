@@ -199,12 +199,21 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Sets the soTimeout option.
-     * <p/>
-     * Used by FTPClient
+     * Sets the soTimeout on the FTP client.
      */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
+    }
+
+    public int getDataTimeout() {
+        return dataTimeout;
+    }
+
+    /**
+     * Sets the data timeout on the FTP client.
+     */
+    public void setDataTimeout(int dataTimeout) {
+        this.dataTimeout = dataTimeout;
     }
 
     @Override

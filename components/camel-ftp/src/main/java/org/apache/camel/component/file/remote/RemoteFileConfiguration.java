@@ -201,6 +201,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return binary;
     }
 
+    /**
+     * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII (false).
+     */
     public void setBinary(boolean binary) {
         this.binary = binary;
     }
