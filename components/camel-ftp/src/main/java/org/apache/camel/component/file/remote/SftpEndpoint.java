@@ -34,7 +34,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
     @UriParam
     protected SftpConfiguration configuration;
     @UriParam
-    Proxy proxy;
+    protected Proxy proxy;
     
     public SftpEndpoint() {
     }
@@ -74,12 +74,20 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
         return operations;
     }
 
+    public Proxy getProxy() {
+        return proxy;
+    }
+
+    /**
+     * To use a custom configured com.jcraft.jsch.Proxy.
+     * This proxy is used to consume/send messages from the target SFTP host.
+     */
+    public void setProxy(Proxy proxy) {
+        this.proxy = proxy;
+    }
+
     @Override
     public String getScheme() {
         return "sftp";
-    }
-
-    public void setProxy(Proxy proxy) {
-        this.proxy = proxy;
     }
 }
