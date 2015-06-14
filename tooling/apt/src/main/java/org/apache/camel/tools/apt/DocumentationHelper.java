@@ -17,17 +17,67 @@
 package org.apache.camel.tools.apt;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.camel.tools.apt.JsonSchemaHelper.parseJsonSchema;
 
 /**
  * Helper to find documentation for inherited options when a component extends another.
  */
 public final class DocumentationHelper {
 
-    public static String findJavaDoc(String scheme, String fieldName) {
+    public static String findJavaDoc(String scheme, String extendsScheme, String fieldName) {
+        File file = jsonFile(scheme, extendsScheme);
+        if (file != null) {
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                String json = loadText(fis);
+                List<Map<String, String>> rows = parseJsonSchema("properties", json, true);
+
+                for (Map<String, String> row : rows) {
+                    String name = row.get("name");
+                    String description = row.get("description");
+                    if (fieldName.equals(name)) {
+                        return description;
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            } finally {
+                IOHelper.close(fis);
+            }
+        }
+
+        // not found
+        return null;
+    }
+
+    private static File jsonFile(String scheme, String extendsScheme) {
+        // TODO: scan components for each component and find component name from extendsScheme
+        // and then find the package name where the json file is
+
+        if ("file".equals(extendsScheme)) {
+            return new File("../../camel-core/target/classes/org/apache/camel/component/file/file.json");
+        } else if ("http".equals(extendsScheme)) {
+            return new File("../camel-http/target/classes/org/apache/camel/component/http/http.json");
+        } else if ("https".equals(extendsScheme)) {
+            return new File("../camel-http/target/classes/org/apache/camel/component/http/https.json");
+        } else if ("netty".equals(extendsScheme)) {
+            return new File("../camel-netty/target/classes/org/apache/camel/component/netty/netty.json");
+        } else if ("netty4".equals(extendsScheme)) {
+            return new File("../camel-netty4/target/classes/org/apache/camel/component/netty4/netty4.json");
+        } else if ("servlet".equals(extendsScheme)) {
+            return new File("../camel-servlet/target/classes/org/apache/camel/component/servlet/servlet.json");
+        }
+        // not found
         return null;
     }
 

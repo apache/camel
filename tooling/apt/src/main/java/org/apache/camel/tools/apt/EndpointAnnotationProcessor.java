@@ -286,7 +286,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentationWithNotes();
 
             if (Strings.isNullOrEmpty(doc)) {
-                doc = DocumentationHelper.findJavaDoc(componentModel.getScheme(), entry.getName());
+                doc = DocumentationHelper.findJavaDoc(componentModel.getScheme(), componentModel.getExtendsScheme(), entry.getName());
             }
 
             doc = sanitizeDescription(doc, false);
