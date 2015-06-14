@@ -96,6 +96,8 @@ public final class DocumentationHelper {
 
         if ("file".equals(extendsScheme)) {
             return new File("../../camel-core/target/classes/org/apache/camel/component/file/file.json");
+        } else if ("atom".equals(extendsScheme)) {
+            return new File("../camel-atom/target/classes/org/apache/camel/component/atom/atom.json");
         } else if ("http".equals(extendsScheme)) {
             return new File("../camel-http/target/classes/org/apache/camel/component/http/http.json");
         } else if ("https".equals(extendsScheme)) {
