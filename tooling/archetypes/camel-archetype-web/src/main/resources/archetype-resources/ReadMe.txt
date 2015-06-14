@@ -21,6 +21,10 @@ Or to redeploy
 
     mvn jboss-as:redeploy
 
+
+The application will be available at:
+   http://localhost:8080/${artifactId}/
+
 For more help see the Apache Camel documentation
 
     http://camel.apache.org/

@@ -115,7 +115,7 @@
         <version>${jetty-plugin-version}</version>
         <configuration>
           <webAppConfig>
-            <contextPath>/</contextPath>
+            <contextPath>/${project.artifactId}</contextPath>
           </webAppConfig>
           <systemProperties>
             <!-- enable easy JMX connection to JConsole -->
