@@ -44,21 +44,21 @@ import org.junit.Test;
  */
 public class HttpAuthenticationTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
     private String user = "camel";
     private String password = "password";
-    
-    protected HttpServer localServer;
-
+   
     @Before
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
-        		setHttpProcessor(getBasicHttpProcessor()).
-        		setConnectionReuseStrategy(getConnectionReuseStrategy()).
-        		setResponseFactory(getHttpResponseFactory()).
-        		setExpectationVerifier(getHttpExpectationVerifier()).
-        		setSslContext(getSSLContext()).
-        		registerHandler("/search", new AuthenticationValidationHandler("GET", null, null, getExpectedContent(), user, password)).create();
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/search", new AuthenticationValidationHandler("GET", null, null, getExpectedContent(), user, password)).create();
         localServer.start();
 
         super.setUp();
@@ -76,10 +76,11 @@ public class HttpAuthenticationTest extends BaseHttpTest {
     
     @Test
     public void basicAuthenticationShouldSuccess() throws Exception {
-        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword=" + password, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
-        });
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword=" 
+            + password, new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                }
+            });
         assertExchange(exchange);
     }
     
@@ -107,10 +108,11 @@ public class HttpAuthenticationTest extends BaseHttpTest {
 
     @Test
     public void basicAuthenticationShouldFailWithWrongCreds() throws Exception {
-        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search?throwExceptionOnFailure=false&authUsername=camel&authPassword=wrong", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
-        });
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() 
+            + "/search?throwExceptionOnFailure=false&authUsername=camel&authPassword=wrong", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                }
+            });
 
         assertExchangeFailed(exchange);
     }

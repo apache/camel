@@ -25,8 +25,12 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -34,12 +38,40 @@ import org.junit.Test;
  */
 public class HttpRedirectTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY)).
+                registerHandler("/someplaceelse", new BasicValidationHandler("GET", null, null, "Bye World")).
+                registerHandler("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY)).
+                create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void httpRedirect() throws Exception {
-        // force a 301 redirect
-        localServer.register("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY));
 
-        String uri = "http4://" + getHostName() + ":" + getPort()
+        String uri = "http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
                 + "/test?httpClient.redirectsEnabled=false&httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
                 + "&httpClient.staleConnectionCheckEnabled=false";
         Exchange out = template.request(uri, new Processor() {
@@ -52,16 +84,13 @@ public class HttpRedirectTest extends BaseHttpTest {
         HttpOperationFailedException cause = out.getException(HttpOperationFailedException.class);
         assertNotNull(cause);
         assertEquals(HttpStatus.SC_MOVED_PERMANENTLY, cause.getStatusCode());
-        assertEquals("http4://" + getHostName() + ":" + getPort() + "/someplaceelse", cause.getRedirectLocation());
+        assertEquals("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/someplaceelse", cause.getRedirectLocation());
     }
 
     @Test
     public void httpHandleRedirect() throws Exception {
-        // force a 301 redirect
-        localServer.register("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY));
-        localServer.register("/someplaceelse", new BasicValidationHandler("GET", null, null, "Bye World"));
 
-        String uri = "http4://" + getHostName() + ":" + getPort()
+        String uri = "http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
                 + "/test?httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
                 + "&httpClient.staleConnectionCheckEnabled=false";
         Exchange out = template.request(uri, new Processor() {
@@ -84,7 +113,7 @@ public class HttpRedirectTest extends BaseHttpTest {
         }
 
         public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws HttpException, IOException {
-            httpResponse.setHeader("location", "http4://" + getHostName() + ":" + getPort() + "/someplaceelse");
+            httpResponse.setHeader("location", "http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/someplaceelse");
             httpResponse.setStatusCode(code);
         }
     }
