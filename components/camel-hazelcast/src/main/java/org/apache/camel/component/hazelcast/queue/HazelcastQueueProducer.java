@@ -69,6 +69,10 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
             this.remove(exchange);
             break;
 
+        case HazelcastConstants.REMAINING_CAPACITY_OPERATION:
+            this.remainingCapacity(exchange);
+            break;
+            
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the QUEUE cache.", operation, HazelcastConstants.OPERATION));
         }
@@ -108,5 +112,9 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
         } else {
             this.queue.remove();
         }
+    }
+    
+    private void remainingCapacity(Exchange exchange) {
+    	exchange.getOut().setBody(this.queue.remainingCapacity());
     }
 }

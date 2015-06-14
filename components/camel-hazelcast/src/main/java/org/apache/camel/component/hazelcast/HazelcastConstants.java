@@ -83,9 +83,10 @@ public final class HazelcastConstants {
     public static final int OFFER_OPERATION = 32;
     public static final int PEEK_OPERATION = 33;
     public static final int POLL_OPERATION = 34;
+    public static final int REMAINING_CAPACITY_OPERATION = 35;
 
     // topic
-    public static final int PUBLISH_OPERATION = 35;
+    public static final int PUBLISH_OPERATION = 36;
 
     /*
      * header values

@@ -114,6 +114,14 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
         verify(queue).peek();
         assertEquals("foo", answer);
     }
+    
+    @Test
+    public void remainingCapacity() throws InterruptedException {
+        when(queue.remainingCapacity()).thenReturn(10);
+        int answer = template.requestBody("direct:remainingCapacity", null, Integer.class);
+        verify(queue).remainingCapacity();
+        assertEquals(10, answer);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -137,6 +145,9 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
                 from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
                         String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
 
+                from("direct:remainingCapacity").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMAINING_CAPACITY_OPERATION)).to(
+                        String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                
                 from("direct:putWithOperationNumber").toF(String.format("hazelcast:%sbar?operation=%s", HazelcastConstants.QUEUE_PREFIX, HazelcastConstants.PUT_OPERATION));
 
                 from("direct:putWithOperationName").toF(String.format("hazelcast:%sbar?operation=put", HazelcastConstants.QUEUE_PREFIX));
