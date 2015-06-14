@@ -40,7 +40,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     private String privateKeyFile;
     @UriParam
     private String privateKeyFilePassphrase;
-    @UriParam
+    @UriParam(enums = "no,yes", defaultValue = "no")
     private String strictHostKeyChecking;
     @UriParam
     private int serverAliveInterval;
@@ -80,6 +80,9 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return useUserKnownHostsFile;
     }
 
+    /**
+     * If knownHostFile has not been explicit configured, then use the host file from System.getProperty("user.home") + "/.ssh/known_hosts"
+     */
     public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
         this.useUserKnownHostsFile = useUserKnownHostsFile;
     }
@@ -104,6 +107,9 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return strictHostKeyChecking;
     }
 
+    /**
+     * Sets whether to use strict host key checking. Possible values are: no, yes
+     */
     public void setStrictHostKeyChecking(String strictHostKeyChecking) {
         this.strictHostKeyChecking = strictHostKeyChecking;
     }
@@ -124,6 +130,9 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return serverAliveCountMax;
     }
 
+    /**
+     * Allows you to set chmod on the stored file. For example chmod=664.
+     */
     public void setChmod(String chmod) {
         if (chmod.length() == 3) {
             for (byte c : chmod.getBytes()) {
@@ -157,5 +166,16 @@ public class ScpConfiguration extends RemoteFileConfiguration {
 
     public void setCompression(int compression) {
         this.compression = compression;
+    }
+
+    public boolean isVerboseLogging() {
+        return verboseLogging;
+    }
+
+    /**
+     * To enable verbose logging
+     */
+    public void setVerboseLogging(boolean verboseLogging) {
+        this.verboseLogging = verboseLogging;
     }
 }

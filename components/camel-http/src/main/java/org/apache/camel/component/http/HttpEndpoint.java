@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri", producerOnly = true, label = "http")
 public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
+    // Note: all consumer options must be documented with description in annotations so extended components can access the documentation
+
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
     private HttpComponent component;
@@ -57,7 +59,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private HttpConnectionManager httpConnectionManager;
     private UrlRewrite urlRewrite;
 
-    @UriPath @Metadata(required = "true", label = "producer")
+    @UriPath(label = "producer") @Metadata(required = "true")
     private URI httpUri;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
@@ -67,11 +69,21 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private boolean throwExceptionOnFailure = true;
     @UriParam(label = "producer")
     private boolean bridgeEndpoint;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+            description = "Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.")
     private boolean matchOnUriPrefix;
     @UriParam(defaultValue = "true")
     private boolean chunked = true;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+            description = "Determines whether or not the raw input stream from Jetty is cached or not"
+                    + " (Camel will read the stream into a in memory/overflow to file, Stream caching) cache."
+                    + " By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel"
+                    + " can retrieve all data from the stream. However you can set this option to true when you for example need"
+                    + " to access the raw stream, such as streaming it directly to a file or other persistent store."
+                    + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
+                    + " if this option is false to support reading the stream multiple times."
+                    + " If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,"
+                    + " in case you do not need to read the message payload multiple times.")
     private boolean disableStreamCache;
     @UriParam(label = "producer")
     private String proxyHost;
@@ -81,11 +93,14 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String authMethodPriority;
     @UriParam
     private boolean transferException;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+            description = "Specifies whether to enable HTTP TRACE for this Jetty consumer. By default TRACE is turned off.")
     private boolean traceEnabled;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+            description = "Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.")
     private String httpMethodRestrict;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+            description = "To use a custom buffer size on the javax.servlet.ServletResponse.")
     private Integer responseBufferSize;
 
     public HttpEndpoint() {
@@ -346,7 +361,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
      * By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel
      * can retrieve all data from the stream. However you can set this option to true when you for example need
      * to access the raw stream, such as streaming it directly to a file or other persistent store.
-     * DefaultHttpBinding will copy the request input stream into a stream cache and put it into message bod
+     * DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body
      * if this option is false to support reading the stream multiple times.
      * If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,
      * in case you do not need to read the message payload multiple times.

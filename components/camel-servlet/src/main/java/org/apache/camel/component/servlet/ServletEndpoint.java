@@ -34,7 +34,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
         syntax = "servlet:servletName", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
 public class ServletEndpoint extends HttpEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(label = "consumer") @Metadata(required = "true")
     private String servletName;
 
     public ServletEndpoint() {

@@ -215,8 +215,12 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            // as its json we need to sanitize the docs
+            // either we have the documentation from this apt plugin or we need help to find it from extended component
             String doc = entry.getDocumentationWithNotes();
+            if (Strings.isNullOrEmpty(doc)) {
+                doc = DocumentationHelper.findComponentJavaDoc(componentModel.getScheme(), componentModel.getExtendsScheme(), entry.getName());
+            }
+            // as its json we need to sanitize the docs
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
             String defaultValue = entry.getDefaultValue();
@@ -251,7 +255,12 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
+            // either we have the documentation from this apt plugin or we need help to find it from extended component
             String doc = entry.getDocumentation();
+            if (Strings.isNullOrEmpty(doc)) {
+                doc = DocumentationHelper.findEndpointJavaDoc(componentModel.getScheme(), componentModel.getExtendsScheme(), entry.getName());
+            }
+            // as its json we need to sanitize the docs
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
             String defaultValue = entry.getDefaultValue();
@@ -282,13 +291,12 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            // as its json we need to sanitize the docs
+            // either we have the documentation from this apt plugin or we need help to find it from extended component
             String doc = entry.getDocumentationWithNotes();
-
             if (Strings.isNullOrEmpty(doc)) {
-                doc = DocumentationHelper.findJavaDoc(componentModel.getScheme(), componentModel.getExtendsScheme(), entry.getName());
+                doc = DocumentationHelper.findEndpointJavaDoc(componentModel.getScheme(), componentModel.getExtendsScheme(), entry.getName());
             }
-
+            // as its json we need to sanitize the docs
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
             String defaultValue = entry.getDefaultValue();
@@ -537,6 +545,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     String defaultValueNote = path.defaultValueNote();
                     String required = metadata != null ? metadata.required() : null;
                     String label = path.label();
+                    if (Strings.isNullOrEmpty(label) && metadata != null) {
+                        label = metadata.label();
+                    }
 
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
@@ -592,6 +603,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     String defaultValueNote = param.defaultValueNote();
                     String required = metadata != null ? metadata.required() : null;
                     String label = param.label();
+                    if (Strings.isNullOrEmpty(label) && metadata != null) {
+                        label = metadata.label();
+                    }
 
                     // if the field type is a nested parameter then iterate through its fields
                     TypeMirror fieldType = fieldElement.asType();

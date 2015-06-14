@@ -33,22 +33,15 @@ import static org.apache.camel.tools.apt.JsonSchemaHelper.parseJsonSchema;
  */
 public final class DocumentationHelper {
 
-    public static String findJavaDoc(String scheme, String extendsScheme, String fieldName) {
+    public static String findComponentJavaDoc(String scheme, String extendsScheme, String fieldName) {
         File file = jsonFile(scheme, extendsScheme);
         if (file != null) {
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(file);
                 String json = loadText(fis);
-                List<Map<String, String>> rows = parseJsonSchema("properties", json, true);
-
-                for (Map<String, String> row : rows) {
-                    String name = row.get("name");
-                    String description = row.get("description");
-                    if (fieldName.equals(name)) {
-                        return description;
-                    }
-                }
+                List<Map<String, String>> rows = parseJsonSchema("componentProperties", json, true);
+                return getPropertyDescription(rows, fieldName);
             } catch (Exception e) {
                 // ignore
             } finally {
@@ -57,6 +50,43 @@ public final class DocumentationHelper {
         }
 
         // not found
+        return null;
+    }
+
+    public static String findEndpointJavaDoc(String scheme, String extendsScheme, String fieldName) {
+        File file = jsonFile(scheme, extendsScheme);
+        if (file != null) {
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                String json = loadText(fis);
+                List<Map<String, String>> rows = parseJsonSchema("properties", json, true);
+                return getPropertyDescription(rows, fieldName);
+            } catch (Exception e) {
+                // ignore
+            } finally {
+                IOHelper.close(fis);
+            }
+        }
+
+        // not found
+        return null;
+    }
+
+    private static String getPropertyDescription(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String description = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("description")) {
+                description = row.get("description");
+            }
+            if (found) {
+                return description;
+            }
+        }
         return null;
     }
 
