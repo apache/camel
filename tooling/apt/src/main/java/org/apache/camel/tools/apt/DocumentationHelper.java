@@ -100,6 +100,8 @@ public final class DocumentationHelper {
             return new File("../camel-ahc/target/classes/org/apache/camel/component/ahc/ahc.json");
         } else if ("atom".equals(extendsScheme)) {
             return new File("../camel-atom/target/classes/org/apache/camel/component/atom/atom.json");
+        } else if ("ftp".equals(extendsScheme)) {
+            return new File("../camel-ftp/target/classes/org/apache/camel/component/file/remote/ftp.json");
         } else if ("jms".equals(extendsScheme)) {
             return new File("../camel-jms/target/classes/org/apache/camel/component/jms/jms.json");
         } else if ("http".equals(extendsScheme)) {
