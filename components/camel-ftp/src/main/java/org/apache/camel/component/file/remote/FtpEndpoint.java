@@ -34,7 +34,8 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * FTP endpoint
  */
-@UriEndpoint(scheme = "ftp", title = "FTP", syntax = "ftp:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
+@UriEndpoint(scheme = "ftp", extendsScheme = "file", title = "FTP",
+        syntax = "ftp:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
 
     protected FTPClient ftpClient;

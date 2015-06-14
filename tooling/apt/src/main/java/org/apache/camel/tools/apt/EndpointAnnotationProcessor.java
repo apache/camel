@@ -189,6 +189,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n \"component\": {");
         buffer.append("\n    \"kind\": \"").append("component").append("\",");
         buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
+        buffer.append("\n    \"extendsScheme\": \"").append(componentModel.getExtendsScheme()).append("\",");
         buffer.append("\n    \"syntax\": \"").append(componentModel.getSyntax()).append("\",");
         buffer.append("\n    \"title\": \"").append(componentModel.getTitle()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
@@ -283,6 +284,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             buffer.append("\n    ");
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentationWithNotes();
+
+            if (Strings.isNullOrEmpty(doc)) {
+                doc = DocumentationHelper.findJavaDoc(componentModel.getScheme(), entry.getName());
+            }
+
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
             String defaultValue = entry.getDefaultValue();
@@ -361,6 +367,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         // if the scheme is an alias then replace the scheme name from the syntax with the alias
         String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");
 
+        model.setExtendsScheme(uriEndpoint.extendsScheme());
         model.setSyntax(syntax);
         model.setTitle(title);
         model.setLabel(label);
@@ -671,6 +678,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     private static final class ComponentModel {
 
         private String scheme;
+        private String extendsScheme;
         private String syntax;
         private String javaType;
         private String title;
@@ -688,6 +696,14 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public String getScheme() {
             return scheme;
+        }
+
+        public String getExtendsScheme() {
+            return extendsScheme;
+        }
+
+        public void setExtendsScheme(String extendsScheme) {
+            this.extendsScheme = extendsScheme;
         }
 
         public String getSyntax() {
