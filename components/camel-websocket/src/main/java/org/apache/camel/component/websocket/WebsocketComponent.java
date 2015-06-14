@@ -650,8 +650,6 @@ public class WebsocketComponent extends UriEndpointComponent {
      * <tt>classpath:WEB-INF/static</tt>
      * <p/>
      * If not configured (eg <tt>null</tt>) then no static resource is in use.
-     *
-     * @param staticResources the base path
      */
     public void setStaticResources(String staticResources) {
         this.staticResources = staticResources;
@@ -661,6 +659,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return host;
     }
 
+    /**
+     * The hostname. The default value is <tt>0.0.0.0</tt>
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -669,6 +670,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return port;
     }
 
+    /**
+     * The port number. The default value is <tt>9292</tt>
+     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -685,18 +689,30 @@ public class WebsocketComponent extends UriEndpointComponent {
         return sslKeystore;
     }
 
+    /**
+     * The password for the keystore when using SSL.
+     */
     public void setSslKeyPassword(String sslKeyPassword) {
         this.sslKeyPassword = sslKeyPassword;
     }
 
+    /**
+     * The password when using SSL.
+     */
     public void setSslPassword(String sslPassword) {
         this.sslPassword = sslPassword;
     }
 
+    /**
+     * The path to the keystore.
+     */
     public void setSslKeystore(String sslKeystore) {
         this.sslKeystore = sslKeystore;
     }
 
+    /**
+     * If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
+     */
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
@@ -709,6 +725,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return minThreads;
     }
 
+    /**
+     * To set a value for minimum number of threads in server thread pool.
+     */
     public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
     }
@@ -717,6 +736,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return maxThreads;
     }
 
+    /**
+     * To set a value for maximum number of threads in server thread pool.
+     */
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
     }
@@ -725,6 +747,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return threadPool;
     }
 
+    /**
+     * To use a custom thread pool for the server.
+     */
     public void setThreadPool(ThreadPool threadPool) {
         this.threadPool = threadPool;
     }
@@ -733,6 +758,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
