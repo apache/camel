@@ -198,6 +198,9 @@
                 <version>${jetty9-version}</version>
                 <configuration>
                     <webAppSourceDirectory>target/classes</webAppSourceDirectory>
+                	<webApp>
+                		<contextPath>/${project.artifactId}</contextPath>
+                	</webApp>
                 </configuration>
             </plugin>
         </plugins>
