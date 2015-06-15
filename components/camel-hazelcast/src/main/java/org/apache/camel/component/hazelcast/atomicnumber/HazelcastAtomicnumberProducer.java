@@ -62,6 +62,10 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
         case HazelcastConstants.COMPARE_AND_SET_OPERATION:
             this.compare(expectedValue, exchange);
             break;
+            
+        case HazelcastConstants.GET_AND_ADD:
+            this.getAndAdd(exchange);
+            break;
 
         case HazelcastConstants.SETVALUE_OPERATION:
             this.set(exchange);
@@ -101,6 +105,11 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
             throw new IllegalArgumentException("Expected value must be specified");
         }
         exchange.getOut().setBody(this.atomicnumber.compareAndSet(expected, update));
+    }
+    
+    private void getAndAdd(Exchange exchange) {
+        long delta = exchange.getIn().getBody(Long.class);
+        exchange.getOut().setBody(this.atomicnumber.getAndAdd(delta));
     }
 
     private void set(Exchange exchange) {

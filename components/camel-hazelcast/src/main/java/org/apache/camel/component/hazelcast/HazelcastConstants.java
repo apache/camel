@@ -79,6 +79,7 @@ public final class HazelcastConstants {
     public static final int SETVALUE_OPERATION = 22;
     public static final int DESTROY_OPERATION = 23;
     public static final int COMPARE_AND_SET_OPERATION = 24;
+    public static final int GET_AND_ADD = 25;
 
     // queue
     public static final int ADD_OPERATION = 31;

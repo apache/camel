@@ -64,6 +64,14 @@
 		</route>
 
 		<route>
+			<from uri="direct:getAndAdd" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>getAndAdd</constant>
+			</setHeader>
+			<to uri="hazelcast:atomicvalue:foo" />
+		</route>
+		
+		<route>
 			<from uri="direct:destroy" />
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>destroy</constant>

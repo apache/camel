@@ -109,5 +109,12 @@ public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSp
         verify(atomicNumber).compareAndSet(1233L, 1235L);
         assertEquals(false, result);
     }
-
+    
+    @Test
+    public void testGetAndAdd() {
+        when(atomicNumber.getAndAdd(12L)).thenReturn(13L);
+        long result = template.requestBody("direct:getAndAdd", 12L, Long.class);
+        verify(atomicNumber).getAndAdd(12L);
+        assertEquals(13L, result);
+    }
 }

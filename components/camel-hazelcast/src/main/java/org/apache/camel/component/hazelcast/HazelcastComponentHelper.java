@@ -111,6 +111,7 @@ public final class HazelcastComponentHelper {
         addMapping("setvalue", HazelcastConstants.SETVALUE_OPERATION);
         addMapping("destroy", HazelcastConstants.DESTROY_OPERATION);
         addMapping("compareAndSet", HazelcastConstants.COMPARE_AND_SET_OPERATION);
+        addMapping("getAndAdd", HazelcastConstants.GET_AND_ADD);
 
         // queue
         addMapping("add", HazelcastConstants.ADD_OPERATION);

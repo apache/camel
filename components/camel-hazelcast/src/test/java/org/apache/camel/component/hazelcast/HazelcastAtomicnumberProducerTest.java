@@ -118,6 +118,14 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
         verify(atomicNumber).compareAndSet(1233L, 1235L);
         assertEquals(false, result);
     }
+    
+    @Test
+    public void testGetAndAdd() {
+        when(atomicNumber.getAndAdd(12L)).thenReturn(13L);
+        long result = template.requestBody("direct:getAndAdd", 12L, Long.class);
+        verify(atomicNumber).getAndAdd(12L);
+        assertEquals(13L, result);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -143,6 +151,9 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
                         String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
                 
                 from("direct:compareAndSet").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.COMPARE_AND_SET_OPERATION)).to(
+                        String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+              
+                from("direct:getAndAdd").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_AND_ADD)).to(
                         String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
                 from("direct:setWithOperationNumber").toF("hazelcast:%sfoo?operation=%s", HazelcastConstants.ATOMICNUMBER_PREFIX, HazelcastConstants.SETVALUE_OPERATION);
