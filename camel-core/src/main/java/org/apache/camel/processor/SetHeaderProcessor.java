@@ -59,7 +59,7 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
 
             old.setHeader(headerName, newHeader);
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
         }
 
