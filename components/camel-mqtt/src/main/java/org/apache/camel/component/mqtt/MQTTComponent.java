@@ -63,6 +63,9 @@ public class MQTTComponent extends UriEndpointComponent {
         return host;
     }
 
+    /**
+     * The URI of the MQTT broker to connect too - this component also supports SSL - e.g. ssl://127.0.0.1:8883
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -71,6 +74,9 @@ public class MQTTComponent extends UriEndpointComponent {
         return userName;
     }
 
+    /**
+     * Username to be used for authentication against the MQTT broker
+     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -79,6 +85,9 @@ public class MQTTComponent extends UriEndpointComponent {
         return password;
     }
 
+    /**
+     * Password to be used for authentication against the MQTT broker
+     */
     public void setPassword(String password) {
         this.password = password;
     }
