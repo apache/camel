@@ -77,6 +77,9 @@ public class KestrelComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use a shared configured configuration as base for creating new endpoints.
+     */
     public void setConfiguration(KestrelConfiguration configuration) {
         this.configuration = configuration;
     }
