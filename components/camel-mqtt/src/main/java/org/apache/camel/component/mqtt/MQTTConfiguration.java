@@ -56,8 +56,6 @@ public class MQTTConfiguration extends MQTT {
     int receiveBufferSize = 1024 * 64;
     @UriParam(defaultValue = "" + 1024 * 64)
     int sendBufferSize = 1024 * 64;
-    @UriParam(defaultValue = "true")
-    boolean useLocalHost = true;
     @UriParam(defaultValue = "10")
     long reconnectDelay = 10;
     @UriParam(defaultValue = "" + 30 * 1000)
@@ -68,8 +66,6 @@ public class MQTTConfiguration extends MQTT {
     long reconnectAttemptsMax = -1;
     @UriParam(defaultValue = "-1")
     long connectAttemptsMax = -1;
-    @UriParam
-    Tracer tracer;
     @UriParam
     String clientId;
     @UriParam
@@ -154,11 +150,11 @@ public class MQTTConfiguration extends MQTT {
 
     /**
      * A comma-delimited list of Topics to subscribe to for messages.
-     * Note that each item of this list can contain MQTT wildcards ('\+' and/or '#'), in order to subscribe
+     * Note that each item of this list can contain MQTT wildcards (+ and/or #), in order to subscribe
      * to topics matching a certain pattern within a hierarchy.
-     * For example, '\+' is a wildcard for all topics at a level within the hierarchy,
-     * so if a broker has topics "topics/one" and "topics/two", then "topics/\+" can be used to subscribe to both.
-     * A caveat to consider here is that if the broker adds "topics/three", the route would also begin to receive messages from that topic.
+     * For example, + is a wildcard for all topics at a level within the hierarchy,
+     * so if a broker has topics topics/one and topics/two, then topics/+ can be used to subscribe to both.
+     * A caveat to consider here is that if the broker adds topics/three, the route would also begin to receive messages from that topic.
      */
     public void setSubscribeTopicNames(String subscribeTopicNames) {
         this.subscribeTopicNames = subscribeTopicNames;
@@ -277,11 +273,6 @@ public class MQTTConfiguration extends MQTT {
         throw new IllegalArgumentException("There is no QoS with name " + qualityOfService);
     }
 
-    @Override
-    public void setTracer(Tracer tracer) {
-        super.setTracer(tracer);
-    }
-
     /**
      *  Use to set the client Id of the session.
      *  This is what an MQTT server uses to identify a session where setCleanSession(false); is being used.
@@ -334,7 +325,7 @@ public class MQTTConfiguration extends MQTT {
     }
 
     /**
-     * Sets the quality of service to use for the Will message. Defaults to QoS.AT_MOST_ONCE.
+     * Sets the quality of service to use for the Will message. Defaults to AT_MOST_ONCE.
      */
     @Override
     public void setWillQos(QoS willQos) {
@@ -342,7 +333,7 @@ public class MQTTConfiguration extends MQTT {
     }
 
     /**
-     * Set to "3.1.1" to use MQTT version 3.1.1. Otherwise defaults to the 3.1 protocol version.
+     * Set to 3.1.1 to use MQTT version 3.1.1. Otherwise defaults to the 3.1 protocol version.
      */
     @Override
     public void setVersion(String version) {
@@ -375,6 +366,9 @@ public class MQTTConfiguration extends MQTT {
         return super.getBlockingExecutor();
     }
 
+    /**
+     * SSL connections perform blocking operations against internal thread pool unless you call the setBlockingExecutor method to configure that executor they will use instead.
+     */
     @Override
     public void setBlockingExecutor(Executor blockingExecutor) {
         super.setBlockingExecutor(blockingExecutor);
@@ -385,6 +379,11 @@ public class MQTTConfiguration extends MQTT {
         return super.getDispatchQueue();
     }
 
+    /**
+     * A HawtDispatch dispatch queue is used to synchronize access to the connection.
+     * If an explicit queue is not configured via the setDispatchQueue method, then a new queue will be created for the connection.
+     * Setting an explicit queue might be handy if you want multiple connection to share the same queue for synchronization.
+     */
     @Override
     public void setDispatchQueue(DispatchQueue dispatchQueue) {
         super.setDispatchQueue(dispatchQueue);
@@ -488,6 +487,9 @@ public class MQTTConfiguration extends MQTT {
         return super.getSslContext();
     }
 
+    /**
+     * To configure security using SSLContext configuration
+     */
     @Override
     public void setSslContext(SSLContext sslContext) {
         super.setSslContext(sslContext);
@@ -505,16 +507,6 @@ public class MQTTConfiguration extends MQTT {
     @Override
     public void setTrafficClass(int trafficClass) {
         super.setTrafficClass(trafficClass);
-    }
-
-    @Override
-    public boolean isUseLocalHost() {
-        return super.isUseLocalHost();
-    }
-
-    @Override
-    public void setUseLocalHost(boolean useLocalHost) {
-        super.setUseLocalHost(useLocalHost);
     }
 
     @Override
@@ -584,10 +576,6 @@ public class MQTTConfiguration extends MQTT {
         super.setReconnectDelayMax(reconnectDelayMax);
     }
 
-    @Override
-    public Tracer getTracer() {
-        return super.getTracer();
-    }
 }
 
 

@@ -350,6 +350,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 writer.println("    <td>" + path.getType() + "</td>");
                 writer.println("    <td>" + safeNull(path.getRequired()) + "</td>");
                 writer.println("    <td>" + path.isDeprecated() + "</td>");
+                writer.println("    <td>" + path.getDefaultValue() + "</td>");
                 writer.println("    <td>" + path.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + path.getDocumentation() + "</td>");
                 writer.println("  </tr>");
