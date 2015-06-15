@@ -49,6 +49,12 @@ public class TransformProcessor extends ServiceSupport implements AsyncProcessor
         try {
             Object newBody = expression.evaluate(exchange, Object.class);
 
+            if (exchange.getException() != null) {
+                // the expression threw an exception so we should break-out
+                callback.done(true);
+                return true;
+            }
+
             boolean out = exchange.hasOut();
             Message old = out ? exchange.getOut() : exchange.getIn();
 
@@ -73,7 +79,7 @@ public class TransformProcessor extends ServiceSupport implements AsyncProcessor
                 }
             }
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
         }
 
