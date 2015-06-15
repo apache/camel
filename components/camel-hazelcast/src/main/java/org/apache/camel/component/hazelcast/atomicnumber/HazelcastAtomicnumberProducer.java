@@ -63,7 +63,7 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
             this.compare(expectedValue, exchange);
             break;
             
-        case HazelcastConstants.GET_AND_ADD:
+        case HazelcastConstants.GET_AND_ADD_OPERATION:
             this.getAndAdd(exchange);
             break;
 

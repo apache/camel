@@ -153,7 +153,7 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
                 from("direct:compareAndSet").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.COMPARE_AND_SET_OPERATION)).to(
                         String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
               
-                from("direct:getAndAdd").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_AND_ADD)).to(
+                from("direct:getAndAdd").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_AND_ADD_OPERATION)).to(
                         String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
                 from("direct:setWithOperationNumber").toF("hazelcast:%sfoo?operation=%s", HazelcastConstants.ATOMICNUMBER_PREFIX, HazelcastConstants.SETVALUE_OPERATION);
