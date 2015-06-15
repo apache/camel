@@ -52,7 +52,7 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
             }
 
             exchange.setProperty(propertyName, newProperty);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
         }
 

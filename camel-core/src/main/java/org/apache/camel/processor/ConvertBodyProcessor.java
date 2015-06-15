@@ -79,7 +79,7 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         Object value;
         try {
             value = old.getMandatoryBody(type);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
             callback.done(true);
             return true;
