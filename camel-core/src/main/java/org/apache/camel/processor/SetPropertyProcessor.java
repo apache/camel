@@ -44,6 +44,13 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Object newProperty = expression.evaluate(exchange, Object.class);
+
+            if (exchange.getException() != null) {
+                // the expression threw an exception so we should break-out
+                callback.done(true);
+                return true;
+            }
+
             exchange.setProperty(propertyName, newProperty);
         } catch (Exception e) {
             exchange.setException(e);
