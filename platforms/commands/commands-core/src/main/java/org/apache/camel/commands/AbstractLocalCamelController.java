@@ -178,11 +178,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
         if (agent != null) {
             MBeanServer mBeanServer = agent.getMBeanServer();
-            ObjectName on = null;
-            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=services,name=DefaultInflightRepository,*"), null);
-            if (set.size() == 1) {
-                on = set.iterator().next();
-            }
+            ObjectName on = new ObjectName(agent.getMBeanObjectDomainName() + ":type=services,name=DefaultInflightRepository,context=" + context.getManagementName());
             if (mBeanServer.isRegistered(on)) {
                 TabularData list = (TabularData) mBeanServer.invoke(on, "browse", new Object[]{limit, sortByLongestDuration}, new String[]{"int", "boolean"});
                 Collection<CompositeData> values = (Collection<CompositeData>) list.values();
