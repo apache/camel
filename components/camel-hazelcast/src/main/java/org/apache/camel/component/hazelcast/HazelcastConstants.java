@@ -40,6 +40,7 @@ public final class HazelcastConstants {
     public static final String TTL_VALUE = "CamelHazelcastObjectTtlValue";
     public static final String TTL_UNIT = "CamelHazelcastObjectTtlUnit";
     public static final String QUERY = "CamelHazelcastQuery";
+    public static final String EXPECTED_VALUE = "CamelHazelcastExpectedValue";
 
     /*
      * outgoing header properties
@@ -77,6 +78,7 @@ public final class HazelcastConstants {
     public static final int DECREMENT_OPERATION = 21;
     public static final int SETVALUE_OPERATION = 22;
     public static final int DESTROY_OPERATION = 23;
+    public static final int COMPARE_AND_SET_OPERATION = 24;
 
     // queue
     public static final int ADD_OPERATION = 31;

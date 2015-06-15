@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
+
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -88,6 +92,22 @@ public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSp
     public void testDestroy() throws InterruptedException {
         template.sendBody("direct:destroy", null);
         verify(atomicNumber).destroy();
+    }
+    
+    @Test
+    public void testCompareAndSet() {
+        Map<String, Object> headersOk = new HashMap();
+        headersOk.put(HazelcastConstants.EXPECTED_VALUE, 1234L);
+        when(atomicNumber.compareAndSet(1234L, 1235L)).thenReturn(true);
+        when(atomicNumber.compareAndSet(1233L, 1235L)).thenReturn(false);
+        boolean result = template.requestBodyAndHeaders("direct:compareAndSet", 1235L, headersOk, Boolean.class);
+        verify(atomicNumber).compareAndSet(1234L, 1235L);
+        assertEquals(true, result);
+        Map<String, Object> headersKo = new HashMap();
+        headersKo.put(HazelcastConstants.EXPECTED_VALUE, 1233L);
+        result = template.requestBodyAndHeaders("direct:compareAndSet", 1235L, headersKo, Boolean.class);
+        verify(atomicNumber).compareAndSet(1233L, 1235L);
+        assertEquals(false, result);
     }
 
 }

@@ -54,6 +54,14 @@
 			</setHeader>
 			<to uri="hazelcast:atomicvalue:foo" />
 		</route>
+		
+		<route>
+			<from uri="direct:compareAndSet" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>compareAndSet</constant>
+			</setHeader>
+			<to uri="hazelcast:atomicvalue:foo" />
+		</route>
 
 		<route>
 			<from uri="direct:destroy" />
