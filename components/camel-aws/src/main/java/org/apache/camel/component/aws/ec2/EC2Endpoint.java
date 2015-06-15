@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.ec2;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2Client;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -28,17 +27,13 @@ import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS EC2 Endpoint</a>.  
  */
-@UriEndpoint(scheme = "aws-ec2", title = "AWS EC2", syntax = "aws-ec2:label", producerOnly = true, label = "cloud")
+@UriEndpoint(scheme = "aws-ec2", title = "AWS EC2", syntax = "aws-ec2:label", producerOnly = true, label = "cloud,management")
 public class EC2Endpoint extends ScheduledPollEndpoint {
     
-    private static final Logger LOG = LoggerFactory.getLogger(EC2Endpoint.class);
-
     private AmazonEC2Client ec2Client;
 
     @UriParam
