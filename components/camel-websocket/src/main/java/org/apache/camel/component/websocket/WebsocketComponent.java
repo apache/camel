@@ -80,6 +80,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     protected String sslKeyPassword;
     protected String sslPassword;
     protected String sslKeystore;
+    protected Map<String, WebSocketFactory> socketFactory; 
 
     /**
      * Map for storing servlets. {@link WebsocketComponentServlet} is identified by pathSpec {@link String}.
@@ -114,6 +115,11 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     public WebsocketComponent() {
         super(WebsocketEndpoint.class);
+
+        if (this.socketFactory == null) {
+            this.socketFactory = new HashMap<String, WebSocketFactory>();
+            this.socketFactory.put("default", new DefaultWebsocketFactory());
+        }
     }
 
     /**
@@ -460,7 +466,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     protected WebsocketComponentServlet createServlet(NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets, ServletContextHandler handler) {
-        WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync);
+        WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync, socketFactory);
         servlets.put(pathSpec, servlet);
         handler.addServlet(new ServletHolder(servlet), pathSpec);
         return servlet;
@@ -763,6 +769,18 @@ public class WebsocketComponent extends UriEndpointComponent {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public Map<String, WebSocketFactory> getSocketFactory() {
+        return socketFactory;
+    }
+
+    public void setSocketFactory(Map<String, WebSocketFactory> socketFactory) {
+        this.socketFactory = socketFactory;
+
+        if (!this.socketFactory.containsKey("default")) {
+            this.socketFactory.put("default", new DefaultWebsocketFactory());
+        }
     }
 
     public static HashMap<String, ConnectorRef> getConnectors() {
