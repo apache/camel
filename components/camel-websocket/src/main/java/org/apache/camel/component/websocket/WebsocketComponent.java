@@ -775,6 +775,11 @@ public class WebsocketComponent extends UriEndpointComponent {
         return socketFactory;
     }
 
+    /**
+     * To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol.
+     * <p/>
+     * The <tt>default</tt> key is reserved for the default implementation.
+     */
     public void setSocketFactory(Map<String, WebSocketFactory> socketFactory) {
         this.socketFactory = socketFactory;
 
