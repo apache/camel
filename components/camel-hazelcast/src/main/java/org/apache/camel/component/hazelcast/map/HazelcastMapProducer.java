@@ -97,6 +97,14 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
         case HazelcastConstants.GET_ALL_OPERATION:
             this.getAll(oid, exchange);
             break;
+            
+        case HazelcastConstants.CONTAINS_KEY_OPERATION:
+            this.containsKey(oid, exchange);
+            break;
+            
+        case HazelcastConstants.CONTAINS_VALUE_OPERATION:
+            this.containsValue(exchange);
+            break;
 
         case HazelcastConstants.DELETE_OPERATION:
             this.delete(oid);
@@ -240,5 +248,20 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
      */
     private void evictAll() {
         this.cache.evictAll();
+    }
+    
+    /**
+     * Check for a specific key in the cache and return true if it exists or false otherwise
+     */
+    private void containsKey(Object oid, Exchange exchange) {
+        exchange.getOut().setBody(this.cache.containsKey(oid));
+    }
+    
+    /**
+     * Check for a specific value in the cache and return true if it exists or false otherwise
+     */
+    private void containsValue(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        exchange.getOut().setBody(this.cache.containsValue(body));
     }
 }

@@ -106,6 +106,24 @@
 			</setHeader>
 			<to uri="hazelcast:map:foo" />
 			<to uri="seda:out" />
+		</route>
+		
+		<route>
+			<from uri="direct:containsKey" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>containsKey</constant>
+			</setHeader>
+			<to uri="hazelcast:map:foo" />
+			<to uri="seda:out" />
+		</route>
+		
+		<route>
+			<from uri="direct:containsValue" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>containsValue</constant>
+			</setHeader>
+			<to uri="hazelcast:map:foo" />
+			<to uri="seda:out" />
 		</route>		
 	</camelContext>
 
