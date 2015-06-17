@@ -91,4 +91,38 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e);
         assertEquals(501, cause.getStatusCode());
     }
+    
+    @Test
+    public void httpGetWhichReturnsHttp501WithIgnoreResponseBody() throws Exception {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" 
+            + localServer.getLocalPort() + "/XXX?throwExceptionOnFailure=false&ignoreResponseBody=true", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                }
+            });
+
+        assertNotNull(exchange);
+
+        Message out = exchange.getOut();
+        assertNotNull(out);
+        assertNull(out.getBody());
+
+        Map<String, Object> headers = out.getHeaders();
+        assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, headers.get(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("0", headers.get("Content-Length"));
+    }
+
+    @Test
+    public void httpGetWhichReturnsHttp501ShouldThrowAnExceptionWithIgnoreResponseBody() throws Exception {
+        Exchange reply = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" 
+            + localServer.getLocalPort() + "/XXX?throwExceptionOnFailure=true&ignoreResponseBody=true", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                }
+            });
+
+        Exception e = reply.getException();
+        assertNotNull("Should have thrown an exception", e);
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e);
+        assertEquals(501, cause.getStatusCode());
+    }
+    
 }

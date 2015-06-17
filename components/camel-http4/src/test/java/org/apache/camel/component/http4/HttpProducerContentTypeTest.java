@@ -92,4 +92,22 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
         assertEquals(CONTENT_TYPE, out.getOut().getBody(String.class));
         
     }
+    
+    @Test
+    public void testContentTypeWithBoundaryWithIgnoreResponseBody() throws Exception {
+        Exchange out = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content?ignoreResponseBody=true", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
+                exchange.getIn().setBody("This is content");
+            }
+            
+        });
+
+        assertNotNull(out);
+        assertFalse("Should not fail", out.isFailed());
+        assertNull(out.getOut().getBody());
+        
+    }
 }
