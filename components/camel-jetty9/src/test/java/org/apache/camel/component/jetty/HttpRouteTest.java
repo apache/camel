@@ -93,6 +93,12 @@ public class HttpRouteTest extends BaseJettyTest {
         String out = template.requestBody("http://localhost:" + port1 + "/echo", "HelloWorld", String.class);
         assertEquals("Get a wrong output " , "HelloWorld", out);
     }
+    
+    @Test
+    public void testEchoEndpointWithIgnoreResponseBody() throws Exception {
+        String out = template.requestBody("http://localhost:" + port1 + "/echo?ignoreResponseBody=true", "HelloWorld", String.class);
+        assertNull("Get a wrong output " , out);
+    }
 
     @Test
     public void testPostParameter() throws Exception {
