@@ -478,6 +478,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return sslKeyPassword;
     }
 
+    /**
+     * The key password, which is used to access the certificate's key entry in the keystore (this is the same password that is supplied to the keystore command's -keypass option).
+     */
     public void setSslKeyPassword(String sslKeyPassword) {
         this.sslKeyPassword = sslKeyPassword;
     }
@@ -486,10 +489,16 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return sslPassword;
     }
 
+    /**
+     * The ssl password, which is required to access the keystore file (this is the same password that is supplied to the keystore command's -storepass option).
+     */
     public void setSslPassword(String sslPassword) {
         this.sslPassword = sslPassword;
     }
 
+    /**
+     * Specifies the location of the Java keystore file, which contains the Jetty server's own X.509 certificate in a key entry.
+     */
     public void setKeystore(String sslKeystore) {
         this.sslKeystore = sslKeystore;
     }
@@ -502,6 +511,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return errorHandler;
     }
 
+    /**
+     * This option is used to set the ErrorHandler that Jetty server uses.
+     */
     public void setErrorHandler(ErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
@@ -611,10 +623,16 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return sslSocketConnectors;
     }
 
+    /**
+     * A map which contains per port number specific SSL connectors.
+     */
     public void setSslSocketConnectors(Map <Integer, Connector> connectors) {
         sslSocketConnectors = connectors;
     }
 
+    /**
+     * A map which contains per port number specific HTTP connectors. Uses the same principle as sslSocketConnectors.
+     */
     public void setSocketConnectors(Map<Integer, Connector> socketConnectors) {
         this.socketConnectors = socketConnectors;
     }
@@ -686,6 +704,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return httpClientMinThreads;
     }
 
+    /**
+     * To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured.
+     */
     public void setHttpClientMinThreads(Integer httpClientMinThreads) {
         this.httpClientMinThreads = httpClientMinThreads;
     }
@@ -694,6 +715,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return httpClientMaxThreads;
     }
 
+    /**
+     * To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured.
+     */
     public void setHttpClientMaxThreads(Integer httpClientMaxThreads) {
         this.httpClientMaxThreads = httpClientMaxThreads;
     }
@@ -702,6 +726,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return minThreads;
     }
 
+    /**
+     * To set a value for minimum number of threads in server thread pool. Notice that both a min and max size must be configured.
+     */
     public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
     }
@@ -710,6 +737,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return maxThreads;
     }
 
+    /**
+     * To set a value for maximum number of threads in server thread pool. Notice that both a min and max size must be configured.
+     */
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
     }
@@ -718,22 +748,31 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return threadPool;
     }
 
+    /**
+     * To use a custom thread pool for the server. This option should only be used in special circumstances.
+     */
     public void setThreadPool(ThreadPool threadPool) {
         this.threadPool = threadPool;
-    }
-
-    public void setEnableJmx(boolean enableJmx) {
-        this.enableJmx = enableJmx;
     }
 
     public boolean isEnableJmx() {
         return enableJmx;
     }
-    
+
+    /**
+     * If this option is true, Jetty JMX support will be enabled for this endpoint.
+     */
+    public void setEnableJmx(boolean enableJmx) {
+        this.enableJmx = enableJmx;
+    }
+
     public JettyHttpBinding getJettyHttpBinding() {
         return jettyHttpBinding;
     }
 
+    /**
+     * To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which are used to customize how a response should be written for the producer.
+     */
     public void setJettyHttpBinding(JettyHttpBinding jettyHttpBinding) {
         this.jettyHttpBinding = jettyHttpBinding;
     }
@@ -760,6 +799,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return this.mbContainer;
     }
 
+    /**
+     * To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX is enabled that Jetty uses for registering mbeans.
+     */
     public void setMbContainer(MBeanContainer mbContainer) {
         this.mbContainer = mbContainer;
     }
@@ -768,6 +810,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return sslSocketConnectorProperties;
     }
 
+    /**
+     * A map which contains general SSL connector properties.
+     */
     public void setSslSocketConnectorProperties(Map<String, Object> sslSocketConnectorProperties) {
         this.sslSocketConnectorProperties = sslSocketConnectorProperties;
     }
@@ -776,6 +821,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return socketConnectorProperties;
     }
 
+    /**
+     * A map which contains general HTTP connector properties. Uses the same principle as sslSocketConnectorProperties.
+     */
     public void setSocketConnectorProperties(Map<String, Object> socketConnectorProperties) {
         this.socketConnectorProperties = socketConnectorProperties;
     }
@@ -798,6 +846,12 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return continuationTimeout;
     }
 
+    /**
+     * Allows to set a timeout in millis when using Jetty as consumer (server).
+     * By default Jetty uses 30000. You can use a value of <= 0 to never expire.
+     * If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client.
+     * This option is only in use when using Jetty with the Asynchronous Routing Engine.
+     */
     public void setContinuationTimeout(Long continuationTimeout) {
         this.continuationTimeout = continuationTimeout;
     }
@@ -806,6 +860,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return useContinuation;
     }
 
+    /**
+     * Whether or not to use Jetty continuations for the Jetty Server.
+     */
     public void setUseContinuation(boolean useContinuation) {
         this.useContinuation = useContinuation;
     }
@@ -814,6 +871,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -822,6 +882,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return responseBufferSize;
     }
 
+    /**
+     * Allows to configure a custom value of the response buffer size on the Jetty connectors.
+     */
     public void setResponseBufferSize(Integer responseBufferSize) {
         this.responseBufferSize = responseBufferSize;
     }
@@ -830,6 +893,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return requestBufferSize;
     }
 
+    /**
+     * Allows to configure a custom value of the request buffer size on the Jetty connectors.
+     */
     public void setRequestBufferSize(Integer requestBufferSize) {
         this.requestBufferSize = requestBufferSize;
     }
@@ -838,6 +904,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return requestHeaderSize;
     }
 
+    /**
+     * Allows to configure a custom value of the request header size on the Jetty connectors.
+     */
     public void setRequestHeaderSize(Integer requestHeaderSize) {
         this.requestHeaderSize = requestHeaderSize;
     }
@@ -846,6 +915,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return responseHeaderSize;
     }
 
+    /**
+     * Allows to configure a custom value of the response header size on the Jetty connectors.
+     */
     public void setResponseHeaderSize(Integer responseHeaderSize) {
         this.responseHeaderSize = responseHeaderSize;
     }
@@ -854,6 +926,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return proxyHost;
     }
 
+    /**
+     * To use a http proxy to configure the hostname.
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -862,6 +937,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return proxyPort;
     }
 
+    /**
+     * To use a http proxy to configure the port number.
+     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
