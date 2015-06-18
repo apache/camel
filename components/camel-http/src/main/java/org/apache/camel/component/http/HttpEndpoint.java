@@ -95,7 +95,8 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private int proxyPort;
     @UriParam(label = "producer", enums = "Basic,Digest,NTLM", description = "Authentication method for proxy, either as Basic, Digest or NTLM.")
     private String authMethodPriority;
-    @UriParam
+    @UriParam(description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
+                    + " This allows you to get all responses regardless of the HTTP status code.")
     private boolean transferException;
     @UriParam(label = "consumer",
             description = "Specifies whether to enable HTTP TRACE for this Jetty consumer. By default TRACE is turned off.")
