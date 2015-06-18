@@ -129,6 +129,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
     private List<Handler> handlers;
     private List<String> schemaLocations;
+    private String transportId;
 
     @UriPath(description = "To lookup an existing configured CxfEndpoint. Must used bean: as prefix.")
     private String beanId;
@@ -177,8 +178,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean skipFaultLogging;
     @UriParam
     private boolean mergeProtocolHeaders;
-    @UriParam
-    private String transportId;
     @UriParam
     private String bindingId;
     @UriParam
@@ -899,6 +898,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return cxfBinding;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
         if (cxfBinding instanceof HeaderFilterStrategyAware) {
@@ -1042,6 +1044,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
     }
 
+    /**
+     * The service publish address.
+     */
     public void setAddress(String address) {
         super.setEndpointUri(UnsafeUriCharactersEncoder.encodeHttpURI(address));
         this.address = address;
@@ -1256,6 +1261,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return resolvePropertyPlaceholders(bindingId);
     }
 
+    /**
+     * The bindingId for the service model to use.
+     */
     public void setBindingId(String bindingId) {
         this.bindingId = bindingId;
     }
@@ -1268,6 +1276,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return skipFaultLogging;
     }
 
+    /**
+     * This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches.
+     */
     public void setSkipFaultLogging(boolean skipFaultLogging) {
         this.skipFaultLogging = skipFaultLogging;
     }
@@ -1276,6 +1287,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return mergeProtocolHeaders;
     }
 
+    /**
+     * Whether to merge protocol headers. If enabled then propagating headers between Camel and CXF becomes more consistent and similar. For more details see CAMEL-6393.
+     */
     public void setMergeProtocolHeaders(boolean mergeProtocolHeaders) {
         this.mergeProtocolHeaders = mergeProtocolHeaders;
     }
