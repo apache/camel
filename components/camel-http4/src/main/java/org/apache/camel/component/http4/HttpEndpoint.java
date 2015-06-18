@@ -87,7 +87,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String httpMethodRestrict;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean clearExpiredCookies = true;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer")
     private boolean ignoreResponseBody;
 
     public HttpEndpoint() {
@@ -478,7 +478,6 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.authenticationPreemptive = authenticationPreemptive;
     }
 
-   
     public boolean isIgnoreResponseBody() {
         return ignoreResponseBody;
     }
@@ -489,4 +488,5 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void setIgnoreResponseBody(boolean ignoreResponseBody) {
         this.ignoreResponseBody = ignoreResponseBody;
     }
+
 }

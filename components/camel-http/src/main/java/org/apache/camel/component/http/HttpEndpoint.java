@@ -106,7 +106,8 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @UriParam(label = "consumer",
             description = "To use a custom buffer size on the javax.servlet.ServletResponse.")
     private Integer responseBufferSize;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer",
+            description = "If this option is true, The http producer won't read response body and cache the input stream")
     private boolean ignoreResponseBody;
 
     public HttpEndpoint() {
@@ -484,9 +485,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     /**
      * If this option is true, The http producer won't read response body and cache the input stream.
-     *
      */
     public void setIgnoreResponseBody(boolean ignoreResponseBody) {
         this.ignoreResponseBody = ignoreResponseBody;
     }
+
 }
