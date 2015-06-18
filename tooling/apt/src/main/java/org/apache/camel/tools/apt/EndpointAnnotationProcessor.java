@@ -480,7 +480,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 String defaultValueNote = null;
 
                 String docComment = findJavaDoc(elementUtils, method, fieldName, name, classElement, false);
-                if (docComment == null) {
+                if (isNullOrEmpty(docComment)) {
+                    docComment = metadata != null ? metadata.description() : null;
+                }
+                if (isNullOrEmpty(docComment)) {
                     // apt cannot grab javadoc from camel-core, only from annotations
                     if ("setHeaderFilterStrategy".equals(methodName)) {
                         docComment = HEADER_FILTER_STRATEGY_JAVADOC;
