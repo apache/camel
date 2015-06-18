@@ -39,9 +39,6 @@
     <requiredProperty key="weld2-version">
       <defaultValue>${weld2-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="openwebbeans-version">
-      <defaultValue>${openwebbeans-version}</defaultValue>
-    </requiredProperty>
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
     </requiredProperty>
