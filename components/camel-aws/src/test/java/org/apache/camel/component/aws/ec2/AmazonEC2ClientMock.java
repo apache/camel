@@ -52,6 +52,8 @@ import com.amazonaws.services.ec2.model.TerminateInstancesResult;
 import com.amazonaws.services.ec2.model.UnmonitorInstancesRequest;
 import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
+import org.apache.camel.util.ObjectHelper;
+
 public class AmazonEC2ClientMock extends AmazonEC2Client {
 
     public AmazonEC2ClientMock() {
@@ -71,17 +73,32 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
             ins.setImageId(runInstancesRequest.getImageId());
             ins.setInstanceType(runInstancesRequest.getInstanceType());
             ins.setInstanceId("instance-1");
-            if (runInstancesRequest.getSecurityGroups().contains("secgroup-1") && runInstancesRequest.getSecurityGroups().contains("secgroup-2")) {
-                GroupIdentifier id1 = new GroupIdentifier();
-                id1.setGroupId("id-1");
-                id1.setGroupName("secgroup-1");
-                GroupIdentifier id2 = new GroupIdentifier();
-                id2.setGroupId("id-2");
-                id2.setGroupName("secgroup-2");
-                Collection secGroups = new ArrayList<GroupIdentifier>();
-                secGroups.add(id1);
-                secGroups.add(id2);
-                ins.setSecurityGroups(secGroups);
+            if (ObjectHelper.isNotEmpty(runInstancesRequest.getSecurityGroups()) && ObjectHelper.isNotEmpty(runInstancesRequest.getSecurityGroups())) {
+                if (runInstancesRequest.getSecurityGroups().contains("secgroup-1") && runInstancesRequest.getSecurityGroups().contains("secgroup-2")) {
+                    GroupIdentifier id1 = new GroupIdentifier();
+                    id1.setGroupId("id-1");
+                    id1.setGroupName("secgroup-1");
+                    GroupIdentifier id2 = new GroupIdentifier();
+                    id2.setGroupId("id-2");
+                    id2.setGroupName("secgroup-2");
+                    Collection secGroups = new ArrayList<GroupIdentifier>();
+                    secGroups.add(id1);
+                    secGroups.add(id2);
+                    ins.setSecurityGroups(secGroups);
+                } else if (ObjectHelper.isNotEmpty(runInstancesRequest.getKeyName())) {
+                    if (ObjectHelper.isNotEmpty(runInstancesRequest.getKeyName().contains("keypair-1"))) {
+                        GroupIdentifier id1 = new GroupIdentifier();
+                        id1.setGroupId("id-3");
+                        id1.setGroupName("secgroup-3");
+                        GroupIdentifier id2 = new GroupIdentifier();
+                        id2.setGroupId("id-4");
+                        id2.setGroupName("secgroup-4");
+                        Collection secGroups = new ArrayList<GroupIdentifier>();
+                        secGroups.add(id1);
+                        secGroups.add(id2);
+                        ins.setSecurityGroups(secGroups);
+                    }
+                }
             }
             instances.add(ins);
             res.setInstances(instances);

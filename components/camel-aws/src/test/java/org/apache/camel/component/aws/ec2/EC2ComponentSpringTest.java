@@ -71,6 +71,30 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
     }
     
     @Test
+    public void ec2CreateAndRunTestWithKeyPair() throws Exception {
+
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_KEY_PAIR, "keypair-1");
+            }
+        });
+        
+        RunInstancesResult resultGet = (RunInstancesResult) exchange.getIn().getBody();
+        assertEquals(resultGet.getReservation().getInstances().get(0).getImageId(), "test-1");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceType(), InstanceType.T2Micro.toString());
+        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceId(), "instance-1");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().size(), 2);
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(0).getGroupId(), "id-3");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(1).getGroupId(), "id-4");
+    }
+    
+    @Test
     public void startInstances() {
         
         Exchange exchange = template.request("direct:start", new Processor() {
