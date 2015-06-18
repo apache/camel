@@ -125,6 +125,7 @@ public class EC2Producer extends DefaultProducer {
         boolean ebsOptimized;
         Collection securityGroups;
         String keyName;
+        String clientToken;
         RunInstancesRequest request = new RunInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.IMAGE_ID))) {
             ami = exchange.getIn().getHeader(EC2Constants.IMAGE_ID, String.class);
@@ -169,6 +170,10 @@ public class EC2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_KEY_PAIR))) {
             keyName = exchange.getIn().getHeader(EC2Constants.INSTANCES_KEY_PAIR, String.class);
             request.withKeyName(keyName);
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_CLIENT_TOKEN))) {
+            clientToken = exchange.getIn().getHeader(EC2Constants.INSTANCES_CLIENT_TOKEN, String.class);
+            request.withClientToken(clientToken);
         }
         RunInstancesResult result;
         try {
