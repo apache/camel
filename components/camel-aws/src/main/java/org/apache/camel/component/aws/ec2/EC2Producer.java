@@ -27,6 +27,7 @@ import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.MonitorInstancesRequest;
 import com.amazonaws.services.ec2.model.MonitorInstancesResult;
+import com.amazonaws.services.ec2.model.Placement;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -126,6 +127,7 @@ public class EC2Producer extends DefaultProducer {
         Collection securityGroups;
         String keyName;
         String clientToken;
+        Placement placement;
         RunInstancesRequest request = new RunInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.IMAGE_ID))) {
             ami = exchange.getIn().getHeader(EC2Constants.IMAGE_ID, String.class);
@@ -174,6 +176,10 @@ public class EC2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_CLIENT_TOKEN))) {
             clientToken = exchange.getIn().getHeader(EC2Constants.INSTANCES_CLIENT_TOKEN, String.class);
             request.withClientToken(clientToken);
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_PLACEMENT))) {
+            placement = exchange.getIn().getHeader(EC2Constants.INSTANCES_PLACEMENT, Placement.class);
+            request.withPlacement(placement);
         }
         RunInstancesResult result;
         try {
