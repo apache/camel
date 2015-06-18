@@ -55,6 +55,24 @@
 			</setHeader>
 			<to uri="hazelcast:multimap:bar" />
 		</route>
+		
+		<route>
+			<from uri="direct:containsKey" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>containsKey</constant>
+			</setHeader>
+			<to uri="hazelcast:multimap:bar" />
+            <to uri="seda:out" />
+		</route>
+		
+		<route>
+			<from uri="direct:containsValue" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>containsValue</constant>
+			</setHeader>
+			<to uri="hazelcast:multimap:bar" />
+            <to uri="seda:out" />
+		</route>
 
 	</camelContext>
 
