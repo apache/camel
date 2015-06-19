@@ -41,7 +41,7 @@ public class GreaterCamelEjbPropertiesTest extends CamelTestSupport {
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
         EjbComponent ejb = answer.getComponent("ejb", EjbComponent.class);
-        ejb.setJndiProperties(properties);
+        ejb.setProperties(properties);
 
         return answer;
     }
