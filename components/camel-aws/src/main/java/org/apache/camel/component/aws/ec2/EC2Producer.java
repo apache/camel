@@ -42,6 +42,7 @@ import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -114,6 +115,15 @@ public class EC2Producer extends DefaultProducer {
     @Override
     public EC2Endpoint getEndpoint() {
         return (EC2Endpoint) super.getEndpoint();
+    }
+
+    private Message getMessageForResponse(final Exchange exchange) {
+        if (exchange.getPattern().isOutCapable()) {
+            Message out = exchange.getOut();
+            out.copyFrom(exchange.getIn());
+            return out;
+        }
+        return exchange.getIn();
     }
     
     private void createAndRunInstance(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -188,7 +198,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Run Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
     
     private void startInstances(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -207,7 +218,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Start Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);        
     }
     
     private void stopInstances(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -226,7 +238,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Stop Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);        
     }
     
     private void terminateInstances(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -245,7 +258,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Terminate Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);        
     }
     
     private void describeInstances(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -262,7 +276,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Describe Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);        
     }
     
     private void describeInstancesStatus(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -279,7 +294,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Describe Instances Status command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);        
     }
     
     private void rebootInstances(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -315,7 +331,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Monitor Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result); 
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result); 
     }
     
     private void unmonitorInstances(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -334,6 +351,7 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Unmonitor Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result); 
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result); 
     }
 }
