@@ -36,7 +36,7 @@ import org.apache.camel.spi.Registry;
 public class EjbComponent extends BeanComponent {
 
     private Context context;
-    private Properties properties;
+    private Properties jndiProperties;
 
     public EjbComponent() {
         super(EjbEndpoint.class);
@@ -67,23 +67,23 @@ public class EjbComponent extends BeanComponent {
         this.context = context;
     }
 
-    public Properties getProperties() {
-        return properties;
+    public Properties getJndiProperties() {
+        return jndiProperties;
     }
 
     /**
      * Properties for creating javax.naming.Context if a context has not been configured.
      */
-    public void setProperties(Properties properties) {
-        this.properties = properties;
+    public void setJndiProperties(Properties jndiProperties) {
+        this.jndiProperties = jndiProperties;
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (context == null && properties != null) {
-            context = new InitialContext(getProperties());
+        if (context == null && jndiProperties != null) {
+            context = new InitialContext(getJndiProperties());
         }
     }
 }
