@@ -99,12 +99,16 @@ public final class DefaultExchange implements Exchange {
             exchange.getIn().setBody(getIn().getBody());
             if (getIn().hasHeaders()) {
                 exchange.getIn().setHeaders(safeCopyHeaders(getIn().getHeaders()));
+                // just copy the attachments here
+                exchange.getIn().copyAttachments(getIn());
             }
             if (hasOut()) {
                 exchange.getOut().setBody(getOut().getBody());
                 if (getOut().hasHeaders()) {
                     exchange.getOut().setHeaders(safeCopyHeaders(getOut().getHeaders()));
                 }
+                // Just copy the attachments here
+                exchange.getOut().copyAttachments(getOut());
             }
         } else {
             // old way of doing copy which is @deprecated
