@@ -82,21 +82,33 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
 
-    protected Bus bus;
+    private final InterceptorHolder interceptorHolder = new InterceptorHolder();
 
-    protected List<Object> entityProviders = new LinkedList<Object>();
-
-    protected List<String> schemaLocations;
+    private Map<String, String> parameters;
+    private Map<String, Object> properties;
 
     @UriPath(description = "To lookup an existing configured CxfRsEndpoint. Must used bean: as prefix.")
     private String beanId;
     @UriPath
     private String address;
-
-    private Map<String, String> parameters;
+    @UriParam
     private List<Class<?>> resourceClasses;
+    @UriParam
+    private String modelRef;
+    @UriParam(defaultValue = "Default")
+    private BindingStyle bindingStyle = BindingStyle.Default;
+    @UriPath
+    protected Bus bus;
+    @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
+    @UriParam
     private CxfRsBinding binding;
+    @UriParam
+    private List<Object> providers = new LinkedList<Object>();
+    @UriParam
+    private List<String> schemaLocations;
+    @UriParam
+    private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
     @UriParam(defaultValue = "true")
     private boolean httpClientAPI = true;
     @UriParam
@@ -111,22 +123,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private int loggingSizeLimit;
     @UriParam
     private boolean skipFaultLogging;
-    @UriParam(defaultValue = "Default")
-    private BindingStyle bindingStyle = BindingStyle.Default;
-    // The continuation timeout value for CXF continuation to use
     @UriParam(defaultValue = "30000")
     private long continuationTimeout = 30000;
     @UriParam
-    private boolean isSetDefaultBus;
+    private boolean defaultBus;
     @UriParam
     private boolean performInvocation;
     @UriParam
     private boolean propagateContexts;
-    @UriParam
-    private String modelRef;
-    private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
-    private InterceptorHolder interceptorHolder = new InterceptorHolder();
-    private Map<String, Object> properties;
 
     public CxfRsEndpoint() {
     }
@@ -142,6 +146,11 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         setAddress(endpointUri);
     }
 
+    @Override
+    public boolean isLenientProperties() {
+        return true;
+    }
+
     // This method is for CxfRsComponent setting the EndpointUri
     protected void updateEndpointUri(String endpointUri) {
         super.setEndpointUri(endpointUri);
@@ -155,6 +164,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return parameters;
     }
 
+    /**
+     * If it is true, the CxfRsProducer will use the HttpClientAPI to invoke the service.
+     * If it is false, the CxfRsProducer will use the ProxyClientAPI to invoke the service
+     */
     public void setHttpClientAPI(boolean clientAPI) {
         httpClientAPI = clientAPI;
     }
@@ -163,15 +176,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return httpClientAPI;
     }
 
-    @Override
-    public boolean isLenientProperties() {
-        return true;
-    }
-
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
     }
@@ -193,6 +204,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return false;
     }
 
+    /**
+     * To use a custom CxfBinding to control the binding between Camel Message and CXF Message.
+     */
     public void setBinding(CxfRsBinding binding) {
         this.binding = binding;
     }
@@ -205,6 +219,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return skipFaultLogging;
     }
 
+    /**
+     * This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches.
+     */
     public void setSkipFaultLogging(boolean skipFaultLogging) {
         this.skipFaultLogging = skipFaultLogging;
     }
@@ -359,13 +376,11 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
     }
 
-
     public JAXRSServerFactoryBean createJAXRSServerFactoryBean() {
         JAXRSServerFactoryBean answer = newJAXRSServerFactoryBean();
         setupJAXRSServerFactoryBean(answer);
         return answer;
     }
-
 
     public JAXRSClientFactoryBean createJAXRSClientFactoryBean() {
         return createJAXRSClientFactoryBean(getAddress());
@@ -388,6 +403,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         resourceClasses.add(resourceClass);
     }
 
+    /**
+     * The resource classes which you want to export as REST service. Multiple classes can be separated by comma.
+     */
     public void setResourceClasses(List<Class<?>> resourceClasses) {
         this.resourceClasses = resourceClasses;
     }
@@ -396,16 +414,28 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         setResourceClasses(Arrays.asList(classes));
     }
 
+    /**
+     * The service publish address.
+     */
     public void setAddress(String address) {
         this.address = address;
     }
+
+    /**
+     * This option is used to specify the model file which is useful for the resource class without annotation.
+     * When using this option, then the service class can be omitted, to  emulate document-only endpoints
+     */
     public void setModelRef(String ref) {
         this.modelRef = ref;
     }
+
     public String getAddress() {
         return resolvePropertyPlaceholders(address);
     }
 
+    /**
+     * This option enables CXF Logging Feature which writes inbound and outbound REST messages to log.
+     */
     public boolean isLoggingFeatureEnabled() {
         return loggingFeatureEnabled;
     }
@@ -418,6 +448,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return loggingSizeLimit;
     }
 
+    /**
+     * To limit the total size of number of bytes the logger will output when logging feature has been enabled.
+     */
     public void setLoggingSizeLimit(int loggingSizeLimit) {
         this.loggingSizeLimit = loggingSizeLimit;
     }
@@ -426,27 +459,31 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return throwExceptionOnFailure;
     }
 
+    /**
+     * This option tells the CxfRsProducer to inspect return codes and will generate an Exception if the return code is larger than 207.
+     */
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
 
     /**
-     * @param maxClientCacheSize the maxClientCacheSize to set
+     * This option allows you to configure the maximum size of the cache.
+     * The implementation caches CXF clients or ClientFactoryBean in CxfProvider and CxfRsProvider.
      */
     public void setMaxClientCacheSize(int maxClientCacheSize) {
         this.maxClientCacheSize = maxClientCacheSize;
     }
 
-    /**
-     * @return the maxClientCacheSize
-     */
     public int getMaxClientCacheSize() {
         return maxClientCacheSize;
     }
 
+    /**
+     * To use a custom configured CXF Bus.
+     */
     public void setBus(Bus bus) {
         this.bus = bus;
-        if (isSetDefaultBus) {
+        if (defaultBus) {
             BusFactory.setDefaultBus(bus);
             LOG.debug("Set bus {} as thread default bus", bus);
         }
@@ -456,18 +493,24 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return bus;
     }
 
-    public void setSetDefaultBus(boolean isSetDefaultBus) {
-        this.isSetDefaultBus = isSetDefaultBus;
+    /**
+     * Will set the default bus when CXF endpoint create a bus by itself
+     */
+    public void setDefaultBus(boolean isSetDefaultBus) {
+        this.defaultBus = isSetDefaultBus;
     }
 
-    public boolean isSetDefaultBus() {
-        return isSetDefaultBus;
+    public boolean isDefaultBus() {
+        return defaultBus;
     }
 
     public boolean isIgnoreDeleteMethodMessageBody() {
         return ignoreDeleteMethodMessageBody;
     }
 
+    /**
+     * This option is used to tell CxfRsProducer to ignore the message body of the DELETE method when using HTTP API.
+     */
     public void setIgnoreDeleteMethodMessageBody(boolean ignoreDeleteMethodMessageBody) {
         this.ignoreDeleteMethodMessageBody = ignoreDeleteMethodMessageBody;
     }
@@ -477,21 +520,33 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     public List<?> getProviders() {
-        return entityProviders;
+        return providers;
     }
 
+    /**
+     * Set custom JAX-RS provider(s) list to the CxfRs endpoint.
+     */
     public void setProviders(List<?> providers) {
-        this.entityProviders.addAll(providers);
+        this.providers.addAll(providers);
     }
 
+    /**
+     * Set custom JAX-RS provider to the CxfRs endpoint.
+     */
     public void setProvider(Object provider) {
-        entityProviders.add(provider);
+        providers.add(provider);
     }
 
+    /**
+     * Sets the locations of the schema(s) which can be used to validate the incoming XML or JAXB-driven JSON.
+     */
     public void setSchemaLocation(String schema) {
         setSchemaLocations(Collections.singletonList(schema));
     }
 
+    /**
+     * Sets the locations of the schema(s) which can be used to validate the incoming XML or JAXB-driven JSON.
+     */
     public void setSchemaLocations(List<String> schemas) {
         this.schemaLocations = schemas;
     }
@@ -516,18 +571,30 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return interceptorHolder.getOutInterceptors();
     }
 
+    /**
+     * Set the inInterceptors to the CxfRs endpoint.
+     */
     public void setInInterceptors(List<Interceptor<? extends Message>> interceptors) {
         interceptorHolder.setInInterceptors(interceptors);
     }
 
+    /**
+     * Set the inFaultInterceptors to the CxfRs endpoint.
+     */
     public void setInFaultInterceptors(List<Interceptor<? extends Message>> interceptors) {
         interceptorHolder.setInFaultInterceptors(interceptors);
     }
 
+    /**
+     * Set the outInterceptor to the CxfRs endpoint.
+     */
     public void setOutInterceptors(List<Interceptor<? extends Message>> interceptors) {
         interceptorHolder.setOutInterceptors(interceptors);
     }
 
+    /**
+     * Set the outFaultInterceptors to the CxfRs endpoint.
+     */
     public void setOutFaultInterceptors(List<Interceptor<? extends Message>> interceptors) {
         interceptorHolder.setOutFaultInterceptors(interceptors);
     }
@@ -536,6 +603,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return features;
     }
 
+    /**
+     * Set the feature list to the CxfRs endpoint.
+     */
     public void setFeatures(List<Feature> features) {
         this.features = features;
     }
@@ -553,7 +623,19 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * See documentation of {@link BindingStyle}.
+     *  Sets how requests and responses will be mapped to/from Camel. Two values are possible:
+     *  <ul>
+     *      <li>SimpleConsumer: This binding style processes request parameters, multiparts, etc. and maps them to IN headers, IN attachments and to the message body.
+     *                          It aims to eliminate low-level processing of {@link org.apache.cxf.message.MessageContentsList}.
+     *                          It also also adds more flexibility and simplicity to the response mapping.
+     *                          Only available for consumers.
+     *      </li>
+     *      <li>Default: The default style. For consumers this passes on a MessageContentsList to the route, requiring low-level processing in the route.
+     *                   This is the traditional binding style, which simply dumps the {@link org.apache.cxf.message.MessageContentsList} coming in from the CXF stack
+     *                   onto the IN message body. The user is then responsible for processing it according to the contract defined by the JAX-RS method signature.
+     *      </li>
+     *      <li>Custom: allows you to specify a custom binding through the binding option.</li>
+     *  </ul>
      */
     public void setBindingStyle(BindingStyle bindingStyle) {
         this.bindingStyle = bindingStyle;
@@ -607,19 +689,20 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return continuationTimeout;
     }
 
+    /**
+     * This option is used to set the CXF continuation timeout which could be used in CxfConsumer by default when the CXF server is using Jetty or Servlet transport.
+     */
     public void setContinuationTimeout(long continuationTimeout) {
         this.continuationTimeout = continuationTimeout;
     }
-
-
-    private static class InterceptorHolder extends AbstractBasicInterceptorProvider {
-    }
-
 
     public boolean isPerformInvocation() {
         return performInvocation;
     }
 
+    /**
+     * When the option is true, Camel will perform the invocation of the resource class instance and put the response object into the exchange for further processing.
+     */
     public void setPerformInvocation(boolean performInvocation) {
         this.performInvocation = performInvocation;
     }
@@ -628,7 +711,16 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return propagateContexts;
     }
 
+    /**
+     * When the option is true, JAXRS UriInfo, HttpHeaders, Request and SecurityContext contexts will be available to
+     * custom CXFRS processors as typed Camel exchange properties.
+     * These contexts can be used to analyze the current requests using JAX-RS API.
+     */
     public void setPropagateContexts(boolean propagateContexts) {
         this.propagateContexts = propagateContexts;
     }
+
+    private static class InterceptorHolder extends AbstractBasicInterceptorProvider {
+    }
+
 }
