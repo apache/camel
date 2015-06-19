@@ -18,8 +18,11 @@ package org.apache.camel.component.olingo2;
 
 import java.util.Map;
 
+import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.http.HttpHost;
@@ -34,6 +37,13 @@ public class Olingo2Configuration {
 
     private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON.toString();
     private static final int DEFAULT_TIMEOUT = 30 * 1000;
+
+    @UriPath
+    @Metadata(required = "true")
+    private Olingo2ApiName apiName;
+
+    @UriPath @Metadata(required = "true")
+    private String methodName;
 
     @UriParam
     private String serviceUri;
@@ -60,6 +70,28 @@ public class Olingo2Configuration {
     // for more complex configuration, use a client builder
     @UriParam
     private HttpAsyncClientBuilder httpAsyncClientBuilder;
+
+    public Olingo2ApiName getApiName() {
+        return apiName;
+    }
+
+    /**
+     * What kind of operation to perform
+     */
+    public void setApiName(Olingo2ApiName apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    /**
+     * What sub operation to use for the selected operation
+     */
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
 
     public String getServiceUri() {
         return serviceUri;
