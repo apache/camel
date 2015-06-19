@@ -56,7 +56,7 @@ public class ValidateComponentMojo extends AbstractMojo {
     /**
      * Whether to validate if the components, data formats, and languages are properly documented and have all the needed details.
      *
-     * @parameter default-value="false"
+     * @parameter default-value="true"
      */
     protected Boolean validate;
 

@@ -31,7 +31,7 @@
   <packaging>pom</packaging>
 
   <modules>
-	  <!-- we want to test these modules first to catch any errors early as possible -->
+    <!-- we want to test these modules first to catch any errors early as possible -->
     <module>camel-test</module>
     <module>camel-testng</module>
     <module>camel-test-blueprint</module>
@@ -246,9 +246,6 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
         <version>${project.version}</version>
-        <configuration>
-          <validate>true</validate>
-        </configuration>
         <executions>
           <execution>
             <id>prepare</id>
