@@ -219,7 +219,7 @@
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.4.1</httpcore4-version>
     <httpclient4-version>4.4.1</httpclient4-version>
-    <httpasyncclient-version>4.0.2</httpasyncclient-version>
+    <httpasyncclient-version>4.1</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
@@ -373,7 +373,7 @@
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.2.0</openwebbeans-version>
     <olingo2-version>2.0.4</olingo2-version>
-    <olingo-odata2-core-bundle-version>2.0.3_1</olingo-odata2-core-bundle-version>
+    <olingo-odata2-core-bundle-version>2.0.4_1</olingo-odata2-core-bundle-version>
     <ognl-version>3.0.11</ognl-version>
     <ognl-bundle-version>3.0.11_1</ognl-bundle-version>
     <oncrpc-version>1.1.2</oncrpc-version>
