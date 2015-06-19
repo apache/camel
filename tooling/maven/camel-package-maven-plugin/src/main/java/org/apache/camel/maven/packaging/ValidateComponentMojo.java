@@ -93,27 +93,29 @@ public class ValidateComponentMojo extends AbstractMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        final Set<File> jsonFiles = new TreeSet<>();
-        PackageHelper.findJsonFiles(outDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+        if (!validate) {
+            getLog().info("Validation disabled");
+        } else {
 
-        boolean failed = false;
-        if (validate) {
-            getLog().info("Validating ...");
+            final Set<File> jsonFiles = new TreeSet<File>();
+            PackageHelper.findJsonFiles(outDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+            boolean failed = false;
 
             for (File file : jsonFiles) {
                 final String name = asName(file);
                 final ErrorDetail detail = new ErrorDetail();
 
+                getLog().debug("Validating file " + file);
                 validate(file, detail);
 
                 if (detail.hasErrors()) {
                     failed = true;
-                    getLog().warn("The " + detail.getKind() + ": " + name + " has errors!");
+                    getLog().warn("The " + detail.getKind() + ": " + name + " has validation errors");
                     if (detail.isMissingDescription()) {
-                        getLog().warn("Missing description on " + detail.getKind());
+                        getLog().warn("Missing description on: " + detail.getKind());
                     }
                     if (detail.isMissingLabel()) {
-                        getLog().warn("Missing label on " + detail.getKind());
+                        getLog().warn("Missing label on: " + detail.getKind());
                     }
                     if (detail.isMissingSyntax()) {
                         getLog().warn("Missing syntax on endpoint");
@@ -129,10 +131,12 @@ public class ValidateComponentMojo extends AbstractMojo {
                     }
                 }
             }
-        }
 
-        if (failed) {
-            throw new MojoFailureException("There are validation errors, see above!");
+            if (failed) {
+                throw new MojoFailureException("Validating failed, see errors above!");
+            } else {
+                getLog().info("Validation complete");
+            }
         }
     }
 

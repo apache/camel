@@ -169,6 +169,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         executeXmlSchemas();
     }
 
+    // TODO: Remove some of the missing check as we should have that out of the box with the validate goal
+
     protected void executeModel() throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel model json descriptors");
 

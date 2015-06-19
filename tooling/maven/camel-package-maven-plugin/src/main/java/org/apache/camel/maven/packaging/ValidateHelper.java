@@ -39,8 +39,6 @@ public final class ValidateHelper {
      * @param errorDetail details to add errors
      */
     public static void validate(File file, ErrorDetail errorDetail) {
-        String name = asName(file);
-
         try {
             String json = loadText(new FileInputStream(file));
 
@@ -86,7 +84,7 @@ public final class ValidateHelper {
                 errorDetail.setMissingDescription(true);
             }
             if (!syntax) {
-                errorDetail.setMissingDescription(true);
+                errorDetail.setMissingSyntax(true);
             }
 
             if (isComponent) {
