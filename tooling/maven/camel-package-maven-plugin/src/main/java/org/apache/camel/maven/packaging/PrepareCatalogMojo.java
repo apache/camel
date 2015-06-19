@@ -62,6 +62,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
+     * Whether to validate if the components, data formats, and languages are properly documented and have all the needed details.
+     *
+     * @parameter default-value="true"
+     */
+    protected Boolean validate;
+
+    /**
      * The output directory for components catalog
      *
      * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/components"
