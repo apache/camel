@@ -84,6 +84,12 @@ public class HazelcastMultimapProducerForSpringTest extends HazelcastCamelSpring
         template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711);
         verify(map).remove(4711);
     }
+    
+    @Test
+    public void testValueCount() {
+        template.sendBodyAndHeader("direct:valueCount", "test", HazelcastConstants.OBJECT_ID, "4711");
+        verify(map).valueCount("4711");
+    }
 
     @Test
     public void testContainsKey() {

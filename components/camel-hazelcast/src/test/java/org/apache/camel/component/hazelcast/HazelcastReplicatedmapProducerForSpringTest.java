@@ -79,6 +79,12 @@ public class HazelcastReplicatedmapProducerForSpringTest extends HazelcastCamelS
         template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711);
         verify(map).remove(4711);
     }
+        
+    @Test
+    public void testClear() {
+        template.sendBody("direct:clear", "test");
+        verify(map).clear();
+    }
 
     @Test
     public void testContainsKey() {
