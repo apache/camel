@@ -41,33 +41,22 @@ public class Olingo2Configuration {
     @UriPath
     @Metadata(required = "true")
     private Olingo2ApiName apiName;
-
     @UriPath @Metadata(required = "true")
     private String methodName;
-
     @UriParam
     private String serviceUri;
-
-    @UriParam
+    @UriParam(defaultValue = "application/json;charset=utf-8")
     private String contentType = DEFAULT_CONTENT_TYPE;
-
     @UriParam
     private Map<String, String> httpHeaders;
-
-    // common connection parameters for convenience
-    @UriParam
+    @UriParam(defaultValue = "" + DEFAULT_TIMEOUT)
     private int connectTimeout = DEFAULT_TIMEOUT;
-
-    @UriParam
+    @UriParam(defaultValue = "" + DEFAULT_TIMEOUT)
     private int socketTimeout = DEFAULT_TIMEOUT;
-
     @UriParam
     private HttpHost proxy;
-
     @UriParam
     private SSLContextParameters sslContextParameters;
-
-    // for more complex configuration, use a client builder
     @UriParam
     private HttpAsyncClientBuilder httpAsyncClientBuilder;
 
@@ -97,6 +86,9 @@ public class Olingo2Configuration {
         return serviceUri;
     }
 
+    /**
+     * Target OData service base URI, e.g. http://services.odata.org/OData/OData.svc
+     */
     public void setServiceUri(String serviceUri) {
         this.serviceUri = serviceUri;
     }
@@ -105,6 +97,9 @@ public class Olingo2Configuration {
         return contentType;
     }
 
+    /**
+     * Content-Type header value can be used to specify JSON or XML message format, defaults to application/json;charset=utf-8
+     */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
@@ -113,6 +108,9 @@ public class Olingo2Configuration {
         return httpHeaders;
     }
 
+    /**
+     * Custom HTTP headers to inject into every request, this could include OAuth tokens, etc.
+     */
     public void setHttpHeaders(Map<String, String> httpHeaders) {
         this.httpHeaders = httpHeaders;
     }
@@ -121,6 +119,9 @@ public class Olingo2Configuration {
         return connectTimeout;
     }
 
+    /**
+     * HTTP connection creation timeout in milliseconds, defaults to 30,000 (30 seconds)
+     */
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
@@ -129,6 +130,9 @@ public class Olingo2Configuration {
         return socketTimeout;
     }
 
+    /**
+     * HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds)
+     */
     public void setSocketTimeout(int socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
@@ -137,6 +141,9 @@ public class Olingo2Configuration {
         return proxy;
     }
 
+    /**
+     * HTTP proxy server configuration
+     */
     public void setProxy(HttpHost proxy) {
         this.proxy = proxy;
     }
@@ -145,6 +152,9 @@ public class Olingo2Configuration {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -153,6 +163,10 @@ public class Olingo2Configuration {
         return httpAsyncClientBuilder;
     }
 
+    /**
+     * Custom HTTP async client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext.
+     * Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely
+     */
     public void setHttpAsyncClientBuilder(HttpAsyncClientBuilder httpAsyncClientBuilder) {
         this.httpAsyncClientBuilder = httpAsyncClientBuilder;
     }
