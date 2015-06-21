@@ -99,6 +99,90 @@ public class EC2ProducerTest extends CamelTestSupport {
     }
     
     @Test
+    public void ec2CreateAndRunImageIdNotSpecifiedTest() throws Exception {
+
+        mock.expectedMessageCount(0);
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        
+        assertTrue("Should be failed", exchange.isFailed());
+        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertEquals("AMI must be specified", exchange.getException().getMessage());
+    }
+    
+    @Test
+    public void ec2CreateAndRunInstanceTypeNotSpecifiedTest() throws Exception {
+
+        mock.expectedMessageCount(0);
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        assertTrue("Should be failed", exchange.isFailed());
+        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertEquals("Instance Type must be specified", exchange.getException().getMessage());
+    }
+    
+    @Test
+    public void ec2CreateAndRunMinCountNotSpecifiedTest() throws Exception {
+
+        mock.expectedMessageCount(0);
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        assertTrue("Should be failed", exchange.isFailed());
+        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertEquals("Min instances count must be specified", exchange.getException().getMessage());
+    }
+    
+    @Test
+    public void ec2CreateAndRunMaxCountNotSpecifiedTest() throws Exception {
+
+        mock.expectedMessageCount(0);
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        assertTrue("Should be failed", exchange.isFailed());
+        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertEquals("Max instances count must be specified", exchange.getException().getMessage());
+    }
+    
+    @Test
     public void ec2CreateAndRunTestWithKeyPair() throws Exception {
 
         mock.expectedMessageCount(1);
