@@ -19,6 +19,9 @@ package org.apache.camel.maven.packaging;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Holder to keep information about detected errors.
+ */
 public final class ErrorDetail {
 
     private String kind;
@@ -27,11 +30,11 @@ public final class ErrorDetail {
     private boolean missingDescription;
     private boolean missingSyntax;
     private boolean missingUriPath;
-    private List<String> missingComponentDocumentation = new ArrayList<>();
-    private List<String> missingEndpointDocumentation = new ArrayList<>();
+    private final List<String> missingComponentDocumentation = new ArrayList<>();
+    private final List<String> missingEndpointDocumentation = new ArrayList<>();
 
     public boolean hasErrors() {
-        return missingLabel || missingDescription || missingDescription || missingUriPath || !missingComponentDocumentation.isEmpty() || !missingEndpointDocumentation.isEmpty();
+        return missingLabel || missingDescription || missingSyntax || missingUriPath || !missingComponentDocumentation.isEmpty() || !missingEndpointDocumentation.isEmpty();
     }
 
     public String getKind() {
