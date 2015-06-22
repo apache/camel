@@ -77,6 +77,7 @@
       org.apache.camel.spi.ComponentResolver;component=validator,
       org.apache.camel.spi.ComponentResolver;component=vm,
       org.apache.camel.spi.ComponentResolver;component=xslt,
+      org.apache.camel.spi.DataFormatResolver;dataformat=gzip,
       org.apache.camel.spi.DataFormatResolver;dataformat=serialization,
       org.apache.camel.spi.DataFormatResolver;dataformat=string,
       org.apache.camel.spi.DataFormatResolver;dataformat=zip,
