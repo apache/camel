@@ -77,13 +77,17 @@ public final class ValidateHelper {
                     syntax = true;
                 }
             }
+            
             if (!label) {
                 errorDetail.setMissingLabel(true);
             }
+            
             if (!description) {
                 errorDetail.setMissingDescription(true);
             }
-            if (!syntax) {
+
+            // syntax check is only for the components
+            if (!syntax && isComponent) {
                 errorDetail.setMissingSyntax(true);
             }
 
