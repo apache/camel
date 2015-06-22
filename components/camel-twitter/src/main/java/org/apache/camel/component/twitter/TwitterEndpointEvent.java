@@ -19,17 +19,14 @@ package org.apache.camel.component.twitter;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerEvent;
 import org.apache.camel.component.twitter.data.EndpointType;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
+import org.apache.camel.impl.DefaultEndpoint;
 
-@UriEndpoint(scheme = "twitter", title = "Twitter", syntax = "twitter:type", consumerClass = Twitter4JConsumer.class, label = "api,social")
-public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpoint {
+public class TwitterEndpointEvent extends DefaultEndpoint implements TwitterEndpoint {
 
-    @UriParam
+    // only TwitterEndpointPolling is annotated
     private TwitterConfiguration properties;
 
     public TwitterEndpointEvent(String uri, TwitterComponent component, TwitterConfiguration properties) {
@@ -62,11 +59,15 @@ public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpo
     }
 
     @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
         if (properties.getTwitterStream() != null) {
             properties.getTwitterStream().shutdown();
         }
     }
-
 }
