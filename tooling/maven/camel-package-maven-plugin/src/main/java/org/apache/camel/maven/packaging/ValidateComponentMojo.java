@@ -92,7 +92,6 @@ public class ValidateComponentMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-
         if (!validate) {
             getLog().info("Validation disabled");
         } else {
