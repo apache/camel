@@ -449,8 +449,8 @@
     <spring-data-redis-version>1.3.4.RELEASE</spring-data-redis-version>
     <spring-integration-version>2.2.6.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-    <spring-ldap-version>2.0.2.RELEASE</spring-ldap-version>
-    <spring-ldap-bundle-version>2.0.2.RELEASE_1</spring-ldap-bundle-version>
+    <spring-ldap-version>2.0.3.RELEASE</spring-ldap-version>
+    <spring-ldap-bundle-version>2.0.3.RELEASE_1</spring-ldap-bundle-version>
     <!-- spring 1.1.0 is not OSGi bundle any more -->
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
     <!-- Spring 4 can be used in OSGi, but not with spring-dm.  Allow Spring 4 for the bundle imports. -->
