@@ -36,7 +36,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class ExpressionMappingTest {
+public class ExpressionMappingFileTest {
     
     @EndpointInject(uri = "mock:result")
     private MockEndpoint resultEndpoint;
@@ -53,11 +53,11 @@ public class ExpressionMappingTest {
     }
     
     @Test
-    public void testExpressionMapping() throws Exception {
+    public void testExpressionMappingScriptFile() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         Map<String, Object> headers = new HashMap<String, Object>();
-        final String customerNumber = "CAFE-123";
-        final String orderNumber = "ABC-000";
+        final String customerNumber = "CAFE-678";
+        final String orderNumber = "ABC-002";
         headers.put("customerNumber", customerNumber);
         headers.put("orderNumber", orderNumber);
         ABCOrder abcOrder = new ABCOrder();
@@ -69,5 +69,4 @@ public class ExpressionMappingTest {
         Assert.assertEquals(customerNumber, result.getCustId());
         Assert.assertEquals(orderNumber, result.getOrderId());
     }
-
 }
