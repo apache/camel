@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.hazelcast.queue;
 
+import java.util.Collection;
+import java.util.Map;
+
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
 
@@ -24,6 +27,7 @@ import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  *
@@ -38,6 +42,15 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        
+        Map<String, Object> headers = exchange.getIn().getHeaders();
+
+        // get header parameters
+        Object draintToCollection = null;
+        
+        if (headers.containsKey(HazelcastConstants.DRAIN_TO_COLLECTION)) {
+            draintToCollection = headers.get(HazelcastConstants.DRAIN_TO_COLLECTION);
+        }
 
         final int operation = lookupOperationNumber(exchange);
 
@@ -71,6 +84,14 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
 
         case HazelcastConstants.REMAINING_CAPACITY_OPERATION:
             this.remainingCapacity(exchange);
+            break;
+            
+        case HazelcastConstants.DRAIN_TO_OPERATION:
+            if (ObjectHelper.isNotEmpty(draintToCollection)) {
+                this.drainTo((Collection) draintToCollection, exchange);
+            } else {
+                throw new IllegalArgumentException("Drain to collection header must be specified");
+            }
             break;
             
         default:
@@ -116,5 +137,10 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
     
     private void remainingCapacity(Exchange exchange) {
         exchange.getOut().setBody(this.queue.remainingCapacity());
+    }
+    
+    private void drainTo(Collection c, Exchange exchange) {
+        exchange.getOut().setBody(this.queue.drainTo(c));
+        exchange.getOut().setHeader(HazelcastConstants.DRAIN_TO_COLLECTION, c);
     }
 }

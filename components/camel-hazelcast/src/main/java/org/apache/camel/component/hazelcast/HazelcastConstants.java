@@ -41,6 +41,7 @@ public final class HazelcastConstants {
     public static final String TTL_UNIT = "CamelHazelcastObjectTtlUnit";
     public static final String QUERY = "CamelHazelcastQuery";
     public static final String EXPECTED_VALUE = "CamelHazelcastExpectedValue";
+    public static final String DRAIN_TO_COLLECTION = "CamelHazelcastDrainToCollection";
 
     /*
      * outgoing header properties
@@ -89,9 +90,10 @@ public final class HazelcastConstants {
     public static final int PEEK_OPERATION = 33;
     public static final int POLL_OPERATION = 34;
     public static final int REMAINING_CAPACITY_OPERATION = 35;
+    public static final int DRAIN_TO_OPERATION = 36;
 
     // topic
-    public static final int PUBLISH_OPERATION = 36;
+    public static final int PUBLISH_OPERATION = 37;
 
     /*
      * header values

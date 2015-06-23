@@ -16,8 +16,14 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
@@ -122,6 +128,17 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
         verify(queue).remainingCapacity();
         assertEquals(10, answer);
     }
+    
+    @Test
+    public void drainTo() throws InterruptedException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        Collection l = new ArrayList<>();
+        headers.put(HazelcastConstants.DRAIN_TO_COLLECTION, l);
+        when(queue.drainTo(l)).thenReturn(10);
+        int answer = template.requestBodyAndHeaders("direct:drainTo", "test", headers, Integer.class);
+        verify(queue).drainTo(l);
+        assertEquals(10, answer);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -146,6 +163,9 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
                         String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
 
                 from("direct:remainingCapacity").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMAINING_CAPACITY_OPERATION)).to(
+                        String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                
+                from("direct:drainTo").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DRAIN_TO_OPERATION)).to(
                         String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
                 
                 from("direct:putWithOperationNumber").toF(String.format("hazelcast:%sbar?operation=%s", HazelcastConstants.QUEUE_PREFIX, HazelcastConstants.PUT_OPERATION));
