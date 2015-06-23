@@ -121,6 +121,7 @@ public final class HazelcastComponentHelper {
         addMapping("peek", HazelcastConstants.PEEK_OPERATION);
         addMapping("poll", HazelcastConstants.POLL_OPERATION);
         addMapping("remainingCapacity", HazelcastConstants.REMAINING_CAPACITY_OPERATION);
+        addMapping("drainTo", HazelcastConstants.DRAIN_TO_OPERATION);
 
         // topic
         addMapping("publish", HazelcastConstants.PUBLISH_OPERATION);
