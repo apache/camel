@@ -22,8 +22,8 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * Provides support for mapping a Camel expression to a target field in a 
@@ -46,15 +46,14 @@ public class ExpressionMapper extends BaseConverter {
                 throw new IllegalStateException(
                         "Current exchange has not been set for ExpressionMapper");
             }
+
+            Expression exp;
+
             // Resolve the language being used for this expression and evaluate
             Exchange exchange = currentExchange.get();
             Language expLang = exchange.getContext().resolveLanguage(getLanguagePart());
             String scheme = getSchemePart();
-            Expression exp = null;
-            if (scheme != null && 
-                    (scheme.equalsIgnoreCase("classpath") ||
-                            scheme.equalsIgnoreCase("file") ||
-                            scheme.equalsIgnoreCase("http"))) {
+            if (scheme != null && (scheme.equalsIgnoreCase("classpath") || scheme.equalsIgnoreCase("file") || scheme.equalsIgnoreCase("http"))) {
                 String path = getPathPart();
                 try {
                     exp = expLang.createExpression(resolveScript(scheme + ":" + path));
