@@ -87,7 +87,7 @@
     <cdi-api-version>1.0</cdi-api-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
-    <chunk-templates-version>2.6.3</chunk-templates-version>
+    <chunk-templates-version>2.6.4</chunk-templates-version>
     <classmate-version>1.0.0</classmate-version>
     <cmis-version>0.8.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
