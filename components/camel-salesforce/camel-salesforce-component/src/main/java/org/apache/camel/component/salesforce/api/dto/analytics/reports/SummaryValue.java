@@ -14,26 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.api.dto;
+package org.apache.camel.component.salesforce.api.dto.analytics.reports;
+
+import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
+import org.codehaus.jackson.annotate.JsonAnySetter;
 
 /**
- * Salesforce DTO for picklist value.
+ * Report results summary value DTO for data cells and aggregates.
  */
-public class PickListValue extends AbstractDTOBase {
+public class SummaryValue extends AbstractDTOBase {
 
-    private String value;
+    public static final String VALUE_FIELD = "value";
+
     private String label;
-    private Boolean active;
-    private Boolean defaultValue;
-    private byte[] validFor;
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    private Object value;
 
     public String getLabel() {
         return label;
@@ -43,28 +38,21 @@ public class PickListValue extends AbstractDTOBase {
         this.label = label;
     }
 
-    public Boolean getActive() {
-        return active;
+    public Object getValue() {
+        return value;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    /**
+     * Helper method for JSON un-marshaling.
+     * @param name field name, MUST be "value"
+     * @param value field value
+     * @throws java.lang.IllegalArgumentException if field name is not "value"
+     */
+    @JsonAnySetter
+    public void setAny(String name, Object value) throws IllegalArgumentException {
+        if (!VALUE_FIELD.equals(name)) {
+            throw new IllegalArgumentException(name);
+        }
+        this.value = value;
     }
-
-    public Boolean getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(Boolean defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public byte[] getValidFor() {
-        return validFor;
-    }
-
-    public void setValidFor(byte[] validFor) {
-        this.validFor = validFor;
-    }
-
 }

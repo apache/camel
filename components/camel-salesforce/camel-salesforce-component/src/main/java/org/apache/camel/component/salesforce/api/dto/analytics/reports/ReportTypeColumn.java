@@ -14,26 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.api.dto;
+package org.apache.camel.component.salesforce.api.dto.analytics.reports;
+
+import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 
 /**
- * Salesforce DTO for picklist value.
+ * Report categories columns.
  */
-public class PickListValue extends AbstractDTOBase {
+public class ReportTypeColumn extends AbstractDTOBase {
 
-    private String value;
     private String label;
-    private Boolean active;
-    private Boolean defaultValue;
-    private byte[] validFor;
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    private FilterValue[] filterValues;
+    private String dataType;
+    private Boolean filterable;
 
     public String getLabel() {
         return label;
@@ -43,28 +36,27 @@ public class PickListValue extends AbstractDTOBase {
         this.label = label;
     }
 
-    public Boolean getActive() {
-        return active;
+    public FilterValue[] getFilterValues() {
+        return filterValues;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setFilterValues(FilterValue[] filterValues) {
+        this.filterValues = filterValues;
     }
 
-    public Boolean getDefaultValue() {
-        return defaultValue;
+    public String getDataType() {
+        return dataType;
     }
 
-    public void setDefaultValue(Boolean defaultValue) {
-        this.defaultValue = defaultValue;
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
     }
 
-    public byte[] getValidFor() {
-        return validFor;
+    public Boolean getFilterable() {
+        return filterable;
     }
 
-    public void setValidFor(byte[] validFor) {
-        this.validFor = validFor;
+    public void setFilterable(Boolean filterable) {
+        this.filterable = filterable;
     }
-
 }
