@@ -288,6 +288,13 @@ public class InfinispanOperation {
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 cache.clear();
             }
+        }, CLEARASYNC {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                NotifyingFuture result;
+                result = cache.clearAsync();
+                setResult(result, exchange);
+            }
         };
 
         void setResult(Object result, Exchange exchange) {
