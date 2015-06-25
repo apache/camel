@@ -14,18 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.api.dto;
+package org.apache.camel.component.salesforce.api.dto.analytics.reports;
+
+import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 
 /**
- * Salesforce DTO for picklist value.
+ * Report results grouping value.
  */
-public class PickListValue extends AbstractDTOBase {
+public class GroupingValue extends AbstractDTOBase {
 
     private String value;
+    private String key;
     private String label;
-    private Boolean active;
-    private Boolean defaultValue;
-    private byte[] validFor;
+    private GroupingValue[] groupings;
+    // TODO the description is vague about this!!!
+    private GroupingValue[] dategroupings;
 
     public String getValue() {
         return value;
@@ -33,6 +36,14 @@ public class PickListValue extends AbstractDTOBase {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getLabel() {
@@ -43,28 +54,19 @@ public class PickListValue extends AbstractDTOBase {
         this.label = label;
     }
 
-    public Boolean getActive() {
-        return active;
+    public GroupingValue[] getGroupings() {
+        return groupings;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setGroupings(GroupingValue[] groupings) {
+        this.groupings = groupings;
     }
 
-    public Boolean getDefaultValue() {
-        return defaultValue;
+    public GroupingValue[] getDategroupings() {
+        return dategroupings;
     }
 
-    public void setDefaultValue(Boolean defaultValue) {
-        this.defaultValue = defaultValue;
+    public void setDategroupings(GroupingValue[] dategroupings) {
+        this.dategroupings = dategroupings;
     }
-
-    public byte[] getValidFor() {
-        return validFor;
-    }
-
-    public void setValidFor(byte[] validFor) {
-        this.validFor = validFor;
-    }
-
 }

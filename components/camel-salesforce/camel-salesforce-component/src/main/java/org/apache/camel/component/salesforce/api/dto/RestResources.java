@@ -45,6 +45,7 @@ public class RestResources extends AbstractDTOBase {
     private String compactLayouts;
     private String actions;
     private String tabs;
+    private String wave;
 
     public String getSobjects() {
         return sobjects;
@@ -212,5 +213,13 @@ public class RestResources extends AbstractDTOBase {
 
     public void setTabs(String tabs) {
         this.tabs = tabs;
+    }
+
+    public String getWave() {
+        return wave;
+    }
+
+    public void setWave(String wave) {
+        this.wave = wave;
     }
 }
