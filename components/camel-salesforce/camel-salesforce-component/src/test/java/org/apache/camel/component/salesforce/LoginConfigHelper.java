@@ -26,7 +26,7 @@ import org.junit.Assert;
 
 public class LoginConfigHelper extends Assert {
 
-    private static final String TEST_LOGIN_PROPERTIES = "../test-salesforce-login.properties";
+    protected static final String TEST_LOGIN_PROPERTIES = "../test-salesforce-login.properties";
 
     public static SalesforceLoginConfig getLoginConfig() throws IOException {
 

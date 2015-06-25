@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.api.dto;
+package org.apache.camel.component.salesforce.api.dto.analytics.reports;
+
+import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 
 /**
- * Salesforce DTO for picklist value.
+ * Report filter details DTO.
  */
-public class PickListValue extends AbstractDTOBase {
+public class ReportFilter extends AbstractDTOBase {
 
     private String value;
-    private String label;
-    private Boolean active;
-    private Boolean defaultValue;
-    private byte[] validFor;
+    private String column;
+    private String operator;
 
     public String getValue() {
         return value;
@@ -35,36 +35,19 @@ public class PickListValue extends AbstractDTOBase {
         this.value = value;
     }
 
-    public String getLabel() {
-        return label;
+    public String getColumn() {
+        return column;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setColumn(String column) {
+        this.column = column;
     }
 
-    public Boolean getActive() {
-        return active;
+    public String getOperator() {
+        return operator;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
-
-    public Boolean getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(Boolean defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public byte[] getValidFor() {
-        return validFor;
-    }
-
-    public void setValidFor(byte[] validFor) {
-        this.validFor = validFor;
-    }
-
 }
