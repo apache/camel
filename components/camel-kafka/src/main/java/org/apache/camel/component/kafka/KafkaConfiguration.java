@@ -166,9 +166,9 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, "auto.offset.reset", getAutoOffsetReset());
         addPropertyIfNotNull(props, "consumer.timeout.ms", getConsumerTimeoutMs());
         addPropertyIfNotNull(props, "client.id", getClientId());
-        addPropertyIfNotNull(props, "zookeeper.session.timeout.ms ", getZookeeperSessionTimeoutMs());
+        addPropertyIfNotNull(props, "zookeeper.session.timeout.ms", getZookeeperSessionTimeoutMs());
         addPropertyIfNotNull(props, "zookeeper.connection.timeout.ms", getZookeeperConnectionTimeoutMs());
-        addPropertyIfNotNull(props, "zookeeper.sync.time.ms ", getZookeeperSyncTimeMs());
+        addPropertyIfNotNull(props, "zookeeper.sync.time.ms", getZookeeperSyncTimeMs());
         return props;
     }
 
@@ -178,7 +178,7 @@ public class KafkaConfiguration {
             props.put(key, value.toString());
         }
     }
-    
+
     public String getZookeeperConnect() {
         if (this.zookeeperConnect != null) {
             return zookeeperConnect;
@@ -189,7 +189,7 @@ public class KafkaConfiguration {
 
     public void setZookeeperConnect(String zookeeperConnect) {
         this.zookeeperConnect = zookeeperConnect;
-        
+
         // connect overrides host and port
         this.zookeeperHost = null;
         this.zookeeperPort = -1;
