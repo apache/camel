@@ -34,6 +34,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.jackrabbit.util.Text;
 
 public class JcrProducer extends DefaultProducer {
@@ -160,7 +161,11 @@ public class JcrProducer extends DefaultProducer {
     }
 
     protected Session openSession() throws RepositoryException {
-        return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
+        if (ObjectHelper.isEmpty(getJcrEndpoint().getWorkspaceName())) { 
+            return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
+        } else {
+            return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials(), getJcrEndpoint().getWorkspaceName());
+        }
     }
 
     private JcrEndpoint getJcrEndpoint() {
