@@ -38,7 +38,7 @@ public abstract class JcrRouteDifferentWorkspaceTestSupport extends CamelTestSup
 
     protected static final String CONFIG_FILE = "target/test-classes/repository-simple-security.xml";
 
-    protected static final String REPO_PATH = "target/repository-simple-diff-workspace";
+    protected static final String REPO_PATH = "target/repository-simple-security";
     
     protected static final String CUSTOM_WORKSPACE_NAME = "testWorkspace";
 
