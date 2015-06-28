@@ -36,7 +36,6 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMet
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportStatusEnum;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.SyncReportResults;
 import org.apache.camel.dataformat.csv.CsvDataFormat;
-import org.apache.commons.csv.CSVFormat;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -273,7 +272,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
                 from("direct:getReportResults")
                     .to("salesforce:getReportResults");
 
-                CsvDataFormat csv = new CsvDataFormat(CSVFormat.EXCEL);
+                CsvDataFormat csv = new CsvDataFormat();
 
                 // type converter test
                 from("direct:convertResults")
