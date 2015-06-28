@@ -70,9 +70,9 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         } else if (JcloudsConstants.REBOOT_NODE.equals(operation)) {
             rebootNode(exchange);
         } else if (JcloudsConstants.SUSPEND_NODE.equals(operation)) {
-        	suspendNode(exchange);
+            suspendNode(exchange);
         } else if (JcloudsConstants.RESUME_NODE.equals(operation)) {
-        	resumeNode(exchange);
+            resumeNode(exchange);
         }
     }
 
