@@ -68,7 +68,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         } else if (JcloudsConstants.DESTROY_NODE.equals(operation)) {
             destroyNode(exchange);
         } else if (JcloudsConstants.REBOOT_NODE.equals(operation)) {
-            destroyNode(exchange);
+            rebootNode(exchange);
         }
     }
 

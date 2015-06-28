@@ -28,6 +28,12 @@
             <to uri="jclouds:compute:stub?operation=CamelJcloudsListImages&amp;nodeState=RUNNING"/>
             <to uri="mock:result"/>
         </route>
+        
+        <route>
+            <from uri="direct:nodelist"/>
+            <to uri="jclouds:compute:stub?operation=CamelJcloudsListImage"/>
+            <to uri="mock:resultlist"/>
+        </route>
 
         <route>
             <from uri="direct:in-out"/>

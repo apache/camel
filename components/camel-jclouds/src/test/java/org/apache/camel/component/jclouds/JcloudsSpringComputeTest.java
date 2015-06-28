@@ -37,6 +37,9 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
+    
+    @EndpointInject(uri = "mock:resultlist")
+    protected MockEndpoint resultlist;
 
     @After
     public void tearDown() throws Exception {
@@ -153,6 +156,44 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
             }
         }
     }
+    
+    @Test
+    public void testCreateAndRebootNode() throws InterruptedException {
+        result.expectedMessageCount(1);
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
+        result.assertIsSatisfied();
+
+        List<Exchange> exchanges = result.getExchanges();
+        if (exchanges != null && !exchanges.isEmpty()) {
+            for (Exchange exchange : exchanges) {
+                Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
+                assertEquals("There should be one node running", 1, nodeMetadatas.size());
+
+                for (Object obj : nodeMetadatas) {
+                    NodeMetadata nodeMetadata = (NodeMetadata) obj;
+                    template.sendBodyAndHeaders("direct:start", null, rebootHeaders(nodeMetadata.getId(), null));
+                }
+            }
+        }
+        
+        resultlist.expectedMessageCount(1);
+        template.sendBodyAndHeaders("direct:nodelist",null, listNodeHeaders("1", "default", "RUNNING"));
+        resultlist.assertIsSatisfied();
+        
+        List<Exchange> exchangesNodeList = resultlist.getExchanges();
+        if (exchangesNodeList != null && !exchangesNodeList.isEmpty()) {
+            for (Exchange exchange : exchangesNodeList) {
+                Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
+                assertEquals("There should be one node running", 1, nodeMetadatas.size());
+
+                for (Object obj : nodeMetadatas) {
+                    NodeMetadata nodeMetadata = (NodeMetadata) obj;
+                    assertEquals(nodeMetadata.getId(), "1");
+                }
+            }
+        }
+    }    
+
 
     @SuppressWarnings("unchecked")
     @Ignore("For now not possible to combine stub provider with ssh module, required for runScript")
@@ -226,5 +267,23 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         }
 
         return listHeaders;
+    }
+    
+    /**
+     * Returns a {@Map} with the reboot headers.
+     *
+     * @param nodeId The id of the node to reboot.
+     * @param group  The group of the node to reboot.
+     */
+    protected Map<String, Object> rebootHeaders(String nodeId, String group) {
+        Map<String, Object> rebootHeaders = new HashMap<String, Object>();
+        rebootHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.REBOOT_NODE);
+        if (nodeId != null) {
+        	rebootHeaders.put(JcloudsConstants.NODE_ID, nodeId);
+        }
+        if (group != null) {
+        	rebootHeaders.put(JcloudsConstants.GROUP, group);
+        }
+        return rebootHeaders;
     }
 }
