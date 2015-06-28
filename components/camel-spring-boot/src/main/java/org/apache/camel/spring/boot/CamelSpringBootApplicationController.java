@@ -24,6 +24,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
 import org.springframework.context.ApplicationContext;
 
+import javax.annotation.PreDestroy;
+
 public class CamelSpringBootApplicationController {
 
     private final MainSupport mainSupport;
@@ -49,6 +51,11 @@ public class CamelSpringBootApplicationController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PreDestroy
+    private void destroy() {
+        mainSupport.completed();
     }
 
 }
