@@ -71,6 +71,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
             rebootNode(exchange);
         } else if (JcloudsConstants.SUSPEND_NODE.equals(operation)) {
         	suspendNode(exchange);
+        } else if (JcloudsConstants.RESUME_NODE.equals(operation)) {
+        	resumeNode(exchange);
         }
     }
 
@@ -180,11 +182,19 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     }
     
     /**
-     * Reboot the node with the specified nodeId.
+     * Suspend the node with the specified nodeId.
      */
     protected void suspendNode(Exchange exchange) {
         Predicate<NodeMetadata> predicate = getNodePredicate(exchange);
         computeService.suspendNodesMatching(predicate);
+    }
+    
+    /**
+     * Suspend the node with the specified nodeId.
+     */
+    protected void resumeNode(Exchange exchange) {
+        Predicate<NodeMetadata> predicate = getNodePredicate(exchange);
+        computeService.resumeNodesMatching(predicate);
     }
 
     /**

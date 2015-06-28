@@ -35,6 +35,7 @@ public final class JcloudsConstants {
     public static final String DESTROY_NODE = "CamelJcloudsDestroyNode";
     public static final String REBOOT_NODE = "CamelJcloudsRebootNode";
     public static final String SUSPEND_NODE = "CamelJcloudsSuspendNode";
+    public static final String RESUME_NODE = "CamelJcloudsResumeNode";
     public static final String RUN_SCRIPT = "CamelJcloudsRunScript";
     
     public static final String CONTENT_LANGUAGE = "CamelJcloudsContentLanguage";
