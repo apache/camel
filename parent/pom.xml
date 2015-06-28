@@ -251,7 +251,7 @@
     <jaxen-version>1.1.6</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jboss-logging-version>3.1.4.GA</jboss-logging-version>
-    <jboss-marshalling-version>1.4.4.Final</jboss-marshalling-version>
+    <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jclouds-version>1.9.0</jclouds-version>
     <!-- jclouds must use this guava version -->
     <jclouds-google-guava-version>16.0</jclouds-google-guava-version>
