@@ -67,6 +67,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
             createNode(exchange);
         } else if (JcloudsConstants.DESTROY_NODE.equals(operation)) {
             destroyNode(exchange);
+        } else if (JcloudsConstants.REBOOT_NODE.equals(operation)) {
+            destroyNode(exchange);
         }
     }
 
@@ -165,6 +167,14 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     protected void listHardware(Exchange exchange) {
         Set<? extends Hardware> hardwareProfiles = computeService.listHardwareProfiles();
         exchange.getOut().setBody(hardwareProfiles);
+    }
+    
+    /**
+     * Reboot the node with the specified nodeId.
+     */
+    protected void rebootNode(Exchange exchange) {
+        Predicate<NodeMetadata> predicate = getNodePredicate(exchange);
+        computeService.rebootNodesMatching(predicate);
     }
 
 
