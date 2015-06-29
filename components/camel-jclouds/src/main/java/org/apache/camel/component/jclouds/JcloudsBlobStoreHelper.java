@@ -96,4 +96,12 @@ public final class JcloudsBlobStoreHelper {
         }
         return is;
     }
+    
+    /**
+     * Return the count of all the blobs in the container
+     */
+    public static long countBlob(BlobStore blobStore, String container) {
+        long blobsCount = blobStore.countBlobs(container);
+        return blobsCount;
+    }
 }
