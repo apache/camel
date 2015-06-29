@@ -79,6 +79,15 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
         assertEquals(new Long(1), result);
     }
+    
+    @Test
+    public void testBlobStorePutAndRemove() throws InterruptedException {
+        String message = "Some message";
+        template.sendBody("direct:put-and-remove", message);
+        template.requestBodyAndHeader("direct:put-and-remove", null, JcloudsConstants.OPERATION, JcloudsConstants.REMOVE_BLOB);
+        Object result = template.requestBodyAndHeader("direct:put-and-remove", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        assertEquals(new Long(0), result);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -98,6 +107,11 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
                         .to("jclouds:blobstore:transient");
                 
                 from("direct:put-and-count")
+                        .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB_IN_DIR))
+                        .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))
+                        .to("jclouds:blobstore:transient");
+                
+                from("direct:put-and-remove")
                         .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB_IN_DIR))
                         .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))
                         .to("jclouds:blobstore:transient");
