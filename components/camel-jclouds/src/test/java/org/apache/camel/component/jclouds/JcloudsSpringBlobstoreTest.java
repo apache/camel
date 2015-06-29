@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.jclouds;
 
+import java.util.List;
+import java.util.Set;
+
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.compute.domain.Image;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -66,5 +71,17 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
         resultBar.expectedMessageCount(1);
         template.sendBody("direct:start-with-url-parameters", "Some message");
         resultBar.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testBlobStoreCount() throws InterruptedException {
+        Long count = template.requestBody("direct:count", "Some message", Long.class);
+        assertEquals(new Long(1), count);
+    }
+    
+    @Test
+    public void testBlobStoreRemove() throws InterruptedException {
+        Long count = template.requestBody("direct:remove", "Some message", Long.class);
+        assertEquals(new Long(0), count);
     }
 }
