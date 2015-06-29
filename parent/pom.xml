@@ -101,7 +101,7 @@
     <commons-configuration-version>1.9</commons-configuration-version>
     <commons-configuration-bundle-version>1.9_1</commons-configuration-bundle-version>
     <commons-csv-version>1.1</commons-csv-version>
-    <commons-cli-version>1.2</commons-cli-version>
+    <commons-cli-version>1.3.1</commons-cli-version>
     <commons-daemon-version>1.0.15</commons-daemon-version>
     <commons-dbcp-version>1.4</commons-dbcp-version>
     <commons-digester-1x-version>1.8.1</commons-digester-1x-version>
