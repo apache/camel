@@ -17,10 +17,14 @@
 package org.apache.camel.component.jclouds;
 
 import java.io.ByteArrayInputStream;
+
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
+
 import org.xml.sax.InputSource;
+
 import com.google.common.collect.Lists;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
@@ -67,6 +71,14 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         Object result = template.requestBodyAndHeader("direct:put-and-get", null, JcloudsConstants.OPERATION, JcloudsConstants.GET, String.class);
         assertEquals(MESSAGE, result);
     }
+    
+    @Test
+    public void testBlobStorePutAndCount() throws InterruptedException {
+        String message = "Some message";
+        template.sendBody("direct:put-and-count", message);
+        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        assertEquals(new Long(1), result);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -81,6 +93,11 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
                         .to("jclouds:blobstore:transient").to("mock:results");
 
                 from("direct:put-and-get")
+                        .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB_IN_DIR))
+                        .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))
+                        .to("jclouds:blobstore:transient");
+                
+                from("direct:put-and-count")
                         .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB_IN_DIR))
                         .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))
                         .to("jclouds:blobstore:transient");
