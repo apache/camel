@@ -57,6 +57,8 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
             exchange.getOut().setBody(JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName));
         } else if (JcloudsConstants.COUNT_BLOBS.equals(operation)) {
             exchange.getOut().setBody(JcloudsBlobStoreHelper.countBlob(blobStore, container));
+        }  else if (JcloudsConstants.REMOVE_BLOB.equals(operation)) {
+            JcloudsBlobStoreHelper.removeBlob(blobStore, container, blobName);
         } else {
             Payload body = exchange.getIn().getBody(Payload.class);
             JcloudsBlobStoreHelper.writeBlob(blobStore, container, blobName, body);

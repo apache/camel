@@ -104,4 +104,14 @@ public final class JcloudsBlobStoreHelper {
         long blobsCount = blobStore.countBlobs(container);
         return blobsCount;
     }
+    
+
+    /**
+     * Reads from a {@link BlobStore}. It returns an Object.
+     */
+    public static void removeBlob(BlobStore blobStore, String container, String blobName) throws IOException {
+        if (!Strings.isNullOrEmpty(blobName)) {
+            blobStore.removeBlob(container, blobName);            
+        }
+    }
 }
