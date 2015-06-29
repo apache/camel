@@ -79,11 +79,11 @@ public class RestOperationParamDefinition {
     @Metadata(defaultValue = "")
     private String paramAccess;
 
-    public RestOperationParamDefinition(VerbDefinition verb) {
-        this.verb = verb;
+    public RestOperationParamDefinition() {
     }
 
-    public RestOperationParamDefinition() {
+    public RestOperationParamDefinition(VerbDefinition verb) {
+        this.verb = verb;
     }
 
     public RestParamType getParamType() {
@@ -189,57 +189,91 @@ public class RestOperationParamDefinition {
         this.paramAccess = paramAccess;
     }
 
+    /**
+     * Name of the parameter.
+     * <p/>
+     * This option is mandatory.
+     */
     public RestOperationParamDefinition name(String name) {
         setName(name);
         return this;
     }
 
+    /**
+     * Description of the parameter.
+     */
     public RestOperationParamDefinition description(String name) {
         setDescription(name);
         return this;
     }
 
+    /**
+     * The default value of the parameter.
+     */
     public RestOperationParamDefinition defaultValue(String name) {
         setDefaultValue(name);
         return this;
     }
 
+    /**
+     * Whether the parameter is required
+     */
     public RestOperationParamDefinition required(Boolean required) {
         setRequired(required);
         return this;
     }
 
+    /**
+     * Whether the parameter can be used multiple times
+     */
     public RestOperationParamDefinition allowMultiple(Boolean allowMultiple) {
         setAllowMultiple(allowMultiple);
         return this;
     }
 
+    /**
+     * The data type of the parameter such as string,int
+     */
     public RestOperationParamDefinition dataType(String type) {
         setDataType(type);
         return this;
     }
 
+    /**
+     * Allowed values of the parameter when its an enum type
+     */
     public RestOperationParamDefinition allowableValues(List<String> allowableValues) {
         setAllowableValues(allowableValues);
         return this;
     }
 
+    /**
+     * Allowed values of the parameter when its an enum type
+     */
     public RestOperationParamDefinition allowableValues(String... allowableValues) {
         setAllowableValues(Arrays.asList(allowableValues));
         return this;
     }
 
-
+    /**
+     * The parameter type such as body, form, header, path, query
+     */
     public RestOperationParamDefinition type(RestParamType type) {
         setParamType(type);
         return this;
     }
 
+    /**
+     * A flag to hide the parameter if set to false
+     */
     public RestOperationParamDefinition paramAccess(String paramAccess) {
         setParamAccess(paramAccess);
         return this;
     }
 
+    /**
+     * Ends the configuration of this parameter
+     */
     public RestDefinition endParam() {
         verb.getParams().add(this);
         return verb.getRest();
