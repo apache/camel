@@ -670,7 +670,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.avro/${avro-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-compress/${commons-compress-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-math3/${commons-math3-version}</bundle>
-    <bundle dependency='true'>mvn:commons-cli/commons-cli/1.2</bundle>
+    <bundle dependency='true'>mvn:commons-cli/commons-cli/${commons-cli-version}</bundle>
     <bundle dependency='true'>mvn:commons-configuration/commons-configuration/${commons-configuration-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
