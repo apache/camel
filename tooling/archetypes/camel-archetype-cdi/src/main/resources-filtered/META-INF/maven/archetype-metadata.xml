@@ -24,12 +24,6 @@
     <requiredProperty key="camel-version">
       <defaultValue>${project.version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="log4j-version">
-      <defaultValue>${log4j-version}</defaultValue>
-    </requiredProperty>
-    <requiredProperty key="geronimo-ejb-spec-version">
-      <defaultValue>${geronimo-ejb_3.1_spec-version}</defaultValue>
-    </requiredProperty>
     <requiredProperty key="cdi-api-version">
       <defaultValue>1.2</defaultValue>
     </requiredProperty>
@@ -47,9 +41,6 @@
     </requiredProperty>
     <requiredProperty key="exec-maven-plugin-version">
       <defaultValue>${exec-maven-plugin-version}</defaultValue>
-    </requiredProperty>
-    <requiredProperty key="slf4j-api-version">
-      <defaultValue>${slf4j-api-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="slf4j-version">
       <defaultValue>${slf4j-version}</defaultValue>
