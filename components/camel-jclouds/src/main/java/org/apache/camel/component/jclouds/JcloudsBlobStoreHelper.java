@@ -18,15 +18,18 @@ package org.apache.camel.component.jclouds;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
+
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
+
 import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
 
 public final class JcloudsBlobStoreHelper {
@@ -135,5 +138,12 @@ public final class JcloudsBlobStoreHelper {
     public static boolean containerExists(BlobStore blobStore, String container) throws IOException {
         boolean result = blobStore.containerExists(container);
         return result;
+    }
+    
+    /**
+     * Delete a list of {@link BlobStore} blob
+     */
+    public static void removeBlobs(BlobStore blobStore, String container, List blobNames) throws IOException {
+        blobStore.removeBlobs(container, blobNames);
     }
 }

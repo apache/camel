@@ -22,6 +22,7 @@ public final class JcloudsConstants {
     public static final String COMPUTE = "compute";
     public static final String BLOB_NAME = "CamelJcloudsBlobName";
     public static final String CONTAINER_NAME = "CamelJcloudsContainerName";
+    public static final String BLOB_NAME_LIST = "CamelJcloudsBlobNameList";
 
     public static final String NODE_STATE = "CamelJcloudsNodeState";
 
@@ -30,6 +31,7 @@ public final class JcloudsConstants {
     public static final String GET = "CamelJcloudsGet";
     public static final String COUNT_BLOBS = "CamelJcloudsCountBlobs";
     public static final String REMOVE_BLOB = "CamelJcloudsRemoveBlob";
+    public static final String REMOVE_BLOBS = "CamelJcloudsRemoveBlobs";
     public static final String CLEAR_CONTAINER = "CamelJcloudsClearContainer";
     public static final String DELETE_CONTAINER = "CamelJcloudsDeleteContainer";
     public static final String CONTAINER_EXISTS = "CamelJcloudsExistsContainer";
