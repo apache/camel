@@ -121,4 +121,11 @@ public final class JcloudsBlobStoreHelper {
     public static void clearContainer(BlobStore blobStore, String container) throws IOException {
         blobStore.clearContainer(container);           
     }
+    
+    /**
+     * Delete a {@link BlobStore} specific container
+     */
+    public static void deleteContainer(BlobStore blobStore, String container) throws IOException {
+        blobStore.deleteContainer(container);
+    }
 }
