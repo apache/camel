@@ -17,7 +17,9 @@
 package org.apache.camel.component.jclouds;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.transform.TransformerException;
@@ -121,6 +123,22 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         result = template.requestBodyAndHeaders("direct:container-exists", null, headers, Boolean.class);
         assertEquals(false, result);
     }
+    
+    @Test
+    public void testRemoveBlobs() throws InterruptedException {
+        template.sendBody("direct:put", "test message");
+        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        assertEquals(new Long(1), result);
+        List blobsToRemove = new ArrayList<>();
+        blobsToRemove.add(TEST_BLOB_IN_DIR);
+        Map<String,Object> headers = new HashMap<String,Object>();
+        headers.put(JcloudsConstants.OPERATION, JcloudsConstants.REMOVE_BLOBS);
+        headers.put(JcloudsConstants.CONTAINER_NAME, TEST_CONTAINER);
+        headers.put(JcloudsConstants.BLOB_NAME_LIST, blobsToRemove);
+        template.sendBodyAndHeaders("direct:remove-blobs", null, headers);
+        result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        assertEquals(new Long(0), result);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -160,6 +178,9 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
                         .to("jclouds:blobstore:transient");
                 
                 from("direct:container-exists")
+                        .to("jclouds:blobstore:transient");
+                
+                from("direct:remove-blobs")
                         .to("jclouds:blobstore:transient");
             }
         };

@@ -81,6 +81,16 @@
             <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName"/>
             <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsExistsContainer"/>
         </route>
+        
+        <route>
+            <from uri="direct:remove-blobs"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsExistsContainer"/>
+        </route>
+        
+        <route>
+            <from uri="direct:count-after-remove-blobs"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsCountBlobs"/>
+        </route>
 
     </camelContext>
 

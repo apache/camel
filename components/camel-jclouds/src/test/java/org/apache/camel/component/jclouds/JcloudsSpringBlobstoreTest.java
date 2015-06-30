@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.jclouds;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.EndpointInject;
@@ -101,5 +104,20 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
     public void testBlobStoreContainerExists() throws InterruptedException {
         Boolean result = template.requestBody("direct:exists", "Some message", Boolean.class);
         assertEquals(true, result);
+    }
+    
+    @Test
+    public void testBlobStoreRemoveBlobs() throws InterruptedException {
+        Boolean result = template.requestBody("direct:exists", "Some message", Boolean.class);
+        assertEquals(true, result);
+        List blobsToRemove = new ArrayList<>();
+        blobsToRemove.add("testName");
+        Map<String,Object> headers = new HashMap<String,Object>();
+        headers.put(JcloudsConstants.OPERATION, JcloudsConstants.REMOVE_BLOBS);
+        headers.put(JcloudsConstants.CONTAINER_NAME, "foo");
+        headers.put(JcloudsConstants.BLOB_NAME_LIST, blobsToRemove);
+        template.sendBodyAndHeaders("direct:remove-blobs", null, headers);
+        Long count = template.requestBody("direct:count-after-remove-blobs", null, Long.class);
+        assertEquals(new Long(0), count);
     }
 }
