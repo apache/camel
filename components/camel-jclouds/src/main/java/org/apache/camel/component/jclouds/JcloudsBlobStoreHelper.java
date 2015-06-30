@@ -107,11 +107,18 @@ public final class JcloudsBlobStoreHelper {
     
 
     /**
-     * Reads from a {@link BlobStore}. It returns an Object.
+     * Remove a specific blob from a {@link BlobStore}
      */
     public static void removeBlob(BlobStore blobStore, String container, String blobName) throws IOException {
         if (!Strings.isNullOrEmpty(blobName)) {
             blobStore.removeBlob(container, blobName);            
         }
+    }
+    
+    /**
+     * Clear a {@link BlobStore} specific container
+     */
+    public static void clearContainer(BlobStore blobStore, String container) throws IOException {
+        blobStore.clearContainer(container);           
     }
 }
