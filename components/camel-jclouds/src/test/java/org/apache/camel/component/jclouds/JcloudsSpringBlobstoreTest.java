@@ -93,6 +93,13 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
     
     @Test
     public void testBlobStoreDelete() throws InterruptedException {
-        template.requestBody("direct:delete", "Some message");
+        Boolean result = template.requestBody("direct:delete", "Some message", Boolean.class);
+        assertEquals(false, result);
+    }
+    
+    @Test
+    public void testBlobStoreContainerExists() throws InterruptedException {
+        Boolean result = template.requestBody("direct:exists", "Some message", Boolean.class);
+        assertEquals(true, result);
     }
 }

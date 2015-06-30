@@ -64,7 +64,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         } else if (JcloudsConstants.DELETE_CONTAINER.equals(operation)) {
             JcloudsBlobStoreHelper.deleteContainer(blobStore, container);
         } else if (JcloudsConstants.CONTAINER_EXISTS.equals(operation)) {
-            JcloudsBlobStoreHelper.containerExists(blobStore, container);
+            exchange.getOut().setBody(JcloudsBlobStoreHelper.containerExists(blobStore, container));
         } else {
             Payload body = exchange.getIn().getBody(Payload.class);
             JcloudsBlobStoreHelper.writeBlob(blobStore, container, blobName, body);

@@ -17,6 +17,8 @@
 package org.apache.camel.component.jclouds;
 
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
@@ -108,6 +110,17 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         assertEquals(new Long(1), result);
         template.requestBodyAndHeader("direct:put-and-delete-container", null, JcloudsConstants.OPERATION, JcloudsConstants.DELETE_CONTAINER);
     }
+    
+    @Test
+    public void testCheckContainerExists() throws InterruptedException {
+        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.CONTAINER_EXISTS, Boolean.class);
+        assertEquals(true, result);
+        Map<String,Object> headers = new HashMap<String,Object>();
+        headers.put(JcloudsConstants.OPERATION, JcloudsConstants.CONTAINER_EXISTS);
+        headers.put(JcloudsConstants.CONTAINER_NAME, "otherTest");
+        result = template.requestBodyAndHeaders("direct:container-exists", null, headers, Boolean.class);
+        assertEquals(false, result);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -144,6 +157,9 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
                 from("direct:put-and-delete-container")
                         .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB_IN_DIR))
                         .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))
+                        .to("jclouds:blobstore:transient");
+                
+                from("direct:container-exists")
                         .to("jclouds:blobstore:transient");
             }
         };
