@@ -32,6 +32,7 @@ public final class JcloudsConstants {
     public static final String REMOVE_BLOB = "CamelJcloudsRemoveBlob";
     public static final String CLEAR_CONTAINER = "CamelJcloudsClearContainer";
     public static final String DELETE_CONTAINER = "CamelJcloudsDeleteContainer";
+    public static final String CONTAINER_EXISTS = "CamelJcloudsExistsContainer";
     public static final String LIST_IMAGES = "CamelJcloudsListImages";
     public static final String LIST_HARDWARE = "CamelJcloudsListHardware";
     public static final String LIST_NODES = "CamelJcloudsListNodes";

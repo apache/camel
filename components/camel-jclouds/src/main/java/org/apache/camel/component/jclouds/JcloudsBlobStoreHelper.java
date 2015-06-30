@@ -128,4 +128,12 @@ public final class JcloudsBlobStoreHelper {
     public static void deleteContainer(BlobStore blobStore, String container) throws IOException {
         blobStore.deleteContainer(container);
     }
+    
+    /**
+     * Check if a {@link BlobStore} specific container exists or not
+     */
+    public static boolean containerExists(BlobStore blobStore, String container) throws IOException {
+        boolean result = blobStore.containerExists(container);
+        return result;
+    }
 }
