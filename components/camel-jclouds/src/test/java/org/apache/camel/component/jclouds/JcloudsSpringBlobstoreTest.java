@@ -90,4 +90,9 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
         Long count = template.requestBody("direct:clear", "Some message", Long.class);
         assertEquals(new Long(0), count);
     }
+    
+    @Test
+    public void testBlobStoreDelete() throws InterruptedException {
+        template.requestBody("direct:delete", "Some message");
+    }
 }
