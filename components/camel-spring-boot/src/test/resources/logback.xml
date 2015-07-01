@@ -15,21 +15,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:camel="http://camel.apache.org/schema/spring"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-
-
-  <camelContext id="xmlCamelContext" xmlns="http://camel.apache.org/schema/spring">
-    <template id="xmlProducerTemplate"/>
-    <consumerTemplate id="xmlConsumerTemplate"/>
-
-    <route>
-      <from uri="direct:input"/>
-      <to uri="mock:output"/>
-    </route>
-  </camelContext>
-
-</beans>
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/base.xml"/>
+  <logger name="org.apache.camel.spring.boot" level="INFO"/>
+</configuration>
