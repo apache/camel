@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * To specify the rest operation parameters using Swagger.
@@ -275,6 +276,8 @@ public class RestOperationParamDefinition {
      * Ends the configuration of this parameter
      */
     public RestDefinition endParam() {
+        // name is mandatory
+        ObjectHelper.notEmpty(name, "name");
         verb.getParams().add(this);
         return verb.getRest();
     }

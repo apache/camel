@@ -577,6 +577,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     //  merge if exists
                     boolean found = false;
                     for (RestOperationParamDefinition param : verb.getParams()) {
+                        // name is mandatory
+                        ObjectHelper.notEmpty(param.getName(), "parameter name");
                         if (param.getName().equalsIgnoreCase(key)) {
                             param.type(RestParamType.path);
                             found = true;
