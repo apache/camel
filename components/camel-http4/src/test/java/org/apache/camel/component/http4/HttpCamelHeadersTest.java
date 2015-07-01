@@ -27,8 +27,11 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.protocol.HttpContext;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -37,9 +40,40 @@ import org.junit.Test;
  */
 public class HttpCamelHeadersTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        Map<String, String> expectedHeaders = new HashMap<String, String>();
+        expectedHeaders.put("TestHeader", "test");
+        expectedHeaders.put("Accept-Language", "pl");
+        
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/", new MyHeaderValidationHandler("GET", "HTTP/1.0", getExpectedContent(), expectedHeaders)).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void httpHeadersShouldPresent() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("TestHeader", "test");
                 exchange.getIn().setHeader("Accept-Language", "pl");
@@ -56,15 +90,6 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
 
         assertEquals("test", headers.get("TestHeader"));
         assertEquals("pl", headers.get("Accept-Language"));
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
-        expectedHeaders.put("TestHeader", "test");
-        expectedHeaders.put("Accept-Language", "pl");
-
-        server.register("/", new MyHeaderValidationHandler("GET", "HTTP/1.0", getExpectedContent(), expectedHeaders));
     }
     
     class MyHeaderValidationHandler extends HeaderValidationHandler {

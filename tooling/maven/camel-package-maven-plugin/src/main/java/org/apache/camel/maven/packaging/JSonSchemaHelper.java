@@ -52,7 +52,7 @@ public final class JSonSchemaHelper {
             // we need to find the group first
             if (!found) {
                 String s = line.trim();
-                found = s.startsWith("\"" + group + "\":");
+                found = s.startsWith("\"" + group + "\":") && s.endsWith("{");
                 continue;
             }
 
@@ -111,6 +111,5 @@ public final class JSonSchemaHelper {
         }
         return value;
     }
-
 
 }

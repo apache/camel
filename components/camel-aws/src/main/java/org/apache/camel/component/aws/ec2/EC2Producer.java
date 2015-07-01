@@ -20,9 +20,15 @@ import java.util.Collection;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceType;
+import com.amazonaws.services.ec2.model.MonitorInstancesRequest;
+import com.amazonaws.services.ec2.model.MonitorInstancesResult;
+import com.amazonaws.services.ec2.model.Placement;
+import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.StartInstancesRequest;
@@ -31,10 +37,12 @@ import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
-import com.amazonaws.services.opsworks.model.StartInstanceRequest;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesRequest;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -70,6 +78,18 @@ public class EC2Producer extends DefaultProducer {
         case describeInstances:
             describeInstances(getEndpoint().getEc2Client(), exchange);
             break;
+        case describeInstancesStatus:
+            describeInstancesStatus(getEndpoint().getEc2Client(), exchange);
+            break;
+        case rebootInstances:
+            rebootInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case monitorInstances:
+            monitorInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case unmonitorInstances:
+            unmonitorInstances(getEndpoint().getEc2Client(), exchange);
+            break; 
         default:
             throw new IllegalArgumentException("Unsupported operation");
         }
@@ -96,6 +116,15 @@ public class EC2Producer extends DefaultProducer {
     public EC2Endpoint getEndpoint() {
         return (EC2Endpoint) super.getEndpoint();
     }
+
+    private Message getMessageForResponse(final Exchange exchange) {
+        if (exchange.getPattern().isOutCapable()) {
+            Message out = exchange.getOut();
+            out.copyFrom(exchange.getIn());
+            return out;
+        }
+        return exchange.getIn();
+    }
     
     private void createAndRunInstance(AmazonEC2Client ec2Client, Exchange exchange) {
         String ami;
@@ -106,6 +135,9 @@ public class EC2Producer extends DefaultProducer {
         String kernelId;
         boolean ebsOptimized;
         Collection securityGroups;
+        String keyName;
+        String clientToken;
+        Placement placement;
         RunInstancesRequest request = new RunInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.IMAGE_ID))) {
             ami = exchange.getIn().getHeader(EC2Constants.IMAGE_ID, String.class);
@@ -147,6 +179,18 @@ public class EC2Producer extends DefaultProducer {
             securityGroups = exchange.getIn().getHeader(EC2Constants.INSTANCE_SECURITY_GROUPS, Collection.class);
             request.withSecurityGroups(securityGroups);
         }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_KEY_PAIR))) {
+            keyName = exchange.getIn().getHeader(EC2Constants.INSTANCES_KEY_PAIR, String.class);
+            request.withKeyName(keyName);
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_CLIENT_TOKEN))) {
+            clientToken = exchange.getIn().getHeader(EC2Constants.INSTANCES_CLIENT_TOKEN, String.class);
+            request.withClientToken(clientToken);
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_PLACEMENT))) {
+            placement = exchange.getIn().getHeader(EC2Constants.INSTANCES_PLACEMENT, Placement.class);
+            request.withPlacement(placement);
+        }
         RunInstancesResult result;
         try {
             result = ec2Client.runInstances(request);
@@ -154,7 +198,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Run Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
     
     private void startInstances(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -173,7 +218,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Start Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);        
     }
     
     private void stopInstances(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -192,7 +238,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Stop Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);        
     }
     
     private void terminateInstances(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -211,7 +258,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Terminate Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);        
     }
     
     private void describeInstances(AmazonEC2Client ec2Client, Exchange exchange) {
@@ -228,6 +276,82 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Describe Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        exchange.getIn().setBody(result);        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);        
+    }
+    
+    private void describeInstancesStatus(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        DescribeInstanceStatusRequest request = new DescribeInstanceStatusRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withInstanceIds(instanceIds);
+        } 
+        DescribeInstanceStatusResult result;
+        try {
+            result = ec2Client.describeInstanceStatus(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Describe Instances Status command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);        
+    }
+    
+    private void rebootInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        RebootInstancesRequest request = new RebootInstancesRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withInstanceIds(instanceIds);
+        } else {
+            throw new IllegalArgumentException("Instances Ids must be specified");
+        }
+        try {
+            ec2Client.rebootInstances(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Reboot Instances command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+    }
+    
+    private void monitorInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        MonitorInstancesRequest request = new MonitorInstancesRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withInstanceIds(instanceIds);
+        } else {
+            throw new IllegalArgumentException("Instances Ids must be specified");
+        }
+        MonitorInstancesResult result;
+        try {
+            result = ec2Client.monitorInstances(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Monitor Instances command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result); 
+    }
+    
+    private void unmonitorInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        UnmonitorInstancesRequest request = new UnmonitorInstancesRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withInstanceIds(instanceIds);
+        } else {
+            throw new IllegalArgumentException("Instances Ids must be specified");
+        }
+        UnmonitorInstancesResult result;
+        try {
+            result = ec2Client.unmonitorInstances(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Unmonitor Instances command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result); 
     }
 }

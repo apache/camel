@@ -34,7 +34,8 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * FTP endpoint
  */
-@UriEndpoint(scheme = "ftp", title = "FTP", syntax = "ftp:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
+@UriEndpoint(scheme = "ftp", extendsScheme = "file", title = "FTP",
+        syntax = "ftp:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
 
     protected FTPClient ftpClient;
@@ -198,12 +199,21 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Sets the soTimeout option.
-     * <p/>
-     * Used by FTPClient
+     * Sets the soTimeout on the FTP client.
      */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
+    }
+
+    public int getDataTimeout() {
+        return dataTimeout;
+    }
+
+    /**
+     * Sets the data timeout on the FTP client.
+     */
+    public void setDataTimeout(int dataTimeout) {
+        this.dataTimeout = dataTimeout;
     }
 
     @Override

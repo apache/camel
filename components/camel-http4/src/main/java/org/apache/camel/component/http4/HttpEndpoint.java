@@ -87,6 +87,8 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String httpMethodRestrict;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean clearExpiredCookies = true;
+    @UriParam(label = "producer")
+    private boolean ignoreResponseBody;
 
     public HttpEndpoint() {
     }
@@ -475,4 +477,16 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
         this.authenticationPreemptive = authenticationPreemptive;
     }
+
+    public boolean isIgnoreResponseBody() {
+        return ignoreResponseBody;
+    }
+
+    /**
+     * If this option is true, The http producer won't read response body and cached the input stream.
+     */
+    public void setIgnoreResponseBody(boolean ignoreResponseBody) {
+        this.ignoreResponseBody = ignoreResponseBody;
+    }
+
 }

@@ -36,12 +36,12 @@
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.11.1</activemq-version>
-    <ahc-version>1.9.17</ahc-version>
+    <ahc-version>1.9.27</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>3.4_1</antlr-bundle-version>
     <antlr-runtime-bundle-version>3.4_2</antlr-runtime-bundle-version>
     <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
-    <apacheds-version>2.0.0-M19</apacheds-version>
+    <apacheds-version>2.0.0-M20</apacheds-version>
     <apache-gora-version>0.4</apache-gora-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-api-version>1.0.0</aries-blueprint-api-version>
@@ -55,7 +55,7 @@
     <asm-version>3.3.1</asm-version>
     <aspectj-version>1.8.5</aspectj-version>
     <atmos-client-version>2.2.2</atmos-client-version>
-    <atmosphere-version>2.2.6</atmosphere-version>
+    <atmosphere-version>2.3.2</atmosphere-version>
     <atmosphere-version-range>[2.0,3.0)</atmosphere-version-range>
     <atomikos-transactions-version>3.9.3</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
@@ -64,7 +64,7 @@
     <avro-bundle-version>1.7.7_1</avro-bundle-version>
     <avro-ipc-bundle-version>1.7.7_1</avro-ipc-bundle-version>
     <awaitility.version>1.6.3</awaitility.version>
-    <aws-java-sdk-bundle-version>1.9.33_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-bundle-version>1.9.40_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.9.40</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
@@ -72,7 +72,7 @@
     <beanio-version>2.1.0</beanio-version>
     <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
     <bsh-version>2.0b5</bsh-version>
-    <boon-version>0.32</boon-version>
+    <boon-version>0.33</boon-version>
     <bouncycastle-version>1.52</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <build-helper-maven-plugin-version>1.8</build-helper-maven-plugin-version>
@@ -80,14 +80,14 @@
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <cassandra-driver-version>2.1.6</cassandra-driver-version>
     <cassandra-driver-guava-version>16.0.1</cassandra-driver-guava-version>
-    <cassandra-version>2.1.5</cassandra-version>
+    <cassandra-version>2.1.6</cassandra-version>
     <cassandra-unit-version>2.1.3.1</cassandra-unit-version>
     <castor-version>1.3.3</castor-version>
     <castor-bundle-version>1.3.3_1</castor-bundle-version>
     <cdi-api-version>1.0</cdi-api-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
-    <chunk-templates-version>2.6.3</chunk-templates-version>
+    <chunk-templates-version>2.6.4</chunk-templates-version>
     <classmate-version>1.0.0</classmate-version>
     <cmis-version>0.8.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
@@ -97,11 +97,11 @@
     <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
     <commons-codec-version>1.10</commons-codec-version>
     <commons-collections-version>3.2.1</commons-collections-version>
-    <commons-compress-version>1.5</commons-compress-version>
+    <commons-compress-version>1.9</commons-compress-version>
     <commons-configuration-version>1.9</commons-configuration-version>
     <commons-configuration-bundle-version>1.9_1</commons-configuration-bundle-version>
     <commons-csv-version>1.1</commons-csv-version>
-    <commons-cli-version>1.2</commons-cli-version>
+    <commons-cli-version>1.3.1</commons-cli-version>
     <commons-daemon-version>1.0.15</commons-daemon-version>
     <commons-dbcp-version>1.4</commons-dbcp-version>
     <commons-digester-1x-version>1.8.1</commons-digester-1x-version>
@@ -112,7 +112,7 @@
     <commons-jexl2-version>2.1.1</commons-jexl2-version>
     <commons-jxpath-version>1.3</commons-jxpath-version>
     <commons-lang-version>2.6</commons-lang-version>
-    <commons-lang3-version>3.3.2</commons-lang3-version>
+    <commons-lang3-version>3.4</commons-lang3-version>
     <commons-logging-version>1.1.3</commons-logging-version>
     <commons-math-version>2.2</commons-math-version>
     <commons-math3-version>3.3</commons-math3-version>
@@ -125,14 +125,14 @@
     <cxf-version>3.0.4</cxf-version>
     <cxf-version-range>[2.7,4.0)</cxf-version-range>
     <cxf-xjc-utils-version>3.0.2</cxf-xjc-utils-version>
-    <deltaspike-version>1.3.0</deltaspike-version>
+    <deltaspike-version>1.4.1</deltaspike-version>
     <derby-version>10.11.1.1</derby-version>
     <disruptor-version>3.3.2</disruptor-version>
     <dnsjava-version>2.1.7</dnsjava-version>
     <dnsjava-bundle-version>2.1.7_1</dnsjava-bundle-version>
     <docker-java-version>1.3.0</docker-java-version>
+    <docker-bundle-version>1.3.0_1</docker-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
-    <docker-bundle-version>1.2.0_1</docker-bundle-version>
     <dozer-version>5.5.1</dozer-version>
     <drools-version>6.2.0.Final</drools-version>
     <dropbox-version>1.7.7</dropbox-version>
@@ -145,7 +145,7 @@
     <elasticsearch-bundle-version>1.4.4_1</elasticsearch-bundle-version>
     <elasticsearch-version>1.4.4</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
-    <embedmongo-version>1.47.3</embedmongo-version>
+    <embedmongo-version>1.48.0</embedmongo-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <facebook4j-core-version>2.2.2</facebook4j-core-version>
@@ -183,7 +183,7 @@
     <gmaven-plugin-version>1.4</gmaven-plugin-version>
     <gmetric4j-version>1.0.10</gmetric4j-version>
     <google-app-engine-version>1.9.21</google-app-engine-version>
-    <google-app-engine-bundle-version>1.9.19_1</google-app-engine-bundle-version>
+    <google-app-engine-bundle-version>1.9.21_1</google-app-engine-bundle-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
     <google-gdata-bundle-version>1.41.1_1</google-gdata-bundle-version>
     <google-guava-version>18.0</google-guava-version>
@@ -191,7 +191,7 @@
     <google-api-services-drive-version>v2-rev151-1.19.0</google-api-services-drive-version>
     <google-api-services-calendar-version>v3-rev99-1.19.0</google-api-services-calendar-version>
     <google-api-services-mail-version>v1-rev15-1.19.0</google-api-services-mail-version>
-    <grizzly-websockets-version>2.3.19</grizzly-websockets-version>
+    <grizzly-websockets-version>2.3.21</grizzly-websockets-version>
     <groovy-version>2.4.3</groovy-version>
     <gson-version>2.3.1</gson-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
@@ -205,7 +205,7 @@
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.21</hawtdispatch-version>
-    <hazelcast-version>3.4.2</hazelcast-version>
+    <hazelcast-version>3.5</hazelcast-version>
     <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
     <hibernate-validator-version>5.0.3.Final</hibernate-validator-version>
@@ -217,14 +217,14 @@
     <htmlunit.version>2.15</htmlunit.version>
     <htmlunit-bundle-version>2.15_1</htmlunit-bundle-version>
     <httpunit-version>1.7</httpunit-version>
-    <httpcore4-version>4.3.3</httpcore4-version>
-    <httpclient4-version>4.3.6</httpclient4-version>
-    <httpasyncclient-version>4.0.2</httpasyncclient-version>
+    <httpcore4-version>4.4.1</httpcore4-version>
+    <httpclient4-version>4.4.1</httpclient4-version>
+    <httpasyncclient-version>4.1</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.6</ical4j-version>
-    <infinispan-version>7.2.0.Final</infinispan-version>
+    <infinispan-version>7.2.3.Final</infinispan-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
@@ -233,8 +233,8 @@
     <ivy-version>2.4.0</ivy-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
-    <jackson2-version>2.5.1</jackson2-version>
-    <jackrabbit-version>2.10.0</jackrabbit-version>
+    <jackson2-version>2.5.4</jackson2-version>
+    <jackrabbit-version>2.10.1</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasper-bundle-version>6.0.36_1</jasper-bundle-version>
     <jasypt-bundle-version>1.9.2_1</jasypt-bundle-version>
@@ -251,7 +251,7 @@
     <jaxen-version>1.1.6</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jboss-logging-version>3.1.4.GA</jboss-logging-version>
-    <jboss-marshalling-version>1.4.4.Final</jboss-marshalling-version>
+    <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jclouds-version>1.9.0</jclouds-version>
     <!-- jclouds must use this guava version -->
     <jclouds-google-guava-version>16.0</jclouds-google-guava-version>
@@ -259,7 +259,7 @@
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
-    <jedis-client-bundle-version>2.7.1_1</jedis-client-bundle-version>
+    <jedis-client-bundle-version>2.7.2_1</jedis-client-bundle-version>
     <jersey-version>2.11</jersey-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
@@ -272,22 +272,22 @@
     <jettison-version>1.3.7</jettison-version>
     <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
-    <jgroups-version>3.6.1.Final</jgroups-version>
+    <jgroups-version>3.6.3.Final</jgroups-version>
     <jibx-version>1.2.5</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
     <jline-version>2.12</jline-version>
     <jmockit-version>1.5</jmockit-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
-    <jodatime2-bundle-version>2.5</jodatime2-bundle-version>
+    <jodatime2-bundle-version>2.8.1</jodatime2-bundle-version>
     <jolokia-version>1.3.1</jolokia-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
     <jruby-version>1.7.18</jruby-version>
     <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.1.1</jsmpp-version>
-    <jsch-version>0.1.52</jsch-version>
-    <jsch-bundle-version>0.1.52_1</jsch-bundle-version>
+    <jsch-version>0.1.53</jsch-version>
+    <jsch-bundle-version>0.1.53_1</jsch-bundle-version>
     <jsendnsca-bundle-version>1.3.1_3</jsendnsca-bundle-version>
     <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
     <jsonlib-version>2.4</jsonlib-version>
@@ -326,8 +326,8 @@
     <lucene-bundle-version>4.10.3_1</lucene-bundle-version>
     <lucene-version>4.10.3</lucene-version>
     <lucene-version-range>[4.5,5)</lucene-version-range>
-    <lightcouch-version>0.1.6</lightcouch-version>
-    <lightcouch-bundle-version>0.1.6_1</lightcouch-bundle-version>
+    <lightcouch-version>0.1.8</lightcouch-version>
+    <lightcouch-bundle-version>0.1.8_1</lightcouch-bundle-version>
     <!-- needed from tooling/archetypes -->
     <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
@@ -338,7 +338,7 @@
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
     <!-- maven-checkstyle-plugin 2.10 has problems to validate the license header in properties files-->
     <maven-checkstyle-plugin-version>2.9.1</maven-checkstyle-plugin-version>
-    <maven-checkstyle-version>5.3</maven-checkstyle-version>
+    <maven-checkstyle-version>5.6</maven-checkstyle-version>
     <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.4.Final</maven-jboss-as-maven-plugin-version>
@@ -358,26 +358,26 @@
     <minimal-json-version>0.9.1</minimal-json-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockito-version>1.9.5</mockito-version>
-    <mongo-java-driver-version>3.0.1</mongo-java-driver-version>
+    <mongo-java-driver-version>3.0.2</mongo-java-driver-version>
     <mqtt-client-version>1.10</mqtt-client-version>
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.0</mustache-java-version>
     <mustache-guava-version>16.0</mustache-guava-version>
     <mustache-bundle-version>0.8.16_1</mustache-bundle-version>
-    <mvel-version>2.2.4.Final</mvel-version>
+    <mvel-version>2.2.5.Final</mvel-version>
     <mybatis-version>3.3.0</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.10.3.Final</netty3-version>
-    <netty-version>4.0.28.Final</netty-version>
+    <netty-version>4.0.29.Final</netty-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.2.0</openwebbeans-version>
     <olingo2-version>2.0.4</olingo2-version>
-    <olingo-odata2-core-bundle-version>2.0.3_1</olingo-odata2-core-bundle-version>
+    <olingo-odata2-core-bundle-version>2.0.4_1</olingo-odata2-core-bundle-version>
     <ognl-version>3.0.11</ognl-version>
     <ognl-bundle-version>3.0.11_1</ognl-bundle-version>
     <oncrpc-version>1.1.2</oncrpc-version>
-    <openejb-version>4.7.1</openejb-version>
+    <openejb-version>4.7.2</openejb-version>
     <openjpa-version>2.4.0</openjpa-version>
     <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
     <optaplanner-version>6.2.0.Final</optaplanner-version>
@@ -410,7 +410,7 @@
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
-    <rxjava-version>1.0.10</rxjava-version>
+    <rxjava-version>1.0.12</rxjava-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.5.1-5_1</saxon-bundle-version>
     <saxon-version>9.5.1-5</saxon-version>
@@ -449,8 +449,8 @@
     <spring-data-redis-version>1.3.4.RELEASE</spring-data-redis-version>
     <spring-integration-version>2.2.6.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-    <spring-ldap-version>2.0.2.RELEASE</spring-ldap-version>
-    <spring-ldap-bundle-version>2.0.2.RELEASE_1</spring-ldap-bundle-version>
+    <spring-ldap-version>2.0.3.RELEASE</spring-ldap-version>
+    <spring-ldap-bundle-version>2.0.3.RELEASE_1</spring-ldap-bundle-version>
     <!-- spring 1.1.0 is not OSGi bundle any more -->
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
     <!-- Spring 4 can be used in OSGi, but not with spring-dm.  Allow Spring 4 for the bundle imports. -->
@@ -492,9 +492,9 @@
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>
-    <vertx-version>2.1.5</vertx-version>
+    <vertx-version>2.1.6</vertx-version>
     <vysper-version>0.7</vysper-version>
-    <weld2-version>2.2.11.Final</weld2-version>
+    <weld2-version>2.2.14.Final</weld2-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <woodstox-version>4.4.1</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
@@ -526,8 +526,8 @@
     <xstream-version>1.4.8</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
-    <zxing-version>3.0.0</zxing-version>
-	<zxing-bundle-version>3.0.1_1</zxing-bundle-version>
+    <zxing-version>3.2.0</zxing-version>
+	<zxing-bundle-version>3.2.0_1</zxing-bundle-version>
     <zookeeper-version>3.4.6</zookeeper-version>
 
     <!-- OSGi bundles properties -->

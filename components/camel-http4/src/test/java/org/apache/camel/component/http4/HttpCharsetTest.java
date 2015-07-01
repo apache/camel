@@ -21,7 +21,10 @@ import java.io.ByteArrayInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -32,10 +35,37 @@ public class HttpCharsetTest extends BaseHttpTest {
 
     // default content encoding of the local test server
     private String charset = "ISO-8859-1";
+    
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/", new BasicValidationHandler("POST", null, getBody(), getExpectedContent())).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
 
     @Test
     public void sendCharsetInExchangeProperty() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setProperty(Exchange.CHARSET_NAME, charset);
                 exchange.getIn().setBody(getBody());
@@ -47,7 +77,7 @@ public class HttpCharsetTest extends BaseHttpTest {
 
     @Test
     public void sendByteArrayCharsetInExchangeProperty() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setProperty(Exchange.CHARSET_NAME, charset);
                 exchange.getIn().setBody(getBody().getBytes(charset));
@@ -59,7 +89,7 @@ public class HttpCharsetTest extends BaseHttpTest {
 
     @Test
     public void sendInputStreamCharsetInExchangeProperty() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setProperty(Exchange.CHARSET_NAME, charset);
                 exchange.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset)));
@@ -67,11 +97,6 @@ public class HttpCharsetTest extends BaseHttpTest {
         });
 
         assertExchange(exchange);
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/", new BasicValidationHandler("POST", null, getBody(), getExpectedContent()));
     }
 
     protected String getBody() {

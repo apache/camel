@@ -30,7 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 public class XmlSignatureComponent extends UriEndpointComponent {
 
     private XmlSignerConfiguration signerConfiguration;
-
     private XmlVerifierConfiguration verifierConfiguration;
 
     public XmlSignatureComponent() {
@@ -91,6 +90,9 @@ public class XmlSignatureComponent extends UriEndpointComponent {
         return signerConfiguration;
     }
 
+    /**
+     * To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints.
+     */
     public void setSignerConfiguration(XmlSignerConfiguration signerConfiguration) {
         this.signerConfiguration = signerConfiguration;
     }
@@ -102,6 +104,9 @@ public class XmlSignatureComponent extends UriEndpointComponent {
         return verifierConfiguration;
     }
 
+    /**
+     * To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints.
+     */
     public void setVerifierConfiguration(XmlVerifierConfiguration verifierConfiguration) {
         this.verifierConfiguration = verifierConfiguration;
     }

@@ -17,27 +17,22 @@
 package org.apache.camel.component.aws.ec2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceStateName;
 import com.amazonaws.services.ec2.model.InstanceType;
+import com.amazonaws.services.ec2.model.MonitorInstancesResult;
+import com.amazonaws.services.ec2.model.MonitoringState;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.StartInstancesResult;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
-import com.amazonaws.services.simpledb.model.Attribute;
-import com.amazonaws.services.simpledb.model.DeletableItem;
-import com.amazonaws.services.simpledb.model.Item;
-import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
-import com.amazonaws.services.simpledb.model.ReplaceableItem;
-import com.amazonaws.services.simpledb.model.UpdateCondition;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,10 +64,34 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
         
-        RunInstancesResult resultGet = (RunInstancesResult) exchange.getIn().getBody();
+        RunInstancesResult resultGet = (RunInstancesResult) exchange.getOut().getBody();
         assertEquals(resultGet.getReservation().getInstances().get(0).getImageId(), "test-1");
         assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceType(), InstanceType.T2Micro.toString());
         assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceId(), "instance-1");
+    }
+    
+    @Test
+    public void ec2CreateAndRunTestWithKeyPair() throws Exception {
+
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_KEY_PAIR, "keypair-1");
+            }
+        });
+        
+        RunInstancesResult resultGet = (RunInstancesResult) exchange.getOut().getBody();
+        assertEquals(resultGet.getReservation().getInstances().get(0).getImageId(), "test-1");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceType(), InstanceType.T2Micro.toString());
+        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceId(), "instance-1");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().size(), 2);
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(0).getGroupId(), "id-3");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(1).getGroupId(), "id-4");
     }
     
     @Test
@@ -87,7 +106,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
                 
-        StartInstancesResult resultGet = (StartInstancesResult) exchange.getIn().getBody();
+        StartInstancesResult resultGet = (StartInstancesResult) exchange.getOut().getBody();
         assertEquals(resultGet.getStartingInstances().get(0).getInstanceId(), "test-1");
         assertEquals(resultGet.getStartingInstances().get(0).getPreviousState().getName(), InstanceStateName.Stopped.toString());
         assertEquals(resultGet.getStartingInstances().get(0).getCurrentState().getName(), InstanceStateName.Running.toString());
@@ -105,7 +124,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
                 
-        StopInstancesResult resultGet = (StopInstancesResult) exchange.getIn().getBody();
+        StopInstancesResult resultGet = (StopInstancesResult) exchange.getOut().getBody();
         assertEquals(resultGet.getStoppingInstances().get(0).getInstanceId(), "test-1");
         assertEquals(resultGet.getStoppingInstances().get(0).getPreviousState().getName(), InstanceStateName.Running.toString());
         assertEquals(resultGet.getStoppingInstances().get(0).getCurrentState().getName(), InstanceStateName.Stopped.toString());
@@ -123,7 +142,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
                 
-        TerminateInstancesResult resultGet = (TerminateInstancesResult) exchange.getIn().getBody();
+        TerminateInstancesResult resultGet = (TerminateInstancesResult) exchange.getOut().getBody();
         assertEquals(resultGet.getTerminatingInstances().get(0).getInstanceId(), "test-1");
         assertEquals(resultGet.getTerminatingInstances().get(0).getPreviousState().getName(), InstanceStateName.Running.toString());
         assertEquals(resultGet.getTerminatingInstances().get(0).getCurrentState().getName(), InstanceStateName.Terminated.toString());
@@ -142,9 +161,84 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
         
-        DescribeInstancesResult resultGet = (DescribeInstancesResult) exchange.getIn().getBody();
+        DescribeInstancesResult resultGet = (DescribeInstancesResult) exchange.getOut().getBody();
         assertEquals(resultGet.getReservations().size(), 1);
         assertEquals(resultGet.getReservations().get(0).getInstances().size(), 1);
+    }
+    
+    @Test
+    public void ec2DescribeStatusSpecificInstancesTest() throws Exception {
+
+        Exchange exchange = template.request("direct:describeStatus", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        DescribeInstanceStatusResult resultGet = (DescribeInstanceStatusResult) exchange.getOut().getBody();
+        assertEquals(resultGet.getInstanceStatuses().size(), 1);
+        assertEquals(resultGet.getInstanceStatuses().get(0).getInstanceState().getName(), InstanceStateName.Running.toString());
+    }
+    
+    @Test
+    public void ec2RebootInstancesTest() throws Exception {
+
+        Exchange exchange = template.request("direct:reboot", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+    }
+    
+    @Test
+    public void ec2MonitorInstancesTest() throws Exception {
+
+        Exchange exchange = template.request("direct:monitor", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        MonitorInstancesResult resultGet = (MonitorInstancesResult) exchange.getOut().getBody();
+        
+        assertEquals(resultGet.getInstanceMonitorings().size(), 1);
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Enabled.toString());
+    }
+    
+    @Test
+    public void ec2UnmonitorInstancesTest() throws Exception {
+
+        Exchange exchange = template.request("direct:unmonitor", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        UnmonitorInstancesResult resultGet = (UnmonitorInstancesResult) exchange.getOut().getBody();
+        
+        assertEquals(resultGet.getInstanceMonitorings().size(), 1);
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Disabled.toString());
     }
     
     @Override

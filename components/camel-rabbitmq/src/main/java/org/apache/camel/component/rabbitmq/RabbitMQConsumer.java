@@ -27,15 +27,17 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
+
 public class RabbitMQConsumer extends DefaultConsumer {
-    ExecutorService executor;
-    Connection conn;
+    private ExecutorService executor;
+    private Connection conn;
     private int closeTimeout = 30 * 1000;
     private final RabbitMQEndpoint endpoint;
 
@@ -55,7 +57,6 @@ public class RabbitMQConsumer extends DefaultConsumer {
     }
 
     @Override
-
     public RabbitMQEndpoint getEndpoint() {
         return (RabbitMQEndpoint) super.getEndpoint();
     }
@@ -79,7 +80,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
         // setup the basicQos
         if (endpoint.isPrefetchEnabled()) {
             channel.basicQos(endpoint.getPrefetchSize(), endpoint.getPrefetchCount(),
-                    endpoint.isPrefetchGlobal());
+                            endpoint.isPrefetchGlobal());
         }
         return channel;
     }
@@ -182,10 +183,11 @@ public class RabbitMQConsumer extends DefaultConsumer {
                                    AMQP.BasicProperties properties, byte[] body) throws IOException {
 
             Exchange exchange = consumer.endpoint.createRabbitExchange(envelope, properties, body);
-            mergeAmqpProperties(exchange, properties);
+            endpoint.getMessageConverter().mergeAmqpProperties(exchange, properties);
 
             boolean sendReply = properties.getReplyTo() != null;
             if (sendReply && !exchange.getPattern().isOutCapable()) {
+                log.debug("In an inOut capable route");
                 exchange.setPattern(ExchangePattern.InOut);
             }
 
@@ -208,16 +210,17 @@ public class RabbitMQConsumer extends DefaultConsumer {
             if (!exchange.isFailed()) {
                 // processing success
                 if (sendReply && exchange.getPattern().isOutCapable()) {
-                    AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()
-                            .headers(msg.getHeaders())
-                            .correlationId(properties.getCorrelationId())
-                            .build();
-                    channel.basicPublish("", properties.getReplyTo(), replyProps, msg.getBody(byte[].class));
+                    endpoint.publishExchangeToChannel(exchange, channel, properties.getReplyTo());
                 }
                 if (!consumer.endpoint.isAutoAck()) {
                     log.trace("Acknowledging receipt [delivery_tag={}]", deliveryTag);
                     channel.basicAck(deliveryTag, false);
                 }
+            } else if (endpoint.isTransferException() && exchange.getPattern().isOutCapable()) {
+                // the inOut exchange failed so put the exception in the body and send back
+                msg.setBody(exchange.getException());
+                exchange.setOut(msg);
+                endpoint.publishExchangeToChannel(exchange, channel, properties.getReplyTo());
             } else {
                 boolean isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE, false, boolean.class);
                 // processing failed, then reject and handle the exception
@@ -232,49 +235,6 @@ public class RabbitMQConsumer extends DefaultConsumer {
                 if (exchange.getException() != null) {
                     getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                 }
-            }
-        }
-
-        /**
-         * Will take an {@link Exchange} and add header values back to the {@link Exchange#getIn()}
-         */
-        private void mergeAmqpProperties(Exchange exchange, AMQP.BasicProperties properties) {
-
-            if (properties.getType() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.TYPE, properties.getType());
-            }
-            if (properties.getAppId() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.APP_ID, properties.getAppId());
-            }
-            if (properties.getClusterId() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.CLUSTERID, properties.getClusterId());
-            }
-            if (properties.getContentEncoding() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.CONTENT_ENCODING, properties.getContentEncoding());
-            }
-            if (properties.getContentType() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.CONTENT_TYPE, properties.getContentType());
-            }
-            if (properties.getCorrelationId() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.CORRELATIONID, properties.getCorrelationId());
-            }
-            if (properties.getExpiration() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.EXPIRATION, properties.getExpiration());
-            }
-            if (properties.getMessageId() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.MESSAGE_ID, properties.getMessageId());
-            }
-            if (properties.getPriority() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.PRIORITY, properties.getPriority());
-            }
-            if (properties.getReplyTo() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.REPLY_TO, properties.getReplyTo());
-            }
-            if (properties.getTimestamp() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.TIMESTAMP, properties.getTimestamp());
-            }
-            if (properties.getUserId() != null) {
-                exchange.getIn().setHeader(RabbitMQConstants.USERID, properties.getUserId());
             }
         }
 
@@ -333,5 +293,4 @@ public class RabbitMQConsumer extends DefaultConsumer {
             return null;
         }
     }
-
 }

@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * To specify the rest operation parameters using Swagger.
@@ -45,11 +46,11 @@ public class RestOperationParamDefinition {
     private VerbDefinition verb;
 
     @XmlAttribute(required = true)
-    @Metadata(defaultValue = "path")
-    private RestParamType paramType;
+    private String name;
 
     @XmlAttribute(required = true)
-    private String name;
+    @Metadata(defaultValue = "path")
+    private RestParamType type;
 
     @XmlAttribute
     @Metadata(defaultValue = "")
@@ -77,24 +78,24 @@ public class RestOperationParamDefinition {
 
     @XmlAttribute
     @Metadata(defaultValue = "")
-    private String paramAccess;
+    private String access;
+
+    public RestOperationParamDefinition() {
+    }
 
     public RestOperationParamDefinition(VerbDefinition verb) {
         this.verb = verb;
     }
 
-    public RestOperationParamDefinition() {
-    }
-
-    public RestParamType getParamType() {
-        return paramType != null ? paramType : RestParamType.path;
+    public RestParamType getType() {
+        return type != null ? type : RestParamType.path;
     }
 
     /**
      * Sets the Swagger Parameter type.
      */
-    public void setParamType(RestParamType paramType) {
-        this.paramType = paramType;
+    public void setType(RestParamType type) {
+        this.type = type;
     }
 
     public String getName() {
@@ -153,7 +154,7 @@ public class RestOperationParamDefinition {
     }
 
     public String getDataType() {
-        return dataType != null ? dataType : "string";
+        return dataType;
     }
 
     /**
@@ -178,69 +179,106 @@ public class RestOperationParamDefinition {
         this.allowableValues = allowableValues;
     }
 
-    public String getParamAccess() {
-        return paramAccess != null ? paramAccess : "";
+    public String getAccess() {
+        return access != null ? access : "";
     }
 
     /**
      * Sets the Swagger Parameter paramAccess flag.
      */
-    public void setParamAccess(String paramAccess) {
-        this.paramAccess = paramAccess;
+    public void setAccess(String access) {
+        this.access = access;
     }
 
+    /**
+     * Name of the parameter.
+     * <p/>
+     * This option is mandatory.
+     */
     public RestOperationParamDefinition name(String name) {
         setName(name);
         return this;
     }
 
+    /**
+     * Description of the parameter.
+     */
     public RestOperationParamDefinition description(String name) {
         setDescription(name);
         return this;
     }
 
+    /**
+     * The default value of the parameter.
+     */
     public RestOperationParamDefinition defaultValue(String name) {
         setDefaultValue(name);
         return this;
     }
 
+    /**
+     * Whether the parameter is required
+     */
     public RestOperationParamDefinition required(Boolean required) {
         setRequired(required);
         return this;
     }
 
+    /**
+     * Whether the parameter can be used multiple times
+     */
     public RestOperationParamDefinition allowMultiple(Boolean allowMultiple) {
         setAllowMultiple(allowMultiple);
         return this;
     }
 
+    /**
+     * The data type of the parameter such as <tt>string</tt>, <tt>long</tt>, <tt>int</tt>, <tt>boolean</tt>
+     */
     public RestOperationParamDefinition dataType(String type) {
         setDataType(type);
         return this;
     }
 
+    /**
+     * Allowed values of the parameter when its an enum type
+     */
     public RestOperationParamDefinition allowableValues(List<String> allowableValues) {
         setAllowableValues(allowableValues);
         return this;
     }
 
+    /**
+     * Allowed values of the parameter when its an enum type
+     */
     public RestOperationParamDefinition allowableValues(String... allowableValues) {
         setAllowableValues(Arrays.asList(allowableValues));
         return this;
     }
 
-
+    /**
+     * The parameter type such as body, form, header, path, query
+     */
     public RestOperationParamDefinition type(RestParamType type) {
-        setParamType(type);
+        setType(type);
         return this;
     }
 
-    public RestOperationParamDefinition paramAccess(String paramAccess) {
-        setParamAccess(paramAccess);
+    /**
+     * Parameter access. Use <tt>false</tt> or <tt>internal</tt> to indicate the parameter
+     * should be hidden for the public.
+     */
+    public RestOperationParamDefinition access(String paramAccess) {
+        setAccess(paramAccess);
         return this;
     }
 
+    /**
+     * Ends the configuration of this parameter
+     */
     public RestDefinition endParam() {
+        // name is mandatory
+        ObjectHelper.notEmpty(name, "name");
         verb.getParams().add(this);
         return verb.getRest();
     }

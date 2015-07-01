@@ -107,7 +107,7 @@ public class CamelExtension implements Extension {
 
     }
 
-    protected  void detectRouteBuilders(@Observes ProcessAnnotatedType<?> process) throws Exception {
+    protected void detectRouteBuilders(@Observes ProcessAnnotatedType<?> process) throws Exception {
         AnnotatedType<?> annotatedType = process.getAnnotatedType();
         ContextName annotation = annotatedType.getAnnotation(ContextName.class);
         Class<?> javaClass = annotatedType.getJavaClass();

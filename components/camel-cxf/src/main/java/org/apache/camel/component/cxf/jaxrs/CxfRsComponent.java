@@ -29,11 +29,15 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxfrs.html">CXF RS Component</a> 
  */
 public class CxfRsComponent extends HeaderFilterStrategyComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfRsComponent.class);
 
     public CxfRsComponent() {
         super(CxfRsEndpoint.class);
@@ -45,7 +49,18 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        CxfRsEndpoint answer = null;
+
+        CxfRsEndpoint answer;
+
+        Object value = parameters.remove("setDefaultBus");
+        if (value != null) {
+            LOG.warn("The option setDefaultBus is @deprecated, use name defaultBus instead");
+            if (!parameters.containsKey("defaultBus")) {
+                parameters.put("defaultBus", value);
+            }
+        }
+
+
         if (remaining.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
             // Get the bean from the Spring context
             String beanId = remaining.substring(CxfConstants.SPRING_CONTEXT_ENDPOINT.length());

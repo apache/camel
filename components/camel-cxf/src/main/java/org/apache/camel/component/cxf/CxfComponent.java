@@ -25,12 +25,17 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.cxf.message.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a>
  */
 public class CxfComponent extends HeaderFilterStrategyComponent {
-    Boolean allowStreaming;
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfComponent.class);
+
+    private Boolean allowStreaming;
     
     public CxfComponent() {
         super(CxfEndpoint.class);
@@ -39,12 +44,16 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
     public CxfComponent(CamelContext context) {
         super(context, CxfEndpoint.class);
     }
-    
-    public void setAllowStreaming(Boolean b) {
-        allowStreaming = b;
+
+    /**
+     * This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages
+     * into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases.
+     */
+    public void setAllowStreaming(Boolean allowStreaming) {
+        this.allowStreaming = allowStreaming;
     }
 
-    public Boolean getAllowStreaming() {
+    public Boolean isAllowStreaming() {
         return allowStreaming;
     }
 
@@ -56,7 +65,15 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        CxfEndpoint result = null;
+        CxfEndpoint result;
+
+        Object value = parameters.remove("setDefaultBus");
+        if (value != null) {
+            LOG.warn("The option setDefaultBus is @deprecated, use name defaultBus instead");
+            if (!parameters.containsKey("defaultBus")) {
+                parameters.put("defaultBus", value);
+            }
+        }
         
         if (allowStreaming != null && !parameters.containsKey("allowStreaming")) {
             parameters.put("allowStreaming", Boolean.toString(allowStreaming));

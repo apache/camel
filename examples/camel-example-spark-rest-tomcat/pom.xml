@@ -78,11 +78,20 @@
   </dependencies>
 
   <build>
+    <!-- we do not want version in the WAR name -->
+ 	<finalName>${project.artifactId}</finalName>
+
     <plugins>
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty9-version}</version>
+        <configuration>
+        	<webApp>
+        		<contextPath>/${project.artifactId}</contextPath>
+        	</webApp>
+        </configuration>
+
       </plugin>
     </plugins>
   </build>

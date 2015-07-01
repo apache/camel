@@ -18,18 +18,28 @@ package org.apache.camel.component.aws.ec2;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.GroupIdentifier;
 import com.amazonaws.services.ec2.model.Instance;
+import com.amazonaws.services.ec2.model.InstanceMonitoring;
 import com.amazonaws.services.ec2.model.InstanceState;
 import com.amazonaws.services.ec2.model.InstanceStateChange;
 import com.amazonaws.services.ec2.model.InstanceStateName;
+import com.amazonaws.services.ec2.model.InstanceStatus;
 import com.amazonaws.services.ec2.model.InstanceType;
+import com.amazonaws.services.ec2.model.MonitorInstancesRequest;
+import com.amazonaws.services.ec2.model.MonitorInstancesResult;
+import com.amazonaws.services.ec2.model.Monitoring;
+import com.amazonaws.services.ec2.model.MonitoringState;
+import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -39,6 +49,10 @@ import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesRequest;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
+
+import org.apache.camel.util.ObjectHelper;
 
 public class AmazonEC2ClientMock extends AmazonEC2Client {
 
@@ -59,17 +73,32 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
             ins.setImageId(runInstancesRequest.getImageId());
             ins.setInstanceType(runInstancesRequest.getInstanceType());
             ins.setInstanceId("instance-1");
-            if (runInstancesRequest.getSecurityGroups().contains("secgroup-1") && runInstancesRequest.getSecurityGroups().contains("secgroup-2")) {
-                GroupIdentifier id1 = new GroupIdentifier();
-                id1.setGroupId("id-1");
-                id1.setGroupName("secgroup-1");
-                GroupIdentifier id2 = new GroupIdentifier();
-                id2.setGroupId("id-2");
-                id2.setGroupName("secgroup-2");
-                Collection secGroups = new ArrayList<GroupIdentifier>();
-                secGroups.add(id1);
-                secGroups.add(id2);
-                ins.setSecurityGroups(secGroups);
+            if (ObjectHelper.isNotEmpty(runInstancesRequest.getSecurityGroups()) && ObjectHelper.isNotEmpty(runInstancesRequest.getSecurityGroups())) {
+                if (runInstancesRequest.getSecurityGroups().contains("secgroup-1") && runInstancesRequest.getSecurityGroups().contains("secgroup-2")) {
+                    GroupIdentifier id1 = new GroupIdentifier();
+                    id1.setGroupId("id-1");
+                    id1.setGroupName("secgroup-1");
+                    GroupIdentifier id2 = new GroupIdentifier();
+                    id2.setGroupId("id-2");
+                    id2.setGroupName("secgroup-2");
+                    Collection secGroups = new ArrayList<GroupIdentifier>();
+                    secGroups.add(id1);
+                    secGroups.add(id2);
+                    ins.setSecurityGroups(secGroups);
+                } else if (ObjectHelper.isNotEmpty(runInstancesRequest.getKeyName())) {
+                    if (ObjectHelper.isNotEmpty(runInstancesRequest.getKeyName().contains("keypair-1"))) {
+                        GroupIdentifier id1 = new GroupIdentifier();
+                        id1.setGroupId("id-3");
+                        id1.setGroupName("secgroup-3");
+                        GroupIdentifier id2 = new GroupIdentifier();
+                        id2.setGroupId("id-4");
+                        id2.setGroupName("secgroup-4");
+                        Collection secGroups = new ArrayList<GroupIdentifier>();
+                        secGroups.add(id1);
+                        secGroups.add(id2);
+                        ins.setSecurityGroups(secGroups);
+                    }
+                }
             }
             instances.add(ins);
             res.setInstances(instances);
@@ -190,6 +219,81 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
                 list.add(res);
                 result.setReservations(list); 
             }
+        }
+        return result;
+    }
+    
+    @Override
+    public DescribeInstanceStatusResult describeInstanceStatus(DescribeInstanceStatusRequest describeInstanceStatusRequest) {
+        DescribeInstanceStatusResult result = new DescribeInstanceStatusResult();
+        Collection<InstanceStatus> instanceStatuses = new ArrayList();
+        if (describeInstanceStatusRequest.getInstanceIds().isEmpty()) {
+            InstanceStatus status = new InstanceStatus();
+            status.setInstanceId("test-1");
+            status.setInstanceState(new InstanceState().withName(InstanceStateName.Running));
+            instanceStatuses.add(status);
+            status.setInstanceId("test-2");
+            status.setInstanceState(new InstanceState().withName(InstanceStateName.Stopped));
+            instanceStatuses.add(status);
+        } else {
+            if (describeInstanceStatusRequest.getInstanceIds().contains("test-1")) {
+                InstanceStatus status = new InstanceStatus();
+                status.setInstanceId("test-1");
+                status.setInstanceState(new InstanceState().withName(InstanceStateName.Running));
+                instanceStatuses.add(status);
+            }
+            if (describeInstanceStatusRequest.getInstanceIds().contains("test-2")) {
+                InstanceStatus status = new InstanceStatus();
+                status.setInstanceId("test-2");
+                status.setInstanceState(new InstanceState().withName(InstanceStateName.Stopped));
+                instanceStatuses.add(status);
+            }
+        }
+        result.setInstanceStatuses(instanceStatuses);
+        return result;
+    }
+
+    @Override
+    public void rebootInstances(RebootInstancesRequest rebootInstancesRequest) {
+        return;
+    }
+    
+    @Override
+    public MonitorInstancesResult monitorInstances(MonitorInstancesRequest monitorInstancesRequest) {
+        MonitorInstancesResult result = new MonitorInstancesResult();
+        if (!monitorInstancesRequest.getInstanceIds().isEmpty()) {
+            Collection<InstanceMonitoring> coll = new ArrayList();
+            Iterator it = monitorInstancesRequest.getInstanceIds().iterator();
+            while (it.hasNext()) {
+                String id = (String) it.next();
+                InstanceMonitoring mon = new InstanceMonitoring();
+                mon.setInstanceId(id);
+                Monitoring monitoring = new Monitoring();
+                monitoring.setState(MonitoringState.Enabled);
+                mon.setMonitoring(monitoring); 
+                coll.add(mon);
+            }
+            result.setInstanceMonitorings(coll);
+        }
+        return result;
+    }
+    
+    @Override
+    public UnmonitorInstancesResult unmonitorInstances(UnmonitorInstancesRequest unmonitorInstancesRequest) {
+        UnmonitorInstancesResult result = new UnmonitorInstancesResult();
+        if (!unmonitorInstancesRequest.getInstanceIds().isEmpty()) {
+            Collection<InstanceMonitoring> coll = new ArrayList();
+            Iterator it = unmonitorInstancesRequest.getInstanceIds().iterator();
+            while (it.hasNext()) {
+                String id = (String) it.next();
+                InstanceMonitoring mon = new InstanceMonitoring();
+                mon.setInstanceId(id);
+                Monitoring monitoring = new Monitoring();
+                monitoring.setState(MonitoringState.Disabled);
+                mon.setMonitoring(monitoring); 
+                coll.add(mon);
+            }
+            result.setInstanceMonitorings(coll);
         }
         return result;
     }

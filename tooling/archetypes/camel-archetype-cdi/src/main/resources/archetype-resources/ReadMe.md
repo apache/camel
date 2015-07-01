@@ -11,7 +11,7 @@ You will need to compile this example first:
   mvn install
 
 To run the example type
-  mvn exec:java
+  mvn camel:run
 
 You will see the message printed to the console every 5th second.
 

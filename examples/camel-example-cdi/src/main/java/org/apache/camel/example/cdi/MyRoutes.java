@@ -16,8 +16,6 @@
  */
 package org.apache.camel.example.cdi;
 
-import javax.ejb.Startup;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.camel.Endpoint;
@@ -29,8 +27,6 @@ import org.apache.camel.cdi.Uri;
  * Configures all our Camel routes, components, endpoints and beans
  */
 @ContextName
-@Startup
-@ApplicationScoped
 public class MyRoutes extends RouteBuilder {
 
     @Inject

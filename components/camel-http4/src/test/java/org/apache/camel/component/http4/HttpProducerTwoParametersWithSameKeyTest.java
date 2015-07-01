@@ -25,9 +25,12 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -35,9 +38,48 @@ import org.junit.Test;
  */
 public class HttpProducerTwoParametersWithSameKeyTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/myapp", new HttpRequestHandler() {
+                    @Override
+                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+                        String uri = request.getRequestLine().getUri();
+                        assertEquals("/myapp?from=me&to=foo&to=bar", uri);
+
+                        response.setHeader("bar", "yes");
+                        response.addHeader("foo", "123");
+                        response.addHeader("foo", "456");
+                        response.setEntity(new StringEntity("OK", "ASCII"));
+                        response.setStatusCode(HttpStatus.SC_OK);
+                    }
+                }).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void testTwoParametersWithSameKey() throws Exception {
-        Exchange out = template.request("http4://" + getHostName() + ":" + getPort() + "/myapp?from=me&to=foo&to=bar", null);
+        Exchange out = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp?from=me&to=foo&to=bar", null);
 
         assertNotNull(out);
         assertFalse("Should not fail", out.isFailed());
@@ -49,23 +91,6 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseHttpTest {
         assertEquals(2, foo.size());
         assertEquals("123", foo.get(0));
         assertEquals("456", foo.get(1));
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/myapp", new HttpRequestHandler() {
-            @Override
-            public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                String uri = request.getRequestLine().getUri();
-                assertEquals("/myapp?from=me&to=foo&to=bar", uri);
-
-                response.setHeader("bar", "yes");
-                response.addHeader("foo", "123");
-                response.addHeader("foo", "456");
-                response.setEntity(new StringEntity("OK", "ASCII"));
-                response.setStatusCode(HttpStatus.SC_OK);
-            }
-        });
     }
 
 }

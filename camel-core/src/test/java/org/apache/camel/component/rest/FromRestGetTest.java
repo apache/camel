@@ -56,8 +56,8 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
 
         assertEquals(2, rest.getVerbs().get(0).getParams().size());
-        assertEquals(RestParamType.header, rest.getVerbs().get(0).getParams().get(0).getParamType());
-        assertEquals(RestParamType.query, rest.getVerbs().get(0).getParams().get(1).getParamType());
+        assertEquals(RestParamType.header, rest.getVerbs().get(0).getParams().get(0).getType());
+        assertEquals(RestParamType.query, rest.getVerbs().get(0).getParams().get(1).getType());
 
         assertEquals("header param description1", rest.getVerbs().get(0).getParams().get(0).getDescription());
         assertEquals("header param description2", rest.getVerbs().get(0).getParams().get(1).getDescription());
@@ -76,8 +76,8 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("header_letter", rest.getVerbs().get(0).getParams().get(1).getName());
         assertEquals(Boolean.TRUE, rest.getVerbs().get(0).getParams().get(0).getRequired());
         assertEquals(Boolean.FALSE, rest.getVerbs().get(0).getParams().get(1).getRequired());
-        assertEquals("acc1", rest.getVerbs().get(0).getParams().get(0).getParamAccess());
-        assertEquals("acc2", rest.getVerbs().get(0).getParams().get(1).getParamAccess());
+        assertEquals("acc1", rest.getVerbs().get(0).getParams().get(0).getAccess());
+        assertEquals("acc2", rest.getVerbs().get(0).getParams().get(1).getAccess());
 
         assertEquals(300, rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
         assertEquals("test msg", rest.getVerbs().get(0).getResponseMsgs().get(0).getMessage());
@@ -109,10 +109,10 @@ public class FromRestGetTest extends ContextTestSupport {
                 rest("/say/bye")
                         .get().consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
-                        .defaultValue("1").allowMultiple(false).name("header_count").required(true).paramAccess("acc1")
+                        .defaultValue("1").allowMultiple(false).name("header_count").required(true).access("acc1")
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
-                        .defaultValue("b").allowMultiple(true).name("header_letter").required(false).paramAccess("acc2")
+                        .defaultValue("b").allowMultiple(true).name("header_letter").required(false).access("acc2")
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .to("direct:bye")

@@ -169,7 +169,7 @@ public class HttpProducer extends DefaultProducer {
 
     protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException, ClassNotFoundException {
         //We just make the out message is not create when extractResponseBody throws exception,
-        Object response = extractResponseBody(method, exchange);
+        Object response = extractResponseBody(method, exchange, getEndpoint().isIgnoreResponseBody());
         Message answer = exchange.getOut();
 
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
@@ -205,7 +205,7 @@ public class HttpProducer extends DefaultProducer {
         String statusText = method.getStatusLine() != null ? method.getStatusLine().getReasonPhrase() : null;
         Map<String, String> headers = extractResponseHeaders(method.getResponseHeaders());
 
-        Object responseBody = extractResponseBody(method, exchange);
+        Object responseBody = extractResponseBody(method, exchange, getEndpoint().isIgnoreResponseBody());
         if (transferException && responseBody != null && responseBody instanceof Exception) {
             // if the response was a serialized exception then use that
             return (Exception) responseBody;
@@ -269,10 +269,11 @@ public class HttpProducer extends DefaultProducer {
      * Extracts the response from the method as a InputStream.
      *
      * @param method the method that was executed
+     * @param ignoreResponseBody if it is true, camel don't read the response and cached the input stream
      * @return the response either as a stream, or as a deserialized java object
      * @throws IOException can be thrown
      */
-    protected static Object extractResponseBody(HttpMethod method, Exchange exchange) throws IOException, ClassNotFoundException {
+    protected static Object extractResponseBody(HttpMethod method, Exchange exchange, boolean ignoreResponseBody) throws IOException, ClassNotFoundException {
         InputStream is = method.getResponseBodyAsStream();
         if (is == null) {
             return null;
@@ -293,11 +294,15 @@ public class HttpProducer extends DefaultProducer {
             // find the charset and set it to the Exchange
             HttpHelper.setCharsetFromContentType(contentType, exchange);
         }
-        InputStream response = doExtractResponseBodyAsStream(is, exchange);
+        
         // if content type is a serialized java object then de-serialize it back to a Java object
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            return HttpHelper.deserializeJavaObjectFromStream(response, exchange.getContext());
+            return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
         } else {
+            InputStream response = null;
+            if (!ignoreResponseBody) {
+                response = doExtractResponseBodyAsStream(is, exchange);
+            }
             return response;
         }
     }

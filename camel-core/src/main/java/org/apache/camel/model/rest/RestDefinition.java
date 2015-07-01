@@ -577,6 +577,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     //  merge if exists
                     boolean found = false;
                     for (RestOperationParamDefinition param : verb.getParams()) {
+                        // name is mandatory
+                        ObjectHelper.notEmpty(param.getName(), "parameter name");
                         if (param.getName().equalsIgnoreCase(key)) {
                             param.type(RestParamType.path);
                             found = true;
@@ -594,10 +596,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 if (bodyType.endsWith("[]")) {
                     bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
                 }
-                param(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
+                RestOperationParamDefinition param = findParam(verb, RestParamType.body.name());
+                if (param == null) {
+                    // must be body type and set the model class as data type
+                    param(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
+                } else {
+                    // must be body type and set the model class as data type
+                    param.type(RestParamType.body).dataType(bodyType);
+                }
             }
-
-
 
             // the route should be from this rest endpoint
             route.fromRest(from);
@@ -618,6 +625,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         } else {
             return "";
         }
+    }
+
+    private RestOperationParamDefinition findParam(VerbDefinition verb, String name) {
+        for (RestOperationParamDefinition param : verb.getParams()) {
+            if (name.equals(param.getName())) {
+                return param;
+            }
+        }
+        return null;
     }
 
 }

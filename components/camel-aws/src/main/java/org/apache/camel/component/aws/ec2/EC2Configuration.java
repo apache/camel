@@ -17,13 +17,16 @@
 package org.apache.camel.component.aws.ec2;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
-
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class EC2Configuration {
-    
+
+    @UriPath(description = "Logical name") @Metadata(required = "true")
+    private String label;
     @UriParam
     private AmazonEC2Client amazonEc2Client;
     @UriParam
@@ -32,13 +35,16 @@ public class EC2Configuration {
     private String secretKey;
     @UriParam
     private String amazonEc2Endpoint;
-    @UriParam
+    @UriParam @Metadata(required = "true")
     private EC2Operations operation;
     
     public AmazonEC2Client getAmazonEc2Client() {
         return amazonEc2Client;
     }
-    
+
+    /**
+     * To use a existing configured AmazonEC2Client as client
+     */
     public void setAmazonEc2Client(AmazonEC2Client amazonEc2Client) {
         this.amazonEc2Client = amazonEc2Client;
     }
@@ -46,7 +52,10 @@ public class EC2Configuration {
     public String getAccessKey() {
         return accessKey;
     }
-    
+
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -54,7 +63,10 @@ public class EC2Configuration {
     public String getSecretKey() {
         return secretKey;
     }
-    
+
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -62,7 +74,10 @@ public class EC2Configuration {
     public String getAmazonEc2Endpoint() {
         return amazonEc2Endpoint;
     }
-    
+
+    /**
+     * The region with which the AWS-EC2 client wants to work with.
+     */
     public void setAmazonEc2Endpoint(String amazonEc2Endpoint) {
         this.amazonEc2Endpoint = amazonEc2Endpoint;
     }
@@ -71,6 +86,9 @@ public class EC2Configuration {
         return operation;
     }
 
+    /**
+     * The operation to perform
+     */
     public void setOperation(EC2Operations operation) {
         this.operation = operation;
     } 

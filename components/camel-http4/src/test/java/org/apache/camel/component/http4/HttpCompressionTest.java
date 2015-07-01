@@ -40,13 +40,16 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.HttpEntityWrapper;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.localserver.ResponseBasicUnauthorized;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.util.EntityUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -55,9 +58,40 @@ import org.junit.Test;
  */
 public class HttpCompressionTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        Map<String, String> expectedHeaders = new HashMap<String, String>();
+        expectedHeaders.put("Content-Type", "text/plain");
+        expectedHeaders.put("Content-Encoding", "gzip");
+        
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/", new HeaderValidationHandler("POST", null, getBody(), getExpectedContent(), expectedHeaders)).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void compressedHttpPost() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
                 exchange.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
@@ -85,15 +119,6 @@ public class HttpCompressionTest extends BaseHttpTest {
         responseInterceptors.add(new ResponseBasicUnauthorized());
         ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
         return httpproc;
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
-        expectedHeaders.put("Content-Type", "text/plain");
-        expectedHeaders.put("Content-Encoding", "gzip");
-
-        server.register("/", new HeaderValidationHandler("POST", null, getBody(), getExpectedContent(), expectedHeaders));
     }
 
     protected String getBody() {

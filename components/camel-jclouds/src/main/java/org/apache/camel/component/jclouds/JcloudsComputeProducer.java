@@ -67,6 +67,12 @@ public class JcloudsComputeProducer extends JcloudsProducer {
             createNode(exchange);
         } else if (JcloudsConstants.DESTROY_NODE.equals(operation)) {
             destroyNode(exchange);
+        } else if (JcloudsConstants.REBOOT_NODE.equals(operation)) {
+            rebootNode(exchange);
+        } else if (JcloudsConstants.SUSPEND_NODE.equals(operation)) {
+            suspendNode(exchange);
+        } else if (JcloudsConstants.RESUME_NODE.equals(operation)) {
+            resumeNode(exchange);
         }
     }
 
@@ -166,7 +172,30 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         Set<? extends Hardware> hardwareProfiles = computeService.listHardwareProfiles();
         exchange.getOut().setBody(hardwareProfiles);
     }
-
+    
+    /**
+     * Reboot the node with the specified nodeId.
+     */
+    protected void rebootNode(Exchange exchange) {
+        Predicate<NodeMetadata> predicate = getNodePredicate(exchange);
+        computeService.rebootNodesMatching(predicate);
+    }
+    
+    /**
+     * Suspend the node with the specified nodeId.
+     */
+    protected void suspendNode(Exchange exchange) {
+        Predicate<NodeMetadata> predicate = getNodePredicate(exchange);
+        computeService.suspendNodesMatching(predicate);
+    }
+    
+    /**
+     * Suspend the node with the specified nodeId.
+     */
+    protected void resumeNode(Exchange exchange) {
+        Predicate<NodeMetadata> predicate = getNodePredicate(exchange);
+        computeService.resumeNodesMatching(predicate);
+    }
 
     /**
      * Returns the required {@ComputeMetadata} {@link Predicate} for the Exhcnage.

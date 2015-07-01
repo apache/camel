@@ -84,7 +84,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public Exchange createKafkaExchange(MessageAndMetadata<byte[], byte[]> mm) {
-        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
+        Exchange exchange = new DefaultExchange(this, getExchangePattern());
 
         Message message = new DefaultMessage();
         message.setHeader(KafkaConstants.PARTITION, mm.partition());
