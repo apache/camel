@@ -83,7 +83,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
     protected String getBlobName(Exchange exchange) {
         String blobName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getBlobName();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME))) {
-            blobName = (String) exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME);
+            blobName = exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME, String.class);
         }
         return blobName;
     }
@@ -94,7 +94,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
     protected String getContainerName(Exchange exchange) {
         String containerName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getContainer();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME))) {
-            containerName = (String) exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME);
+            containerName = exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME, String.class);
         }
         return containerName;
     }
@@ -106,7 +106,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         String operation = ((JcloudsBlobStoreEndpoint) getEndpoint()).getOperation();
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.OPERATION))) {
-            operation = (String) exchange.getIn().getHeader(JcloudsConstants.OPERATION);
+            operation = exchange.getIn().getHeader(JcloudsConstants.OPERATION, String.class);
         }
         return operation;
     }
@@ -118,7 +118,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         String operation = ((JcloudsBlobStoreEndpoint) getEndpoint()).getLocationId();
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID))) {
-            operation = (String) exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID);
+            operation = exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID, String.class);
         }
         return operation;
     }
@@ -130,7 +130,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         List blobNames = new ArrayList<>();
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME_LIST))) {
-            blobNames = (List) exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME_LIST);
+            blobNames = exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME_LIST, List.class);
         }
         return blobNames;
     }
