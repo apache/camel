@@ -37,7 +37,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
     
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "If the option is true, then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message.", defaultValue = "false")
     private boolean bridgeEndpoint;
 
     public KafkaEndpoint() {
