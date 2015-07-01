@@ -17,10 +17,13 @@
 package org.apache.camel.component.jclouds;
 
 import java.util.Set;
+
 import com.google.common.base.Predicate;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -85,19 +88,19 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         String locationId = getLocationId(exchange);
         String hardwareId = getHardwareId(exchange);
 
-        if (group == null) {
+        if (ObjectHelper.isEmpty(group)) {
             throw new CamelExchangeException("Group must be specific in the URI or as exchange property for the destroy node operation.", exchange);
         }
         TemplateBuilder builder = computeService.templateBuilder();
         builder.any();
 
-        if (locationId != null) {
+        if (ObjectHelper.isNotEmpty(locationId)) {
             builder.locationId(locationId);
         }
-        if (imageId != null) {
+        if (ObjectHelper.isNotEmpty(imageId)) {
             builder.imageId(imageId);
         }
-        if (hardwareId != null) {
+        if (ObjectHelper.isNotEmpty(hardwareId)) {
             builder.hardwareId(hardwareId);
         }
 
@@ -120,7 +123,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
 
         LoginCredentials credentials = null;
 
-        if (user != null) {
+        if (ObjectHelper.isNotEmpty(user)) {
             credentials = LoginCredentials.builder().user(user).build();
         }
         ExecResponse execResponse = null;
@@ -260,7 +263,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     public String getOperation(Exchange exchange) {
         String operation = getEndpoint().getOperation();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.OPERATION) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.OPERATION))) {
             operation = (String) exchange.getIn().getHeader(JcloudsConstants.OPERATION);
         }
         return operation;
@@ -272,11 +275,11 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     public NodeMetadata.Status getNodeState(Exchange exchange) {
         NodeMetadata.Status nodeState = null;
         String state = getEndpoint().getNodeState();
-        if (state != null) {
+        if (ObjectHelper.isNotEmpty(state)) {
             nodeState =  NodeMetadata.Status.valueOf(state);
         }
 
-        if (exchange.getIn().getHeader(JcloudsConstants.NODE_STATE) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.NODE_STATE))) {
             Object stateHeader = exchange.getIn().getHeader(JcloudsConstants.NODE_STATE);
             if (stateHeader == null) {
                 nodeState = null;
@@ -296,7 +299,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     protected String getImageId(Exchange exchange) {
         String imageId = getEndpoint().getImageId();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.IMAGE_ID) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.IMAGE_ID))) {
             imageId = (String) exchange.getIn().getHeader(JcloudsConstants.IMAGE_ID);
         }
         return imageId;
@@ -308,7 +311,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     protected String getHardwareId(Exchange exchange) {
         String hardwareId = getEndpoint().getHardwareId();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.HARDWARE_ID) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.HARDWARE_ID))) {
             hardwareId = (String) exchange.getIn().getHeader(JcloudsConstants.HARDWARE_ID);
         }
         return hardwareId;
@@ -320,7 +323,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     protected String getLocationId(Exchange exchange) {
         String locationId = getEndpoint().getLocationId();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID))) {
             locationId = (String) exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID);
         }
         return locationId;
@@ -332,7 +335,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     protected String getNodeId(Exchange exchange) {
         String nodeId = getEndpoint().getNodeId();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.NODE_ID) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.NODE_ID))) {
             nodeId = (String) exchange.getIn().getHeader(JcloudsConstants.NODE_ID);
         }
         return nodeId;
@@ -344,7 +347,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     protected String getGroup(Exchange exchange) {
         String group = getEndpoint().getGroup();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.GROUP) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.GROUP))) {
             group = (String) exchange.getIn().getHeader(JcloudsConstants.GROUP);
         }
         return group;
@@ -356,7 +359,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     protected String getUser(Exchange exchange) {
         String user = getEndpoint().getUser();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.USER) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.USER))) {
             user = (String) exchange.getIn().getHeader(JcloudsConstants.USER);
         }
         return user;

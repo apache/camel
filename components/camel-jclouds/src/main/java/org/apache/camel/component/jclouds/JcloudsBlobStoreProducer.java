@@ -82,7 +82,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
      */
     protected String getBlobName(Exchange exchange) {
         String blobName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getBlobName();
-        if (exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME))) {
             blobName = (String) exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME);
         }
         return blobName;
@@ -93,7 +93,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
      */
     protected String getContainerName(Exchange exchange) {
         String containerName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getContainer();
-        if (exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME))) {
             containerName = (String) exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME);
         }
         return containerName;
@@ -105,7 +105,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
     public String getOperation(Exchange exchange) {
         String operation = ((JcloudsBlobStoreEndpoint) getEndpoint()).getOperation();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.OPERATION) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.OPERATION))) {
             operation = (String) exchange.getIn().getHeader(JcloudsConstants.OPERATION);
         }
         return operation;
@@ -117,7 +117,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
     public String getLocationId(Exchange exchange) {
         String operation = ((JcloudsBlobStoreEndpoint) getEndpoint()).getLocationId();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID) != null) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID))) {
             operation = (String) exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID);
         }
         return operation;
