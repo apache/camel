@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.net.URISyntaxException;
 import java.util.concurrent.ExecutorService;
 
 import kafka.message.MessageAndMetadata;
@@ -29,16 +28,17 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 
 @UriEndpoint(scheme = "kafka", title = "Kafka", syntax = "kafka:brokers", consumerClass = KafkaConsumer.class, label = "messaging")
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
+    
+    @UriParam(defaultValue = "false")
+    private boolean bridgeEndpoint;
 
     public KafkaEndpoint() {
     }
@@ -457,5 +457,13 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;
+    }
+
+    public boolean isBridgeEndpoint() {
+        return bridgeEndpoint;
+    }
+
+    public void setBridgeEndpoint(boolean bridgeEndpoint) {
+        this.bridgeEndpoint = bridgeEndpoint;
     }
 }

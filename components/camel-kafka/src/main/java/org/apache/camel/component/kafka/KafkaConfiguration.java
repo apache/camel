@@ -39,7 +39,6 @@ public class KafkaConfiguration {
     private String groupId;
     @UriParam(defaultValue = "DefaultPartitioner")
     private String partitioner = DefaultPartitioner.class.getCanonicalName();
-
     @UriParam(label = "consumer", defaultValue = "10")
     private int consumerStreams = 10;
     @UriParam(label = "consumer", defaultValue = "1")
