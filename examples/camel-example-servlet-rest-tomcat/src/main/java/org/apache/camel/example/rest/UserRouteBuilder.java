@@ -18,9 +18,9 @@ package org.apache.camel.example.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.apache.camel.model.rest.RestParamType;
 
-import static org.apache.camel.model.rest.RestParamType.*;
+import static org.apache.camel.model.rest.RestParamType.body;
+import static org.apache.camel.model.rest.RestParamType.query;
 
 /**
  * Define REST services using the Camel REST DSL
