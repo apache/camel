@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.ec2;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.amazonaws.AmazonServiceException;
@@ -198,6 +199,7 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Run Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
+        LOG.trace("Creating and running instances with ami [{}] and instance type {}", ami, instanceType.toString());
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
@@ -218,6 +220,7 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Start Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
+        LOG.trace("Starting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result);        
     }
@@ -238,6 +241,7 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Stop Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
+        LOG.trace("Stopping instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result);        
     }
@@ -258,6 +262,7 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Terminate Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
+        LOG.trace("Terminating instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result);        
     }
@@ -308,6 +313,7 @@ public class EC2Producer extends DefaultProducer {
             throw new IllegalArgumentException("Instances Ids must be specified");
         }
         try {
+            LOG.trace("Rebooting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
             ec2Client.rebootInstances(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Reboot Instances command returned the error code {}", ase.getErrorCode());
@@ -331,6 +337,7 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Monitor Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
+        LOG.trace("Start Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result); 
     }
@@ -351,6 +358,7 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Unmonitor Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
+        LOG.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result); 
     }

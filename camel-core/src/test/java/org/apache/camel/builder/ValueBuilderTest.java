@@ -42,6 +42,7 @@ public class ValueBuilderTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
+        mock.message(0).body().isEqualToIgnoreCase("hello WORLD");
 
         template.sendBody("direct:start", "Hello");
 
@@ -59,6 +60,7 @@ public class ValueBuilderTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
+        mock.message(0).body().isEqualToIgnoreCase("hello world");
 
         template.sendBody("direct:start", "World");
 

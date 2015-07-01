@@ -128,6 +128,19 @@ public class KafkaProducerTest {
 
         verifySendMessage("someKey", "someTopic", "someKey");
     }
+    
+    @Test
+    public void processSendMessageWithBridgeEndpoint() throws Exception {
+        endpoint.setTopic("someTopic");
+        endpoint.setBridgeEndpoint(true);
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
+        in.setHeader(KafkaConstants.KEY, "someKey");
+        
+        producer.process(exchange);
+        
+        verifySendMessage("someKey", "someTopic", "someKey");
+    }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected void verifySendMessage(String partitionKey, String topic, String messageKey) {

@@ -897,13 +897,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 exclude = getContext().resolvePropertyPlaceholders(exclude);
                 filter.addExcludePattern(exclude);
             }
-            findRouteBuildersByContextScan(filter, builders);
+            // lets be false by default, to skip prototype beans
+            boolean includeNonSingletons = contextScanDef.getIncludeNonSingletons() != null ? contextScanDef.getIncludeNonSingletons() : false;
+            findRouteBuildersByContextScan(filter, includeNonSingletons, builders);
         }
     }
 
     protected abstract void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception;
 
-    protected abstract void findRouteBuildersByContextScan(PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception;
+    protected abstract void findRouteBuildersByContextScan(PackageScanFilter filter, boolean includeNonSingletons, List<RoutesBuilder> builders) throws Exception;
 
     private void addPackageElementContentsToScanDefinition() {
         PackageScanDefinition packageScanDef = getPackageScan();
