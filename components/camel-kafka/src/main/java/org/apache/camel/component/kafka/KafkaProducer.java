@@ -64,7 +64,10 @@ public class KafkaProducer<K, V> extends DefaultProducer {
     @Override
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws CamelException {
-        String topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, endpoint.getTopic(), String.class);
+        String topic = endpoint.getTopic();
+        if (!endpoint.isBridgeEndpoint()) {
+            topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, topic, String.class);
+        }
         if (topic == null) {
             throw new CamelExchangeException("No topic key set", exchange);
         }

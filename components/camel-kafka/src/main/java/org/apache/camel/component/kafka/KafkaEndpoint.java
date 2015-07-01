@@ -489,4 +489,12 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public boolean isMultipleConsumersSupported() {
         return true;
     }
+
+    public boolean isBridgeEndpoint() {
+        return bridgeEndpoint;
+    }
+
+    public void setBridgeEndpoint(boolean bridgeEndpoint) {
+        this.bridgeEndpoint = bridgeEndpoint;
+    }
 }
