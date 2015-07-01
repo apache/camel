@@ -16,6 +16,10 @@
  */
 package org.apache.camel.example.rest;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "Represents an user of the system")
 public class User {
 
     private int id;
@@ -29,6 +33,7 @@ public class User {
         this.name = name;
     }
 
+    @ApiModelProperty(value = "The id of the user", required = true)
     public int getId() {
         return id;
     }
@@ -37,6 +42,7 @@ public class User {
         this.id = id;
     }
 
+    @ApiModelProperty(value = "The name of the user", required = true)
     public String getName() {
         return name;
     }

@@ -18,6 +18,9 @@ package org.apache.camel.example.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.model.rest.RestParamType;
+
+import static org.apache.camel.model.rest.RestParamType.*;
 
 /**
  * Define REST services using the Camel REST DSL
@@ -46,9 +49,11 @@ public class UserRouteBuilder extends RouteBuilder {
             .consumes("application/json").produces("application/json")
 
             .get("/{id}").description("Find user by id").outType(User.class)
+                .param().name("id").type(query).description("The id of the user to get").dataType("int").endParam()
                 .to("bean:userService?method=getUser(${header.id})")
 
             .put().description("Updates or create a user").type(User.class)
+                .param().name("body").type(body).description("The user to update or create").endParam()
                 .to("bean:userService?method=updateUser")
 
             .get("/findAll").description("Find all users").outTypeList(User.class)
