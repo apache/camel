@@ -201,7 +201,7 @@ public final class PredicateBuilder {
             }
 
             protected String getOperationText() {
-                return "~=";
+                return "=~";
             }
         };
     }
