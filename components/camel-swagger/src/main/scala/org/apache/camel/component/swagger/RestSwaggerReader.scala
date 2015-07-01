@@ -205,8 +205,8 @@ class RestSwaggerReader {
         if (param.getAllowMultiple != null) param.getAllowMultiple.booleanValue() else false,
         param.getDataType,
         allowValues,
-        param.getParamType.toString,
-        Some(param.getParamAccess)
+        param.getType.toString,
+        Some(param.getAccess)
       )
     }
 

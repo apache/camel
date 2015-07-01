@@ -46,11 +46,11 @@ public class RestOperationParamDefinition {
     private VerbDefinition verb;
 
     @XmlAttribute(required = true)
-    @Metadata(defaultValue = "path")
-    private RestParamType paramType;
+    private String name;
 
     @XmlAttribute(required = true)
-    private String name;
+    @Metadata(defaultValue = "path")
+    private RestParamType type;
 
     @XmlAttribute
     @Metadata(defaultValue = "")
@@ -78,7 +78,7 @@ public class RestOperationParamDefinition {
 
     @XmlAttribute
     @Metadata(defaultValue = "")
-    private String paramAccess;
+    private String access;
 
     public RestOperationParamDefinition() {
     }
@@ -87,15 +87,15 @@ public class RestOperationParamDefinition {
         this.verb = verb;
     }
 
-    public RestParamType getParamType() {
-        return paramType != null ? paramType : RestParamType.path;
+    public RestParamType getType() {
+        return type != null ? type : RestParamType.path;
     }
 
     /**
      * Sets the Swagger Parameter type.
      */
-    public void setParamType(RestParamType paramType) {
-        this.paramType = paramType;
+    public void setType(RestParamType type) {
+        this.type = type;
     }
 
     public String getName() {
@@ -154,7 +154,7 @@ public class RestOperationParamDefinition {
     }
 
     public String getDataType() {
-        return dataType != null ? dataType : "string";
+        return dataType;
     }
 
     /**
@@ -179,15 +179,15 @@ public class RestOperationParamDefinition {
         this.allowableValues = allowableValues;
     }
 
-    public String getParamAccess() {
-        return paramAccess != null ? paramAccess : "";
+    public String getAccess() {
+        return access != null ? access : "";
     }
 
     /**
      * Sets the Swagger Parameter paramAccess flag.
      */
-    public void setParamAccess(String paramAccess) {
-        this.paramAccess = paramAccess;
+    public void setAccess(String access) {
+        this.access = access;
     }
 
     /**
@@ -233,7 +233,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * The data type of the parameter such as string,int
+     * The data type of the parameter such as <tt>string</tt>, <tt>long</tt>, <tt>int</tt>, <tt>boolean</tt>
      */
     public RestOperationParamDefinition dataType(String type) {
         setDataType(type);
@@ -260,15 +260,16 @@ public class RestOperationParamDefinition {
      * The parameter type such as body, form, header, path, query
      */
     public RestOperationParamDefinition type(RestParamType type) {
-        setParamType(type);
+        setType(type);
         return this;
     }
 
     /**
-     * A flag to hide the parameter if set to false
+     * Parameter access. Use <tt>false</tt> or <tt>internal</tt> to indicate the parameter
+     * should be hidden for the public.
      */
-    public RestOperationParamDefinition paramAccess(String paramAccess) {
-        setParamAccess(paramAccess);
+    public RestOperationParamDefinition access(String paramAccess) {
+        setAccess(paramAccess);
         return this;
     }
 
