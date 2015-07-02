@@ -132,7 +132,7 @@ public class WsProducer extends DefaultProducer {
         }
     }
     
-    private WebSocket getWebSocket() {
+    private WebSocket getWebSocket() throws Exception {
         return getEndpoint().getWebSocket();
     }
 }
