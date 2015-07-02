@@ -80,14 +80,10 @@ public class WsEndpoint extends AhcEndpoint {
         return new WsConsumer(this, processor);
     }
 
-    WebSocket getWebSocket() {
+    WebSocket getWebSocket() throws Exception {
         synchronized (this) {
             if (websocket == null) {
-                try { 
-                    connect();
-                } catch (Exception e) {
-                    LOG.error("Failed to connect", e);
-                }
+                connect();
             }
         }
         return websocket;
@@ -133,6 +129,7 @@ public class WsEndpoint extends AhcEndpoint {
     protected void doStop() throws Exception {
         if (websocket != null && websocket.isOpen()) {
             websocket.close();
+            websocket = null;
         }
         super.doStop();
     }
