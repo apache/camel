@@ -20,14 +20,9 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.component.file.remote.FtpEndpoint;
-import org.apache.camel.component.file.remote.FtpServerTestSupport;
-import org.apache.camel.component.file.remote.FtpsEndpoint;
 import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * @version 

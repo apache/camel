@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.net.SocketFactory;
 
-import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
