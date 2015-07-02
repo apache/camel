@@ -44,4 +44,9 @@ public class ManagedIdempotentConsumer extends ManagedProcessor implements Manag
         getProcessor().resetDuplicateMessageCount();
     }
 
+	@Override
+	public void clear() {
+        getProcessor().clear();
+	}
+
 }

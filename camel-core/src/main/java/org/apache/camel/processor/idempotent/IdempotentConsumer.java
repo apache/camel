@@ -198,6 +198,13 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     }
 
     /**
+     * Clear the idempotent repository
+     */
+	public void clear() {
+		idempotentRepository.clear();
+	}
+
+    /**
      * A strategy method to allow derived classes to overload the behaviour of
      * processing a duplicate message
      *
