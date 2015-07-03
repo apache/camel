@@ -19,6 +19,7 @@ package org.apache.camel.component.hbase.processor.idempotent;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+
 import org.apache.camel.component.hbase.HBaseHelper;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
@@ -28,6 +29,9 @@ import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +107,21 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
     public boolean confirm(Object o) {
         return true;
     }
+    
+    @Override
+    public void clear() {
+        Scan s = new Scan();
+        ResultScanner scanner;
+        try {
+            scanner = table.getScanner(s);
+            for (Result rr : scanner) {
+                Delete d = new Delete(rr.getRow());
+                table.delete(d);
+            } 
+        } catch (Exception e) {
+            LOG.warn("Error clear HBase repository {}", table);
+        }
+    }    
 
     @Override
     protected void doStart() throws Exception {
