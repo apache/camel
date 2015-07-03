@@ -30,16 +30,20 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
     private final SetOperations<String, String> setOperations;
     private final String processorName;
     private RedisConfiguration redisConfiguration;
+    private RedisTemplate<String, String> redisTemplate;
 
     public RedisIdempotentRepository(RedisTemplate<String, String> redisTemplate, String processorName) {
         this.setOperations = redisTemplate.opsForSet();
         this.processorName = processorName;
+        this.redisTemplate = redisTemplate;
     }
 
     public RedisIdempotentRepository(String processorName) {
         redisConfiguration = new RedisConfiguration();
         RedisTemplate<String, String> redisTemplate = redisConfiguration.getRedisTemplate();
+        this.redisTemplate = redisTemplate;
         this.setOperations = redisTemplate.opsForSet();
+        redisTemplate.getConnectionFactory().getConnection().flushDb();
         this.processorName = processorName;
     }
 
@@ -73,7 +77,7 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
     
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        setOperations.remove(processorName);
+        redisTemplate.getConnectionFactory().getConnection().flushDb();
     }
 
     @ManagedAttribute(description = "The processor name")

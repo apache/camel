@@ -18,6 +18,8 @@ package org.apache.camel.component.redis.processor.idempotent;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
@@ -30,6 +32,8 @@ public class RedisIdempotentRepositoryTest {
     private static final String REPOSITORY = "testRepository";
     private static final String KEY = "KEY";
     private RedisTemplate redisTemplate;
+    private RedisConnectionFactory redisConnectionFactory;
+    private RedisConnection redisConnection;
     private SetOperations setOperations;
     private RedisIdempotentRepository idempotentRepository;
 
@@ -37,7 +41,11 @@ public class RedisIdempotentRepositoryTest {
     public void setUp() throws Exception {
         redisTemplate = mock(RedisTemplate.class);
         setOperations = mock(SetOperations.class);
+        redisConnection = mock(RedisConnection.class);
+        redisConnectionFactory = mock(RedisConnectionFactory.class);
         when(redisTemplate.opsForSet()).thenReturn(setOperations);
+        when(redisTemplate.getConnectionFactory()).thenReturn(redisConnectionFactory);
+        when(redisTemplate.getConnectionFactory().getConnection()).thenReturn(redisConnection);
         idempotentRepository = RedisIdempotentRepository.redisIdempotentRepository(redisTemplate, REPOSITORY);
     }
 
@@ -62,7 +70,7 @@ public class RedisIdempotentRepositoryTest {
     @Test
     public void shouldClearRepository() {
         idempotentRepository.clear();
-        verify(setOperations).remove(REPOSITORY);
+        verify(redisConnection).flushDb();
     }
 
     @Test
