@@ -98,6 +98,10 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         public boolean confirm(String key) {
             return true;
         }
+        
+        public void clear() {
+            return;  
+        }
 
         public void start() throws Exception {
         }
