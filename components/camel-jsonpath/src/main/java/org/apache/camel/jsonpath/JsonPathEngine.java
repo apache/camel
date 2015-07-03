@@ -17,22 +17,19 @@
 package org.apache.camel.jsonpath;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.nio.charset.Charset;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configuration.Defaults;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.internal.DefaultsImpl;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.component.file.GenericFileConverter;
 
 public class JsonPathEngine {
 
@@ -65,32 +62,29 @@ public class JsonPathEngine {
         Object json = exchange.getIn().getBody();
 
         if (json instanceof GenericFile) {
-            try {
-                json = GenericFileConverter.genericFileToInputStream((GenericFile<?>) json, exchange);
-            } catch (NoTypeConversionAvailableException e) {
-                json = ((WrappedFile<?>) json).getFile();
+            GenericFile<?> genericFile = (GenericFile<?>) json;
+            if (genericFile.getCharset() != null) {
+                // special treatment for generic file with charset
+                InputStream inputStream = new FileInputStream((File) genericFile.getFile());
+                return path.read(inputStream, genericFile.getCharset(), configuration);
             }
-        } else if (json instanceof WrappedFile) {
-            json = ((WrappedFile<?>) json).getFile();
         }
 
-        // the message body type should use the suitable read method
         if (json instanceof String) {
             String str = (String) json;
             return path.read(str, configuration);
-        } else if (json instanceof InputStream) {
-            InputStream is = (InputStream) json;
-            return path.read(is, Charset.defaultCharset().displayName(), configuration);
-        } else if (json instanceof File) {
-            File file = (File) json;
-            return path.read(file, configuration);
-        } else if (json instanceof URL) {
-            URL url = (URL) json;
-            return path.read(url, configuration);
+        } else {
+            InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+            String jsonEncoding = exchange.getIn().getHeader(JsonPathConstants.HEADER_JSON_ENCODING, String.class);
+            if (jsonEncoding != null) {
+                // json encoding specified in header
+                return path.read(is, jsonEncoding, configuration);
+            } else {
+                // no json encoding specified --> assume json encoding is unicode and determine the specific unicode encoding according to RFC-4627
+                // this is a temporary solution, it can be removed as sson as jsonpath offers the encoding detection
+                JsonStream jsonStream = new JsonStream(is);
+                return path.read(jsonStream, jsonStream.getEncoding().name(), configuration);
+            }
         }
-
-        // fallback as input stream
-        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
-        return path.read(is);
     }
 }
