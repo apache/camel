@@ -20,6 +20,7 @@ import krati.core.segment.ChannelSegmentFactory;
 import krati.core.segment.SegmentFactory;
 import krati.io.Serializer;
 import krati.store.DataSet;
+
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.component.krati.KratiHelper;
 import org.apache.camel.component.krati.serializer.KratiDefaultSerializer;
@@ -90,6 +91,15 @@ public class KratiIdempotentRepository extends ServiceSupport implements Idempot
     public boolean confirm(String s) {
         return true;
     }
+    
+	@Override
+	public void clear() {
+		try {
+			dataSet.clear();
+		} catch (Exception e) {
+			LOG.warn("Error clear Krati idempotent repository. This exception is ignored.", e);
+		}
+	}
 
     @Override
     protected void doStart() throws Exception {
