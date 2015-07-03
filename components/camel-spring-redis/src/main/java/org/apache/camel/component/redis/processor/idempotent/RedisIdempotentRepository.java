@@ -70,6 +70,11 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
     public boolean remove(String key) {
         return setOperations.remove(processorName, key) != null;
     }
+    
+    @ManagedOperation(description = "Clear the store")
+    public void clear() {
+        setOperations.remove(processorName);
+    }
 
     @ManagedAttribute(description = "The processor name")
     public String getProcessorName() {

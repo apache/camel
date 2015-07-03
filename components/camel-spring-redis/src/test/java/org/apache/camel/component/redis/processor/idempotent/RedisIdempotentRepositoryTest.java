@@ -58,6 +58,12 @@ public class RedisIdempotentRepositoryTest {
         idempotentRepository.remove(KEY);
         verify(setOperations).remove(REPOSITORY, KEY);
     }
+    
+    @Test
+    public void shouldClearRepository() {
+        idempotentRepository.clear();
+        verify(setOperations).remove(REPOSITORY);
+    }
 
     @Test
     public void shouldReturnProcessorName() {
