@@ -202,8 +202,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
                     while (it.hasNext()) {
                         Object item = it.next();
                         entityManager.remove(item);
-                        entityManager.flush();
                     }
+                    entityManager.flush();
                 }
                 return Boolean.TRUE;
             }
