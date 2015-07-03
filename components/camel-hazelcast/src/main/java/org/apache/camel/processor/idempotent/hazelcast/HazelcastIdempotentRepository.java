@@ -85,9 +85,13 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
             repo.unlock(key);
         }
     }
+    
+    @Override
+    public void clear() {
+        repo.clear();        
+    }
 
     public String getRepositoryName() {
         return repositoryName;
     }
-
 }
