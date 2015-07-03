@@ -92,14 +92,14 @@ public class KratiIdempotentRepository extends ServiceSupport implements Idempot
         return true;
     }
     
-	@Override
-	public void clear() {
-		try {
-			dataSet.clear();
-		} catch (Exception e) {
-			LOG.warn("Error clear Krati idempotent repository. This exception is ignored.", e);
-		}
-	}
+    @Override
+    public void clear() {
+        try {
+            dataSet.clear();
+        } catch (Exception e) {
+            LOG.warn("Error clear Krati idempotent repository. This exception is ignored.", e);
+        }
+    }
 
     @Override
     protected void doStart() throws Exception {
