@@ -56,9 +56,9 @@ public class JdbcIdempotentRepository implements IdempotentRepository<String> {
         return true;
     }
     
-	public void clear() {
-		jdbc.update("DELETE * FROM ProcessedPayments");		
-	}
+    public void clear() {
+        jdbc.update("DELETE * FROM ProcessedPayments");
+    }
 
     public void start() throws Exception {
         // noop
