@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,23 +16,33 @@
  */
 package org.apache.camel.scala.dsl
 
+import org.apache.camel.ServiceStatus.Stopped
+
+import org.junit.Test
+import org.junit.Assert.assertEquals
 import builder.RouteBuilder
-import org.apache.camel.model.PipelineDefinition
 
-/**
- * Scala enrichment for Camel's PipelineDefinition
- */
-case class SPipelineDefinition(override val target: PipelineDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[PipelineDefinition] {
-
-  override def to(uris: String*) : SPipelineDefinition = {
-    uris.length match {
-      case 1 => target.to(uris(0))
-      case _ => {
-        for (uri <- uris) this.to(uri)
-      }
-    }
-    this
+class AutoStartupNotReturningRouteDefinitionTest extends ScalaTestSupport {
+  @Test
+  def testBooleanAutoStartup() {
+    assertEquals(context.getRouteStatus("boolean-auto-startup"), Stopped)
   }
 
-  override def apply(block: => Unit) = wrap(super.apply(block))
+  @Test
+  def testStringAutoStartup() {
+    assertEquals(context.getRouteStatus("string-auto-startup"), Stopped)
+  }
+
+  val builder =
+    new RouteBuilder {
+      // will throw an exception if bug is present
+      "boolean-auto-startup" :: "direct:a".autoStartup(false) ==> {
+        to ("mock:a")
+      }
+
+      // will throw an exception if bug is present
+      "string-auto-startup" :: "direct:b".autoStartup("false") ==> {
+        to ("mock:b")
+      }
+    }
 }

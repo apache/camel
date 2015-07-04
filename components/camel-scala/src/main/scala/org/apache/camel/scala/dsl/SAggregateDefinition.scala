@@ -65,6 +65,4 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
      val predicate = filter
      target.completionPredicate(predicate)
   }
-
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SAggregateDefinition]
 }
