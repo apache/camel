@@ -30,7 +30,4 @@ case class SEnrichDefinition(override val target: EnrichDefinition)(implicit val
   
   def resourceRef(ref: String) = wrap(target.setResourceRef(ref))
   def resourceUri(resourceUri: String) = wrap(target.setResourceUri(resourceUri))
-  
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SEnrichDefinition]
-
 }
