@@ -30,6 +30,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.util.StringUtils;
+import org.springframework.ws.WebServiceMessageFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.addressing.messageid.MessageIdStrategy;
 import org.springframework.ws.soap.addressing.server.annotation.Action;
@@ -39,16 +40,21 @@ import org.springframework.ws.transport.WebServiceMessageSender;
 public class SpringWebserviceConfiguration {
 
     private XmlConverter xmlConverter;
-    private MessageFilter messageFilter;
 
-    @UriParam(label = "consumer")
-    private EndpointMappingKey endpointMappingKey;
     @UriPath(label = "producer")
     private String webServiceEndpointUri;
+
+    /* Common configuration */
+    @UriParam
+    private MessageFilter messageFilter;
 
     /* Producer configuration */
     @UriParam(label = "producer")
     private WebServiceTemplate webServiceTemplate;
+    @UriParam(label = "producer")
+    private WebServiceMessageSender messageSender;
+    @UriParam(label = "producer")
+    private WebServiceMessageFactory messageFactory;
     @UriParam(label = "producer")
     private String soapAction;
     @UriParam(label = "producer")
@@ -62,13 +68,13 @@ public class SpringWebserviceConfiguration {
     @UriParam(label = "producer")
     private URI replyTo;
     @UriParam(label = "producer")
-    private WebServiceMessageSender messageSender;
-    @UriParam(label = "producer")
     private MessageIdStrategy messageIdStrategy;
     @UriParam(label = "producer")
     private int timeout = -1;
 
     /* Consumer configuration */
+    @UriParam(label = "consumer")
+    private EndpointMappingKey endpointMappingKey;
     @UriParam(label = "consumer")
     private CamelSpringWSEndpointMapping endpointMapping;
     @UriParam(label = "consumer")
@@ -89,6 +95,17 @@ public class SpringWebserviceConfiguration {
      */
     public void setWebServiceTemplate(WebServiceTemplate webServiceTemplate) {
         this.webServiceTemplate = webServiceTemplate;
+    }
+
+    public WebServiceMessageFactory getMessageFactory() {
+        return messageFactory;
+    }
+
+    /**
+     * Option to provide a custom WebServiceMessageFactory. For example when you want Apache Axiom to handle web service messages instead of SAAJ.
+     */
+    public void setMessageFactory(WebServiceMessageFactory messageFactory) {
+        this.messageFactory = messageFactory;
     }
 
     public String getWebServiceEndpointUri() {
@@ -242,10 +259,7 @@ public class SpringWebserviceConfiguration {
     }
 
     public MessageFilter getMessageFilter() {
-        if (this.messageFilter == null) {
-            this.messageFilter = new BasicMessageFilter();
-        }
-        return this.messageFilter;
+        return messageFilter;
     }
 
     public URI getOutputAction() {
