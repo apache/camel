@@ -174,6 +174,9 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def process(processor: Processor) = stack.top.process(processor)
 
   def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
+  def removeHeader(name: String) = stack.top.removeHeader(name)
+  def removeHeaders(pattern: String) = stack.top.removeHeaders(pattern)
+  def removeHeaders(pattern: String, excludePatterns: String*) = stack.top.removeHeaders(pattern, excludePatterns:_*)
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
   def rollback = stack.top.rollback
   def routeId(id: String) = stack.top.routeId(id)
