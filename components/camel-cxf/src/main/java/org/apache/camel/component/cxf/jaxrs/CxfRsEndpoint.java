@@ -81,6 +81,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
+    
+    @UriPath
+    protected Bus bus;
 
     private final InterceptorHolder interceptorHolder = new InterceptorHolder();
 
@@ -97,8 +100,6 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private String modelRef;
     @UriParam(defaultValue = "Default")
     private BindingStyle bindingStyle = BindingStyle.Default;
-    @UriPath
-    protected Bus bus;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
     @UriParam
