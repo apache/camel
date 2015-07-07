@@ -109,6 +109,7 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
         }
 
         Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
+        exchange.setFromEndpoint(endpoint);
         if (entry != null) {
             exchange.getIn().setHeader(Jt400DataQueueEndpoint.SENDER_INFORMATION, entry.getSenderInformation());
             if (endpoint.getFormat() == Format.binary) {
@@ -135,6 +136,7 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
         }
 
         Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
+        exchange.setFromEndpoint(endpoint);
         if (entry != null) {
             exchange.getIn().setHeader(Jt400DataQueueEndpoint.SENDER_INFORMATION, entry.getSenderInformation());
             if (endpoint.getFormat() == Format.binary) {
