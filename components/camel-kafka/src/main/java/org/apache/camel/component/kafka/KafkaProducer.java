@@ -48,7 +48,9 @@ public class KafkaProducer extends DefaultProducer {
 
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createProducerProperties();
-        props.put("metadata.broker.list", endpoint.getBrokers());
+        if (endpoint.getBrokers() != null) {
+            props.put("metadata.broker.list", endpoint.getBrokers());
+        }
         return props;
     }
 
