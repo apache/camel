@@ -135,4 +135,22 @@ public class UserStreamingConsumer extends StreamingConsumer implements UserStre
         // noop
     }
 
+    @Override
+    public void onRetweetedRetweet(User source, User target, Status retweetedStatus) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onFavoritedRetweet(User source, User target, Status favoritedRetweeet) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onQuotedTweet(User source, User target, Status quotingTweet) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
