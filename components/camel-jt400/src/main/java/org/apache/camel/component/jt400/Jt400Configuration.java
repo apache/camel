@@ -128,6 +128,12 @@ public class Jt400Configuration {
     @UriParam(defaultValue = "EQ")
     private SearchType searchType = SearchType.EQ;
 
+    /**
+     * Whether connections to AS/400 are secured with SSL.
+     */
+    @UriParam
+    private boolean secured;
+
     @UriParam
     private Integer[] outputFieldsIdxArray;
 
@@ -293,6 +299,14 @@ public class Jt400Configuration {
         return outputFieldsIdxArray;
     }
 
+    public boolean isSecured() {
+        return secured;
+    }
+
+    public void setSecured(boolean secured) {
+        this.secured = secured;
+    }
+
     /**
      * Specifies which fields (program parameters) are output parameters.
      */
@@ -349,7 +363,13 @@ public class Jt400Configuration {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Getting an AS400 object for '{}' from {}.", systemName + '/' + userID, connectionPool);
             }
-            system = connectionPool.getConnection(systemName, userID, password);
+
+            if(isSecured()){
+                system = connectionPool.getSecureConnection(systemName, userID, password);
+            }else{
+                system = connectionPool.getConnection(systemName, userID, password);
+            }
+
             if (ccsid != DEFAULT_SYSTEM_CCSID) {
                 system.setCcsid(ccsid);
             }
