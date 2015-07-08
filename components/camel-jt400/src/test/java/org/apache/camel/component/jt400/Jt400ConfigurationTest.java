@@ -31,7 +31,7 @@ public class Jt400ConfigurationTest extends Jt400TestSupport {
 
     @Test
     public void testDefaultSecured() {
-        assertFalse( jt400Configuration.isSecured());
+        assertFalse(jt400Configuration.isSecured());
     }
 
     @Test

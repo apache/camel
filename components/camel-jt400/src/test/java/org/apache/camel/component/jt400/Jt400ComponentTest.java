@@ -80,7 +80,7 @@ public class Jt400ComponentTest extends Jt400TestSupport {
                 .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool&secured=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Jt400Endpoint);
-        assertTrue( ((Jt400Endpoint)endpoint).isSecured() );
+        assertTrue(((Jt400Endpoint) endpoint).isSecured());
     }
 
     /**
@@ -92,7 +92,7 @@ public class Jt400ComponentTest extends Jt400TestSupport {
                 .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.pgm?connectionPool=#mockPool&secured=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Jt400Endpoint);
-        assertTrue( ((Jt400Endpoint)endpoint).isSecured() );
+        assertTrue(((Jt400Endpoint) endpoint).isSecured());
     }
 
 }

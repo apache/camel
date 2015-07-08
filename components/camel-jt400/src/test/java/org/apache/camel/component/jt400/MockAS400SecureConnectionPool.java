@@ -16,18 +16,17 @@
  */
 package org.apache.camel.component.jt400;
 
+import java.util.Locale;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
 import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.security.auth.ProfileTokenCredential;
 
-import java.util.Locale;
-
 /**
  * Mock {@code AS400ConnectionPool} implementation, useful in unit testing JT400 endpoints with secure option=true.
  */
 public class MockAS400SecureConnectionPool extends AS400ConnectionPool {
-
 
     public MockAS400SecureConnectionPool() {
         setRunMaintenance(false);
