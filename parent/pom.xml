@@ -243,8 +243,8 @@
     <java-apns-version>1.0.0.Beta6</java-apns-version>
     <javacrumbs-version>0.22</javacrumbs-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
-    <javax.el-api-version>2.2.4</javax.el-api-version>
-    <javax.el-version>2.2.4</javax.el-version>
+    <javax.el-api-version>2.2.5</javax.el-api-version>
+    <javax.el-version>2.2.5</javax.el-version>
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
     <javax-mail-version>1.4.7</javax-mail-version>
     <jaxb-bundle-version>2.2.6_1</jaxb-bundle-version>
