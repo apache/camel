@@ -1549,9 +1549,16 @@
     <bundle>mvn:org.apache.camel/camel-urlrewrite/${project.version}</bundle>
   </feature>
   <feature name='camel-vertx' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-vertx requires Java 1.8 or better</details>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
     <bundle dependency='true'>mvn:com.hazelcast/hazelcast/${hazelcast-version}</bundle>
     <bundle dependency='true'>mvn:com.eclipsesource.minimal-json/minimal-json/${minimal-json-version}</bundle>
     <!-- TODO: vertx is not OSGi bundle, see https://github.com/eclipse/vert.x/issues/708 -->

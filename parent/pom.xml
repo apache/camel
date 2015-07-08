@@ -492,7 +492,7 @@
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>
-    <vertx-version>2.1.6</vertx-version>
+    <vertx-version>3.0.0</vertx-version>
     <vysper-version>0.7</vysper-version>
     <weld2-version>2.2.14.Final</weld2-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
