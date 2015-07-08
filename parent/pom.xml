@@ -154,7 +154,7 @@
     <felix-connect-version>0.1.0</felix-connect-version>
     <felix-fileinstall-version>3.5.0</felix-fileinstall-version>
     <felix-framework-version>3.2.2</felix-framework-version>
-    <felix-scr-annotations-version>1.9.8</felix-scr-annotations-version>
+    <felix-scr-annotations-version>1.9.12</felix-scr-annotations-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-version>3.4.2</flatpack-version>
     <fop-bundle-version>1.1_1</fop-bundle-version>
