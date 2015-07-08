@@ -104,7 +104,6 @@ public class CamelExtension implements Extension {
                 .readFromType(at)
                 .addToMethod(method, new InjectLiteral());
         process.setAnnotatedType(builder.create());
-
     }
 
     protected void detectRouteBuilders(@Observes ProcessAnnotatedType<?> process) throws Exception {
@@ -146,8 +145,7 @@ public class CamelExtension implements Extension {
             for (Map.Entry<String, CamelContextConfig> entry : entries) {
                 String name = entry.getKey();
                 CamelContextConfig config = entry.getValue();
-                CamelContextBean camelContextBean = new CamelContextBean(manager, "CamelContext:" + name,
-                        name, config);
+                CamelContextBean camelContextBean = new CamelContextBean(manager, "CamelContext:" + name, name, config);
                 camelContextBeans.add(camelContextBean);
                 abd.addBean(camelContextBean);
             }
@@ -155,9 +153,7 @@ public class CamelExtension implements Extension {
     }
 
     /**
-     * Lets detect all beans annotated with @Consume and
-     * beans of type {@link RouteBuilder} which are annotated with {@link org.apache.camel.cdi.ContextName}
-     * so they can be auto-registered
+     * Lets detect all beans annotated with @Consume so they can be auto-registered
      */
     public void detectConsumeBeans(@Observes ProcessBean<?> event) {
         final Bean<?> bean = event.getBean();
@@ -204,9 +200,8 @@ public class CamelExtension implements Extension {
     }
 
     /**
-     * Lets detect all producer methods creating instances of {@link RouteBuilder} which are annotated with {@link org
-     * .apache.camel.cdi.ContextName}
-     * so they can be auto-registered
+     * Lets detect all producer methods creating instances of {@link RouteBuilder} which are annotated with
+     * {@link org.apache.camel.cdi.ContextName} so they can be auto-registered
      */
     public void detectProducerRoutes(@Observes ProcessProducerMethod<?, ?> event) {
         Annotated annotated = event.getAnnotated();
@@ -237,7 +232,6 @@ public class CamelExtension implements Extension {
             beanManager.getReference(bean, bean.getBeanClass(), creationalContext);
         }
     }
-
 
     /**
      * Lets perform injection of all beans which use Camel annotations

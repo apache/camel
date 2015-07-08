@@ -33,7 +33,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * produces {@link Endpoint} and {@link org.apache.camel.ProducerTemplate} instances for injection into beans
+ * Produces {@link Endpoint} and {@link org.apache.camel.ProducerTemplate} instances for injection into beans
  */
 public class CamelFactory {
     @Inject CamelContextMap camelContextMap;
