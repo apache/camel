@@ -17,8 +17,10 @@
 package org.apache.camel.model.language;
 
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,12 +29,14 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
 
 import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
@@ -49,7 +53,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionDefinition implements Expression, Predicate {
+public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -64,6 +68,9 @@ public class ExpressionDefinition implements Expression, Predicate {
     private Expression expressionValue;
     @XmlTransient
     private ExpressionDefinition expressionType;
+    // use xs:any to support optional property placeholders
+    @XmlAnyAttribute
+    private Map<QName, Object> otherAttributes;
 
     public ExpressionDefinition() {
     }
@@ -239,6 +246,16 @@ public class ExpressionDefinition implements Expression, Predicate {
      */
     public void setTrim(Boolean trim) {
         this.trim = trim;
+    }
+
+    @Override
+    public Map<QName, Object> getOtherAttributes() {
+        return otherAttributes;
+    }
+
+    @Override
+    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+        this.otherAttributes = otherAttributes;
     }
 
     /**

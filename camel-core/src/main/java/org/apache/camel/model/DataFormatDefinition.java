@@ -16,10 +16,13 @@
  */
 package org.apache.camel.model;
 
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
@@ -36,11 +39,14 @@ import static org.apache.camel.util.EndpointHelper.isReferenceParameter;
 @Metadata(label = "dataformat,transformation")
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataFormatDefinition extends IdentifiedType {
+public class DataFormatDefinition extends IdentifiedType implements OtherAttributesAware {
     @XmlTransient
     private DataFormat dataFormat;
     @XmlTransient
     private String dataFormatName;
+    // use xs:any to support optional property placeholders
+    @XmlAnyAttribute
+    private Map<QName, Object> otherAttributes;
 
     public DataFormatDefinition() {
     }
@@ -66,7 +72,7 @@ public class DataFormatDefinition extends IdentifiedType {
             ObjectHelper.notNull(ref, "ref or type");
 
             // try to let resolver see if it can resolve it, its not always possible
-            type = ((ModelCamelContext) routeContext.getCamelContext()).resolveDataFormatDefinition(ref);
+            type = routeContext.getCamelContext().resolveDataFormatDefinition(ref);
 
             if (type != null) {
                 return type.getDataFormat(routeContext);
@@ -175,6 +181,14 @@ public class DataFormatDefinition extends IdentifiedType {
 
     public void setDataFormat(DataFormat dataFormat) {
         this.dataFormat = dataFormat;
+    }
+
+    public Map<QName, Object> getOtherAttributes() {
+        return otherAttributes;
+    }
+
+    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+        this.otherAttributes = otherAttributes;
     }
 
     public String getShortName() {
