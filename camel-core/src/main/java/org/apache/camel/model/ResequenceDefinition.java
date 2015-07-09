@@ -352,10 +352,8 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         Expression expression = getExpression().createExpression(routeContext);
 
         // and wrap in unit of work
-        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
         CamelInternalProcessor internal = new CamelInternalProcessor(processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
-        internal.addAdvice(new CamelInternalProcessor.RouteContextAdvice(routeContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
@@ -385,11 +383,8 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         Processor processor = this.createChildProcessor(routeContext, true);
         Expression expression = getExpression().createExpression(routeContext);
 
-        // and wrap in unit of work
-        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
         CamelInternalProcessor internal = new CamelInternalProcessor(processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
-        internal.addAdvice(new CamelInternalProcessor.RouteContextAdvice(routeContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);

@@ -108,9 +108,8 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         Processor target = wrapInErrorHandler(routeContext, producer);
 
         // and wrap in unit of work
-        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
         CamelInternalProcessor internal = new CamelInternalProcessor(target);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
 
         // is true bt default
         boolean isCopy = getCopy() == null || getCopy();
