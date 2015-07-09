@@ -29,6 +29,8 @@ import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
+
 /**
  * The processor which sends messages in a loop.
  */
@@ -89,6 +91,11 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
             LOG.trace("Processing exchangeId: {} is continued being processed synchronously", target.getExchangeId());
 
+            // check for error if so we should break out
+            if (!continueProcessing(target, "so breaking out of loop", LOG)) {
+                break;
+            }
+
             // increment counter before next loop
             index.getAndIncrement();
         }
@@ -133,6 +140,11 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                         // the remainder of the routing slip will be completed async
                         // so we break out now, then the callback will be invoked which then continue routing from where we left here
                         return;
+                    }
+
+                    // check for error if so we should break out
+                    if (!continueProcessing(target, "so breaking out of loop", LOG)) {
+                        break;
                     }
 
                     // increment counter before next loop
