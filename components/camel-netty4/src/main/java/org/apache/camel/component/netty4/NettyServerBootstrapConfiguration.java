@@ -97,7 +97,11 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected EventLoopGroup workerGroup;
     @UriParam(label = "consumer")
     protected String networkInterface;
-    
+    @UriParam(label = "consumer")
+    private boolean reconnect;
+    @UriParam(label = "consumer", defaultValue = "10000")
+    private int reconnectInterval = 10000;
+
     public String getAddress() {
         return host + ":" + port;
     }
@@ -503,6 +507,28 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     }
 
     /**
+     * Used only in clientMode in consumer, the consumer will attempt to reconnect on disconnection if this is enabled
+     */
+    public boolean isReconnect() {
+        return reconnect;
+    }
+
+    public void setReconnect(boolean reconnect) {
+        this.reconnect = reconnect;
+    }
+
+    /**
+     * Used if reconnect and clientMode is enabled. The interval in milli seconds to attempt reconnection
+     */
+    public int getReconnectInterval() {
+        return reconnectInterval;
+    }
+
+    public void setReconnectInterval(int reconnectInterval) {
+        this.reconnectInterval = reconnectInterval;
+    }
+
+    /**
      * Checks if the other {@link NettyServerBootstrapConfiguration} is compatible
      * with this, as a Netty listener bound on port X shares the same common
      * {@link NettyServerBootstrapConfiguration}, which must be identical.
@@ -581,6 +607,10 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
             isCompatible = false;
         } else if (networkInterface != null && !networkInterface.equals(other.networkInterface)) {
             isCompatible = false;
+        } else if (reconnect != other.reconnect) {
+            isCompatible = false;
+        } else if (reconnectInterval != other.reconnectInterval) {
+            isCompatible = false;
         }
 
         return isCompatible;
@@ -620,6 +650,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                 + ", bossGroup=" + bossGroup
                 + ", workerGroup=" + workerGroup
                 + ", networkInterface='" + networkInterface + '\''
+                + ", reconnect='" + reconnect + '\''
+                + ", reconnectInterval='" + reconnectInterval + '\''
                 + '}';
     }
 }
