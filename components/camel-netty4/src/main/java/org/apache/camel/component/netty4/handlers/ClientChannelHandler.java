@@ -119,7 +119,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        // TODO Auto-generated method stub
         messageReceived = true;
 
         if (LOG.isTraceEnabled()) {
