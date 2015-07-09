@@ -97,8 +97,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected EventLoopGroup workerGroup;
     @UriParam(label = "consumer")
     protected String networkInterface;
-    @UriParam(label = "consumer")
-    private boolean reconnect;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean reconnect = true;
     @UriParam(label = "consumer", defaultValue = "10000")
     private int reconnectInterval = 10000;
 
