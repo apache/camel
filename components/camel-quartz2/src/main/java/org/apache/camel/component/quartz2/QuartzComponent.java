@@ -350,11 +350,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         LOG.info("Create and initializing scheduler.");
         scheduler = createScheduler();
 
-        // Store CamelContext into QuartzContext space
-        SchedulerContext quartzContext = scheduler.getContext();
-        String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
-        LOG.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
-        quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName, getCamelContext());
+        SchedulerContext quartzContext = storeCamelContextInQuartzContext();
 
         // Set camel job counts to zero. We needed this to prevent shutdown in case there are multiple Camel contexts
         // that has not completed yet, and the last one with job counts to zero will eventually shutdown.
@@ -363,6 +359,15 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             number = new AtomicInteger(0);
             quartzContext.put(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT, number);
         }
+    }
+
+    private SchedulerContext storeCamelContextInQuartzContext() throws SchedulerException {
+        // Store CamelContext into QuartzContext space
+        SchedulerContext quartzContext = scheduler.getContext();
+        String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
+        LOG.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
+        quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName, getCamelContext());
+        return quartzContext;
     }
 
     private Scheduler createScheduler() throws SchedulerException {
@@ -391,8 +396,12 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         // to create and init the scheduler first.
         if (scheduler == null) {
             createAndInitScheduler();
+        } else {
+            // in case custom scheduler was injected (i.e. created elsewhere), we may need to add 
+            // current camel context to quartz context so jobs have access
+            storeCamelContextInQuartzContext();
         }
-
+        
         // Now scheduler is ready, let see how we should start it.
         if (!autoStartScheduler) {
             LOG.info("Not starting scheduler because autoStartScheduler is set to false.");
