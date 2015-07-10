@@ -74,8 +74,7 @@ public class BeanAdapter {
     /**
      * Perform injections
      */
-    public void inject(CamelExtension camelExtension, Object reference,
-                                String beanName) {
+    public void inject(CamelExtension camelExtension, Object reference, String beanName) {
         for (Method method : consumeMethods) {
             Consume annotation = method.getAnnotation(Consume.class);
             if (annotation != null) {

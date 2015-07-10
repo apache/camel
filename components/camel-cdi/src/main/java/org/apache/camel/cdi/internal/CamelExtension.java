@@ -236,6 +236,7 @@ public class CamelExtension implements Extension {
     /**
      * Lets perform injection of all beans which use Camel annotations
      */
+    @SuppressWarnings("unchecked")
     public void onInjectionTarget(@Observes ProcessInjectionTarget<?> event) {
         final InjectionTarget injectionTarget = event.getInjectionTarget();
         AnnotatedType annotatedType = event.getAnnotatedType();
@@ -246,12 +247,11 @@ public class CamelExtension implements Extension {
         final BeanAdapter adapter = createBeanAdapter(beanClass, contextName);
         if (!adapter.isEmpty()) {
             DelegateInjectionTarget newTarget = new DelegateInjectionTarget(injectionTarget) {
-
                 @Override
-                public void postConstruct(Object instance) {
-                    super.postConstruct(instance);
+                public void inject(Object instance, CreationalContext ctx) {
+                    super.inject(instance, ctx);
 
-                    // now lets do the post instruct to inject our Camel injections
+                    // now lets inject our Camel injections to the bean instance
                     adapter.inject(CamelExtension.this, instance, beanName);
                 }
             };
