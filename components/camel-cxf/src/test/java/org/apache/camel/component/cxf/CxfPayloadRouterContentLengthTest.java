@@ -38,8 +38,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.junit.After;
 import org.junit.Before;
@@ -90,7 +93,13 @@ public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
          * Content-Length but no other header
          */
         log.info("Starting jetty server at port {}", JETTY_PORT);
-        server = new Server(JETTY_PORT);
+        server = new Server();
+        // Do not send a Server header
+        HttpConfiguration httpconf = new HttpConfiguration();
+        httpconf.setSendServerVersion(false);
+        ServerConnector http = new ServerConnector(server, new HttpConnectionFactory(httpconf));
+        http.setPort(JETTY_PORT);
+        server.addConnector(http);
         server.setHandler(new AbstractHandler() {
             @Override
             public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
@@ -105,8 +114,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
                 pw.close();
             }
         });
-        // Do not send a Server header
-        server.setSendServerVersion(false);
+
         server.start();
         // Load the CXF endpoints for the route
         log.info("Start Routing Scenario at port {}", CXFTestSupport.getPort1());
