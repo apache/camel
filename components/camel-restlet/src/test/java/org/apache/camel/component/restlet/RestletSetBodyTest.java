@@ -19,6 +19,7 @@ package org.apache.camel.component.restlet;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.HttpResponse;
@@ -32,6 +33,9 @@ import org.restlet.engine.application.EncodeRepresentation;
 import org.restlet.representation.InputRepresentation;
 import org.restlet.representation.StringRepresentation;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assume.assumeThat;
+
 /**
  * @version 
  */
@@ -42,7 +46,6 @@ public class RestletSetBodyTest extends RestletTestSupport {
     public void testSetBody() throws Exception {
         String response = template.requestBody("restlet:http://localhost:" + portNum + "/stock/ORCL?restletMethod=get", null, String.class);
         assertEquals("110", response);
-       
     }
     
     @Test
@@ -55,12 +58,55 @@ public class RestletSetBodyTest extends RestletTestSupport {
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("image/png", response.getEntity().getContentType().getValue());
             is = response.getEntity().getContent();
-            assertEquals("Get wrong available size", 10, response.getEntity().getContentLength());
-            byte[] buffer = new byte[10];
-            is.read(buffer);
-            for (int i = 0; i < 10; i++) {
-                assertEquals(i + 1, buffer[i]);
+            assertEquals("Get wrong available size", 256, response.getEntity().getContentLength());
+            byte[] buffer = new byte[256];
+            assumeThat("Should read all data", is.read(buffer), equalTo(256));
+            assertThat("Data should match", buffer, equalTo(getAllBytes()));
+        } finally {
+            httpclient.close();
+            if (is != null) {
+                is.close();
             }
+        }
+    }
+
+    @Test
+    public void consumerShouldReturnByteArray() throws Exception {
+        HttpGet get = new HttpGet("http://localhost:" + portNum + "/music/123");
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+        InputStream is = null;
+        try {
+            HttpResponse response = httpclient.execute(get);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("audio/mpeg", response.getEntity().getContentType().getValue());
+            is = response.getEntity().getContent();
+            assertEquals("Content length should match returned data", 256, response.getEntity().getContentLength());
+            byte[] buffer = new byte[256];
+            assumeThat("Should read all data", is.read(buffer), equalTo(256));
+            assertThat("Binary content should match", buffer, equalTo(getAllBytes()));
+        } finally {
+            httpclient.close();
+            if (is != null) {
+                is.close();
+            }
+        }
+    }
+
+    @Test
+    public void consumerShouldReturnInputStream() throws Exception {
+        HttpGet get = new HttpGet("http://localhost:" + portNum + "/video/123");
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+        InputStream is = null;
+        try {
+            HttpResponse response = httpclient.execute(get);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("video/mp4", response.getEntity().getContentType().getValue());
+            assertTrue("Content should be streamed", response.getEntity().isChunked());
+            assertEquals("Content length should be unknown", -1, response.getEntity().getContentLength());
+            is = response.getEntity().getContent();
+            byte[] buffer = new byte[256];
+            assumeThat("Should read all data", is.read(buffer), equalTo(256));
+            assertThat("Binary content should match", buffer, equalTo(getAllBytes()));
         } finally {
             httpclient.close();
             if (is != null) {
@@ -75,7 +121,6 @@ public class RestletSetBodyTest extends RestletTestSupport {
         assertEquals("Hello World!", response);
     }
     
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -89,18 +134,29 @@ public class RestletSetBodyTest extends RestletTestSupport {
                 from("jetty:http://localhost:" + portNum2 + "/test").setBody().constant("response is back");
 
                 // create ByteArrayRepresentation for response
-                byte[] image = new byte[10];
-                for (int i = 0; i < 10; i++) {
-                    image[i] = (byte)(i + 1);
-                }
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
-
                 from("restlet:http://localhost:" + portNum + "/images/{symbol}?restletMethods=get")
-                    .setBody().constant(new InputRepresentation(inputStream, MediaType.IMAGE_PNG, 10));
+                    .setBody().constant(new InputRepresentation(
+                        new ByteArrayInputStream(getAllBytes()), MediaType.IMAGE_PNG, 256));
                 
+                from("restlet:http://localhost:" + portNum + "/music/{symbol}?restletMethods=get")
+                    .setHeader(Exchange.CONTENT_TYPE).constant("audio/mpeg")
+                    .setBody().constant(getAllBytes());
+
+                from("restlet:http://localhost:" + portNum + "/video/{symbol}?restletMethods=get")
+                    .setHeader(Exchange.CONTENT_TYPE).constant("video/mp4")
+                    .setBody().constant(new ByteArrayInputStream(getAllBytes()));
+
                 from("restlet:http://localhost:" + portNum + "/gzip/data?restletMethods=get")
                     .setBody().constant(new EncodeRepresentation(Encoding.GZIP, new StringRepresentation("Hello World!", MediaType.TEXT_XML)));
             }
         };
+    }
+
+    private static byte[] getAllBytes() {
+        byte[] data = new byte[256];
+        for (int i = 0; i < 256; i++) {
+            data[i] = (byte)(Byte.MIN_VALUE + i);
+        }
+        return data;
     }
 }
