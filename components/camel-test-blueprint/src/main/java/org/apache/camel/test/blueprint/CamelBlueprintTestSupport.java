@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.blueprint;
 
+import java.io.File;
 import java.util.Dictionary;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -101,6 +102,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         }
 
         if (file != null) {
+            if (!new File(file[0]).exists()) {
+                throw new IllegalArgumentException("The provided file \"" + file[0] + "\" from loadConfigAdminConfigurationFile doesn't exist");
+            }
             CamelBlueprintHelper.setPersistentFileForConfigAdmin(answer, file[1], file[0], props);
         }
 
