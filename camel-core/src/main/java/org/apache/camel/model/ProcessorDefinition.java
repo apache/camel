@@ -68,7 +68,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -2135,6 +2134,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type throwException(Exception exception) {
         ThrowExceptionDefinition answer = new ThrowExceptionDefinition();
         answer.setException(exception);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Sets the exception on the {@link org.apache.camel.Exchange}
+     *
+     * @param type the exception class to use
+     * @param message the given message as caused message (supports simple language)
+     * @return the builder
+     */
+    public Type throwException(Class<? extends Exception> type, String message) {
+        ThrowExceptionDefinition answer = new ThrowExceptionDefinition();
+        answer.setExceptionClass(type);
+        answer.setMessage(message);
         addOutput(answer);
         return (Type) this;
     }

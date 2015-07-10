@@ -16,9 +16,15 @@
  */
 package org.apache.camel.processor;
 
+import java.lang.reflect.Constructor;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
@@ -28,21 +34,47 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The processor which sets an {@link Exception} on the {@link Exchange}
  */
-public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware, CamelContextAware {
     private String id;
+    private CamelContext camelContext;
+    private Expression simple;
     private final Exception exception;
+    private final Class<? extends Exception> type;
+    private final String message;
 
     public ThrowExceptionProcessor(Exception exception) {
-        ObjectHelper.notNull(exception, "exception", this);
+        this(exception, null, null);
+    }
+
+    public ThrowExceptionProcessor(Exception exception, Class<? extends Exception> type, String message) {
         this.exception = exception;
+        this.type = type;
+        this.message = message;
     }
 
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        exchange.setException(exception);
+        Exception cause = exception;
+
+        try {
+            if (message != null && type != null) {
+                // create the message using simple language so it can be dynamic
+                String text = simple.evaluate(exchange, String.class);
+                // create a new exception of that type, and provide the message as
+                Constructor<?> constructor = type.getDeclaredConstructor(String.class);
+                cause = (Exception) constructor.newInstance(text);
+                exchange.setException(cause);
+            } else {
+                exchange.setException(cause);
+            }
+        } catch (Throwable e) {
+            exchange.setException(new CamelExchangeException("Error creating new instance of " + exception.getClass(), exchange, e));
+        }
+
         callback.done(true);
         return true;
     }
@@ -63,13 +95,33 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
         return exception;
     }
 
+    public Class<? extends Exception> getType() {
+        return type;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     public String toString() {
         return "ThrowException";
     }
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        ObjectHelper.notNull(camelContext, "camelContext", this);
+
+        if (message != null) {
+            simple = camelContext.resolveLanguage("simple").createExpression(message);
+        }
     }
 
     @Override
