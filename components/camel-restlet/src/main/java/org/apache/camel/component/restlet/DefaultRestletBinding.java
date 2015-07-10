@@ -54,6 +54,7 @@ import org.restlet.data.Preference;
 import org.restlet.data.Status;
 import org.restlet.engine.application.DecodeRepresentation;
 import org.restlet.engine.header.HeaderConstants;
+import org.restlet.representation.ByteArrayRepresentation;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.InputRepresentation;
 import org.restlet.representation.Representation;
@@ -272,6 +273,9 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             response.setEntity(new InputRepresentation(out.getBody(InputStream.class), mediaType));
         } else if (body instanceof File) {
             response.setEntity(new FileRepresentation(out.getBody(File.class), mediaType));
+        } else if (body instanceof byte[]) {
+            byte[] bytes = out.getBody(byte[].class);
+            response.setEntity(new ByteArrayRepresentation(bytes, mediaType, bytes.length));
         } else {
             // fallback and use string
             String text = out.getBody(String.class);
