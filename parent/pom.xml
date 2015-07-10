@@ -44,10 +44,11 @@
     <apacheds-version>2.0.0-M20</apacheds-version>
     <apache-gora-version>0.4</apache-gora-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
-    <aries-blueprint-api-version>1.0.0</aries-blueprint-api-version>
-    <aries-blueprint-core-version>1.1.0</aries-blueprint-core-version>
-    <aries-blueprint-proxy-version>1.0.0</aries-blueprint-proxy-version>
-    <aries-blueprint-proxy-impl-version>1.0.1</aries-blueprint-proxy-impl-version>
+    <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
+    <aries-blueprint-cm-version>1.0.6</aries-blueprint-cm-version>
+    <aries-blueprint-core-version>1.4.3</aries-blueprint-core-version>
+    <aries-blueprint-proxy-version>1.0.1</aries-blueprint-proxy-version>
+    <aries-blueprint-proxy-impl-version>1.0.4</aries-blueprint-proxy-impl-version>
     <aries-util-version>1.1.0</aries-util-version>
     <arquillian-junit-container-version>1.1.8.Final</arquillian-junit-container-version>
     <arquillian-weld-se-embedded-version>1.0.0.CR8</arquillian-weld-se-embedded-version>
@@ -2614,13 +2615,18 @@
       <!-- blueprint -->
       <dependency>
         <groupId>org.apache.aries.blueprint</groupId>
-        <artifactId>org.apache.aries.blueprint</artifactId>
-        <version>${aries-blueprint-core-version}</version>
+        <artifactId>org.apache.aries.blueprint.api</artifactId>
+        <version>${aries-blueprint-api-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.aries.blueprint</groupId>
         <artifactId>org.apache.aries.blueprint.core</artifactId>
         <version>${aries-blueprint-core-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.aries.blueprint</groupId>
+        <artifactId>org.apache.aries.blueprint.cm</artifactId>
+        <version>${aries-blueprint-cm-version}</version>
       </dependency>
 
       <!-- OSGi ConfigAdmin service -->
