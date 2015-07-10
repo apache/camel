@@ -185,7 +185,8 @@ public final class CamelBlueprintHelper {
                     .getOsgiService(bundleContext, ConfigurationAdmin.class);
                 if (configAdmin != null) {
                     // ensure we update
-                    Configuration config = configAdmin.getConfiguration(pid);
+                    // we *have to* use "null" as 2nd arg to have correct bundle location for Configuration object
+                    Configuration config = configAdmin.getConfiguration(pid, null);
                     LOG.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
                     config.update(props);
                 }
