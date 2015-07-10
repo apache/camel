@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -52,7 +53,7 @@ public final class UnsafeUriCharactersEncoder {
         unsafeCharactersRfc1738.set(']');
         unsafeCharactersRfc1738.set('`');
     }
-    
+
     static {
         unsafeCharactersHttp = new BitSet(256);
         unsafeCharactersHttp.set(' ');
@@ -70,6 +71,8 @@ public final class UnsafeUriCharactersEncoder {
         unsafeCharactersHttp.set('`');
     }
 
+    static Charset UTF_8_CHARSET = Charset.forName("utf-8");
+
     private UnsafeUriCharactersEncoder() {
         // util class
     }
@@ -77,23 +80,23 @@ public final class UnsafeUriCharactersEncoder {
     public static String encode(String s) {
         return encode(s, unsafeCharactersRfc1738);
     }
-    
+
     public static String encodeHttpURI(String s) {
         return encode(s, unsafeCharactersHttp);
     }
-    
+
     public static String encode(String s, BitSet unsafeCharacters) {
         return encode(s, unsafeCharacters, false);
     }
-    
+
     public static String encode(String s, boolean checkRaw) {
         return encode(s, unsafeCharactersRfc1738, checkRaw);
     }
-    
+
     public static String encodeHttpURI(String s, boolean checkRaw) {
         return encode(s, unsafeCharactersHttp, checkRaw);
     }
-    
+
     private static List<Pair> checkRAW(String s) {
         Pattern pattern = Pattern.compile("RAW\\([^\\)]+\\)");
         Matcher matcher = pattern.matcher(s);
@@ -104,7 +107,7 @@ public final class UnsafeUriCharactersEncoder {
         }
         return answer;
     }
-    
+
     private static boolean isRaw(int index, List<Pair>pairs) {
         for (Pair pair : pairs) {
             if (index < pair.left) {
@@ -121,7 +124,7 @@ public final class UnsafeUriCharactersEncoder {
         }
         return false;
     }
-    
+
     private static class Pair {
         int left;
         int right;
@@ -130,16 +133,16 @@ public final class UnsafeUriCharactersEncoder {
             this.right = right;
         }
     }
-    
+
     // Just skip the encode for isRAW part
     public static String encode(String s, BitSet unsafeCharacters, boolean checkRaw) {
         List<Pair> rawPairs;
         if (checkRaw) {
-            rawPairs = checkRAW(s); 
+            rawPairs = checkRAW(s);
         } else {
             rawPairs = new ArrayList<Pair>();
         }
-   
+
         int n = s == null ? 0 : s.length();
         if (n == 0) {
             return s;
@@ -153,6 +156,10 @@ public final class UnsafeUriCharactersEncoder {
                 if (unsafeCharacters.get(chars[i])) {
                     break;
                 }
+            }
+            //contains non ascii character!
+            else if (chars[i] >= 128) {
+                break;
             }
             if (++i >= chars.length) {
                 return s;
@@ -181,6 +188,8 @@ public final class UnsafeUriCharactersEncoder {
                     // must escape then, as its an unsafe character
                     appendEscape(sb, (byte)ch);
                 }
+            } else if (ch >= 128) {
+                appendEscapeUtf8(sb, ch);
             } else {
                 sb.append(ch);
             }
@@ -201,6 +210,12 @@ public final class UnsafeUriCharactersEncoder {
             }
         }
         return false;
+    }
+
+    private static void appendEscapeUtf8(StringBuilder sb, char ch) {
+        for (byte b : String.valueOf(ch).getBytes(UTF_8_CHARSET)) {
+            appendEscape(sb, b);
+        }
     }
 
 }
