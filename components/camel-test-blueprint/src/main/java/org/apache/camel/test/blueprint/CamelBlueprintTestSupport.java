@@ -167,6 +167,19 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             config.update(props);
 
             latch.await(CamelBlueprintHelper.DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+        } else {
+            // let's wait for BP container to start
+            final CountDownLatch latch = new CountDownLatch(1);
+            answer.registerService(BlueprintListener.class, new BlueprintListener() {
+                @Override
+                public void blueprintEvent(BlueprintEvent event) {
+                    if (event.getType() == BlueprintEvent.CREATED && event.getBundle().getSymbolicName().equals(symbolicName)) {
+                        latch.countDown();
+                    }
+                }
+            }, null);
+
+            latch.await(CamelBlueprintHelper.DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
         }
 
         return answer;
@@ -192,13 +205,12 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         super.setUp();
 
+        // we don't have to wait for BP container's OSGi service - we've already waited
+        // for BlueprintEvent.CREATED
+
         // start context when we are ready
         log.debug("Staring CamelContext: {}", context.getName());
         context.start();
-
-        // must wait for blueprint container to be published then the namespace parser is complete and we are ready for testing
-        log.debug("Waiting for BlueprintContainer to be published with symbolicName: {}", symbolicName);
-        getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=" + symbolicName + ")");
     }
 
     /**
