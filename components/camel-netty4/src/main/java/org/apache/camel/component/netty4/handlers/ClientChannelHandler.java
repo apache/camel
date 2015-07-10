@@ -232,6 +232,4 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         return state != null ? state.getCallback() : null;
     }
 
-
-
 }
