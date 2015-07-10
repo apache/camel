@@ -49,6 +49,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.CdiBeanManagerHelper;
 import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
@@ -321,12 +322,7 @@ public class CamelExtension implements Extension {
     protected CamelContext getCamelContext(String context, BeanManager beanManager) {
         BeanManager manager = this.beanManager != null ? this.beanManager : beanManager;
         if (camelContextMap == null && manager != null) {
-            Set<Bean<?>> beans = manager.getBeans(CamelContextMap.class);
-            if (!beans.isEmpty()) {
-                Bean<?> bean = manager.resolve(beans);
-                CreationalContext<?> creationalContext = manager.createCreationalContext(bean);
-                camelContextMap = (CamelContextMap) manager.getReference(bean, CamelContextMap.class, creationalContext);
-            }
+            camelContextMap = CdiBeanManagerHelper.lookupBeanByType(manager, CamelContextMap.class);
         }
         ObjectHelper.notNull(camelContextMap, "Could not resolve CamelContextMap");
         return camelContextMap.getCamelContext(context);
