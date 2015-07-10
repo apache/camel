@@ -113,6 +113,19 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         this.message = message;
     }
 
+    public String getExceptionType() {
+        return exceptionType;
+    }
+
+    /**
+     * The class of the exception to create using the message.
+     *
+     * @see #setMessage(String)
+     */
+    public void setExceptionType(String exceptionType) {
+        this.exceptionType = exceptionType;
+    }
+
     public Class<? extends Exception> getExceptionClass() {
         return exceptionClass;
     }
