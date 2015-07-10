@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty.http.handlers;
 
+import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -132,17 +133,25 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
                 LOG.debug("Channel already closed. Ignoring this exception.");
                 return;
             } else {
-                // we cannot throw the exception here
-                LOG.warn("HttpServerChannelHandler is not found as attachment to handle exception, send 404 back to the client.", e.getCause());
-                // Now we just send 404 back to the client
-                HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
-                response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
-                response.headers().set(Exchange.CONTENT_LENGTH, 0);
-                // Here we don't want to expose the exception detail to the client
-                response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
-                ctx.getChannel().write(response).syncUninterruptibly();
-                // close the channel after send error message
-                ctx.getChannel().close();
+                if ("Broken pipe".equals(e.getCause().getMessage())) {
+                    // Can't recover channel at this point. Only valid thing to do is close. A TCP RST is a possible cause for this.
+                    // Note that trying to write to channel in this state will cause infinite recursion in netty 3.x
+                    LOG.debug("Channel pipe is broken. Closing channel now.", e);                    
+                    ctx.getChannel().close();
+                } else {
+                    // we cannot throw the exception here
+                    LOG.warn("HttpServerChannelHandler is not found as attachment to handle exception, send 404 back to the client.", e.getCause());
+                    // Now we just send 404 back to the client
+                    HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
+                    response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+                    response.headers().set(Exchange.CONTENT_LENGTH, 0);
+                    // Here we don't want to expose the exception detail to the client
+                    response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));                
+                    
+                    ctx.getChannel().write(response).syncUninterruptibly();
+                    // close the channel after send error message
+                    ctx.getChannel().close();
+                }
             }
         }
     }
