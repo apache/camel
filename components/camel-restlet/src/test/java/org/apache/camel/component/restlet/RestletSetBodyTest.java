@@ -40,14 +40,14 @@ public class RestletSetBodyTest extends RestletTestSupport {
 
     @Test
     public void testSetBody() throws Exception {
-        String response = template.requestBody("restlet:http://0.0.0.0:" + portNum + "/stock/ORCL?restletMethod=get", null, String.class);
+        String response = template.requestBody("restlet:http://localhost:" + portNum + "/stock/ORCL?restletMethod=get", null, String.class);
         assertEquals("110", response);
        
     }
     
     @Test
     public void testSetBodyRepresentation() throws Exception {
-        HttpGet get = new HttpGet("http://0.0.0.0:" + portNum + "/images/123");
+        HttpGet get = new HttpGet("http://localhost:" + portNum + "/images/123");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
         InputStream is = null;
         try {
@@ -71,7 +71,7 @@ public class RestletSetBodyTest extends RestletTestSupport {
     
     @Test
     public void testGzipEntity() {
-        String response = template.requestBody("restlet:http://0.0.0.0:" + portNum + "/gzip/data?restletMethod=get", null, String.class);
+        String response = template.requestBody("restlet:http://localhost:" + portNum + "/gzip/data?restletMethod=get", null, String.class);
         assertEquals("Hello World!", response);
     }
     
@@ -81,12 +81,12 @@ public class RestletSetBodyTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://0.0.0.0:" + portNum + "/stock/{symbol}?restletMethods=get")
-                    .to("http://127.0.0.1:" + portNum2 + "/test?bridgeEndpoint=true")
+                from("restlet:http://localhost:" + portNum + "/stock/{symbol}?restletMethods=get")
+                    .to("http://localhost:" + portNum2 + "/test?bridgeEndpoint=true")
                     //.removeHeader("Transfer-Encoding")
                     .setBody().constant("110");
                 
-                from("jetty:http://0.0.0.0:" + portNum2 + "/test").setBody().constant("response is back");
+                from("jetty:http://localhost:" + portNum2 + "/test").setBody().constant("response is back");
 
                 // create ByteArrayRepresentation for response
                 byte[] image = new byte[10];
@@ -95,10 +95,10 @@ public class RestletSetBodyTest extends RestletTestSupport {
                 }
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
 
-                from("restlet:http://0.0.0.0:" + portNum + "/images/{symbol}?restletMethods=get")
+                from("restlet:http://localhost:" + portNum + "/images/{symbol}?restletMethods=get")
                     .setBody().constant(new InputRepresentation(inputStream, MediaType.IMAGE_PNG, 10));
                 
-                from("restlet:http://0.0.0.0:" + portNum + "/gzip/data?restletMethods=get")
+                from("restlet:http://localhost:" + portNum + "/gzip/data?restletMethods=get")
                     .setBody().constant(new EncodeRepresentation(Encoding.GZIP, new StringRepresentation("Hello World!", MediaType.TEXT_XML)));
             }
         };
