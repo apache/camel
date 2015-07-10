@@ -73,6 +73,8 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean limitConcurrentConsumers = true;
     @UriParam(label = "consumer")
     private boolean multipleConsumers;
     @UriParam(label = "consumer")
@@ -88,6 +90,8 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private boolean blockWhenFull;
     @UriParam(label = "producer")
     private boolean failIfNoConsumers;
+    @UriParam(label = "producer")
+    private boolean discardIfNoConsumers;
 
     private BlockingQueueFactory<Exchange> queueFactory;
 
@@ -292,6 +296,19 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return concurrentConsumers;
     }
 
+    @ManagedAttribute
+    public boolean isLimitConcurrentConsumers() {
+        return limitConcurrentConsumers;
+    }
+
+    /**
+     * Whether to limit the number of concurrentConsumers to the maximum of 500.
+     * By default, an exception will be thrown if an endpoint is configured with a greater number. You can disable that check by turning this option off.
+     */
+    public void setLimitConcurrentConsumers(boolean limitConcurrentConsumers) {
+        this.limitConcurrentConsumers = limitConcurrentConsumers;
+    }
+
     public WaitForTaskToComplete getWaitForTaskToComplete() {
         return waitForTaskToComplete;
     }
@@ -326,10 +343,26 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Whether the producer should fail by throwing an exception, when sending to a SEDA queue with no active consumers.
+     * Whether the producer should fail by throwing an exception, when sending to a queue with no active consumers.
+     * <p/>
+     * Only one of the options <tt>discardIfNoConsumers</tt> and <tt>failIfNoConsumers</tt> can be enabled at the same time.
      */
     public void setFailIfNoConsumers(boolean failIfNoConsumers) {
         this.failIfNoConsumers = failIfNoConsumers;
+    }
+
+    @ManagedAttribute
+    public boolean isDiscardIfNoConsumers() {
+        return discardIfNoConsumers;
+    }
+
+    /**
+     * Whether the producer should discard the message (do not add the message to the queue), when sending to a queue with no active consumers.
+     * <p/>
+     * Only one of the options <tt>discardIfNoConsumers</tt> and <tt>failIfNoConsumers</tt> can be enabled at the same time.
+     */
+    public void setDiscardIfNoConsumers(boolean discardIfNoConsumers) {
+        this.discardIfNoConsumers = discardIfNoConsumers;
     }
 
     @ManagedAttribute

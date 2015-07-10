@@ -216,9 +216,16 @@ public class SedaProducer extends DefaultAsyncProducer {
             throw new SedaConsumerNotAvailableException("No queue available on endpoint: " + endpoint, exchange);
         }
 
-        if (endpoint.isFailIfNoConsumers() && !queueReference.hasConsumers()) {
-            throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+        boolean empty = !queueReference.hasConsumers();
+        if (empty) {
+            if (endpoint.isFailIfNoConsumers()) {
+                throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+            } else if (endpoint.isDiscardIfNoConsumers()) {
+                log.debug("Discard message as no active consumers on endpoint: " + endpoint);
+                return;
+            }
         }
+
         if (blockWhenFull) {
             try {
                 queue.put(exchange);
