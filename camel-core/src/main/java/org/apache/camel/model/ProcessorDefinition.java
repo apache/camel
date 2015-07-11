@@ -2840,9 +2840,35 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to set the body
      */
     public ExpressionClause<ProcessorDefinition<Type>> transform() {
-        ExpressionClause<ProcessorDefinition<Type>> clause = 
+        ExpressionClause<ProcessorDefinition<Type>> clause =
             new ExpressionClause<ProcessorDefinition<Type>>((ProcessorDefinition<Type>) this);
         TransformDefinition answer = new TransformDefinition(clause);
+        addOutput(answer);
+        return clause;
+    }
+
+    /**
+     * Executes a script (do not change the message body).
+     *
+     * @param expression   the expression used as the script.
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type script(Expression expression) {
+        ScriptDefinition answer = new ScriptDefinition(expression);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Executes a script (do not change the message body).
+     *
+     * @return a expression builder clause to use as script.
+     */
+    public ExpressionClause<ProcessorDefinition<Type>> script() {
+        ExpressionClause<ProcessorDefinition<Type>> clause =
+                new ExpressionClause<ProcessorDefinition<Type>>((ProcessorDefinition<Type>) this);
+        ScriptDefinition answer = new ScriptDefinition(clause);
         addOutput(answer);
         return clause;
     }

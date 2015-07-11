@@ -20,23 +20,20 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.Traceable;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A processor which sets the body on the OUT message with an {@link Expression}.
+ * A processor which executes the script as an expression and does not change the message body.
  */
-public class TransformProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class ScriptProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
     private String id;
     private final Expression expression;
 
-    public TransformProcessor(Expression expression) {
+    public ScriptProcessor(Expression expression) {
         ObjectHelper.notNull(expression, "expression", this);
         this.expression = expression;
     }
@@ -47,38 +44,7 @@ public class TransformProcessor extends ServiceSupport implements AsyncProcessor
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            Object newBody = expression.evaluate(exchange, Object.class);
-
-            if (exchange.getException() != null) {
-                // the expression threw an exception so we should break-out
-                callback.done(true);
-                return true;
-            }
-
-            boolean out = exchange.hasOut();
-            Message old = out ? exchange.getOut() : exchange.getIn();
-
-            // create a new message container so we do not drag specialized message objects along
-            // but that is only needed if the old message is a specialized message
-            boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
-
-            if (copyNeeded) {
-                Message msg = new DefaultMessage();
-                msg.copyFrom(old);
-                msg.setBody(newBody);
-
-                // replace message on exchange (must set as OUT)
-                ExchangeHelper.replaceMessage(exchange, msg, true);
-            } else {
-                // no copy needed so set replace value directly
-                old.setBody(newBody);
-
-                // but the message must be on OUT
-                if (!exchange.hasOut()) {
-                    exchange.setOut(exchange.getIn());
-                }
-            }
-
+            expression.evaluate(exchange, Object.class);
         } catch (Throwable e) {
             exchange.setException(e);
         }
@@ -89,11 +55,11 @@ public class TransformProcessor extends ServiceSupport implements AsyncProcessor
 
     @Override
     public String toString() {
-        return "Transform(" + expression + ")";
+        return "Script(" + expression + ")";
     }
 
     public String getTraceLabel() {
-        return "transform[" + expression + "]";
+        return "script[" + expression + "]";
     }
 
     public String getId() {
