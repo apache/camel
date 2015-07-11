@@ -197,6 +197,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def threads = stack.top.threads
   def throttle(frequency: Frequency) = stack.top.throttle(frequency)
   def throwException(exception: Exception) = stack.top.throwException(exception)
+  def throwException(exceptionType: Class[_ <: Exception], message: String) = stack.top.throwException(exceptionType, message)
   def transacted = stack.top.transacted
   def transacted(uri: String) = stack.top.transacted
   def transform(expression: Exchange => Any) = stack.top.transform(expression)

@@ -148,6 +148,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def threads = SThreadsDefinition(target.threads)
   def throttle(frequency: Frequency) = SThrottleDefinition(target.throttle(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   def throwException(exception: Exception) = wrap(target.throwException(exception))
+  def throwException(exceptionType: Class[_ <: Exception], message: String) = wrap(target.throwException(exceptionType, message))
   def transacted = STransactedDefinition(target.transacted)
   def transacted(ref: String) = STransactedDefinition(target.transacted(ref))
   def transform(expression: Exchange => Any) = wrap(target.transform(expression))

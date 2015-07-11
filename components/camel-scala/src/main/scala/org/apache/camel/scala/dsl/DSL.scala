@@ -103,6 +103,7 @@ trait DSL {
   def threads : SThreadsDefinition
   def throttle(frequency: Frequency) : SThrottleDefinition
   def throwException(exception: Exception) : DSL
+  def throwException(exceptionType: Class[_ <: Exception], message: String) : DSL
   def to(uris: String*) : DSL
   def transacted : DSL
   def transacted(ref: String) : DSL
