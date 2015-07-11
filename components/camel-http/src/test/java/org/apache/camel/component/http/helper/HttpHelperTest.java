@@ -161,6 +161,13 @@ public class HttpHelperTest {
         assertEquals(HttpMethods.POST, method);
     }
 
+    @Test
+    public void createURIShouldNotDecodeEuroSymbolAway() throws URISyntaxException{
+        final URI result =  HttpHelper.createURI(createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null, null),
+                "http://www.google.com/search?hl=en&q=%E2%82%AC",createHttpEndpoint(true, "http://host"));
+        assertEquals("http://www.google.com/search?hl=en&q=%E2%82%AC",result.toString());
+    }
+
     private Exchange createExchangeWithOptionalHttpQueryAndHttpMethodHeader(String httpQuery, HttpMethods httpMethod) {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
