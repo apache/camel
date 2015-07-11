@@ -27,4 +27,7 @@ public interface ManagedDelayerMBean extends ManagedProcessorMBean {
     @ManagedOperation(description = "Set a constant delay in millis")
     void constantDelay(Integer millis);
 
+    @ManagedAttribute(description = "Number of exchanges currently delayed")
+    int getDelayedCount();
+
 }

@@ -49,4 +49,7 @@ public class ManagedDelayer extends ManagedProcessor implements ManagedDelayerMB
         getDelayer().setDelay(delay);
     }
 
+    public int getDelayedCount() {
+        return getDelayer().getDelayedCount();
+    }
 }
