@@ -432,7 +432,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     // Generate a key using the number of the section
                     // and the position of the field
                     Integer key1 = sections.get(obj.getClass().getName());
-                    Integer key2 = datafield.position();
+                    Integer key2 = datafield.outPos() > 0 ? datafield.outPos() : datafield.position();
                     Integer keyGenerated = generateKey(key1, key2);
 
                     if (LOG.isDebugEnabled()) {

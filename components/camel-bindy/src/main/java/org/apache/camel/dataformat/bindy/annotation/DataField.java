@@ -91,8 +91,16 @@ public @interface DataField {
 
     /**
      * Position of the field in the message generated (should start from 1)
+     *
+     * @deprecated use {@link #outPos()}
      */
+    @Deprecated
     int position() default 0;
+
+    /**
+     * Position of the field in the message generated (should start from 1)
+     */
+    int outPos() default 0;
 
     /**
      * Indicates if the field is mandatory
