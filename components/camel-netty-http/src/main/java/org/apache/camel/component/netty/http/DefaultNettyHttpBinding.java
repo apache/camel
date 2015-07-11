@@ -265,7 +265,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         LOG.trace("populateCamelHeaders: {}", response);
 
         headers.put(Exchange.HTTP_RESPONSE_CODE, response.getStatus().getCode());
-        headers.put(NettyHttpConstants.HTTP_RESPONSE_TEXT, response.getStatus().getReasonPhrase());
+        headers.put(Exchange.HTTP_RESPONSE_TEXT, response.getStatus().getReasonPhrase());
 
         for (String name : response.headers().names()) {
             // mapping the content-type

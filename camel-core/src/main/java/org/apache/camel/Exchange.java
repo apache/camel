@@ -145,6 +145,7 @@ public interface Exchange {
     String HTTP_QUERY              = "CamelHttpQuery";
     String HTTP_RAW_QUERY          = "CamelHttpRawQuery";
     String HTTP_RESPONSE_CODE      = "CamelHttpResponseCode";
+    String HTTP_RESPONSE_TEXT      = "CamelHttpResponseText";
     String HTTP_URI                = "CamelHttpUri";
     String HTTP_URL                = "CamelHttpUrl";
     String HTTP_CHUNKED            = "CamelHttpChunked";

@@ -173,6 +173,7 @@ public class HttpProducer extends DefaultProducer {
         Message answer = exchange.getOut();
 
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+        answer.setHeader(Exchange.HTTP_RESPONSE_TEXT, method.getStatusText());
         answer.setBody(response);
 
         // propagate HTTP response headers

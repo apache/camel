@@ -189,6 +189,9 @@ public class HttpProducer extends DefaultProducer {
         Message answer = exchange.getOut();
 
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+        if (httpResponse.getStatusLine() != null) {
+            answer.setHeader(Exchange.HTTP_RESPONSE_TEXT, httpResponse.getStatusLine().getReasonPhrase());
+        }
         answer.setBody(response);
 
         // propagate HTTP response headers

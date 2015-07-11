@@ -100,6 +100,9 @@ public class HttpPollingConsumer extends PollingConsumerSupport implements Servi
                 }
             }
             message.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+            if (response.getStatusLine() != null) {
+                message.setHeader(Exchange.HTTP_RESPONSE_TEXT, response.getStatusLine().getReasonPhrase());
+            }
 
             return exchange;
         } catch (IOException e) {
