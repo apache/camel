@@ -14,20 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel
-package scala
+package org.apache.camel.scala.dsl
 
-import dsl.languages.LanguageFunction
-import org.apache.camel.util.ObjectHelper._
+import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.junit.Test
+import org.scalatest.MustMatchers
 
-class ScalaPredicate(function: Exchange => Any) extends Predicate {
+class SScriptTest extends ScalaTestSupport with MustMatchers{
 
-  override def matches(exchange: Exchange) = {
-    val predicate = function(exchange)
-    predicate match {
-      case f : LanguageFunction => f.matches(exchange)
-      case _ => evaluateValuePredicate(predicate)
-    }
+  @Test
+  def testRequestBody {
+    "direct:start" !? "Hello" must equal("Hello")
   }
+
+  val builder =
+    new RouteBuilder {
+      //START SNIPPET: simple
+      "direct:start" script(_.in[String] + " World!")
+      //END SNIPPET: block
+    }
+
 
 }

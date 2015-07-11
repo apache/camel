@@ -19,7 +19,6 @@ package scala
 package dsl.builder
 
 import org.apache.camel.model.DataFormatDefinition
-import org.apache.camel.{Exchange, RoutesBuilder}
 import org.apache.camel.builder.{LoggingErrorHandlerBuilder, DeadLetterChannelBuilder, ErrorHandlerBuilder}
 
 import org.apache.camel.spi.Policy
@@ -30,7 +29,6 @@ import reflect.{ClassTag, classTag}
 import org.apache.camel.scala.dsl._
 
 import org.apache.camel.scala.dsl.languages.Languages
-import java.lang.String
 import java.util.Comparator
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -185,6 +183,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def routingSlip(header: String, separator: String) = stack.top.routingSlip(header, separator)
   def routingSlip(expression: Exchange => Any) = stack.top.routingSlip(expression)
 
+  def script(expression: Exchange => Any) = stack.top.script(expression)
   def setBody(expression : Exchange => Any) = stack.top.setBody(expression)
   def setFaultBody(expression: Exchange => Any) = stack.top.setFaultBody(expression)
   def setHeader(name: String, expression: Exchange => Any) = stack.top.setHeader(name, expression)

@@ -22,7 +22,6 @@ import builder.RouteBuilder
 import org.apache.camel.ThreadPoolRejectedPolicy
 import org.apache.camel.model.ThreadsDefinition
 
-
 /**
  * Scala enrichment for Camel's ThreadsDefinition
  */

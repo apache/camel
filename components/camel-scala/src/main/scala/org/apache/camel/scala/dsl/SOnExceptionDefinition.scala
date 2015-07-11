@@ -17,11 +17,9 @@
 package org.apache.camel
 package scala.dsl
 
-import org.apache.camel.LoggingLevel
 import org.apache.camel.model.OnExceptionDefinition
 import org.apache.camel.scala.ScalaProcessor
 import org.apache.camel.scala.dsl.builder.RouteBuilder
-import org.apache.camel.Exchange
 
 /**
  * Scala enrichment for Camel's OnExceptionDefinition
