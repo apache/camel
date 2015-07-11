@@ -21,6 +21,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * Creates an {@link org.apache.camel.language.Simple} language builder.
@@ -85,9 +86,11 @@ public class SimpleBuilder implements Predicate, Expression {
 
     private Predicate createPredicate(Exchange exchange) {
         SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
-        // resolve property placeholders
         try {
+            // resolve property placeholders
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
+            // and optional it be refer to an external script on the file/classpath
+            resolve = ResourceHelper.resolveOptionalExternalScript(exchange.getContext(), resolve);
             return simple.createPredicate(resolve);
         } catch (Exception e) {
             throw ObjectHelper.wrapCamelExecutionException(exchange, e);
@@ -96,9 +99,11 @@ public class SimpleBuilder implements Predicate, Expression {
 
     private Expression createExpression(Exchange exchange) {
         SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
-        // resolve property placeholders
         try {
+            // resolve property placeholders
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
+            // and optional it be refer to an external script on the file/classpath
+            resolve = ResourceHelper.resolveOptionalExternalScript(exchange.getContext(), resolve);
             return simple.createExpression(resolve, resultType);
         } catch (Exception e) {
             throw ObjectHelper.wrapCamelExecutionException(exchange, e);

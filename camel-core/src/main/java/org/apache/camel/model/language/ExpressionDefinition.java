@@ -45,6 +45,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * A useful base class for an expression
@@ -166,6 +167,9 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                 if (exp != null && isTrim) {
                     exp = exp.trim();
                 }
+                // resolve the expression as it may be an external script from the classpath/file etc
+                exp = ResourceHelper.resolveOptionalExternalScript(camelContext, exp);
+
                 predicate = language.createPredicate(exp);
                 configurePredicate(camelContext, predicate);
             }
@@ -191,6 +195,9 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                 if (exp != null && isTrim) {
                     exp = exp.trim();
                 }
+                // resolve the expression as it may be an external script from the classpath/file etc
+                exp = ResourceHelper.resolveOptionalExternalScript(camelContext, exp);
+
                 setExpressionValue(language.createExpression(exp));
                 configureExpression(camelContext, getExpressionValue());
             }

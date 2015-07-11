@@ -122,9 +122,4 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         super.configurePredicate(camelContext, predicate);
     }
 
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        Expression answer = super.createExpression(camelContext);
-        return answer;
-    }
 }
