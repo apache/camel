@@ -15,6 +15,6 @@
 # limitations under the License.
 #
 moduleName=camel-groovy
-moduleVersion=2.11
+moduleVersion=2.15
 extensionClasses=org.apache.camel.groovy.extend.CamelGroovyMethods
 staticExtensionClasses=
