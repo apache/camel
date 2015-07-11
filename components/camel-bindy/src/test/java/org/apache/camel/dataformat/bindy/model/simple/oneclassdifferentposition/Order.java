@@ -29,37 +29,37 @@ public class Order {
 
     // Positions of the fields start from 1 and not from 0
 
-    @DataField(pos = 1, outPos = 11)
+    @DataField(pos = 1, position = 11)
     private int orderNr;
 
-    @DataField(pos = 2, outPos = 10)
+    @DataField(pos = 2, position = 10)
     private String clientNr;
 
-    @DataField(pos = 3, outPos = 9)
+    @DataField(pos = 3, position = 9)
     private String firstName;
 
-    @DataField(pos = 4, outPos = 8)
+    @DataField(pos = 4, position = 8)
     private String lastName;
 
-    @DataField(pos = 5, outPos = 7)
+    @DataField(pos = 5, position = 7)
     private String instrumentCode;
 
-    @DataField(pos = 6, outPos = 6)
+    @DataField(pos = 6, position = 6)
     private String instrumentNumber;
 
-    @DataField(pos = 7, outPos = 5)
+    @DataField(pos = 7, position = 5)
     private String orderType;
 
-    @DataField(name = "Name", pos = 8, outPos = 4)
+    @DataField(name = "Name", pos = 8, position = 4)
     private String instrumentType;
 
-    @DataField(pos = 9, precision = 2, outPos = 3)
+    @DataField(pos = 9, precision = 2, position = 3)
     private BigDecimal amount;
 
-    @DataField(pos = 10, outPos = 2)
+    @DataField(pos = 10, position = 2)
     private String currency;
 
-    @DataField(pos = 11, pattern = "dd-MM-yyyy", outPos = 1)
+    @DataField(pos = 11, pattern = "dd-MM-yyyy", position = 1)
     private Date orderDate;
 
     public int getOrderNr() {

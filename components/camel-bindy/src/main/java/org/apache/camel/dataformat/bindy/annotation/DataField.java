@@ -40,7 +40,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface DataField {
 
     /**
-     * Position of the data in the record, must start from 1 (mandatory).
+     * Position of the data in the input record, must start from 1 (mandatory).
      */
     int pos();
 
@@ -90,17 +90,11 @@ public @interface DataField {
     int precision() default 0;
 
     /**
-     * Position of the field in the message generated (should start from 1)
+     * Position of the field in the output message generated (should start from 1)
      *
-     * @deprecated use {@link #outPos()}
+     * @see #pos()
      */
-    @Deprecated
     int position() default 0;
-
-    /**
-     * Position of the field in the message generated (should start from 1)
-     */
-    int outPos() default 0;
 
     /**
      * Indicates if the field is mandatory
