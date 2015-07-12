@@ -43,10 +43,12 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     private final List<Class<?>> exceptions;
     private CamelContext camelContext;
     private boolean roundRobin;
+    private boolean sticky;
     private int maximumFailoverAttempts = -1;
 
     // stateful counter
     private final AtomicInteger counter = new AtomicInteger(-1);
+    private final AtomicInteger lastGoodIndex = new AtomicInteger();
 
     public FailOverLoadBalancer() {
         this.exceptions = null;
@@ -83,6 +85,14 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
     public void setRoundRobin(boolean roundRobin) {
         this.roundRobin = roundRobin;
+    }
+
+    public boolean isSticky() {
+        return sticky;
+    }
+
+    public void setSticky(boolean sticky) {
+        this.sticky = sticky;
     }
 
     public int getMaximumFailoverAttempts() {
@@ -147,7 +157,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         Exchange copy = null;
 
         // get the next processor
-        if (isRoundRobin()) {
+        if (isSticky()) {
+            index.set(lastGoodIndex.get());
+        } else if (isRoundRobin()) {
             if (counter.incrementAndGet() >= processors.size()) {
                 counter.set(0);
             }
@@ -213,6 +225,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
             log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
         }
+
+        // remember last good index
+        lastGoodIndex.set(index.get());
 
         // and copy the current result to original so it will contain this result of this eip
         if (copy != null) {
@@ -323,6 +338,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 }
             }
 
+            // remember last good index
+            lastGoodIndex.set(index.get());
+
             // and copy the current result to original so it will contain this result of this eip
             if (copy != null) {
                 ExchangeHelper.copyResults(exchange, copy);
@@ -330,7 +348,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             log.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
             // signal callback we are done
             callback.done(false);
-        };
+        }
     }
 
     public String toString() {
