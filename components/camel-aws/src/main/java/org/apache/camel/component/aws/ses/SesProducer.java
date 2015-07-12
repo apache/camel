@@ -81,7 +81,7 @@ public class SesProducer extends DefaultProducer {
         return request;
     }
     
-    private SendRawEmailRequest createRawMailRequest(Exchange exchange) {
+    private SendRawEmailRequest createRawMailRequest(Exchange exchange) throws Exception {
         SendRawEmailRequest request = new SendRawEmailRequest();
         request.setSource(determineFrom(exchange));
         request.setDestinations(determineRawTo(exchange));
@@ -102,7 +102,7 @@ public class SesProducer extends DefaultProducer {
         return message;
     }
     
-    private com.amazonaws.services.simpleemail.model.RawMessage createRawMessage(Exchange exchange) {
+    private com.amazonaws.services.simpleemail.model.RawMessage createRawMessage(Exchange exchange) throws Exception {
         com.amazonaws.services.simpleemail.model.RawMessage message = new com.amazonaws.services.simpleemail.model.RawMessage();
         javax.mail.Message content = exchange.getIn().getBody(javax.mail.Message.class);
         OutputStream byteOutput = new ByteArrayOutputStream();
@@ -110,7 +110,7 @@ public class SesProducer extends DefaultProducer {
             content.writeTo(byteOutput);
         } catch (Exception e) {
             log.error("Cannot write to byte Array");
-            e.printStackTrace();
+            throw e;
         }
         byte[] messageByteArray = ((ByteArrayOutputStream)byteOutput).toByteArray();
         message.setData(ByteBuffer.wrap(messageByteArray));
