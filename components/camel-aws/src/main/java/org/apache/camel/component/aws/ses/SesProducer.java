@@ -53,21 +53,21 @@ public class SesProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-    	if (!(exchange.getIn().getBody() instanceof javax.mail.Message)) {
-    		SendEmailRequest request = createMailRequest(exchange);
+        if (!(exchange.getIn().getBody() instanceof javax.mail.Message)) {
+            SendEmailRequest request = createMailRequest(exchange);
             log.trace("Sending request [{}] from exchange [{}]...", request, exchange);            
             SendEmailResult result = getEndpoint().getSESClient().sendEmail(request);
             log.trace("Received result [{}]", result);
             Message message = getMessageForResponse(exchange);
             message.setHeader(SesConstants.MESSAGE_ID, result.getMessageId());
-    	} else {
-    		SendRawEmailRequest request = createRawMailRequest(exchange);
+        } else {
+            SendRawEmailRequest request = createRawMailRequest(exchange);
             log.trace("Sending request [{}] from exchange [{}]...", request, exchange);            
             SendRawEmailResult result = getEndpoint().getSESClient().sendRawEmail(request);
             log.trace("Received result [{}]", result);
             Message message = getMessageForResponse(exchange);
             message.setHeader(SesConstants.MESSAGE_ID, result.getMessageId());
-    	}
+        }
     }
 
     private SendEmailRequest createMailRequest(Exchange exchange) {
@@ -82,7 +82,7 @@ public class SesProducer extends DefaultProducer {
     }
     
     private SendRawEmailRequest createRawMailRequest(Exchange exchange) {
-    	SendRawEmailRequest request = new SendRawEmailRequest();
+        SendRawEmailRequest request = new SendRawEmailRequest();
         request.setSource(determineFrom(exchange));
         request.setDestinations(determineRawTo(exchange));
         request.setRawMessage(createRawMessage(exchange));
@@ -105,14 +105,14 @@ public class SesProducer extends DefaultProducer {
     private com.amazonaws.services.simpleemail.model.RawMessage createRawMessage(Exchange exchange) {
         com.amazonaws.services.simpleemail.model.RawMessage message = new com.amazonaws.services.simpleemail.model.RawMessage();
         javax.mail.Message content = exchange.getIn().getBody(javax.mail.Message.class);
-        OutputStream byteOutput=new ByteArrayOutputStream();
+        OutputStream byteOutput = new ByteArrayOutputStream();
         try {
-			content.writeTo(byteOutput);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        byte[] messageByteArray=((ByteArrayOutputStream)byteOutput).toByteArray();
+            content.writeTo(byteOutput);
+        } catch (Exception e) {
+            log.error("Cannot write to byte Array");
+            e.printStackTrace();
+        }
+        byte[] messageByteArray = ((ByteArrayOutputStream)byteOutput).toByteArray();
         message.setData(ByteBuffer.wrap(messageByteArray));
         return message;
     }

@@ -31,205 +31,195 @@ import javax.mail.Multipart;
 
 public class MockMessage extends Message {
 
-	@Override
-	public int getSize() throws MessagingException {
-		return 0;
-	}
+    @Override
+    public int getSize() throws MessagingException {
+        return 0;
+    }
 
-	@Override
-	public int getLineCount() throws MessagingException {
-		return 0;
-	}
+    @Override
+    public int getLineCount() throws MessagingException {
+        return 0;
+    }
 
-	@Override
-	public String getContentType() throws MessagingException {
-		return null;
-	}
+    @Override
+    public String getContentType() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public boolean isMimeType(String mimeType) throws MessagingException {
-		return false;
-	}
+    @Override
+    public boolean isMimeType(String mimeType) throws MessagingException {
+        return false;
+    }
 
-	@Override
-	public String getDisposition() throws MessagingException {
-		return null;
-	}
+    @Override
+    public String getDisposition() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public void setDisposition(String disposition) throws MessagingException {		
-	}
+    @Override
+    public void setDisposition(String disposition) throws MessagingException {
+    }
 
-	@Override
-	public String getDescription() throws MessagingException {
-		return null;
-	}
+    @Override
+    public String getDescription() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public void setDescription(String description) throws MessagingException {
-	}
+    @Override
+    public void setDescription(String description) throws MessagingException {
+    }
 
-	@Override
-	public String getFileName() throws MessagingException {
-		return null;
-	}
+    @Override
+    public String getFileName() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public void setFileName(String filename) throws MessagingException {
-	}
+    @Override
+    public void setFileName(String filename) throws MessagingException {
+    }
 
-	@Override
-	public InputStream getInputStream() throws IOException, MessagingException {
-		return null;
-	}
+    @Override
+    public InputStream getInputStream() throws IOException, MessagingException {
+        return null;
+    }
 
-	@Override
-	public DataHandler getDataHandler() throws MessagingException {
-		return null;
-	}
+    @Override
+    public DataHandler getDataHandler() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public Object getContent() throws IOException, MessagingException {
-		return null;
-	}
+    @Override
+    public Object getContent() throws IOException, MessagingException {
+        return null;
+    }
 
-	@Override
-	public void setDataHandler(DataHandler dh) throws MessagingException {
-	}
+    @Override
+    public void setDataHandler(DataHandler dh) throws MessagingException {
+    }
 
-	@Override
-	public void setContent(Object obj, String type) throws MessagingException {
-	}
+    @Override
+    public void setContent(Object obj, String type) throws MessagingException {
+    }
 
-	@Override
-	public void setText(String text) throws MessagingException {
-	}
+    @Override
+    public void setText(String text) throws MessagingException {
+    }
+    
+    @Override
+    public void setContent(Multipart mp) throws MessagingException {
+    }
 
-	@Override
-	public void setContent(Multipart mp) throws MessagingException {	
-	}
+    @Override
+    public void writeTo(OutputStream os) throws IOException, MessagingException {
+    }
 
-	@Override
-	public void writeTo(OutputStream os) throws IOException, MessagingException {		
-	}
+    @Override
+    public String[] getHeader(String headername) throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public String[] getHeader(String header_name) throws MessagingException {
-		return null;
-	}
+    @Override
+    public void setHeader(String headername, String headervalue)
+        throws MessagingException {
+    }
 
-	@Override
-	public void setHeader(String header_name, String header_value)
-			throws MessagingException {
-	}
+    @Override
+    public void addHeader(String headername, String headervalue)
+        throws MessagingException {
+    }
 
-	@Override
-	public void addHeader(String header_name, String header_value)
-			throws MessagingException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void removeHeader(String headername) throws MessagingException {
+    }
 
-	@Override
-	public void removeHeader(String header_name) throws MessagingException {
-	}
+    @Override
+    public Enumeration getAllHeaders() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public Enumeration getAllHeaders() throws MessagingException {
-		return null;
-	}
+    @Override
+    public Enumeration getMatchingHeaders(String[] headernames)
+        throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public Enumeration getMatchingHeaders(String[] header_names)
-			throws MessagingException {
-		return null;
-	}
+    @Override
+    public Enumeration getNonMatchingHeaders(String[] headernames)
+        throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public Enumeration getNonMatchingHeaders(String[] header_names)
-			throws MessagingException {
-		return null;
-	}
+    @Override
+    public Address[] getFrom() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public Address[] getFrom() throws MessagingException {
-		return null;
-	}
+    @Override
+    public void setFrom() throws MessagingException {
+    }
 
-	@Override
-	public void setFrom() throws MessagingException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void setFrom(Address address) throws MessagingException {
+    }
 
-	@Override
-	public void setFrom(Address address) throws MessagingException {	
-	}
+    @Override
+    public void addFrom(Address[] addresses) throws MessagingException {
+    }
 
-	@Override
-	public void addFrom(Address[] addresses) throws MessagingException {		
-	}
+    @Override
+    public Address[] getRecipients(RecipientType type)
+        throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public Address[] getRecipients(RecipientType type)
-			throws MessagingException {
-		return null;
-	}
+    @Override
+    public void setRecipients(RecipientType type, Address[] addresses)
+        throws MessagingException {
+    }
 
-	@Override
-	public void setRecipients(RecipientType type, Address[] addresses)
-			throws MessagingException {
-	}
+    @Override
+    public void addRecipients(RecipientType type, Address[] addresses)
+        throws MessagingException {
+    }
 
-	@Override
-	public void addRecipients(RecipientType type, Address[] addresses)
-			throws MessagingException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public String getSubject() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public String getSubject() throws MessagingException {
-		return null;
-	}
+    @Override
+    public void setSubject(String subject) throws MessagingException {
+    }
 
-	@Override
-	public void setSubject(String subject) throws MessagingException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public Date getSentDate() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public Date getSentDate() throws MessagingException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public void setSentDate(Date date) throws MessagingException {
+    }
 
-	@Override
-	public void setSentDate(Date date) throws MessagingException {		
-	}
+    @Override
+    public Date getReceivedDate() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public Date getReceivedDate() throws MessagingException {
-		return null;
-	}
+    @Override
+    public Flags getFlags() throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public Flags getFlags() throws MessagingException {
-		return null;
-	}
+    @Override
+    public void setFlags(Flags flag, boolean set) throws MessagingException {
+    }
 
-	@Override
-	public void setFlags(Flags flag, boolean set) throws MessagingException {		
-	}
+    @Override
+    public Message reply(boolean replyToAll) throws MessagingException {
+        return null;
+    }
 
-	@Override
-	public Message reply(boolean replyToAll) throws MessagingException {
-		return null;
-	}
-
-	@Override
-	public void saveChanges() throws MessagingException {		
-	}
-
+    @Override
+    public void saveChanges() throws MessagingException {
+    }
 }

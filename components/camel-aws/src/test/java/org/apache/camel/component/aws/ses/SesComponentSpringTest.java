@@ -83,8 +83,7 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
     
     @Test
     public void sendRawMessage() throws Exception {
-        final MockMessage mess = new MockMessage();
-    	  
+        final MockMessage mess = new MockMessage();  
         Exchange exchange = template.request("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
