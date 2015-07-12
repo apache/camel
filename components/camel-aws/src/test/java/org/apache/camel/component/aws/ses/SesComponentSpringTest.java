@@ -18,8 +18,13 @@ package org.apache.camel.component.aws.ses;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
+
+import javax.mail.Message;
 
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
+import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -75,6 +80,24 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
         
         assertEquals("1", exchange.getOut().getHeader(SesConstants.MESSAGE_ID));
     }
+    
+    @Test
+    public void sendRawMessage() throws Exception {
+        final MockMessage mess = new MockMessage();
+    	  
+        Exchange exchange = template.request("direct:start", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(mess);
+            }
+        });
+        
+        assertEquals("1", exchange.getOut().getHeader(SesConstants.MESSAGE_ID));
+        
+        SendRawEmailRequest sendRawEmailRequest = sesClient.getSendRawEmailRequest();
+        assertEquals("from@example.com", sendRawEmailRequest.getSource());
+        assertEquals(2, getTo(sendRawEmailRequest).size());
+    }
 
     @Test
     public void sendMessageUsingMessageHeaders() throws Exception {
@@ -122,5 +145,9 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
 
     private List<String> getTo(SendEmailRequest sendEmailRequest) {
         return sendEmailRequest.getDestination().getToAddresses();
+    }
+    
+    private List<String> getTo(SendRawEmailRequest sendEmailRequest) {
+        return sendEmailRequest.getDestinations();
     }
 }
