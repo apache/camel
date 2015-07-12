@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ExchangeHelper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -35,21 +37,23 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 
 public class SqlProducer extends DefaultProducer {
-    private String query;
-    private JdbcTemplate jdbcTemplate;
-    private boolean batch;
-    private boolean alwaysPopulateStatement;
-    private SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
+    private final String query;
+    private final JdbcTemplate jdbcTemplate;
+    private final boolean batch;
+    private final boolean alwaysPopulateStatement;
+    private final SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
+    private final boolean useMessageBodyForSql;
     private int parametersCount;
 
     public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate, SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
-                       boolean batch, boolean alwaysPopulateStatement) {
+                       boolean batch, boolean alwaysPopulateStatement, boolean useMessageBodyForSql) {
         super(endpoint);
         this.jdbcTemplate = jdbcTemplate;
         this.sqlPrepareStatementStrategy = sqlPrepareStatementStrategy;
         this.query = query;
         this.batch = batch;
         this.alwaysPopulateStatement = alwaysPopulateStatement;
+        this.useMessageBodyForSql = useMessageBodyForSql;
     }
 
     @Override
@@ -58,9 +62,13 @@ public class SqlProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) throws Exception {
-        String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
-
-        final String sql = queryHeader != null ? queryHeader : query;
+        final String sql;
+        if (useMessageBodyForSql) {
+            sql = exchange.getIn().getBody(String.class);
+        } else {
+            String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
+            sql = queryHeader != null ? queryHeader : query;
+        }
         final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters());
 
         // CAMEL-7313 - check whether to return generated keys
@@ -99,7 +107,12 @@ public class SqlProducer extends DefaultProducer {
                     if (alwaysPopulateStatement || expected > 0) {
                         // transfer incoming message body data to prepared statement parameters, if necessary
                         if (batch) {
-                            Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
+                            Iterator<?> iterator;
+                            if (useMessageBodyForSql) {
+                                iterator = exchange.getIn().getHeader(SqlConstants.SQL_PARAMETERS, Iterator.class);
+                            } else {
+                                iterator = exchange.getIn().getBody(Iterator.class);
+                            }
                             while (iterator != null && iterator.hasNext()) {
                                 Object value = iterator.next();
                                 Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
@@ -107,7 +120,13 @@ public class SqlProducer extends DefaultProducer {
                                 ps.addBatch();
                             }
                         } else {
-                            Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, exchange.getIn().getBody());
+                            Object value;
+                            if (useMessageBodyForSql) {
+                                value = exchange.getIn().getHeader(SqlConstants.SQL_PARAMETERS);
+                            } else {
+                                value = exchange.getIn().getBody();
+                            }
+                            Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
                             sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
                         }
                     }

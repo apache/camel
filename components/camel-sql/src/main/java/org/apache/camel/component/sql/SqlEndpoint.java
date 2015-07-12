@@ -86,6 +86,8 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private boolean noop;
     @UriParam
     private String outputHeader;
+    @UriParam(label = "producer")
+    private boolean useMessageBodyForSql;
 
     public SqlEndpoint() {
     }
@@ -110,7 +112,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public Producer createProducer() throws Exception {
         SqlPrepareStatementStrategy prepareStrategy = prepareStatementStrategy != null ? prepareStatementStrategy : new DefaultSqlPrepareStatementStrategy(separator);
-        SqlProducer result = new SqlProducer(this, query, jdbcTemplate, prepareStrategy, batch, alwaysPopulateStatement);
+        SqlProducer result = new SqlProducer(this, query, jdbcTemplate, prepareStrategy, batch, alwaysPopulateStatement, useMessageBodyForSql);
         result.setParametersCount(parametersCount);
         return result;
     }
@@ -316,6 +318,19 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
      */
     public void setOutputHeader(String outputHeader) {
         this.outputHeader = outputHeader;
+    }
+
+    public boolean isUseMessageBodyForSql() {
+        return useMessageBodyForSql;
+    }
+
+    /**
+     * Whether to use the message body as the SQL and then headers for parameters.
+     * <p/>
+     * If this option is enabled then the SQL in the uri is not used.
+     */
+    public void setUseMessageBodyForSql(boolean useMessageBodyForSql) {
+        this.useMessageBodyForSql = useMessageBodyForSql;
     }
 
     public String getDataSourceRef() {
