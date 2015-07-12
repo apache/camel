@@ -161,6 +161,50 @@ public class HttpHelperTest {
         assertEquals(HttpMethods.POST, method);
     }
 
+    @Test
+    public void createURIShouldKeepQueryParametersGivenInUrlParameter() throws URISyntaxException {
+
+        URI uri = HttpHelper.createURI(
+                createExchangeWithOptionalCamelHttpUriHeader(null,
+                        null),
+                "http://apache.org/?q=%E2%82%AC"
+                , createHttpEndpoint(false, "http://apache.org"));
+        assertEquals("http://apache.org/?q=%E2%82%AC",uri.toString());
+    }
+
+    @Test
+    public void createURIShouldEncodeExchangeHttpQuery() throws URISyntaxException {
+
+        URI uri = HttpHelper.createURI(
+                createExchangeWithOptionalHttpQueryAndHttpMethodHeader("q= ",
+                        null),
+                "http://apache.org/?q=%E2%82%AC"
+                , createHttpEndpoint(false, "http://apache.org"));
+        assertEquals("http://apache.org/?q=%20",uri.toString());
+    }
+
+    @Test
+    public void createURIShouldNotDoubleEncodeExchangeHttpQuery() throws URISyntaxException {
+
+        URI uri = HttpHelper.createURI(
+                createExchangeWithOptionalHttpQueryAndHttpMethodHeader("q=%E2%82%AC",
+                        null),
+                "http://apache.org/?q=%E2%82%AC"
+                , createHttpEndpoint(false, "http://apache.org"));
+        assertEquals("http://apache.org/?q=%E2%82%AC",uri.toString());
+    }
+
+    @Test
+    public void createURIShouldKeepQueryParametersGivenInEndPointUri() throws URISyntaxException {
+
+        URI uri = HttpHelper.createURI(
+                createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null,
+                        null),
+                "http://apache.org/"
+                , createHttpEndpoint(false, "http://apache.org/?q=%E2%82%AC"));
+        assertEquals("http://apache.org/?q=%E2%82%AC",uri.toString());
+    }
+
     private Exchange createExchangeWithOptionalHttpQueryAndHttpMethodHeader(String httpQuery, HttpMethods httpMethod) {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
