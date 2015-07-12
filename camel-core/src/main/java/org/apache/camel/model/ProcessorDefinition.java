@@ -3153,6 +3153,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param resourceUri           URI of resource endpoint for obtaining additional data.
      * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
@@ -3160,6 +3162,27 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
         EnrichDefinition enrich = new EnrichDefinition(aggregationStrategy, resourceUri);
         enrich.setAggregateOnException(aggregateOnException);
+        addOutput(enrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException  whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                              an exception was thrown.
+     * @param shareUnitOfWork       whether to share unit of work
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException, boolean shareUnitOfWork) {
+        EnrichDefinition enrich = new EnrichDefinition(aggregationStrategy, resourceUri);
+        enrich.setAggregateOnException(aggregateOnException);
+        enrich.setShareUnitOfWork(shareUnitOfWork);
         addOutput(enrich);
         return (Type) this;
     }
@@ -3222,6 +3245,32 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         enrich.setResourceRef(resourceRef);
         enrich.setAggregationStrategyRef(aggregationStrategyRef);
         enrich.setAggregateOnException(aggregateOnException);
+        addOutput(enrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     * <p/>
+     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
+     * to obtain the additional data, where as pollEnrich uses a polling consumer.
+     *
+     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
+     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
+     * @param shareUnitOfWork        whether to share unit of work
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException, boolean shareUnitOfWork) {
+        EnrichDefinition enrich = new EnrichDefinition();
+        enrich.setResourceRef(resourceRef);
+        enrich.setAggregationStrategyRef(aggregationStrategyRef);
+        enrich.setAggregateOnException(aggregateOnException);
+        enrich.setShareUnitOfWork(shareUnitOfWork);
         addOutput(enrich);
         return (Type) this;
     }

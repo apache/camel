@@ -57,7 +57,9 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
     private Boolean aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
-    
+    @XmlAttribute
+    private Boolean shareUnitOfWork;
+
     public EnrichDefinition() {
         this(null, null);
     }
@@ -107,8 +109,9 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
         } else {
             endpoint = routeContext.resolveEndpoint(null, resourceRef);
         }
+        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
 
-        Enricher enricher = new Enricher(null, endpoint.createProducer());
+        Enricher enricher = new Enricher(null, endpoint.createProducer(), isShareUnitOfWork);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
         if (strategy == null) {
             enricher.setDefaultAggregationStrategy();
@@ -232,4 +235,18 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
     public void setAggregateOnException(Boolean aggregateOnException) {
         this.aggregateOnException = aggregateOnException;
     }
+
+    public Boolean getShareUnitOfWork() {
+        return shareUnitOfWork;
+    }
+
+    /**
+     * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and the resource exchange.
+     * Enrich will by default not share unit of work between the parent exchange and the resource exchange.
+     * This means the resource exchange has its own individual unit of work.
+     */
+    public void setShareUnitOfWork(Boolean shareUnitOfWork) {
+        this.shareUnitOfWork = shareUnitOfWork;
+    }
+
 }

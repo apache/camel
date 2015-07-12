@@ -23,10 +23,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -57,6 +60,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
     private AggregationStrategy aggregationStrategy;
     private Producer producer;
     private boolean aggregateOnException;
+    private boolean shareUnitOfWork;
 
     /**
      * Creates a new {@link Enricher}. The default aggregation strategy is to
@@ -67,7 +71,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
      * @param producer producer to resource endpoint.
      */
     public Enricher(Producer producer) {
-        this(defaultAggregationStrategy(), producer);
+        this(defaultAggregationStrategy(), producer, false);
     }
 
     /**
@@ -75,10 +79,12 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
      * 
      * @param aggregationStrategy  aggregation strategy to aggregate input data and additional data.
      * @param producer producer to resource endpoint.
+     * @param shareUnitOfWork whether to share unit of work
      */
-    public Enricher(AggregationStrategy aggregationStrategy, Producer producer) {
+    public Enricher(AggregationStrategy aggregationStrategy, Producer producer, boolean shareUnitOfWork) {
         this.aggregationStrategy = aggregationStrategy;
         this.producer = producer;
+        this.shareUnitOfWork = shareUnitOfWork;
     }
 
     public String getId() {
@@ -144,7 +150,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final Exchange resourceExchange = createResourceExchange(exchange, ExchangePattern.InOut);
         final Endpoint destination = producer.getEndpoint();
-        
+
         EventHelper.notifyExchangeSending(exchange.getContext(), resourceExchange, destination);
         // record timing for sending the exchange using the producer
         final StopWatch watch = new StopWatch();
@@ -247,6 +253,13 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
         // copy exchange, and do not share the unit of work
         Exchange target = ExchangeHelper.createCorrelatedCopy(source, false);
         target.setPattern(pattern);
+
+        // if we share unit of work, we need to prepare the resource exchange
+        if (isShareUnitOfWork()) {
+            target.setProperty(Exchange.PARENT_UNIT_OF_WORK, source.getUnitOfWork());
+            // and then share the unit of work
+            target.setUnitOfWork(source.getUnitOfWork());
+        }
         return target;
     }
 
@@ -258,6 +271,10 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
 
     private static AggregationStrategy defaultAggregationStrategy() {
         return new CopyAggregationStrategy();
+    }
+
+    public boolean isShareUnitOfWork() {
+        return shareUnitOfWork;
     }
 
     @Override
