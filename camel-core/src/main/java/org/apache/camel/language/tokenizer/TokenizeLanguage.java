@@ -98,6 +98,14 @@ public class TokenizeLanguage implements Language, IsSingleton {
     public Expression createExpression() {
         ObjectHelper.notNull(token, "token");
 
+        // validate some invalid combinations
+        if (endToken != null && inheritNamespaceTagName != null) {
+            throw new IllegalArgumentException("Cannot have both xml and pair tokenizer enabled.");
+        }
+        if (isXml() && (endToken != null || includeTokens)) {
+            throw new IllegalArgumentException("Cannot have both xml and pair tokenizer enabled.");
+        }
+
         Expression answer = null;
         if (isXml()) {
             answer = ExpressionBuilder.tokenizeXMLExpression(token, inheritNamespaceTagName);
