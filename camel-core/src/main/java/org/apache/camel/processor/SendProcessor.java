@@ -118,7 +118,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             return true;
         }
 
-
         // we should preserve existing MEP so remember old MEP
         // if you want to permanently to change the MEP then use .setExchangePattern in the DSL
         final ExchangePattern existingPattern = exchange.getPattern();

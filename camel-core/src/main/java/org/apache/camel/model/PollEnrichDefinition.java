@@ -19,12 +19,16 @@ package org.apache.camel.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Expression;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -41,6 +45,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinition> implements EndpointRequiredDefinition {
+    @XmlElementRef
+    private ExpressionDefinition expression;
     @XmlAttribute(name = "uri")
     private String resourceUri;
     // TODO: For Camel 3.0 we should remove this ref attribute as you can do that in the uri, by prefixing with ref:
@@ -94,24 +100,33 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (ObjectHelper.isEmpty(resourceUri) && ObjectHelper.isEmpty(resourceRef)) {
-            throw new IllegalArgumentException("Either uri or ref must be provided for resource endpoint");
+        if (ObjectHelper.isEmpty(resourceUri) && ObjectHelper.isEmpty(resourceRef) && expression == null) {
+            throw new IllegalArgumentException("Either resourceUri, resourceRef or expression must be configured");
         }
 
         // lookup endpoint
-        Endpoint endpoint;
+        PollingConsumer consumer = null;
         if (resourceUri != null) {
-            endpoint = routeContext.resolveEndpoint(resourceUri);
-        } else {
-            endpoint = routeContext.resolveEndpoint(null, resourceRef);
+            Endpoint endpoint = routeContext.resolveEndpoint(resourceUri);
+            consumer = endpoint.createPollingConsumer();
+        } else if (resourceRef != null) {
+            Endpoint endpoint = routeContext.resolveEndpoint(null, resourceRef);
+            consumer = endpoint.createPollingConsumer();
         }
 
+        // if no timeout then we should block, and there use a negative timeout
+        long time = timeout != null ? timeout : -1;
+
+        // create the expression if any was configured
+        Expression exp = createResourceExpression(routeContext);
+
         PollEnricher enricher;
-        if (timeout != null) {
-            enricher = new PollEnricher(null, endpoint.createPollingConsumer(), timeout);
+        if (exp != null) {
+            enricher = new PollEnricher(null, exp, time);
+        } else if (consumer != null) {
+            enricher = new PollEnricher(null, consumer, time);
         } else {
-            // if no timeout then we should block, and there use a negative timeout
-            enricher = new PollEnricher(null, endpoint.createPollingConsumer(), -1);
+            throw new IllegalArgumentException("Either resourceUri, resourceRef or expression must be configured");
         }
 
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
@@ -150,6 +165,20 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         }
 
         return strategy;
+    }
+
+    /**
+     * Creates the {@link org.apache.camel.Expression} from the expression node to use to compute the endpoint to poll from.
+     *
+     * @param routeContext  the route context
+     * @return the created expression, or <tt>null</tt> if no expression configured
+     */
+    protected Expression createResourceExpression(RouteContext routeContext) {
+        if (expression != null) {
+            return expression.createExpression(routeContext);
+        } else {
+            return null;
+        }
     }
 
     public String getResourceUri() {
@@ -256,5 +285,18 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
      */
     public void setAggregateOnException(Boolean aggregateOnException) {
         this.aggregateOnException = aggregateOnException;
+    }
+
+    public ExpressionDefinition getExpression() {
+        return expression;
+    }
+
+    /**
+     * Sets an expression to use for dynamic computing the endpoint to poll from.
+     * <p/>
+     * If this option is set, then <tt>resourceUri</tt> or <tt>resourceRef</tt> is not in use.
+     */
+    public void setExpression(ExpressionDefinition expression) {
+        this.expression = expression;
     }
 }
