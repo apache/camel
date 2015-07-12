@@ -84,7 +84,6 @@ public class TokenizeLanguage implements Language, IsSingleton {
         language.setToken(tagName);
         language.setInheritNamespaceTagName(inheritNamespaceTagName);
         language.setXml(true);
-        language.setIncludeTokens(true);
         return language.createExpression(null);
     }
 
