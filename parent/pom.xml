@@ -311,7 +311,7 @@
     <kafka-version>0.8.2.1</kafka-version>
     <kafka-bundle-version>0.8.2.1_1</kafka-bundle-version>
     <kafka-clients-bundle-version>0.8.2.0_1</kafka-clients-bundle-version>
-    <karaf-version>2.4.2</karaf-version>
+    <karaf-version>2.4.3</karaf-version>
     <karaf3-version>3.0.2</karaf3-version>
     <kie-version>6.2.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
