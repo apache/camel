@@ -282,7 +282,7 @@ public final class HttpHelper {
         }
         // We should user the query string from the HTTP_URI header
         if (queryString == null) {
-            queryString = uri.getQuery();
+            queryString = uri.getRawQuery();
         }
         if (queryString != null) {
             // need to encode query string
