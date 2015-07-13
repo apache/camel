@@ -39,7 +39,7 @@ public class PollEnrichExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .pollEnrich(header("source"), 1000, null, false)
+                    .pollEnrich().header("source")
                     .to("mock:result");
             }
         };

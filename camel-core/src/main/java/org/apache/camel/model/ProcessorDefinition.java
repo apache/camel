@@ -52,6 +52,7 @@ import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -3292,8 +3293,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri) {
-        addOutput(new PollEnrichDefinition(null, resourceUri, -1));
-        return (Type) this;
+        return pollEnrich(resourceUri, null);
     }
 
     /**
@@ -3314,8 +3314,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, AggregationStrategy aggregationStrategy) {
-        addOutput(new PollEnrichDefinition(aggregationStrategy, resourceUri, -1));
-        return (Type) this;
+        return pollEnrich(resourceUri, -1, aggregationStrategy);
     }
 
     /**
@@ -3338,8 +3337,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
-        addOutput(new PollEnrichDefinition(aggregationStrategy, resourceUri, timeout));
-        return (Type) this;
+        return pollEnrich(resourceUri, timeout, aggregationStrategy, false);
     }
 
     /**
@@ -3364,7 +3362,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
-        PollEnrichDefinition pollEnrich = new PollEnrichDefinition(aggregationStrategy, resourceUri, timeout);
+        PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
+        pollEnrich.setExpression(new ConstantExpression(resourceUri));
+        pollEnrich.setTimeout(timeout);
+        pollEnrich.setAggregationStrategy(aggregationStrategy);
         pollEnrich.setAggregateOnException(aggregateOnException);
         addOutput(pollEnrich);
         return (Type) this;
@@ -3389,8 +3390,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout) {
-        addOutput(new PollEnrichDefinition(null, resourceUri, timeout));
-        return (Type) this;
+        return pollEnrich(resourceUri, timeout, null);
     }
 
     /**
@@ -3414,7 +3414,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
-        pollEnrich.setResourceRef(resourceRef);
+        pollEnrich.setExpression(new SimpleExpression("ref:" + resourceRef));
         pollEnrich.setTimeout(timeout);
         pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
         addOutput(pollEnrich);
@@ -3444,7 +3444,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
-        pollEnrich.setResourceRef(resourceRef);
+        pollEnrich.setExpression(new SimpleExpression("ref:" + resourceRef));
         pollEnrich.setTimeout(timeout);
         pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
         pollEnrich.setAggregateOnException(aggregateOnException);
@@ -3481,6 +3481,27 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         pollEnrich.setAggregateOnException(aggregateOnException);
         addOutput(pollEnrich);
         return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
+     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * <p/>
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer
+     * to obtain the additional data, where as enrich uses a producer.
+     * <p/>
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
+     * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
+     * otherwise we use <tt>receive(timeout)</tt>.
+     *
+     * @return a expression builder clause to set the expression to use for computing the endpoint to poll from
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    public ExpressionClause<PollEnrichDefinition> pollEnrich() {
+        PollEnrichDefinition answer = new PollEnrichDefinition();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
     }
 
     /**
