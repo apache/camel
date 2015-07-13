@@ -3173,7 +3173,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see org.apache.camel.processor.Enricher
      */
     public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
-        return enrich(resourceUri, aggregationStrategy, false, false);
+        return enrich(resourceUri, aggregationStrategy, aggregateOnException, false);
     }
 
     /**
