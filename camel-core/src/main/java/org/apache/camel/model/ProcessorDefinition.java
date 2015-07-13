@@ -3136,16 +3136,29 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
      * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     * <p/>
+     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
+     * to obatin the additional data, where as pollEnrich uses a polling consumer.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    public Type enrich(String resourceUri) {
+        return enrich(resourceUri, null);
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
      * 
      * @param resourceUri           URI of resource endpoint for obtaining additional data.
      * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
-    @SuppressWarnings("unchecked")
     public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy) {
-        addOutput(new EnrichDefinition(aggregationStrategy, resourceUri));
-        return (Type) this;
+        return enrich(resourceUri, aggregationStrategy, false);
     }
 
     /**
@@ -3159,12 +3172,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
-    @SuppressWarnings("unchecked")
     public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
-        EnrichDefinition enrich = new EnrichDefinition(aggregationStrategy, resourceUri);
-        enrich.setAggregateOnException(aggregateOnException);
-        addOutput(enrich);
-        return (Type) this;
+        return enrich(resourceUri, aggregationStrategy, false, false);
     }
 
     /**
@@ -3181,27 +3190,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException, boolean shareUnitOfWork) {
-        EnrichDefinition enrich = new EnrichDefinition(aggregationStrategy, resourceUri);
-        enrich.setAggregateOnException(aggregateOnException);
-        enrich.setShareUnitOfWork(shareUnitOfWork);
-        addOutput(enrich);
-        return (Type) this;
-    }
-
-    /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
-     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
-     * <p/>
-     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
-     * to obatin the additional data, where as pollEnrich uses a polling consumer.
-     *
-     * @param resourceUri           URI of resource endpoint for obtaining additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
-     */
-    @SuppressWarnings("unchecked")
-    public Type enrich(String resourceUri) {
-        addOutput(new EnrichDefinition(resourceUri));
+        EnrichDefinition answer = new EnrichDefinition();
+        answer.setExpression(new ConstantExpression(resourceUri));
+        answer.setAggregationStrategy(aggregationStrategy);
+        answer.setAggregateOnException(aggregateOnException);
+        answer.setShareUnitOfWork(shareUnitOfWork);
+        addOutput(answer);
         return (Type) this;
     }
 
@@ -3217,13 +3211,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
-    @SuppressWarnings("unchecked")
     public Type enrichRef(String resourceRef, String aggregationStrategyRef) {
-        EnrichDefinition enrich = new EnrichDefinition();
-        enrich.setResourceRef(resourceRef);
-        enrich.setAggregationStrategyRef(aggregationStrategyRef);
-        addOutput(enrich);
-        return (Type) this;
+        return enrichRef(resourceRef, aggregationStrategyRef, false);
     }
 
     /**
@@ -3240,14 +3229,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
-    @SuppressWarnings("unchecked")
     public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException) {
-        EnrichDefinition enrich = new EnrichDefinition();
-        enrich.setResourceRef(resourceRef);
-        enrich.setAggregationStrategyRef(aggregationStrategyRef);
-        enrich.setAggregateOnException(aggregateOnException);
-        addOutput(enrich);
-        return (Type) this;
+        return enrichRef(resourceRef, aggregationStrategyRef, false, false);
     }
 
     /**
@@ -3267,13 +3250,29 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException, boolean shareUnitOfWork) {
-        EnrichDefinition enrich = new EnrichDefinition();
-        enrich.setResourceRef(resourceRef);
-        enrich.setAggregationStrategyRef(aggregationStrategyRef);
-        enrich.setAggregateOnException(aggregateOnException);
-        enrich.setShareUnitOfWork(shareUnitOfWork);
-        addOutput(enrich);
+        EnrichDefinition answer = new EnrichDefinition();
+        answer.setExpression(new SimpleExpression("ref:" + resourceRef));
+        answer.setAggregationStrategyRef(aggregationStrategyRef);
+        answer.setAggregateOnException(aggregateOnException);
+        answer.setShareUnitOfWork(shareUnitOfWork);
+        addOutput(answer);
         return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     * <p/>
+     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
+     * to obtain the additional data, where as pollEnrich uses a polling consumer.
+     *
+     * @return a expression builder clause to set the expression to use for computing the endpoint to use
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    public ExpressionClause<EnrichDefinition> enrich() {
+        EnrichDefinition answer = new EnrichDefinition();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
     }
 
     /**

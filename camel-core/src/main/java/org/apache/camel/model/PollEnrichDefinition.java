@@ -126,8 +126,6 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
     // Fluent API
     // -------------------------------------------------------------------------
 
-    // TODO: add cacheSize option
-
     /**
      * Timeout in millis when polling from the external service.
      * <p/>
