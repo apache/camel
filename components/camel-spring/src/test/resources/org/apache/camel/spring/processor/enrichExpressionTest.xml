@@ -22,28 +22,29 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: example -->
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <!-- START SNIPPET: e1 -->
+    <route>
+      <from uri="direct:start"/>
+      <enrich>
+        <header>source</header>
+      </enrich>
+      <to uri="mock:result"/>
+    </route>
+    <!-- END SNIPPET: e1 -->
 
-        <!-- define cool endpoint -->
-        <endpoint id="cool" uri="direct:resource"/>
-
-        <route>
-            <from uri="direct:start"/>
-            <enrich strategyRef="sampleAggregator">
-              <simple>ref:cool</simple>
-            </enrich>
-            <to uri="mock:result"/>
-        </route>
-        <route>
-            <from uri="direct:resource"/>
-            <transform>
-                <constant>blah</constant>
-            </transform>
-        </route>
-    </camelContext>
-
-    <bean id="sampleAggregator" class="org.apache.camel.processor.enricher.SampleAggregator"/>
-    <!-- END SNIPPET: example -->
+    <route>
+      <from uri="direct:foo"/>
+      <transform>
+        <constant>Hello World</constant>
+      </transform>
+    </route>
+    <route>
+      <from uri="direct:bar"/>
+      <transform>
+        <constant>Bye World</constant>
+      </transform>
+    </route>
+  </camelContext>
 
 </beans>
