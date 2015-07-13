@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.impl.ConsumerCache;
+import org.apache.camel.impl.EmptyConsumerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
@@ -59,6 +60,7 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
     private final Expression expression;
     private long timeout;
     private boolean aggregateOnException;
+    private int cacheSize;
 
     /**
      * Creates a new {@link PollEnricher}.
@@ -129,6 +131,14 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
      */
     public void setDefaultAggregationStrategy() {
         this.aggregationStrategy = defaultAggregationStrategy();
+    }
+
+    public int getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -275,7 +285,16 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
     protected void doStart() throws Exception {
         if (consumerCache == null) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
-            consumerCache = new ConsumerCache(this, getCamelContext());
+            if (cacheSize < 0) {
+                consumerCache = new EmptyConsumerCache(this, camelContext);
+                LOG.debug("PollEnrich {} is not using ConsumerCache", this);
+            } else if (cacheSize == 0) {
+                consumerCache = new ConsumerCache(this, camelContext);
+                LOG.debug("PollEnrich {} using ConsumerCache with default cache size", this);
+            } else {
+                consumerCache = new ConsumerCache(this, camelContext, cacheSize);
+                LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
+            }
         }
         ServiceHelper.startServices(consumerCache, aggregationStrategy);
     }

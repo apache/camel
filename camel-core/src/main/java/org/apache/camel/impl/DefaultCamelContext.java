@@ -2720,6 +2720,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // special for executorServiceManager as want to stop it manually
         doAddService(executorServiceManager, false);
         addService(producerServicePool);
+        addService(pollingConsumerServicePool);
         addService(inflightRepository);
         addService(asyncProcessorAwaitManager);
         addService(shutdownStrategy);

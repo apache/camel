@@ -19,18 +19,16 @@ package org.apache.camel.processor.enricher;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
-public class PollEnrichExpressionTest extends ContextTestSupport {
+public class PollEnrichExpressionNoCacheTest extends ContextTestSupport {
 
-    public void testPollEnrichExpression() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World", "Hi World");
+    public void testPollEnricExpression() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:bar", "Bye World");
-        template.sendBody("seda:foo", "Hi World");
 
         template.sendBodyAndHeader("direct:start", null, "source", "seda:foo");
         template.sendBodyAndHeader("direct:start", null, "source", "seda:bar");
-        template.sendBodyAndHeader("direct:start", null, "source", "seda:foo");
 
         assertMockEndpointsSatisfied();
     }
@@ -41,7 +39,7 @@ public class PollEnrichExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .pollEnrich().header("source")
+                    .pollEnrich().header("source").cacheSize(-1)
                     .to("mock:result");
             }
         };

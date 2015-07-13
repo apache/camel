@@ -33,7 +33,7 @@
     <route>
       <from uri="direct:enricher-test-1"/>
       <pollEnrich strategyRef="sampleAggregator">
-        <ref>foo1</ref>
+        <simple>ref:foo1</simple>
       </pollEnrich>
       <to uri="mock:mock"/>
     </route>
@@ -42,7 +42,7 @@
     <route>
       <from uri="direct:enricher-test-2"/>
       <pollEnrich timeout="1000" strategyRef="sampleAggregator">
-        <ref>foo2</ref>
+        <simple>ref:foo2</simple>
       </pollEnrich>
       <to uri="mock:mock"/>
     </route>
@@ -50,7 +50,7 @@
     <route>
       <from uri="direct:enricher-test-3"/>
       <pollEnrich timeout="-1" strategyRef="sampleAggregator">
-        <ref>foo3</ref>
+        <simple>ref:foo3</simple>
       </pollEnrich>
       <to uri="mock:mock"/>
     </route>
@@ -58,7 +58,7 @@
     <route>
       <from uri="direct:enricher-test-4"/>
       <pollEnrich strategyRef="sampleAggregator">
-        <ref>foo4</ref>
+        <simple>ref:foo4</simple>
       </pollEnrich>
       <to uri="mock:mock"/>
     </route>

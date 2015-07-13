@@ -52,6 +52,8 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
     private Boolean aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
+    @XmlAttribute
+    private Integer cacheSize;
 
     public PollEnrichDefinition() {
     }
@@ -88,6 +90,9 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
         }
         if (getAggregateOnException() != null) {
             enricher.setAggregateOnException(getAggregateOnException());
+        }
+        if (getCacheSize() != null) {
+            enricher.setCacheSize(getCacheSize());
         }
 
         return enricher;
@@ -186,6 +191,18 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
         return this;
     }
 
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ConsumerCache} which is used
+     * to cache and reuse consumers when using this pollEnrich, when uris are reused.
+     *
+     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public PollEnrichDefinition cacheSize(int cacheSize) {
+        setCacheSize(cacheSize);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -237,4 +254,11 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
         this.aggregateOnException = aggregateOnException;
     }
 
+    public Integer getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(Integer cacheSize) {
+        this.cacheSize = cacheSize;
+    }
 }
