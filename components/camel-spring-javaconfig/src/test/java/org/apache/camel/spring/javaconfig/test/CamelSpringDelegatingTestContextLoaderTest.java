@@ -41,7 +41,7 @@ import org.springframework.test.context.ContextConfiguration;
         classes = {CamelSpringDelegatingTestContextLoaderTest.TestConfig.class},
         // Since Camel 2.11.0 
         loader = CamelSpringDelegatingTestContextLoader.class
-)
+    )
 @MockEndpoints
 public class CamelSpringDelegatingTestContextLoaderTest {
     @EndpointInject(uri = "mock:direct:end")

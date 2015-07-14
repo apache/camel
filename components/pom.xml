@@ -80,6 +80,7 @@
     <module>camel-cdi</module>
     <module>camel-chunk</module>
     <module>camel-cmis</module>
+    <module>camel-coap</module>
     <module>camel-cometd</module>
     <module>camel-context</module>
     <module>camel-couchdb</module>
