@@ -882,6 +882,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             resumeRouteService(routeService);
+            // must resume the route as well
+            Route route = getRoute(routeId);
+            ServiceHelper.resumeService(route);
         }
     }
 
@@ -1023,12 +1026,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
-            RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+            Route route = routeService.getRoutes().iterator().next();
+            RouteStartupOrder order = new DefaultRouteStartupOrder(1, route, routeService);
             routes.add(order);
 
             getShutdownStrategy().suspend(this, routes);
             // must suspend route service as well
             suspendRouteService(routeService);
+            // must suspend the route as well
+            ServiceHelper.suspendService(route);
         }
     }
 
@@ -1041,12 +1047,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
-            RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+            Route route = routeService.getRoutes().iterator().next();
+            RouteStartupOrder order = new DefaultRouteStartupOrder(1, route, routeService);
             routes.add(order);
 
             getShutdownStrategy().suspend(this, routes, timeout, timeUnit);
             // must suspend route service as well
             suspendRouteService(routeService);
+            // must suspend the route as well
+            ServiceHelper.suspendService(route);
         }
     }
 
