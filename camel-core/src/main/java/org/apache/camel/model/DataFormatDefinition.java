@@ -187,6 +187,9 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
         return otherAttributes;
     }
 
+    /**
+     * Adds an optional attribute
+     */
     public void setOtherAttributes(Map<QName, Object> otherAttributes) {
         this.otherAttributes = otherAttributes;
     }
