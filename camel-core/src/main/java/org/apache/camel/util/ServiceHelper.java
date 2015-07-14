@@ -260,7 +260,7 @@ public final class ServiceHelper {
      * If there's any exception being thrown while resuming the elements one after the
      * other this method would rethrow the <b>first</b> such exception being thrown.
      * 
-     * @see #resumeService(Service)
+     * @see #resumeService(Object)
      */
     public static void resumeServices(Collection<?> services) throws Exception {
         if (services == null) {
@@ -308,7 +308,7 @@ public final class ServiceHelper {
      * @throws Exception is thrown if error occurred
      * @see #startService(Service)
      */
-    public static boolean resumeService(Service service) throws Exception {
+    public static boolean resumeService(Object service) throws Exception {
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (ss.isSuspended()) {
@@ -331,7 +331,7 @@ public final class ServiceHelper {
      * If there's any exception being thrown while suspending the elements one after the
      * other this method would rethrow the <b>first</b> such exception being thrown.
      * 
-     * @see #suspendService(Service)
+     * @see #suspendService(Object)
      */
     public static void suspendServices(Collection<?> services) throws Exception {
         if (services == null) {
@@ -379,7 +379,7 @@ public final class ServiceHelper {
      * @throws Exception is thrown if error occurred
      * @see #stopService(Object)
      */
-    public static boolean suspendService(Service service) throws Exception {
+    public static boolean suspendService(Object service) throws Exception {
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (!ss.isSuspended()) {
