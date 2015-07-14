@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -203,6 +204,15 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
 
     // Properties
     // -------------------------------------------------------------------------
+
+    /**
+     * Expression that computes the endpoint uri to use as the resource endpoint to enrich from
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
 
     public Long getTimeout() {
         return timeout;
