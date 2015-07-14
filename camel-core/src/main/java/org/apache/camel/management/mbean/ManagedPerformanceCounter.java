@@ -109,7 +109,9 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         return exchangesFailed.getValue();
     }
 
-    public long getExchangesInflight() { return exchangesInflight.getValue(); }
+    public long getExchangesInflight() {
+        return exchangesInflight.getValue();
+    }
 
     public long getFailuresHandled() throws Exception {
         return failuresHandled.getValue();

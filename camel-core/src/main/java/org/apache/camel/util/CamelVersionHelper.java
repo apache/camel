@@ -20,6 +20,9 @@ package org.apache.camel.util;
  * A simple util to test Camel versions.
  */
 public final class CamelVersionHelper {
+    private CamelVersionHelper() {
+        //utility class, never constructed
+    }
 
     /**
      * Checks whether other >= base

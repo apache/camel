@@ -1015,11 +1015,15 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         @Override
         public void purge() {
             // must acquire the shared aggregation lock to be able to purge
-            if (!optimisticLocking) { lock.lock(); }
+            if (!optimisticLocking) {
+                lock.lock();
+            }
             try {
                 super.purge();
             } finally {
-                if (!optimisticLocking) { lock.unlock(); }
+                if (!optimisticLocking) {
+                    lock.unlock();
+                }
             }
         }
 
@@ -1078,7 +1082,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
             if (keys != null && !keys.isEmpty()) {
                 // must acquire the shared aggregation lock to be able to trigger interval completion
-                if (!optimisticLocking) { lock.lock(); }
+                if (!optimisticLocking) {
+                    lock.lock();
+                }
                 try {
                     for (String key : keys) {
                         boolean stolenInterval = false;
@@ -1103,7 +1109,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                         }
                     }
                 } finally {
-                    if (!optimisticLocking) { lock.unlock(); }
+                    if (!optimisticLocking) {
+                        lock.unlock();
+                    }
                 }
             }
 
@@ -1395,7 +1403,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         // must acquire the shared aggregation lock to be able to trigger force completion
         int total = 0;
 
-        if (!optimisticLocking) { lock.lock(); }
+        if (!optimisticLocking) {
+            lock.lock();
+        }
         try {
             Exchange exchange = aggregationRepository.get(camelContext, key);
             if (exchange != null) {
@@ -1409,7 +1419,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 }
             }
         } finally {
-            if (!optimisticLocking) { lock.unlock(); }
+            if (!optimisticLocking) {
+                lock.unlock(); 
+            }
         }
         LOG.trace("Completed force completion of group {}", key);
 
@@ -1436,7 +1448,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         int total = 0;
         if (keys != null && !keys.isEmpty()) {
             // must acquire the shared aggregation lock to be able to trigger force completion
-            if (!optimisticLocking) { lock.lock(); }
+            if (!optimisticLocking) {
+                lock.lock(); 
+            }
             total = keys.size();
             try {
                 for (String key : keys) {
@@ -1452,7 +1466,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                     }
                 }
             } finally {
-                if (!optimisticLocking) { lock.unlock(); }
+                if (!optimisticLocking) {
+                    lock.unlock();
+                }
             }
         }
         LOG.trace("Completed force completion of all groups task");

@@ -17,6 +17,10 @@
 package org.apache.camel.component.bean;
 
 public class CamelCustomer {
+    public CamelCustomer() {
+    }
+    public void extraMethod() {
+    }
 
     public static boolean isGoldCustomer(String body) {
         return body.contains("Camel");

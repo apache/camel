@@ -53,9 +53,9 @@ import org.apache.camel.util.ObjectHelper;
 public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
     @Metadata(required = "false")
     @XmlElements({
-    @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
-    @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)}
-    )
+        @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
+        @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)}
+        )
     private ResequencerConfig resequencerConfig;
     @XmlTransient
     private BatchResequencerConfig batchConfig;

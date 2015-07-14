@@ -57,7 +57,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
             @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "weighted", type = WeightedLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "circuitBreaker", type = CircuitBreakerLoadBalancerDefinition.class)}
-    )
+        )
     private LoadBalancerDefinition loadBalancerType;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
