@@ -38,6 +38,7 @@ import org.apache.cxf.helpers.HttpHeaderHelper;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.security.LoginSecurityContext;
 import org.apache.cxf.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,7 +130,11 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         
         // propagate the security subject from CXF security context
         SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
-        if (securityContext != null && securityContext.getUserPrincipal() != null) {
+        if (securityContext instanceof LoginSecurityContext
+            && ((LoginSecurityContext)securityContext).getSubject() != null) {
+            camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, 
+                                                   ((LoginSecurityContext)securityContext).getSubject());
+        } else if (securityContext != null && securityContext.getUserPrincipal() != null) {
             Subject subject = new Subject();
             subject.getPrincipals().add(securityContext.getUserPrincipal());
             camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, subject);
