@@ -39,6 +39,10 @@
     <bundle>mvn:org.apache.camel/camel-catalog/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${project.version}</bundle>
+    <!-- allow camel to access its own mbeans for karaf commands and other needs -->
+    <config name="jmx.acl.org.apache.camel">
+      * = *
+    </config>
   </feature>
   <feature name='camel-catalog' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
