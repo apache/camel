@@ -169,6 +169,11 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
         // noop - not supported by ftp
     }
 
+    @Override
+    public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
+        // noop - not supported by ftp
+    }
+
     public long getMinLength() {
         return minLength;
     }

@@ -164,6 +164,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected long readLockTimeout = 10000;
     @UriParam(label = "consumer", defaultValue = "true")
     protected boolean readLockMarkerFile = true;
+    @UriParam(label = "consumer", defaultValue = "true")
+    protected boolean readLockDeleteOrphanLockFiles = true;
     @UriParam(label = "consumer", defaultValue = "WARN")
     protected LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
     @UriParam(label = "consumer", defaultValue = "1")
@@ -890,6 +892,21 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.readLockMarkerFile = readLockMarkerFile;
     }
 
+    public boolean isReadLockDeleteOrphanLockFiles() {
+        return readLockDeleteOrphanLockFiles;
+    }
+
+    /**
+     * Whether or not read lock with marker files should upon startup delete any orphan read lock files, which may
+     * have been left on the file system, if Camel was not properly shutdown (such as a JVM crash).
+     * <p/>
+     * If turning this option to <tt>false</tt> then any orphaned lock file will cause Camel to not attempt to pickup
+     * that file, this could also be due another node is concurrently reading files from the same shared directory.
+     */
+    public void setReadLockDeleteOrphanLockFiles(boolean readLockDeleteOrphanLockFiles) {
+        this.readLockDeleteOrphanLockFiles = readLockDeleteOrphanLockFiles;
+    }
+
     public LoggingLevel getReadLockLoggingLevel() {
         return readLockLoggingLevel;
     }
@@ -1272,6 +1289,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             params.put("readLockTimeout", readLockTimeout);
         }
         params.put("readLockMarkerFile", readLockMarkerFile);
+        params.put("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
         params.put("readLockMinLength", readLockMinLength);
         params.put("readLockLoggingLevel", readLockLoggingLevel);
         params.put("readLockMinAge", readLockMinAge);

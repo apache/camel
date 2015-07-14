@@ -136,4 +136,9 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
     public void setMarkerFiler(boolean markerFile) {
         // noop - we do not use marker file with the rename strategy
     }
+
+    @Override
+    public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
+        // noop - we do not use marker file with the rename strategy
+    }
 }

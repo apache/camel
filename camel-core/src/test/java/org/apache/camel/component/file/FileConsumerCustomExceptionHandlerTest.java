@@ -188,6 +188,11 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
             // noop
         }
 
+        @Override
+        public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
+            // noop
+        }
+
         public int getCounter() {
             return counter;
         }

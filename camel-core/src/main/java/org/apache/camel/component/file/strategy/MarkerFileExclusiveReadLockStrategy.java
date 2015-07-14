@@ -38,20 +38,24 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     private static final Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategy.class);
 
     private boolean markerFile = true;
+    private boolean deleteOrphanLockFiles = true;
 
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
-        String dir = endpoint.getConfiguration().getDirectory();
-        File file = new File(dir);
+        if (deleteOrphanLockFiles) {
 
-        LOG.debug("Prepare on startup by deleting orphaned lock files from: {}", dir);
+            String dir = endpoint.getConfiguration().getDirectory();
+            File file = new File(dir);
 
-        StopWatch watch = new StopWatch();
-        deleteLockFiles(file, endpoint.isRecursive());
+            LOG.debug("Prepare on startup by deleting orphaned lock files from: {}", dir);
 
-        // log anything that takes more than a second
-        if (watch.taken() > 1000) {
-            LOG.info("Prepared on startup by deleting orphaned lock files from: {} took {} millis to complete.", dir, watch.taken());
+            StopWatch watch = new StopWatch();
+            deleteLockFiles(file, endpoint.isRecursive());
+
+            // log anything that takes more than a second
+            if (watch.taken() > 1000) {
+                LOG.info("Prepared on startup by deleting orphaned lock files from: {} took {} millis to complete.", dir, watch.taken());
+            }
         }
     }
 
@@ -128,6 +132,11 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     @Override
     public void setMarkerFiler(boolean markerFile) {
         this.markerFile = markerFile;
+    }
+
+    @Override
+    public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
+        this.deleteOrphanLockFiles = deleteOrphanLockFiles;
     }
 
     private static void deleteLockFiles(File dir, boolean recursive) {
