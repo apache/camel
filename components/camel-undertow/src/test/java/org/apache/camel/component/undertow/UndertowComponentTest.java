@@ -28,24 +28,19 @@ public class UndertowComponentTest extends BaseUndertowTest {
 
     @Test
     public void testUndertow() throws Exception {
-
-
-        String response = template.requestBody("undertow://http://localhost:{{port}}/myapp", "Hello Camel!", String.class);
-
-        assertNotNull(response);
-
-        assertEquals("Hello Camel!", response);
-
         MockEndpoint mockEndpoint = getMockEndpoint("mock:myapp");
         mockEndpoint.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
         LOG.debug("Number of exchanges in mock:myapp" + mockEndpoint.getExchanges().size());
 
-        for (Exchange exchange : mockEndpoint.getExchanges()) {
-            assertEquals("Hello Camel! Bye Camel!", exchange.getIn().getBody(String.class));
-        }
+        String response = template.requestBody("undertow:http://localhost:{{port}}/myapp", "Hello Camel!", String.class);
+        assertNotNull(response);
+        assertEquals("Hello Camel!", response);
 
         mockEndpoint.assertIsSatisfied();
 
+        for (Exchange exchange : mockEndpoint.getExchanges()) {
+            assertEquals("Hello Camel! Bye Camel!", exchange.getIn().getBody(String.class));
+        }
     }
 
     @Override
