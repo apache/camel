@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow;
 
 import java.util.Map;
@@ -29,7 +28,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Interface to define custom binding for the component
- *
  */
 public interface UndertowHttpBinding {
 

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow;
 
 import org.apache.camel.CamelExecutionException;
@@ -26,8 +25,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- */
 public class UndertowPrefixMatchingTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowComponentTest.class);
 
@@ -67,8 +64,6 @@ public class UndertowPrefixMatchingTest extends CamelTestSupport {
                 from("undertow:http://localhost:8888/bar")
                     .transform(bodyAs(String.class).append(" Matching prefix"))
                     .to("mock:bar");
-
-
             }
         };
     }

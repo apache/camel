@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow;
 
 import org.apache.camel.Exchange;
@@ -28,10 +27,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.Test;
 
-/**
- */
 public class UndertowMethodRestricTest extends CamelTestSupport {
-
 
     private String url = "http://localhost:8888/methodRestrict";
 

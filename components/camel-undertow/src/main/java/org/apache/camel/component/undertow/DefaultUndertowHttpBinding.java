@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow;
 
 import java.io.IOException;
@@ -50,7 +49,6 @@ import org.xnio.Pooled;
 /**
  * DefaultUndertowHttpBinding represent binding used by default, if user doesn't provide any.
  * By default {@link HttpHeaderFilterStrategy} is also used.
- *
  */
 public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
@@ -103,7 +101,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         result.setBody(readResponseBody(clientExchange));
 
         return result;
-
     }
 
     @Override
@@ -177,7 +174,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 }
             }
         }
-
     }
 
     @Override
@@ -215,7 +211,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 }
             }
         }
-
     }
 
     @Override
@@ -269,7 +264,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         }
 
         return message.getBody();
-
     }
 
     @Override
@@ -317,7 +311,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             }
         }
 
-
         return body;
     }
 
@@ -354,6 +347,5 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         pooledByteBuffer.free();
         return bytes;
     }
-
 
 }

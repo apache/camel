@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow;
 
 import io.undertow.util.HttpString;
 
 /**
  * Copy of {@link org.apache.camel.Exchange} headers fields, to return them as {@link HttpString} for Undertow
- *
  */
 public final class ExchangeHeaders {
 

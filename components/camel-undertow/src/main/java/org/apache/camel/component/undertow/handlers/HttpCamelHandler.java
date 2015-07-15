@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow.handlers;
 
 import java.nio.ByteBuffer;
@@ -38,7 +37,6 @@ import org.slf4j.LoggerFactory;
  * to be used in the Camel route.
  *
  * This class can be considered part of UndertowConsumer implementation.
- *
  */
 public class HttpCamelHandler implements HttpHandler {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
@@ -127,6 +125,5 @@ public class HttpCamelHandler implements HttpHandler {
         }
         return result;
     }
-
 
 }

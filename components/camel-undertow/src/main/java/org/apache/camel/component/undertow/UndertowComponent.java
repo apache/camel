@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
@@ -48,7 +47,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
- *
  */
 public class UndertowComponent extends HttpComponent implements RestConsumerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
@@ -68,10 +66,8 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
-
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
 
-        System.out.println("Remaining: " + remaining);
         String address = remaining;
         URI httpUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(address));
         URI endpointUri = URISupport.createRemainingURI(httpUri, parameters);
@@ -158,9 +154,7 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
         setProperties(endpoint, parameters);
 
         Consumer consumer = endpoint.createConsumer(processor);
-
         return consumer;
-
     }
 
     @Override
@@ -192,7 +186,7 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
                 path.addExactPath(httpUri.getPath(), new HttpCamelHandler(consumer));
 
             }
-            LOG.debug("::Rebuild for path: {}", httpUri.getPath());
+            LOG.debug("Rebuild for path: {}", httpUri.getPath());
         }
         result = result.setHandler(path);
         return result.build();
@@ -241,8 +235,6 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
 
     /**
      * To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
-     *
-     * @param httpClientConfigurer
      */
     @Override
     public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
@@ -251,8 +243,6 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
 
     /**
      * To use a custom HttpConnectionManager to manage connections
-     *
-     * @param httpConnectionManager
      */
     @Override
     public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
@@ -261,8 +251,6 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
 
     /**
      * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-     *
-     * @param httpBinding
      */
     @Override
     public void setHttpBinding(HttpBinding httpBinding) {
@@ -271,8 +259,6 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
 
     /**
      * To use the shared HttpConfiguration as base configuration.
-     *
-     * @param httpConfiguration
      */
     @Override
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {

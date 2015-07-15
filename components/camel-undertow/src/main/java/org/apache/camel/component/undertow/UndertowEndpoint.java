@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
@@ -39,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Represents an Undertow endpoint.
- *
  */
 @UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:host:port/path",
     consumerClass = UndertowConsumer.class, label = "http")
@@ -105,7 +103,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
 
     /**
      * Set full HTTP URI
-     * @param httpURI
      */
     public void setHttpURI(URI httpURI) {
         this.httpURI = httpURI;
@@ -118,7 +115,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
 
     /**
      * Configure set of allowed HTTP request method
-     * @param httpMethodRestrict
      */
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
@@ -130,7 +126,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
 
     /**
      * Set if URI should be matched on prefix
-     * @param matchOnUriPrefix
      */
     public void setMatchOnUriPrefix(Boolean matchOnUriPrefix) {
         this.matchOnUriPrefix = matchOnUriPrefix;
@@ -159,7 +154,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
 
     /**
      * Configure if exception should be thrown on failure
-     * @param throwExceptionOnFailure
      */
     public void setThrowExceptionOnFailure(Boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
@@ -170,8 +164,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     }
 
     /**
-     * Configure if expcetion should be transfered to client
-     * @param transferException
+     * Configure if exception should be transferred to client
      */
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;

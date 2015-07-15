@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow;
 
 import java.io.IOException;
@@ -47,7 +46,6 @@ import org.xnio.XnioWorker;
  * The implementation of Producer is considered as experimental. The Undertow client classes are not thread safe,
  * their purpose is for the reverse proxy usage inside Undertow itself. This may change in the future versions and
  * general purpose HTTP client wrapper will be added. Therefore this Producer may be changed too.
- *
  */
 public class UndertowProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowProducer.class);
@@ -67,10 +65,10 @@ public class UndertowProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    // TODO: use async routing engine
+
     @Override
     public void process(Exchange exchange) throws Exception {
-        LOG.info("Producer endpoint uri " + endpoint.getHttpURI());
-
         final UndertowClient client = UndertowClient.getInstance();
         XnioWorker worker = Xnio.getInstance().createWorker(OptionMap.EMPTY);
         IoFuture<ClientConnection> connect = client.connect(endpoint.getHttpURI(), worker, new ByteBufferSlicePool(BufferAllocator.DIRECT_BYTE_BUFFER_ALLOCATOR, 8192, 8192 * 8192), OptionMap.EMPTY);
@@ -80,7 +78,6 @@ public class UndertowProducer extends DefaultProducer {
 
         Object body = getRequestBody(request, exchange);
 
-
         TypeConverter tc = endpoint.getCamelContext().getTypeConverter();
         ByteBuffer bodyAsByte = tc.convertTo(ByteBuffer.class, body);
 
@@ -89,7 +86,6 @@ public class UndertowProducer extends DefaultProducer {
         }
 
         connect.get().sendRequest(request, new UndertowProducerCallback(bodyAsByte, exchange));
-
     }
 
     private Object getRequestBody(ClientRequest request, Exchange camelExchange) {
@@ -133,7 +129,6 @@ public class UndertowProducer extends DefaultProducer {
                 @Override
                 public void failed(IOException e) {
                     camelExchange.setException(e);
-
                 }
             });
             try {
@@ -142,18 +137,14 @@ public class UndertowProducer extends DefaultProducer {
                     clientExchange.getRequestChannel().write(body);
                 }
             } catch (IOException e) {
-                LOG.error("Failed with: " + e.getMessage());
                 camelExchange.setException(e);
             }
-
         }
 
         @Override
         public void failed(IOException e) {
-            LOG.error("Failed with: " + e.getMessage());
             camelExchange.setException(e);
         }
     }
-
 
 }

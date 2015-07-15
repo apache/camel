@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow;
 
 import org.apache.camel.Processor;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The Undertow consumer.
- *
  */
 public class UndertowConsumer extends DefaultConsumer {
 
@@ -32,7 +30,6 @@ public class UndertowConsumer extends DefaultConsumer {
 
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-
     }
 
     @Override
@@ -53,6 +50,5 @@ public class UndertowConsumer extends DefaultConsumer {
         LOG.debug("Undertow consumer is stopping");
         getEndpoint().getComponent().unregisterConsumer(this);
     }
-
 
 }

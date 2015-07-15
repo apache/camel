@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow.handlers;
 
 import io.undertow.server.HttpHandler;
@@ -23,7 +22,6 @@ import io.undertow.util.Headers;
 
 /**
  * Custom handler to inform client that no matching path was found
- *
  */
 public class NotFoundHandler implements HttpHandler {
 

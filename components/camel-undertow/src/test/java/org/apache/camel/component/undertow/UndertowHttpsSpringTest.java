@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.undertow;
 
 import java.net.URL;
@@ -32,20 +31,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- */
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/SpringTest.xml"})
 public class UndertowHttpsSpringTest {
-
 
     @Produce
     private ProducerTemplate template;
 
     @EndpointInject(uri = "mock:input")
     private MockEndpoint mockEndpoint;
-
 
     @BeforeClass
     public static void setUpJaas() throws Exception {
