@@ -17,6 +17,7 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URL;
+import javax.annotation.Resource;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -34,6 +35,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/SpringTest.xml"})
 public class UndertowHttpsSpringTest {
+
+    private Integer port;
 
     @Produce
     private ProducerTemplate template;
@@ -53,13 +56,22 @@ public class UndertowHttpsSpringTest {
     }
 
     @Test
-    public void testSSLInOutWithNettyConsumer() throws Exception {
+    public void testSSLConsumer() throws Exception {
         mockEndpoint.expectedBodiesReceived("Hello World");
 
-        String out = template.requestBody("https://localhost:9000/spring", "Hello World", String.class);
+        String out = template.requestBody("https://localhost:" + port + "/spring", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         mockEndpoint.assertIsSatisfied();
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    @Resource(name = "dynaPort")
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
 }

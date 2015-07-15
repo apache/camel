@@ -19,19 +19,16 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class UndertowError500Test extends CamelTestSupport {
-
-    // TODO: add unit test should use dynamic port number, see camel-jetty9 for example
+public class UndertowError500Test extends BaseUndertowTest {
 
     @Test
     public void testHttp500Error() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
         try {
-            template.requestBody("http://localhost:8888/foo", "Hello World", String.class);
+            template.requestBody("http://localhost:{{port}}/foo", "Hello World", String.class);
             fail("Should have failed");
         } catch (CamelExecutionException e) {
 
@@ -45,7 +42,7 @@ public class UndertowError500Test extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("undertow:http://localhost:8888/foo")
+                from("undertow:http://localhost:{{port}}/foo")
                     .to("mock:input")
                         // trigger failure by setting error code to 500
                     .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))

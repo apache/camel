@@ -20,16 +20,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class UndertowMethodRestricTest extends CamelTestSupport {
+public class UndertowMethodRestricTest extends BaseUndertowTest {
 
-    private String url = "http://localhost:8888/methodRestrict";
+    private static String url;
+
+    @BeforeClass
+    public static void init() {
+        url = "http://localhost:" + getPort() + "/methodRestrict";
+    }
 
     @Test
     public void testProperHttpMethod() throws Exception {
@@ -61,7 +66,7 @@ public class UndertowMethodRestricTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("undertow://http://localhost:8888/methodRestrict?httpMethodRestrict=POST").process(new Processor() {
+                from("undertow://http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         String request = in.getBody(String.class);
