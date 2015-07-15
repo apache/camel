@@ -34,7 +34,7 @@ public class UndertowComponentTest extends BaseUndertowTest {
 
         String response = template.requestBody("undertow:http://localhost:{{port}}/myapp", "Hello Camel!", String.class);
         assertNotNull(response);
-        assertEquals("Hello Camel!", response);
+        assertEquals("Bye Camel!", response);
 
         mockEndpoint.assertIsSatisfied();
 
