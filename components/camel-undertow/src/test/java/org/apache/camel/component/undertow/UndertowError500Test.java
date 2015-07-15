@@ -24,6 +24,8 @@ import org.junit.Test;
 
 public class UndertowError500Test extends CamelTestSupport {
 
+    // TODO: add unit test should use dynamic port number, see camel-jetty9 for example
+
     @Test
     public void testHttp500Error() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
