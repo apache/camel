@@ -27,8 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.AfterPropertiesConfigured;
@@ -56,7 +54,6 @@ import org.apache.camel.util.ResourceHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware {
     @XmlAttribute
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     private String id;
     @XmlValue
