@@ -209,6 +209,7 @@
         <include>org.apache.camel:camel-test-spring40</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-twitter</include>
+        <include>org.apache.camel:camel-undertow</include>
         <include>org.apache.camel:camel-univocity-parsers</include>
         <include>org.apache.camel:camel-urlrewrite</include>
         <include>org.apache.camel:camel-velocity</include>
