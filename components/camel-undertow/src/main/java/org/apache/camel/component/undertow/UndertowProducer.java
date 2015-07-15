@@ -43,7 +43,7 @@ import org.xnio.XnioWorker;
 
 /**
  * The Undertow producer.
- * <p/>
+ *
  * The implementation of Producer is considered as experimental. The Undertow client classes are not thread safe,
  * their purpose is for the reverse proxy usage inside Undertow itself. This may change in the future versions and
  * general purpose HTTP client wrapper will be added. Therefore this Producer may be changed too.
@@ -72,6 +72,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
 
             ClientRequest request = new ClientRequest();
             request.setProtocol(Protocols.HTTP_1_1);
+            request.setPath(endpoint.getHttpURI().getPath());
 
             Object body = getRequestBody(request, exchange);
 

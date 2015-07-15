@@ -37,21 +37,19 @@ public class UndertowSharedPortTest extends BaseUndertowTest {
     }
 
     private void testPath(String pathSuffix) throws InterruptedException {
-        String response = template.requestBody("undertow://http://localhost:{{port}}/" + pathSuffix, "Hello Camel!", String.class);
-
-        assertNotNull(response);
-
-        assertEquals("Hello Camel!", response);
-
         MockEndpoint mockEndpoint = getMockEndpoint("mock:" + pathSuffix);
-        mockEndpoint.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-        LOG.debug("Number of exchanges in mock:" + pathSuffix + mockEndpoint.getExchanges().size());
+        mockEndpoint.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
+        LOG.debug("Number of exchanges in mock:myapp " + mockEndpoint.getExchanges().size());
 
-        for (Exchange exchange : mockEndpoint.getExchanges()) {
-            assertEquals("Hello Camel! Bye Camel! " + pathSuffix, exchange.getIn().getBody(String.class));
-        }
+        String response = template.requestBody("undertow:http://localhost:{{port}}/" + pathSuffix, "Hello Camel!", String.class);
+        assertNotNull(response);
+        assertEquals("Bye Camel! " + pathSuffix, response);
 
         mockEndpoint.assertIsSatisfied();
+
+        for (Exchange exchange : mockEndpoint.getExchanges()) {
+            assertEquals("Bye Camel! " + pathSuffix, exchange.getIn().getBody(String.class));
+        }
     }
 
     @Override
