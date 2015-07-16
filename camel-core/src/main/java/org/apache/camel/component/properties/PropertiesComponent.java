@@ -64,6 +64,24 @@ public class PropertiesComponent extends DefaultComponent {
     public static final String SUFFIX_TOKEN = DEFAULT_SUFFIX_TOKEN;
 
     /**
+     *  Never check system properties.
+     */
+    public static final int SYSTEM_PROPERTIES_MODE_NEVER = 0;
+
+    /**
+     * Check system properties if not resolvable in the specified properties.
+     */
+    public static final int SYSTEM_PROPERTIES_MODE_FALLBACK = 1;
+
+    /**
+     * Check system properties first, before trying the specified properties.
+     * This allows system properties to override any other property source.
+     * <p/>
+     * This is the default.
+     */
+    public static final int SYSTEM_PROPERTIES_MODE_OVERRIDE = 2;
+
+    /**
      * Key for stores special override properties that containers such as OSGi can store
      * in the OSGi service registry
      */
@@ -87,6 +105,7 @@ public class PropertiesComponent extends DefaultComponent {
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
     private Properties initialProperties;
     private Properties overrideProperties;
+    private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
 
     public PropertiesComponent() {
         // include out of the box functions
@@ -368,9 +387,30 @@ public class PropertiesComponent extends DefaultComponent {
         return functions.containsKey(name);
     }
 
+    public int getSystemPropertiesMode() {
+        return systemPropertiesMode;
+    }
+
+    /**
+     * Sets the system property mode.
+     *
+     * @see #SYSTEM_PROPERTIES_MODE_NEVER
+     * @see #SYSTEM_PROPERTIES_MODE_FALLBACK
+     * @see #SYSTEM_PROPERTIES_MODE_OVERRIDE
+     */
+    public void setSystemPropertiesMode(int systemPropertiesMode) {
+        this.systemPropertiesMode = systemPropertiesMode;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
+                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
+                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            throw new IllegalArgumentException("Option systemPropertiesMode has invalid value: " + systemPropertiesMode);
+        }
 
         // inject the component to the parser
         if (propertiesParser instanceof DefaultPropertiesParser) {
