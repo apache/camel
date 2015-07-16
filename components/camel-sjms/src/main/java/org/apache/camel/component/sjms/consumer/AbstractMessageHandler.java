@@ -70,7 +70,8 @@ public abstract class AbstractMessageHandler implements MessageListener {
     public void onMessage(Message message) {
         RuntimeCamelException rce = null;
         try {
-            final DefaultExchange exchange = (DefaultExchange) JmsMessageHelper.createExchange(message, getEndpoint());
+            SjmsEndpoint endpoint = (SjmsEndpoint) getEndpoint();
+            final DefaultExchange exchange = (DefaultExchange) JmsMessageHelper.createExchange(message, endpoint, endpoint.getJmsKeyFormatStrategy());
 
             log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
 
