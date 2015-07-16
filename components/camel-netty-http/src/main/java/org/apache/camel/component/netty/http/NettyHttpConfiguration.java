@@ -57,7 +57,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private int chunkedMaxContentLength = 1024 * 1024;
     @UriParam(defaultValue = "true")
     private boolean chunked = true;
-    @UriParam(defaultValue = "8192")
+    @UriParam(label = "consumer", defaultValue = "8192")
     private int maxHeaderSize = 8192;
 
     public NettyHttpConfiguration() {

@@ -82,7 +82,7 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
             pipeline.addLast("ssl", sslHandler);
         }
 
-        pipeline.addLast("decoder", new HttpRequestDecoder(409, configuration.getMaxHeadersSize(), 8192));
+        pipeline.addLast("decoder", new HttpRequestDecoder(409, configuration.getMaxHeaderSize(), 8192));
         if (configuration.isChunked()) {
             pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
         }
