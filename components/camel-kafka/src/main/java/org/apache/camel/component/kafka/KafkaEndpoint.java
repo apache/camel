@@ -71,7 +71,18 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @Override
     public Producer createProducer() throws Exception {
-        return new KafkaProducer(this);
+        String msgClassName = getConfiguration().getSerializerClass();
+        String keyClassName = getConfiguration().getKeySerializerClass();
+        if (msgClassName == null) {
+            msgClassName = KafkaConstants.KAFKA_DEFAULT_ENCODER;
+        }
+        if (keyClassName == null) {
+            keyClassName = msgClassName;
+        }
+
+        Class k = getCamelContext().getClassResolver().resolveMandatoryClass(keyClassName);
+        Class v = getCamelContext().getClassResolver().resolveMandatoryClass(msgClassName);
+        return createProducer(k, v, this);
     }
 
     @Override
@@ -98,6 +109,9 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return exchange;
     }
 
+    protected <K, V> KafkaProducer<K, V> createProducer(Class<K> keyClass, Class<V> valueClass, KafkaEndpoint endpoint) {
+        return new KafkaProducer<K, V>(endpoint);
+    }
 
     // Delegated properties from the configuration
     //-------------------------------------------------------------------------

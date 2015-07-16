@@ -29,9 +29,9 @@ import org.apache.camel.impl.DefaultProducer;
 /**
  *
  */
-public class KafkaProducer extends DefaultProducer {
+public class KafkaProducer<K, V> extends DefaultProducer {
 
-    protected Producer<String, String> producer;
+    protected Producer<K, V> producer;
     private final KafkaEndpoint endpoint;
 
     public KafkaProducer(KafkaEndpoint endpoint) {
@@ -58,10 +58,11 @@ public class KafkaProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         Properties props = getProps();
         ProducerConfig config = new ProducerConfig(props);
-        producer = new Producer<String, String>(config);
+        producer = new Producer<K, V>(config);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws CamelException {
         String topic = endpoint.getTopic();
         if (!endpoint.isBridgeEndpoint()) {
@@ -70,21 +71,24 @@ public class KafkaProducer extends DefaultProducer {
         if (topic == null) {
             throw new CamelExchangeException("No topic key set", exchange);
         }
-        String partitionKey = exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY, String.class);
+        K partitionKey = (K) exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY);
         boolean hasPartitionKey = partitionKey != null;
-        String messageKey = exchange.getIn().getHeader(KafkaConstants.KEY, String.class);
+
+        K messageKey = (K) exchange.getIn().getHeader(KafkaConstants.KEY);
         boolean hasMessageKey = messageKey != null;
-        String msg = exchange.getIn().getBody(String.class);
-        KeyedMessage<String, String> data;
+
+        V msg = (V) exchange.getIn().getBody();
+        KeyedMessage<K, V> data;
+
         if (hasPartitionKey && hasMessageKey) {
-            data = new KeyedMessage<String, String>(topic, messageKey, partitionKey, msg);
+            data = new KeyedMessage<K, V>(topic, messageKey, partitionKey, msg);
         } else if (hasPartitionKey) {
-            data = new KeyedMessage<String, String>(topic, partitionKey, msg);
+            data = new KeyedMessage<K, V>(topic, partitionKey, msg);
         } else if (hasMessageKey) {
-            data = new KeyedMessage<String, String>(topic, messageKey, msg);
+            data = new KeyedMessage<K, V>(topic, messageKey, msg);
         } else {
             log.warn("No message key or partition key set");
-            data = new KeyedMessage<String, String>(topic, messageKey, partitionKey, msg);
+            data = new KeyedMessage<K, V>(topic, messageKey, partitionKey, msg);
         }
         producer.send(data);
     }
