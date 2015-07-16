@@ -82,7 +82,7 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
             pipeline.addLast("ssl", sslHandler);
         }
 
-        pipeline.addLast("decoder", new HttpRequestDecoder());
+        pipeline.addLast("decoder", new HttpRequestDecoder(409, configuration.getMaxHeadersSize(), 8192));
         if (configuration.isChunked()) {
             pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
         }
@@ -92,7 +92,6 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         }
 
         pipeline.addLast("handler", channelFactory.getChannelHandler());
-        
     }
 
     private SSLContext createSSLContext() throws Exception {
