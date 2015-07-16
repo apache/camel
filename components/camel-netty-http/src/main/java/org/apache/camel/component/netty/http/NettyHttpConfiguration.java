@@ -26,6 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.jboss.netty.channel.ChannelHandler;
+import org.jboss.netty.handler.codec.frame.TooLongFrameException;
 
 /**
  * Extended configuration for using HTTP with Netty.
@@ -55,6 +56,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean send503whenSuspended = true;
     @UriParam(defaultValue = "" + 1024 * 1024)
     private int chunkedMaxContentLength = 1024 * 1024;
+    @UriParam(defaultValue = "8192")
+    private int maxHeaderSize = 8192;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -220,7 +223,19 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     public void setChunkedMaxContentLength(int chunkedMaxContentLength) {
         this.chunkedMaxContentLength = chunkedMaxContentLength;
     }
-    
+
+    public int getMaxHeaderSize() {
+        return maxHeaderSize;
+    }
+
+    /**
+     * The maximum length of all headers.
+     * If the sum of the length of each header exceeds this value, a {@link TooLongFrameException} will be raised.
+     */
+    public void setMaxHeaderSize(int maxHeaderSize) {
+        this.maxHeaderSize = maxHeaderSize;
+    }
+
     // Don't support allowDefaultCodec
     public boolean isAllowDefaultCodec() {
         return false;
