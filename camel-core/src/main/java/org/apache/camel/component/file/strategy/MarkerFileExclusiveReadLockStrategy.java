@@ -69,8 +69,10 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
         // create a plain file as marker filer for locking (do not use FileLock)
         boolean acquired = FileUtil.createNewFile(new File(lockFileName));
-        exchange.setProperty(Exchange.FILE_LOCK_FILE_ACQUIRED, acquired);
-        exchange.setProperty(Exchange.FILE_LOCK_FILE_NAME, lockFileName);
+
+        // store read-lock state
+        exchange.setProperty(asReadLockKey(file, Exchange.FILE_LOCK_FILE_ACQUIRED), acquired);
+        exchange.setProperty(asReadLockKey(file, Exchange.FILE_LOCK_FILE_NAME), lockFileName);
 
         return acquired;
     }
@@ -83,9 +85,11 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             return;
         }
 
+        boolean acquired = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_FILE_ACQUIRED), false, Boolean.class);
+
         // only release the file if camel get the lock before
-        if (exchange.getProperty(Exchange.FILE_LOCK_FILE_ACQUIRED, false, Boolean.class)) {
-            String lockFileName = exchange.getProperty(Exchange.FILE_LOCK_FILE_NAME, getLockFileName(file), String.class);
+        if (acquired) {
+            String lockFileName = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_FILE_NAME), String.class);
             File lock = new File(lockFileName);
 
             if (lock.exists()) {
@@ -137,6 +141,14 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
     private static String getLockFileName(GenericFile<File> file) {
         return file.getAbsoluteFilePath() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+    }
+
+    private static String asReadLockKey(GenericFile file, String key) {
+        // use the copy from absolute path as that was the original path of the file when the lock was acquired
+        // for example if the file consumer uses preMove then the file is moved and therefore has another name
+        // that would no longer match
+        String path = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
+        return path + "-" + key;
     }
 
 }

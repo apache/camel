@@ -127,10 +127,11 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
             }
         }
 
-        // we grabbed the lock
-        exchange.setProperty(Exchange.FILE_LOCK_EXCLUSIVE_LOCK, lock);
-        exchange.setProperty(Exchange.FILE_LOCK_RANDOM_ACCESS_FILE, randomAccessFile);
+        // store read-lock state
+        exchange.setProperty(asReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), lock);
+        exchange.setProperty(asReadLockKey(file, Exchange.FILE_LOCK_RANDOM_ACCESS_FILE), randomAccessFile);
 
+        // we grabbed the lock
         return true;
     }
 
@@ -141,10 +142,10 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
         // must call super
         super.releaseExclusiveReadLock(operations, file, exchange);
 
-        String target = file.getFileName();
-        FileLock lock = exchange.getProperty(Exchange.FILE_LOCK_EXCLUSIVE_LOCK, FileLock.class);
-        RandomAccessFile rac = exchange.getProperty(Exchange.FILE_LOCK_RANDOM_ACCESS_FILE, RandomAccessFile.class);
+        FileLock lock = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), FileLock.class);
+        RandomAccessFile rac = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), RandomAccessFile.class);
 
+        String target = file.getFileName();
         if (lock != null) {
             Channel channel = lock.acquiredBy();
             try {
@@ -185,6 +186,14 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     @Override
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
+    }
+
+    private static String asReadLockKey(GenericFile file, String key) {
+        // use the copy from absolute path as that was the original path of the file when the lock was acquired
+        // for example if the file consumer uses preMove then the file is moved and therefore has another name
+        // that would no longer match
+        String path = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
+        return path + "-" + key;
     }
 
 }
