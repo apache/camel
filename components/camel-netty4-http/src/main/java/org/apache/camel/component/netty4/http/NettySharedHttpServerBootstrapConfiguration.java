@@ -23,7 +23,7 @@ public class NettySharedHttpServerBootstrapConfiguration extends NettyServerBoot
     private int chunkedMaxContentLength = 1024 * 1024;
     private boolean chunked = true;
     private boolean compression;
-    private int maxHeadersSize = 8192;
+    private int maxHeaderSize = 8192;
 
     public boolean isChunked() {
         return chunked;
@@ -49,11 +49,11 @@ public class NettySharedHttpServerBootstrapConfiguration extends NettyServerBoot
         this.compression = compression;
     }
 
-    public int getMaxHeadersSize() {
-        return maxHeadersSize;
+    public int getMaxHeaderSize() {
+        return maxHeaderSize;
     }
 
-    public void setMaxHeadersSize(int maxHeadersSize) {
-        this.maxHeadersSize = maxHeadersSize;
+    public void setMaxHeaderSize(int maxHeaderSize) {
+        this.maxHeaderSize = maxHeaderSize;
     }
 }
