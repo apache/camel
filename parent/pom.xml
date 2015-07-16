@@ -190,7 +190,7 @@
     <google-api-services-calendar-version>v3-rev99-1.19.0</google-api-services-calendar-version>
     <google-api-services-mail-version>v1-rev15-1.19.0</google-api-services-mail-version>
     <grizzly-websockets-version>2.3.19</grizzly-websockets-version>
-    <groovy-version>2.4.3</groovy-version>
+    <groovy-version>2.4.4</groovy-version>
     <gson-version>2.3.1</gson-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
     <guice-version>3.0</guice-version>
