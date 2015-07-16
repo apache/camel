@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import static java.lang.String.format;
-
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.lang.String.format;
 
 /**
  * A parser to parse a string which contains property placeholders.
@@ -297,12 +297,29 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
          * @return Value of the property or {@code null} if not found
          */
         private String doGetPropertyValue(String key) {
-            String value = System.getProperty(key);
-            if (value != null) {
-                log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
-            } else if (properties != null) {
-                value = properties.getProperty(key);
+            String value = null;
+
+            if (propertiesComponent.getSystemPropertiesMode() == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+                value = System.getProperty(key);
+                if (value != null) {
+                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
+                }
             }
+
+            if (value == null && properties != null) {
+                value = properties.getProperty(key);
+                if (value != null) {
+                    log.debug("Found property: {} with value: {} to be used.", key, value);
+                }
+            }
+
+            if (value == null && propertiesComponent.getSystemPropertiesMode() == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
+                value = System.getProperty(key);
+                if (value != null) {
+                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
+                }
+            }
+
             return parseProperty(key, value, properties);
         }
     }
