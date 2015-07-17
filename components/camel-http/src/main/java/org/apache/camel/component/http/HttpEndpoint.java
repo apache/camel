@@ -110,6 +110,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @UriParam(label = "producer",
             description = "If this option is true, The http producer won't read response body and cache the input stream")
     private boolean ignoreResponseBody;
+    @UriParam(label = "consumer",
+            description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
+                    + " This can be turned on in case HTTP clients do not send streamed data.")
+    private boolean eagerCheckContentAvailable;
 
     public HttpEndpoint() {
     }
@@ -258,6 +262,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             binding = new DefaultHttpBinding();
             binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             binding.setTransferException(isTransferException());
+            binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
         }
         return binding;
     }
@@ -491,4 +496,15 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.ignoreResponseBody = ignoreResponseBody;
     }
 
+    public boolean isEagerCheckContentAvailable() {
+        return eagerCheckContentAvailable;
+    }
+
+    /**
+     * Whether to eager check whether the HTTP requests has content.
+     * This can be used to turn off in case HTTP clients send streamed data and the available check must be delayed.
+     */
+    public void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable) {
+        this.eagerCheckContentAvailable = eagerCheckContentAvailable;
+    }
 }

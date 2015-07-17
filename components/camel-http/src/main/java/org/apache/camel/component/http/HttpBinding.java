@@ -125,6 +125,18 @@ public interface HttpBinding {
     boolean isTransferException();
 
     /**
+     * Whether to eager check whether the HTTP requests has content.
+     * This can be used to turn off in case HTTP clients send streamed data and the available check must be delayed.
+     */
+    boolean isEagerCheckContentAvailable();
+
+    /**
+     * Whether to eager check whether the HTTP requests has content.
+     * This can be used to turn off in case HTTP clients send streamed data and the available check must be delayed.
+     */
+    void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable);
+
+    /**
      * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back
      * serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or
      * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is,
