@@ -58,6 +58,16 @@
         <!-- the ordering of the dependencies can matter as we load the dependencies from the classpath
              with felix-connect, and you may get a weird error if wrong order -->
         <dependency>
+            <groupId>org.apache.aries.proxy</groupId>
+            <artifactId>org.apache.aries.proxy.api</artifactId>
+            <version>${aries-blueprint-proxy-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.aries.proxy</groupId>
+            <artifactId>org.apache.aries.proxy.impl</artifactId>
+            <version>${aries-blueprint-proxy-impl-version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
             <artifactId>org.apache.aries.blueprint.api</artifactId>
         </dependency>
@@ -73,16 +83,6 @@
             <groupId>org.apache.aries</groupId>
             <artifactId>org.apache.aries.util</artifactId>
             <version>${aries-util-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.proxy</groupId>
-            <artifactId>org.apache.aries.proxy.impl</artifactId>
-            <version>${aries-blueprint-proxy-impl-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.proxy</groupId>
-            <artifactId>org.apache.aries.proxy.api</artifactId>
-            <version>${aries-blueprint-proxy-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
