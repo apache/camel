@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.sjms.producer;
 
-import java.util.concurrent.TimeUnit;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.jmx.DestinationViewMBean;
 import org.apache.activemq.broker.region.policy.PolicyEntry;
 import org.apache.activemq.broker.region.policy.PolicyMap;
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.camel.builder.NotifyBuilder;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.Test;
 
@@ -33,12 +33,14 @@ public class QueueProducerQoSTest extends JmsTestSupport {
     private static final String TEST_INOUT_DESTINATION_NAME = "queue.producer.test.qos.inout";
 
     private static final String EXPIRED_MESSAGE_ROUTE_ID = "expiredAdvisoryRoute";
+    public static final String MOCK_EXPIRED_ADVISORY = "mock:expiredAdvisory";
+
+    @EndpointInject(uri = MOCK_EXPIRED_ADVISORY)
+    MockEndpoint mockExpiredAdvisory;
 
     @Test
     public void testInOutQueueProducerTTL() throws Exception {
-
-        NotifyBuilder expireMatcher = new NotifyBuilder(context)
-                .fromRoute(EXPIRED_MESSAGE_ROUTE_ID).whenCompleted(1).create();
+        mockExpiredAdvisory.expectedMessageCount(1);
 
         String endpoint = String.format("sjms:queue:%s?ttl=1000&exchangePattern=InOut&responseTimeOut=500", TEST_INOUT_DESTINATION_NAME);
 
@@ -51,8 +53,7 @@ public class QueueProducerQoSTest extends JmsTestSupport {
             // we're just interested in the message becoming expired
         }
 
-        // we should delay a bit so broker can run its expiration processes...
-        assertFalse(expireMatcher.matches(2, TimeUnit.SECONDS));
+        assertMockEndpointsSatisfied();
 
         DestinationViewMBean queue = getQueueMBean(TEST_INOUT_DESTINATION_NAME);
         assertEquals("There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME,
@@ -61,14 +62,12 @@ public class QueueProducerQoSTest extends JmsTestSupport {
 
     @Test
     public void testInOnlyQueueProducerTTL() throws Exception {
-        NotifyBuilder expireMatcher = new NotifyBuilder(context)
-                .fromRoute(EXPIRED_MESSAGE_ROUTE_ID).whenCompleted(1).create();
+        mockExpiredAdvisory.expectedMessageCount(1);
 
         String endpoint = String.format("sjms:queue:%s?ttl=1000", TEST_INONLY_DESTINATION_NAME);
         template.sendBody(endpoint, "test message");
 
-        // we should delay a bit so broker can run its expiration processes...
-        assertFalse(expireMatcher.matches(2, TimeUnit.SECONDS));
+        assertMockEndpointsSatisfied();
 
         DestinationViewMBean queue = getQueueMBean(TEST_INONLY_DESTINATION_NAME);
         assertEquals("There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME,
@@ -102,7 +101,7 @@ public class QueueProducerQoSTest extends JmsTestSupport {
             public void configure() throws Exception {
                 from("sjms:topic:ActiveMQ.Advisory.Expired.Queue.>")
                         .routeId(EXPIRED_MESSAGE_ROUTE_ID)
-                        .to("mock:expiredAdvisory");
+                        .to(MOCK_EXPIRED_ADVISORY);
             }
         };
     }

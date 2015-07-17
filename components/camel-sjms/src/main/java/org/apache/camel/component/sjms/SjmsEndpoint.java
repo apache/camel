@@ -22,11 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.sjms.jms.ConnectionResource;
-import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
-import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
-import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
-import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
+import org.apache.camel.component.sjms.jms.*;
 import org.apache.camel.component.sjms.producer.InOnlyProducer;
 import org.apache.camel.component.sjms.producer.InOutProducer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -95,19 +91,11 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     public SjmsEndpoint() {
     }
 
-    public SjmsEndpoint(String uri, Component component) {
+    public SjmsEndpoint(String uri, Component component, String remaining) {
         super(uri, component);
-        if (getEndpointUri().contains("://queue:")) {
-            topic = false;
-        } else if (getEndpointUri().contains("://topic:")) {
-            topic = true;
-        } else {
-            throw new IllegalArgumentException("Endpoint URI unsupported: " + uri);
-        }
-        destinationName = getEndpointUri().substring(getEndpointUri().lastIndexOf(":") + 1);
-        if (destinationName.contains("?")) {
-            destinationName = destinationName.substring(0, destinationName.lastIndexOf("?"));
-        }
+        DestinationNameParser parser = new DestinationNameParser();
+        topic = parser.isTopic(remaining);
+        this.destinationName = parser.getShortName(remaining);
     }
 
     @Override
