@@ -77,8 +77,13 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
 
         // the state may not be set
         if (exchange != null && callback != null) {
-            // set the cause on the exchange
-            exchange.setException(cause);
+            Throwable initialCause = exchange.getException();
+            if (initialCause != null && initialCause.getCause() == null) {
+                initialCause.initCause(cause);
+            } else {
+                // set the cause on the exchange
+                exchange.setException(cause);
+            }
 
             // close channel in case an exception was thrown
             NettyHelper.close(ctx.channel());
