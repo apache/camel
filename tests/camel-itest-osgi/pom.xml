@@ -43,7 +43,17 @@
     <!-- blueprint -->
     <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
-      <artifactId>org.apache.aries.blueprint</artifactId>
+      <artifactId>org.apache.aries.blueprint.api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.aries.blueprint</groupId>
+      <artifactId>org.apache.aries.blueprint.core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.aries.blueprint</groupId>
+      <artifactId>org.apache.aries.blueprint.cm</artifactId>
       <scope>test</scope>
     </dependency>
 
