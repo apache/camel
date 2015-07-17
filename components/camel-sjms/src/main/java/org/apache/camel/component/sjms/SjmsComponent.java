@@ -61,7 +61,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         validateMepAndReplyTo(parameters);
         uri = normalizeUri(uri);
-        SjmsEndpoint endpoint = new SjmsEndpoint(uri, this);
+        SjmsEndpoint endpoint = new SjmsEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         if (endpoint.isTransacted()) {
             endpoint.setSynchronous(true);
