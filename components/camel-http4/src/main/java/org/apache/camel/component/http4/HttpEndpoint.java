@@ -84,7 +84,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @UriParam(defaultValue = "true")
     private boolean clearExpiredCookies = true;
     private CookieStore cookieStore = new BasicCookieStore();
-    
+    @UriParam
+    private boolean eagerCheckContentAvailable;
+
     public HttpEndpoint() {
     }
 
@@ -250,9 +252,11 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.httpClientConfigurer = httpClientConfigurer;
     }
 
-    public HttpBinding getBinding() {
+    public HttpBinding getHttpBinding() {
         if (binding == null) {
+            // create a new binding and use the options from this endpoint
             binding = new DefaultHttpBinding(this);
+            binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
         }
         return binding;
     }
@@ -412,4 +416,17 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
         this.authenticationPreemptive = authenticationPreemptive;
     }
+
+    public boolean isEagerCheckContentAvailable() {
+        return eagerCheckContentAvailable;
+    }
+
+    /**
+     * Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present.
+     * This can be turned on in case HTTP clients do not send streamed data.
+     */
+    public void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable) {
+        this.eagerCheckContentAvailable = eagerCheckContentAvailable;
+    }
+
 }
