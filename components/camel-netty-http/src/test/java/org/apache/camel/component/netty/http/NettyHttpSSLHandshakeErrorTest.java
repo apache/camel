@@ -39,7 +39,8 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("netty-http:https://localhost:{{port}}?ssl=true&needClientAuth=true&keyStoreFormat=JKS&passphrase=storepassword&keyStoreResource=jsse/server-keystore.jks&trustStoreResource=jsse/server-truststore.jks")
+                from("netty-http:https://localhost:{{port}}?ssl=true&needClientAuth=true&keyStoreFormat=JKS"
+                        + "&passphrase=storepassword&keyStoreResource=jsse/server-keystore.jks&trustStoreResource=jsse/server-truststore.jks")
                         .to("mock:target");
             }
         });
@@ -47,7 +48,8 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
 
         DefaultExchange exchange = new DefaultExchange(context);
 
-        Exchange response = template.send("netty-http:https://localhost:{{port}}?requestTimeout=10000&throwExceptionOnFailure=false&ssl=true&keyStoreFormat=JKS&passphrase=storepassword&keyStoreResource=jsse/client-keystore.jks&trustStoreResource=jsse/server-truststore.jks", exchange);
+        Exchange response = template.send("netty-http:https://localhost:{{port}}?requestTimeout=10000&throwExceptionOnFailure=false"
+                + "&ssl=true&keyStoreFormat=JKS&passphrase=storepassword&keyStoreResource=jsse/client-keystore.jks&trustStoreResource=jsse/server-truststore.jks", exchange);
 
         Exception ex = response.getException();
 
