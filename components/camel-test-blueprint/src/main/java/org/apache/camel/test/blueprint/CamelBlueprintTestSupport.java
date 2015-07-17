@@ -162,7 +162,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             ConfigurationAdmin configAdmin = CamelBlueprintHelper.getOsgiService(answer, ConfigurationAdmin.class);
             // passing null as second argument ties the configuration to correct bundle.
             // using single-arg method causes:
-            // *ERROR* Cannot use configuration xxx.properties for [org.osgi.service.cm.ManagedService, id=N, bundle=N/jar:file:xyz.jar!/]: No visibility to configuration bound to file:pojosr
+            // *ERROR* Cannot use configuration xxx.properties for [org.osgi.service.cm.ManagedService, id=N, bundle=N/jar:file:xyz.jar!/]: No visibility to configuration bound to felix-connect
             Configuration config = configAdmin.getConfiguration(pid, null);
             if (config == null) {
                 throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");

@@ -103,7 +103,7 @@ public final class CamelBlueprintHelper {
     }
 
     public static BundleContext createBundleContext(String name, String bundleFilter, TinyBundle bundle) throws Exception {
-        // ensure pojosr stores bundles in an unique target directory
+        // ensure felix-connect stores bundles in an unique target directory
         String uid = "" + System.currentTimeMillis();
         String tempDir = "target/bundles/" + uid;
         System.setProperty("org.osgi.framework.storage", tempDir);
@@ -129,7 +129,7 @@ public final class CamelBlueprintHelper {
             }
         }
 
-        // setup pojosr to use our bundles
+        // setup felix-connect to use our bundles
         Map<String, Object> config = new HashMap<String, Object>();
         config.put(PojoServiceRegistryFactory.BUNDLE_DESCRIPTORS, bundles);
 

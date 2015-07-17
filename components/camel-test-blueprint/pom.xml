@@ -56,7 +56,7 @@
         </dependency>
 
         <!-- the ordering of the dependencies can matter as we load the dependencies from the classpath
-             with pojosr, and you may get a weird error if wrong order -->
+             with felix-connect, and you may get a weird error if wrong order -->
         <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
             <artifactId>org.apache.aries.blueprint.api</artifactId>
