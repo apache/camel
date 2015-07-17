@@ -249,6 +249,17 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
         super.setHttpConnectionManager(httpConnectionManager);
     }
 
+    public UndertowHttpBinding getUndertowHttpBinding() {
+        return undertowHttpBinding;
+    }
+
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+     */
+    public void setUndertowHttpBinding(UndertowHttpBinding undertowHttpBinding) {
+        this.undertowHttpBinding = undertowHttpBinding;
+    }
+
     /**
      * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
      */
