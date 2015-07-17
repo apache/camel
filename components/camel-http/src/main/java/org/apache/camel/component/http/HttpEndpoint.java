@@ -83,6 +83,8 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private UrlRewrite urlRewrite;
     @UriParam
     private Integer responseBufferSize;
+    @UriParam
+    private boolean eagerCheckContentAvailable;
 
     public HttpEndpoint() {
     }
@@ -228,6 +230,8 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public HttpBinding getBinding() {
         if (binding == null) {
             binding = new DefaultHttpBinding(this);
+            // create a new binding and use the options from this endpoint
+            binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
         }
         return binding;
     }
@@ -385,5 +389,17 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public void setResponseBufferSize(Integer responseBufferSize) {
         this.responseBufferSize = responseBufferSize;
+    }
+
+    public boolean isEagerCheckContentAvailable() {
+        return eagerCheckContentAvailable;
+    }
+
+    /**
+     * Whether to eager check whether the HTTP requests has content.
+     * This can be used to turn off in case HTTP clients send streamed data and the available check must be delayed.
+     */
+    public void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable) {
+        this.eagerCheckContentAvailable = eagerCheckContentAvailable;
     }
 }
