@@ -100,7 +100,8 @@ public class Main extends MainSupport {
             }
             LOG.debug("Starting Blueprint XML file: " + descriptors);
             bundleContext = createBundleContext(bundleName);
-            CamelBlueprintHelper.setPersistentFileForConfigAdmin(bundleContext, configAdminPid, configAdminFileName, new Properties());
+            CamelBlueprintHelper.setPersistentFileForConfigAdmin(bundleContext, configAdminPid, configAdminFileName, new Properties(),
+                                                                 bundleName, null);
             camelContext = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
             if (camelContext == null) {
                 throw new IllegalArgumentException("Cannot find CamelContext in blueprint XML file: " + descriptors);
