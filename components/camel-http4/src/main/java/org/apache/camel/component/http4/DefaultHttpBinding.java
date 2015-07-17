@@ -61,6 +61,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
     private boolean useReaderForPayload;
     private boolean transferException;
+    private boolean eagerCheckContentAvailable;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
 
     public DefaultHttpBinding() {
@@ -413,7 +414,7 @@ public class DefaultHttpBinding implements HttpBinding {
             return request.getReader();
         } else {
             // if we do not know if there is any data at all, then make sure to check the stream first
-            if (len < 0) {
+            if (len < 0 && isEagerCheckContentAvailable()) {
                 InputStream is = request.getInputStream();
                 if (is.available() == 0) {
                     // no data so return null
@@ -431,6 +432,14 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void setUseReaderForPayload(boolean useReaderForPayload) {
         this.useReaderForPayload = useReaderForPayload;
+    }
+
+    public boolean isEagerCheckContentAvailable() {
+        return eagerCheckContentAvailable;
+    }
+
+    public void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable) {
+        this.eagerCheckContentAvailable = eagerCheckContentAvailable;
     }
 
     public boolean isTransferException() {

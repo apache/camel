@@ -125,14 +125,14 @@ public interface HttpBinding {
     boolean isTransferException();
 
     /**
-     * Whether to eager check whether the HTTP requests has content.
-     * This can be used to turn off in case HTTP clients send streamed data and the available check must be delayed.
+     * Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present.
+     * This can be turned on in case HTTP clients do not send streamed data.
      */
     boolean isEagerCheckContentAvailable();
 
     /**
-     * Whether to eager check whether the HTTP requests has content.
-     * This can be used to turn off in case HTTP clients send streamed data and the available check must be delayed.
+     * Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present.
+     * This can be turned on in case HTTP clients do not send streamed data.
      */
     void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable);
 
