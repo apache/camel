@@ -17,7 +17,9 @@
 package org.apache.camel.test.blueprint;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Dictionary;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -25,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -38,13 +38,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.BlueprintEvent;
-import org.osgi.service.blueprint.container.BlueprintListener;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.cm.ConfigurationEvent;
-import org.osgi.service.cm.ConfigurationListener;
 
 /**
  * Base class for OSGi Blueprint unit tests with Camel.
@@ -103,7 +99,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         }
 
         // must reuse props as we can do both load from .cfg file and override afterwards
-        Dictionary props = new Properties();
+        final Dictionary props = new Properties();
 
         // load configuration file
         String[] file = loadConfigAdminConfigurationFile();
@@ -111,79 +107,54 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             throw new IllegalArgumentException("The returned String[] from loadConfigAdminConfigurationFile must be of length 2, was " + file.length);
         }
 
+        // if blueprint XML uses <cm:property-placeholder> (any update-strategy and any default properties)
+        // - org.apache.aries.blueprint.compendium.cm.ManagedObjectManager.register() is called
+        // - ManagedServiceUpdate is scheduled in felix.cm
+        // - org.apache.felix.cm.impl.ConfigurationImpl.setDynamicBundleLocation() is called
+        // - CM_LOCATION_CHANGED event is fired
+        // - if BP was alredy created, it's <cm:property-placeholder> receives the event and
+        // - org.apache.aries.blueprint.compendium.cm.CmPropertyPlaceholder.updated() is called,
+        //   but no BP reload occurs
+        // we will however wait for BP container of the test bundle to become CREATED for the first time
+        // each configadmin update *may* lead to reload of BP container, if it uses <cm:property-placeholder>
+        // with update-strategy="reload"
+
+        // we will gather timestamps of BP events. We don't want to be fooled but repeated events related
+        // to the same state of BP container
+        Set<Long> bpEvents = new HashSet<>();
+
+        CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, null);
+
         if (file != null) {
             if (!new File(file[0]).exists()) {
                 throw new IllegalArgumentException("The provided file \"" + file[0] + "\" from loadConfigAdminConfigurationFile doesn't exist");
             }
-            CamelBlueprintHelper.setPersistentFileForConfigAdmin(answer, file[1], file[0], props);
+            CamelBlueprintHelper.setPersistentFileForConfigAdmin(answer, file[1], file[0], props, symbolicName, bpEvents);
         }
 
         // allow end user to override properties
         String pid = useOverridePropertiesWithConfigAdmin(props);
         if (pid != null) {
-            // we will update the configuration now. As OSGi is highly asynchronous, we need to make the tests as repeatable as possible
-            // the problem is when blueprint container defines cm:property-placeholder with update-strategy="reload"
-            // updating the configuration leads to (felix framework + aries blueprint):
-            // 1. schedule org.apache.felix.cm.impl.ConfigurationManager.UpdateConfiguration object to run in config admin thread
-            // 2. this thread calls org.apache.felix.cm.impl.ConfigurationImpl#tryBindLocation()
-            // 3. org.osgi.service.cm.ConfigurationEvent#CM_LOCATION_CHANGED is send
-            // 4. org.apache.aries.blueprint.compendium.cm.ManagedObjectManager.ConfigurationWatcher#updated() is invoked
-            // 5. new Thread().start() is called
-            // 6. org.apache.aries.blueprint.compendium.cm.ManagedObject#updated() is called
-            // 7. org.apache.aries.blueprint.compendium.cm.CmPropertyPlaceholder#updated() is called
-            // 8. new Thread().start() is called
-            // 9. org.apache.aries.blueprint.services.ExtendedBlueprintContainer#reload() is called which destroys everything in BP container
-            // 10. finally reload of BP container is scheduled (in yet another thread)
-            //
-            // if we start/use camel context between point 9 and 10 we may get many different errors described in https://issues.apache.org/jira/browse/ARIES-961
-
-            // to synchronize this (main) thread of execution with the asynchronous series of events, we can register the following listener.
-            // this way be sure that we got to point 3
-            final CountDownLatch latch = new CountDownLatch(2);
-            answer.registerService(ConfigurationListener.class, new ConfigurationListener() {
-                @Override
-                public void configurationEvent(ConfigurationEvent event) {
-                    if (event.getType() == ConfigurationEvent.CM_LOCATION_CHANGED) {
-                        latch.countDown();
-                    }
-                    // when we update the configuration, BP container will be reloaded as well
-                    // hoping that we get the event after *second* restart, let's register the listener
-                    answer.registerService(BlueprintListener.class, new BlueprintListener() {
-                        @Override
-                        public void blueprintEvent(BlueprintEvent event) {
-                            if (event.getType() == BlueprintEvent.CREATED && event.getBundle().getSymbolicName().equals(symbolicName)) {
-                                latch.countDown();
-                            }
-                        }
-                    }, null);
-                }
-            }, null);
-
+            // we will update the configuration again
             ConfigurationAdmin configAdmin = CamelBlueprintHelper.getOsgiService(answer, ConfigurationAdmin.class);
             // passing null as second argument ties the configuration to correct bundle.
             // using single-arg method causes:
             // *ERROR* Cannot use configuration xxx.properties for [org.osgi.service.cm.ManagedService, id=N, bundle=N/jar:file:xyz.jar!/]: No visibility to configuration bound to felix-connect
-            Configuration config = configAdmin.getConfiguration(pid, null);
+            final Configuration config = configAdmin.getConfiguration(pid, null);
             if (config == null) {
                 throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");
             }
             log.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
-            config.update(props);
-
-            latch.await(CamelBlueprintHelper.DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
-        } else {
-            // let's wait for BP container to start
-            final CountDownLatch latch = new CountDownLatch(1);
-            answer.registerService(BlueprintListener.class, new BlueprintListener() {
+            CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, new Runnable() {
                 @Override
-                public void blueprintEvent(BlueprintEvent event) {
-                    if (event.getType() == BlueprintEvent.CREATED && event.getBundle().getSymbolicName().equals(symbolicName)) {
-                        latch.countDown();
+                public void run() {
+                    try {
+                        config.update(props);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e.getMessage(), e);
                     }
                 }
-            }, null);
-
-            latch.await(CamelBlueprintHelper.DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+            });
         }
 
         return answer;

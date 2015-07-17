@@ -35,6 +35,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarInputStream;
 
 import org.apache.camel.impl.DefaultClassResolver;
@@ -58,6 +61,9 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.blueprint.container.BlueprintEvent;
+import org.osgi.service.blueprint.container.BlueprintListener;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.util.tracker.ServiceTracker;
@@ -107,6 +113,9 @@ public final class CamelBlueprintHelper {
         String uid = "" + System.currentTimeMillis();
         String tempDir = "target/bundles/" + uid;
         System.setProperty("org.osgi.framework.storage", tempDir);
+        // explicitly set this to "false" - we will not depend on the order of starting bundles,
+        // (and running their BP containers) but we will have to do more synchornization
+        System.setProperty("org.apache.aries.blueprint.synchronous", "false");
         createDirectory(tempDir);
 
         // use another directory for the jar of the bundle as it cannot be in the same directory
@@ -169,7 +178,8 @@ public final class CamelBlueprintHelper {
     // pick up persistent file configuration
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void setPersistentFileForConfigAdmin(BundleContext bundleContext, String pid,
-                                                       String fileName, Dictionary props) throws IOException {
+                                                       String fileName, final Dictionary props,
+                                                       String symbolicName, Set<Long> bpEvents) throws IOException, InterruptedException {
         if (pid != null) {
             if (fileName == null) {
                 throw new IllegalArgumentException("The persistent file should not be null");
@@ -186,9 +196,20 @@ public final class CamelBlueprintHelper {
                 if (configAdmin != null) {
                     // ensure we update
                     // we *have to* use "null" as 2nd arg to have correct bundle location for Configuration object
-                    Configuration config = configAdmin.getConfiguration(pid, null);
+                    final Configuration config = configAdmin.getConfiguration(pid, null);
                     LOG.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
-                    config.update(props);
+                    // we will have update and in consequence, BP container reload, let's wait for it to
+                    // be CREATED again
+                    CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, bundleContext, symbolicName, BlueprintEvent.CREATED, new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                config.update(props);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e.getMessage(), e);
+                            }
+                        }
+                    });
                 }
 
             }
@@ -226,6 +247,7 @@ public final class CamelBlueprintHelper {
             // Note that the tracker is not closed to keep the reference
             // This is buggy, as the service reference may change i think
             Object svc = tracker.waitForService(timeout);
+
             if (svc == null) {
                 Dictionary<?, ?> dic = bundleContext.getBundle().getHeaders();
                 LOG.warn("Test bundle headers: " + explode(dic));
@@ -246,6 +268,30 @@ public final class CamelBlueprintHelper {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Synchronization method to wait for particular state of BlueprintContainer under test.
+     */
+    public static void waitForBlueprintContainer(final Set<Long> eventHistory, BundleContext context, final String symbolicName, final int bpEvent, final Runnable runAndWait) throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+        ServiceRegistration<BlueprintListener> registration = context.registerService(BlueprintListener.class, new BlueprintListener() {
+            @Override
+            public void blueprintEvent(BlueprintEvent event) {
+                if (event.getType() == bpEvent && event.getBundle().getSymbolicName().equals(symbolicName)) {
+                    // we skip events that we've already seen
+                    // it works with BP container reloads if next CREATE state is at least 1ms after previous one
+                    if (eventHistory == null || eventHistory.add(event.getTimestamp())) {
+                        latch.countDown();
+                    }
+                }
+            }
+        }, null);
+        if (runAndWait != null) {
+            runAndWait.run();
+        }
+        latch.await(CamelBlueprintHelper.DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+        registration.unregister();
     }
 
     protected static TinyBundle createTestBundle(String name, String version, String descriptors) throws FileNotFoundException, MalformedURLException {
