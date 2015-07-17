@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.sjms.batch;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +88,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     }
 
     @Override
-    public Endpoint getEndpoint() {
+    public SjmsBatchEndpoint getEndpoint() {
         return sjmsBatchEndpoint;
     }
 
@@ -164,10 +162,11 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                 // a batch corresponds to a single session that will be committed or rolled back by a background thread
                 final Session session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
                 try {
-                    // destinationName only creates queues; there is no additional value to be gained
-                    // by transactionally consuming topic messages in batches
+                    // only batch consumption from queues is supported - it makes no sense to transactionally consume
+                    // from a topic as you don't car about message loss, users can just use a regular aggregator instead
                     Queue queue = session.createQueue(destinationName);
                     MessageConsumer consumer = session.createConsumer(queue);
+
                     try {
                         consumeBatchesOnLoop(session, consumer);
                     } finally {
@@ -289,11 +288,11 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             int id = batchCount.getAndIncrement();
             int batchSize = exchange.getProperty(SjmsBatchEndpoint.PROPERTY_BATCH_SIZE, Integer.class);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Processing batch:size={}:total={}", batchSize, messagesReceived.addAndGet(batchSize));
+                LOG.debug("Processing batch[" + id + "]:size=" + batchSize + ":total=" + messagesReceived.addAndGet(batchSize));
             }
 
-            Synchronization committing = new SessionCompletion(session);
-            exchange.addOnCompletion(committing);
+            SessionCompletion sessionCompletion = new SessionCompletion(session);
+            exchange.addOnCompletion(sessionCompletion);
             try {
                 processor.process(exchange);
                 LOG.debug("Completed processing[{}]:total={}", id, messagesProcessed.addAndGet(batchSize));

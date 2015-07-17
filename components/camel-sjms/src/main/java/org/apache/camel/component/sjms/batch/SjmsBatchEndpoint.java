@@ -20,6 +20,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.sjms.jms.DestinationNameParser;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.Metadata;
@@ -30,7 +31,10 @@ import org.apache.camel.spi.UriPath;
 /**
  * @author jkorab
  */
-@UriEndpoint(scheme = "sjmsBatch", title = "Simple JMS Batch Component", syntax = "sjms-batch:destinationName?aggregationStrategy=#aggStrategy", consumerClass = SjmsBatchComponent.class, label = "messaging")
+@UriEndpoint(scheme = "sjmsBatch",
+        title = "Simple JMS Batch Component",
+        syntax = "sjms-batch:destinationName?aggregationStrategy=#aggStrategy",
+        consumerClass = SjmsBatchComponent.class, label = "messaging")
 public class SjmsBatchEndpoint extends DefaultEndpoint {
 
     public static final int DEFAULT_COMPLETION_SIZE = 200; // the default dispatch queue size in ActiveMQ
@@ -38,7 +42,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint {
     public static final String PROPERTY_BATCH_SIZE = "CamelSjmsBatchSize";
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = "true",
+            description = "The destination name. Only queues are supported, names may be prefixed by 'queue:'.")
     private String destinationName;
 
     @UriParam(label = "consumer", defaultValue = "1", description = "The number of JMS sessions to consume from")
@@ -61,11 +66,18 @@ public class SjmsBatchEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", description = "A #-reference to an AggregationStrategy visible to Camel")
     private AggregationStrategy aggregationStrategy;
 
+    private boolean topic;
+
     public SjmsBatchEndpoint() {}
 
     public SjmsBatchEndpoint(String endpointUri, Component component, String remaining) {
         super(endpointUri, component);
-        this.destinationName = remaining;
+        DestinationNameParser parser = new DestinationNameParser();
+        if (parser.isTopic(remaining)) {
+            throw new IllegalArgumentException("Only batch consumption from queues is supported. For topics you " +
+                    "should use a regular JMS consumer with an aggregator.");
+        }
+        this.destinationName = parser.getShortName(remaining);
     }
 
     @Override
@@ -130,4 +142,5 @@ public class SjmsBatchEndpoint extends DefaultEndpoint {
     public void setPollDuration(Integer pollDuration) {
         this.pollDuration = pollDuration;
     }
+
 }
