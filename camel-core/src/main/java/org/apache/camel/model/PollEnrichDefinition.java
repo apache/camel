@@ -55,6 +55,8 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
     private AggregationStrategy aggregationStrategy;
     @XmlAttribute
     private Integer cacheSize;
+    @XmlAttribute
+    private Boolean ignoreInvalidEndpoint;
 
     public PollEnrichDefinition() {
     }
@@ -79,6 +81,7 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
 
         // if no timeout then we should block, and there use a negative timeout
         long time = timeout != null ? timeout : -1;
+        boolean isIgnoreInvalidEndpoint = getIgnoreInvalidEndpoint() != null && getIgnoreInvalidEndpoint();
         Expression exp = getExpression().createExpression(routeContext);
 
         PollEnricher enricher = new PollEnricher(exp, time);
@@ -95,6 +98,7 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
         if (getCacheSize() != null) {
             enricher.setCacheSize(getCacheSize());
         }
+        enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
 
         return enricher;
     }
@@ -202,6 +206,16 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
         return this;
     }
 
+    /**
+     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     *
+     * @return the builder
+     */
+    public PollEnrichDefinition ignoreInvalidEndpoint() {
+        setIgnoreInvalidEndpoint(true);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -268,5 +282,13 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
 
     public void setCacheSize(Integer cacheSize) {
         this.cacheSize = cacheSize;
+    }
+
+    public Boolean getIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(Boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 }

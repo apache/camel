@@ -55,6 +55,8 @@ public class EnrichDefinition extends NoOutputExpressionNode {
     private Boolean shareUnitOfWork;
     @XmlAttribute
     private Integer cacheSize;
+    @XmlAttribute
+    private Boolean ignoreInvalidEndpoint;
 
     public EnrichDefinition() {
         this(null);
@@ -77,13 +79,13 @@ public class EnrichDefinition extends NoOutputExpressionNode {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
 
-        // lookup endpoint
-
         Expression exp = getExpression().createExpression(routeContext);
         boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
+        boolean isIgnoreInvalidEndpoint = getIgnoreInvalidEndpoint() != null && getIgnoreInvalidEndpoint();
 
         Enricher enricher = new Enricher(exp);
         enricher.setShareUnitOfWork(isShareUnitOfWork);
+        enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
         if (strategy != null) {
             enricher.setAggregationStrategy(strategy);
@@ -191,6 +193,16 @@ public class EnrichDefinition extends NoOutputExpressionNode {
         return this;
     }
 
+    /**
+     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     *
+     * @return the builder
+     */
+    public EnrichDefinition ignoreInvalidEndpoint() {
+        setIgnoreInvalidEndpoint(true);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -257,5 +269,13 @@ public class EnrichDefinition extends NoOutputExpressionNode {
 
     public void setCacheSize(Integer cacheSize) {
         this.cacheSize = cacheSize;
+    }
+
+    public Boolean getIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(Boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 }

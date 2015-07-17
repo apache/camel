@@ -66,6 +66,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
     private boolean aggregateOnException;
     private boolean shareUnitOfWork;
     private int cacheSize;
+    private boolean ignoreInvalidEndpoint;
 
     public Enricher(Expression expression) {
         this.expression = expression;
@@ -119,6 +120,14 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         this.cacheSize = cacheSize;
     }
 
+    public boolean isIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
+    }
+
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
@@ -141,13 +150,20 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         final Endpoint endpoint;
 
         // use dynamic endpoint so calculate the endpoint to use
+        Object recipient = null;
         try {
-            Object recipient = expression.evaluate(exchange, Object.class);
+            recipient = expression.evaluate(exchange, Object.class);
             endpoint = resolveEndpoint(exchange, recipient);
             // acquire the consumer from the cache
             producer = producerCache.acquireProducer(endpoint);
         } catch (Throwable e) {
-            exchange.setException(e);
+            if (isIgnoreInvalidEndpoint()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                }
+            } else {
+                exchange.setException(e);
+            }
             callback.done(true);
             return true;
         }
