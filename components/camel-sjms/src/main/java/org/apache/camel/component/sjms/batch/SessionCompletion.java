@@ -16,34 +16,32 @@
  */
 package org.apache.camel.component.sjms.batch;
 
+import javax.jms.JMSException;
+import javax.jms.Session;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
-
-/**
- * @author jkorab
- */
 class SessionCompletion implements Synchronization {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(SessionCompletion.class);
 
     private final Session session;
 
+    // TODO: add more details in the commit/rollback eg such as message id
+
     public SessionCompletion(Session session) {
-        assert (session != null);
         this.session = session;
     }
 
     @Override
     public void onComplete(Exchange exchange) {
         try {
-            log.debug("Committing");
+            LOG.debug("Committing");
             session.commit();
         } catch (JMSException ex) {
-            log.error("Exception caught while committing: {}", ex.getMessage());
+            LOG.error("Exception caught while committing: {}", ex.getMessage());
             exchange.setException(ex);
         }
     }
@@ -51,10 +49,10 @@ class SessionCompletion implements Synchronization {
     @Override
     public void onFailure(Exchange exchange) {
         try {
-            log.debug("Rolling back");
+            LOG.debug("Rolling back");
             session.rollback();
         } catch (JMSException ex) {
-            log.error("Exception caught while rolling back: {}", ex.getMessage());
+            LOG.error("Exception caught while rolling back: {}", ex.getMessage());
             exchange.setException(ex);
         }
     }

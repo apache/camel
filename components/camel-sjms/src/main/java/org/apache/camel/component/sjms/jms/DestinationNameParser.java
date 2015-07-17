@@ -20,6 +20,7 @@ package org.apache.camel.component.sjms.jms;
  * @author jkorab
  */
 public class DestinationNameParser {
+
     public boolean isTopic(String destinationName) {
         if (destinationName == null) {
             throw new IllegalArgumentException("destinationName is null");

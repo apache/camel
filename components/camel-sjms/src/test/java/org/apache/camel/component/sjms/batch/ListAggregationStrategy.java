@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.sjms.batch;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author jkorab
- */
+import org.apache.camel.Exchange;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+
 public class ListAggregationStrategy implements AggregationStrategy {
+
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         String body = newExchange.getIn().getBody(String.class);
@@ -34,7 +32,7 @@ public class ListAggregationStrategy implements AggregationStrategy {
             list.add(body);
             newExchange.getIn().setBody(list);
             return newExchange;
-        }  else {
+        } else {
             List<String> list = oldExchange.getIn().getBody(List.class);
             list.add(body);
             return oldExchange;

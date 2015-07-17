@@ -28,12 +28,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-/**
- * @author jkorab
- */
-@UriEndpoint(scheme = "sjmsBatch",
-        title = "Simple JMS Batch Component",
-        syntax = "sjms-batch:destinationName?aggregationStrategy=#aggStrategy",
+@UriEndpoint(scheme = "sjms-batch", title = "Simple JMS Batch Component", syntax = "sjms-batch:destinationName",
         consumerClass = SjmsBatchComponent.class, label = "messaging")
 public class SjmsBatchEndpoint extends DefaultEndpoint {
 
@@ -41,41 +36,29 @@ public class SjmsBatchEndpoint extends DefaultEndpoint {
     public static final int DEFAULT_COMPLETION_TIMEOUT = 500;
     public static final String PROPERTY_BATCH_SIZE = "CamelSjmsBatchSize";
 
-    @UriPath
-    @Metadata(required = "true",
-            description = "The destination name. Only queues are supported, names may be prefixed by 'queue:'.")
+    @UriPath(label = "consumer") @Metadata(required = "true")
     private String destinationName;
-
-    @UriParam(label = "consumer", defaultValue = "1", description = "The number of JMS sessions to consume from")
-    private Integer consumerCount = 1;
-
-    @UriParam(label = "consumer", defaultValue = "200",
-            description = "The number of messages consumed at which the batch will be completed")
-    private Integer completionSize = DEFAULT_COMPLETION_SIZE;
-
-    @UriParam(label = "consumer", defaultValue = "500",
-            description = "The timeout from receipt of the first first message when the batch will be completed")
-    private Integer completionTimeout = DEFAULT_COMPLETION_TIMEOUT;
-
-    @UriParam(label = "consumer", defaultValue = "1000",
-            description = "The duration in milliseconds of each poll for messages. " +
-                    "completionTimeOut will be used if it is shorter and a batch has started.")
-    private Integer pollDuration = 1000;
-
-    @Metadata(required = "true")
-    @UriParam(label = "consumer", description = "A #-reference to an AggregationStrategy visible to Camel")
+    @UriParam(label = "consumer", defaultValue = "1")
+    private int consumerCount = 1;
+    @UriParam(label = "consumer", defaultValue = "200")
+    private int completionSize = DEFAULT_COMPLETION_SIZE;
+    @UriParam(label = "consumer", defaultValue = "500")
+    private int completionTimeout = DEFAULT_COMPLETION_TIMEOUT;
+    @UriParam(label = "consumer", defaultValue = "1000")
+    private int pollDuration = 1000;
+    @UriParam(label = "consumer") @Metadata(required = "true")
     private AggregationStrategy aggregationStrategy;
 
-    private boolean topic;
-
-    public SjmsBatchEndpoint() {}
+    public SjmsBatchEndpoint() {
+    }
 
     public SjmsBatchEndpoint(String endpointUri, Component component, String remaining) {
         super(endpointUri, component);
+
         DestinationNameParser parser = new DestinationNameParser();
         if (parser.isTopic(remaining)) {
-            throw new IllegalArgumentException("Only batch consumption from queues is supported. For topics you " +
-                    "should use a regular JMS consumer with an aggregator.");
+            throw new IllegalArgumentException("Only batch consumption from queues is supported. For topics you "
+                    + "should use a regular JMS consumer with an aggregator.");
         }
         this.destinationName = parser.getShortName(remaining);
     }
@@ -99,47 +82,62 @@ public class SjmsBatchEndpoint extends DefaultEndpoint {
         return aggregationStrategy;
     }
 
+    /**
+     * The aggregation strategy to use, which merges all the batched messages into a single message
+     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    public Integer getCompletionSize() {
-        return completionSize;
-    }
-
-    public void setCompletionSize(Integer completionSize) {
-        this.completionSize = completionSize;
-    }
-
-    public Integer getCompletionTimeout() {
-        return completionTimeout;
-    }
-
-    public void setCompletionTimeout(Integer completionTimeout) {
-        this.completionTimeout = completionTimeout;
-    }
-
+    /**
+     * The destination name. Only queues are supported, names may be prefixed by 'queue:'.
+     */
     public String getDestinationName() {
         return destinationName;
     }
 
-    public void setDestinationName(String destinationName) {
-        this.destinationName = destinationName;
-    }
-
-    public Integer getConsumerCount() {
+    public int getConsumerCount() {
         return consumerCount;
     }
 
-    public void setConsumerCount(Integer consumerCount) {
+    /**
+     * The number of JMS sessions to consume from
+     */
+    public void setConsumerCount(int consumerCount) {
         this.consumerCount = consumerCount;
     }
 
-    public Integer getPollDuration() {
+    public int getCompletionSize() {
+        return completionSize;
+    }
+
+    /**
+     * The number of messages consumed at which the batch will be completed
+     */
+    public void setCompletionSize(int completionSize) {
+        this.completionSize = completionSize;
+    }
+
+    public int getCompletionTimeout() {
+        return completionTimeout;
+    }
+
+    /**
+     * The timeout from receipt of the first first message when the batch will be completed
+     */
+    public void setCompletionTimeout(int completionTimeout) {
+        this.completionTimeout = completionTimeout;
+    }
+
+    public int getPollDuration() {
         return pollDuration;
     }
 
-    public void setPollDuration(Integer pollDuration) {
+    /**
+     * The duration in milliseconds of each poll for messages.
+     * completionTimeOut will be used if it is shorter and a batch has started.
+     */
+    public void setPollDuration(int pollDuration) {
         this.pollDuration = pollDuration;
     }
 

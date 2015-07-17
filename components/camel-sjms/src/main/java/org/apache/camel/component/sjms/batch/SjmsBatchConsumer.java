@@ -16,16 +16,6 @@
  */
 package org.apache.camel.component.sjms.batch;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.component.sjms.jms.JmsMessageHelper;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jms.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
@@ -36,30 +26,47 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
-/**
- * @author jkorab
- */
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.component.sjms.jms.JmsMessageHelper;
+import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SjmsBatchConsumer extends DefaultConsumer {
     private static final boolean TRANSACTED = true;
-    private final Logger LOG = LoggerFactory.getLogger(SjmsBatchConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SjmsBatchConsumer.class);
+
+    // global counters, maybe they should be on component instead?
+    private static final AtomicInteger BATCH_COUNT = new AtomicInteger();
+    private static final AtomicLong MESSAGE_RECEIVED = new AtomicLong();
+    private static final AtomicLong MESSAGE_PROCESSED = new AtomicLong();
 
     private final SjmsBatchEndpoint sjmsBatchEndpoint;
     private final AggregationStrategy aggregationStrategy;
-
     private final int completionSize;
     private final int completionTimeout;
     private final int consumerCount;
     private final int pollDuration;
-
     private final ConnectionFactory connectionFactory;
     private final String destinationName;
     private final Processor processor;
-
-    private static AtomicInteger batchCount = new AtomicInteger();
-    private static AtomicLong messagesReceived = new AtomicLong();
-    private static AtomicLong messagesProcessed = new AtomicLong();
     private ExecutorService jmsConsumerExecutors;
+    private final AtomicBoolean running = new AtomicBoolean(true);
+    private final AtomicReference<CountDownLatch> consumersShutdownLatchRef = new AtomicReference<>();
+    private Connection connection;
 
     public SjmsBatchConsumer(SjmsBatchEndpoint sjmsBatchEndpoint, Processor processor) {
         super(sjmsBatchEndpoint, processor);
@@ -91,11 +98,6 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     public SjmsBatchEndpoint getEndpoint() {
         return sjmsBatchEndpoint;
     }
-
-    private final AtomicBoolean running = new AtomicBoolean(true);
-    private final AtomicReference<CountDownLatch> consumersShutdownLatchRef = new AtomicReference<>();
-
-    private Connection connection;
 
     @Override
     protected void doStart() throws Exception {
@@ -145,8 +147,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             LOG.error("Exception caught closing connection: {}", getStackTrace(jex));
         }
 
-        getEndpoint().getCamelContext().getExecutorServiceManager()
-                .shutdown(jmsConsumerExecutors);
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(jmsConsumerExecutors);
     }
 
     private String getStackTrace(Exception ex) {
@@ -174,7 +175,6 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                             consumer.close();
                         } catch (JMSException ex2) {
                             log.error("Exception caught closing consumer: {}", ex2.getMessage());
-
                         }
                     }
                 } finally {
@@ -197,7 +197,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         private void consumeBatchesOnLoop(Session session, MessageConsumer consumer) throws JMSException {
             final boolean usingTimeout = completionTimeout > 0;
 
-            batchConsumption:
+        batchConsumption:
             while (running.get()) {
                 int messageCount = 0;
 
@@ -206,7 +206,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                 long startTime = 0;
                 Exchange aggregatedExchange = null;
 
-                batch:
+            batch:
                 while ((completionSize <= 0) || (messageCount < completionSize)) {
                     // check periodically to see whether we should be shutting down
                     long waitTime = (usingTimeout && (timeElapsed > 0))
@@ -219,7 +219,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                             // timed out, no message received
                             LOG.trace("No message received");
                         } else {
-                            if ((usingTimeout) && (messageCount == 0)) { // this is the first message
+                            if (usingTimeout && messageCount == 0) { // this is the first message
                                 startTime = new Date().getTime(); // start counting down the period for this batch
                             }
                             messageCount++;
@@ -230,12 +230,11 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                                 aggregatedExchange = aggregationStrategy.aggregate(aggregatedExchange, exchange);
                                 aggregatedExchange.setProperty(SjmsBatchEndpoint.PROPERTY_BATCH_SIZE, messageCount);
                             } else {
-                                throw new IllegalArgumentException("Unexpected message type: "
-                                        + message.getClass().toString());
+                                throw new IllegalArgumentException("Unexpected message type: " + message.getClass().toString());
                             }
                         }
 
-                        if ((usingTimeout) && (startTime > 0)) {
+                        if (usingTimeout && startTime > 0) {
                             // a batch has been started, check whether it should be timed out
                             long currentTime = new Date().getTime();
                             timeElapsed = currentTime - startTime;
@@ -252,13 +251,13 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                         break batchConsumption;
                     }
                 } // batch
-                assert (aggregatedExchange != null);
                 process(aggregatedExchange, session);
             }
         }
 
         /**
          * Determine the time that a call to {@link MessageConsumer#receive()} should wait given the time that has elapsed for this batch.
+         *
          * @param timeElapsed The time that has elapsed.
          * @return The shorter of the time remaining or poll duration.
          */
@@ -277,25 +276,25 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         private long getTimeRemaining(long timeElapsed) {
             long timeRemaining = completionTimeout - timeElapsed;
-            if (LOG.isDebugEnabled() && (timeElapsed > 0)) {
+            if (LOG.isDebugEnabled() && timeElapsed > 0) {
                 LOG.debug("Time remaining this batch: {}", timeRemaining);
             }
             return timeRemaining;
         }
 
         private void process(Exchange exchange, Session session) {
-            assert (exchange != null);
-            int id = batchCount.getAndIncrement();
+            int id = BATCH_COUNT.getAndIncrement();
             int batchSize = exchange.getProperty(SjmsBatchEndpoint.PROPERTY_BATCH_SIZE, Integer.class);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Processing batch[" + id + "]:size=" + batchSize + ":total=" + messagesReceived.addAndGet(batchSize));
+                LOG.debug("Processing batch[" + id + "]:size=" + batchSize + ":total=" + MESSAGE_RECEIVED.addAndGet(batchSize));
             }
 
             SessionCompletion sessionCompletion = new SessionCompletion(session);
             exchange.addOnCompletion(sessionCompletion);
             try {
                 processor.process(exchange);
-                LOG.debug("Completed processing[{}]:total={}", id, messagesProcessed.addAndGet(batchSize));
+                long total = MESSAGE_PROCESSED.addAndGet(batchSize);
+                LOG.debug("Completed processing[{}]:total={}", id, total);
             } catch (Exception e) {
                 LOG.error("Error processing exchange: {}", e.getMessage());
             }

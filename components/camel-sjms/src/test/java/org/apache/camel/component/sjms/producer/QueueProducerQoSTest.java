@@ -33,7 +33,7 @@ public class QueueProducerQoSTest extends JmsTestSupport {
     private static final String TEST_INOUT_DESTINATION_NAME = "queue.producer.test.qos.inout";
 
     private static final String EXPIRED_MESSAGE_ROUTE_ID = "expiredAdvisoryRoute";
-    public static final String MOCK_EXPIRED_ADVISORY = "mock:expiredAdvisory";
+    private static final String MOCK_EXPIRED_ADVISORY = "mock:expiredAdvisory";
 
     @EndpointInject(uri = MOCK_EXPIRED_ADVISORY)
     MockEndpoint mockExpiredAdvisory;

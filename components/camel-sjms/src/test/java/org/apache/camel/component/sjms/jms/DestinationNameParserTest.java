@@ -34,7 +34,7 @@ public class DestinationNameParserTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testIsTopic_nullDestinationName() throws Exception {
+    public void testIsTopicNullDestinationName() throws Exception {
         DestinationNameParser parser = new DestinationNameParser();
         parser.isTopic(null);
     }
@@ -48,7 +48,7 @@ public class DestinationNameParserTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetShortName_nullDestinationName() throws Exception {
+    public void testGetShortNameNullDestinationName() throws Exception {
         DestinationNameParser parser = new DestinationNameParser();
         parser.getShortName(null);
     }

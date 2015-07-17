@@ -30,9 +30,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- * @author jkorab
- */
 public class SjmsBatchEndpointTest extends CamelTestSupport {
 
     // Create one embedded broker instance for the entire test, as we aren't actually
@@ -92,19 +89,19 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testConsumer_negativePollDuration() throws Exception {
+    public void testConsumerNegativePollDuration() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("sjms-batch:in?aggregationStrategy=#aggStrategy&pollDuration=-1")
-                    .to("mock:out");
+                        .to("mock:out");
             }
         });
         context.start();
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testConsumer_negativeConsumerCount() throws Exception {
+    public void testConsumerNegativeConsumerCount() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -116,7 +113,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
     }
 
     @Test(expected = FailedToCreateRouteException.class)
-    public void testConsumer_topic() throws Exception {
+    public void testConsumerTopic() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
