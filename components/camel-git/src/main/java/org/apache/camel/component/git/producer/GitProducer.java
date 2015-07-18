@@ -147,7 +147,7 @@ public class GitProducer extends DefaultProducer {
         try {
             File localRepo = new File(endpoint.getLocalPath(), "");
             if (!localRepo.exists()) {
-                result = Git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                result = git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
             } else {
                 throw new IllegalArgumentException("The local repository directory already exists");
             }
@@ -165,7 +165,7 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Local path must specified to execute " + operation);
         }
         try {
-            result = Git.init().setDirectory(new File(endpoint.getLocalPath(), "")).setBare(false).call();
+            result = git.init().setDirectory(new File(endpoint.getLocalPath(), "")).setBare(false).call();
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
