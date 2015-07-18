@@ -19,4 +19,5 @@ package org.apache.camel.component.git;
 public interface GitConstants {
 	public static final String GIT_OPERATION = "CamelGitOperation";
 	public static final String GIT_FILE_NAME = "CamelGitFilename";
+	public static final String GIT_COMMIT_MESSAGE = "CamelGitCommitMessage";
 }
