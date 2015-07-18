@@ -20,6 +20,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.git.consumer.GitCommitConsumer;
+import org.apache.camel.component.git.consumer.GitTagConsumer;
 import org.apache.camel.component.git.consumer.GitType;
 import org.apache.camel.component.git.producer.GitProducer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -58,6 +59,7 @@ public class GitEndpoint extends DefaultEndpoint {
 	@Override
 	public Consumer createConsumer(Processor processor) throws Exception {
 	    if (type == GitType.COMMIT) return new GitCommitConsumer(this, processor);
+	    else if (type == GitType.TAG) return new GitTagConsumer(this, processor);
 	    else throw new IllegalArgumentException("Cannot create producer with type " + type);
 	}
 

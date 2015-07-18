@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.github.consumer;
+package org.apache.camel.component.git.consumer;
 
 import java.io.File;
 
@@ -22,10 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.git.GitConstants;
-import org.apache.camel.component.github.producer.GitTestSupport;
+import org.apache.camel.component.git.producer.GitTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.Test;
@@ -98,8 +99,19 @@ public class GitConsumerTest extends GitTestSupport {
         Thread.sleep(1 * 5000);
         Exchange ex1 = added.getExchanges().get(0);
         Exchange ex2 = added.getExchanges().get(1);
-        assertEquals(COMMIT_MESSAGE, ex2.getOut().getBody());
-        assertEquals("Test test Commit", ex1.getOut().getBody());
+        assertEquals(COMMIT_MESSAGE, ex2.getOut().getBody(RevCommit.class).getShortMessage());
+        assertEquals("Test test Commit", ex1.getOut().getBody(RevCommit.class).getShortMessage());
+        repository.close();
+    }
+    
+    @Test
+    public void tagConsumerTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        MockEndpoint added = getMockEndpoint("mock:result");
+        
+        Thread.sleep(1 * 5000);
+        assertEquals(added.getExchanges().size(), 0);
         repository.close();
     }
     
@@ -117,6 +129,8 @@ public class GitConsumerTest extends GitTestSupport {
                 from("direct:commit")
                         .to("git://" + GIT_LOCAL_REPO + "?operation=commit");
                 from("git://" + GIT_LOCAL_REPO + "?type=commit")
+                        .to("mock:result");
+                from("git://" + GIT_LOCAL_REPO + "?type=tag")
                         .to("mock:result");
             } 
         };
