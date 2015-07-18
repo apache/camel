@@ -38,25 +38,25 @@ public class GitRemoteProducerTest extends GitTestSupport {
 
         Repository repository = getTestRepository();
         
-        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
         fileToAdd.createNewFile();
         
         template.send("direct:add", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameToAdd);
             }
         });
-        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
         
         Status status = new Git(repository).status().call();
-        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        assertTrue(status.getAdded().contains(filenameToAdd));
         
         template.send("direct:commit", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE);
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
             }
         });
 
@@ -71,11 +71,11 @@ public class GitRemoteProducerTest extends GitTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:add")
-                        .to("git://" + GIT_LOCAL_REPO + "?operation=add");
+                        .to("git://" + gitLocalRepo + "?operation=add");
                 from("direct:commit")
-                        .to("git://" + GIT_LOCAL_REPO + "?operation=commit");
+                        .to("git://" + gitLocalRepo + "?operation=commit");
                 from("direct:push")
-                        .to("git://" + GIT_LOCAL_REPO + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx" );
+                        .to("git://" + gitLocalRepo + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx" );
             } 
         };
     }

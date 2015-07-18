@@ -29,41 +29,41 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 public class GitTestSupport extends CamelTestSupport {
 
-    public final static String GIT_LOCAL_REPO = "testRepo";
+    public final String gitLocalRepo = "testRepo";
 
-    public final static String FILENAME_TO_ADD = "filetest.txt";
+    public final String filenameToAdd = "filetest.txt";
 
-    public final static String FILENAME_BRANCH_TO_ADD = "filetest1.txt";
+    public final String filenameBranchToAdd = "filetest1.txt";
 
-    public final static String COMMIT_MESSAGE = "Test commit";
+    public final String commitMessage = "Test commit";
 
-    public final static String COMMIT_MESSAGE_ALL = "Test commit all";
+    public final String commitMessageAll = "Test commit all";
 
-    public final static String COMMIT_MESSAGE_BRANCH = "Test commit on a branch";
+    public final String commitMessageBranch = "Test commit on a branch";
 
-    public final static String BRANCH_TEST = "testBranch";
+    public final String branchTest = "testBranch";
     
-    public final static String TAG_TEST = "testTag";
+    public final String tagTest = "testTag";
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        File localPath = File.createTempFile(GIT_LOCAL_REPO, "");
+        File localPath = File.createTempFile(gitLocalRepo, "");
         localPath.delete();
-        File path = new File(GIT_LOCAL_REPO);
+        File path = new File(gitLocalRepo);
         path.deleteOnExit();
     }
 
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        File path = new File(GIT_LOCAL_REPO);
+        File path = new File(gitLocalRepo);
         deleteDirectory(path);
     }
       
     protected Repository getTestRepository() throws IOException, IllegalStateException, GitAPIException {
-        File gitRepo = new File(GIT_LOCAL_REPO, ".git");
-        Git.init().setDirectory(new File(GIT_LOCAL_REPO,"")).setBare(false).call();
+        File gitRepo = new File(gitLocalRepo, ".git");
+        Git.init().setDirectory(new File(gitLocalRepo, "")).setBare(false).call();
         // now open the resulting repository with a FileRepositoryBuilder
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         Repository repo = builder.setGitDir(gitRepo)
@@ -72,19 +72,4 @@ public class GitTestSupport extends CamelTestSupport {
                 .build();
         return repo;
     }
-    
-    static public boolean deleteDirectory(File path) {
-        if( path.exists() ) {
-          File[] files = path.listFiles();
-          for(int i=0; i<files.length; i++) {
-             if(files[i].isDirectory()) {
-               deleteDirectory(files[i]);
-             }
-             else {
-               files[i].delete();
-             }
-          }
-        }
-        return( path.delete() );
-      }
 }
