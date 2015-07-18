@@ -33,33 +33,11 @@ import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.PushResult;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class GitProducerTest extends CamelTestSupport {
-
-	private final static String GIT_LOCAL_REPO = "testRepo";
-	private final static String FILENAME_TO_ADD = "filetest.txt";
-	private final static String FILENAME_BRANCH_TO_ADD = "filetest1.txt";
-	private final static String COMMIT_MESSAGE = "Test commit";
-        private final static String COMMIT_MESSAGE_ALL = "Test commit all";
-	private final static String COMMIT_MESSAGE_BRANCH = "Test commit on a branch";
-	private final static String BRANCH_TEST = "testBranch";
-	
-    @Override
-    public void setUp() throws Exception {
-    	super.setUp();
-        File localPath = File.createTempFile(GIT_LOCAL_REPO, "");
-        localPath.delete();
-        File path = new File(GIT_LOCAL_REPO);
-        path.deleteOnExit();
-    }
-    
-    @Override
-    public void tearDown() throws Exception {
-    	super.tearDown();
-        File path = new File(GIT_LOCAL_REPO);
-        deleteDirectory(path);
-    }
+public class GitProducerTest extends GitTestSupport {
     
     @Test
     public void cloneTest() throws Exception {
@@ -742,31 +720,5 @@ public class GitProducerTest extends CamelTestSupport {
             } 
         };
     }
-    
-    private Repository getTestRepository() throws IOException, IllegalStateException, GitAPIException {
-        File gitRepo = new File(GIT_LOCAL_REPO, ".git");
-        Git.init().setDirectory(new File(GIT_LOCAL_REPO,"")).setBare(false).call();
-        // now open the resulting repository with a FileRepositoryBuilder
-        FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        Repository repo = builder.setGitDir(gitRepo)
-                .readEnvironment() // scan environment GIT_* variables
-                .findGitDir() // scan up the file system tree
-                .build();
-        return repo;
-    }
-    
-    static public boolean deleteDirectory(File path) {
-        if( path.exists() ) {
-          File[] files = path.listFiles();
-          for(int i=0; i<files.length; i++) {
-             if(files[i].isDirectory()) {
-               deleteDirectory(files[i]);
-             }
-             else {
-               files[i].delete();
-             }
-          }
-        }
-        return( path.delete() );
-      }
+
 }

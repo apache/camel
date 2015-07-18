@@ -28,4 +28,6 @@ public interface GitOperation {
     public final static String DELETE_BRANCH_OPERATION = "deleteBranch";
     public final static String STATUS_OPERATION = "status";
     public final static String LOG_OPERATION = "log";
+    public final static String PUSH_OPERATION = "push";
+    public final static String PULL_OPERATION = "pull";
 }

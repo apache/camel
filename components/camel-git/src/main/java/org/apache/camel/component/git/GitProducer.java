@@ -7,10 +7,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RefSpec;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +81,14 @@ public class GitProducer extends DefaultProducer{
                 
             case GitOperation.LOG_OPERATION:
                 doLog(exchange, operation, repo);
+                break;
+                
+            case GitOperation.PUSH_OPERATION:
+                doPush(exchange, operation, repo);
+                break;
+                            
+            case GitOperation.PULL_OPERATION:
+                doPull(exchange, operation, repo);
                 break;
 	    }
 	    repo.close();
@@ -255,6 +267,54 @@ public class GitProducer extends DefaultProducer{
                         e.printStackTrace();
                 }
         exchange.getOut().setBody(revCommit);
+    }
+    
+    protected void doPush(Exchange exchange, String operation, Repository repo) {
+        Git git = null;
+        Iterable<PushResult> result = null;
+        try {
+            git = new Git(repo);
+            if (ObjectHelper.isEmpty(endpoint.getRemotePath())) {
+                throw new IllegalArgumentException("Remote path must be specified to execute " + operation);
+            } 
+            if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
+                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+            } 
+            if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
+                UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                result = git.push().setCredentialsProvider(credentials).setRemote(endpoint.getRemotePath()).call();
+            } else {
+                result = git.push().setRemote(endpoint.getRemotePath()).call();
+            }
+                } catch (Exception e) {
+                        LOG.error("There was an error in Git " + operation + " operation");
+                        e.printStackTrace();
+                }
+        exchange.getOut().setBody(result);
+    }
+    
+    protected void doPull(Exchange exchange, String operation, Repository repo) {
+        Git git = null;
+        PullResult result = null;
+        try {
+            git = new Git(repo);
+            if (ObjectHelper.isEmpty(endpoint.getRemotePath())) {
+                throw new IllegalArgumentException("Remote path must be specified to execute " + operation);
+            } 
+            if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
+                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+            } 
+            if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
+                UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                result = git.pull().setCredentialsProvider(credentials).setRemote(endpoint.getRemotePath()).call();
+            } else {
+                result = git.pull().setRemote(endpoint.getRemotePath()).call();
+            }
+                } catch (Exception e) {
+                        LOG.error("There was an error in Git " + operation + " operation");
+                        e.printStackTrace();
+                }
+        exchange.getOut().setBody(result);
     }
     
     private Repository getLocalRepository(){
