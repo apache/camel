@@ -516,6 +516,85 @@ public class GitProducerTest extends CamelTestSupport {
         repository.close();
     }
     
+    @Test
+    public void statusTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = template.requestBody("direct:status", "", Status.class);
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        repository.close();
+    }
+    
+    @Test
+    public void statusBranchTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = template.requestBody("direct:status", "", Status.class);
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE);
+            }
+        });
+        
+        template.sendBody("direct:create-branch", "");
+        
+        Git git = new Git(repository);
+        
+        List<Ref> ref = git.branchList().call();
+        boolean branchCreated = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/heads/" + BRANCH_TEST)) {
+                branchCreated = true;
+            }
+        }
+        assertEquals(branchCreated, true);
+        
+        File fileToAddDifferent = new File(GIT_LOCAL_REPO, FILENAME_BRANCH_TO_ADD);
+        fileToAddDifferent.createNewFile();
+        
+        template.send("direct:add-on-branch", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_BRANCH_TO_ADD);
+            }
+        });
+        
+        status = template.requestBody("direct:status-branch", "", Status.class);
+        assertTrue(status.getAdded().contains(FILENAME_BRANCH_TO_ADD));
+        
+        repository.close();
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {            
@@ -545,6 +624,10 @@ public class GitProducerTest extends CamelTestSupport {
                         .to("git://" + GIT_LOCAL_REPO + "?operation=createBranch&branchName=" + BRANCH_TEST);
                 from("direct:delete-branch")
                         .to("git://" + GIT_LOCAL_REPO + "?operation=deleteBranch&branchName=" + BRANCH_TEST);
+                from("direct:status")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=status");
+                from("direct:status-branch")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=status&branchName=" + BRANCH_TEST);
             } 
         };
     }

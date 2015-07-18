@@ -26,4 +26,5 @@ public interface GitOperation {
     public final static String COMMIT_ALL_OPERATION = "commitAll";
     public final static String CREATE_BRANCH_OPERATION = "createBranch";
     public final static String DELETE_BRANCH_OPERATION = "deleteBranch";
+    public final static String STATUS_OPERATION = "status";
 }
