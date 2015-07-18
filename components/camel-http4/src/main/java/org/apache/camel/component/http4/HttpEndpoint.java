@@ -89,6 +89,8 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private boolean clearExpiredCookies = true;
     @UriParam(label = "producer")
     private boolean ignoreResponseBody;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean copyHeaders = true;
     @UriParam(label = "consumer")
     private boolean eagerCheckContentAvailable;
 
@@ -504,4 +506,14 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.eagerCheckContentAvailable = eagerCheckContentAvailable;
     }
 
+    /**
+     * If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy.
+     */
+    public boolean isCopyHeaders() {
+        return copyHeaders;
+    }
+
+    public void setCopyHeaders(boolean copyHeaders) {
+        this.copyHeaders = copyHeaders;
+    }
 }

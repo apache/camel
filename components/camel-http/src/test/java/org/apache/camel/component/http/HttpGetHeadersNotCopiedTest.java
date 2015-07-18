@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.http;
 
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 
-public class HttpGetWithHeadersTest extends HttpGetTest {
+import java.util.Map;
+
+public class HttpGetHeadersNotCopiedTest extends HttpGetWithHeadersTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -31,24 +31,16 @@ public class HttpGetWithHeadersTest extends HttpGetTest {
                     .setHeader("TestHeader", constant("test"))
                     .setHeader("Content-Length", constant(0))
                     .setHeader("Accept-Language", constant("pl"))
-                    .to("http://www.google.com/search")
+                    .to("http://www.google.com/search?copyHeaders=false")
                     .to("mock:results");
             }
         };
     }
 
     @Override
-    @Before
-    public void setUp() throws Exception {
-        // "Szukaj" is "Search" in polish language
-        expectedText = "Szukaj";
-        super.setUp();
-    }
-
-    @Override
     protected void checkHeaders(Map<String, Object> headers) {
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
-        assertEquals("Should get the TestHeader", "test", headers.get("TestHeader"));
+        assertFalse("TestHeader should not be copied.", headers.containsKey("TestHeader"));
     }
 
 }

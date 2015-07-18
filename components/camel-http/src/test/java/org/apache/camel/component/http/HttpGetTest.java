@@ -72,7 +72,7 @@ public class HttpGetTest extends CamelTestSupport {
             public void configure() {
                 getContext().addComponent("http2", new HttpComponent());
                 from("direct:start").setHeader(Exchange.HTTP_QUERY, constant("hl=en&q=activemq"))
-                    .to("http2://http://www.google.com/search").to("mock:results");
+                    .to("http2://www.google.com/search").to("mock:results");
             }
         };
     }
