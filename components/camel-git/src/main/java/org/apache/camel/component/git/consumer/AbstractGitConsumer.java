@@ -21,10 +21,13 @@ import java.io.IOException;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.git.GitEndpoint;
+import org.apache.camel.component.git.producer.GitProducer;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
     
@@ -33,12 +36,12 @@ public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
     private Repository repo;
     
     private Git git;
+    
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractGitConsumer.class);
 
     public AbstractGitConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.repo = getLocalRepository();
-        this.git = new Git(repo);
     }
     
     @Override
@@ -55,7 +58,7 @@ public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
         git.close();
     }
 
-    private Repository getLocalRepository(){
+    private Repository getLocalRepository() throws IOException{
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         Repository repo = null;
                 try {
@@ -64,8 +67,8 @@ public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
                                 .findGitDir() // scan up the file system tree
                                 .build();
                 } catch (IOException e) {
-                        //LOG.error("There was an error, cannot open " + endpoint.getLocalPath() + " repository");
-                        e.printStackTrace();
+                        LOG.error("There was an error, cannot open " + endpoint.getLocalPath() + " repository");
+                        throw e;
                 }
                 return repo;
     }

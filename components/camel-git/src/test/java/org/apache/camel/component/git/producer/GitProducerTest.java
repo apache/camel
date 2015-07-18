@@ -707,13 +707,66 @@ public class GitProducerTest extends GitTestSupport {
         template.sendBody("direct:create-tag", "");
         
         List<Ref> ref = git.tagList().call();
-        boolean branchCreated = false;
+        boolean tagCreated = false;
         for (Ref refInternal : ref) {
             if (refInternal.getName().equals("refs/tags/" + TAG_TEST)) {
-                branchCreated = true;
+                tagCreated = true;
             }
         }
-        assertEquals(branchCreated, true);
+        assertEquals(tagCreated, true);
+        repository.close();
+    }
+    
+    @Test
+    public void deleteTagTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE);
+            }
+        });
+        
+        Git git = new Git(repository);
+        
+        template.sendBody("direct:create-tag", "");
+        
+        List<Ref> ref = git.tagList().call();
+        boolean tagCreated = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/tags/" + TAG_TEST)) {
+                tagCreated = true;
+            }
+        }
+        assertEquals(tagCreated, true);
+        
+        template.sendBody("direct:delete-tag", "");
+        
+        ref = git.tagList().call();
+        boolean tagExists = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/tags/" + TAG_TEST)) {
+                tagExists = true;
+            }
+        }
+        assertEquals(tagExists, false);
         repository.close();
     }
     
@@ -756,6 +809,8 @@ public class GitProducerTest extends GitTestSupport {
                         .to("git://" + GIT_LOCAL_REPO + "?operation=log&branchName=" + BRANCH_TEST);
                 from("direct:create-tag")
                         .to("git://" + GIT_LOCAL_REPO + "?operation=createTag&tagName=" + TAG_TEST);
+                from("direct:delete-tag")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=deleteTag&tagName=" + TAG_TEST);
             } 
         };
     }
