@@ -26,7 +26,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 
 public class GitCommitConsumer extends AbstractGitConsumer {
 
-    private List used = new ArrayList();
+    private List commitsConsumed = new ArrayList();
 
     public GitCommitConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -37,11 +37,11 @@ public class GitCommitConsumer extends AbstractGitConsumer {
         int count = 0;
         Iterable<RevCommit> commits = getGit().log().all().call();
         for (RevCommit commit : commits) {
-            if (!used.contains(commit.getId())) {
+            if (!commitsConsumed.contains(commit.getId())) {
                 Exchange e = getEndpoint().createExchange();
                 e.getOut().setBody(commit);
                 getProcessor().process(e);
-                used.add(commit.getId());
+                commitsConsumed.add(commit.getId());
                 count++;
             }
         }

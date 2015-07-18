@@ -26,7 +26,7 @@ import org.eclipse.jgit.lib.Ref;
 
 public class GitTagConsumer extends AbstractGitConsumer {
 
-    private List used = new ArrayList();
+    private List tagsConsumed = new ArrayList();
 
     public GitTagConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -37,11 +37,11 @@ public class GitTagConsumer extends AbstractGitConsumer {
         int count = 0;
         List<Ref> call = getGit().tagList().call();
         for (Ref ref : call) {
-            if (!used.contains(ref.getName())) {
+            if (!tagsConsumed.contains(ref.getName())) {
                 Exchange e = getEndpoint().createExchange();
                 e.getOut().setBody(ref);
                 getProcessor().process(e);
-                used.add(ref.getName());
+                tagsConsumed.add(ref.getName());
                 count++;
             }
         }

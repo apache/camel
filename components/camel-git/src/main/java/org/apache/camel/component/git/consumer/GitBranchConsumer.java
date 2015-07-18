@@ -26,7 +26,7 @@ import org.eclipse.jgit.lib.Ref;
 
 public class GitBranchConsumer extends AbstractGitConsumer {
 
-    private List used = new ArrayList();
+    private List branchesConsumed = new ArrayList();
 
     public GitBranchConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -37,11 +37,11 @@ public class GitBranchConsumer extends AbstractGitConsumer {
         int count = 0;
         List<Ref> call = getGit().branchList().call();
         for (Ref ref : call) {
-            if (!used.contains(ref.getName())) {
+            if (!branchesConsumed.contains(ref.getName())) {
                 Exchange e = getEndpoint().createExchange();
                 e.getOut().setBody(ref);
                 getProcessor().process(e);
-                used.add(ref.getName());
+                branchesConsumed.add(ref.getName());
                 count++;
             }
         }
