@@ -239,6 +239,7 @@
                 <exclude>**/test_rsa*</exclude>
                 <exclude>**/examples/*/src/**/data/**/*.xml</exclude>
                 <exlucde>**/*.log</exlucde>
+                <exclude>**/id_file</exclude>
                 <exclude>**/dependency-reduced-pom.xml</exclude>
                 <exclude>**/camel-grape/src/main/resources/org/apache/camel/component/grape/grape.json</exclude>
                 <exclude>**/Dropbox_API_Terms_and_Conditions.txt</exclude>
