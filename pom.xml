@@ -238,6 +238,7 @@
                 <exclude>**/OSGI-INF/bundle.info</exclude>
                 <exclude>**/test_rsa*</exclude>
                 <exclude>**/examples/*/src/**/data/**/*.xml</exclude>
+                <exlucde>**/*.log</exlucde>
               </excludes>
             </configuration>
           </plugin>
