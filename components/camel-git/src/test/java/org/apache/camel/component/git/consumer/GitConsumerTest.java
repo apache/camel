@@ -17,6 +17,7 @@
 package org.apache.camel.component.git.consumer;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +27,7 @@ import org.apache.camel.component.git.GitTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.Test;
@@ -36,7 +38,7 @@ public class GitConsumerTest extends GitTestSupport {
     public void commitConsumerTest() throws Exception {
 
     	Repository repository = getTestRepository();
-        MockEndpoint added = getMockEndpoint("mock:result");
+        MockEndpoint added = getMockEndpoint("mock:result-commit");
         
         File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
         fileToAdd.createNewFile();
@@ -107,10 +109,93 @@ public class GitConsumerTest extends GitTestSupport {
     public void tagConsumerTest() throws Exception {
 
         Repository repository = getTestRepository();
-        MockEndpoint added = getMockEndpoint("mock:result");
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE);
+            }
+        });
+        
+        Git git = new Git(repository);
+        
+        template.sendBody("direct:create-tag", "");
+        
+        List<Ref> ref = git.tagList().call();
+        boolean tagCreated = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/tags/" + TAG_TEST)) {
+                tagCreated = true;
+            }
+        }
+        assertEquals(tagCreated, true);
+        
+        MockEndpoint added = getMockEndpoint("mock:result-tag");
         
         Thread.sleep(1 * 5000);
-        assertEquals(added.getExchanges().size(), 0);
+        assertEquals(added.getExchanges().size(), 1);
+        repository.close();
+    }
+    
+    @Test
+    public void branchConsumerTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE);
+            }
+        });
+        
+        Git git = new Git(repository);
+        
+        template.sendBody("direct:create-branch", "");
+        
+        List<Ref> ref = git.branchList().call();
+        boolean branchCreated = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/heads/" + BRANCH_TEST)) {
+                branchCreated = true;
+            }
+        }
+        assertEquals(branchCreated, true);
+        
+        MockEndpoint added = getMockEndpoint("mock:result-branch");
+        
+        Thread.sleep(1 * 5000);
+        assertEquals(added.getExchanges().size(), 2);
         repository.close();
     }
     
@@ -127,10 +212,16 @@ public class GitConsumerTest extends GitTestSupport {
                         .to("git://" + GIT_LOCAL_REPO + "?operation=add");
                 from("direct:commit")
                         .to("git://" + GIT_LOCAL_REPO + "?operation=commit");
+                from("direct:create-branch")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=createBranch&branchName=" + BRANCH_TEST);
+                from("direct:create-tag")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=createTag&tagName=" + TAG_TEST);
                 from("git://" + GIT_LOCAL_REPO + "?type=commit")
-                        .to("mock:result");
+                        .to("mock:result-commit");
                 from("git://" + GIT_LOCAL_REPO + "?type=tag")
-                        .to("mock:result");
+                        .to("mock:result-tag");
+                from("git://" + GIT_LOCAL_REPO + "?type=branch")
+                        .to("mock:result-branch");
             } 
         };
     }

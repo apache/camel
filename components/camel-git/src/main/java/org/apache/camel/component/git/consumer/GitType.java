@@ -18,6 +18,6 @@ package org.apache.camel.component.git.consumer;
 
 public enum GitType {
 
-    COMMIT, TAG
+    COMMIT, TAG, BRANCH
 
 }
