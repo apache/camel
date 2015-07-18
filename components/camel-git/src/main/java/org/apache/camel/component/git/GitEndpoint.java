@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "git", title = "Git", syntax = "git:localpath", label = "api,file")
+@UriEndpoint(scheme = "git", title = "Git", syntax = "git://localpath", label = "api,file")
 public class GitEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -52,8 +52,7 @@ public class GitEndpoint extends DefaultEndpoint {
 
 	@Override
 	public Consumer createConsumer(Processor processor) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+        return new GitConsumer(this, processor);
 	}
 
 	@Override
