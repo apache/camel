@@ -37,7 +37,7 @@ public class GitConsumerTest extends GitTestSupport {
     @Test
     public void commitConsumerTest() throws Exception {
 
-    	Repository repository = getTestRepository();
+        Repository repository = getTestRepository();
         MockEndpoint added = getMockEndpoint("mock:result-commit");
         
         File fileToAdd = new File(gitLocalRepo, filenameToAdd);

@@ -25,27 +25,27 @@ import org.apache.camel.component.git.GitEndpoint;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 public class GitCommitConsumer extends AbstractGitConsumer {
-	
-	private List used = new ArrayList();
 
-	public GitCommitConsumer(GitEndpoint endpoint, Processor processor) {
-		super(endpoint, processor);
-	}
+    private List used = new ArrayList();
 
-	@Override
-	protected int poll() throws Exception {
-		int count = 0;
-		Iterable<RevCommit> commits = getGit().log().all().call();
+    public GitCommitConsumer(GitEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+    }
+
+    @Override
+    protected int poll() throws Exception {
+        int count = 0;
+        Iterable<RevCommit> commits = getGit().log().all().call();
         for (RevCommit commit : commits) {
-        	if (!used.contains(commit.getId())) {
-            Exchange e = getEndpoint().createExchange();
-            e.getOut().setBody(commit);
-            getProcessor().process(e);
-            used.add(commit.getId());
-            count++;
-        	}
+            if (!used.contains(commit.getId())) {
+                Exchange e = getEndpoint().createExchange();
+                e.getOut().setBody(commit);
+                getProcessor().process(e);
+                used.add(commit.getId());
+                count++;
+            }
         }
         return count;
-	}
+    }
 
 }

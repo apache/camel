@@ -23,30 +23,29 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.git.GitEndpoint;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.revwalk.RevCommit;
 
 public class GitTagConsumer extends AbstractGitConsumer {
-	
-	private List used = new ArrayList();
 
-	public GitTagConsumer(GitEndpoint endpoint, Processor processor) {
-		super(endpoint, processor);
-	}
+    private List used = new ArrayList();
 
-	@Override
-	protected int poll() throws Exception {
-		int count = 0;
-		List<Ref> call = getGit().tagList().call();
+    public GitTagConsumer(GitEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+    }
+
+    @Override
+    protected int poll() throws Exception {
+        int count = 0;
+        List<Ref> call = getGit().tagList().call();
         for (Ref ref : call) {
-        	if (!used.contains(ref.getName())) {
-            Exchange e = getEndpoint().createExchange();
-            e.getOut().setBody(ref);
-            getProcessor().process(e);
-            used.add(ref.getName());
-            count++;
-        	}
+            if (!used.contains(ref.getName())) {
+                Exchange e = getEndpoint().createExchange();
+                e.getOut().setBody(ref);
+                getProcessor().process(e);
+                used.add(ref.getName());
+                count++;
+            }
         }
         return count;
-	}
+    }
 
 }

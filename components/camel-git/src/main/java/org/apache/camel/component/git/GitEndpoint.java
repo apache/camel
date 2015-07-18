@@ -33,94 +33,127 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(scheme = "git", title = "Git", syntax = "git://localpath", label = "api,file")
 public class GitEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     private String localPath;
+
     @UriPath
     private String branchName;
+
     @UriPath
     private String tagName;
+
     @UriPath(label = "consumer")
     private GitType type;
+
     @UriParam
     private String username;
+
     @UriParam
     private String password;
+
     @UriParam
     private String remotePath;
-    @UriParam
+
+    @UriParam(label = "producer")
     private String operation;
 
     public GitEndpoint(String uri, GitComponent component) {
         super(uri, component);
     }
-    
-	@Override
-	public Producer createProducer() throws Exception {
-		return new GitProducer(this);
-	}
 
-	@Override
-	public Consumer createConsumer(Processor processor) throws Exception {
-	    if (type == GitType.COMMIT) return new GitCommitConsumer(this, processor);
-	    else if (type == GitType.TAG) return new GitTagConsumer(this, processor);
-	    else if (type == GitType.BRANCH) return new GitBranchConsumer(this, processor);
-	    else throw new IllegalArgumentException("Cannot create producer with type " + type);
-	}
+    @Override
+    public Producer createProducer() throws Exception {
+        return new GitProducer(this);
+    }
 
-	@Override
-	public boolean isSingleton() {
-		// TODO Auto-generated method stub
-		return false;
-	} 
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        if (type == GitType.COMMIT) {
+            return new GitCommitConsumer(this, processor);
+        } else if (type == GitType.TAG) {
+            return new GitTagConsumer(this, processor);
+        } else if (type == GitType.BRANCH) {
+            return new GitBranchConsumer(this, processor);
+        } else {
+            throw new IllegalArgumentException("Cannot create producer with type " + type);
+        }
+    }
 
-	public String getRemotePath() {
-		return remotePath;
-	}
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
 
-	public void setRemotePath(String remotePath) {
-		this.remotePath = remotePath;
-	}
+    /**
+     * The remote repository path
+     */
+    public String getRemotePath() {
+        return remotePath;
+    }
 
-	public String getBranchName() {
-		return branchName;
-	}
+    public void setRemotePath(String remotePath) {
+        this.remotePath = remotePath;
+    }
 
-	public void setBranchName(String branchName) {
-		this.branchName = branchName;
-	}
+    /**
+     * The branch name to work on
+     */
+    public String getBranchName() {
+        return branchName;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    /**
+     * Remote repository username
+     */
+    public String getUsername() {
+        return username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    /**
+     * Remote repository password
+     */
+    public String getPassword() {
+        return password;
+    }
 
-	public String getLocalPath() {
-		return localPath;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setLocalPath(String localPath) {
-		this.localPath = localPath;
-	}
+    /**
+     * Local repository path
+     */
+    public String getLocalPath() {
+        return localPath;
+    }
 
-	public String getOperation() {
-		return operation;
-	}
+    public void setLocalPath(String localPath) {
+        this.localPath = localPath;
+    }
 
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
+    /**
+     * The operation to do on the repository
+     */
+    public String getOperation() {
+        return operation;
+    }
 
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    /**
+     * The consumer type
+     */
     public GitType getType() {
         return type;
     }
@@ -129,6 +162,9 @@ public class GitEndpoint extends DefaultEndpoint {
         this.type = type;
     }
 
+    /**
+     * The tag name to work on
+     */
     public String getTagName() {
         return tagName;
     }
@@ -136,5 +172,5 @@ public class GitEndpoint extends DefaultEndpoint {
     public void setTagName(String tagName) {
         this.tagName = tagName;
     }
-   
+
 }

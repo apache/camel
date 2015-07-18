@@ -21,7 +21,6 @@ import java.io.IOException;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.git.GitEndpoint;
-import org.apache.camel.component.git.producer.GitProducer;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
@@ -30,20 +29,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
-    
-    private final GitEndpoint endpoint;
-    
-    private Repository repo;
-    
-    private Git git;
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractGitConsumer.class);
+
+    private final GitEndpoint endpoint;
+
+    private Repository repo;
+
+    private Git git;
 
     public AbstractGitConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -58,28 +57,27 @@ public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
         git.close();
     }
 
-    private Repository getLocalRepository() throws IOException{
+    private Repository getLocalRepository() throws IOException {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         Repository repo = null;
-                try {
-                        repo = builder.setGitDir(new File(endpoint.getLocalPath(), ".git"))
-                                .readEnvironment() // scan environment GIT_* variables
-                                .findGitDir() // scan up the file system tree
-                                .build();
-                } catch (IOException e) {
-                        LOG.error("There was an error, cannot open " + endpoint.getLocalPath() + " repository");
-                        throw e;
-                }
-                return repo;
+        try {
+            repo = builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment() // scan environment GIT_* variables
+                    .findGitDir() // scan up the file system tree
+                    .build();
+        } catch (IOException e) {
+            LOG.error("There was an error, cannot open " + endpoint.getLocalPath() + " repository");
+            throw e;
+        }
+        return repo;
     }
-    
+
     protected Repository getRepository() {
         return repo;
     }
-    
+
     protected Git getGit() {
         return git;
     }
-    
+
     protected abstract int poll() throws Exception;
 }

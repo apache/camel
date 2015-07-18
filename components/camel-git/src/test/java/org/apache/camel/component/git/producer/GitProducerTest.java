@@ -36,14 +36,14 @@ public class GitProducerTest extends GitTestSupport {
     
     @Test
     public void cloneTest() throws Exception {
-        template.sendBody("direct:clone","");
+        template.sendBody("direct:clone", "");
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
     }
     
     @Test
     public void initTest() throws Exception {
-        template.sendBody("direct:init","");
+        template.sendBody("direct:init", "");
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
     }
@@ -51,8 +51,8 @@ public class GitProducerTest extends GitTestSupport {
     @Test
     public void addTest() throws Exception {
 
-    	Repository repository = getTestRepository();
-        
+        Repository repository = getTestRepository();
+       
         File fileToAdd = new File(gitLocalRepo, filenameToAdd);
         fileToAdd.createNewFile();
         
@@ -124,7 +124,7 @@ public class GitProducerTest extends GitTestSupport {
     @Test
     public void commitTest() throws Exception {
 
-    	Repository repository = getTestRepository();
+        Repository repository = getTestRepository();
         
         File fileToAdd = new File(gitLocalRepo, filenameToAdd);
         fileToAdd.createNewFile();
@@ -161,7 +161,7 @@ public class GitProducerTest extends GitTestSupport {
     @Test
     public void commitBranchTest() throws Exception {
 
-    	Repository repository = getTestRepository();
+        Repository repository = getTestRepository();
         
         File fileToAdd = new File(gitLocalRepo, filenameToAdd);
         fileToAdd.createNewFile();
@@ -206,8 +206,12 @@ public class GitProducerTest extends GitTestSupport {
         logs = git.log().call();
         count = 0;
         for (RevCommit rev : logs) {
-        	if (count == 0) assertEquals(rev.getShortMessage(), commitMessageBranch);
-        	if (count == 1) assertEquals(rev.getShortMessage(), commitMessage);
+            if (count == 0) {
+                assertEquals(rev.getShortMessage(), commitMessageBranch);
+            }
+            if (count == 1) {
+                assertEquals(rev.getShortMessage(), commitMessage);
+            }
             count++;
         }
         assertEquals(count, 2);
@@ -306,8 +310,12 @@ public class GitProducerTest extends GitTestSupport {
         logs = git.log().call();
         count = 0;
         for (RevCommit rev : logs) {
-            if (count == 0) assertEquals(rev.getShortMessage(), commitMessageAll);
-            if (count == 1) assertEquals(rev.getShortMessage(), commitMessage);
+            if (count == 0) {
+                assertEquals(rev.getShortMessage(), commitMessageAll);
+            }
+            if (count == 1) {
+                assertEquals(rev.getShortMessage(), commitMessage);
+            }
             count++;
         }
         assertEquals(count, 2);
@@ -372,8 +380,12 @@ public class GitProducerTest extends GitTestSupport {
         logs = git.log().call();
         count = 0;
         for (RevCommit rev : logs) {
-            if (count == 0) assertEquals(rev.getShortMessage(), commitMessageAll);
-            if (count == 1) assertEquals(rev.getShortMessage(), commitMessage);
+            if (count == 0) {
+                assertEquals(rev.getShortMessage(), commitMessageAll);
+            }
+            if (count == 1) {
+                assertEquals(rev.getShortMessage(), commitMessage);
+            }
             count++;
         }
         assertEquals(count, 2);
@@ -667,8 +679,12 @@ public class GitProducerTest extends GitTestSupport {
         revCommits = template.requestBody("direct:log-branch", "", Iterable.class);
         int count = 0;
         for (RevCommit rev : revCommits) {
-            if (count == 0) assertEquals(rev.getShortMessage(), commitMessageAll);
-            if (count == 1) assertEquals(rev.getShortMessage(), commitMessage);
+            if (count == 0) {
+                assertEquals(rev.getShortMessage(), commitMessageAll);
+            }
+            if (count == 1) {
+                assertEquals(rev.getShortMessage(), commitMessage);
+            }
             count++;
         }
         

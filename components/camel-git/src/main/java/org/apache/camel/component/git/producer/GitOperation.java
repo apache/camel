@@ -18,18 +18,18 @@ package org.apache.camel.component.git.producer;
 
 public interface GitOperation {
 
-    public final static String CLONE_OPERATION = "clone";
-    public final static String INIT_OPERATION = "init";
-    public final static String ADD_OPERATION = "add";
-    public final static String REMOVE_OPERATION = "remove";
-    public final static String COMMIT_OPERATION = "commit";
-    public final static String COMMIT_ALL_OPERATION = "commitAll";
-    public final static String CREATE_BRANCH_OPERATION = "createBranch";
-    public final static String DELETE_BRANCH_OPERATION = "deleteBranch";
-    public final static String CREATE_TAG_OPERATION = "createTag";
-    public final static String DELETE_TAG_OPERATION = "deleteTag";
-    public final static String STATUS_OPERATION = "status";
-    public final static String LOG_OPERATION = "log";
-    public final static String PUSH_OPERATION = "push";
-    public final static String PULL_OPERATION = "pull";
+    String CLONE_OPERATION = "clone";
+    String INIT_OPERATION = "init";
+    String ADD_OPERATION = "add";
+    String REMOVE_OPERATION = "remove";
+    String COMMIT_OPERATION = "commit";
+    String COMMIT_ALL_OPERATION = "commitAll";
+    String CREATE_BRANCH_OPERATION = "createBranch";
+    String DELETE_BRANCH_OPERATION = "deleteBranch";
+    String CREATE_TAG_OPERATION = "createTag";
+    String DELETE_TAG_OPERATION = "deleteTag";
+    String STATUS_OPERATION = "status";
+    String LOG_OPERATION = "log";
+    String PUSH_OPERATION = "push";
+    String PULL_OPERATION = "pull";
 }

@@ -75,7 +75,7 @@ public class GitRemoteProducerTest extends GitTestSupport {
                 from("direct:commit")
                         .to("git://" + gitLocalRepo + "?operation=commit");
                 from("direct:push")
-                        .to("git://" + gitLocalRepo + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx" );
+                        .to("git://" + gitLocalRepo + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx");
             } 
         };
     }
