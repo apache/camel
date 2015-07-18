@@ -50,6 +50,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         // for ftp we need to use higher interval/checkout that for files
         setReadLockTimeout(20000);
         setReadLockCheckInterval(5000);
+        // explicitly set RemoteFilePollingConsumerPollStrategy otherwise
+        // DefaultPollingConsumerPollStrategy is be used
+        setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
 
     public RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileConfiguration configuration) {
@@ -58,6 +61,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         // for ftp we need to use higher interval/checkout that for files
         setReadLockTimeout(20000);
         setReadLockCheckInterval(5000);
+        // explicitly set RemoteFilePollingConsumerPollStrategy otherwise
+        // DefaultPollingConsumerPollStrategy is be used
+        setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
 
     @Override
