@@ -17,14 +17,24 @@
 package org.apache.camel.component.github.producer;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.junit.Test;
 
 public class GitProducerTest extends CamelTestSupport{
 
 	private final static String GIT_LOCAL_REPO = "pippo";
+	private final static String FILENAME_TO_ADD = "filetest.txt";
 	
     @Override
     public void setUp() throws Exception {
@@ -56,6 +66,28 @@ public class GitProducerTest extends CamelTestSupport{
         assertEquals(gitDir.exists(), true);
     }
     
+    @Test
+    public void addTest() throws Exception {
+
+    	Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        repository.close();
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {            
@@ -65,8 +97,22 @@ public class GitProducerTest extends CamelTestSupport{
                         .to("git://https://github.com/oscerd/json-webserver-example.git?localPath=" + GIT_LOCAL_REPO + "&operation=clone");
                 from("direct:init")
                         .to("git://https://github.com/oscerd/json-webserver-example.git?localPath=" + GIT_LOCAL_REPO + "&operation=init");
+                from("direct:add")
+                        .to("git://https://github.com/oscerd/json-webserver-example.git?localPath=" + GIT_LOCAL_REPO + "&operation=add");
             } 
         };
+    }
+    
+    private Repository getTestRepository() throws IOException, IllegalStateException, GitAPIException {
+        File gitRepo = new File(GIT_LOCAL_REPO, ".git");
+        Git.init().setDirectory(new File(GIT_LOCAL_REPO,"")).call();
+        // now open the resulting repository with a FileRepositoryBuilder
+        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        Repository repo = builder.setGitDir(gitRepo)
+                .readEnvironment() // scan environment GIT_* variables
+                .findGitDir() // scan up the file system tree
+                .build();
+        return repo;
     }
     
     static public boolean deleteDirectory(File path) {
