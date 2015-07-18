@@ -80,8 +80,8 @@ public class JsonPathEngine {
                 // json encoding specified in header
                 return path.read(is, jsonEncoding, configuration);
             } else {
-                // no json encoding specified --> assume json encoding is unicode and determine the specific unicode encoding according to RFC-4627
-                // this is a temporary solution, it can be removed as soon as jsonpath offers the encoding detection
+                // No json encoding specified --> assume json encoding is unicode and determine the specific unicode encoding according to RFC-4627.
+                // This is a temporary solution, it can be removed as soon as jsonpath offers the encoding detection
                 JsonStream jsonStream = new JsonStream(is);
                 return path.read(jsonStream, jsonStream.getEncoding().name(), configuration);
             }
