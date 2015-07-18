@@ -1,9 +1,11 @@
-package org.apache.camel.component.git;
+package org.apache.camel.component.git.producer;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.git.GitConstants;
+import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jgit.api.Git;
@@ -23,15 +25,32 @@ public class GitProducer extends DefaultProducer{
     private static final Logger LOG = LoggerFactory.getLogger(GitProducer.class);
     private final GitEndpoint endpoint;
     
+    private Repository repo;
+    
+    private Git git;
+    
 	public GitProducer(GitEndpoint endpoint) {
 		super(endpoint);
 		this.endpoint = endpoint;
 	}
+	
+	    @Override
+	    protected void doStart() throws Exception {
+	        super.doStart();
+	        this.repo = getLocalRepository();
+	        this.git = new Git(repo);
+	    }
+
+	    @Override
+	    protected void doStop() throws Exception {
+	        super.doStop();
+	        repo.close();
+	        git.close();
+	    }
 
 	@Override
 	public void process(Exchange exchange) throws Exception {
         String operation;	
-        Repository repo;
 	    if (ObjectHelper.isEmpty(endpoint.getOperation())) {
 	        operation = exchange.getIn().getHeader(GitConstants.GIT_OPERATION, String.class);
 	    } else {
@@ -40,7 +59,6 @@ public class GitProducer extends DefaultProducer{
     	if (ObjectHelper.isEmpty(endpoint.getLocalPath())) {
     		throw new IllegalArgumentException("Local path must specified to execute " + operation);
     	}
-    	repo = getLocalRepository();
 	    
 	    switch (operation) {
 	    case GitOperation.CLONE_OPERATION:
@@ -52,49 +70,48 @@ public class GitProducer extends DefaultProducer{
 	    	break;
 
 	    case GitOperation.ADD_OPERATION:
-	    	doAdd(exchange, operation, repo);
+	    	doAdd(exchange, operation);
 	    	break;
 	    	
             case GitOperation.REMOVE_OPERATION:
-                doRemove(exchange, operation, repo);
+                doRemove(exchange, operation);
                 break;
 	    	
 	    case GitOperation.COMMIT_OPERATION:
-	    	doCommit(exchange, operation, repo);
+	    	doCommit(exchange, operation);
 	    	break;
 	    
             case GitOperation.COMMIT_ALL_OPERATION:
-                doCommitAll(exchange, operation, repo);
+                doCommitAll(exchange, operation);
                 break;
                 
             case GitOperation.CREATE_BRANCH_OPERATION:
-                doCreateBranch(exchange, operation, repo);
+                doCreateBranch(exchange, operation);
                 break;
                 
             case GitOperation.DELETE_BRANCH_OPERATION:
-                doDeleteBranch(exchange, operation, repo);
+                doDeleteBranch(exchange, operation);
                 break;
                 
             case GitOperation.STATUS_OPERATION:
-                doStatus(exchange, operation, repo);
+                doStatus(exchange, operation);
                 break;
                 
             case GitOperation.LOG_OPERATION:
-                doLog(exchange, operation, repo);
+                doLog(exchange, operation);
                 break;
                 
             case GitOperation.PUSH_OPERATION:
-                doPush(exchange, operation, repo);
+                doPush(exchange, operation);
                 break;
                             
             case GitOperation.PULL_OPERATION:
-                doPull(exchange, operation, repo);
+                doPull(exchange, operation);
                 break;
 	    }
-	    repo.close();
 	}
 	
-    protected void doClone(Exchange exchange, String operation) {
+    protected void doClone(Exchange exchange, String operation) throws Exception {
     	Git result = null;
     	if (ObjectHelper.isEmpty(endpoint.getLocalPath())) {
     		throw new IllegalArgumentException("Local path must specified to execute " + operation);
@@ -108,13 +125,13 @@ public class GitProducer extends DefaultProducer{
     		}
 		} catch (Exception e) {
 			LOG.error("There was an error in Git " + operation + " operation");
-			e.printStackTrace();
+			throw e;
 		} finally {
 			result.close();
 		}
     }
 
-    protected void doInit(Exchange exchange, String operation) {
+    protected void doInit(Exchange exchange, String operation) throws Exception {
     	Git result = null;
     	if (ObjectHelper.isEmpty(endpoint.getLocalPath())) {
     		throw new IllegalArgumentException("Local path must specified to execute " + operation);
@@ -123,14 +140,13 @@ public class GitProducer extends DefaultProducer{
 			result = Git.init().setDirectory(new File(endpoint.getLocalPath(),"")).setBare(false).call();
 		} catch (Exception e) {
 			LOG.error("There was an error in Git " + operation + " operation");
-			e.printStackTrace();
+			throw e;
 		} finally {
 			result.close();
 		}
     }
     
-    protected void doAdd(Exchange exchange, String operation, Repository repo) {
-    	Git git = null;
+    protected void doAdd(Exchange exchange, String operation) throws Exception {
     	String fileName = null;
     	if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_FILE_NAME))) {
     		fileName = exchange.getIn().getHeader(GitConstants.GIT_FILE_NAME, String.class);
@@ -138,19 +154,17 @@ public class GitProducer extends DefaultProducer{
     		throw new IllegalArgumentException("File name must be specified to execute " + operation);
     	}
     	try {
-    		git = new Git(repo);
                 if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                     git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
                 }
 			git.add().addFilepattern(fileName).call();
 		} catch (Exception e) {
 			LOG.error("There was an error in Git " + operation + " operation");
-			e.printStackTrace();
+			throw e;
 		}
     }
     
-    protected void doRemove(Exchange exchange, String operation, Repository repo) {
-        Git git = null;
+    protected void doRemove(Exchange exchange, String operation) throws Exception {
         String fileName = null;
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_FILE_NAME))) {
                 fileName = exchange.getIn().getHeader(GitConstants.GIT_FILE_NAME, String.class);
@@ -158,19 +172,17 @@ public class GitProducer extends DefaultProducer{
                 throw new IllegalArgumentException("File name must be specified to execute " + operation);
         }
         try {
-                git = new Git(repo);
                 if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                     git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
                 }
                         git.rm().addFilepattern(fileName).call();
                 } catch (Exception e) {
                         LOG.error("There was an error in Git " + operation + " operation");
-                        e.printStackTrace();
+                        throw e;
                 }
     }
     
-    protected void doCommit(Exchange exchange, String operation, Repository repo) {
-    	Git git = null;
+    protected void doCommit(Exchange exchange, String operation) throws Exception {
     	String commitMessage = null;
     	if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_MESSAGE))) {
     		commitMessage = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_MESSAGE, String.class);
@@ -178,19 +190,17 @@ public class GitProducer extends DefaultProducer{
     		throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
     	}
     	try {
-            git = new Git(repo);
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
     		git.commit().setMessage(commitMessage).call();
 		} catch (Exception e) {
 			LOG.error("There was an error in Git " + operation + " operation");
-			e.printStackTrace();
+			throw e;
 		}
     }
     
-    protected void doCommitAll(Exchange exchange, String operation, Repository repo) {
-        Git git = null;
+    protected void doCommitAll(Exchange exchange, String operation) throws Exception {
         String commitMessage = null;
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_MESSAGE))) {
                 commitMessage = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_MESSAGE, String.class);
@@ -198,82 +208,71 @@ public class GitProducer extends DefaultProducer{
                 throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
         try {
-            git = new Git(repo);
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
                 git.commit().setAll(true).setMessage(commitMessage).call();
                 } catch (Exception e) {
                         LOG.error("There was an error in Git " + operation + " operation");
-                        e.printStackTrace();
+                        throw e;
                 }
     }
     
-    protected void doCreateBranch(Exchange exchange, String operation, Repository repo) {
-        Git git = null;
+    protected void doCreateBranch(Exchange exchange, String operation) throws Exception {
         if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
             throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
         } 
         try {
-            git = new Git(repo);
             git.branchCreate().setName(endpoint.getBranchName()).call();
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
-            e.printStackTrace();
+            throw e;
         }
     }
     
-    protected void doDeleteBranch(Exchange exchange, String operation, Repository repo) {
-        Git git = null;
+    protected void doDeleteBranch(Exchange exchange, String operation) throws Exception {
         if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
             throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
         } 
         try {
-            git = new Git(repo);
             git.branchDelete().setBranchNames(endpoint.getBranchName()).call();
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
-            e.printStackTrace();
+            throw e;
         }
     }
     
-    protected void doStatus(Exchange exchange, String operation, Repository repo) {
-        Git git = null;
+    protected void doStatus(Exchange exchange, String operation) throws Exception {
         Status status = null;
         try {
-            git = new Git(repo);
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
                 status = git.status().call();
                 } catch (Exception e) {
                         LOG.error("There was an error in Git " + operation + " operation");
-                        e.printStackTrace();
+                        throw e;
                 }
         exchange.getOut().setBody(status);
     }
     
-    protected void doLog(Exchange exchange, String operation, Repository repo) {
-        Git git = null;
+    protected void doLog(Exchange exchange, String operation) throws Exception {
         Iterable<RevCommit> revCommit = null;
         try {
-            git = new Git(repo);
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
                 revCommit = git.log().call();
                 } catch (Exception e) {
                         LOG.error("There was an error in Git " + operation + " operation");
-                        e.printStackTrace();
+                        throw e;
                 }
         exchange.getOut().setBody(revCommit);
     }
     
-    protected void doPush(Exchange exchange, String operation, Repository repo) {
-        Git git = null;
+    protected void doPush(Exchange exchange, String operation) throws Exception {
         Iterable<PushResult> result = null;
         try {
-            git = new Git(repo);
             if (ObjectHelper.isEmpty(endpoint.getRemotePath())) {
                 throw new IllegalArgumentException("Remote path must be specified to execute " + operation);
             } 
@@ -288,16 +287,14 @@ public class GitProducer extends DefaultProducer{
             }
                 } catch (Exception e) {
                         LOG.error("There was an error in Git " + operation + " operation");
-                        e.printStackTrace();
+                        throw e;
                 }
         exchange.getOut().setBody(result);
     }
     
-    protected void doPull(Exchange exchange, String operation, Repository repo) {
-        Git git = null;
+    protected void doPull(Exchange exchange, String operation) throws Exception {
         PullResult result = null;
         try {
-            git = new Git(repo);
             if (ObjectHelper.isEmpty(endpoint.getRemotePath())) {
                 throw new IllegalArgumentException("Remote path must be specified to execute " + operation);
             } 
@@ -312,7 +309,7 @@ public class GitProducer extends DefaultProducer{
             }
                 } catch (Exception e) {
                         LOG.error("There was an error in Git " + operation + " operation");
-                        e.printStackTrace();
+                        throw e;
                 }
         exchange.getOut().setBody(result);
     }

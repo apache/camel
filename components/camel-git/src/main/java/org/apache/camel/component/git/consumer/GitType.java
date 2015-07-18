@@ -14,20 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.git;
+package org.apache.camel.component.git.consumer;
 
-public interface GitOperation {
+public enum GitType {
 
-    public final static String CLONE_OPERATION = "clone";
-    public final static String INIT_OPERATION = "init";
-    public final static String ADD_OPERATION = "add";
-    public final static String REMOVE_OPERATION = "remove";
-    public final static String COMMIT_OPERATION = "commit";
-    public final static String COMMIT_ALL_OPERATION = "commitAll";
-    public final static String CREATE_BRANCH_OPERATION = "createBranch";
-    public final static String DELETE_BRANCH_OPERATION = "deleteBranch";
-    public final static String STATUS_OPERATION = "status";
-    public final static String LOG_OPERATION = "log";
-    public final static String PUSH_OPERATION = "push";
-    public final static String PULL_OPERATION = "pull";
+    COMMIT
+
 }

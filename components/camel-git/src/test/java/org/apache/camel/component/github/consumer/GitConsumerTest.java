@@ -33,7 +33,7 @@ import org.junit.Test;
 public class GitConsumerTest extends GitTestSupport {
     
     @Test
-    public void commitTest() throws Exception {
+    public void commitConsumerTest() throws Exception {
 
     	Repository repository = getTestRepository();
         MockEndpoint added = getMockEndpoint("mock:result");
@@ -116,7 +116,7 @@ public class GitConsumerTest extends GitTestSupport {
                         .to("git://" + GIT_LOCAL_REPO + "?operation=add");
                 from("direct:commit")
                         .to("git://" + GIT_LOCAL_REPO + "?operation=commit");
-                from("git://" + GIT_LOCAL_REPO)
+                from("git://" + GIT_LOCAL_REPO + "?type=commit")
                         .to("mock:result");
             } 
         };
