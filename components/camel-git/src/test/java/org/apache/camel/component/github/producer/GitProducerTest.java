@@ -57,8 +57,8 @@ public class GitProducerTest extends CamelTestSupport {
     @Override
     public void tearDown() throws Exception {
     	super.tearDown();
-//        File path = new File(GIT_LOCAL_REPO);
-//        deleteDirectory(path);
+        File path = new File(GIT_LOCAL_REPO);
+        deleteDirectory(path);
     }
     
     @Test
@@ -330,6 +330,59 @@ public class GitProducerTest extends CamelTestSupport {
         repository.close();
     }
     
+    @Test
+    public void deleteBranchTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE);
+            }
+        });
+        
+        Git git = new Git(repository);
+        
+        template.sendBody("direct:create-branch", "");
+        
+        List<Ref> ref = git.branchList().call();
+        boolean branchCreated = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/heads/" + BRANCH_TEST)) {
+                branchCreated = true;
+            }
+        }
+        assertEquals(branchCreated, true);
+        
+        template.sendBody("direct:delete-branch", "");
+        
+        ref = git.branchList().call();
+        branchCreated = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/heads/" + BRANCH_TEST)) {
+                branchCreated = true;
+            }
+        }
+        assertEquals(branchCreated, false);
+        repository.close();
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {            
@@ -353,6 +406,8 @@ public class GitProducerTest extends CamelTestSupport {
                         .to("git://" + GIT_LOCAL_REPO + "?operation=commit&branchName=" + BRANCH_TEST);
                 from("direct:create-branch")
                         .to("git://" + GIT_LOCAL_REPO + "?operation=createBranch&branchName=" + BRANCH_TEST);
+                from("direct:delete-branch")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=deleteBranch&branchName=" + BRANCH_TEST);
             } 
         };
     }

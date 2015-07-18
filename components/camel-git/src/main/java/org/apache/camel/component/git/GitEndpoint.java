@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 public class GitEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
-    private String remotePath;
+    private String localPath;
     @UriPath(label = "consumer")
     private String branchName;
     @UriParam
@@ -37,7 +37,7 @@ public class GitEndpoint extends DefaultEndpoint {
     @UriParam
     private String password;
     @UriParam
-    private String localPath;
+    private String remotePath;
     @UriParam
     private String operation;
 

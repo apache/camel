@@ -60,6 +60,10 @@ public class GitProducer extends DefaultProducer{
             case GitOperation.CREATE_BRANCH_OPERATION:
                 doCreateBranch(exchange, operation, repo);
                 break;
+                
+            case GitOperation.DELETE_BRANCH_OPERATION:
+                doDeleteBranch(exchange, operation, repo);
+                break;
 	    }
 	    repo.close();
 	}
@@ -167,6 +171,20 @@ public class GitProducer extends DefaultProducer{
         try {
             git = new Git(repo);
             git.branchCreate().setName(endpoint.getBranchName()).call();
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            e.printStackTrace();
+        }
+    }
+    
+    protected void doDeleteBranch(Exchange exchange, String operation, Repository repo) {
+        Git git = null;
+        if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
+            throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
+        } 
+        try {
+            git = new Git(repo);
+            git.branchDelete().setBranchNames(endpoint.getBranchName()).call();
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
             e.printStackTrace();
