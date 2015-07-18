@@ -299,7 +299,10 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
         private String doGetPropertyValue(String key) {
             String value = null;
 
-            if (propertiesComponent.getSystemPropertiesMode() == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            // override is the default mode
+            int mode = propertiesComponent != null ? propertiesComponent.getSystemPropertiesMode() : PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE;
+
+            if (mode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 value = System.getProperty(key);
                 if (value != null) {
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
@@ -313,7 +316,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                 }
             }
 
-            if (value == null && propertiesComponent.getSystemPropertiesMode() == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
+            if (value == null && mode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 value = System.getProperty(key);
                 if (value != null) {
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
