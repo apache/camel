@@ -98,6 +98,57 @@ public class GitProducerTest extends CamelTestSupport {
     }
     
     @Test
+    public void removeTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        template.send("direct:remove", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE);
+            }
+        });
+        Iterable<RevCommit> logs = new Git(repository).log()
+                .call();
+        int count = 0;
+        for (RevCommit rev : logs) {
+            assertEquals(rev.getShortMessage(), COMMIT_MESSAGE);
+            count++;
+        }
+        assertEquals(count, 1);
+        
+        status = new Git(repository).status().call();
+
+        assertFalse(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        repository.close();
+    }
+    
+    @Test
     public void commitTest() throws Exception {
 
     	Repository repository = getTestRepository();
@@ -189,6 +240,8 @@ public class GitProducerTest extends CamelTestSupport {
         assertEquals(count, 2);
         repository.close();
     }
+    
+
     
     @Test
     public void commitAllTest() throws Exception {
@@ -285,6 +338,86 @@ public class GitProducerTest extends CamelTestSupport {
             count++;
         }
         assertEquals(count, 2);
+        repository.close();
+    }
+    
+    @Test
+    public void removeFileBranchTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE);
+            }
+        });
+        Iterable<RevCommit> logs = new Git(repository).log()
+                .call();
+        int count = 0;
+        for (RevCommit rev : logs) {
+            assertEquals(rev.getShortMessage(), COMMIT_MESSAGE);
+            count++;
+        }
+        assertEquals(count, 1);
+        
+        Git git = new Git(repository);
+        git.checkout().setCreateBranch(true).setName(BRANCH_TEST).
+        setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
+        
+        File fileToAdd1 = new File(GIT_LOCAL_REPO, FILENAME_BRANCH_TO_ADD);
+        fileToAdd1.createNewFile();
+        
+        template.send("direct:add-on-branch", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_BRANCH_TO_ADD);
+            }
+        });
+        
+        template.send("direct:commit-all-branch", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE_ALL);
+            }
+        });
+        logs = git.log().call();
+        count = 0;
+        for (RevCommit rev : logs) {
+            if (count == 0) assertEquals(rev.getShortMessage(), COMMIT_MESSAGE_ALL);
+            if (count == 1) assertEquals(rev.getShortMessage(), COMMIT_MESSAGE);
+            count++;
+        }
+        assertEquals(count, 2);
+        
+        template.send("direct:remove-on-branch", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        
+        git = new Git(repository);
+        git.checkout().setCreateBranch(false).setName(BRANCH_TEST).call();
+        
+        status = git.status().call();
+        assertFalse(status.getAdded().contains(FILENAME_TO_ADD));
+        
         repository.close();
     }
     
@@ -394,7 +527,11 @@ public class GitProducerTest extends CamelTestSupport {
                         .to("git://" + GIT_LOCAL_REPO + "?operation=init");
                 from("direct:add")
                         .to("git://" + GIT_LOCAL_REPO + "?operation=add");
+                from("direct:remove")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=rm");
                 from("direct:add-on-branch")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=add&branchName=" + BRANCH_TEST);
+                from("direct:remove-on-branch")
                         .to("git://" + GIT_LOCAL_REPO + "?operation=add&branchName=" + BRANCH_TEST);
                 from("direct:commit")
                         .to("git://" + GIT_LOCAL_REPO + "?operation=commit");

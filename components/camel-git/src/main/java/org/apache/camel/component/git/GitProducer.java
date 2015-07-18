@@ -49,6 +49,10 @@ public class GitProducer extends DefaultProducer{
 	    	doAdd(exchange, operation, repo);
 	    	break;
 	    	
+            case GitOperation.REMOVE_OPERATION:
+                doRemove(exchange, operation, repo);
+                break;
+	    	
 	    case GitOperation.COMMIT_OPERATION:
 	    	doCommit(exchange, operation, repo);
 	    	break;
@@ -121,6 +125,26 @@ public class GitProducer extends DefaultProducer{
 			LOG.error("There was an error in Git " + operation + " operation");
 			e.printStackTrace();
 		}
+    }
+    
+    protected void doRemove(Exchange exchange, String operation, Repository repo) {
+        Git git = null;
+        String fileName = null;
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_FILE_NAME))) {
+                fileName = exchange.getIn().getHeader(GitConstants.GIT_FILE_NAME, String.class);
+        } else {
+                throw new IllegalArgumentException("File name must be specified to execute " + operation);
+        }
+        try {
+                git = new Git(repo);
+                if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
+                    git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                }
+                        git.rm().addFilepattern(fileName).call();
+                } catch (Exception e) {
+                        LOG.error("There was an error in Git " + operation + " operation");
+                        e.printStackTrace();
+                }
     }
     
     protected void doCommit(Exchange exchange, String operation, Repository repo) {
