@@ -36,6 +36,8 @@ public class GitEndpoint extends DefaultEndpoint {
     private String localPath;
     @UriPath
     private String branchName;
+    @UriPath
+    private String tagName;
     @UriPath(label = "consumer")
     private GitType type;
     @UriParam
@@ -124,4 +126,13 @@ public class GitEndpoint extends DefaultEndpoint {
     public void setType(GitType type) {
         this.type = type;
     }
+
+    public String getTagName() {
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
+    }
+   
 }

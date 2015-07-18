@@ -17,23 +17,15 @@
 package org.apache.camel.component.git.producer;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.git.GitConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
+import org.apache.camel.component.git.GitTestSupport;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.PushResult;
 import org.junit.Ignore;
 import org.junit.Test;

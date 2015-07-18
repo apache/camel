@@ -108,6 +108,10 @@ public class GitProducer extends DefaultProducer{
             case GitOperation.PULL_OPERATION:
                 doPull(exchange, operation);
                 break;
+                
+            case GitOperation.CREATE_TAG_OPERATION:
+                doCreateTag(exchange, operation);
+                break;
 	    }
 	}
 	
@@ -312,6 +316,18 @@ public class GitProducer extends DefaultProducer{
                         throw e;
                 }
         exchange.getOut().setBody(result);
+    }
+    
+    protected void doCreateTag(Exchange exchange, String operation) throws Exception {
+        if (ObjectHelper.isEmpty(endpoint.getTagName())) {
+            throw new IllegalArgumentException("Tag Name must be specified to execute " + operation);
+        } 
+        try {
+            git.tag().setName(endpoint.getTagName()).call();
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
     }
     
     private Repository getLocalRepository(){

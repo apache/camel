@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.git.producer;
+package org.apache.camel.component.git;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +42,8 @@ public class GitTestSupport extends CamelTestSupport {
     public final static String COMMIT_MESSAGE_BRANCH = "Test commit on a branch";
 
     public final static String BRANCH_TEST = "testBranch";
+    
+    public final static String TAG_TEST = "testTag";
 
     @Override
     public void setUp() throws Exception {

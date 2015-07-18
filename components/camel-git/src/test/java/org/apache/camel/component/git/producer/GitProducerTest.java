@@ -17,24 +17,19 @@
 package org.apache.camel.component.git.producer;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.git.GitConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.component.git.GitTestSupport;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.PushResult;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class GitProducerTest extends GitTestSupport {
@@ -680,6 +675,48 @@ public class GitProducerTest extends GitTestSupport {
         repository.close();
     }
     
+    @Test
+    public void createTagTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE);
+            }
+        });
+        
+        Git git = new Git(repository);
+        
+        template.sendBody("direct:create-tag", "");
+        
+        List<Ref> ref = git.tagList().call();
+        boolean branchCreated = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/tags/" + TAG_TEST)) {
+                branchCreated = true;
+            }
+        }
+        assertEquals(branchCreated, true);
+        repository.close();
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {            
@@ -717,6 +754,8 @@ public class GitProducerTest extends GitTestSupport {
                         .to("git://" + GIT_LOCAL_REPO + "?operation=log");
                 from("direct:log-branch")
                         .to("git://" + GIT_LOCAL_REPO + "?operation=log&branchName=" + BRANCH_TEST);
+                from("direct:create-tag")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=createTag&tagName=" + TAG_TEST);
             } 
         };
     }
