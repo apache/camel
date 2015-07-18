@@ -104,6 +104,7 @@
     <module>camel-gae</module>
     <module>camel-ganglia</module>
     <module>camel-geocoder</module>
+    <module>camel-git</module>
     <module>camel-github</module>
     <module>camel-google-calendar</module>
     <module>camel-google-drive</module>

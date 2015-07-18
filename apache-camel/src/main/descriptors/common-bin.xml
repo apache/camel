@@ -76,6 +76,7 @@
         <include>org.apache.camel:camel-gae</include>
         <include>org.apache.camel:camel-ganglia</include>
         <include>org.apache.camel:camel-geocoder</include>
+        <include>org.apache.camel:camel-git</include>
         <include>org.apache.camel:camel-github</include>
         <include>org.apache.camel:camel-google-calendar</include>
         <include>org.apache.camel:camel-google-drive</include>
