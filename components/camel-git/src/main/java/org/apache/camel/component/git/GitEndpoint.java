@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.git;
 
-import java.io.File;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -26,11 +24,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.internal.storage.file.FileRepository;
-import org.eclipse.jgit.lib.Repository;
 
-@UriEndpoint(scheme = "git", title = "Git", syntax = "git:remotepath/branchname", label = "api,file")
+@UriEndpoint(scheme = "git", title = "Git", syntax = "git:localpath", label = "api,file")
 public class GitEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

@@ -29,7 +29,7 @@ public class GitComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         GitEndpoint endpoint = new GitEndpoint(uri, this);
         setProperties(endpoint, parameters);
-        endpoint.setRemotePath(remaining);
+        endpoint.setLocalPath(remaining);
         return endpoint;
     }
 }

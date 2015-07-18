@@ -51,7 +51,11 @@ public class GitProducer extends DefaultProducer{
 	    	
 	    case GitOperation.COMMIT_OPERATION:
 	    	doCommit(exchange, operation, repo);
-	    	break;	
+	    	break;
+	    
+            case GitOperation.COMMIT_ALL_OPERATION:
+                doCommitAll(exchange, operation, repo);
+                break;
 	    }
 	    repo.close();
 	}
@@ -101,6 +105,9 @@ public class GitProducer extends DefaultProducer{
     	}
     	try {
     		git = new Git(repo);
+                if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
+                    git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                }
 			git.add().addFilepattern(fileName).call();
 		} catch (Exception e) {
 			LOG.error("There was an error in Git " + operation + " operation");
@@ -126,6 +133,26 @@ public class GitProducer extends DefaultProducer{
 			LOG.error("There was an error in Git " + operation + " operation");
 			e.printStackTrace();
 		}
+    }
+    
+    protected void doCommitAll(Exchange exchange, String operation, Repository repo) {
+        Git git = null;
+        String commitMessage = null;
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_MESSAGE))) {
+                commitMessage = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_MESSAGE, String.class);
+        } else {
+                throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
+        }
+        try {
+            git = new Git(repo);
+            if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
+                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+            }
+                git.commit().setAll(true).setMessage(commitMessage).call();
+                } catch (Exception e) {
+                        LOG.error("There was an error in Git " + operation + " operation");
+                        e.printStackTrace();
+                }
     }
     
     private Repository getLocalRepository(){

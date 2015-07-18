@@ -37,7 +37,9 @@ public class GitProducerTest extends CamelTestSupport {
 
 	private final static String GIT_LOCAL_REPO = "testRepo";
 	private final static String FILENAME_TO_ADD = "filetest.txt";
+	private final static String FILENAME_BRANCH_TO_ADD = "filetest1.txt";
 	private final static String COMMIT_MESSAGE = "Test commit";
+        private final static String COMMIT_MESSAGE_ALL = "Test commit all";
 	private final static String COMMIT_MESSAGE_BRANCH = "Test commit on a branch";
 	private final static String BRANCH_TEST = "testBranch";
 	
@@ -186,21 +188,125 @@ public class GitProducerTest extends CamelTestSupport {
         repository.close();
     }
     
+    @Test
+    public void commitAllTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        
+        template.send("direct:commit-all", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE_ALL);
+            }
+        });
+        Iterable<RevCommit> logs = new Git(repository).log()
+                .call();
+        int count = 0;
+        for (RevCommit rev : logs) {
+            assertEquals(rev.getShortMessage(), COMMIT_MESSAGE_ALL);
+            count++;
+        }
+        assertEquals(count, 1);
+        repository.close();
+    }
+    
+    @Test
+    public void commitAllDifferentBranchTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(GIT_LOCAL_REPO, FILENAME_TO_ADD);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_TO_ADD);
+            }
+        });
+        File gitDir = new File(GIT_LOCAL_REPO, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(FILENAME_TO_ADD));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE);
+            }
+        });
+        Iterable<RevCommit> logs = new Git(repository).log()
+                .call();
+        int count = 0;
+        for (RevCommit rev : logs) {
+            assertEquals(rev.getShortMessage(), COMMIT_MESSAGE);
+            count++;
+        }
+        assertEquals(count, 1);
+        
+        Git git = new Git(repository);
+        git.checkout().setCreateBranch(true).setName(BRANCH_TEST).
+        setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
+        
+        File fileToAdd1 = new File(GIT_LOCAL_REPO, FILENAME_BRANCH_TO_ADD);
+        fileToAdd1.createNewFile();
+        
+        template.send("direct:add-on-branch", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, FILENAME_BRANCH_TO_ADD);
+            }
+        });
+        
+        template.send("direct:commit-all-branch", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, COMMIT_MESSAGE_ALL);
+            }
+        });
+        logs = git.log().call();
+        count = 0;
+        for (RevCommit rev : logs) {
+            if (count == 0) assertEquals(rev.getShortMessage(), COMMIT_MESSAGE_ALL);
+            if (count == 1) assertEquals(rev.getShortMessage(), COMMIT_MESSAGE);
+            count++;
+        }
+        assertEquals(count, 2);
+        repository.close();
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {            
             @Override
             public void configure() throws Exception {
                 from("direct:clone")
-                        .to("git://https://github.com/oscerd/json-webserver-example.git?localPath=" + GIT_LOCAL_REPO + "&operation=clone");
+                        .to("git://" + GIT_LOCAL_REPO + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
                 from("direct:init")
-                        .to("git://https://github.com/oscerd/json-webserver-example.git?localPath=" + GIT_LOCAL_REPO + "&operation=init");
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=init");
                 from("direct:add")
-                        .to("git://https://github.com/oscerd/json-webserver-example.git?localPath=" + GIT_LOCAL_REPO + "&operation=add");
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=add");
+                from("direct:add-on-branch")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=add&branchName=" + BRANCH_TEST);
                 from("direct:commit")
-                        .to("git://https://github.com/oscerd/json-webserver-example.git?localPath=" + GIT_LOCAL_REPO + "&operation=commit");
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=commit");
                 from("direct:commit-branch")
-                        .to("git://https://github.com/oscerd/json-webserver-example.git?localPath=" + GIT_LOCAL_REPO + "&operation=commit&branchName=" + BRANCH_TEST);
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=commit&branchName=" + BRANCH_TEST);
+                from("direct:commit-all")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=commit");
+                from("direct:commit-all-branch")
+                        .to("git://" + GIT_LOCAL_REPO + "?operation=commit&branchName=" + BRANCH_TEST);
             } 
         };
     }

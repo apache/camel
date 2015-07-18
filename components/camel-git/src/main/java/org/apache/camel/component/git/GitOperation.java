@@ -22,4 +22,5 @@ public interface GitOperation {
     public final static String INIT_OPERATION = "init";
     public final static String ADD_OPERATION = "add";
     public final static String COMMIT_OPERATION = "commit";
+    public final static String COMMIT_ALL_OPERATION = "commitAll";
 }
