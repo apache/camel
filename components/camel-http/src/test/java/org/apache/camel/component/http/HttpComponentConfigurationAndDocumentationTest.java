@@ -31,10 +31,17 @@ public class HttpComponentConfigurationAndDocumentationTest extends CamelTestSup
     @Test
     public void testComponentConfiguration() throws Exception {
         HttpComponent comp = context.getComponent("http", HttpComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("http://www.google.com?proxyHost=myotherproxy&proxyPort=2345");
+
+        StringBuilder url = new StringBuilder("http://www.google.com");
+        url.append("?proxyHost=myotherproxy");
+        url.append("&proxyPort=2345");
+        url.append("&copyHeaders=false");
+
+        EndpointConfiguration conf = comp.createConfiguration(url.toString());
 
         assertEquals("myotherproxy", conf.getParameter("proxyHost"));
         assertEquals("2345", conf.getParameter("proxyPort"));
+        assertEquals("false", conf.getParameter("copyHeaders"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();

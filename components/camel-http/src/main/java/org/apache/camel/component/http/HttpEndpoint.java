@@ -110,6 +110,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @UriParam(label = "producer",
             description = "If this option is true, The http producer won't read response body and cache the input stream")
     private boolean ignoreResponseBody;
+    @UriParam(defaultValue = "true",
+            description = "If this option is true then IN exchange headers will be copied to OUT exchange headers"
+                    + " according to copy strategy.")
+    private boolean copyHeaders = true;
     @UriParam(label = "consumer",
             description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
                     + " This can be turned on in case HTTP clients do not send streamed data.")
@@ -125,7 +129,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpConnectionManager httpConnectionManager) throws URISyntaxException {
         this(endPointURI, component, httpURI, new HttpClientParams(), httpConnectionManager, null);
     }
-    
+
     public HttpEndpoint(String endPointURI, HttpComponent component, HttpClientParams clientParams,
                         HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         this(endPointURI, component, null, clientParams, httpConnectionManager, clientConfigurer);
@@ -338,7 +342,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
-    
+
     public boolean isBridgeEndpoint() {
         return bridgeEndpoint;
     }
@@ -350,7 +354,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void setBridgeEndpoint(boolean bridge) {
         this.bridgeEndpoint = bridge;
     }
-    
+
     public boolean isMatchOnUriPrefix() {
         return matchOnUriPrefix;
     }
@@ -363,7 +367,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void setMatchOnUriPrefix(boolean match) {
         this.matchOnUriPrefix = match;
     }
-    
+
     public boolean isDisableStreamCache() {
         return this.disableStreamCache;
     }
@@ -382,7 +386,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void setDisableStreamCache(boolean disable) {
         this.disableStreamCache = disable;
     }
-    
+
     public boolean isChunked() {
         return this.chunked;
     }
@@ -496,6 +500,16 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.ignoreResponseBody = ignoreResponseBody;
     }
 
+    /**
+     * If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy.
+     */
+    public boolean isCopyHeaders() {
+        return copyHeaders;
+    }
+
+    public void setCopyHeaders(boolean copyHeaders) {
+        this.copyHeaders = copyHeaders;
+    }
     public boolean isEagerCheckContentAvailable() {
         return eagerCheckContentAvailable;
     }

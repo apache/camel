@@ -210,10 +210,12 @@ public class HttpProducer extends DefaultProducer {
             }
         }
 
-        // preserve headers from in by copying any non existing headers
-        // to avoid overriding existing headers with old values
-        // Just filter the http protocol headers
-        MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
+        // endpoint might be configured to copy headers from in to out
+        // to avoid overriding existing headers with old values just
+        // filter the http protocol headers
+        if (getEndpoint().isCopyHeaders()) {
+            MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
+        }
     }
 
     protected Exception populateHttpOperationFailedException(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse, int responseCode) throws IOException, ClassNotFoundException {
