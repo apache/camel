@@ -110,9 +110,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @UriParam(label = "producer",
             description = "If this option is true, The http producer won't read response body and cache the input stream")
     private boolean ignoreResponseBody;
-    @UriParam(defaultValue = "true",
-            description = "If this option is true then IN exchange headers will be copied to OUT exchange headers"
-                    + " according to copy strategy.")
+    @UriParam(label = "producer", defaultValue = "true",
+            description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
+                    + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
     private boolean copyHeaders = true;
     @UriParam(label = "consumer",
             description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
@@ -502,6 +502,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     /**
      * If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy.
+     * Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).
      */
     public boolean isCopyHeaders() {
         return copyHeaders;
@@ -510,6 +511,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void setCopyHeaders(boolean copyHeaders) {
         this.copyHeaders = copyHeaders;
     }
+
     public boolean isEagerCheckContentAvailable() {
         return eagerCheckContentAvailable;
     }

@@ -508,6 +508,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     /**
      * If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy.
+     * Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).
      */
     public boolean isCopyHeaders() {
         return copyHeaders;
