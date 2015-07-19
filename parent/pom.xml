@@ -90,7 +90,7 @@
     <cglib-version>2.2</cglib-version>
     <chunk-templates-version>3.0.0</chunk-templates-version>
     <classmate-version>1.0.0</classmate-version>
-    <cmis-version>0.8.0</cmis-version>
+    <cmis-version>0.13.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-client-version>2.4.3</cometd-java-client-version>
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
