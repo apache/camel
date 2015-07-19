@@ -30,20 +30,20 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "git", title = "Git", syntax = "git://localpath", label = "api,file")
+@UriEndpoint(scheme = "git", title = "Git", syntax = "git:localpath", label = "file")
 public class GitEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = "true")
     private String localPath;
 
-    @UriPath
+    @UriParam
     private String branchName;
 
-    @UriPath
+    @UriParam
     private String tagName;
 
-    @UriPath(label = "consumer")
+    @UriParam(label = "consumer")
     private GitType type;
 
     @UriParam
@@ -76,13 +76,13 @@ public class GitEndpoint extends DefaultEndpoint {
         } else if (type == GitType.BRANCH) {
             return new GitBranchConsumer(this, processor);
         } else {
-            throw new IllegalArgumentException("Cannot create producer with type " + type);
+            throw new IllegalArgumentException("Cannot create consumer with type " + type);
         }
     }
 
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     /**
