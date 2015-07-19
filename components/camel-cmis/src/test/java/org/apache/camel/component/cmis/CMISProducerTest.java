@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.cmis;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
@@ -123,6 +126,25 @@ public class CMISProducerTest extends CMISTestSupport {
         assertEquals("text/plain; charset=UTF-8",
                 newNode.getPropertyValue(PropertyIds.CONTENT_STREAM_MIME_TYPE));
     }
+
+	@Test
+	public void cmisSecondaryTypePropertiesAreStored() throws Exception {
+
+		List<String> secondaryTypes = Arrays.asList("MySecondaryType");
+
+		Exchange exchange = createExchangeWithInBody("Some content to be store");
+		exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
+		exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.txt");
+		exchange.getIn().getHeaders().put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
+		exchange.getIn().getHeaders().put("SecondaryStringProp", "secondaryTypePropValue");
+
+		template.send(exchange);
+		String newNodeId = exchange.getOut().getBody(String.class);
+		CmisObject newNode = retrieveCMISObjectByIdFromServer(newNodeId);
+
+		assertEquals(1, newNode.getSecondaryTypes().size());
+		assertEquals("secondaryTypePropValue", newNode.getPropertyValue("SecondaryStringProp"));
+	}
 
     @Test(expected = ResolveEndpointFailedException.class)
     public void failConnectingToNonExistingRepository() throws Exception {
