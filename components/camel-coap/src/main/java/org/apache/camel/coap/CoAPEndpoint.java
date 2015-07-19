@@ -29,12 +29,11 @@ import org.eclipse.californium.core.CoapServer;
 /**
  * Represents a CoAP endpoint.
  */
-@UriEndpoint(scheme = "coap", title = "CoAP", syntax = "coap:name", consumerClass = CoAPConsumer.class, label = "CoAP")
+@UriEndpoint(scheme = "coap", title = "CoAP", syntax = "coap:uri", consumerClass = CoAPConsumer.class, label = "iot")
 public class CoAPEndpoint extends DefaultEndpoint {
     @UriPath
     private URI uri;
-    
-    
+        
     private CoAPComponent component;
     
     public CoAPEndpoint(String uri, CoAPComponent component) {
