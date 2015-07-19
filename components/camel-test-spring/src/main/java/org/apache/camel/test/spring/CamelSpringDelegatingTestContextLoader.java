@@ -21,8 +21,10 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
@@ -41,8 +43,6 @@ import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.support.DelegatingSmartContextLoader;
 
 import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
-
-
 
 /**
  * CamelSpringDelegatingTestContextLoader which fixes issues in Camel's JavaConfigContextLoader. (adds support for Camel's test annotations)
@@ -90,12 +90,15 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
         throws Exception {
             
         AnnotationConfigUtils.registerAnnotationConfigProcessors((BeanDefinitionRegistry) context);
-        
+
+        logger.info(">>>> I was here <<<<<");
+
         // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
         handleProvidesBreakpoint(context, testClass);
         handleShutdownTimeout(context, testClass);
         handleMockEndpoints(context, testClass);
         handleMockEndpointsAndSkip(context, testClass);
+        handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
         
         // CamelContext(s) startup
         handleCamelContextStartup(context, testClass);
@@ -277,7 +280,59 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
         }
     }
     
-    
+    /**
+     * Handles override this method to include and override properties with the Camel {@link org.apache.camel.component.properties.PropertiesComponent}.
+     *
+     * @param context the initialized Spring context
+     * @param testClass the test class being executed
+     */
+    protected void handleUseOverridePropertiesWithPropertiesComponent(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
+        Collection<Method> methods = getAllMethods(testClass);
+        final List<Properties> properties = new LinkedList<Properties>();
+
+        for (Method method : methods) {
+            if (AnnotationUtils.findAnnotation(method, UseOverridePropertiesWithPropertiesComponent.class) != null) {
+                Class<?>[] argTypes = method.getParameterTypes();
+                if (argTypes.length > 0) {
+                    throw new IllegalArgumentException("Method [" + method.getName()
+                            + "] is annotated with UseOverridePropertiesWithPropertiesComponent but is not a no-argument method.");
+                } else if (!Properties.class.isAssignableFrom(method.getReturnType())) {
+                    throw new IllegalArgumentException("Method [" + method.getName()
+                            + "] is annotated with UseOverridePropertiesWithPropertiesComponent but does not return a java.util.Properties.");
+                } else if (!Modifier.isStatic(method.getModifiers())) {
+                    throw new IllegalArgumentException("Method [" + method.getName()
+                            + "] is annotated with UseOverridePropertiesWithPropertiesComponent but is not static.");
+                } else if (!Modifier.isPublic(method.getModifiers())) {
+                    throw new IllegalArgumentException("Method [" + method.getName()
+                            + "] is annotated with UseOverridePropertiesWithPropertiesComponent but is not public.");
+                }
+
+                try {
+                    properties.add((Properties) method.invoke(null));
+                } catch (Exception e) {
+                    throw new RuntimeException("Method [" + method.getName()
+                            + "] threw exception during evaluation.", e);
+                }
+            }
+        }
+
+        if (properties.size() != 0) {
+            CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
+                public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
+                    PropertiesComponent pc = camelContext.getComponent("properties", PropertiesComponent.class);
+                    Properties extra = new Properties();
+                    for (Properties prop : properties) {
+                        extra.putAll(prop);
+                    }
+                    if (!extra.isEmpty()) {
+                        logger.info("Using {} properties to override any existing properties on the PropertiesComponent on CamelContext with name [{}].", extra.size(), contextName);
+                        pc.setOverrideProperties(extra);
+                    }
+                }
+            });
+        }
+    }
+
     /**
      * Handles starting of Camel contexts based on {@link UseAdviceWith} and other state in the JVM.
      *
