@@ -212,6 +212,8 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def wireTap(uri: String, expression: Exchange => Any) = stack.top.wireTap(uri, expression)
 
   def to(uris: String*) = stack.top.to(uris: _*)
+  def toD(uri: String) = stack.top.toD(uri)
+  def toD(uri: String, ignoreInvalidEndpoint: Boolean) = stack.top.toD(uri, ignoreInvalidEndpoint)
   def -->(uris: String*) = stack.top.to(uris: _*)
 
 }

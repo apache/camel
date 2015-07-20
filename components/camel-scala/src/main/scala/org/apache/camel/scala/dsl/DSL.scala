@@ -105,6 +105,8 @@ trait DSL {
   def throwException(exception: Exception) : DSL
   def throwException(exceptionType: Class[_ <: Exception], message: String) : DSL
   def to(uris: String*) : DSL
+  def toD(uri: String) : DSL
+  def toD(uri: String, ignoreInvalidEndpoint: Boolean) : DSL
   def transacted : DSL
   def transacted(ref: String) : DSL
   def transform(expression: Exchange => Any) : DSL

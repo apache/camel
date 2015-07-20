@@ -174,5 +174,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
     }
     this
   }
+  def toD(uri: String) = wrap(target.toD(uri))
+  def toD(uri: String, ignoreInvalidEndpoint: Boolean) = wrap(target.toD(uri, ignoreInvalidEndpoint))
 
 }
