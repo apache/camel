@@ -191,6 +191,8 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
                 LOG.info("Waiting for EventBus to be ready using {} sec as timeout", timeout);
                 latch.await(timeout, TimeUnit.SECONDS);
             }
+        } else {
+            LOG.debug("Using Vert.x instance set on the component level.");
         }
     }
 
