@@ -104,6 +104,9 @@ public class InOnlyProducer extends SjmsProducer {
                     Message message = JmsMessageHelper.createMessage(producer.getSession(), payload, exchange.getIn().getHeaders(), getEndpoint());
                     messages.add(message);
                 }
+            } else {
+                Message message = JmsMessageHelper.createMessage(producer.getSession(), null, exchange.getIn().getHeaders(), getEndpoint());
+                messages.add(message);
             }
 
             if (isEndpointTransacted()) {
