@@ -74,9 +74,24 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         return true;
     }
 
-   
+    /**
+     * <p>Override this method if you want to start Blueprint containers asynchronously using the thread
+     * that starts the bundles itself.
+     * By default this method returns <code>true</code> which means Blueprint Extender will use thread pool
+     * (threads named "<code>Blueprint Extender: N</code>") to startup Blueprint containers.</p>
+     * <p>Karaf and Fuse OSGi containers use synchronous startup.</p>
+     * <p>Asynchronous startup is more in the <em>spirit</em> of OSGi and usually means that if everything works fine
+     * asynchronously, it'll work synchronously as well. This isn't always true otherwise.</p>
+     * @return
+     */
+    protected boolean useAsynchronousBlueprintStartup() {
+        return true;
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected BundleContext createBundleContext() throws Exception {
+        System.setProperty("org.apache.aries.blueprint.synchronous", Boolean.toString(!useAsynchronousBlueprintStartup()));
+
         final String symbolicName = getClass().getSimpleName();
         final BundleContext answer = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
             includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives());
