@@ -45,7 +45,7 @@
     <apache-gora-version>0.4</apache-gora-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
-    <aries-blueprint-cm-version>1.0.7</aries-blueprint-cm-version>
+    <aries-blueprint-cm-version>1.0.6</aries-blueprint-cm-version>
     <aries-blueprint-core-version>1.4.4</aries-blueprint-core-version>
     <aries-blueprint-proxy-version>1.0.1</aries-blueprint-proxy-version>
     <aries-blueprint-proxy-impl-version>1.0.4</aries-blueprint-proxy-impl-version>
@@ -3145,6 +3145,7 @@
             </goals>
             <configuration>
               <strict>true</strict>
+              <skip>true</skip>
             </configuration>
           </execution>
         </executions>
