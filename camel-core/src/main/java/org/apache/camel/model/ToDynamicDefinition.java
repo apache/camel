@@ -28,7 +28,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.processor.DynamicSendProcessor;
+import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -46,7 +46,7 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "toD")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DynamicToDefinition extends NoOutputDefinition<DynamicToDefinition> {
+public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition> {
     @XmlAttribute @Metadata(required = "true")
     private String uri;
     @XmlAttribute
@@ -56,10 +56,10 @@ public class DynamicToDefinition extends NoOutputDefinition<DynamicToDefinition>
     @XmlAttribute
     private Boolean ignoreInvalidEndpoint;
 
-    public DynamicToDefinition() {
+    public ToDynamicDefinition() {
     }
 
-    public DynamicToDefinition(String uri) {
+    public ToDynamicDefinition(String uri) {
         this.uri = uri;
     }
 
@@ -97,7 +97,7 @@ public class DynamicToDefinition extends NoOutputDefinition<DynamicToDefinition>
             exp = ExpressionBuilder.concatExpression(list);
         }
 
-        DynamicSendProcessor processor = new DynamicSendProcessor(uri, exp);
+        SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
         processor.setPattern(pattern);
         if (cacheSize != null) {
             processor.setCacheSize(cacheSize);
@@ -119,7 +119,7 @@ public class DynamicToDefinition extends NoOutputDefinition<DynamicToDefinition>
     /**
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
-    public DynamicToDefinition pattern(ExchangePattern pattern) {
+    public ToDynamicDefinition pattern(ExchangePattern pattern) {
         setPattern(pattern);
         return this;
     }
@@ -130,7 +130,7 @@ public class DynamicToDefinition extends NoOutputDefinition<DynamicToDefinition>
      * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return the builder
      */
-    public DynamicToDefinition cacheSize(int cacheSize) {
+    public ToDynamicDefinition cacheSize(int cacheSize) {
         setCacheSize(cacheSize);
         return this;
     }
@@ -140,7 +140,7 @@ public class DynamicToDefinition extends NoOutputDefinition<DynamicToDefinition>
      *
      * @return the builder
      */
-    public DynamicToDefinition ignoreInvalidEndpoint() {
+    public ToDynamicDefinition ignoreInvalidEndpoint() {
         setIgnoreInvalidEndpoint(true);
         return this;
     }

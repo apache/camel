@@ -18,21 +18,21 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedDynamicSendProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedSendDynamicProcessorMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.DynamicSendProcessor;
+import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.URISupport;
 
 /**
  * @version 
  */
-@ManagedResource(description = "Managed DynamicSendProcessor")
-public class ManagedDynamicSendProcessor extends ManagedProcessor implements ManagedDynamicSendProcessorMBean {
-    private final DynamicSendProcessor processor;
+@ManagedResource(description = "Managed SendDynamicProcessor")
+public class ManagedSendDynamicProcessor extends ManagedProcessor implements ManagedSendDynamicProcessorMBean {
+    private final SendDynamicProcessor processor;
     private String uri;
 
-    public ManagedDynamicSendProcessor(CamelContext context, DynamicSendProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedSendDynamicProcessor(CamelContext context, SendDynamicProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
@@ -47,7 +47,7 @@ public class ManagedDynamicSendProcessor extends ManagedProcessor implements Man
         }
     }
 
-    public DynamicSendProcessor getProcessor() {
+    public SendDynamicProcessor getProcessor() {
         return processor;
     }
 

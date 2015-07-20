@@ -616,7 +616,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type toD(String uri) {
-        DynamicToDefinition answer = new DynamicToDefinition();
+        ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setUri(uri);
         addOutput(answer);
         return (Type) this;
@@ -630,7 +630,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type toD(String uri, boolean ignoreInvalidEndpoint) {
-        DynamicToDefinition answer = new DynamicToDefinition();
+        ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setUri(uri);
         answer.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
         addOutput(answer);

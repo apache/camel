@@ -27,9 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version 
  */
-public class ManagedDynamicSendProcessorTest extends ManagementTestSupport {
+public class ManagedSendDynamicProcessorTest extends ManagementTestSupport {
 
-    public void testManageDynamicSendProcessor() throws Exception {
+    public void testManageSendDynamicProcessor() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;

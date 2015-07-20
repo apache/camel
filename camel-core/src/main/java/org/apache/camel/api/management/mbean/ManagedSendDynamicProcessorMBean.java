@@ -18,7 +18,7 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedDynamicSendProcessorMBean extends ManagedProcessorMBean {
+public interface ManagedSendDynamicProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "The uri of the endpoint to send to. The uri can be dynamic computed using the expressions.", mask = true)
     String getUri();

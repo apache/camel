@@ -43,8 +43,8 @@ import org.slf4j.LoggerFactory;
  *
  * @see org.apache.camel.processor.SendProcessor
  */
-public class DynamicSendProcessor extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
-    protected static final Logger LOG = LoggerFactory.getLogger(DynamicSendProcessor.class);
+public class SendDynamicProcessor extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
+    protected static final Logger LOG = LoggerFactory.getLogger(SendDynamicProcessor.class);
     protected CamelContext camelContext;
     protected final String uri;
     protected final Expression expression;
@@ -54,7 +54,7 @@ public class DynamicSendProcessor extends ServiceSupport implements AsyncProcess
     protected boolean ignoreInvalidEndpoint;
     protected int cacheSize;
 
-    public DynamicSendProcessor(String uri, Expression expression) {
+    public SendDynamicProcessor(String uri, Expression expression) {
         this.uri = uri;
         this.expression = expression;
     }

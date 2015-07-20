@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Processor for forwarding exchanges to a static endpoint destination.
  *
- * @see org.apache.camel.processor.DynamicSendProcessor
+ * @see SendDynamicProcessor
  */
 public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware, IdAware {
     protected static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);

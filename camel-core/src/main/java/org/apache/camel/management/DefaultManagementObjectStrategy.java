@@ -38,7 +38,7 @@ import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDelayer;
-import org.apache.camel.management.mbean.ManagedDynamicSendProcessor;
+import org.apache.camel.management.mbean.ManagedSendDynamicProcessor;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
@@ -56,7 +56,7 @@ import org.apache.camel.management.mbean.ManagedThroughputLogger;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Delayer;
-import org.apache.camel.processor.DynamicSendProcessor;
+import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
@@ -183,8 +183,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
-            } else if (target instanceof DynamicSendProcessor) {
-                answer = new ManagedDynamicSendProcessor(context, (DynamicSendProcessor) target, definition);
+            } else if (target instanceof SendDynamicProcessor) {
+                answer = new ManagedSendDynamicProcessor(context, (SendDynamicProcessor) target, definition);
             } else if (target instanceof SendProcessor) {
                 SendProcessor sp = (SendProcessor) target;
                 // special for sending to throughput logger
