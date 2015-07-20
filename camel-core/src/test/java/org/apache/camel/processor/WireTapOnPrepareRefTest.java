@@ -37,7 +37,7 @@ public class WireTapOnPrepareRefTest extends WireTapOnPrepareTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .wireTap("direct:a").onPrepareRef("deepClone")
+                    .wireTap().constant("direct:a").onPrepareRef("deepClone")
                     .to("direct:b");
 
                 from("direct:a").process(new ProcessorA()).to("mock:a");

@@ -44,7 +44,9 @@
                     <to uri="log:otherwise"/>
                     <to uri="mock:otherwise"/>
                     <multicast streaming="true">
-                        <wireTap uri="mock:trapped"/>
+                        <wireTap>
+                          <constant>mock:trapped</constant>
+                        </wireTap>
                         <split strategyRef="splitAggregate">
                             <tokenize token=","/>
                             <filter>

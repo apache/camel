@@ -28,7 +28,8 @@
             <from uri="direct:start"/>
             <!-- tap a new message and send it to direct:tap -->
             <!-- the new message should be Bye World with 2 headers -->
-            <wireTap uri="direct:tap">
+            <wireTap>
+              <constant>direct:tap</constant>
                 <!-- create the new tap message body and headers -->
                 <body><constant>Bye World</constant></body>
                 <setHeader headerName="id"><constant>123</constant></setHeader>

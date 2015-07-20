@@ -52,7 +52,7 @@ public class WireTapNewExchangeTest extends ContextTestSupport {
                 from("direct:start")
                     // tap a new message and send it to direct:tap
                     // the new message should be Bye World with 2 headers
-                    .wireTap("direct:tap")
+                    .wireTap().constant("direct:tap")
                         // create the new tap message body and headers
                         .newExchangeBody(constant("Bye World"))
                         .newExchangeHeader("id", constant(123))
