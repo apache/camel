@@ -17,14 +17,17 @@
 package org.apache.camel.test.blueprint;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.blueprint.container.BlueprintEvent;
 
 /**
  * A command line tool for booting up a CamelContext using an OSGi Blueprint XML file
@@ -97,8 +100,10 @@ public class Main extends MainSupport {
             }
             LOG.debug("Starting Blueprint XML file: " + descriptors);
             bundleContext = createBundleContext(bundleName);
+            Set<Long> eventHistory = new HashSet<>();
+            CamelBlueprintHelper.waitForBlueprintContainer(eventHistory, bundleContext, bundleName, BlueprintEvent.CREATED, null);
             CamelBlueprintHelper.setPersistentFileForConfigAdmin(bundleContext, configAdminPid, configAdminFileName, new Properties(),
-                                                                 bundleName, null);
+                                                                 bundleName, eventHistory, true);
             camelContext = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
             if (camelContext == null) {
                 throw new IllegalArgumentException("Cannot find CamelContext in blueprint XML file: " + descriptors);
