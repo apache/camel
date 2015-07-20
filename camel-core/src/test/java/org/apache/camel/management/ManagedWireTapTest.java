@@ -63,11 +63,11 @@ public class ManagedWireTapTest extends ManagementTestSupport {
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(2, data.size());
+        assertEquals(3, data.size());
 
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(10, data.size());
+        assertEquals(11, data.size());
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);

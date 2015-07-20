@@ -70,6 +70,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         Expression exp = createExpression(routeContext);
 
         SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
+        processor.setCamelContext(routeContext.getCamelContext());
         processor.setPattern(pattern);
         if (cacheSize != null) {
             processor.setCacheSize(cacheSize);
