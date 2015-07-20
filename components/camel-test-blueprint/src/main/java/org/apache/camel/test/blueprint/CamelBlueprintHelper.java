@@ -113,9 +113,6 @@ public final class CamelBlueprintHelper {
         String uid = "" + System.currentTimeMillis();
         String tempDir = "target/bundles/" + uid;
         System.setProperty("org.osgi.framework.storage", tempDir);
-        // explicitly set this to "false" - we will not depend on the order of starting bundles,
-        // (and running their BP containers) but we will have to do more synchornization
-        System.setProperty("org.apache.aries.blueprint.synchronous", "false");
         createDirectory(tempDir);
 
         // use another directory for the jar of the bundle as it cannot be in the same directory
