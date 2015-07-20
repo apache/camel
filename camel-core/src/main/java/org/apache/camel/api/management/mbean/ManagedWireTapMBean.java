@@ -18,18 +18,18 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedSendDynamicProcessorMBean extends ManagedProcessorMBean {
+public interface ManagedWireTapMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "The uri of the endpoint to send to. The uri can be dynamic computed using the expressions.", mask = true)
-    String getUri();
-
-    @ManagedAttribute(description = "Message Exchange Pattern")
-    String getMessageExchangePattern();
+    @ManagedAttribute(description = "Expression that returns the uri to use for the wire tap destination", mask = true)
+    String getExpression();
 
     @ManagedAttribute(description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
     Integer getCacheSize();
 
     @ManagedAttribute(description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
     Boolean isIgnoreInvalidEndpoint();
+
+    @ManagedAttribute(description = "Uses a copy of the original exchange")
+    Boolean isCopy();
 
 }

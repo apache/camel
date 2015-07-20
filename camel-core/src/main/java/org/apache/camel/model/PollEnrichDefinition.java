@@ -196,7 +196,7 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
 
     /**
      * Sets the maximum size used by the {@link org.apache.camel.impl.ConsumerCache} which is used
-     * to cache and reuse consumers when using this pollEnrich, when uris are reused.
+     * to cache and reuse consumers when uris are reused.
      *
      * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return the builder

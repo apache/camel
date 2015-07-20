@@ -57,6 +57,9 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     private final ExchangePattern exchangePattern;
     private final ExecutorService executorService;
     private volatile boolean shutdownExecutorService;
+    // only used for management to be able to report the setting
+    private int cacheSize;
+    private boolean ignoreInvalidEndpoint;
 
     // expression or processor used for populating a new exchange to send
     // as opposed to traditional wiretap that sends a copy of the original exchange
@@ -204,6 +207,10 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         return new DefaultExchange(exchange.getFromEndpoint(), ExchangePattern.InOnly);
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
     public List<Processor> getNewExchangeProcessors() {
         return newExchangeProcessors;
     }
@@ -241,6 +248,22 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public void setOnPrepare(Processor onPrepare) {
         this.onPrepare = onPrepare;
+    }
+
+    public int getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
+    public boolean isIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
     @Override

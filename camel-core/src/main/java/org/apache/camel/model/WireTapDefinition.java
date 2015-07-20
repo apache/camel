@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.WireTapProcessor;
@@ -59,9 +60,13 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean copy;
     @XmlAttribute
+    private Integer cacheSize;
+    @XmlAttribute
     private String onPrepareRef;
     @XmlTransient
     private Processor onPrepare;
+    @XmlAttribute
+    private Boolean ignoreInvalidEndpoint;
 
     public WireTapDefinition() {
     }
@@ -75,6 +80,12 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
         // create the send dynamic producer to send to the wire tapped endpoint
         SendDynamicProcessor dynamicTo = new SendDynamicProcessor(getExpression());
         dynamicTo.setCamelContext(routeContext.getCamelContext());
+        if (cacheSize != null) {
+            dynamicTo.setCacheSize(cacheSize);
+        }
+        if (ignoreInvalidEndpoint != null) {
+            dynamicTo.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
+        }
 
         // create error handler we need to use for processing the wire tapped
         Processor target = wrapInErrorHandler(routeContext, dynamicTo);
@@ -108,6 +119,12 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
         }
         if (onPrepare != null) {
             answer.setOnPrepare(onPrepare);
+        }
+        if (cacheSize != null) {
+            answer.setCacheSize(cacheSize);
+        }
+        if (ignoreInvalidEndpoint != null) {
+            answer.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
         }
 
         return answer;
@@ -261,6 +278,40 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
         return this;
     }
 
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * to cache and reuse producers, when uris are reused.
+     *
+     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public WireTapDefinition cacheSize(int cacheSize) {
+        setCacheSize(cacheSize);
+        return this;
+    }
+
+    /**
+     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     *
+     * @return the builder
+     */
+    public WireTapDefinition ignoreInvalidEndpoint() {
+        setIgnoreInvalidEndpoint(true);
+        return this;
+    }
+
+    // Properties
+    //-------------------------------------------------------------------------
+
+    /**
+     * Expression that returns the uri to use for the wire tap destination
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
     public Processor getNewExchangeProcessor() {
         return newExchangeProcessor;
     }
@@ -344,5 +395,21 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
 
     public void setHeaders(List<SetHeaderDefinition> headers) {
         this.headers = headers;
+    }
+
+    public Integer getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(Integer cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
+    public Boolean getIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(Boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 }
