@@ -28,9 +28,7 @@
         <route>
             <from uri="direct:start"/>
             <to uri="log:foo"/>
-            <wireTap>
-              <constant>direct:tap</constant>
-            </wireTap>
+            <wireTap uri="direct:tap"/>
           <to uri="mock:result"/>
         </route>
         <!-- END SNIPPET: e1 -->
@@ -45,9 +43,7 @@
         
         <route>
         	<from uri="direct:test"/>
-        	<wireTap id="wiretap_1">
-            <constant>direct:a</constant>
-          </wireTap>
+        	<wireTap uri="direct:a" id="wiretap_1"/>
         	<to uri="mock:a"/>
         </route>
         

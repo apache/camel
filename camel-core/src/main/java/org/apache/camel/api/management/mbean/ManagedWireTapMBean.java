@@ -20,8 +20,8 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedWireTapMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Expression that returns the uri to use for the wire tap destination", mask = true)
-    String getExpression();
+    @ManagedAttribute(description = "The uri of the endpoint to wiretap to. The uri can be dynamic computed using the expressions.", mask = true)
+    String getUri();
 
     @ManagedAttribute(description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
     Integer getCacheSize();

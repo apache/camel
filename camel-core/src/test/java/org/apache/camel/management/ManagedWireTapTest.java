@@ -58,8 +58,8 @@ public class ManagedWireTapTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
-        String uri = (String) mbeanServer.getAttribute(on, "Expression");
-        assertEquals("simple{direct:${header.whereto}}", uri);
+        String uri = (String) mbeanServer.getAttribute(on, "Uri");
+        assertEquals("direct:${header.whereto}", uri);
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
@@ -72,6 +72,8 @@ public class ManagedWireTapTest extends ManagementTestSupport {
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);
         assertTrue(json.contains("\"description\": \"Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message"));
+        assertTrue(json.contains(" \"uri\": { \"kind\": \"attribute\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
+                + " \"deprecated\": \"false\", \"value\": \"direct:${header.whereto}\""));
     }
 
     @Override

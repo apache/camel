@@ -62,9 +62,9 @@ public class CBRWithWireTapTest extends ContextTestSupport {
                 from("direct:start")
                     .choice()
                         .when(body().contains("Camel"))
-                            .wireTap("mock:camel")
+                            .wireTap("mock:camel").end()
                         .when(body().contains("Donkey"))
-                            .wireTap("mock:donkey", true)
+                            .wireTap("mock:donkey").end()
                         .otherwise()
                             .to("mock:other");
             }

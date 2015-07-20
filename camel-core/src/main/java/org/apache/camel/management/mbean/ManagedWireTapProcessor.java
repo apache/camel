@@ -41,9 +41,9 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
         super.init(strategy);
         boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
         if (sanitize) {
-            uri = URISupport.sanitizeUri(processor.getExpression().toString());
+            uri = URISupport.sanitizeUri(processor.getUri());
         } else {
-            uri = processor.getExpression().toString();
+            uri = processor.getUri();
         }
     }
 
@@ -51,7 +51,7 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
         return processor;
     }
 
-    public String getExpression() {
+    public String getUri() {
         return uri;
     }
 

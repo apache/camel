@@ -27,9 +27,7 @@
 
     <route>
       <from uri="direct:start"/>
-      <wireTap>
-        <simple>mock:${header.tap}</simple>
-      </wireTap>
+      <wireTap uri="mock:${header.tap}"/>
     </route>
 
   </camelContext>

@@ -2256,12 +2256,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other using {@link ExchangePattern#InOnly}.
      *
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @return the builder
      */
-    public ExpressionClause<WireTapDefinition> wireTap() {
+    public WireTapDefinition<Type> wireTap(String uri) {
         WireTapDefinition answer = new WireTapDefinition();
+        answer.setUri(uri);
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return answer;
     }
 
     /**
@@ -2270,49 +2272,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other using {@link ExchangePattern#InOnly}.
      *
-     * @param expression  the expression to compute the uri to use as wire tap
-     * @return the builder
-     */
-    public Type wireTap(Expression expression) {
-        WireTapDefinition answer = new WireTapDefinition();
-        answer.setExpression(new ExpressionDefinition(expression));
-        addOutput(answer);
-        return (Type) this;
-    }
-
-    /**
-     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
-     * Sends messages to all its child outputs; so that each processor and
-     * destination gets a copy of the original message to avoid the processors
-     * interfering with each other using {@link ExchangePattern#InOnly}.
-     *
-     * @param uri  the destination
-     * @return the builder
-     */
-    public Type wireTap(String uri) {
-        WireTapDefinition answer = new WireTapDefinition();
-        answer.setExpression(new SimpleExpression(uri));
-        addOutput(answer);
-        return (Type) this;
-    }
-
-    /**
-     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
-     * Sends messages to all its child outputs; so that each processor and
-     * destination gets a copy of the original message to avoid the processors
-     * interfering with each other using {@link ExchangePattern#InOnly}.
-     *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param      executorService a custom {@link ExecutorService} to use as thread pool
      *             for sending tapped exchanges
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    public Type wireTap(String uri, ExecutorService executorService) {
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, ExecutorService executorService) {
         WireTapDefinition answer = new WireTapDefinition();
-        answer.setExpression(new SimpleExpression(uri));
+        answer.setUri(uri);
         answer.setExecutorService(executorService);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**
@@ -2321,17 +2293,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other using {@link ExchangePattern#InOnly}.
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param      executorServiceRef reference to lookup a custom {@link ExecutorService}
      *             to use as thread pool for sending tapped exchanges
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    public Type wireTap(String uri, String executorServiceRef) {
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, String executorServiceRef) {
         WireTapDefinition answer = new WireTapDefinition();
-        answer.setExpression(new SimpleExpression(uri));
+        answer.setUri(uri);
         answer.setExecutorServiceRef(executorServiceRef);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**
@@ -2342,11 +2316,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Will use a copy of the original Exchange which is passed in as argument
      * to the given expression
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param body expression that creates the body to send
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    public Type wireTap(String uri, Expression body) {
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, Expression body) {
         return wireTap(uri, true, body);
     }
 
@@ -2355,16 +2331,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends a new {@link org.apache.camel.Exchange} to the destination
      * using {@link ExchangePattern#InOnly}.
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param copy whether or not use a copy of the original exchange or a new empty exchange
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    public Type wireTap(String uri, boolean copy) {
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, boolean copy) {
         WireTapDefinition answer = new WireTapDefinition();
-        answer.setExpression(new SimpleExpression(uri));
+        answer.setUri(uri);
         answer.setCopy(copy);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**
@@ -2372,18 +2350,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends a new {@link org.apache.camel.Exchange} to the destination
      * using {@link ExchangePattern#InOnly}.
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param copy whether or not use a copy of the original exchange or a new empty exchange
      * @param body expression that creates the body to send
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    public Type wireTap(String uri, boolean copy, Expression body) {
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, boolean copy, Expression body) {
         WireTapDefinition answer = new WireTapDefinition();
-        answer.setExpression(new SimpleExpression(uri));
+        answer.setUri(uri);
         answer.setCopy(copy);
-        answer.setNewExchangeExpression(body);
+        answer.setNewExchangeExpression(new ExpressionSubElementDefinition(body));
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**
@@ -2394,11 +2374,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Will use a copy of the original Exchange which is passed in as argument
      * to the given processor
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param processor  processor preparing the new exchange to send
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    public Type wireTap(String uri, Processor processor) {
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, Processor processor) {
         return wireTap(uri, true, processor);
     }
 
@@ -2407,18 +2389,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends a new {@link org.apache.camel.Exchange} to the destination
      * using {@link ExchangePattern#InOnly}.
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param copy whether or not use a copy of the original exchange or a new empty exchange
      * @param processor  processor preparing the new exchange to send
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    public Type wireTap(String uri, boolean copy, Processor processor) {
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, boolean copy, Processor processor) {
         WireTapDefinition answer = new WireTapDefinition();
-        answer.setExpression(new SimpleExpression(uri));
+        answer.setUri(uri);
         answer.setCopy(copy);
         answer.setNewExchangeProcessor(processor);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**

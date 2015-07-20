@@ -25,9 +25,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <wireTap>
-                <constant>direct:tap</constant>
-            </wireTap>
+            <wireTap uri="direct:tap"/>
             <to uri="mock:end"/>
         </route>
 

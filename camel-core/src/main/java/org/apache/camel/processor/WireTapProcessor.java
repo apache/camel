@@ -52,14 +52,12 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
     private String id;
     private CamelContext camelContext;
-    private final Expression expression;
+    private final SendDynamicProcessor dynamicProcessor;
+    private final String uri;
     private final Processor processor;
     private final ExchangePattern exchangePattern;
     private final ExecutorService executorService;
     private volatile boolean shutdownExecutorService;
-    // only used for management to be able to report the setting
-    private int cacheSize;
-    private boolean ignoreInvalidEndpoint;
 
     // expression or processor used for populating a new exchange to send
     // as opposed to traditional wiretap that sends a copy of the original exchange
@@ -68,9 +66,10 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     private boolean copy;
     private Processor onPrepare;
 
-    public WireTapProcessor(Expression expression, Processor processor, ExchangePattern exchangePattern,
+    public WireTapProcessor(SendDynamicProcessor dynamicProcessor, Processor processor, ExchangePattern exchangePattern,
                             ExecutorService executorService, boolean shutdownExecutorService) {
-        this.expression = expression;
+        this.dynamicProcessor = dynamicProcessor;
+        this.uri = dynamicProcessor.getUri();
         this.processor = processor;
         this.exchangePattern = exchangePattern;
         ObjectHelper.notNull(executorService, "executorService");
@@ -80,12 +79,12 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
 
     @Override
     public String toString() {
-        return "WireTap[" + expression + "]";
+        return "WireTap[" + uri + "]";
     }
 
     @Override
     public String getTraceLabel() {
-        return "wireTap(" + expression + ")";
+        return "wireTap(" + uri + ")";
     }
 
     public String getId() {
@@ -129,10 +128,10 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         executorService.submit(new Callable<Exchange>() {
             public Exchange call() throws Exception {
                 try {
-                    LOG.debug(">>>> (wiretap) {} {}", expression, wireTapExchange);
+                    LOG.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
                     processor.process(wireTapExchange);
                 } catch (Throwable e) {
-                    LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + expression + ". This exception will be ignored.", e);
+                    LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", e);
                 }
                 return wireTapExchange;
             }
@@ -207,10 +206,6 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         return new DefaultExchange(exchange.getFromEndpoint(), ExchangePattern.InOnly);
     }
 
-    public Expression getExpression() {
-        return expression;
-    }
-
     public List<Processor> getNewExchangeProcessors() {
         return newExchangeProcessors;
     }
@@ -250,20 +245,16 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         this.onPrepare = onPrepare;
     }
 
-    public int getCacheSize() {
-        return cacheSize;
+    public String getUri() {
+        return uri;
     }
 
-    public void setCacheSize(int cacheSize) {
-        this.cacheSize = cacheSize;
+    public int getCacheSize() {
+        return dynamicProcessor.getCacheSize();
     }
 
     public boolean isIgnoreInvalidEndpoint() {
-        return ignoreInvalidEndpoint;
-    }
-
-    public void setIgnoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
-        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
+        return dynamicProcessor.isIgnoreInvalidEndpoint();
     }
 
     @Override

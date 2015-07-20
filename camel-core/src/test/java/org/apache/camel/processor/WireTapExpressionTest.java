@@ -41,7 +41,7 @@ public class WireTapExpressionTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .wireTap(simple("mock:${header.tap}"));
+                    .wireTap("mock:${header.tap}");
                 // END SNIPPET: e1
             }
         };

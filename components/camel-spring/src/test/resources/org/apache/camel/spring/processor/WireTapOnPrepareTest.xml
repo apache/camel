@@ -27,9 +27,7 @@
         <route>
             <from uri="direct:start"/>
             <!-- use on prepare with wiretap -->
-            <wireTap onPrepareRef="animalDeepClonePrepare">
-                <constant>direct:a</constant>
-            </wireTap>
+            <wireTap uri="direct:a" onPrepareRef="animalDeepClonePrepare"/>
             <to uri="direct:b"/>
         </route>
 

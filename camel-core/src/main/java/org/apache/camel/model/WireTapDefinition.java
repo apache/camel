@@ -44,7 +44,7 @@ import org.apache.camel.util.CamelContextHelper;
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WireTapDefinition extends NoOutputExpressionNode implements ExecutorServiceAwareDefinition<WireTapDefinition> {
+public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>> {
     @XmlTransient
     private Processor newExchangeProcessor;
     @XmlAttribute(name = "processorRef")
@@ -60,13 +60,9 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean copy;
     @XmlAttribute
-    private Integer cacheSize;
-    @XmlAttribute
     private String onPrepareRef;
     @XmlTransient
     private Processor onPrepare;
-    @XmlAttribute
-    private Boolean ignoreInvalidEndpoint;
 
     public WireTapDefinition() {
     }
@@ -78,14 +74,7 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "WireTap", this, true);
 
         // create the send dynamic producer to send to the wire tapped endpoint
-        SendDynamicProcessor dynamicTo = new SendDynamicProcessor(getExpression());
-        dynamicTo.setCamelContext(routeContext.getCamelContext());
-        if (cacheSize != null) {
-            dynamicTo.setCacheSize(cacheSize);
-        }
-        if (ignoreInvalidEndpoint != null) {
-            dynamicTo.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
-        }
+        SendDynamicProcessor dynamicTo = (SendDynamicProcessor) super.createProcessor(routeContext);
 
         // create error handler we need to use for processing the wire tapped
         Processor target = wrapInErrorHandler(routeContext, dynamicTo);
@@ -97,7 +86,7 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
         // is true bt default
         boolean isCopy = getCopy() == null || getCopy();
 
-        WireTapProcessor answer = new WireTapProcessor(getExpression(), internal, getPattern(), threadPool, shutdownThreadPool);
+        WireTapProcessor answer = new WireTapProcessor(dynamicTo, internal, getPattern(), threadPool, shutdownThreadPool);
         answer.setCopy(isCopy);
         if (newExchangeProcessorRef != null) {
             newExchangeProcessor = routeContext.mandatoryLookup(newExchangeProcessorRef, Processor.class);
@@ -120,12 +109,6 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
         if (onPrepare != null) {
             answer.setOnPrepare(onPrepare);
         }
-        if (cacheSize != null) {
-            answer.setCacheSize(cacheSize);
-        }
-        if (ignoreInvalidEndpoint != null) {
-            answer.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
-        }
 
         return answer;
     }
@@ -136,12 +119,25 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
 
     @Override
     public String toString() {
-        return "WireTap[" + getExpression() + "]";
+        return "WireTap[" + getUri() + "]";
     }
     
     @Override
     public String getLabel() {
-        return "wireTap[" + getExpression() + "]";
+        return "wireTap[" + getUri() + "]";
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Type end() {
+        // allow end() to return to previous type so you can continue in the DSL
+        return (Type) super.end();
+    }
+
+    @Override
+    public void addOutput(ProcessorDefinition<?> output) {
+        // add outputs on parent as this wiretap does not support outputs
+        getParent().addOutput(output);
     }
 
     // Fluent API
@@ -209,7 +205,7 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
      * @see #newExchangeHeader(String, org.apache.camel.Expression)
      */
     public WireTapDefinition newExchangeBody(Expression expression) {
-        setNewExchangeExpression(expression);
+        setNewExchangeExpression(new ExpressionSubElementDefinition(expression));
         return this;
     }
 
@@ -285,6 +281,7 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
      * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return the builder
      */
+    @Override
     public WireTapDefinition cacheSize(int cacheSize) {
         setCacheSize(cacheSize);
         return this;
@@ -295,6 +292,7 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
      *
      * @return the builder
      */
+    @Override
     public WireTapDefinition ignoreInvalidEndpoint() {
         setIgnoreInvalidEndpoint(true);
         return this;
@@ -303,13 +301,17 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
     // Properties
     //-------------------------------------------------------------------------
 
+    @Override
+    public String getUri() {
+        return super.getUri();
+    }
+
     /**
-     * Expression that returns the uri to use for the wire tap destination
+     * The uri of the endpoint to wiretap to. The uri can be dynamic computed using the {@link org.apache.camel.language.simple.SimpleLanguage} expression.
      */
     @Override
-    public void setExpression(ExpressionDefinition expression) {
-        // override to include javadoc what the expression is used for
-        super.setExpression(expression);
+    public void setUri(String uri) {
+        super.setUri(uri);
     }
 
     public Processor getNewExchangeProcessor() {
@@ -339,14 +341,10 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
     }
 
     /**
-     * Expression used for creating a new body as the message to use for wire tapping
+     * Uses the expression for creating a new body as the message to use for wire tapping
      */
-    public void setNewExchangeExpression(ExpressionSubElementDefinition expression) {
-        this.newExchangeExpression = expression;
-    }
-
-    public void setNewExchangeExpression(Expression expression) {
-        this.newExchangeExpression = new ExpressionSubElementDefinition(expression);
+    public void setNewExchangeExpression(ExpressionSubElementDefinition newExchangeExpression) {
+        this.newExchangeExpression = newExchangeExpression;
     }
 
     public ExecutorService getExecutorService() {
@@ -397,19 +395,4 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
         this.headers = headers;
     }
 
-    public Integer getCacheSize() {
-        return cacheSize;
-    }
-
-    public void setCacheSize(Integer cacheSize) {
-        this.cacheSize = cacheSize;
-    }
-
-    public Boolean getIgnoreInvalidEndpoint() {
-        return ignoreInvalidEndpoint;
-    }
-
-    public void setIgnoreInvalidEndpoint(Boolean ignoreInvalidEndpoint) {
-        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
-    }
 }

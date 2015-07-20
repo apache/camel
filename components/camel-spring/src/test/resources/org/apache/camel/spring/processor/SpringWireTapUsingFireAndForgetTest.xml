@@ -27,8 +27,7 @@
         <!-- START SNIPPET: e1 -->
         <route>
             <from uri="direct:start"/>
-            <wireTap>
-                <constant>direct:foo</constant>
+            <wireTap uri="direct:foo">
                 <body><constant>Bye World</constant></body>
             </wireTap>
             <to uri="mock:result"/>
@@ -38,9 +37,7 @@
         <!-- START SNIPPET: e2 -->
         <route>
             <from uri="direct:start2"/>
-            <wireTap processorRef="myProcessor">
-                <constant>direct:foo</constant>
-            </wireTap>
+            <wireTap uri="direct:foo" processorRef="myProcessor"/>
             <to uri="mock:result"/>
         </route>
         <!-- END SNIPPET: e2 -->

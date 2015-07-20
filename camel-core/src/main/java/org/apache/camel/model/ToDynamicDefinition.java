@@ -67,6 +67,20 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notEmpty(uri, "uri", this);
 
+        Expression exp = createExpression(routeContext);
+
+        SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
+        processor.setPattern(pattern);
+        if (cacheSize != null) {
+            processor.setCacheSize(cacheSize);
+        }
+        if (ignoreInvalidEndpoint != null) {
+            processor.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
+        }
+        return processor;
+    }
+
+    protected Expression createExpression(RouteContext routeContext) {
         List<Expression> list = new ArrayList<Expression>();
         String[] parts = uri.split("\\+");
         for (String part : parts) {
@@ -97,15 +111,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
             exp = ExpressionBuilder.concatExpression(list);
         }
 
-        SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
-        processor.setPattern(pattern);
-        if (cacheSize != null) {
-            processor.setCacheSize(cacheSize);
-        }
-        if (ignoreInvalidEndpoint != null) {
-            processor.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
-        }
-        return processor;
+        return exp;
     }
 
     @Override

@@ -26,9 +26,7 @@
         <route>
             <from uri="file://target/xmldata"/>
             <convertBodyTo type="java.lang.String"/>
-            <wireTap>
-              <constant>mock:wiretap</constant>
-            </wireTap>
+            <wireTap uri="mock:wiretap"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>
