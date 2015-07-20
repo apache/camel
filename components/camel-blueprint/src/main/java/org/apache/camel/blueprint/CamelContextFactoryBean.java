@@ -179,6 +179,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private BundleContext bundleContext;
     @XmlTransient
     private boolean implicitId;
+    @XmlTransient
+    private OsgiCamelContextPublisher osgiCamelContextPublisher;
 
     public Class<BlueprintCamelContext> getObjectType() {
         return BlueprintCamelContext.class;
@@ -301,7 +303,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         ClassLoader cl = new BundleDelegatingClassLoader(bundleContext.getBundle());
         LOG.debug("Set the application context classloader to: {}", cl);
         getContext().setApplicationContextClassLoader(cl);
-        getContext().getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
+        osgiCamelContextPublisher = new OsgiCamelContextPublisher(bundleContext);
+        osgiCamelContextPublisher.start();
+        getContext().getManagementStrategy().addEventNotifier(osgiCamelContextPublisher);
         try {
             getClass().getClassLoader().loadClass("org.osgi.service.event.EventAdmin");
             getContext().getManagementStrategy().addEventNotifier(new OsgiEventAdminNotifier(bundleContext));
@@ -311,6 +315,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         }
         // ensure routes is setup
         setupRoutes();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        super.destroy();
+        if (osgiCamelContextPublisher != null) {
+            osgiCamelContextPublisher.shutdown();
+        }
     }
 
     public String getDependsOn() {
