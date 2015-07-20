@@ -65,6 +65,8 @@ public class DynamicToDefinition extends NoOutputDefinition<DynamicToDefinition>
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        ObjectHelper.notEmpty(uri, "uri", this);
+
         List<Expression> list = new ArrayList<Expression>();
         String[] parts = uri.split("\\+");
         for (String part : parts) {
@@ -95,7 +97,7 @@ public class DynamicToDefinition extends NoOutputDefinition<DynamicToDefinition>
             exp = ExpressionBuilder.concatExpression(list);
         }
 
-        DynamicSendProcessor processor = new DynamicSendProcessor(exp);
+        DynamicSendProcessor processor = new DynamicSendProcessor(uri, exp);
         processor.setPattern(pattern);
         if (cacheSize != null) {
             processor.setCacheSize(cacheSize);
@@ -123,8 +125,7 @@ public class DynamicToDefinition extends NoOutputDefinition<DynamicToDefinition>
     }
 
     /**
-     * Sets the maximum size used by the {@link org.apache.camel.impl.ConsumerCache} which is used
-     * to cache and reuse consumers when using this pollEnrich, when uris are reused.
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ConsumerCache} which is used to cache and reuse producers.
      *
      * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return the builder
