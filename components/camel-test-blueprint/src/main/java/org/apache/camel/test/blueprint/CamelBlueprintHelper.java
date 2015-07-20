@@ -179,7 +179,8 @@ public final class CamelBlueprintHelper {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void setPersistentFileForConfigAdmin(BundleContext bundleContext, String pid,
                                                        String fileName, final Dictionary props,
-                                                       String symbolicName, Set<Long> bpEvents) throws IOException, InterruptedException {
+                                                       String symbolicName, Set<Long> bpEvents,
+                                                       boolean expectReload) throws IOException, InterruptedException {
         if (pid != null) {
             if (fileName == null) {
                 throw new IllegalArgumentException("The persistent file should not be null");
@@ -198,18 +199,22 @@ public final class CamelBlueprintHelper {
                     // we *have to* use "null" as 2nd arg to have correct bundle location for Configuration object
                     final Configuration config = configAdmin.getConfiguration(pid, null);
                     LOG.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
-                    // we will have update and in consequence, BP container reload, let's wait for it to
+                    // we may have update and in consequence, BP container reload, let's wait for it to
                     // be CREATED again
-                    CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, bundleContext, symbolicName, BlueprintEvent.CREATED, new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                config.update(props);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e.getMessage(), e);
+                    if (expectReload) {
+                        CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, bundleContext, symbolicName, BlueprintEvent.CREATED, new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    config.update(props);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e.getMessage(), e);
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        config.update(props);
+                    }
                 }
 
             }

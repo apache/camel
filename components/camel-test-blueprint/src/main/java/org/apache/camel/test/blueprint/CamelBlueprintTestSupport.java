@@ -18,6 +18,8 @@ package org.apache.camel.test.blueprint;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -26,6 +28,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.aries.blueprint.compendium.cm.CmNamespaceHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelCamelContext;
@@ -39,6 +45,10 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.blueprint.container.BlueprintEvent;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Base class for OSGi Blueprint unit tests with Camel.
@@ -68,6 +78,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         final String symbolicName = getClass().getSimpleName();
         final BundleContext answer = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
             includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives());
+
+        boolean expectReload = expectBlueprintContainerReloadOnConfigAdminUpdate();
 
         // must register override properties early in OSGi containers
         Properties extra = useOverridePropertiesWithPropertiesComponent();
@@ -119,7 +131,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             if (!new File(file[0]).exists()) {
                 throw new IllegalArgumentException("The provided file \"" + file[0] + "\" from loadConfigAdminConfigurationFile doesn't exist");
             }
-            CamelBlueprintHelper.setPersistentFileForConfigAdmin(answer, file[1], file[0], props, symbolicName, bpEvents);
+            CamelBlueprintHelper.setPersistentFileForConfigAdmin(answer, file[1], file[0], props, symbolicName, bpEvents, expectReload);
         }
 
         // allow end user to override properties
@@ -135,16 +147,20 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
                 throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");
             }
             log.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
-            CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        config.update(props);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e.getMessage(), e);
+            if (expectReload) {
+                CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            config.update(props);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e.getMessage(), e);
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                config.update(props);
+            }
         }
 
         return answer;
@@ -186,6 +202,45 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      */
     protected void addServicesOnStartup(Map<String, KeyValueHolder<Object, Dictionary>> services) {
         // noop
+    }
+
+    /**
+     * This method may be overriden to instruct BP test support that BP container will reloaded when
+     * Config Admin configuration is updated. By default, this is expected, when blueprint XML definition
+     * contains <code>&lt;cm:property-placeholder persistent-id="PID" update-strategy="reload"&gt;</code>
+     */
+    protected boolean expectBlueprintContainerReloadOnConfigAdminUpdate() {
+        boolean expectedReload = false;
+        String descriptor = getBlueprintDescriptor();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        try {
+            // cm-1.0 doesn't define update-strategy attribute
+            Set<String> cmNamesaces = new HashSet<>(Arrays.asList(
+                    CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_1,
+                    CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_2,
+                    CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_3
+            ));
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(getClass().getClassLoader().getResourceAsStream(descriptor));
+            NodeList nl = doc.getDocumentElement().getChildNodes();
+            for (int i = 0; i < nl.getLength(); i++) {
+                Node node = nl.item(i);
+                if (node instanceof Element) {
+                    Element pp = (Element) node;
+                    if (cmNamesaces.contains(pp.getNamespaceURI())) {
+                        String us = pp.getAttribute("update-strategy");
+                        if (us != null && us.equals("reload")) {
+                            expectedReload = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return expectedReload;
     }
 
     /**
