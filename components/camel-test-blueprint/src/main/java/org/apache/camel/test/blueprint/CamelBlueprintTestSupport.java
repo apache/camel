@@ -18,7 +18,6 @@ package org.apache.camel.test.blueprint;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.HashSet;
@@ -32,6 +31,11 @@ import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import org.apache.aries.blueprint.compendium.cm.CmNamespaceHandler;
 import org.apache.camel.CamelContext;
@@ -47,10 +51,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.blueprint.container.BlueprintEvent;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Base class for OSGi Blueprint unit tests with Camel.

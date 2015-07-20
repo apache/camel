@@ -26,6 +26,9 @@ import javax.enterprise.inject.spi.BeanManager;
  */
 public final class CdiBeanManagerHelper {
 
+    private CdiBeanManagerHelper() {
+    }
+
     /**
      * To lookup a bean by a type
      */

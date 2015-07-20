@@ -68,7 +68,8 @@ public class UndertowProducer extends DefaultAsyncProducer {
             final UndertowClient client = UndertowClient.getInstance();
             XnioWorker worker = Xnio.getInstance().createWorker(OptionMap.EMPTY);
 
-            IoFuture<ClientConnection> connect = client.connect(endpoint.getHttpURI(), worker, new ByteBufferSlicePool(BufferAllocator.DIRECT_BYTE_BUFFER_ALLOCATOR, 8192, 8192 * 8192), OptionMap.EMPTY);
+            IoFuture<ClientConnection> connect = client.connect(endpoint.getHttpURI(), worker,
+                    new ByteBufferSlicePool(BufferAllocator.DIRECT_BYTE_BUFFER_ALLOCATOR, 8192, 8192 * 8192), OptionMap.EMPTY);
 
             ClientRequest request = new ClientRequest();
             request.setProtocol(Protocols.HTTP_1_1);

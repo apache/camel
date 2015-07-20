@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-
 import java.util.Map;
+
+import org.apache.camel.builder.RouteBuilder;
 
 public class HttpGetHeadersNotCopiedTest extends HttpGetWithHeadersTest {
 

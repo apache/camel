@@ -132,37 +132,12 @@ public class PackageLanguageMojo extends AbstractMojo {
                 File[] files = f.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory such as in camel-script
-                        if (file.isDirectory()) {
-                            continue;
-                        }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
+                        String javaType = readClassFromCamelResource(file, buffer, buildContext);
+                        if (!file.isDirectory() && file.getName().charAt(0) != '.') {
                             count++;
-                            if (buffer.length() > 0) {
-                                buffer.append(" ");
-                            }
-                            buffer.append(name);
                         }
-
-                        if (!buildContext.hasDelta(file)) {
-                            // if this file has not changed,
-                            // then no need to store the javatype
-                            // for the json file to be generated again
-                            // (but we do need the name above!)
-                            continue;
-                        }
-
-                        // find out the javaType for each data format
-                        try {
-                            String text = loadText(new FileInputStream(file));
-                            Map<String, String> map = parseAsMap(text);
-                            String javaType = map.get("class");
-                            if (javaType != null) {
-                                javaTypes.put(name, javaType);
-                            }
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Failed to read file " + file + ". Reason: " + e, e);
+                        if (javaType != null) {
+                            javaTypes.put(file.getName(), javaType);
                         }
                     }
                 }
@@ -295,6 +270,37 @@ public class PackageLanguageMojo extends AbstractMojo {
             }
         } else {
             log.debug("No META-INF/services/org/apache/camel/language directory found. Are you sure you have created a Camel language?");
+        }
+    }
+
+    private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {
+        // skip directories as there may be a sub .resolver directory such as in camel-script
+        if (file.isDirectory()) {
+            return null;
+        }
+        String name = file.getName();
+        if (name.charAt(0) != '.') {
+            if (buffer.length() > 0) {
+                buffer.append(" ");
+            }
+            buffer.append(name);
+        }
+
+        if (!buildContext.hasDelta(file)) {
+            // if this file has not changed,
+            // then no need to store the javatype
+            // for the json file to be generated again
+            // (but we do need the name above!)
+            return null;
+        }
+
+        // find out the javaType for each data format
+        try {
+            String text = loadText(new FileInputStream(file));
+            Map<String, String> map = parseAsMap(text);
+            return map.get("class");
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to read file " + file + ". Reason: " + e, e);
         }
     }
 
