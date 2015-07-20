@@ -73,6 +73,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, true);
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "WireTap", this, true);
 
+        // must use InOnly for WireTap
+        setPattern(ExchangePattern.InOnly);
+
         // create the send dynamic producer to send to the wire tapped endpoint
         SendDynamicProcessor dynamicTo = (SendDynamicProcessor) super.createProcessor(routeContext);
 
