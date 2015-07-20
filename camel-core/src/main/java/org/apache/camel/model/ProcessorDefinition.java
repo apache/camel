@@ -606,8 +606,37 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type to(String uri) {
         addOutput(new ToDefinition(uri));
         return (Type) this;
-    }   
-    
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
+     * @param uri  the dynamic endpoint to send to (resolved using simple language by default)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type toD(String uri) {
+        DynamicToDefinition answer = new DynamicToDefinition();
+        answer.setUri(uri);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
+     * @param uri  the dynamic endpoint to send to (resolved using simple language by default)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type toD(String uri, boolean ignoreInvalidEndpoint) {
+        DynamicToDefinition answer = new DynamicToDefinition();
+        answer.setUri(uri);
+        answer.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
+        addOutput(answer);
+        return (Type) this;
+    }
+
     /**
      * Sends the exchange to the given endpoint
      *

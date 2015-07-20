@@ -25,6 +25,7 @@ DataFormatDefinition
 DelayDefinition
 DescriptionDefinition
 DynamicRouterDefinition
+DynamicToDefinition
 EnrichDefinition
 ExpressionSubElementDefinition
 FilterDefinition

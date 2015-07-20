@@ -26,7 +26,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Sends the message to an endpoint
+ * Sends the message to a static endpoint
  *
  * @version 
  */

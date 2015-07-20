@@ -76,7 +76,7 @@ public class ManagedSendProcessorTest extends ManagementTestSupport {
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Sends the message to an endpoint\""));
+        assertTrue(json.contains("\"description\": \"Sends the message to a static endpoint\""));
         assertTrue(json.contains(" \"uri\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
                 + " \"deprecated\": \"false\", \"value\": \"mock:result\""));
     }
