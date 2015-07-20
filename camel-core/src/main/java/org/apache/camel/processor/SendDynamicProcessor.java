@@ -54,6 +54,11 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
     protected boolean ignoreInvalidEndpoint;
     protected int cacheSize;
 
+    public SendDynamicProcessor(Expression expression) {
+        this.uri = null;
+        this.expression = expression;
+    }
+
     public SendDynamicProcessor(String uri, Expression expression) {
         this.uri = uri;
         this.expression = expression;

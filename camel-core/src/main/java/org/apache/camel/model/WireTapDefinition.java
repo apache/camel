@@ -73,7 +73,8 @@ public class WireTapDefinition extends NoOutputExpressionNode implements Executo
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "WireTap", this, true);
 
         // create the send dynamic producer to send to the wire tapped endpoint
-        Processor dynamicTo = new SendDynamicProcessor(null, getExpression());
+        SendDynamicProcessor dynamicTo = new SendDynamicProcessor(getExpression());
+        dynamicTo.setCamelContext(routeContext.getCamelContext());
 
         // create error handler we need to use for processing the wire tapped
         Processor target = wrapInErrorHandler(routeContext, dynamicTo);

@@ -2270,6 +2270,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other using {@link ExchangePattern#InOnly}.
      *
+     * @param expression  the expression to compute the uri to use as wire tap
+     * @return the builder
+     */
+    public Type wireTap(Expression expression) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setExpression(new ExpressionDefinition(expression));
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
+     * Sends messages to all its child outputs; so that each processor and
+     * destination gets a copy of the original message to avoid the processors
+     * interfering with each other using {@link ExchangePattern#InOnly}.
+     *
      * @param uri  the destination
      * @return the builder
      */
