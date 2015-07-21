@@ -1439,6 +1439,33 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody("87444549697");
         assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", false);
     }
+    
+    public void testRandomExpression() throws Exception {
+        int min = 1;
+        int max = 10;
+        int iterations = 30;
+        int i = 0;
+        for (i=0;i<iterations;i++) {
+            Expression expression = SimpleLanguage.simple("random(1,10)", Integer.class);
+            assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+        }
+        for (i=0;i<iterations;i++) {
+            Expression expression = SimpleLanguage.simple("random(10)", Integer.class);
+            assertTrue(0 <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+        }
+        try {
+            assertExpression("random(10,21,30)", null);
+            fail("Should have thrown exception");
+        } catch (SimpleParserException e) {
+            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random(10,21,30)", e.getMessage());
+        }
+        try {
+            assertExpression("random()", null);
+            fail("Should have thrown exception");
+        } catch (SimpleParserException e) {
+            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random()", e.getMessage());
+        }
+    }
 
     protected String getLanguageName() {
         return "simple";
