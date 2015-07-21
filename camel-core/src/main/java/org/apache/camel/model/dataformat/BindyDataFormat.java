@@ -40,8 +40,6 @@ import org.apache.camel.util.ObjectHelper;
 public class BindyDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private BindyType type;
-    //@XmlAttribute
-    //private String[] packages;
     @XmlAttribute
     private String classType;
     @XmlAttribute
@@ -64,19 +62,6 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.type = type;
     }
 
-    /*
-    public String[] getPackages() {
-        return packages;
-    }
-
-    /**
-     * The java package names to scan for model classes.
-     */
-    public void setPackages(String[] packages) {
-        this.packages = packages;
-    }
-    */
-
     public String getClassType() {
         return classType;
     }
@@ -88,6 +73,9 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.classType = classType;
     }
 
+    /**
+     * Type of model class to use.
+     */
     public void setClassType(Class<?> classType) {
         this.clazz = classType;
     }
