@@ -21,6 +21,9 @@ package org.apache.camel.util;
  */
 public final class CamelVersionHelper {
 
+    private CamelVersionHelper() {
+    }
+
     /**
      * Checks whether other >= base
      *

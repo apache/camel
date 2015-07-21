@@ -275,7 +275,9 @@ public final class CamelBlueprintHelper {
     /**
      * Synchronization method to wait for particular state of BlueprintContainer under test.
      */
-    public static void waitForBlueprintContainer(final Set<Long> eventHistory, BundleContext context, final String symbolicName, final int bpEvent, final Runnable runAndWait) throws InterruptedException {
+    public static void waitForBlueprintContainer(final Set<Long> eventHistory, BundleContext context,
+                                                 final String symbolicName, final int bpEvent, final Runnable runAndWait)
+        throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
         ServiceRegistration<BlueprintListener> registration = context.registerService(BlueprintListener.class, new BlueprintListener() {
             @Override

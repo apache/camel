@@ -33,11 +33,11 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
     /**
      * Mapping of socket hashcode to two element tab ([connect() called, close() called])
      */
-    private Map<Integer, boolean[]> socketAudits = new HashMap<>();
+    private Map<Integer, boolean[]> socketAudits = new HashMap<Integer, boolean[]>();
 
     private String getFtpUrl() {
-        return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3" +
-                "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
+        return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3"
+               + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
     }
 
     @Override
@@ -51,7 +51,7 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
 
     @Test
     public void testConnectionLeak() throws Exception {
-        for (String filename : new String[] { "claus.txt", "grzegorz.txt" }) {
+        for (String filename : new String[] {"claus.txt", "grzegorz.txt"}) {
             try {
                 sendFile(getFtpUrl(), "Hello World", filename);
             } catch (Exception ignored) {
@@ -93,7 +93,7 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
         @Override
         public Socket createSocket() throws IOException {
             AuditingSocket socket = new AuditingSocket();
-            socketAudits.put(System.identityHashCode(socket), new boolean[] { false, false });
+            socketAudits.put(System.identityHashCode(socket), new boolean[] {false, false});
             return socket;
         }
 
@@ -111,13 +111,13 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
         @Override
         public void connect(SocketAddress endpoint, int timeout) throws IOException {
             super.connect(endpoint, timeout);
-            socketAudits.get(System.identityHashCode(this))[0] = true;
+            ((boolean[])socketAudits.get(System.identityHashCode(this)))[0] = true;
         }
 
         @Override
         public synchronized void close() throws IOException {
             super.close();
-            socketAudits.get(System.identityHashCode(this))[1] = true;
+            ((boolean[])socketAudits.get(System.identityHashCode(this)))[1] = true;
         }
     }
 

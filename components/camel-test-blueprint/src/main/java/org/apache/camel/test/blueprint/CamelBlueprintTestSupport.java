@@ -18,7 +18,6 @@ package org.apache.camel.test.blueprint;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.HashSet;
@@ -30,6 +29,11 @@ import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import org.apache.aries.blueprint.compendium.cm.CmNamespaceHandler;
 import org.apache.camel.CamelContext;
@@ -45,10 +49,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.blueprint.container.BlueprintEvent;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Base class for OSGi Blueprint unit tests with Camel.
@@ -138,7 +138,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         // we will gather timestamps of BP events. We don't want to be fooled but repeated events related
         // to the same state of BP container
-        Set<Long> bpEvents = new HashSet<>();
+        Set<Long> bpEvents = new HashSet<Long>();
 
         CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, null);
 
@@ -231,7 +231,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         dbf.setNamespaceAware(true);
         try {
             // cm-1.0 doesn't define update-strategy attribute
-            Set<String> cmNamesaces = new HashSet<>(Arrays.asList(
+            Set<String> cmNamesaces = new HashSet<String>(Arrays.asList(
                     CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_1,
                     CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_2,
                     CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_3

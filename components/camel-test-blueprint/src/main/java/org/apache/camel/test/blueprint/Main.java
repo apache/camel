@@ -103,7 +103,7 @@ public class Main extends MainSupport {
             }
             LOG.debug("Starting Blueprint XML file: " + descriptors);
             bundleContext = createBundleContext(bundleName);
-            Set<Long> eventHistory = new HashSet<>();
+            Set<Long> eventHistory = new HashSet<Long>();
             CamelBlueprintHelper.waitForBlueprintContainer(eventHistory, bundleContext, bundleName, BlueprintEvent.CREATED, null);
             CamelBlueprintHelper.setPersistentFileForConfigAdmin(bundleContext, configAdminPid, configAdminFileName, new Properties(),
                                                                  bundleName, eventHistory, true);
