@@ -42,6 +42,7 @@ import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEnricher;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
+import org.apache.camel.management.mbean.ManagedFilter;
 import org.apache.camel.management.mbean.ManagedIdempotentConsumer;
 import org.apache.camel.management.mbean.ManagedPollEnricher;
 import org.apache.camel.management.mbean.ManagedProcessor;
@@ -61,6 +62,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.ErrorHandler;
+import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.SendProcessor;
@@ -189,6 +191,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
+            } else if (target instanceof FilterProcessor) {
+                answer = new ManagedFilter(context, (FilterProcessor) target, definition);
             } else if (target instanceof WireTapProcessor) {
                 answer = new ManagedWireTapProcessor(context, (WireTapProcessor) target, definition);
             } else if (target instanceof SendDynamicProcessor) {
