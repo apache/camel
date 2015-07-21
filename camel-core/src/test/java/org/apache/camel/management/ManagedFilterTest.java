@@ -58,6 +58,9 @@ public class ManagedFilterTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
+        Long count = (Long) mbeanServer.getAttribute(on, "FilteredCount");
+        assertEquals(1, count.longValue());
+
         String uri = (String) mbeanServer.getAttribute(on, "Filter");
         assertEquals("header{header(foo)}", uri);
 

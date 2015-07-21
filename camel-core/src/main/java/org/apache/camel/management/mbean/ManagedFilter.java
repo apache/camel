@@ -35,7 +35,18 @@ public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBea
     }
 
     @Override
+    public synchronized void reset() {
+        processor.reset();
+        super.reset();
+    }
+
+    @Override
     public String getFilter() {
         return processor.getPredicate().toString();
+    }
+
+    @Override
+    public Long getFilteredCount() {
+        return processor.getFilteredCount();
     }
 }
