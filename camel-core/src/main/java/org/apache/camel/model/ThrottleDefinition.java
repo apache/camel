@@ -153,7 +153,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     /**
-     * Enables asynchronous delay which means the thread will <b>no</b> block while delaying.
+     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
      *
      * @return the builder
      */
