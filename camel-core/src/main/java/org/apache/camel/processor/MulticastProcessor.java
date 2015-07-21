@@ -1267,6 +1267,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         return parallelProcessing;
     }
 
+    public boolean isParallelAggregate() {
+        return parallelAggregate;
+    }
+
     public boolean isShareUnitOfWork() {
         return shareUnitOfWork;
     }

@@ -46,6 +46,7 @@ import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedFilter;
 import org.apache.camel.management.mbean.ManagedIdempotentConsumer;
 import org.apache.camel.management.mbean.ManagedLoop;
+import org.apache.camel.management.mbean.ManagedMulticast;
 import org.apache.camel.management.mbean.ManagedPollEnricher;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
@@ -68,6 +69,7 @@ import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoopProcessor;
+import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.SendDynamicProcessor;
@@ -205,6 +207,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedFilter(context, (FilterProcessor) target, definition);
             } else if (target instanceof LoopProcessor) {
                 answer = new ManagedLoop(context, (LoopProcessor) target, definition);
+            } else if (target instanceof MulticastProcessor) {
+                answer = new ManagedMulticast(context, (MulticastProcessor) target, definition);
             } else if (target instanceof WireTapProcessor) {
                 answer = new ManagedWireTapProcessor(context, (WireTapProcessor) target, definition);
             } else if (target instanceof SendDynamicProcessor) {
