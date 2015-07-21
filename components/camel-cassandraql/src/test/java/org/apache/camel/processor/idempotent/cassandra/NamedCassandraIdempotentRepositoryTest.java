@@ -18,6 +18,7 @@ package org.apache.camel.processor.idempotent.cassandra;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
+
 import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.cassandraunit.CassandraCQLUnit;
 import org.junit.After;
@@ -140,5 +141,15 @@ public class NamedCassandraIdempotentRepositoryTest {
         // Then
         assertTrue(result);
     }
-
+    
+    @Test
+    public void testClear() {
+        // Given
+        String key = "Remove_Exists";
+        assertTrue(exists(key));
+        // When
+        idempotentRepository.clear();
+        // Then
+        assertFalse(idempotentRepository.contains(key));
+    }
 }

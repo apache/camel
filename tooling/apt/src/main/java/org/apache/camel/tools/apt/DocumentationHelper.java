@@ -32,6 +32,9 @@ import static org.apache.camel.tools.apt.JsonSchemaHelper.parseJsonSchema;
  * Helper to find documentation for inherited options when a component extends another.
  */
 public final class DocumentationHelper {
+    private DocumentationHelper() {
+        //utility class, never constructed
+    }
 
     public static String findComponentJavaDoc(String scheme, String extendsScheme, String fieldName) {
         File file = jsonFile(scheme, extendsScheme);

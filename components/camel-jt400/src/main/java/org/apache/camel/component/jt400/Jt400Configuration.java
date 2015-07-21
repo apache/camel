@@ -46,6 +46,7 @@ public class Jt400Configuration {
      * Enumeration of supported data formats
      */
     public enum Format {
+
         /**
          * Using <code>String</code> for transferring data
          */
@@ -68,54 +69,29 @@ public class Jt400Configuration {
      */
     private static final int DEFAULT_SYSTEM_CCSID = -1;
 
-    /**
-     * Pool from which physical connections to the system are obtained.
-     */
     private final AS400ConnectionPool connectionPool;
 
-    /**
-     * ID of the AS/400 user.
-     */
     @UriPath @Metadata(required = "true")
     private String userID;
 
-    /**
-     * Password of the AS/400 user.
-     */
     @UriPath @Metadata(required = "true")
     private String password;
 
-    /**
-     * Name of the AS/400 system.
-     */
     @UriPath @Metadata(required = "true")
     private String systemName;
 
-    /**
-     * Fully qualified integrated file system path name of the target object of
-     * this endpoint (either data queue or program).
-     */
     @UriPath @Metadata(required = "true")
     private String objectPath;
 
     @UriPath @Metadata(required = "true")
     private Jt400Type type;
 
-    /**
-     * CCSID to use for the connection with the AS/400 system.
-     */
     @UriParam
     private int ccsid = DEFAULT_SYSTEM_CCSID;
     
-    /**
-     * Data format for sending messages.
-     */
     @UriParam(defaultValue = "text")
     private Format format = Format.text;
     
-    /**
-     * Whether AS/400 prompting is enabled in the environment running Camel.
-     */
     @UriParam
     private boolean guiAvailable;
 
@@ -127,6 +103,9 @@ public class Jt400Configuration {
 
     @UriParam(defaultValue = "EQ")
     private SearchType searchType = SearchType.EQ;
+
+    @UriParam
+    private boolean secured;
 
     @UriParam
     private Integer[] outputFieldsIdxArray;
@@ -293,6 +272,17 @@ public class Jt400Configuration {
         return outputFieldsIdxArray;
     }
 
+    public boolean isSecured() {
+        return secured;
+    }
+
+    /**
+     * Whether connections to AS/400 are secured with SSL.
+     */
+    public void setSecured(boolean secured) {
+        this.secured = secured;
+    }
+
     /**
      * Specifies which fields (program parameters) are output parameters.
      */
@@ -349,7 +339,13 @@ public class Jt400Configuration {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Getting an AS400 object for '{}' from {}.", systemName + '/' + userID, connectionPool);
             }
-            system = connectionPool.getConnection(systemName, userID, password);
+
+            if (isSecured()) {
+                system = connectionPool.getSecureConnection(systemName, userID, password);
+            } else {
+                system = connectionPool.getConnection(systemName, userID, password);
+            }
+
             if (ccsid != DEFAULT_SYSTEM_CCSID) {
                 system.setCcsid(ccsid);
             }

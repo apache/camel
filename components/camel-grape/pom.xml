@@ -31,8 +31,8 @@
   <description>Camel Component for Grape</description>
 
   <properties>
-    <groovy-eclipse-batch.version>2.3.7-01</groovy-eclipse-batch.version>
-    <groovy-eclipse-compiler.version>2.9.1-01</groovy-eclipse-compiler.version>
+    <groovy-eclipse-batch.version>2.4.3-01</groovy-eclipse-batch.version>
+    <groovy-eclipse-compiler.version>2.9.2-01</groovy-eclipse-compiler.version>
     <plexus-compiler-api.version>2.4</plexus-compiler-api.version>
   </properties>
 
@@ -124,7 +124,7 @@
           <replacements>
             <replacement>
               <token>ARTIFACT_VERSION</token>
-              <value>${version}</value>
+              <value>${project.version}</value>
             </replacement>
           </replacements>
         </configuration>

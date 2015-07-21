@@ -163,6 +163,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         message.setHeader(S3Constants.CONTENT_DISPOSITION, objectMetadata.getContentDisposition());
         message.setHeader(S3Constants.CACHE_CONTROL, objectMetadata.getCacheControl());
         message.setHeader(S3Constants.S3_HEADERS, objectMetadata.getRawMetadata());
+        message.setHeader(S3Constants.SERVER_SIDE_ENCRYPTION, objectMetadata.getSSEAlgorithm());
 
         return exchange;
     }

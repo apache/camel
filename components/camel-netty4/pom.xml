@@ -40,30 +40,9 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    <!-- TODO: use netty-all and ${netty-version} when upgrading to Netty 4.x -->
     <dependency>
       <groupId>io.netty</groupId>
-      <artifactId>netty-codec</artifactId>
-      <version>${netty-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-transport</artifactId>
-      <version>${netty-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-handler</artifactId>
-      <version>${netty-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-buffer</artifactId>
-      <version>${netty-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-common</artifactId>
+      <artifactId>netty-all</artifactId>
       <version>${netty-version}</version>
     </dependency>
     <dependency>

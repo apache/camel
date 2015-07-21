@@ -32,7 +32,7 @@ public class RollbackCustomMessageTest extends ContextTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(RollbackExchangeException.class, e.getCause());
-            assertEquals("boo. Exchange[Message: Hello World]", e.getCause().getMessage());
+            assertTrue(e.getCause().getMessage().startsWith("boo"));
         }
     }
 

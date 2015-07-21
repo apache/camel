@@ -19,12 +19,12 @@ package org.apache.camel.spring.boot;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
 import org.springframework.context.ApplicationContext;
-
-import javax.annotation.PreDestroy;
 
 public class CamelSpringBootApplicationController {
 

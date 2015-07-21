@@ -127,4 +127,11 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
      */
     void setMarkerFiler(boolean markerFile);
 
+    /**
+     * Sets whether orphan marker files should be deleted upon startup
+     *
+     * @param deleteOrphanLockFiles <tt>true</tt> to delete files, <tt>false</tt> to skip this check
+     */
+    void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles);
+
 }

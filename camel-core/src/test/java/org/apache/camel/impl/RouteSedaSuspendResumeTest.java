@@ -17,6 +17,8 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Route;
+import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -41,6 +43,10 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         context.suspendRoute("foo");
 
         assertEquals("Suspended", context.getRouteStatus("foo").name());
+        Route route = context.getRoute("foo");
+        if (route instanceof StatefulService) {
+            assertEquals("Suspended", ((StatefulService) route).getStatus().name());
+        }
 
         template.sendBody("seda:foo", "B");
         mock.assertIsSatisfied(1000);
@@ -54,6 +60,10 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals("Started", context.getRouteStatus("foo").name());
+        route = context.getRoute("foo");
+        if (route instanceof StatefulService) {
+            assertEquals("Started", ((StatefulService) route).getStatus().name());
+        }
     }
 
     @Override

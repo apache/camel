@@ -51,7 +51,6 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
         setUpServer();
     }
 
-    @SuppressWarnings("unchecked")
     protected void setUpServer() throws Exception {
         canTest = true;
         try {

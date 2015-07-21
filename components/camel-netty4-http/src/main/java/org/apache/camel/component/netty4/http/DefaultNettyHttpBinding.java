@@ -135,8 +135,13 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
         String path = uri.getPath();
-        if (configuration.getPath() != null && path.startsWith(configuration.getPath())) {
-            path = path.substring(configuration.getPath().length());
+        if (configuration.getPath() != null) {
+            // need to match by lower case as we want to ignore case on context-path
+            path = path.toLowerCase(Locale.US);
+            String match = configuration.getPath() != null ? configuration.getPath().toLowerCase(Locale.US) : null;
+            if (match != null && path.startsWith(match)) {
+                path = path.substring(configuration.getPath().length());
+            }
         }
         headers.put(Exchange.HTTP_PATH, path);
 
@@ -267,7 +272,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         LOG.trace("populateCamelHeaders: {}", response);
 
         headers.put(Exchange.HTTP_RESPONSE_CODE, response.getStatus().code());
-        headers.put(NettyHttpConstants.HTTP_RESPONSE_TEXT, response.getStatus().reasonPhrase());
+        headers.put(Exchange.HTTP_RESPONSE_TEXT, response.getStatus().reasonPhrase());
 
         for (String name : response.headers().names()) {
             // mapping the content-type

@@ -14,98 +14,101 @@
     the specific language governing permissions and limitations under the
     License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>tests</artifactId>
-        <version>2.16-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>tests</artifactId>
+    <version>2.16-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>camel-itest-cdi</artifactId>
-    <name>Camel :: Integration Tests :: CDI</name>
-    <description>Tests for camel-cdi</description>
+  <artifactId>camel-itest-cdi</artifactId>
+  <name>Camel :: Integration Tests :: CDI</name>
+  <description>Tests for camel-cdi</description>
 
-    <dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cdi</artifactId>
+    </dependency>
+
+    <!-- cdi api -->
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>${cdi-api-version}</version>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+
+    <!-- for testing -->
+    <dependency>
+      <groupId>org.apache.deltaspike.core</groupId>
+      <artifactId>deltaspike-core-impl</artifactId>
+      <version>${deltaspike-version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>${arquillian-junit-container-version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+
+    <profile>
+      <id>weld2</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cdi</artifactId>
-        </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.apache.deltaspike.cdictrl</groupId>
+          <artifactId>deltaspike-cdictrl-weld</artifactId>
+          <version>${deltaspike-version}</version>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-
-        <!-- for testing -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
+          <groupId>org.jboss.weld.se</groupId>
+          <artifactId>weld-se-core</artifactId>
+          <version>${weld2-version}</version>
+          <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <version>${arquillian-junit-container-version}</version>
-            <scope>test</scope>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
+          <version>${arquillian-weld-se-embedded-version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>org.jboss.arquillian.container</groupId>
+              <artifactId>arquillian-container-spi</artifactId>
+            </exclusion>
+          </exclusions>
+          <scope>test</scope>
         </dependency>
-    </dependencies>
+      </dependencies>
+    </profile>
 
-    <build>
-      <plugins>
-        <plugin>
-          <!-- lets re-enable IntegrationTest -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <includes>
-              <include>**/*Test.java</include>
-            </includes>
-            <!-- CDI embedded test doesnt work CAMEL-6976 -->
-            <excludes>
-              <exclude>**/*Test.java</exclude>
-              <exclude>**/*XXXTest.*</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-      </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>arquillian-weld-ee-embedded</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.spec</groupId>
-                    <artifactId>jboss-javaee-6.0</artifactId>
-                    <version>${jboss-javaee-6-version}</version>
-                    <type>pom</type>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
-                    <version>${arquillian-weld-ee-embedded-version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.weld</groupId>
-                    <artifactId>weld-core</artifactId>
-                    <version>${weld2-version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
+  </profiles>
 
 </project>

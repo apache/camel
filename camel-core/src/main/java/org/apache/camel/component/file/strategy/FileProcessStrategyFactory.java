@@ -112,7 +112,7 @@ public final class FileProcessStrategyFactory {
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("markerFile".equals(readLock)) {
-                return new MarkerFileExclusiveReadLockStrategy();
+                strategy = new MarkerFileExclusiveReadLockStrategy();
             } else if ("fileLock".equals(readLock)) {
                 strategy = new FileLockExclusiveReadLockStrategy();
             } else if ("rename".equals(readLock)) {
@@ -161,6 +161,10 @@ public final class FileProcessStrategyFactory {
                 Boolean readLockMarkerFile = (Boolean) params.get("readLockMarkerFile");
                 if (readLockMarkerFile != null) {
                     strategy.setMarkerFiler(readLockMarkerFile);
+                }
+                Boolean readLockDeleteOrphanLockFiles = (Boolean) params.get("readLockDeleteOrphanLockFiles");
+                if (readLockDeleteOrphanLockFiles != null) {
+                    strategy.setDeleteOrphanLockFiles(readLockDeleteOrphanLockFiles);
                 }
             }
         }

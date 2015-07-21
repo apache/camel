@@ -113,6 +113,14 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         this.id = id;
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public String getUriDelimiter() {
+        return uriDelimiter;
+    }
+
     public void setDelimiter(String delimiter) {
         this.uriDelimiter = delimiter;
     }

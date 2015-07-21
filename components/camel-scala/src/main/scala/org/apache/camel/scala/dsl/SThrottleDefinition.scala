@@ -25,8 +25,6 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
  */
 case class SThrottleDefinition(override val target: ThrottleDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ThrottleDefinition] {
  
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SThrottleDefinition]
-  
   def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
   
   def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))

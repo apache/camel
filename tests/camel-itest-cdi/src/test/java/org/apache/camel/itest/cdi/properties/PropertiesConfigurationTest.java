@@ -21,6 +21,9 @@ import javax.inject.Inject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cdi.component.properties.CdiPropertiesComponent;
 import org.apache.camel.cdi.internal.CamelExtension;
+import org.apache.deltaspike.core.impl.scope.conversation.ConversationBeanHolder;
+import org.apache.deltaspike.core.impl.scope.viewaccess.ViewAccessBeanHolder;
+import org.apache.deltaspike.core.impl.scope.window.WindowBeanHolder;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -57,6 +60,10 @@ public class PropertiesConfigurationTest {
             .addPackage(CdiPropertiesComponent.class.getPackage())
             .addClass(Camel1Config.class)
             .addClass(Camel2Config.class)
+            // add a bunch of deltaspike packages so we can find those cdi beans to make arquillian happy
+            .addPackage(WindowBeanHolder.class.getPackage())
+            .addPackage(ConversationBeanHolder.class.getPackage())
+            .addPackage(ViewAccessBeanHolder.class.getPackage())
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 }

@@ -100,8 +100,8 @@ public class HttpPostWithBodyTest extends CamelTestSupport {
 
         log.debug("Body: " + body);
         assertNotNull("Should have a body!", body);
-        assertTrue("body should contain: <html>", body.contains("<html>"));
-
+        assertTrue("body should contain: <html", body.contains("<html"));
+        assertTrue("body should contain: </html>", body.contains("</html>"));
     }
 
     @Override

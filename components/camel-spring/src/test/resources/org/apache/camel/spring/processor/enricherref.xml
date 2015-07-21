@@ -30,7 +30,9 @@
 
         <route>
             <from uri="direct:start"/>
-            <enrich ref="cool" strategyRef="sampleAggregator"/>
+            <enrich strategyRef="sampleAggregator">
+              <simple>ref:cool</simple>
+            </enrich>
             <to uri="mock:result"/>
         </route>
         <route>

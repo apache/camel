@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
@@ -50,13 +49,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.CdiBeanManagerHelper;
 import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
-import org.apache.deltaspike.core.api.provider.BeanProvider;
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 
 /**
@@ -68,12 +67,12 @@ public class CamelExtension implements Extension {
         private static final long serialVersionUID = 1L;
     }
 
-    CamelContextMap camelContextMap;
+    @Inject
+    BeanManager beanManager;
 
+    private CamelContextMap camelContextMap;
     private final Set<Bean<?>> eagerBeans = new HashSet<Bean<?>>();
-
     private final Map<String, CamelContextConfig> camelContextConfigMap = new HashMap<String, CamelContextConfig>();
-
     private final List<CamelContextBean> camelContextBeans = new ArrayList<CamelContextBean>();
 
     public CamelExtension() {
@@ -104,7 +103,6 @@ public class CamelExtension implements Extension {
                 .readFromType(at)
                 .addToMethod(method, new InjectLiteral());
         process.setAnnotatedType(builder.create());
-
     }
 
     protected void detectRouteBuilders(@Observes ProcessAnnotatedType<?> process) throws Exception {
@@ -146,8 +144,7 @@ public class CamelExtension implements Extension {
             for (Map.Entry<String, CamelContextConfig> entry : entries) {
                 String name = entry.getKey();
                 CamelContextConfig config = entry.getValue();
-                CamelContextBean camelContextBean = new CamelContextBean(manager, "CamelContext:" + name,
-                        name, config);
+                CamelContextBean camelContextBean = new CamelContextBean(manager, "CamelContext:" + name, name, config);
                 camelContextBeans.add(camelContextBean);
                 abd.addBean(camelContextBean);
             }
@@ -155,9 +152,7 @@ public class CamelExtension implements Extension {
     }
 
     /**
-     * Lets detect all beans annotated with @Consume and
-     * beans of type {@link RouteBuilder} which are annotated with {@link org.apache.camel.cdi.ContextName}
-     * so they can be auto-registered
+     * Lets detect all beans annotated with @Consume so they can be auto-registered
      */
     public void detectConsumeBeans(@Observes ProcessBean<?> event) {
         final Bean<?> bean = event.getBean();
@@ -204,9 +199,8 @@ public class CamelExtension implements Extension {
     }
 
     /**
-     * Lets detect all producer methods creating instances of {@link RouteBuilder} which are annotated with {@link org
-     * .apache.camel.cdi.ContextName}
-     * so they can be auto-registered
+     * Lets detect all producer methods creating instances of {@link RouteBuilder} which are annotated with
+     * {@link org.apache.camel.cdi.ContextName} so they can be auto-registered
      */
     public void detectProducerRoutes(@Observes ProcessProducerMethod<?, ?> event) {
         Annotated annotated = event.getAnnotated();
@@ -223,7 +217,7 @@ public class CamelExtension implements Extension {
     public void startConsumeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager) throws Exception {
         for (CamelContextBean bean : camelContextBeans) {
             String name = bean.getCamelContextName();
-            CamelContext context = getCamelContext(name);
+            CamelContext context = getCamelContext(name, beanManager);
             if (context == null) {
                 throw new IllegalStateException(
                         "CamelContext '" + name + "' has not been injected into the CamelContextMap");
@@ -238,10 +232,10 @@ public class CamelExtension implements Extension {
         }
     }
 
-
     /**
      * Lets perform injection of all beans which use Camel annotations
      */
+    @SuppressWarnings("unchecked")
     public void onInjectionTarget(@Observes ProcessInjectionTarget<?> event) {
         final InjectionTarget injectionTarget = event.getInjectionTarget();
         AnnotatedType annotatedType = event.getAnnotatedType();
@@ -252,12 +246,11 @@ public class CamelExtension implements Extension {
         final BeanAdapter adapter = createBeanAdapter(beanClass, contextName);
         if (!adapter.isEmpty()) {
             DelegateInjectionTarget newTarget = new DelegateInjectionTarget(injectionTarget) {
-
                 @Override
-                public void postConstruct(Object instance) {
-                    super.postConstruct(instance);
+                public void inject(Object instance, CreationalContext ctx) {
+                    super.inject(instance, ctx);
 
-                    // now lets do the post instruct to inject our Camel injections
+                    // now lets inject our Camel injections to the bean instance
                     adapter.inject(CamelExtension.this, instance, beanName);
                 }
             };
@@ -317,8 +310,8 @@ public class CamelExtension implements Extension {
         return adapter;
     }
 
-    protected DefaultCamelBeanPostProcessor getPostProcessor(String context) {
-        CamelContext camelContext = getCamelContext(context);
+    protected DefaultCamelBeanPostProcessor getPostProcessor(String context, BeanManager beanManager) {
+        CamelContext camelContext = getCamelContext(context, beanManager);
         if (camelContext != null) {
             return new DefaultCamelBeanPostProcessor(camelContext);
         } else {
@@ -326,11 +319,12 @@ public class CamelExtension implements Extension {
         }
     }
 
-    protected CamelContext getCamelContext(String context) {
-        if (camelContextMap == null) {
-            camelContextMap = BeanProvider.getContextualReference(CamelContextMap.class);
-            ObjectHelper.notNull(camelContextMap, "Could not resolve CamelContextMap");
+    protected CamelContext getCamelContext(String context, BeanManager beanManager) {
+        BeanManager manager = this.beanManager != null ? this.beanManager : beanManager;
+        if (camelContextMap == null && manager != null) {
+            camelContextMap = CdiBeanManagerHelper.lookupBeanByType(manager, CamelContextMap.class);
         }
+        ObjectHelper.notNull(camelContextMap, "Could not resolve CamelContextMap");
         return camelContextMap.getCamelContext(context);
     }
 

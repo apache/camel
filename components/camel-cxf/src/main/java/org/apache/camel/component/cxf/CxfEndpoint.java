@@ -37,6 +37,10 @@ import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
@@ -99,9 +103,7 @@ import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+
 
 
 /**
@@ -114,6 +116,9 @@ import org.w3c.dom.Node;
 public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
+    
+    @UriPath
+    protected Bus bus;
 
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
     private volatile boolean createBus;
@@ -135,8 +140,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String beanId;
     @UriPath
     private String address;
-    @UriPath
-    protected Bus bus;
     @UriParam
     private String wsdlURL;
     private Class<?> serviceClass;

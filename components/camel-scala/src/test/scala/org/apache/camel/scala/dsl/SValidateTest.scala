@@ -44,7 +44,7 @@ class SValidateSimpleTest extends ValidateSimpleTest with RouteBuilderSupport {
         assertTrue("Get a wrong exception message",
                    e.getCause.getMessage.startsWith("Validation failed for Predicate[org.apache.camel.scala.ScalaPredicate"))
         assertTrue("Get a wrong exception message",
-                   e.getCause.getMessage.endsWith("Exchange[Message: 1.1.2010]"))
+                   e.getCause.getMessage.endsWith("[Message: 1.1.2010]"))
       }
     }
 
@@ -82,7 +82,7 @@ class SValidateRegExpTest extends ValidateRegExpTest with RouteBuilderSupport {
         assertTrue("Get a wrong exception message",
                    e.getCause.getMessage.startsWith("Validation failed for Predicate[org.apache.camel.scala.ScalaPredicate"))
         assertTrue("Get a wrong exception message",
-                   e.getCause.getMessage.endsWith("Exchange[Message: 1.1.2010]"))
+                   e.getCause.getMessage.endsWith("[Message: 1.1.2010]"))
       }
     }
 

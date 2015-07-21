@@ -107,7 +107,7 @@ public final class RouteStatDump {
     @XmlElementWrapper(name = "processorStats")
     @XmlElements({
             @XmlElement(type = ProcessorStatDump.class, name = "processorStat")
-    })
+        })
     private List<ProcessorStatDump> processorStats;
 
     public String getId() {

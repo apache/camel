@@ -18,7 +18,6 @@ package org.apache.camel.itest.cdi;
 
 import java.util.Map;
 import java.util.Set;
-
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
@@ -29,6 +28,9 @@ import org.apache.camel.cdi.internal.CamelContextMap;
 import org.apache.camel.cdi.internal.CamelExtension;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.deltaspike.core.impl.scope.conversation.ConversationBeanHolder;
+import org.apache.deltaspike.core.impl.scope.viewaccess.ViewAccessBeanHolder;
+import org.apache.deltaspike.core.impl.scope.window.WindowBeanHolder;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -43,8 +45,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
-public class IntegrationTest {
-    private static final Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
+public class CamelCdiTest {
+    private static final Logger LOG = LoggerFactory.getLogger(CamelCdiTest.class);
 
     @Inject
     CamelContextMap camelContextMap;
@@ -131,6 +133,10 @@ public class IntegrationTest {
         return ShrinkWrap.create(JavaArchive.class)
                 .addPackage(CamelExtension.class.getPackage())
                 .addPackage(RoutesContextA.class.getPackage())
+                // add a bunch of deltaspike packages so we can find those cdi beans to make arquillian happy
+                .addPackage(WindowBeanHolder.class.getPackage())
+                .addPackage(ConversationBeanHolder.class.getPackage())
+                .addPackage(ViewAccessBeanHolder.class.getPackage())
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 }

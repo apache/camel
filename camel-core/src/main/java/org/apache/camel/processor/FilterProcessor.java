@@ -36,6 +36,7 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
     private static final Logger LOG = LoggerFactory.getLogger(FilterProcessor.class);
     private String id;
     private final Predicate predicate;
+    private transient long filtered;
 
     public FilterProcessor(Predicate predicate, Processor processor) {
         super(processor);
@@ -57,6 +58,7 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         exchange.setProperty(Exchange.FILTER_MATCHED, matches);
 
         if (matches) {
+            filtered++;
             return processor.process(exchange, callback);
         } else {
             callback.done(true);
@@ -85,9 +87,25 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         return predicate;
     }
 
+    /**
+     * Gets the number of Exchanges that matched the filter predicate and therefore as filtered.
+     */
+    public long getFilteredCount() {
+        return filtered;
+    }
+
+    /**
+     * Reset counters.
+     */
+    public void reset() {
+        filtered = 0;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        // restart counter
+        reset();
         ServiceHelper.startService(predicate);
     }
 

@@ -389,4 +389,19 @@ public final class JmsMessageHelper {
         }
     }
 
+    /**
+     * Gets the JMSCorrelationIDAsBytes from the message.
+     *
+     * @param message the message
+     * @return the JMSCorrelationIDAsBytes, or <tt>null</tt> if not able to get
+     */
+    public static String getJMSCorrelationIDAsBytes(Message message) {
+        try {
+            return new String(message.getJMSCorrelationIDAsBytes());
+        } catch (Exception e) {
+            // ignore if JMS broker do not support this
+        }
+
+        return null;
+    }
 }

@@ -18,7 +18,9 @@ package org.apache.camel.component.twitter.producer;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Produces text as a direct message.
@@ -32,6 +34,9 @@ public class DirectMessageProducer extends Twitter4JProducer {
     public void process(Exchange exchange) throws Exception {
         // send direct message
         String toUsername = te.getProperties().getUser();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(TwitterConstants.TWITTER_USER, String.class))) {
+            toUsername = exchange.getIn().getHeader(TwitterConstants.TWITTER_USER, String.class);
+        }
         String text = exchange.getIn().getBody(String.class);
 
         if (toUsername.isEmpty()) {

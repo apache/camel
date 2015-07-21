@@ -19,6 +19,7 @@ contributor([context(ctype: 'org.apache.camel.model.ProcessorDefinition')]) {
     method name: 'enrich', type: 'org.apache.camel.model.ProcessorDefinition', params: [resourceUri: 'java.lang.String', aggregationLogic: 'groovy.lang.Closure']
     method name: 'pollEnrich', type: 'org.apache.camel.model.ProcessorDefinition', params: [resourceUri: 'java.lang.String', aggregationLogic: 'groovy.lang.Closure']
     method name: 'pollEnrich', type: 'org.apache.camel.model.ProcessorDefinition', params: [resourceUri: 'java.lang.String', timeout: 'long', aggregationLogic: 'groovy.lang.Closure']
+    method name: 'script', type: 'org.apache.camel.model.ProcessorDefinition', params: [expression: 'groovy.lang.Closure']
     method name: 'transform', type: 'org.apache.camel.model.ProcessorDefinition', params: [expression: 'groovy.lang.Closure']
     method name: 'setProperty', type: 'org.apache.camel.model.ProcessorDefinition', params: [name: 'java.lang.String', expression: 'groovy.lang.Closure']
     method name: 'setHeader', type: 'org.apache.camel.model.ProcessorDefinition', params: [name: 'java.lang.String', expression: 'groovy.lang.Closure']

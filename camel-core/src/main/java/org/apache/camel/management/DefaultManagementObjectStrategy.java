@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.util.Iterator;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
@@ -38,27 +39,63 @@ import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDelayer;
+import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
+import org.apache.camel.management.mbean.ManagedEnricher;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
+import org.apache.camel.management.mbean.ManagedFilter;
 import org.apache.camel.management.mbean.ManagedIdempotentConsumer;
+import org.apache.camel.management.mbean.ManagedLoop;
+import org.apache.camel.management.mbean.ManagedMulticast;
+import org.apache.camel.management.mbean.ManagedPollEnricher;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
+import org.apache.camel.management.mbean.ManagedRecipientList;
+import org.apache.camel.management.mbean.ManagedResequencer;
 import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedRoutingSlip;
+import org.apache.camel.management.mbean.ManagedSamplingThrottler;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
+import org.apache.camel.management.mbean.ManagedSendDynamicProcessor;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedService;
+import org.apache.camel.management.mbean.ManagedSetBody;
+import org.apache.camel.management.mbean.ManagedSetHeader;
+import org.apache.camel.management.mbean.ManagedSetProperty;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThroughputLogger;
+import org.apache.camel.management.mbean.ManagedTransformer;
+import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RecipientListDefinition;
+import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.processor.Delayer;
+import org.apache.camel.processor.DynamicRouter;
+import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.ErrorHandler;
+import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.LoopProcessor;
+import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.PollEnricher;
+import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.Resequencer;
+import org.apache.camel.processor.RoutingSlip;
+import org.apache.camel.processor.SamplingThrottler;
+import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.SetBodyProcessor;
+import org.apache.camel.processor.SetHeaderProcessor;
+import org.apache.camel.processor.SetPropertyProcessor;
+import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.processor.TransformProcessor;
+import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -167,6 +204,15 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                                                ProcessorDefinition<?> definition, Route route) {
         ManagedProcessor answer = null;
 
+        if (definition instanceof RecipientListDefinition || definition instanceof ThreadsDefinition) {
+            // special for RecipientListDefinition/ThreadsDefinition, as the processor is wrapped in a pipeline as last
+            Pipeline pipeline = (Pipeline) processor;
+            Iterator<Processor> it = pipeline.getProcessors().iterator();
+            while (it.hasNext()) {
+                processor = it.next();
+            }
+        }
+
         // unwrap delegates as we want the real target processor
         Processor target = processor;
         while (target != null) {
@@ -181,6 +227,36 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
+            } else if (target instanceof DynamicRouter) {
+                answer = new ManagedDynamicRouter(context, (DynamicRouter) target, definition);
+            } else if (target instanceof RoutingSlip) {
+                answer = new ManagedRoutingSlip(context, (RoutingSlip) target, definition);
+            } else if (target instanceof FilterProcessor) {
+                answer = new ManagedFilter(context, (FilterProcessor) target, definition);
+            } else if (target instanceof LoopProcessor) {
+                answer = new ManagedLoop(context, (LoopProcessor) target, definition);
+            } else if (target instanceof RecipientList) {
+                answer = new ManagedRecipientList(context, (RecipientList) target, definition);
+            } else if (target instanceof MulticastProcessor) {
+                answer = new ManagedMulticast(context, (MulticastProcessor) target, definition);
+            } else if (target instanceof SamplingThrottler) {
+                answer = new ManagedSamplingThrottler(context, (SamplingThrottler) target, definition);
+            } else if (target instanceof Resequencer) {
+                answer = new ManagedResequencer(context, (Resequencer) target, definition);
+            } else if (target instanceof StreamResequencer) {
+                answer = new ManagedResequencer(context, (StreamResequencer) target, definition);
+            } else if (target instanceof SetBodyProcessor) {
+                answer = new ManagedSetBody(context, (SetBodyProcessor) target, definition);
+            } else if (target instanceof SetHeaderProcessor) {
+                answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, definition);
+            } else if (target instanceof SetPropertyProcessor) {
+                answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, definition);
+            } else if (target instanceof TransformProcessor) {
+                answer = new ManagedTransformer(context, (TransformProcessor) target, definition);
+            } else if (target instanceof WireTapProcessor) {
+                answer = new ManagedWireTapProcessor(context, (WireTapProcessor) target, definition);
+            } else if (target instanceof SendDynamicProcessor) {
+                answer = new ManagedSendDynamicProcessor(context, (SendDynamicProcessor) target, definition);
             } else if (target instanceof SendProcessor) {
                 SendProcessor sp = (SendProcessor) target;
                 // special for sending to throughput logger
@@ -201,6 +277,10 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedIdempotentConsumer(context, (IdempotentConsumer) target, definition);
             } else if (target instanceof AggregateProcessor) {
                 answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, (org.apache.camel.model.AggregateDefinition) definition);
+            } else if (target instanceof Enricher) {
+                answer = new ManagedEnricher(context, (Enricher) target, definition);
+            } else if (target instanceof PollEnricher) {
+                answer = new ManagedPollEnricher(context, (PollEnricher) target, definition);
             } else if (target instanceof org.apache.camel.spi.ManagementAware) {
                 return ((org.apache.camel.spi.ManagementAware<Processor>) target).getManagedObject(processor);
             }

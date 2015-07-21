@@ -89,6 +89,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private boolean clearExpiredCookies = true;
     @UriParam(label = "producer")
     private boolean ignoreResponseBody;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean copyHeaders = true;
+    @UriParam(label = "consumer")
+    private boolean eagerCheckContentAvailable;
 
     public HttpEndpoint() {
     }
@@ -259,6 +263,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             httpBinding = new DefaultHttpBinding();
             httpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             httpBinding.setTransferException(isTransferException());
+            httpBinding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
         }
         return httpBinding;
     }
@@ -489,4 +494,27 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.ignoreResponseBody = ignoreResponseBody;
     }
 
+    public boolean isEagerCheckContentAvailable() {
+        return eagerCheckContentAvailable;
+    }
+
+    /**
+     * Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present.
+     * This can be turned on in case HTTP clients do not send streamed data.
+     */
+    public void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable) {
+        this.eagerCheckContentAvailable = eagerCheckContentAvailable;
+    }
+
+    /**
+     * If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy.
+     * Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).
+     */
+    public boolean isCopyHeaders() {
+        return copyHeaders;
+    }
+
+    public void setCopyHeaders(boolean copyHeaders) {
+        this.copyHeaders = copyHeaders;
+    }
 }

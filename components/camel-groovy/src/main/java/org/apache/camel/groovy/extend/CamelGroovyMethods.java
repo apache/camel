@@ -54,13 +54,12 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ExpressionSupport;
 
-
-
 /**
  * Extension class containing static methods that mainly allow to use Closures
  * instead of Predicates, Expressions, Processors, or AggregationStrategies
  */
 public final class CamelGroovyMethods {
+
     private CamelGroovyMethods() {
         // Utility Class
     }
@@ -137,6 +136,11 @@ public final class CamelGroovyMethods {
     }
 
     // Extension Methods that use Closures as expressions
+
+    public static ProcessorDefinition<?> script(ProcessorDefinition<?> self,
+            Closure<?> expression) {
+        return self.script(toExpression(expression));
+    }
 
     public static ProcessorDefinition<?> transform(ProcessorDefinition<?> self,
             Closure<?> expression) {

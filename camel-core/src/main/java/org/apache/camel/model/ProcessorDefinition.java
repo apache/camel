@@ -52,6 +52,7 @@ import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -68,7 +69,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block, OtherAttributesAware {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
     @XmlTransient
@@ -606,8 +606,37 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type to(String uri) {
         addOutput(new ToDefinition(uri));
         return (Type) this;
-    }   
-    
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
+     * @param uri  the dynamic endpoint to send to (resolved using simple language by default)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type toD(String uri) {
+        ToDynamicDefinition answer = new ToDynamicDefinition();
+        answer.setUri(uri);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
+     * @param uri  the dynamic endpoint to send to (resolved using simple language by default)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type toD(String uri, boolean ignoreInvalidEndpoint) {
+        ToDynamicDefinition answer = new ToDynamicDefinition();
+        answer.setUri(uri);
+        answer.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
+        addOutput(answer);
+        return (Type) this;
+    }
+
     /**
      * Sends the exchange to the given endpoint
      *
@@ -1442,6 +1471,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }
+
     /**
      * <a href="http://camel.apache.org/load-balancer.html">Load Balancer EIP:</a>
      * Creates a loadbalance
@@ -2140,6 +2170,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Sets the exception on the {@link org.apache.camel.Exchange}
+     *
+     * @param type the exception class to use
+     * @param message the given message as caused message (supports simple language)
+     * @return the builder
+     */
+    public Type throwException(Class<? extends Exception> type, String message) {
+        ThrowExceptionDefinition answer = new ThrowExceptionDefinition();
+        answer.setExceptionClass(type);
+        answer.setMessage(message);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
      * Marks the exchange for rollback only.
      * <p/>
      * Does <b>not</b> set any exception as opposed to {@link #rollback()} methods.
@@ -2211,11 +2256,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other using {@link ExchangePattern#InOnly}.
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @return the builder
      */
     public WireTapDefinition<Type> wireTap(String uri) {
-        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
+        WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         addOutput(answer);
         return answer;
@@ -2227,7 +2272,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other using {@link ExchangePattern#InOnly}.
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param      executorService a custom {@link ExecutorService} to use as thread pool
      *             for sending tapped exchanges
      * @return the builder
@@ -2235,7 +2280,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Deprecated
     public WireTapDefinition<Type> wireTap(String uri, ExecutorService executorService) {
-        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
+        WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         answer.setExecutorService(executorService);
         addOutput(answer);
@@ -2248,7 +2293,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other using {@link ExchangePattern#InOnly}.
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param      executorServiceRef reference to lookup a custom {@link ExecutorService}
      *             to use as thread pool for sending tapped exchanges
      * @return the builder
@@ -2256,7 +2301,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Deprecated
     public WireTapDefinition<Type> wireTap(String uri, String executorServiceRef) {
-        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
+        WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         answer.setExecutorServiceRef(executorServiceRef);
         addOutput(answer);
@@ -2271,7 +2316,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Will use a copy of the original Exchange which is passed in as argument
      * to the given expression
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param body expression that creates the body to send
      * @return the builder
      * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
@@ -2286,7 +2331,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends a new {@link org.apache.camel.Exchange} to the destination
      * using {@link ExchangePattern#InOnly}.
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
+     * @param copy whether or not use a copy of the original exchange or a new empty exchange
+     * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
+     */
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, boolean copy) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setUri(uri);
+        answer.setCopy(copy);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
+     * Sends a new {@link org.apache.camel.Exchange} to the destination
+     * using {@link ExchangePattern#InOnly}.
+     *
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param copy whether or not use a copy of the original exchange or a new empty exchange
      * @param body expression that creates the body to send
      * @return the builder
@@ -2294,10 +2358,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Deprecated
     public WireTapDefinition<Type> wireTap(String uri, boolean copy, Expression body) {
-        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
+        WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         answer.setCopy(copy);
-        answer.setNewExchangeExpression(body);
+        answer.setNewExchangeExpression(new ExpressionSubElementDefinition(body));
         addOutput(answer);
         return answer;
     }
@@ -2310,7 +2374,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Will use a copy of the original Exchange which is passed in as argument
      * to the given processor
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param processor  processor preparing the new exchange to send
      * @return the builder
      * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
@@ -2325,7 +2389,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends a new {@link org.apache.camel.Exchange} to the destination
      * using {@link ExchangePattern#InOnly}.
      *
-     * @param uri  the destination
+     * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @param copy whether or not use a copy of the original exchange or a new empty exchange
      * @param processor  processor preparing the new exchange to send
      * @return the builder
@@ -2333,7 +2397,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Deprecated
     public WireTapDefinition<Type> wireTap(String uri, boolean copy, Processor processor) {
-        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
+        WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         answer.setCopy(copy);
         answer.setNewExchangeProcessor(processor);
@@ -2826,9 +2890,35 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to set the body
      */
     public ExpressionClause<ProcessorDefinition<Type>> transform() {
-        ExpressionClause<ProcessorDefinition<Type>> clause = 
+        ExpressionClause<ProcessorDefinition<Type>> clause =
             new ExpressionClause<ProcessorDefinition<Type>>((ProcessorDefinition<Type>) this);
         TransformDefinition answer = new TransformDefinition(clause);
+        addOutput(answer);
+        return clause;
+    }
+
+    /**
+     * Executes a script (do not change the message body).
+     *
+     * @param expression   the expression used as the script.
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type script(Expression expression) {
+        ScriptDefinition answer = new ScriptDefinition(expression);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Executes a script (do not change the message body).
+     *
+     * @return a expression builder clause to use as script.
+     */
+    public ExpressionClause<ProcessorDefinition<Type>> script() {
+        ExpressionClause<ProcessorDefinition<Type>> clause =
+                new ExpressionClause<ProcessorDefinition<Type>>((ProcessorDefinition<Type>) this);
+        ScriptDefinition answer = new ScriptDefinition(clause);
         addOutput(answer);
         return clause;
     }
@@ -3095,38 +3185,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
      * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
-     * 
-     * @param resourceUri           URI of resource endpoint for obtaining additional data.
-     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
-     */
-    @SuppressWarnings("unchecked")
-    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy) {
-        addOutput(new EnrichDefinition(aggregationStrategy, resourceUri));
-        return (Type) this;
-    }
-
-    /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
-     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
-     *
-     * @param resourceUri           URI of resource endpoint for obtaining additional data.
-     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
-     */
-    @SuppressWarnings("unchecked")
-    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
-        EnrichDefinition enrich = new EnrichDefinition(aggregationStrategy, resourceUri);
-        enrich.setAggregateOnException(aggregateOnException);
-        addOutput(enrich);
-        return (Type) this;
-    }
-
-    /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
-     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
      * <p/>
      * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
      * to obatin the additional data, where as pollEnrich uses a polling consumer.
@@ -3135,9 +3193,58 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
-    @SuppressWarnings("unchecked")
     public Type enrich(String resourceUri) {
-        addOutput(new EnrichDefinition(resourceUri));
+        return enrich(resourceUri, null);
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     * 
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy) {
+        return enrich(resourceUri, aggregationStrategy, false);
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+        return enrich(resourceUri, aggregationStrategy, aggregateOnException, false);
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException  whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                              an exception was thrown.
+     * @param shareUnitOfWork       whether to share unit of work
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException, boolean shareUnitOfWork) {
+        EnrichDefinition answer = new EnrichDefinition();
+        answer.setExpression(new ConstantExpression(resourceUri));
+        answer.setAggregationStrategy(aggregationStrategy);
+        answer.setAggregateOnException(aggregateOnException);
+        answer.setShareUnitOfWork(shareUnitOfWork);
+        addOutput(answer);
         return (Type) this;
     }
 
@@ -3153,13 +3260,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
-    @SuppressWarnings("unchecked")
     public Type enrichRef(String resourceRef, String aggregationStrategyRef) {
-        EnrichDefinition enrich = new EnrichDefinition();
-        enrich.setResourceRef(resourceRef);
-        enrich.setAggregationStrategyRef(aggregationStrategyRef);
-        addOutput(enrich);
-        return (Type) this;
+        return enrichRef(resourceRef, aggregationStrategyRef, false);
     }
 
     /**
@@ -3176,14 +3278,50 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
-    @SuppressWarnings("unchecked")
     public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException) {
-        EnrichDefinition enrich = new EnrichDefinition();
-        enrich.setResourceRef(resourceRef);
-        enrich.setAggregationStrategyRef(aggregationStrategyRef);
-        enrich.setAggregateOnException(aggregateOnException);
-        addOutput(enrich);
+        return enrichRef(resourceRef, aggregationStrategyRef, false, false);
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     * <p/>
+     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
+     * to obtain the additional data, where as pollEnrich uses a polling consumer.
+     *
+     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
+     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
+     * @param shareUnitOfWork        whether to share unit of work
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException, boolean shareUnitOfWork) {
+        EnrichDefinition answer = new EnrichDefinition();
+        answer.setExpression(new SimpleExpression("ref:" + resourceRef));
+        answer.setAggregationStrategyRef(aggregationStrategyRef);
+        answer.setAggregateOnException(aggregateOnException);
+        answer.setShareUnitOfWork(shareUnitOfWork);
+        addOutput(answer);
         return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     * <p/>
+     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
+     * to obtain the additional data, where as pollEnrich uses a polling consumer.
+     *
+     * @return a expression builder clause to set the expression to use for computing the endpoint to use
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    public ExpressionClause<EnrichDefinition> enrich() {
+        EnrichDefinition answer = new EnrichDefinition();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
     }
 
     /**
@@ -3203,8 +3341,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri) {
-        addOutput(new PollEnrichDefinition(null, resourceUri, -1));
-        return (Type) this;
+        return pollEnrich(resourceUri, null);
     }
 
     /**
@@ -3225,8 +3362,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, AggregationStrategy aggregationStrategy) {
-        addOutput(new PollEnrichDefinition(aggregationStrategy, resourceUri, -1));
-        return (Type) this;
+        return pollEnrich(resourceUri, -1, aggregationStrategy);
     }
 
     /**
@@ -3249,8 +3385,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
-        addOutput(new PollEnrichDefinition(aggregationStrategy, resourceUri, timeout));
-        return (Type) this;
+        return pollEnrich(resourceUri, timeout, aggregationStrategy, false);
     }
 
     /**
@@ -3275,7 +3410,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
-        PollEnrichDefinition pollEnrich = new PollEnrichDefinition(aggregationStrategy, resourceUri, timeout);
+        PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
+        pollEnrich.setExpression(new ConstantExpression(resourceUri));
+        pollEnrich.setTimeout(timeout);
+        pollEnrich.setAggregationStrategy(aggregationStrategy);
         pollEnrich.setAggregateOnException(aggregateOnException);
         addOutput(pollEnrich);
         return (Type) this;
@@ -3300,8 +3438,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout) {
-        addOutput(new PollEnrichDefinition(null, resourceUri, timeout));
-        return (Type) this;
+        return pollEnrich(resourceUri, timeout, null);
     }
 
     /**
@@ -3325,7 +3462,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
-        pollEnrich.setResourceRef(resourceRef);
+        pollEnrich.setExpression(new SimpleExpression("ref:" + resourceRef));
         pollEnrich.setTimeout(timeout);
         pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
         addOutput(pollEnrich);
@@ -3355,12 +3492,64 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
-        pollEnrich.setResourceRef(resourceRef);
+        pollEnrich.setExpression(new SimpleExpression("ref:" + resourceRef));
         pollEnrich.setTimeout(timeout);
         pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
         pollEnrich.setAggregateOnException(aggregateOnException);
         addOutput(pollEnrich);
         return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
+     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * <p/>
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer
+     * to obtain the additional data, where as enrich uses a producer.
+     * <p/>
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
+     * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
+     * otherwise we use <tt>receive(timeout)</tt>.
+     *
+     * @param expression             to use an expression to dynamically compute the endpoint to poll from
+     * @param timeout                timeout in millis to wait at most for data to be available.
+     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
+     * @return the builder
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type pollEnrich(Expression expression, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+        PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
+        pollEnrich.setExpression(new ExpressionDefinition(expression));
+        pollEnrich.setTimeout(timeout);
+        pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
+        pollEnrich.setAggregateOnException(aggregateOnException);
+        addOutput(pollEnrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
+     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * <p/>
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer
+     * to obtain the additional data, where as enrich uses a producer.
+     * <p/>
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
+     * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
+     * otherwise we use <tt>receive(timeout)</tt>.
+     *
+     * @return a expression builder clause to set the expression to use for computing the endpoint to poll from
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    public ExpressionClause<PollEnrichDefinition> pollEnrich() {
+        PollEnrichDefinition answer = new PollEnrichDefinition();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
     }
 
     /**
@@ -3551,10 +3740,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         this.inheritErrorHandler = inheritErrorHandler;
     }
 
+    @Override
     public Map<QName, Object> getOtherAttributes() {
         return otherAttributes;
     }
 
+    @Override
     public void setOtherAttributes(Map<QName, Object> otherAttributes) {
         this.otherAttributes = otherAttributes;
     }

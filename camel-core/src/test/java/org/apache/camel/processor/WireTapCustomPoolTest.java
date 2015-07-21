@@ -68,7 +68,7 @@ public class WireTapCustomPoolTest extends ContextTestSupport {
                 from("direct:start")
                     .to("log:foo")
                     // pass in the custom pool to the wireTap DSL
-                    .wireTap("direct:tap", pool)
+                    .wireTap("direct:tap").executorService(pool)
                     .to("mock:result");
                 // END SNIPPET: e1
 

@@ -27,6 +27,7 @@ public class AhcProduceNoThrowExceptionOnFailureTest extends BaseAhcTest {
     public void testAhcProduce() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Does not work");
         getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.HTTP_RESPONSE_CODE, 500);
+        getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.HTTP_RESPONSE_TEXT, "Server Error");
 
         template.sendBody("direct:start", null);
 

@@ -19,6 +19,7 @@ package org.apache.camel.test.blueprint;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.service.blueprint.container.BlueprintEvent;
 
 /**
  *
@@ -49,6 +50,7 @@ public class BlueprintPropertiesTest extends CamelBlueprintTestSupport {
         }
 
         camelCore.start();
+        CamelBlueprintHelper.waitForBlueprintContainer(null, test.getBundleContext(), getClass().getSimpleName(), BlueprintEvent.CREATED, null);
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=" + getClass().getSimpleName() + ")", 500);
     }
 

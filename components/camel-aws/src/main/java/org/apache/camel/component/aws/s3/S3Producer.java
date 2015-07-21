@@ -272,6 +272,11 @@ public class S3Producer extends DefaultProducer {
             }
         }
 
+        String encryption = exchange.getIn().getHeader(S3Constants.SERVER_SIDE_ENCRYPTION, getConfiguration().getServerSideEncryption(), String.class);
+        if (encryption != null) {
+            objectMetadata.setSSEAlgorithm(encryption);
+        }
+
         return objectMetadata;
     }
 

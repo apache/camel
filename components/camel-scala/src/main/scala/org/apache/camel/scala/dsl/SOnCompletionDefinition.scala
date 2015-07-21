@@ -40,7 +40,4 @@ case class SOnCompletionDefinition(override val target : OnCompletionDefinition)
   def parallelProcessing = wrap(target.parallelProcessing)
   def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
   def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
-
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SOnCompletionDefinition]
-
 }

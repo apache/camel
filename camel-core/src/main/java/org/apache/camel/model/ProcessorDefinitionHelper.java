@@ -665,10 +665,10 @@ public final class ProcessorDefinitionHelper {
      * Inspects the given definition and resolves any property placeholders from its properties.
      * <p/>
      * This implementation will check all the getter/setter pairs on this instance and for all the values
-     * (which is a String type) will be property placeholder resolved.
+     * (which is a String type) will be property placeholder resolved. The definition should implement {@link OtherAttributesAware}
      *
      * @param camelContext the Camel context
-     * @param definition   the definition
+     * @param definition   the definition which should implement {@link OtherAttributesAware}
      * @throws Exception is thrown if property placeholders was used and there was an error resolving them
      * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
      * @see org.apache.camel.component.properties.PropertiesComponent
@@ -680,17 +680,17 @@ public final class ProcessorDefinitionHelper {
         Map<String, Object> properties = new HashMap<String, Object>();
         IntrospectionSupport.getProperties(definition, properties, null);
 
-        ProcessorDefinition<?> processorDefinition = null;
-        if (definition instanceof ProcessorDefinition) {
-            processorDefinition = (ProcessorDefinition<?>) definition;
+        OtherAttributesAware other = null;
+        if (definition instanceof OtherAttributesAware) {
+            other = (OtherAttributesAware) definition;
         }
         // include additional properties which have the Camel placeholder QName
         // and when the definition parameter is this (otherAttributes belong to this)
-        if (processorDefinition != null && processorDefinition.getOtherAttributes() != null) {
-            for (QName key : processorDefinition.getOtherAttributes().keySet()) {
+        if (other != null && other.getOtherAttributes() != null) {
+            for (QName key : other.getOtherAttributes().keySet()) {
                 if (Constants.PLACEHOLDER_QNAME.equals(key.getNamespaceURI())) {
                     String local = key.getLocalPart();
-                    Object value = processorDefinition.getOtherAttributes().get(key);
+                    Object value = other.getOtherAttributes().get(key);
                     if (value != null && value instanceof String) {
                         // enforce a properties component to be created if none existed
                         CamelContextHelper.lookupPropertiesComponent(camelContext, true);

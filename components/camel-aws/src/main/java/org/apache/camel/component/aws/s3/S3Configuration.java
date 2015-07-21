@@ -53,6 +53,8 @@ public class S3Configuration implements Cloneable {
     private String policy;
     @UriParam(label = "producer")
     private String storageClass;
+    @UriParam(label = "producer")
+    private String serverSideEncryption;
 
     public long getPartSize() {
         return partSize;
@@ -206,5 +208,17 @@ public class S3Configuration implements Cloneable {
      */
     public void setStorageClass(String storageClass) {
         this.storageClass = storageClass;
+    }
+
+    public String getServerSideEncryption() {
+        return serverSideEncryption;
+    }
+
+    /**
+     * Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys.
+     * For example use <tt>AES256</tt>.
+     */
+    public void setServerSideEncryption(String serverSideEncryption) {
+        this.serverSideEncryption = serverSideEncryption;
     }
 }

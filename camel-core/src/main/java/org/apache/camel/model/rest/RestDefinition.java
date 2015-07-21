@@ -29,8 +29,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -387,7 +389,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Routes directly to the given endpoint.
+     * Routes directly to the given static endpoint.
      * <p/>
      * If you need additional routing capabilities, then use {@link #route()} instead.
      *
@@ -404,6 +406,27 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setTo(to);
+        return this;
+    }
+
+    /**
+     * Routes directly to the given dynamic endpoint.
+     * <p/>
+     * If you need additional routing capabilities, then use {@link #route()} instead.
+     *
+     * @param uri the uri of the endpoint
+     * @return this builder
+     */
+    public RestDefinition toD(String uri) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        ToDynamicDefinition to = new ToDynamicDefinition(uri);
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setToD(to);
         return this;
     }
 
@@ -462,7 +485,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 // it was a singular to, so add a new route and add the singular
                 // to as output to this route
                 route = new RouteDefinition();
-                route.getOutputs().add(verb.getTo());
+                ProcessorDefinition def = verb.getTo() != null ? verb.getTo() : verb.getToD();
+                route.getOutputs().add(def);
             }
 
             // add the binding

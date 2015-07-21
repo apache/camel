@@ -19,8 +19,6 @@ package scala
 
 import reflect.{ClassTag, classTag}
 import org.apache.camel.spi.{UnitOfWork, Synchronization}
-import org.apache.camel.{ExchangePattern, Message, Endpoint, Exchange}
-import java.lang.{String, Class}
 
 /**
  * Rich wrapper for Camel's Exchange implementations

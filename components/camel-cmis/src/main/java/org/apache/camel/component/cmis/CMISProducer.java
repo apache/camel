@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.cmis;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,7 +32,6 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -58,12 +59,23 @@ public class CMISProducer extends DefaultProducer {
 
     private Map<String, Object> filterTypeProperties(Map<String, Object> properties) {
         Map<String, Object> result = new HashMap<String, Object>(properties.size());
+
         String objectTypeName = CamelCMISConstants.CMIS_DOCUMENT;
         if (properties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             objectTypeName = (String) properties.get(PropertyIds.OBJECT_TYPE_ID);
         }
 
-        Set<String> types = cmisSessionFacade.getPropertiesFor(objectTypeName);
+        Set<String> types = new HashSet<String>();
+        types.addAll(cmisSessionFacade.getPropertiesFor(objectTypeName));
+
+        if (cmisSessionFacade.supportsSecondaries() && properties.containsKey(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+            @SuppressWarnings("unchecked")
+            Collection<String> secondaryTypes = (Collection<String>) properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+            for (String secondaryType : secondaryTypes) {
+                types.addAll(cmisSessionFacade.getPropertiesFor(secondaryType));
+            }
+        }
+
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             if (types.contains(entry.getKey())) {
                 result.put(entry.getKey(), entry.getValue());
@@ -88,14 +100,14 @@ public class CMISProducer extends DefaultProducer {
             return storeDocument(parentFolder, cmisProperties, contentStream);
         } else if (isFolder(message)) {
             return storeFolder(parentFolder, cmisProperties);
-        } else {  //other types
+        } else { // other types
             return storeDocument(parentFolder, cmisProperties, null);
         }
     }
 
     private Folder getFolderOnPath(Exchange exchange, String path) {
         try {
-            return (Folder)cmisSessionFacade.getObjectByPath(path);
+            return (Folder) cmisSessionFacade.getObjectByPath(path);
         } catch (CmisObjectNotFoundException e) {
             throw new RuntimeExchangeException("Path not found " + path, exchange, e);
         }
@@ -108,8 +120,8 @@ public class CMISProducer extends DefaultProducer {
         }
 
         if (isFolder(message)) {
-            String path = (String)message.getHeader(PropertyIds.PATH);
-            String name = (String)message.getHeader(PropertyIds.NAME);
+            String path = (String) message.getHeader(PropertyIds.PATH);
+            String name = (String) message.getHeader(PropertyIds.NAME);
             if (path != null && path.length() > name.length()) {
                 return path.substring(0, path.length() - name.length());
             }
@@ -134,15 +146,13 @@ public class CMISProducer extends DefaultProducer {
         return parentFolder.createFolder(cmisProperties);
     }
 
-    private Document storeDocument(Folder parentFolder, Map<String, Object> cmisProperties,
-                                   ContentStream contentStream) {
+    private Document storeDocument(Folder parentFolder, Map<String, Object> cmisProperties, ContentStream contentStream) {
         if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         }
 
         VersioningState versioningState = VersioningState.NONE;
-        if (cmisSessionFacade
-                .isObjectTypeVersionable((String)cmisProperties.get(PropertyIds.OBJECT_TYPE_ID))) {
+        if (cmisSessionFacade.isObjectTypeVersionable((String) cmisProperties.get(PropertyIds.OBJECT_TYPE_ID))) {
             versioningState = VersioningState.MAJOR;
         }
         LOG.debug("Creating document with properties: {}", cmisProperties);

@@ -30,7 +30,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A processor which sets the body on the OUT message with an {@link Expression}
+ * A processor which sets the body on the OUT message with an {@link Expression}.
  */
 public class TransformProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
     private String id;

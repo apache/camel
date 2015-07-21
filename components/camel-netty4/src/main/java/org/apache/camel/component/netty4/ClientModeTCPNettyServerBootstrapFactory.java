@@ -28,6 +28,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.apache.camel.CamelContext;
@@ -143,7 +144,6 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         }
         LOG.info("ClientModeServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
         channel = openChannel(channelFuture);
-       
     }
 
     protected void stopServerBootstrap() {
@@ -155,8 +155,16 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
             workerGroup = null;
         }
     }
-    
-    protected Channel openChannel(ChannelFuture channelFuture) throws Exception {
+
+    protected void doReconnectIfNeeded() throws Exception {
+        if (channel == null || !channel.isActive()) {
+            LOG.debug("ClientModeServerBootstrap re-connect to {}:{}", configuration.getHost(), configuration.getPort());
+            ChannelFuture connectFuture = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            channel = openChannel(connectFuture);
+        }
+    }
+
+    protected Channel openChannel(final ChannelFuture channelFuture) throws Exception {
         // blocking for channel to be done
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
@@ -173,27 +181,39 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         try {
             channelLatch.await(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException ex) {
-            throw new CamelException("Interrupted while waiting for " + "connection to "
-                                     + configuration.getAddress());
+            throw new CamelException("Interrupted while waiting for " + "connection to " + configuration.getAddress());
         }
-
 
         if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
-            ConnectException cause = new ConnectException("Cannot connect to " + configuration.getAddress());
-            if (channelFuture.cause() != null) {
-                cause.initCause(channelFuture.cause());
+            //check if reconnect is enabled and schedule a reconnect, if from handler then dont schedule a reconnect
+            if (configuration.isReconnect()) {
+                final EventLoop loop = channelFuture.channel().eventLoop();
+                loop.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
+                            doReconnectIfNeeded();
+                        } catch (Exception e) {
+                            LOG.warn("Error during re-connect to " + configuration.getAddress() + ". Will attempt again in "
+                                    + configuration.getReconnectInterval() + " millis. This exception is ignored.", e);
+                        }
+                    }
+                }, configuration.getReconnectInterval(), TimeUnit.MILLISECONDS);
+            } else {
+                ConnectException cause = new ConnectException("Cannot connect to " + configuration.getAddress());
+                if (channelFuture.cause() != null) {
+                    cause.initCause(channelFuture.cause());
+                }
+                throw cause;
             }
-            throw cause;
         }
         Channel answer = channelFuture.channel();
-       
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating connector to address: {}", configuration.getAddress());
         }
-        
         return answer;
-        
     }
 
 }

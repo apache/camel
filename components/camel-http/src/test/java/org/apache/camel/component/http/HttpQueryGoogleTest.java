@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.apache.camel.language.constant.ConstantLanguage.constant;
 
 /**
  * Unit test to query Google using GET with endpoint having the query parameters.
@@ -32,7 +35,7 @@ public class HttpQueryGoogleTest extends CamelTestSupport {
     @Test
     @Ignore("Run manually")
     public void testQueryGoogle() throws Exception {
-        Object out = template.requestBody("http://www.google.com/search?q=Camel", "");
+        Object out = template.requestBodyAndHeader("http://www.google.com/search?q=Camel", "", Exchange.HTTP_METHOD, constant("GET"));
         assertNotNull(out);
         String data = context.getTypeConverter().convertTo(String.class, out);
         assertTrue("Camel should be in search result from Google", data.indexOf("Camel") > -1);

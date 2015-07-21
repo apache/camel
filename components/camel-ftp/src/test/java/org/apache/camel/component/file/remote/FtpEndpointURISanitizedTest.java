@@ -38,7 +38,7 @@ public class FtpEndpointURISanitizedTest extends FtpServerTestSupport {
     @Test
     public void testFtpDirectoryRelative() throws Exception {
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
-        assertThat(((FtpEndpoint) endpoint).getConfiguration().getDirectoryName(), equalTo("foo"));
+        assertThat(((FtpEndpoint<?>) endpoint).getConfiguration().getDirectoryName(), equalTo("foo"));
     }
 
     @Test

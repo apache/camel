@@ -560,8 +560,9 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
 
     private static String getRouteState(Route route) {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        if (route instanceof StatefulService) {
-            ServiceStatus status = ((StatefulService) route).getStatus();
+
+        ServiceStatus status = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
+        if (status != null) {
             return status.name();
         }
 

@@ -482,7 +482,8 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
     /**
      * The key password, which is used to access the certificate's key entry in the keystore (this is the same password that is supplied to the keystore command's -keypass option).
      */
-    @Metadata(description = "The key password, which is used to access the certificate's key entry in the keystore (this is the same password that is supplied to the keystore command's -keypass option).")
+    @Metadata(description = "The key password, which is used to access the certificate's key entry in the keystore "
+            + "(this is the same password that is supplied to the keystore command's -keypass option).")
     public void setSslKeyPassword(String sslKeyPassword) {
         this.sslKeyPassword = sslKeyPassword;
     }
