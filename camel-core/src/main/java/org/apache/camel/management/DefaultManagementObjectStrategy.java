@@ -55,6 +55,7 @@ import org.apache.camel.management.mbean.ManagedRecipientList;
 import org.apache.camel.management.mbean.ManagedResequencer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRoutingSlip;
+import org.apache.camel.management.mbean.ManagedSamplingThrottler;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendDynamicProcessor;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
@@ -80,6 +81,7 @@ import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.RoutingSlip;
+import org.apache.camel.processor.SamplingThrottler;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.StreamResequencer;
@@ -229,6 +231,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedRecipientList(context, (RecipientList) target, definition);
             } else if (target instanceof MulticastProcessor) {
                 answer = new ManagedMulticast(context, (MulticastProcessor) target, definition);
+            } else if (target instanceof SamplingThrottler) {
+                answer = new ManagedSamplingThrottler(context, (SamplingThrottler) target, definition);
             } else if (target instanceof Resequencer) {
                 answer = new ManagedResequencer(context, (Resequencer) target, definition);
             } else if (target instanceof StreamResequencer) {
