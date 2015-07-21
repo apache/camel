@@ -41,6 +41,22 @@
             <from uri="direct:describe"/>
             <to uri="aws-ec2://Test?amazonEc2Client=#amazonEc2Client&amp;operation=describeInstances"/>
         </route>
+        <route>
+            <from uri="direct:describeStatus"/>
+            <to uri="aws-ec2://Test?amazonEc2Client=#amazonEc2Client&amp;operation=describeInstancesStatus"/>
+        </route>
+        <route>
+            <from uri="direct:reboot"/>
+            <to uri="aws-ec2://Test?amazonEc2Client=#amazonEc2Client&amp;operation=rebootInstances"/>
+        </route>
+        <route>
+            <from uri="direct:monitor"/>
+            <to uri="aws-ec2://Test?amazonEc2Client=#amazonEc2Client&amp;operation=monitorInstances"/>
+        </route>
+        <route>
+            <from uri="direct:unmonitor"/>
+            <to uri="aws-ec2://Test?amazonEc2Client=#amazonEc2Client&amp;operation=unmonitorInstances"/>
+        </route>
     </camelContext>
 
     <bean id="amazonEc2Client" class="org.apache.camel.component.aws.ec2.AmazonEC2ClientMock"/>

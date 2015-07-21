@@ -39,6 +39,7 @@ public interface InfinispanConstants {
     String REPLACE = "CamelInfinispanOperationReplace";
     String REPLACE_ASYNC = "CamelInfinispanOperationReplaceAsync";
     String CLEAR = "CamelInfinispanOperationClear";
+    String CLEAR_ASYNC = "CamelInfinispanOperationClearAsync";
     String SIZE = "CamelInfinispanOperationSize";
     String RESULT = "CamelInfinispanOperationResult";
     String LIFESPAN_TIME = "CamelInfinispanLifespanTime";

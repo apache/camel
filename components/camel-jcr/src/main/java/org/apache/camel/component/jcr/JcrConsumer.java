@@ -28,6 +28,7 @@ import javax.jcr.observation.EventListener;
 import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +83,11 @@ public class JcrConsumer extends DefaultConsumer implements SuspendableService {
     private synchronized void createSessionAndRegisterListener() throws RepositoryException {
         LOG.trace("createSessionAndRegisterListener START");
 
-        session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
+        if (ObjectHelper.isEmpty(getJcrEndpoint().getWorkspaceName())) { 
+            session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
+        } else {
+            session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials(), getJcrEndpoint().getWorkspaceName());
+        }
 
         int eventTypes = getJcrEndpoint().getEventTypes();
         String absPath = getJcrEndpoint().getBase();

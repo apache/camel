@@ -55,26 +55,10 @@
 			<!-- iteration count to use when generating the secret key -->
 			<iteration-count>19</iteration-count>
 		</symmetric-encryption>
-		<asymmetric-encryption enabled="false">
-			<!-- encryption algorithm -->
-			<algorithm>RSA/NONE/PKCS1PADDING</algorithm>
-			<!-- private key password -->
-			<keyPassword>thekeypass</keyPassword>
-			<!-- private key alias -->
-			<keyAlias>local</keyAlias>
-			<!-- key store type -->
-			<storeType>JKS</storeType>
-			<!-- key store password -->
-			<storePassword>thestorepass</storePassword>
-			<!-- path to the key store -->
-			<storePath>keystore</storePath>
-		</asymmetric-encryption>
 	</network>
 
 	<executor-service>
-		<core-pool-size>16</core-pool-size>
-		<max-pool-size>64</max-pool-size>
-		<keep-alive-seconds>60</keep-alive-seconds>
+		<pool-size>64</pool-size>
 	</executor-service>
 
 	<queue name="default">
@@ -84,14 +68,7 @@
 			size of the JVM goes down below the maximum. Any integer between 0
 			and Integer.MAX_VALUE. 0 means Integer.MAX_VALUE. Default is 0.
 		-->
-		<max-size-per-jvm>0</max-size-per-jvm>
-		<!--
-			Maximum number of seconds for each item to stay in the queue. Items
-			that are not consumed in <time-to-live-seconds> will automatically
-			get evicted from the queue. Any integer between 0 and
-			Integer.MAX_VALUE. 0 means infinite. Default is 0.
-		-->
-		<time-to-live-seconds>0</time-to-live-seconds>
+		<max-size>0</max-size>
 	</queue>
 
 	<map name="default">

@@ -20,6 +20,7 @@ import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -150,7 +151,12 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             // strip the starting endpoint path so the target is relative to the endpoint uri
             String path = consumer.getConfiguration().getPath();
             if (path != null && target.startsWith(path)) {
-                target = target.substring(path.length());
+                // need to match by lower case as we want to ignore case on context-path
+                path = path.toLowerCase(Locale.US);
+                String match = target.toLowerCase(Locale.US);
+                if (match.startsWith(path)) {
+                    target = target.substring(path.length());
+                }
             }
 
             // is it a restricted resource?

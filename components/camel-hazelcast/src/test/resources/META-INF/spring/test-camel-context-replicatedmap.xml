@@ -47,7 +47,32 @@
 			</setHeader>
 			<to uri="hazelcast:replicatedmap:bar" />
 		</route>
+		
+		<route>
+			<from uri="direct:clear" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>clear</constant>
+			</setHeader>
+			<to uri="hazelcast:replicatedmap:bar" />
+		</route>
+		
+		<route>
+			<from uri="direct:containsKey" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>containsKey</constant>
+			</setHeader>
+			<to uri="hazelcast:replicatedmap:bar" />
+			<to uri="seda:out" />
+		</route>
 
+		<route>
+			<from uri="direct:containsValue" />
+			<setHeader headerName="CamelHazelcastOperationType">
+				<constant>containsValue</constant>
+			</setHeader>
+			<to uri="hazelcast:replicatedmap:bar" />
+			<to uri="seda:out" />
+		</route>
 	</camelContext>
 
 </beans>

@@ -32,4 +32,7 @@ public interface EC2Constants {
     String INSTANCE_EBS_OPTIMIZED   = "CamelAwsEC2InstanceEbsOptimized";
     String INSTANCE_SECURITY_GROUPS = "CamelAwsEC2InstanceSecurityGroups";
     String INSTANCES_IDS            = "CamelAwsEC2InstancesIds";
+    String INSTANCES_KEY_PAIR       = "CamelAwsEC2InstancesKeyPair";
+    String INSTANCES_CLIENT_TOKEN   = "CamelAwsEC2InstancesClientToken";
+    String INSTANCES_PLACEMENT      = "CamelAwsEC2InstancesPlacement";
 }

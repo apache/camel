@@ -19,7 +19,10 @@ package org.apache.camel.component.http4;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -28,9 +31,39 @@ import org.junit.Test;
  */
 public class HttpQueryTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/", new BasicValidationHandler("GET", "hl=en&q=camel", null, getExpectedContent())).
+                registerHandler("/test/", new BasicValidationHandler("GET", "my=@+camel", null, getExpectedContent())).
+                registerHandler("/user/pass", new BasicValidationHandler("GET", "password=baa&username=foo", null, getExpectedContent())).
+                create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void httpQuery() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/?hl=en&q=camel", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/?hl=en&q=camel", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
@@ -40,7 +73,7 @@ public class HttpQueryTest extends BaseHttpTest {
 
     @Test
     public void httpQueryHeader() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, "hl=en&q=camel");
             }
@@ -51,7 +84,7 @@ public class HttpQueryTest extends BaseHttpTest {
     
     @Test
     public void httpQueryWithEscapedCharacter() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/test/?my=%40%20camel", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/test/?my=%40%20camel", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
@@ -61,18 +94,11 @@ public class HttpQueryTest extends BaseHttpTest {
     
     @Test
     public void httpQueryWithUsernamePassword() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/user/pass?password=baa&username=foo", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/user/pass?password=baa&username=foo", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
 
         assertExchange(exchange);
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/", new BasicValidationHandler("GET", "hl=en&q=camel", null, getExpectedContent()));
-        server.register("/test/", new BasicValidationHandler("GET", "my=@+camel", null, getExpectedContent()));
-        server.register("/user/pass", new BasicValidationHandler("GET", "password=baa&username=foo", null, getExpectedContent()));
     }
 }

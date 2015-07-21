@@ -77,8 +77,13 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
 
         // the state may not be set
         if (exchange != null && callback != null) {
-            // set the cause on the exchange
-            exchange.setException(cause);
+            Throwable initialCause = exchange.getException();
+            if (initialCause != null && initialCause.getCause() == null) {
+                initialCause.initCause(cause);
+            } else {
+                // set the cause on the exchange
+                exchange.setException(cause);
+            }
 
             // close channel in case an exception was thrown
             NettyHelper.close(ctx.channel());
@@ -119,7 +124,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        // TODO Auto-generated method stub
         messageReceived = true;
 
         if (LOG.isTraceEnabled()) {
@@ -231,7 +235,5 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         NettyCamelState state = producer.getState(ctx.channel());
         return state != null ? state.getCallback() : null;
     }
-
-
 
 }

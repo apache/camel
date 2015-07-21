@@ -189,4 +189,9 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     public void setMarkerFiler(boolean markerFiler) {
         // noop - not supported by ftp
     }
+
+    @Override
+    public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
+        // noop - not supported by ftp
+    }
 }

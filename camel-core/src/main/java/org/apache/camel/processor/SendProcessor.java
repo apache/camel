@@ -46,9 +46,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Processor for forwarding exchanges to an endpoint destination.
+ * Processor for forwarding exchanges to a static endpoint destination.
  *
- * @version 
+ * @see SendDynamicProcessor
  */
 public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware, IdAware {
     protected static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
@@ -117,7 +117,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             callback.done(true);
             return true;
         }
-
 
         // we should preserve existing MEP so remember old MEP
         // if you want to permanently to change the MEP then use .setExchangePattern in the DSL

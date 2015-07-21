@@ -107,7 +107,7 @@ public final class CamelContextStatDump {
     @XmlElementWrapper(name = "routeStats")
     @XmlElements({
             @XmlElement(type = RouteStatDump.class, name = "routeStat")
-    })
+        })
     private List<RouteStatDump> routeStats;
 
     public String getId() {

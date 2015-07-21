@@ -42,31 +42,49 @@ import org.eclipse.jetty.server.Handler;
  */
 public abstract class JettyHttpEndpoint extends HttpEndpoint {
 
-    @UriParam
-    private boolean sessionSupport;
     private List<Handler> handlers;
     private HttpClient client;
-    @UriParam
-    private Integer httpClientMinThreads;
-    @UriParam
-    private Integer httpClientMaxThreads;
-    private JettyHttpBinding jettyBinding;
-    @UriParam
-    private boolean enableJmx;
-    @UriParam
-    private boolean enableMultipartFilter;
-    @UriParam(defaultValue = "true")
-    private boolean sendServerVersion = true;
-    @UriParam
-    private boolean sendDateHeader;
     private Filter multipartFilter;
     private List<Filter> filters;
-    @UriParam
-    private Long continuationTimeout;
-    @UriParam
-    private Boolean useContinuation;
     private SSLContextParameters sslContextParameters;
     private Map<String, Object> httpClientParameters;
+    private JettyHttpBinding jettyBinding;
+
+    @UriParam(label = "consumer",
+            description = "Specifies whether to enable the session manager on the server side of Jetty.")
+    private boolean sessionSupport;
+    @UriParam(label = "producer", defaultValue = "8",
+            description = "To set a value for minimum number of threads in HttpClient thread pool."
+                    + " This setting override any setting configured on component level."
+                    + " Notice that both a min and max size must be configured. If not set it default to min 8 threads used in Jettys thread pool.")
+    private Integer httpClientMinThreads;
+    @UriParam(label = "producer", defaultValue = "254",
+            description = "To set a value for maximum number of threads in HttpClient thread pool."
+                    + " This setting override any setting configured on component level."
+                    + " Notice that both a min and max size must be configured. If not set it default to max 254 threads used in Jettys thread pool.")
+    private Integer httpClientMaxThreads;
+    @UriParam(label = "consumer",
+            description = "If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.")
+    private boolean enableJmx;
+    @UriParam(description = "Whether Jetty org.eclipse.jetty.servlets.MultiPartFilter is enabled or not."
+            + " You should set this value to false when bridging endpoints, to ensure multipart requests is proxied/bridged as well.")
+    private boolean enableMultipartFilter;
+    @UriParam(label = "consumer", defaultValue = "true",
+            description = "If the option is true, jetty will send the server header with the jetty version information to the client which sends the request."
+                    + " NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.")
+    private boolean sendServerVersion = true;
+    @UriParam(label = "consumer", description = "If the option is true, jetty server will send the date header to the client which sends the request."
+            + " NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.")
+    private boolean sendDateHeader;
+    @UriParam(label = "consumer", defaultValue = "30000",
+            description = "Allows to set a timeout in millis when using Jetty as consumer (server)."
+            + " By default Jetty uses 30000. You can use a value of <= 0 to never expire."
+            + " If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client."
+            + " This option is only in use when using Jetty with the Asynchronous Routing Engine.")
+    private Long continuationTimeout;
+    @UriParam(label = "consumer",
+            description = "Whether or not to use Jetty continuations for the Jetty Server.")
+    private Boolean useContinuation;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -128,8 +146,11 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
         HttpConsumer answer = new HttpConsumer(this, processor);
         configureConsumer(answer);
         return answer;
-    }   
+    }
 
+    /**
+     * Specifies whether to enable the session manager on the server side of Jetty.
+     */
     public void setSessionSupport(boolean support) {
         sessionSupport = support;
     }
@@ -184,6 +205,9 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
         return this.enableJmx;
     }
 
+    /**
+     * If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
+     */
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
@@ -191,7 +215,11 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
     public boolean isSendServerVersion() {
         return sendServerVersion;
     }
-    
+
+    /**
+     * If the option is true, jetty will send the server header with the jetty version information to the client which sends the request.
+     * NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.
+     */
     public void setSendServerVersion(boolean sendServerVersion) {
         this.sendServerVersion = sendServerVersion;
     }
@@ -199,7 +227,11 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
     public boolean isSendDateHeader() { 
         return sendDateHeader;
     }
-    
+
+    /**
+     * If the option is true, jetty server will send the date header to the client which sends the request.
+     * NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.
+     */
     public void setSendDateHeader(boolean sendDateHeader) { 
         this.sendDateHeader = sendDateHeader;
     }
@@ -208,10 +240,17 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
         return enableMultipartFilter;
     }
 
+    /**
+     * Whether Jetty org.eclipse.jetty.servlets.MultiPartFilter is enabled or not.
+     * You should set this value to false when bridging endpoints, to ensure multipart requests is proxied/bridged as well.
+     */
     public void setEnableMultipartFilter(boolean enableMultipartFilter) {
         this.enableMultipartFilter = enableMultipartFilter;
     }
-    
+
+    /**
+     * Allows using a custom multipart filter. Note: setting multipartFilter forces the value of enableMultipartFilter to true.
+     */
     public void setMultipartFilter(Filter filter) {
         this.multipartFilter = filter;
     }
@@ -232,6 +271,12 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
         return continuationTimeout;
     }
 
+    /**
+     * Allows to set a timeout in millis when using Jetty as consumer (server).
+     * By default Jetty uses 30000. You can use a value of <= 0 to never expire.
+     * If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client.
+     * This option is only in use when using Jetty with the Asynchronous Routing Engine.
+     */
     public void setContinuationTimeout(Long continuationTimeout) {
         this.continuationTimeout = continuationTimeout;
     }
@@ -240,6 +285,9 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
         return useContinuation;
     }
 
+    /**
+     * Whether or not to use Jetty continuations for the Jetty Server.
+     */
     public void setUseContinuation(Boolean useContinuation) {
         this.useContinuation = useContinuation;
     }
@@ -248,6 +296,9 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -256,6 +307,11 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
         return httpClientMinThreads;
     }
 
+    /**
+     * To set a value for minimum number of threads in HttpClient thread pool.
+     * This setting override any setting configured on component level.
+     * Notice that both a min and max size must be configured. If not set it default to min 8 threads used in Jettys thread pool.
+     */
     public void setHttpClientMinThreads(Integer httpClientMinThreads) {
         this.httpClientMinThreads = httpClientMinThreads;
     }
@@ -264,6 +320,11 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
         return httpClientMaxThreads;
     }
 
+    /**
+     * To set a value for maximum number of threads in HttpClient thread pool.
+     * This setting override any setting configured on component level.
+     * Notice that both a min and max size must be configured. If not set it default to max 254 threads used in Jettys thread pool.
+     */
     public void setHttpClientMaxThreads(Integer httpClientMaxThreads) {
         this.httpClientMaxThreads = httpClientMaxThreads;
     }
@@ -272,6 +333,10 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
         return httpClientParameters;
     }
 
+    /**
+     * Configuration of Jetty's HttpClient. For example, setting httpClient.idleTimeout=30000 sets the idle timeout to 30 seconds.
+     * And httpClient.timeout=30000 sets the request timeout to 30 seconds, in case you want to timeout sooner if you have long running request/response calls.
+     */
     public void setHttpClientParameters(Map<String, Object> httpClientParameters) {
         this.httpClientParameters = httpClientParameters;
     }

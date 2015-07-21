@@ -116,6 +116,10 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
         // noop
     }
 
+    public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
+        // noop
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }

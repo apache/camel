@@ -64,6 +64,8 @@ public class JcrEndpoint extends DefaultEndpoint {
     private long sessionLiveCheckIntervalOnStart = 3000L;
     @UriParam(defaultValue = "60000")
     private long sessionLiveCheckInterval = 60000L;
+    @UriParam
+    private String workspaceName;
 
     protected JcrEndpoint(String endpointUri, JcrComponent component) {
         super(endpointUri, component);
@@ -274,6 +276,17 @@ public class JcrEndpoint extends DefaultEndpoint {
         }
 
         this.sessionLiveCheckInterval = sessionLiveCheckInterval;
+    }
+    
+    /**
+     * The workspace to access. If it's not specified then the default one will be used
+     */
+    public String getWorkspaceName() {
+        return workspaceName;
+    }
+
+    public void setWorkspaceName(String workspaceName) {
+        this.workspaceName = workspaceName;
     }
 
     /**

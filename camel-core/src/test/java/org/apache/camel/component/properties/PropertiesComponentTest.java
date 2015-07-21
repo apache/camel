@@ -311,6 +311,8 @@ public class PropertiesComponentTest extends ContextTestSupport {
         template.sendBody("direct:foo", "Hello Foo");
 
         assertMockEndpointsSatisfied();
+
+        System.clearProperty("myPrefix");
     }
 
     public void testPropertiesComponentPropertyPrefixFallbackDefault() throws Exception {
@@ -496,6 +498,78 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertEquals("mock\"", context.resolvePropertyPlaceholders("{{cool.mock}}\""));
         assertEquals("'mock", context.resolvePropertyPlaceholders("'{{cool.mock}}"));
         assertEquals("\"mock", context.resolvePropertyPlaceholders("\"{{cool.mock}}"));
+    }
+
+    public void testPropertiesComponentOverride() throws Exception {
+        System.setProperty("cool.result", "bar");
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setSystemPropertiesMode(PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").to("mock:{{cool.result}}");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+
+        template.sendBody("direct:foo", "Hello Foo");
+
+        assertMockEndpointsSatisfied();
+
+        System.clearProperty("cool.result");
+    }
+
+    public void testPropertiesComponentFallback() throws Exception {
+        System.setProperty("cool.result", "bar");
+        System.setProperty("beer", "Carlsberg");
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setSystemPropertiesMode(PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").to("mock:{{beer}}").to("mock:{{cool.result}}");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(0);
+        getMockEndpoint("mock:Carlsberg").expectedMessageCount(1);
+
+        template.sendBody("direct:foo", "Hello Foo");
+
+        assertMockEndpointsSatisfied();
+
+        System.clearProperty("cool.result");
+        System.clearProperty("beer");
+    }
+
+    public void testPropertiesComponentNever() throws Exception {
+        System.setProperty("cool.result", "bar");
+        System.setProperty("beer", "Carlsberg");
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setSystemPropertiesMode(PropertiesComponent.SYSTEM_PROPERTIES_MODE_NEVER);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").to("mock:{{beer}}").to("mock:{{cool.result}}");
+            }
+        });
+        try {
+            context.start();
+            fail("Should have thrown exception");
+        } catch (FailedToCreateRouteException e) {
+            assertEquals("Property with key [beer] not found in properties from text: mock:{{beer}}", e.getCause().getMessage());
+        }
+
+        System.clearProperty("cool.result");
+        System.clearProperty("beer");
     }
 
     @Override

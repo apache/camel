@@ -21,8 +21,8 @@ import org.apache.camel.language.Simple;
 
 public class HelloBean {
     
-    public String sayHello(@Header("name") String name, @Simple("${sysenv.HOSTNAME}") String host) {
-        return "Hello " + name + ", how are you? You are from host: " + host;
+    public String sayHello(@Header("name") String name, @Simple("${sys.user.country}") String country) {
+        return "Hello " + name + ", how are you? You are from: " + country;
     }
 
 }

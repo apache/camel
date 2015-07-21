@@ -1064,6 +1064,25 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
         assertTrue(currentCache().isEmpty());
     }
+    
+    @Test
+    public void clearAsyncTest() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+        currentCache().put(KEY_TWO, VALUE_TWO);
+
+        Exchange exchange = template.request("direct:clearasync", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.CLEAR_ASYNC);
+            }
+        });
+
+        Thread.sleep(100);
+        NotifyingFuture fut = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+        assertEquals(fut.isDone(), Boolean.TRUE);
+
+        assertTrue(currentCache().isEmpty());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -1100,6 +1119,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                         .to("infinispan://localhost?cacheContainer=#cacheContainer&command=REPLACEASYNC");
                 from("direct:removeasync")
                         .to("infinispan://localhost?cacheContainer=#cacheContainer&command=REMOVEASYNC");
+                from("direct:clearasync")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CLEARASYNC");
             }
         };
     }

@@ -51,7 +51,7 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         super(endpoint);
 
         this.bulkClient = new DefaultBulkApiClient(
-                endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient);
+            (String) endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient);
     }
 
     @Override
@@ -97,24 +97,24 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
                 processGetQueryResult(exchange, callback);
                 break;
             default:
-                throw new SalesforceException("Unknow operation name: " + operationName, null);
+                throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
         } catch (SalesforceException e) {
             exchange.setException(new SalesforceException(
                     String.format("Error processing %s: [%s] \"%s\"",
-                            operationName, e.getStatusCode(), e.getMessage()), e));
+                            operationName.value(), e.getStatusCode(), e.getMessage()), e));
             callback.done(true);
             done = true;
         } catch (InvalidPayloadException e) {
             exchange.setException(new SalesforceException(
                     String.format("Unexpected Error processing %s: \"%s\"",
-                            operationName, e.getMessage()), e));
+                            operationName.value(), e.getMessage()), e));
             callback.done(true);
             done = true;
         } catch (RuntimeException e) {
             exchange.setException(new SalesforceException(
                     String.format("Unexpected Error processing %s: \"%s\"",
-                            operationName, e.getMessage()), e));
+                            operationName.value(), e.getMessage()), e));
             callback.done(true);
             done = true;
         }

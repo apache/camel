@@ -27,7 +27,6 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.SetPropertyProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -88,7 +87,6 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     /**
      * Name of exchange property to set a new value
      */
-    @Required
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }

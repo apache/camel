@@ -40,6 +40,8 @@ public final class HazelcastConstants {
     public static final String TTL_VALUE = "CamelHazelcastObjectTtlValue";
     public static final String TTL_UNIT = "CamelHazelcastObjectTtlUnit";
     public static final String QUERY = "CamelHazelcastQuery";
+    public static final String EXPECTED_VALUE = "CamelHazelcastExpectedValue";
+    public static final String DRAIN_TO_COLLECTION = "CamelHazelcastDrainToCollection";
 
     /*
      * outgoing header properties
@@ -62,24 +64,36 @@ public final class HazelcastConstants {
     public static final int GET_ALL_OPERATION = 6;
     public static final int CLEAR_OPERATION = 7;
     public static final int PUT_IF_ABSENT_OPERATION = 8;
-
+    public static final int ADD_ALL_OPERATION = 9;
+    public static final int REMOVE_ALL_OPERATION = 10;
+    public static final int RETAIN_ALL_OPERATION = 11;
+    public static final int EVICT_OPERATION = 12;
+    public static final int EVICT_ALL_OPERATION = 13;
+    public static final int VALUE_COUNT_OPERATION = 14;
+    public static final int CONTAINS_KEY_OPERATION = 15;
+    public static final int CONTAINS_VALUE_OPERATION = 16;
+    
     // multimap
-    public static final int REMOVEVALUE_OPERATION = 10;
+    public static final int REMOVEVALUE_OPERATION = 17;
 
     // atomic numbers
     public static final int INCREMENT_OPERATION = 20;
     public static final int DECREMENT_OPERATION = 21;
     public static final int SETVALUE_OPERATION = 22;
     public static final int DESTROY_OPERATION = 23;
+    public static final int COMPARE_AND_SET_OPERATION = 24;
+    public static final int GET_AND_ADD_OPERATION = 25;
 
     // queue
     public static final int ADD_OPERATION = 31;
     public static final int OFFER_OPERATION = 32;
     public static final int PEEK_OPERATION = 33;
     public static final int POLL_OPERATION = 34;
+    public static final int REMAINING_CAPACITY_OPERATION = 35;
+    public static final int DRAIN_TO_OPERATION = 36;
 
     // topic
-    public static final int PUBLISH_OPERATION = 35;
+    public static final int PUBLISH_OPERATION = 37;
 
     /*
      * header values

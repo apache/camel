@@ -1084,21 +1084,16 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @return the unit of work processor
      */
     protected Processor createUnitOfWorkProcessor(RouteContext routeContext, Processor processor, Exchange exchange) {
-        String routeId = routeContext != null ? routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory()) : null;
         CamelInternalProcessor internal = new CamelInternalProcessor(processor);
 
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
         UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
         if (parent != null) {
-            internal.addAdvice(new CamelInternalProcessor.ChildUnitOfWorkProcessorAdvice(routeId, parent));
+            internal.addAdvice(new CamelInternalProcessor.ChildUnitOfWorkProcessorAdvice(routeContext, parent));
         } else {
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
         }
 
-        // and then in route context so we can keep track which route this is at runtime
-        if (routeContext != null) {
-            internal.addAdvice(new CamelInternalProcessor.RouteContextAdvice(routeContext));
-        }
         return internal;
     }
 
@@ -1270,6 +1265,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     public boolean isParallelProcessing() {
         return parallelProcessing;
+    }
+
+    public boolean isParallelAggregate() {
+        return parallelAggregate;
     }
 
     public boolean isShareUnitOfWork() {

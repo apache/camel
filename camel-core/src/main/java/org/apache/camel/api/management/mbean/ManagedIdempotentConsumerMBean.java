@@ -26,5 +26,7 @@ public interface ManagedIdempotentConsumerMBean extends ManagedProcessorMBean {
 
     @ManagedOperation(description = "Reset the current count of duplicate Messages")
     void resetDuplicateMessageCount();
-
+    
+    @ManagedOperation(description = "Clear the repository containing Messages")
+    void clear();
 }

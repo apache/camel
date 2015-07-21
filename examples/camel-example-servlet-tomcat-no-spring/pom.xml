@@ -62,11 +62,16 @@
     
     <build>
       <plugins>
-        <!-- allows running this example with mvn:jetty-run -->
+        <!-- allows running this example with mvn jetty:run -->
          <plugin>
              <groupId>org.eclipse.jetty</groupId>
              <artifactId>jetty-maven-plugin</artifactId>
              <version>${jetty9-version}</version>
+                <configuration>
+                	<webApp>
+                		<contextPath>/${project.artifactId}</contextPath>
+                	</webApp>
+                </configuration>
          </plugin>
       </plugins>
     </build>

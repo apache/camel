@@ -28,7 +28,6 @@ import org.apache.camel.Service;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateSyncProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -84,7 +83,6 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     /**
      * Reference to the {@link Processor} to lookup in the registry to use.
      */
-    @Required
     public void setRef(String ref) {
         this.ref = ref;
     }

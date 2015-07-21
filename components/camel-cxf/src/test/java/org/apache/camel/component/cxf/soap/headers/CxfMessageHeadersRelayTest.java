@@ -440,7 +440,9 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
             + "component/cxf/soap/headers\"><responseType>pass</responseType>" 
             + "</ns2:inoutHeaderResponse>";
         String response = StaxUtils.toString(out.getBody().get(0));
-        assertTrue(response, response.contains(responseExp));
+        //REVISIT use a more reliable comparison to tolerate some namespaces being added to the root element
+        assertTrue(response, response.startsWith(responseExp.substring(0, 87)) 
+                   && response.endsWith(responseExp.substring(88, responseExp.length())));
     }
 
     @Test

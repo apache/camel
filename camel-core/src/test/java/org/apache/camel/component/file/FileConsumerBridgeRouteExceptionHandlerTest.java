@@ -131,6 +131,11 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
             // noop
         }
 
+        @Override
+        public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
+            // noop
+        }
+
         public int getCounter() {
             return counter;
         }

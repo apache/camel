@@ -35,6 +35,36 @@
         <module>camel-salesforce-maven-plugin</module>
     </modules>
 
+ <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <!-- TODO: remove all this when we have salesforce documented -->
+          <validate>false</validate>
+        </configuration>
+        <executions>
+          <execution>
+            <id>prepare</id>
+            <goals>
+              <goal>prepare-components</goal>
+            </goals>
+            <phase>generate-resources</phase>
+         </execution>
+          <execution>
+            <id>validate</id>
+            <goals>
+              <goal>validate-components</goal>
+            </goals>
+            <phase>prepare-package</phase>
+         </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
     <profiles>
 
       <profile>

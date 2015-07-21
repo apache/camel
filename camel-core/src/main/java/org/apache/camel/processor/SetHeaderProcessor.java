@@ -48,12 +48,18 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
         try {
             Object newHeader = expression.evaluate(exchange, Object.class);
 
+            if (exchange.getException() != null) {
+                // the expression threw an exception so we should break-out
+                callback.done(true);
+                return true;
+            }
+
             boolean out = exchange.hasOut();
             Message old = out ? exchange.getOut() : exchange.getIn();
 
             old.setHeader(headerName, newHeader);
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
         }
 

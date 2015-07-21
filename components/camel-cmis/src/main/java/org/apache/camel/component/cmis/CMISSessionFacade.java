@@ -18,7 +18,11 @@ package org.apache.camel.component.cmis;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -35,7 +39,9 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,9 +173,9 @@ public class CMISSessionFacade {
 
     public Document getDocument(QueryResult queryResult) {
         if (CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(PropertyIds.OBJECT_TYPE_ID))
-            || CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(PropertyIds.BASE_TYPE_ID))) {
-            String objectId = (String)queryResult.getPropertyById(PropertyIds.OBJECT_ID).getFirstValue();
-            return (org.apache.chemistry.opencmis.client.api.Document)session.getObject(objectId);
+                || CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(PropertyIds.BASE_TYPE_ID))) {
+            String objectId = (String) queryResult.getPropertyById(PropertyIds.OBJECT_ID).getFirstValue();
+            return (org.apache.chemistry.opencmis.client.api.Document) session.getObject(objectId);
         }
         return null;
     }
@@ -189,7 +195,19 @@ public class CMISSessionFacade {
     public boolean isObjectTypeVersionable(String objectType) {
         if (CamelCMISConstants.CMIS_DOCUMENT.equals(getCMISTypeFor(objectType))) {
             ObjectType typeDefinition = session.getTypeDefinition(objectType);
-            return ((DocumentType)typeDefinition).isVersionable();
+            return ((DocumentType) typeDefinition).isVersionable();
+        }
+        return false;
+    }
+
+    public boolean supportsSecondaries() {
+        if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0) {
+            return false;
+        }
+        for (ObjectType type : session.getTypeChildren(null, false)) {
+            if (BaseTypeId.CMIS_SECONDARY.value().equals(type.getId())) {
+                return true;
+            }
         }
         return false;
     }

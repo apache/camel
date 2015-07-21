@@ -34,7 +34,8 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 /**
  *
  */
-@UriEndpoint(scheme = "atmosphere-websocket", title = "Atmosphere Websocket", syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "http,websocket")
+@UriEndpoint(scheme = "atmosphere-websocket", extendsScheme = "servlet", title = "Atmosphere Websocket",
+        syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "websocket")
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;

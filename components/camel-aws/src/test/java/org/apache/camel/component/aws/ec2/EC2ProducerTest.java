@@ -19,13 +19,17 @@ package org.apache.camel.component.aws.ec2;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceStateName;
 import com.amazonaws.services.ec2.model.InstanceType;
+import com.amazonaws.services.ec2.model.MonitorInstancesResult;
+import com.amazonaws.services.ec2.model.MonitoringState;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.StartInstancesResult;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -92,6 +96,117 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().size(), 2);
         assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(0).getGroupId(), "id-1");
         assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(1).getGroupId(), "id-2");
+    }
+    
+    @Test
+    public void ec2CreateAndRunImageIdNotSpecifiedTest() throws Exception {
+
+        mock.expectedMessageCount(0);
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        
+        assertTrue("Should be failed", exchange.isFailed());
+        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertEquals("AMI must be specified", exchange.getException().getMessage());
+    }
+    
+    @Test
+    public void ec2CreateAndRunInstanceTypeNotSpecifiedTest() throws Exception {
+
+        mock.expectedMessageCount(0);
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        assertTrue("Should be failed", exchange.isFailed());
+        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertEquals("Instance Type must be specified", exchange.getException().getMessage());
+    }
+    
+    @Test
+    public void ec2CreateAndRunMinCountNotSpecifiedTest() throws Exception {
+
+        mock.expectedMessageCount(0);
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        assertTrue("Should be failed", exchange.isFailed());
+        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertEquals("Min instances count must be specified", exchange.getException().getMessage());
+    }
+    
+    @Test
+    public void ec2CreateAndRunMaxCountNotSpecifiedTest() throws Exception {
+
+        mock.expectedMessageCount(0);
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        assertTrue("Should be failed", exchange.isFailed());
+        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertEquals("Max instances count must be specified", exchange.getException().getMessage());
+    }
+    
+    @Test
+    public void ec2CreateAndRunTestWithKeyPair() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_KEY_PAIR, "keypair-1");
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        RunInstancesResult resultGet = (RunInstancesResult) exchange.getIn().getBody();
+        assertEquals(resultGet.getReservation().getInstances().get(0).getImageId(), "test-1");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceType(), InstanceType.T2Micro.toString());
+        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceId(), "instance-1");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().size(), 2);
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(0).getGroupId(), "id-3");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(1).getGroupId(), "id-4");
     }
     
     @Test
@@ -217,6 +332,109 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertEquals(resultGet.getReservations().get(0).getInstances().size(), 1);
     }
     
+    @Test
+    public void ec2DescribeInstancesStatusTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:describeStatus", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        DescribeInstanceStatusResult resultGet = (DescribeInstanceStatusResult) exchange.getIn().getBody();
+        assertEquals(resultGet.getInstanceStatuses().size(), 2);
+    }
+    
+    @Test
+    public void ec2DescribeStatusSpecificInstancesTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:describeStatus", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        DescribeInstanceStatusResult resultGet = (DescribeInstanceStatusResult) exchange.getIn().getBody();
+        assertEquals(resultGet.getInstanceStatuses().size(), 1);
+        assertEquals(resultGet.getInstanceStatuses().get(0).getInstanceState().getName(), InstanceStateName.Running.toString());
+    }
+    
+    @Test
+    public void ec2RebootInstancesTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:reboot", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+    }
+    
+    
+    @Test
+    public void ec2MonitorInstancesTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:monitor", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        MonitorInstancesResult resultGet = (MonitorInstancesResult) exchange.getIn().getBody();
+        
+        assertEquals(resultGet.getInstanceMonitorings().size(), 1);
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Enabled.toString());
+    }
+    
+    @Test
+    public void ec2UnmonitorInstancesTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:unmonitor", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        UnmonitorInstancesResult resultGet = (UnmonitorInstancesResult) exchange.getIn().getBody();
+        
+        assertEquals(resultGet.getInstanceMonitorings().size(), 1);
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
+        assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Disabled.toString());
+    }
+    
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -247,6 +465,18 @@ public class EC2ProducerTest extends CamelTestSupport {
                     .to("mock:result");
                 from("direct:describe")
                     .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=describeInstances")
+                    .to("mock:result");
+                from("direct:describeStatus")
+                    .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=describeInstancesStatus")
+                    .to("mock:result");
+                from("direct:reboot")
+                    .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=rebootInstances")
+                    .to("mock:result");
+                from("direct:monitor")
+                    .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=monitorInstances")
+                    .to("mock:result");
+                from("direct:unmonitor")
+                    .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=unmonitorInstances")
                     .to("mock:result");
             }
         };

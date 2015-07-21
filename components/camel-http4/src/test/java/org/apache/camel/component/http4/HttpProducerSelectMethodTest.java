@@ -18,7 +18,10 @@ package org.apache.camel.component.http4;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.camel.component.http4.HttpMethods.GET;
@@ -31,18 +34,41 @@ import static org.apache.camel.component.http4.HttpMethods.POST;
  */
 public class HttpProducerSelectMethodTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
     @Override
-    protected void registerHandler(LocalTestServer server) {
-        localServer.register("/myget", new BasicValidationHandler("GET", null, null, getExpectedContent()));
-        localServer.register("/mypost", new BasicValidationHandler("POST", null, null, getExpectedContent()));
-        localServer.register("/myget2", new BasicValidationHandler("GET", "q=Camel", null, getExpectedContent()));
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/myget", new BasicValidationHandler("GET", null, null, getExpectedContent())).
+                registerHandler("/mypost", new BasicValidationHandler("POST", null, null, getExpectedContent())).
+                registerHandler("/myget2", new BasicValidationHandler("GET", "q=Camel", null, getExpectedContent())).
+                create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
     }
 
     @Test
     public void noDataDefaultIsGet() throws Exception {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
         
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + getHostName() + ":" + getPort() + "/myget");
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myget");
         HttpProducer producer = new HttpProducer(endpoiont);
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(null);
@@ -57,7 +83,7 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void dataDefaultIsPost() throws Exception {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
 
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + getHostName() + ":" + getPort() + "/mypost");
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/mypost");
         HttpProducer producer = new HttpProducer(endpoiont);
 
         Exchange exchange = producer.createExchange();
@@ -73,7 +99,7 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withMethodPostInHeader() throws Exception {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
 
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + getHostName() + ":" + getPort() + "/mypost");
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/mypost");
         HttpProducer producer = new HttpProducer(endpoiont);
 
         Exchange exchange = producer.createExchange();
@@ -88,7 +114,7 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withMethodGetInHeader() throws Exception {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
 
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + getHostName() + ":" + getPort() + "/myget");
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myget");
         HttpProducer producer = new HttpProducer(endpoiont);
 
         Exchange exchange = producer.createExchange();
@@ -103,7 +129,7 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withEndpointQuery() throws Exception {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
 
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + getHostName() + ":" + getPort() + "/myget2?q=Camel");
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myget2?q=Camel");
         HttpProducer producer = new HttpProducer(endpoiont);
 
         Exchange exchange = producer.createExchange();
@@ -117,7 +143,7 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withQueryInHeader() throws Exception {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
 
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + getHostName() + ":" + getPort() + "/myget2");
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myget2");
         HttpProducer producer = new HttpProducer(endpoiont);
 
         Exchange exchange = producer.createExchange();
@@ -132,12 +158,12 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withHttpURIInHeader() throws Exception {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
 
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + getHostName() + ":" + getPort() + "/myget2");
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myget2");
         HttpProducer producer = new HttpProducer(endpoiont);
 
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody("");
-        exchange.getIn().setHeader(Exchange.HTTP_URI, "http://" + getHostName() + ":" + getPort() + "/myget2?q=Camel");
+        exchange.getIn().setHeader(Exchange.HTTP_URI, "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myget2?q=Camel");
         producer.start();
         producer.process(exchange);
         producer.stop();
@@ -147,7 +173,7 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withQueryInHeaderOverrideEndpoint() throws Exception {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
 
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + getHostName() + ":" + getPort() + "/myget2?q=Donkey");
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myget2?q=Donkey");
         HttpProducer producer = new HttpProducer(endpoiont);
 
         Exchange exchange = producer.createExchange();

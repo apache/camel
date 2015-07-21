@@ -67,6 +67,14 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
             this.clear(exchange);
             break;
             
+        case HazelcastConstants.CONTAINS_KEY_OPERATION:
+            this.containsKey(oid, exchange);
+            break;
+            
+        case HazelcastConstants.CONTAINS_VALUE_OPERATION:
+            this.containsValue(exchange);
+            break;
+            
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation, HazelcastConstants.OPERATION));
         }
@@ -90,5 +98,14 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
 
     private void clear(Exchange exchange) {
         this.cache.clear();
+    }
+    
+    private void containsKey(Object oid, Exchange exchange) {
+        exchange.getOut().setBody(this.cache.containsKey(oid));
+    }
+
+    private void containsValue(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        exchange.getOut().setBody(this.cache.containsValue(body));
     }
 }

@@ -18,7 +18,6 @@ package org.apache.camel
 package scala
 
 import dsl.languages.LanguageFunction
-import org.apache.camel.Predicate
 import org.apache.camel.util.ObjectHelper._
 
 class ScalaPredicate(function: Exchange => Any) extends Predicate {

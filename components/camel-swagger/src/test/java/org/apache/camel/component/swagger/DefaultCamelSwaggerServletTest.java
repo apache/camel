@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.swagger;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import scala.collection.immutable.List;
 import scala.collection.mutable.Buffer;
 
 public class DefaultCamelSwaggerServletTest extends CamelTestSupport {
@@ -60,7 +62,6 @@ public class DefaultCamelSwaggerServletTest extends CamelTestSupport {
         checkRestDefinition(rest);
 
         // get the RestDefinition by using the camel context id
-        System.out.println(context.getName());
         list = servlet.getRestDefinitions(context.getName());
         assertEquals(1, list.size());
         rest = list.iterator().next();
@@ -70,6 +71,15 @@ public class DefaultCamelSwaggerServletTest extends CamelTestSupport {
         checkRestDefinition(rest2);
     }
     
+    @Test
+    public void testContexts() throws Exception {
+        DefaultCamelSwaggerServlet servlet = new DefaultCamelSwaggerServlet();
+
+        List<String> list = servlet.findCamelContexts();
+        assertEquals(1, list.length());
+        assertEquals(context.getName(), list.head());
+    }
+
     private void checkRestDefinition(RestDefinition rest) {
         assertNotNull(rest);
         assertEquals("/hello", rest.getPath());

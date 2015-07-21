@@ -106,6 +106,13 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         // noop
         return true;
     }
+    
+    @ManagedOperation(description = "Clear the store")
+    public void clear() {
+        synchronized (cache) {
+            cache.clear();
+        }
+    }
 
     public Map<String, Object> getCache() {
         return cache;

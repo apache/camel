@@ -19,7 +19,10 @@ package org.apache.camel.component.http4;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -28,11 +31,38 @@ import org.junit.Test;
  */
 public class HttpBridgeEndpointTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void notBridgeEndpoint() throws Exception {
         Exchange exchange = template.request("http4://host/?bridgeEndpoint=false", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_URI, "http://" + getHostName() + ":" + getPort() + "/");
+                exchange.getIn().setHeader(Exchange.HTTP_URI, "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/");
             }
         });
 
@@ -41,17 +71,12 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
 
     @Test
     public void bridgeEndpoint() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/?bridgeEndpoint=true", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/?bridgeEndpoint=true", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://host:8080/");
             }
         });
 
         assertExchange(exchange);
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/", new BasicValidationHandler("GET", null, null, getExpectedContent()));
     }
 }

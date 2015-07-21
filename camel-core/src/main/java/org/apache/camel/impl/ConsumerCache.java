@@ -58,7 +58,6 @@ public class ConsumerCache extends ServiceSupport {
         this(source, camelContext, cache, camelContext.getPollingConsumerServicePool());
     }
 
-
     public ConsumerCache(Object source, CamelContext camelContext, Map<String, PollingConsumer> cache, ServicePool<Endpoint, PollingConsumer> pool) {
         this.camelContext = camelContext;
         this.consumers = cache;

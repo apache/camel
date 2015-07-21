@@ -44,7 +44,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   /**
    * Helper method to return this Scala type instead of creating another wrapper type for the processor
    */
-  def wrap(block: => Unit): SAbstractDefinition[_] = {
+  def wrap(block: => Unit): this.type = {
     block
     this
   }
@@ -134,6 +134,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def routingSlip(expression: Exchange => Any, separator: String) = wrap(target.routingSlip(expression, separator))
   def routingSlip(expression: Exchange => Any) = wrap(target.routingSlip(expression))
 
+  def script(expression: Exchange => Any) = wrap(target.script(expression))
   def setBody(expression: Exchange => Any) = wrap(target.setBody(expression))
   def setFaultBody(expression: Exchange => Any) = wrap(target.setFaultBody(expression))
   def setHeader(name: String, expression: Exchange => Any) = wrap(target.setHeader(name, expression))
@@ -147,6 +148,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def threads = SThreadsDefinition(target.threads)
   def throttle(frequency: Frequency) = SThrottleDefinition(target.throttle(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   def throwException(exception: Exception) = wrap(target.throwException(exception))
+  def throwException(exceptionType: Class[_ <: Exception], message: String) = wrap(target.throwException(exceptionType, message))
   def transacted = STransactedDefinition(target.transacted)
   def transacted(ref: String) = STransactedDefinition(target.transacted(ref))
   def transform(expression: Exchange => Any) = wrap(target.transform(expression))
@@ -172,5 +174,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
     }
     this
   }
+  def toD(uri: String) = wrap(target.toD(uri))
+  def toD(uri: String, ignoreInvalidEndpoint: Boolean) = wrap(target.toD(uri, ignoreInvalidEndpoint))
 
 }

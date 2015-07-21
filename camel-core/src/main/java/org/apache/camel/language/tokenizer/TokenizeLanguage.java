@@ -84,7 +84,6 @@ public class TokenizeLanguage implements Language, IsSingleton {
         language.setToken(tagName);
         language.setInheritNamespaceTagName(inheritNamespaceTagName);
         language.setXml(true);
-        language.setIncludeTokens(true);
         return language.createExpression(null);
     }
 
@@ -97,6 +96,14 @@ public class TokenizeLanguage implements Language, IsSingleton {
      */
     public Expression createExpression() {
         ObjectHelper.notNull(token, "token");
+
+        // validate some invalid combinations
+        if (endToken != null && inheritNamespaceTagName != null) {
+            throw new IllegalArgumentException("Cannot have both xml and pair tokenizer enabled.");
+        }
+        if (isXml() && (endToken != null || includeTokens)) {
+            throw new IllegalArgumentException("Cannot have both xml and pair tokenizer enabled.");
+        }
 
         Expression answer = null;
         if (isXml()) {

@@ -322,7 +322,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
      * @return true if the entity was locked
      */
     protected boolean lockEntity(Object entity, EntityManager entityManager) {
-        if (!getEndpoint().isConsumeDelete() || !getEndpoint().isConsumeLockEntity()) {
+        if (!getEndpoint().isConsumeLockEntity()) {
             return true;
         }
         try {

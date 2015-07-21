@@ -17,7 +17,9 @@
 package org.apache.camel.processor.idempotent.jpa;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -45,6 +47,7 @@ import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 @ManagedResource(description = "JPA based message id repository")
 public class JpaMessageIdRepository extends ServiceSupport implements ExchangeIdempotentRepository<String> {
     protected static final String QUERY_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
+    protected static final String QUERY_CLEAR_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     private static final Logger LOG = LoggerFactory.getLogger(JpaMessageIdRepository.class);
     private final String processorName;
     private final EntityManagerFactory entityManagerFactory;
@@ -183,10 +186,42 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
         return true;
     }
 
+    @ManagedOperation(description = "Clear the store")
+    public void clear() {
+        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager);
+
+        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
+                if (isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
+
+                List<?> list = queryClear(entityManager);
+                if (!list.isEmpty()) {
+                    Iterator it = list.iterator();
+                    while (it.hasNext()) {
+                        Object item = it.next();
+                        entityManager.remove(item);
+                    }
+                    entityManager.flush();
+                }
+                return Boolean.TRUE;
+            }
+        });
+
+        LOG.debug("clear the store {}", MessageProcessed.class.getName());        
+    }
+
     private List<?> query(final EntityManager entityManager, final String messageId) {
         Query query = entityManager.createQuery(QUERY_STRING);
         query.setParameter(1, processorName);
         query.setParameter(2, messageId);
+        return query.getResultList();
+    }
+    
+    private List<?> queryClear(final EntityManager entityManager) {
+        Query query = entityManager.createQuery(QUERY_CLEAR_STRING);
+        query.setParameter(1, processorName);
         return query.getResultList();
     }
 

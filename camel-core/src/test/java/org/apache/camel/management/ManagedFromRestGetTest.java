@@ -61,16 +61,14 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
 
-        assertTrue(xml.contains("<param paramType=\"query\" name=\"header_letter\" description=\"header param description2\""
-                + " defaultValue=\"b\" required=\"false\" allowMultiple=\"true\" dataType=\"string\" paramAccess=\"acc2\">"));
-        assertTrue(xml.contains("<param paramType=\"header\" name=\"header_count\" description=\"header param description1\" "
-                + "defaultValue=\"1\" required=\"true\" allowMultiple=\"false\" dataType=\"integer\" paramAccess=\"acc1\">"));
+        assertTrue(xml.contains("<param name=\"header_letter\" type=\"query\" description=\"header param description2\""
+                + " defaultValue=\"b\" required=\"false\" allowMultiple=\"true\" dataType=\"string\" access=\"acc2\">"));
+        assertTrue(xml.contains("<param name=\"header_count\" type=\"header\" description=\"header param description1\" "
+                + "defaultValue=\"1\" required=\"true\" allowMultiple=\"false\" dataType=\"integer\" access=\"acc1\">"));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
         assertTrue(xml.contains("<responseMessage code=\"300\" message=\"test msg\" responseModel=\"java.lang.Integer\"/>"));
-
-
 
         String xml2 = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         log.info(xml2);
@@ -93,10 +91,10 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
                 rest("/say/bye")
                     .get().consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues(Arrays.asList("1", "2", "3", "4"))
-                        .defaultValue("1").allowMultiple(false).name("header_count").required(true).paramAccess("acc1")
+                            .defaultValue("1").allowMultiple(false).name("header_count").required(true).access("acc1")
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
-                        .defaultValue("b").allowMultiple(true).name("header_letter").required(false).paramAccess("acc2")
+                            .defaultValue("b").allowMultiple(true).name("header_letter").required(false).access("acc2")
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .to("direct:bye")

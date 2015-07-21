@@ -156,6 +156,9 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         return servletName;
     }
 
+    /**
+     * Default name of servlet to use. The default name is <tt>CamelServlet</tt>.
+     */
     public void setServletName(String servletName) {
         this.servletName = servletName;
     }
@@ -164,6 +167,9 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         return httpRegistry;
     }
 
+    /**
+     * To use a custom {@link org.apache.camel.component.servlet.HttpRegistry}.
+     */
     public void setHttpRegistry(HttpRegistry httpRegistry) {
         this.httpRegistry = httpRegistry;
     }

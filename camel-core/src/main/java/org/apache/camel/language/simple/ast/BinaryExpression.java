@@ -80,6 +80,8 @@ public class BinaryExpression extends BaseSimpleNode {
 
         if (operator == BinaryOperatorType.EQ) {
             return createExpression(leftExp, rightExp, PredicateBuilder.isEqualTo(leftExp, rightExp));
+        } else if (operator == BinaryOperatorType.EQ_IGNORE) {
+            return createExpression(leftExp, rightExp, PredicateBuilder.isEqualToIgnoreCase(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.GT) {
             return createExpression(leftExp, rightExp, PredicateBuilder.isGreaterThan(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.GTE) {

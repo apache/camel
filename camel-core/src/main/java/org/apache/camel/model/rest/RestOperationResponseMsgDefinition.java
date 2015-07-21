@@ -49,7 +49,6 @@ public class RestOperationResponseMsgDefinition {
     @Metadata(defaultValue = "")
     private String responseModel;
 
-
     public RestOperationResponseMsgDefinition(VerbDefinition verb) {
         this.verb = verb;
     }
@@ -57,10 +56,10 @@ public class RestOperationResponseMsgDefinition {
     public RestOperationResponseMsgDefinition() {
     }
 
-
     public int getCode() {
         return code != 0 ? code : 200;
     }
+
     /**
      * Sets the Swagger Operation's ResponseMessage code
      */
@@ -90,22 +89,33 @@ public class RestOperationResponseMsgDefinition {
         this.message = message;
     }
 
-
+    /**
+     * The return code
+     */
     public RestOperationResponseMsgDefinition code(int code) {
         setCode(code);
         return this;
     }
 
+    /**
+     * The return message
+     */
     public RestOperationResponseMsgDefinition message(String msg) {
         setMessage(msg);
         return this;
     }
 
+    /**
+     * The response model
+     */
     public RestOperationResponseMsgDefinition responseModel(Class<?> type) {
         setResponseModel(type.getCanonicalName());
         return this;
     }
 
+    /**
+     * Ends the configuration of this response message
+     */
     public RestDefinition endResponseMessage() {
         verb.getResponseMsgs().add(this);
         return verb.getRest();

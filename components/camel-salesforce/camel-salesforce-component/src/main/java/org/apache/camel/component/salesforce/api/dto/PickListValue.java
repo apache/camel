@@ -19,7 +19,7 @@ package org.apache.camel.component.salesforce.api.dto;
 /**
  * Salesforce DTO for picklist value.
  */
-public class PickListValue {
+public class PickListValue extends AbstractDTOBase {
 
     private String value;
     private String label;

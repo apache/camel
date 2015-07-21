@@ -57,7 +57,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
             @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "weighted", type = WeightedLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "circuitBreaker", type = CircuitBreakerLoadBalancerDefinition.class)}
-    )
+        )
     private LoadBalancerDefinition loadBalancerType;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
@@ -173,10 +173,28 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition failover(int maximumFailoverAttempts, boolean inheritErrorHandler, boolean roundRobin, Class<?>... exceptions) {
+        return failover(maximumFailoverAttempts, inheritErrorHandler, roundRobin, false, exceptions);
+    }
+
+    /**
+     * Uses fail over load balancer
+     *
+     * @param maximumFailoverAttempts  maximum number of failover attempts before exhausting.
+     *                                 Use -1 to newer exhaust when round robin is also enabled.
+     *                                 If round robin is disabled then it will exhaust when there are no more endpoints to failover
+     * @param inheritErrorHandler      whether or not to inherit error handler.
+     *                                 If <tt>false</tt> then it will failover immediately in case of an exception
+     * @param roundRobin               whether or not to use round robin (which keeps state)
+     * @param sticky                   whether or not to use sticky (which keeps state)
+     * @param exceptions               exception classes which we want to failover if one of them was thrown
+     * @return the builder
+     */
+    public LoadBalanceDefinition failover(int maximumFailoverAttempts, boolean inheritErrorHandler, boolean roundRobin, boolean sticky, Class<?>... exceptions) {
         FailoverLoadBalancerDefinition def = new FailoverLoadBalancerDefinition();
         def.setExceptionTypes(Arrays.asList(exceptions));
         def.setMaximumFailoverAttempts(maximumFailoverAttempts);
         def.setRoundRobin(roundRobin);
+        def.setSticky(sticky);
         setLoadBalancerType(def);
         this.setInheritErrorHandler(inheritErrorHandler);
         return this;

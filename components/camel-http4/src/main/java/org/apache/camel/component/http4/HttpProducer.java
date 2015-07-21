@@ -185,10 +185,13 @@ public class HttpProducer extends DefaultProducer {
     protected void populateResponse(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse,
                                     Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException, ClassNotFoundException {
         // We just make the out message is not create when extractResponseBody throws exception
-        Object response = extractResponseBody(httpRequest, httpResponse, exchange);
+        Object response = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
         Message answer = exchange.getOut();
 
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+        if (httpResponse.getStatusLine() != null) {
+            answer.setHeader(Exchange.HTTP_RESPONSE_TEXT, httpResponse.getStatusLine().getReasonPhrase());
+        }
         answer.setBody(response);
 
         // propagate HTTP response headers
@@ -207,10 +210,12 @@ public class HttpProducer extends DefaultProducer {
             }
         }
 
-        // preserve headers from in by copying any non existing headers
-        // to avoid overriding existing headers with old values
-        // Just filter the http protocol headers
-        MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
+        // endpoint might be configured to copy headers from in to out
+        // to avoid overriding existing headers with old values just
+        // filter the http protocol headers
+        if (getEndpoint().isCopyHeaders()) {
+            MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
+        }
     }
 
     protected Exception populateHttpOperationFailedException(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse, int responseCode) throws IOException, ClassNotFoundException {
@@ -220,7 +225,7 @@ public class HttpProducer extends DefaultProducer {
         String statusText = httpResponse.getStatusLine() != null ? httpResponse.getStatusLine().getReasonPhrase() : null;
         Map<String, String> headers = extractResponseHeaders(httpResponse.getAllHeaders());
 
-        Object responseBody = extractResponseBody(httpRequest, httpResponse, exchange);
+        Object responseBody = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
         if (transferException && responseBody != null && responseBody instanceof Exception) {
             // if the response was a serialized exception then use that
             return (Exception) responseBody;
@@ -287,7 +292,7 @@ public class HttpProducer extends DefaultProducer {
      * @return the response either as a stream, or as a deserialized java object
      * @throws IOException can be thrown
      */
-    protected static Object extractResponseBody(HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange) throws IOException, ClassNotFoundException {
+    protected static Object extractResponseBody(HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody) throws IOException, ClassNotFoundException {
         HttpEntity entity = httpResponse.getEntity();
         if (entity == null) {
             return null;
@@ -312,11 +317,14 @@ public class HttpProducer extends DefaultProducer {
             // find the charset and set it to the Exchange
             HttpHelper.setCharsetFromContentType(contentType, exchange);
         }
-        InputStream response = doExtractResponseBodyAsStream(is, exchange);
         // if content type is a serialized java object then de-serialize it back to a Java object
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            return HttpHelper.deserializeJavaObjectFromStream(response);
+            return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
         } else {
+            InputStream response = null;
+            if (!ignoreResponseBody) {
+                response = doExtractResponseBodyAsStream(is, exchange);
+            }
             return response;
         }
     }

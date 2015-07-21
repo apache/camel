@@ -34,40 +34,40 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <version>${camel-version}</version>
-    </dependency>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cdi</artifactId>
       <version>${camel-version}</version>
     </dependency>
 
-    <!-- the various CDI/JEE annotations -->
-    <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-      <version>1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-ejb_3.1_spec</artifactId>
-      <version>${geronimo-ejb-spec-version}</version>
-    </dependency>
+    <!-- cdi api -->
     <dependency>
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
       <version>${cdi-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- need to use a CDI container such as JBoss Weld -->
+    <!-- lets use weld for CDI -->
+    <dependency>
+      <groupId>org.jboss.weld.se</groupId>
+      <artifactId>weld-se</artifactId>
+      <version>${weld2-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.weld</groupId>
+      <artifactId>weld-core</artifactId>
+      <version>${weld2-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-weld</artifactId>
+      <version>${deltaspike-version}</version>
     </dependency>
 
     <!-- logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-api-version}</version>
-    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -86,6 +86,7 @@
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -110,67 +111,17 @@
         </configuration>
       </plugin>
 
-      <!-- Allows the example to be run via 'mvn compile exec:java' -->
+      <!-- allows the routes to be run via 'mvn camel:run' -->
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${exec-maven-plugin-version}</version>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel-version}</version>
         <configuration>
-          <mainClass>org.apache.camel.cdi.Main</mainClass>
-          <includePluginDependencies>false</includePluginDependencies>
+          <useCDI>true</useCDI>
         </configuration>
       </plugin>
 
     </plugins>
   </build>
-
-  <profiles>
-
-    <profile>
-      <id>weld2</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.deltaspike.cdictrl</groupId>
-          <artifactId>deltaspike-cdictrl-weld</artifactId>
-          <version>${deltaspike-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.weld.se</groupId>
-          <artifactId>weld-se-core</artifactId>
-          <version>${weld2-version}</version>
-        </dependency>
-      </dependencies>
-    </profile>
-
-    <profile>
-      <id>owb</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-servlet_3.0_spec</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.deltaspike.cdictrl</groupId>
-          <artifactId>deltaspike-cdictrl-owb</artifactId>
-          <version>${deltaspike-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>openwebbeans-impl</artifactId>
-          <version>${openwebbeans-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>openwebbeans-spi</artifactId>
-          <version>${openwebbeans-version}</version>
-        </dependency>
-      </dependencies>
-    </profile>
-
-  </profiles>
-
 
 </project>

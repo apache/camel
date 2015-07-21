@@ -44,6 +44,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  * for installing a web hook.
  */
 public class GTaskComponent extends ServletComponent {
+
     public GTaskComponent() {
         super(GTaskEndpoint.class);
     }
@@ -51,23 +52,29 @@ public class GTaskComponent extends ServletComponent {
     @Override
     @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String workerRoot = getAndRemoveParameter(
-                parameters, "workerRoot", String.class, "worker");
+        String workerRoot = getAndRemoveParameter(parameters, "workerRoot", String.class, "worker");
+        String inboundBindingRef = (String) parameters.get("inboundBindingRef");
+        String outboundBindingRef = (String) parameters.get("outboundBindingRef");
+
         OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "outboundBindingRef", OutboundBinding.class, new GTaskBinding());
         InboundBinding<GTaskEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "inboundBindingRef", InboundBinding.class, new GTaskBinding());
+
         GTaskEndpointInfo info = new GTaskEndpointInfo(uri, remaining);
         GTaskEndpoint endpoint = (GTaskEndpoint)super.createEndpoint(
             info.getCanonicalUri(),
             info.getCanonicalUriPath(),
             parameters);
+
         endpoint.setServletName(getServletName());
         endpoint.setWorkerRoot(workerRoot);
         endpoint.setOutboundBinding(outboundBinding);
         endpoint.setInboundBinding(inboundBinding);
         endpoint.setQueueName(remaining);
         endpoint.setQueue(QueueFactory.getQueue(remaining));
+        endpoint.setInboundBindingRef(inboundBindingRef);
+        endpoint.setOutboundBindingRef(outboundBindingRef);
         return endpoint;
     }
 

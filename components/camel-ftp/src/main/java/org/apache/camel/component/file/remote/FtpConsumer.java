@@ -41,6 +41,32 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        // turn off scheduler first, so autoCreate is handled before scheduler starts
+        boolean startScheduler = isStartScheduler();
+        setStartScheduler(false);
+        try {
+            super.doStart();
+            if (endpoint.isAutoCreate()) {
+                log.debug("Auto creating \"" + endpoint.getConfiguration().getDirectory());
+                try {
+                    connectIfNecessary();
+                    operations.buildDirectory(endpoint.getConfiguration().getDirectory(), true);
+                } catch (GenericFileOperationFailedException e) {
+                    if (getEndpoint().getConfiguration().isThrowExceptionOnConnectFailed()) {
+                        throw e;
+                    }
+                }
+            }
+        } finally {
+            if (startScheduler) {
+                setStartScheduler(true);
+                startScheduler();
+            }
+        }
+    }
+
+    @Override
     protected boolean pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList, int depth) {
         String currentDir = null;
         if (isStepwise()) {

@@ -744,18 +744,30 @@ public class RunMojo extends AbstractExecMojo {
                     path.add(artifact.getFile().toURI().toURL());
 
                     // add the transient dependencies of this artifact
-                    Set<Artifact> deps = resolveExecutableDependencies(artifact);
-                    for (Artifact dep : deps) {
+                    Set<Artifact> deps = resolveExecutableDependencies(artifact, true);
+                    if (deps != null) {
+                        for (Artifact dep : deps) {
 
-                        // we must skip org.apache.aries.blueprint.core:, otherwise we get duplicate blueprint extenders
-                        if (dep.getArtifactId().equals("org.apache.aries.blueprint.core")) {
-                            getLog().debug("Skipping org.apache.aries.blueprint.core -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
-                            continue;
+                            // we must skip org.apache.aries.blueprint.core:, otherwise we get duplicate blueprint extenders
+                            if (dep.getArtifactId().equals("org.apache.aries.blueprint.core")) {
+                                getLog().debug("Skipping org.apache.aries.blueprint.core -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
+                                continue;
+                            }
+
+                            // we skip test scoped
+                            if ("test".equals(dep.getScope())) {
+                                getLog().debug("Skipping test scoped -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
+                                continue;
+                            }
+                            if ("provided".equals(dep.getScope())) {
+                                getLog().debug("Skipping provided scoped -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
+                                continue;
+                            }
+
+                            getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId()
+                                    + " to classpath");
+                            path.add(dep.getFile().toURI().toURL());
                         }
-
-                        getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId()
-                                + " to classpath");
-                        path.add(dep.getFile().toURI().toURL());
                     }
                 }
             }
@@ -888,7 +900,7 @@ public class RunMojo extends AbstractExecMojo {
                 getLog().debug("Selected plugin Dependencies will be included.");
                 Artifact executableArtifact = this.findExecutableArtifact();
                 Artifact executablePomArtifact = this.getExecutablePomArtifact(executableArtifact);
-                relevantDependencies = this.resolveExecutableDependencies(executablePomArtifact);
+                relevantDependencies = this.resolveExecutableDependencies(executablePomArtifact, false);
             }
         } else {
             relevantDependencies = Collections.emptySet();
@@ -935,9 +947,9 @@ public class RunMojo extends AbstractExecMojo {
         return executableTool;
     }
 
-    private Set<Artifact> resolveExecutableDependencies(Artifact executablePomArtifact) throws MojoExecutionException {
+    private Set<Artifact> resolveExecutableDependencies(Artifact executablePomArtifact, boolean ignoreFailures) throws MojoExecutionException {
 
-        Set<Artifact> executableDependencies;
+        Set<Artifact> executableDependencies = null;
         try {
             MavenProject executableProject = this.projectBuilder.buildFromRepository(executablePomArtifact,
                                                                                      this.remoteRepositories,
@@ -966,8 +978,12 @@ public class RunMojo extends AbstractExecMojo {
             executableDependencies = CastUtils.cast(result.getArtifacts());
 
         } catch (Exception ex) {
-            throw new MojoExecutionException("Encountered problems resolving dependencies of the executable "
-                                             + "in preparation for its execution.", ex);
+            if (ignoreFailures) {
+                getLog().debug("Ignoring maven resolving dependencies failure " + ex.getMessage());
+            } else {
+                throw new MojoExecutionException("Encountered problems resolving dependencies of the executable "
+                        + "in preparation for its execution.", ex);
+            }
         }
 
         return executableDependencies;

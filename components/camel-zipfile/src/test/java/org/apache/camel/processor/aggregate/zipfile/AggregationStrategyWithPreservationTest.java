@@ -78,7 +78,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?consumer.delay=1000&noop=true&recursive=true")
-                    .aggregate(new ZipAggregationStrategy(true))
+                    .aggregate(new ZipAggregationStrategy(true, true))
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()

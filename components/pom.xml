@@ -31,7 +31,7 @@
   <packaging>pom</packaging>
 
   <modules>
-	  <!-- we want to test these modules first to catch any errors early as possible -->
+    <!-- we want to test these modules first to catch any errors early as possible -->
     <module>camel-test</module>
     <module>camel-testng</module>
     <module>camel-test-blueprint</module>
@@ -80,6 +80,7 @@
     <module>camel-cdi</module>
     <module>camel-chunk</module>
     <module>camel-cmis</module>
+    <module>camel-coap</module>
     <module>camel-cometd</module>
     <module>camel-context</module>
     <module>camel-couchdb</module>
@@ -103,6 +104,7 @@
     <module>camel-gae</module>
     <module>camel-ganglia</module>
     <module>camel-geocoder</module>
+    <module>camel-git</module>
     <module>camel-github</module>
     <module>camel-google-calendar</module>
     <module>camel-google-drive</module>
@@ -222,6 +224,7 @@
     <module>camel-swagger</module>
     <module>camel-tagsoup</module>
     <module>camel-twitter</module>
+    <module>camel-undertow</module>
     <module>camel-univocity-parsers</module>
     <module>camel-urlrewrite</module>
     <module>camel-velocity</module>
@@ -248,11 +251,19 @@
         <version>${project.version}</version>
         <executions>
           <execution>
+            <id>prepare</id>
             <goals>
               <goal>prepare-components</goal>
             </goals>
             <phase>generate-resources</phase>
-          </execution>
+         </execution>
+          <execution>
+            <id>validate</id>
+            <goals>
+              <goal>validate-components</goal>
+            </goals>
+            <phase>prepare-package</phase>
+         </execution>
         </executions>
       </plugin>
     </plugins>

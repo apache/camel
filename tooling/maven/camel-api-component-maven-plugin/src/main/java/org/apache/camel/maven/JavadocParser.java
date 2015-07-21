@@ -86,7 +86,6 @@ public class JavadocParser extends Parser {
 
                             final String hrefAttr = (String) attributes.getAttribute(HTML.Attribute.HREF);
                             if (hrefAttr != null && hrefAttr.contains(hrefPattern)) {
-
                                 // unescape HTML
                                 String methodSignature = hrefAttr.substring(hrefAttr.indexOf('#') + 1);
                                 final int firstHyphen = methodSignature.indexOf('-');
@@ -146,7 +145,9 @@ public class JavadocParser extends Parser {
             }
 
             parserState = ParserState.METHOD_SUMMARY;
-        } else if (parserState == ParserState.METHOD_SUMMARY && HTML.Tag.TABLE.equals(tag.getHTMLTag())) {
+        } else if (parserState == ParserState.METHOD_SUMMARY
+            && !methods.isEmpty()
+            && HTML.Tag.TABLE.equals(tag.getHTMLTag())) {
             // end of method summary table
             parserState = ParserState.INIT;
         }

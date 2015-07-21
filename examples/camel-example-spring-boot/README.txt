@@ -22,7 +22,7 @@ To run the example type
 
 You can also execute the fat WAR directly:
 
-  java -jar target/camel-example-spring-boot-2.x-SNAPSHOT.war
+  java -jar target/camel-example-spring-boot.war
 
 You will see the message printed to the console every second.
 

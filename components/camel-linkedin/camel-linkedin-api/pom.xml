@@ -32,7 +32,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.linkedin.api*</camel.osgi.export.pkg>
-    <htmlunit-version>2.15</htmlunit-version>
   </properties>
 
   <dependencies>
@@ -59,7 +58,7 @@
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
-      <version>${htmlunit-version}</version>
+      <version>${htmlunit.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

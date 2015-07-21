@@ -193,19 +193,29 @@ public class ApiMethodHelperTest {
         }
 
         @Override
-        public String getName() { return apiMethod.getName(); }
+        public String getName() {
+            return apiMethod.getName();
+        }
 
         @Override
-        public Class<?> getResultType() { return apiMethod.getResultType(); }
+        public Class<?> getResultType() {
+            return apiMethod.getResultType();
+        }
 
         @Override
-        public List<String> getArgNames() { return apiMethod.getArgNames(); }
+        public List<String> getArgNames() {
+            return apiMethod.getArgNames();
+        }
 
         @Override
-        public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }
+        public List<Class<?>> getArgTypes() {
+            return apiMethod.getArgTypes();
+        }
 
         @Override
-        public Method getMethod() { return apiMethod.getMethod(); }
+        public Method getMethod() {
+            return apiMethod.getMethod();
+        }
     }
 
 }

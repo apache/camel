@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.rabbitmq;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -25,6 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.AMQP;
@@ -34,11 +41,14 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.LongString;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
@@ -46,9 +56,14 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @UriEndpoint(scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:hostname:portNumber/exchangeName", consumerClass = RabbitMQConsumer.class, label = "messaging")
 public class RabbitMQEndpoint extends DefaultEndpoint {
+    private static final Logger LOG = LoggerFactory.getLogger(RabbitMQEndpoint.class);
+    // header to indicate that the message body needs to be de-serialized
+    private static final String SERIALIZE_HEADER = "CamelSerialize";
 
     @UriPath @Metadata(required = "true")
     private String hostname;
@@ -135,6 +150,22 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     @UriParam
     private ArgsConfigurer exchangeArgsConfigurer;
 
+    @UriParam
+    private long requestTimeout = 20000;
+    @UriParam
+    private long requestTimeoutCheckerInterval = 1000;
+    @UriParam
+    private boolean transferException;
+    // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
+    private boolean useMessageIDAsCorrelationID = true;
+    // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
+    private String replyToType = ReplyToType.Temporary.name();
+    // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
+    private String replyTo;
+
+    private RabbitMQMessageConverter messageConverter = new RabbitMQMessageConverter();
+    
+
     public RabbitMQEndpoint() {
     }
 
@@ -150,12 +181,33 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     public Exchange createRabbitExchange(Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
         Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
 
-        Message message = new DefaultMessage();
-        exchange.setIn(message);
+        setRabbitExchange(exchange, envelope, properties, body);
+        return exchange;
+    }
 
-        message.setHeader(RabbitMQConstants.ROUTING_KEY, envelope.getRoutingKey());
-        message.setHeader(RabbitMQConstants.EXCHANGE_NAME, envelope.getExchange());
-        message.setHeader(RabbitMQConstants.DELIVERY_TAG, envelope.getDeliveryTag());
+    /**
+     * Gets the message converter to convert between rabbit and camel
+     * @return
+     */
+    protected RabbitMQMessageConverter getMessageConverter() {
+        return messageConverter;
+    }
+
+    public void setRabbitExchange(Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
+        Message message;
+        if (camelExchange.getIn() != null) {
+            // Use the existing message so we keep the headers
+            message = camelExchange.getIn();
+        } else {
+            message = new DefaultMessage();
+            camelExchange.setIn(message);
+        }
+
+        if (envelope != null) {
+            message.setHeader(RabbitMQConstants.ROUTING_KEY, envelope.getRoutingKey());
+            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, envelope.getExchange());
+            message.setHeader(RabbitMQConstants.DELIVERY_TAG, envelope.getDeliveryTag());
+        }
 
         Map<String, Object> headers = properties.getHeaders();
         if (headers != null) {
@@ -169,9 +221,108 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
             }
         }
 
-        message.setBody(body);
+        if (hasSerializeHeader(properties)) {
+            Object messageBody = null;
+            try (InputStream b = new ByteArrayInputStream(body);
+                            ObjectInputStream o = new ObjectInputStream(b);) {
+                messageBody = o.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                LOG.warn("Could not deserialize the object");
+            }
+            if (messageBody instanceof Throwable) {
+                LOG.debug("Reply was an Exception. Setting the Exception on the Exchange");
+                camelExchange.setException((Throwable) messageBody);
+            } else {
+                message.setBody(messageBody);
+            }
+        } else {
+            // Set the body as a byte[] and let the type converter deal with it
+            message.setBody(body);
+        }
 
-        return exchange;
+    }
+
+    private boolean hasSerializeHeader(AMQP.BasicProperties properties) {
+        if (properties == null || properties.getHeaders() == null) {
+            return false;
+        }
+        if (properties.getHeaders().containsKey(SERIALIZE_HEADER) && properties.getHeaders().get(SERIALIZE_HEADER).equals(true)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sends the body that is on the exchange
+     * @param camelExchange
+     * @param channel
+     * @param properties
+     * @throws IOException
+     */
+    public void publishExchangeToChannel(Exchange camelExchange, Channel channel, String routingKey) throws IOException {
+        Message msg;
+        if (camelExchange.hasOut()) {
+            msg = camelExchange.getOut();
+        } else {
+            msg = camelExchange.getIn();
+        }
+
+        // Remove the SERIALIZE_HEADER in case it was previously set
+        if (msg.getHeaders() != null && msg.getHeaders().containsKey(SERIALIZE_HEADER)) {
+            LOG.debug("Removing the {} header", SERIALIZE_HEADER);
+            msg.getHeaders().remove(SERIALIZE_HEADER);
+        }
+
+        AMQP.BasicProperties properties;
+        byte[] body;
+        try {
+            // To maintain backwards compatibility try the TypeConverter (The DefaultTypeConverter seems to only work on Strings)
+            body = camelExchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, camelExchange, msg.getBody());
+
+            properties = getMessageConverter().buildProperties(camelExchange).build();
+        } catch (NoTypeConversionAvailableException | TypeConversionException e) {
+            if (msg.getBody() instanceof Serializable) {
+                // Add the header so the reply processor knows to de-serialize it
+                msg.getHeaders().put(SERIALIZE_HEADER, true);
+
+                properties = getMessageConverter().buildProperties(camelExchange).build();
+
+                try (ByteArrayOutputStream b = new ByteArrayOutputStream(); ObjectOutputStream o = new ObjectOutputStream(b);) {
+                    o.writeObject(msg.getBody());
+                    body = b.toByteArray();
+                }
+            } else if (msg.getBody() == null) {
+                properties = getMessageConverter().buildProperties(camelExchange).build();
+                body = null;
+            } else {
+                LOG.warn("Could not convert {} to byte[]", msg.getBody());
+                throw new IOException(e);
+            }
+        }
+        String rabbitExchange = getExchangeName(msg);
+
+        Boolean mandatory = camelExchange.getIn().getHeader(RabbitMQConstants.MANDATORY, isMandatory(), Boolean.class);
+        Boolean immediate = camelExchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE, isImmediate(), Boolean.class);
+
+
+        LOG.debug("Sending message to exchange: {} with CorrelationId = {}", rabbitExchange, properties.getCorrelationId());
+
+        channel.basicPublish(rabbitExchange, routingKey, mandatory, immediate, properties, body);
+    }
+
+    /**
+     * Extracts name of the rabbitmq exchange
+     * 
+     * @param msg
+     * @return
+     */
+    protected String getExchangeName(Message msg) {
+        String exchangeName = msg.getHeader(RabbitMQConstants.EXCHANGE_NAME, String.class);
+        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_NAME
+        if (exchangeName == null || isBridgeEndpoint()) {
+            exchangeName = getExchangeName();
+        }
+        return exchangeName;
     }
 
     @Override
@@ -712,9 +863,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         return channelPoolMaxSize;
     }
 
-    /**
-     * Set maximum number of opened channel in pool
-     */
     public void setChannelPoolMaxSize(int channelPoolMaxSize) {
         this.channelPoolMaxSize = channelPoolMaxSize;
     }
@@ -763,14 +911,14 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     public ArgsConfigurer getQueueArgsConfigurer() {
         return queueArgsConfigurer;
     }
-    
+
     /**
      * Set the configurer for setting the queue args in Channel.queueDeclare
      */
     public void setQueueArgsConfigurer(ArgsConfigurer queueArgsConfigurer) {
         this.queueArgsConfigurer = queueArgsConfigurer;
     }
-    
+
     public ArgsConfigurer getExchangeArgsConfigurer() {
         return exchangeArgsConfigurer;
     }
@@ -780,5 +928,59 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
      */
     public void setExchangeArgsConfigurer(ArgsConfigurer exchangeArgsConfigurer) {
         this.exchangeArgsConfigurer = exchangeArgsConfigurer;
+    }
+
+    /**
+     * Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds)
+     */
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    /**
+     * Set requestTimeoutCheckerInterval for inOut exchange
+     */
+    public void setRequestTimeoutCheckerInterval(long requestTimeoutCheckerInterval) {
+        this.requestTimeoutCheckerInterval = requestTimeoutCheckerInterval;
+    }
+
+    public long getRequestTimeoutCheckerInterval() {
+        return requestTimeoutCheckerInterval;
+    }
+
+    /**
+     * Get useMessageIDAsCorrelationID for inOut exchange
+     */
+    public boolean isUseMessageIDAsCorrelationID() {
+        return useMessageIDAsCorrelationID;
+    }
+
+    /**
+     * When true and an inOut Exchange failed on the consumer side send the caused Exception back in the response 
+     */
+    public void setTransferException(boolean transferException) {
+        this.transferException = transferException;
+    }
+
+    public boolean isTransferException() {
+        return transferException;
+    }
+
+    /**
+     * Get replyToType for inOut exchange
+     */
+    public String getReplyToType() {
+        return replyToType;
+    }
+
+    /**
+     * Gets the Queue to reply to if you dont want to use temporary reply queues
+     */
+    public String getReplyTo() {
+        return replyTo;
     }
 }

@@ -16,9 +16,16 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.util.Collection;
+
 public final class StringHelper {
+
     private StringHelper() {
         // Utils Class
+    }
+
+    public static boolean isEmpty(String s) {
+        return s == null || s.trim().isEmpty();
     }
 
     public static String after(String text, String after) {
@@ -41,6 +48,14 @@ public final class StringHelper {
             return null;
         }
         return before(text, before);
+    }
+
+    public static String indentCollection(String indent, Collection<String> list) {
+        StringBuilder sb = new StringBuilder();
+        for (String text : list) {
+            sb.append(indent).append(text);
+        }
+        return sb.toString();
     }
 
 }

@@ -191,6 +191,7 @@ public class DefaultAhcBinding implements AhcBinding {
         // Just filter the http protocol headers 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), httpProtocolHeaderFilterStrategy, false);
         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, responseStatus.getStatusCode());
+        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_TEXT, responseStatus.getStatusText());
     }
 
     @Override

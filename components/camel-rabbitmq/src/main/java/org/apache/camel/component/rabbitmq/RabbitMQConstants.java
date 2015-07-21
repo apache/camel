@@ -28,6 +28,7 @@ public final class RabbitMQConstants {
     public static final String DELIVERY_MODE = "rabbitmq.DELIVERY_MODE";
     public static final String USERID = "rabbitmq.USERID";
     public static final String CLUSTERID = "rabbitmq.CLUSTERID";
+    public static final String REQUEST_TIMEOUT = "rabbitmq.REQUEST_TIMEOUT";
     public static final String REPLY_TO = "rabbitmq.REPLY_TO";
     public static final String CONTENT_ENCODING = "rabbitmq.CONTENT_ENCODING";
     public static final String TYPE = "rabbitmq.TYPE";

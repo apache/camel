@@ -93,6 +93,16 @@ public final class HazelcastComponentHelper {
         addMapping("update", HazelcastConstants.UPDATE_OPERATION);
         addMapping("query", HazelcastConstants.QUERY_OPERATION);
         addMapping("getAll", HazelcastConstants.GET_ALL_OPERATION);
+        addMapping("clear", HazelcastConstants.CLEAR_OPERATION);
+        addMapping("evict", HazelcastConstants.EVICT_OPERATION);
+        addMapping("evictAll", HazelcastConstants.EVICT_ALL_OPERATION);
+        addMapping("putIfAbsent", HazelcastConstants.PUT_IF_ABSENT_OPERATION);
+        addMapping("addAll", HazelcastConstants.ADD_ALL_OPERATION);
+        addMapping("removeAll", HazelcastConstants.REMOVE_ALL_OPERATION);
+        addMapping("retainAll", HazelcastConstants.RETAIN_ALL_OPERATION);
+        addMapping("valueCount", HazelcastConstants.VALUE_COUNT_OPERATION);
+        addMapping("containsKey", HazelcastConstants.CONTAINS_KEY_OPERATION);
+        addMapping("containsValue", HazelcastConstants.CONTAINS_VALUE_OPERATION);
 
         // multimap
         addMapping("removevalue", HazelcastConstants.REMOVEVALUE_OPERATION);
@@ -102,12 +112,16 @@ public final class HazelcastComponentHelper {
         addMapping("decrement", HazelcastConstants.DECREMENT_OPERATION);
         addMapping("setvalue", HazelcastConstants.SETVALUE_OPERATION);
         addMapping("destroy", HazelcastConstants.DESTROY_OPERATION);
+        addMapping("compareAndSet", HazelcastConstants.COMPARE_AND_SET_OPERATION);
+        addMapping("getAndAdd", HazelcastConstants.GET_AND_ADD_OPERATION);
 
         // queue
         addMapping("add", HazelcastConstants.ADD_OPERATION);
         addMapping("offer", HazelcastConstants.OFFER_OPERATION);
         addMapping("peek", HazelcastConstants.PEEK_OPERATION);
         addMapping("poll", HazelcastConstants.POLL_OPERATION);
+        addMapping("remainingCapacity", HazelcastConstants.REMAINING_CAPACITY_OPERATION);
+        addMapping("drainTo", HazelcastConstants.DRAIN_TO_OPERATION);
 
         // topic
         addMapping("publish", HazelcastConstants.PUBLISH_OPERATION);
