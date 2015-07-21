@@ -68,6 +68,8 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
     private boolean groupExchanges;
     private boolean batchConsumer;
     private boolean ignoreInvalidExchanges;
+    private boolean reverse;
+    private boolean allowDuplicates;
     private Predicate completionPredicate;
     private Expression expression;
 
@@ -100,6 +102,12 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
 
     // Properties
     // -------------------------------------------------------------------------
+
+
+    public Expression getExpression() {
+        return expression;
+    }
+
     public ExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
@@ -174,6 +182,22 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
 
     public void setIgnoreInvalidExchanges(boolean ignoreInvalidExchanges) {
         this.ignoreInvalidExchanges = ignoreInvalidExchanges;
+    }
+
+    public boolean isReverse() {
+        return reverse;
+    }
+
+    public void setReverse(boolean reverse) {
+        this.reverse = reverse;
+    }
+
+    public boolean isAllowDuplicates() {
+        return allowDuplicates;
+    }
+
+    public void setAllowDuplicates(boolean allowDuplicates) {
+        this.allowDuplicates = allowDuplicates;
     }
 
     public Predicate getCompletionPredicate() {

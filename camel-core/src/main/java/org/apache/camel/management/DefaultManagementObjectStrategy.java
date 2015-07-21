@@ -52,6 +52,7 @@ import org.apache.camel.management.mbean.ManagedPollEnricher;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRecipientList;
+import org.apache.camel.management.mbean.ManagedResequencer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRoutingSlip;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
@@ -77,9 +78,11 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.processor.WireTapProcessor;
@@ -226,6 +229,10 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedRecipientList(context, (RecipientList) target, definition);
             } else if (target instanceof MulticastProcessor) {
                 answer = new ManagedMulticast(context, (MulticastProcessor) target, definition);
+            } else if (target instanceof Resequencer) {
+                answer = new ManagedResequencer(context, (Resequencer) target, definition);
+            } else if (target instanceof StreamResequencer) {
+                answer = new ManagedResequencer(context, (StreamResequencer) target, definition);
             } else if (target instanceof WireTapProcessor) {
                 answer = new ManagedWireTapProcessor(context, (WireTapProcessor) target, definition);
             } else if (target instanceof SendDynamicProcessor) {

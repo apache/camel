@@ -37,7 +37,6 @@ import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -61,8 +60,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     private BatchResequencerConfig batchConfig;
     @XmlTransient
     private StreamResequencerConfig streamConfig;
-    @XmlElementRef
-    @Required
+    @XmlElementRef @Metadata(required = "true")
     private ExpressionDefinition expression;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
@@ -364,6 +362,8 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), internal, expression, isAllowDuplicates, isReverse);
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
+        resequencer.setReverse(isReverse);
+        resequencer.setAllowDuplicates(isAllowDuplicates);
         if (config.getIgnoreInvalidExchanges() != null) {
             resequencer.setIgnoreInvalidExchanges(config.getIgnoreInvalidExchanges());
         }
@@ -397,7 +397,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         }
         comparator.setExpression(expression);
 
-        StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), internal, comparator);
+        StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), internal, comparator, expression);
         resequencer.setTimeout(config.getTimeout());
         resequencer.setCapacity(config.getCapacity());
         resequencer.setRejectOld(config.getRejectOld());

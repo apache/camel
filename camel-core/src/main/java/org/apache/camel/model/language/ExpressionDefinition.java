@@ -37,7 +37,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
@@ -56,7 +55,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     @XmlAttribute
     @XmlID
     private String id;
-    @XmlValue
+    @XmlValue @Metadata(required = "true")
     private String expression;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean trim;
@@ -209,7 +208,6 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     /**
      * The expression value in your chosen language syntax
      */
-    @Required
     public void setExpression(String expression) {
         this.expression = expression;
     }
