@@ -38,6 +38,7 @@ import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDelayer;
+import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEnricher;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
@@ -48,6 +49,7 @@ import org.apache.camel.management.mbean.ManagedPollEnricher;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedRoutingSlip;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendDynamicProcessor;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
@@ -60,10 +62,12 @@ import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Delayer;
+import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.PollEnricher;
+import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
@@ -191,6 +195,10 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
+            } else if (target instanceof DynamicRouter) {
+                answer = new ManagedDynamicRouter(context, (DynamicRouter) target, definition);
+            } else if (target instanceof RoutingSlip) {
+                answer = new ManagedRoutingSlip(context, (RoutingSlip) target, definition);
             } else if (target instanceof FilterProcessor) {
                 answer = new ManagedFilter(context, (FilterProcessor) target, definition);
             } else if (target instanceof WireTapProcessor) {
