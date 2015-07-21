@@ -18,21 +18,21 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedRoutingSlipMBean;
+import org.apache.camel.api.management.mbean.ManagedRecipientListMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.RoutingSlip;
+import org.apache.camel.processor.RecipientList;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.URISupport;
 
 /**
  * @version 
  */
-@ManagedResource(description = "Managed RoutingSlip")
-public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRoutingSlipMBean {
-    private final RoutingSlip processor;
+@ManagedResource(description = "Managed RecipientList")
+public class ManagedRecipientList extends ManagedProcessor implements ManagedRecipientListMBean {
+    private final RecipientList processor;
     private String uri;
 
-    public ManagedRoutingSlip(CamelContext context, RoutingSlip processor, ProcessorDefinition<?> definition) {
+    public ManagedRecipientList(CamelContext context, RecipientList processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
@@ -54,7 +54,7 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
 
     @Override
     public String getUriDelimiter() {
-        return processor.getUriDelimiter();
+        return processor.getDelimiter();
     }
 
     @Override
@@ -63,7 +63,32 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
     }
 
     @Override
-    public Boolean isIgnoreInvalidEndpoints() {
-        return processor.isIgnoreInvalidEndpoints();
+    public Boolean isParallelAggregate() {
+        return processor.isParallelAggregate();
+    }
+
+    @Override
+    public Boolean isParallelProcessing() {
+        return processor.isParallelProcessing();
+    }
+
+    @Override
+    public Boolean isStreaming() {
+        return processor.isStreaming();
+    }
+
+    @Override
+    public Boolean isStopOnException() {
+        return processor.isStopOnException();
+    }
+
+    @Override
+    public Boolean isShareUnitOfWork() {
+        return processor.isShareUnitOfWork();
+    }
+
+    @Override
+    public Long getTimeout() {
+        return processor.getTimeout();
     }
 }

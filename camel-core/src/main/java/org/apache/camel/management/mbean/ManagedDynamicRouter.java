@@ -21,6 +21,8 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedDynamicRouterMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DynamicRouter;
+import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.URISupport;
 
 /**
  * @version 
@@ -28,12 +30,21 @@ import org.apache.camel.processor.DynamicRouter;
 @ManagedResource(description = "Managed DynamicRouter")
 public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDynamicRouterMBean {
     private final DynamicRouter processor;
-    private final String uri;
+    private String uri;
 
     public ManagedDynamicRouter(CamelContext context, DynamicRouter processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
-        this.uri = processor.getExpression().toString();
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
+        uri = processor.getExpression().toString();
+        if (sanitize) {
+            uri = URISupport.sanitizeUri(uri);
+        }
     }
 
     @Override

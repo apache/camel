@@ -213,6 +213,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
         }
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
     public boolean isStreaming() {
         return streaming;
     }

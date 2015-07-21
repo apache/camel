@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.util.Iterator;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
@@ -50,6 +51,7 @@ import org.apache.camel.management.mbean.ManagedMulticast;
 import org.apache.camel.management.mbean.ManagedPollEnricher;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
+import org.apache.camel.management.mbean.ManagedRecipientList;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRoutingSlip;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
@@ -63,6 +65,8 @@ import org.apache.camel.management.mbean.ManagedThroughputLogger;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RecipientListDefinition;
+import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.Enricher;
@@ -70,7 +74,9 @@ import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoopProcessor;
 import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.PollEnricher;
+import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.SendProcessor;
@@ -185,6 +191,15 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                                                ProcessorDefinition<?> definition, Route route) {
         ManagedProcessor answer = null;
 
+        if (definition instanceof RecipientListDefinition || definition instanceof ThreadsDefinition) {
+            // special for RecipientListDefinition/ThreadsDefinition, as the processor is wrapped in a pipeline as last
+            Pipeline pipeline = (Pipeline) processor;
+            Iterator<Processor> it = pipeline.getProcessors().iterator();
+            while (it.hasNext()) {
+                processor = it.next();
+            }
+        }
+
         // unwrap delegates as we want the real target processor
         Processor target = processor;
         while (target != null) {
@@ -207,6 +222,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedFilter(context, (FilterProcessor) target, definition);
             } else if (target instanceof LoopProcessor) {
                 answer = new ManagedLoop(context, (LoopProcessor) target, definition);
+            } else if (target instanceof RecipientList) {
+                answer = new ManagedRecipientList(context, (RecipientList) target, definition);
             } else if (target instanceof MulticastProcessor) {
                 answer = new ManagedMulticast(context, (MulticastProcessor) target, definition);
             } else if (target instanceof WireTapProcessor) {

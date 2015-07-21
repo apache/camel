@@ -18,9 +18,9 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedRoutingSlipMBean extends ManagedProcessorMBean {
+public interface ManagedRecipientListMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.", mask = true)
+    @ManagedAttribute(description = "Expression that returns which endpoints (url) to send the message to (the recipients).", mask = true)
     String getExpression();
 
     @ManagedAttribute(description = "The uri delimiter to use")
@@ -29,7 +29,22 @@ public interface ManagedRoutingSlipMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
     Integer getCacheSize();
 
-    @ManagedAttribute(description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
-    Boolean isIgnoreInvalidEndpoints();
+    @ManagedAttribute(description = "If enabled then the aggregate method on AggregationStrategy can be called concurrently.")
+    Boolean isParallelAggregate();
+
+    @ManagedAttribute(description = "If enabled then sending messages to the recipient lists occurs concurrently.")
+    Boolean isParallelProcessing();
+
+    @ManagedAttribute(description = "If enabled then Camel will process replies out-of-order, eg in the order they come back.")
+    Boolean isStreaming();
+
+    @ManagedAttribute(description = "Will now stop further processing if an exception or failure occurred during processing.")
+    Boolean isStopOnException();
+
+    @ManagedAttribute(description = "Shares the UnitOfWork with the parent and the resource exchange")
+    Boolean isShareUnitOfWork();
+
+    @ManagedAttribute(description = "The total timeout specified in millis, when using parallel processing.")
+    Long getTimeout();
 
 }
