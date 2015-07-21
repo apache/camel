@@ -60,10 +60,14 @@ import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendDynamicProcessor;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedService;
+import org.apache.camel.management.mbean.ManagedSetBody;
+import org.apache.camel.management.mbean.ManagedSetHeader;
+import org.apache.camel.management.mbean.ManagedSetProperty;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThroughputLogger;
+import org.apache.camel.management.mbean.ManagedTransformer;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
@@ -84,9 +88,13 @@ import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.SamplingThrottler;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.SetBodyProcessor;
+import org.apache.camel.processor.SetHeaderProcessor;
+import org.apache.camel.processor.SetPropertyProcessor;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.processor.TransformProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
@@ -237,6 +245,14 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedResequencer(context, (Resequencer) target, definition);
             } else if (target instanceof StreamResequencer) {
                 answer = new ManagedResequencer(context, (StreamResequencer) target, definition);
+            } else if (target instanceof SetBodyProcessor) {
+                answer = new ManagedSetBody(context, (SetBodyProcessor) target, definition);
+            } else if (target instanceof SetHeaderProcessor) {
+                answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, definition);
+            } else if (target instanceof SetPropertyProcessor) {
+                answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, definition);
+            } else if (target instanceof TransformProcessor) {
+                answer = new ManagedTransformer(context, (TransformProcessor) target, definition);
             } else if (target instanceof WireTapProcessor) {
                 answer = new ManagedWireTapProcessor(context, (WireTapProcessor) target, definition);
             } else if (target instanceof SendDynamicProcessor) {
