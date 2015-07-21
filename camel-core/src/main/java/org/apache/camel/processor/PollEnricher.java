@@ -90,6 +90,10 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
         this.id = id;
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
     }

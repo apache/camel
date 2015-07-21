@@ -88,6 +88,10 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         this.id = id;
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
