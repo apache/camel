@@ -336,7 +336,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 }
                 int min = Integer.parseInt(tokens[0]);
                 int max = Integer.parseInt(tokens[1]);
-                return ExpressionBuilder.randomExpression(min,max);
+                return ExpressionBuilder.randomExpression(min, max);
             } else {
                 int max = Integer.parseInt(values);
                 return ExpressionBuilder.randomExpression(max);

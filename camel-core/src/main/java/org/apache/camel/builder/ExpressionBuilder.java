@@ -1878,7 +1878,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Random random = new Random();
-                int randomNum = random.nextInt((max - min)) + min;
+                int randomNum = random.nextInt(max - min) + min;
                 return randomNum;
             }
 

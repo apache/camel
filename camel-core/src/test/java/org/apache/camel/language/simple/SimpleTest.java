@@ -1445,11 +1445,11 @@ public class SimpleTest extends LanguageTestSupport {
         int max = 10;
         int iterations = 30;
         int i = 0;
-        for (i=0;i<iterations;i++) {
+        for (i = 0; i < iterations; i++) {
             Expression expression = SimpleLanguage.simple("random(1,10)", Integer.class);
             assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
         }
-        for (i=0;i<iterations;i++) {
+        for (i = 0; i < iterations; i++) {
             Expression expression = SimpleLanguage.simple("random(10)", Integer.class);
             assertTrue(0 <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
         }
