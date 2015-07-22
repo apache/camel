@@ -17,11 +17,15 @@
 package org.apache.camel.component.http4;
 
 import java.net.ConnectException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -29,6 +33,33 @@ import org.junit.Test;
  */
 public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/search", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void httpConnectionOk() throws Exception {
         Exchange exchange = template.request("direct:start", null);
@@ -41,7 +72,7 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
         // stop server so there are no connection
         // and wait for it to terminate
         localServer.stop();
-        localServer.awaitTermination(5000);
+        localServer.awaitTermination(5000, TimeUnit.MILLISECONDS);
 
         Exchange exchange = template.request("direct:start", null);
         assertTrue(exchange.isFailed());
@@ -51,11 +82,6 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
 
         assertEquals(true, exchange.getIn().getHeader(Exchange.REDELIVERED));
         assertEquals(4, exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER));
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/search", new BasicValidationHandler("GET", null, null, getExpectedContent()));
     }
 
     @Override
@@ -71,7 +97,7 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
                         .maximumRedeliveryDelay(5000)
                         .useExponentialBackOff()
                     .end()
-                    .to("http4://" + getHostName() + ":" + getPort() + "/search");
+                    .to("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search");
             }
         };
     }

@@ -228,8 +228,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     @Override
-    protected void findRouteBuildersByContextScan(PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
-        ContextScanRouteBuilderFinder finder = new ContextScanRouteBuilderFinder(getContext(), filter);
+    protected void findRouteBuildersByContextScan(PackageScanFilter filter, boolean includeNonSingletons, List<RoutesBuilder> builders) throws Exception {
+        ContextScanRouteBuilderFinder finder = new ContextScanRouteBuilderFinder(getContext(), filter, includeNonSingletons);
         finder.appendBuilders(builders);
     }
 
@@ -288,6 +288,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
                 pc = new PropertiesComponent();
                 getContext().addComponent("properties", pc);
             }
+            // use the spring system properties mode which has a different value than Camel may have
+            pc.setSystemPropertiesMode(configurer.getSystemPropertiesMode());
             // replace existing resolver with us
             configurer.setResolver(pc.getPropertiesResolver());
             configurer.setParser(pc.getPropertiesParser());
@@ -424,6 +426,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public List<CamelEndpointFactoryBean> getEndpoints() {
         return endpoints;
+    }
+
+    public void setEndpoints(List<CamelEndpointFactoryBean> endpoints) {
+        this.endpoints = endpoints;
     }
 
     public List<CamelRedeliveryPolicyFactoryBean> getRedeliveryPolicies() {

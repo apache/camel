@@ -20,20 +20,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.DefaultHttpBinding;
-import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpMessage;
 import org.eclipse.jetty.util.MultiPartInputStreamParser;
 
 final class AttachmentHttpBinding extends DefaultHttpBinding {
-    AttachmentHttpBinding(HttpEndpoint endpoint) {
-        super(endpoint);
+
+    AttachmentHttpBinding() {
     }
 
     @Override
@@ -54,9 +53,8 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                     message.addAttachment(part.getName(), new DataHandler(ds));
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new RuntimeCamelException("Cannot populate attachments", e);
             }
-
         }
     }
     

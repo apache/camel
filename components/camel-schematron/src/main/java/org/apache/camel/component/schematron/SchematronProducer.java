@@ -72,7 +72,6 @@ public class SchematronProducer extends DefaultProducer {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(Constants.VALIDATION_STATUS, status);
         headers.put(Constants.VALIDATION_REPORT, report);
-        exchange.getOut().setHeader(Constants.VALIDATION_REPORT, report);
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
             exchange.getOut().getHeaders().putAll(headers);

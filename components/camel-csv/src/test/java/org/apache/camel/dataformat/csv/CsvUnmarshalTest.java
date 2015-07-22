@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.csv;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,6 +37,9 @@ public class CsvUnmarshalTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:output")
     MockEndpoint output;
+
+    @EndpointInject(uri = "mock:line")
+    MockEndpoint line;
 
     @Test
     public void shouldUseDefaultFormat() throws Exception {
@@ -66,16 +70,16 @@ public class CsvUnmarshalTest extends CamelTestSupport {
 
     @Test
     public void shouldUseLazyLoading() throws Exception {
-        output.expectedMessageCount(1);
-
+        line.expectedMessageCount(3);
         template.sendBody("direct:lazy", CSV_SAMPLE);
-        output.assertIsSatisfied();
+        line.assertIsSatisfied();
 
-        Iterator<?> body = assertIsInstanceOf(Iterator.class, output.getExchanges().get(0).getIn().getBody());
-        assertEquals(Arrays.asList("A", "B", "C"), body.next());
-        assertEquals(Arrays.asList("1", "2", "3"), body.next());
-        assertEquals(Arrays.asList("one", "two", "three"), body.next());
-        assertFalse(body.hasNext());
+        List body1 = line.getExchanges().get(0).getIn().getBody(List.class);
+        List body2 = line.getExchanges().get(1).getIn().getBody(List.class);
+        List body3 = line.getExchanges().get(2).getIn().getBody(List.class);
+        assertEquals(Arrays.asList("A", "B", "C"), body1);
+        assertEquals(Arrays.asList("1", "2", "3"), body2);
+        assertEquals(Arrays.asList("one", "two", "three"), body3);
     }
 
     @Test
@@ -93,15 +97,15 @@ public class CsvUnmarshalTest extends CamelTestSupport {
 
     @Test
     public void shouldUseLazyLoadingAndMaps() throws Exception {
-        output.expectedMessageCount(1);
-
+        line.expectedMessageCount(2);
         template.sendBody("direct:lazy_map", CSV_SAMPLE);
-        output.assertIsSatisfied();
+        line.assertIsSatisfied();
 
-        Iterator<?> body = assertIsInstanceOf(Iterator.class, output.getExchanges().get(0).getIn().getBody());
-        assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.next());
-        assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.next());
-        assertFalse(body.hasNext());
+        Map map1 = line.getExchanges().get(0).getIn().getBody(Map.class);
+        Map map2 = line.getExchanges().get(1).getIn().getBody(Map.class);
+
+        assertEquals(asMap("A", "1", "B", "2", "C", "3"), map1);
+        assertEquals(asMap("A", "one", "B", "two", "C", "three"), map2);
     }
 
     @Test
@@ -135,7 +139,8 @@ public class CsvUnmarshalTest extends CamelTestSupport {
                 // Lazy load
                 from("direct:lazy")
                         .unmarshal(new CsvDataFormat().setLazyLoad(true))
-                        .to("mock:output");
+                        .split().body()
+                            .to("mock:line");
 
                 // Use maps
                 from("direct:map")
@@ -145,7 +150,8 @@ public class CsvUnmarshalTest extends CamelTestSupport {
                 // Use lazy load and maps
                 from("direct:lazy_map")
                         .unmarshal(new CsvDataFormat().setLazyLoad(true).setUseMaps(true))
-                        .to("mock:output");
+                        .split().body()
+                            .to("mock:line");
 
                 // Use map without first line and headers
                 from("direct:map_headers")

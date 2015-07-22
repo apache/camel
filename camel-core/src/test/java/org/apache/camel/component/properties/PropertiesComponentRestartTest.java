@@ -51,11 +51,11 @@ public class PropertiesComponentRestartTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
 
-        PropertiesComponent pc = new PropertiesComponent("classpath:org/apache/camel/component/properties/myproperties.properties");
+        final PropertiesComponent pc = new PropertiesComponent("classpath:org/apache/camel/component/properties/myproperties.properties");
         pc.setPropertiesResolver(new PropertiesResolver() {
             public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
                 resolvedCount++;
-                return new DefaultPropertiesResolver().resolveProperties(context, ignoreMissingLocation, uri);
+                return new DefaultPropertiesResolver(pc).resolveProperties(context, ignoreMissingLocation, uri);
             }
         });
 

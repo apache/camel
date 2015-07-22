@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * Unit test for fetch size.
+ * Unit test for delete mail runs as an onCompletion.
  */
 public class MailCommitOnCompletionTest extends CamelTestSupport {
 

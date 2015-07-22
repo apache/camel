@@ -17,10 +17,10 @@
 package org.apache.camel.component.github;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.component.github.consumer.MockCommitService;
-import org.apache.camel.component.github.consumer.MockIssueService;
-import org.apache.camel.component.github.consumer.MockPullRequestService;
-import org.apache.camel.component.github.consumer.MockRepositoryService;
+import org.apache.camel.component.github.services.MockCommitService;
+import org.apache.camel.component.github.services.MockIssueService;
+import org.apache.camel.component.github.services.MockPullRequestService;
+import org.apache.camel.component.github.services.MockRepositoryService;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;

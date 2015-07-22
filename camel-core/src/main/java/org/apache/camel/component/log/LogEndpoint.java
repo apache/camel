@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 /**
  * Logger endpoint.
  */
-@UriEndpoint(scheme = "log", syntax = "log:loggerName", producerOnly = true, label = "core,monitoring")
+@UriEndpoint(scheme = "log", title = "Log", syntax = "log:loggerName", producerOnly = true, label = "core,monitoring")
 public class LogEndpoint extends ProcessorEndpoint {
 
     private volatile Processor logger;

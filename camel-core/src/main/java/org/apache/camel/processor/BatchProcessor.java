@@ -38,6 +38,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -53,19 +54,22 @@ import org.slf4j.LoggerFactory;
  * @deprecated may be removed in the future when we overhaul the resequencer EIP
  */
 @Deprecated
-public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
+public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, IdAware {
 
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
 
     private static final Logger LOG = LoggerFactory.getLogger(BatchProcessor.class);
 
+    private String id;
     private long batchTimeout = DEFAULT_BATCH_TIMEOUT;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int outBatchSize;
     private boolean groupExchanges;
     private boolean batchConsumer;
     private boolean ignoreInvalidExchanges;
+    private boolean reverse;
+    private boolean allowDuplicates;
     private Predicate completionPredicate;
     private Expression expression;
 
@@ -98,6 +102,12 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
 
     // Properties
     // -------------------------------------------------------------------------
+
+
+    public Expression getExpression() {
+        return expression;
+    }
+
     public ExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
@@ -174,6 +184,22 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
         this.ignoreInvalidExchanges = ignoreInvalidExchanges;
     }
 
+    public boolean isReverse() {
+        return reverse;
+    }
+
+    public void setReverse(boolean reverse) {
+        this.reverse = reverse;
+    }
+
+    public boolean isAllowDuplicates() {
+        return allowDuplicates;
+    }
+
+    public void setAllowDuplicates(boolean allowDuplicates) {
+        this.allowDuplicates = allowDuplicates;
+    }
+
     public Predicate getCompletionPredicate() {
         return completionPredicate;
     }
@@ -197,6 +223,14 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
 
     public boolean hasNext() {
         return processor != null;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**

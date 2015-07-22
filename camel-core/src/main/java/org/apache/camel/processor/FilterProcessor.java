@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +32,11 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class FilterProcessor extends DelegateAsyncProcessor implements Traceable {
+public class FilterProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(FilterProcessor.class);
+    private String id;
     private final Predicate predicate;
+    private transient long filtered;
 
     public FilterProcessor(Predicate predicate, Processor processor) {
         super(processor);
@@ -55,6 +58,7 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         exchange.setProperty(Exchange.FILTER_MATCHED, matches);
 
         if (matches) {
+            filtered++;
             return processor.process(exchange, callback);
         } else {
             callback.done(true);
@@ -67,6 +71,14 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         return "Filter[if: " + predicate + " do: " + getProcessor() + "]";
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getTraceLabel() {
         return "filter[if: " + predicate + "]";
     }
@@ -75,9 +87,25 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         return predicate;
     }
 
+    /**
+     * Gets the number of Exchanges that matched the filter predicate and therefore as filtered.
+     */
+    public long getFilteredCount() {
+        return filtered;
+    }
+
+    /**
+     * Reset counters.
+     */
+    public void reset() {
+        filtered = 0;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        // restart counter
+        reset();
         ServiceHelper.startService(predicate);
     }
 

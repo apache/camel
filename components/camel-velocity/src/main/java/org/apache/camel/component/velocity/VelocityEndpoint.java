@@ -40,7 +40,7 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.CommonsLogLogChute;
 
-@UriEndpoint(scheme = "velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
 public class VelocityEndpoint extends ResourceEndpoint {
     
     private VelocityEngine velocityEngine;
@@ -125,13 +125,14 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
     /**
      * Enables / disables the velocity resource loader cache which is enabled by default
-     *
-     * @param loaderCache a flag to enable/disable the cache
      */
     public void setLoaderCache(boolean loaderCache) {
         this.loaderCache = loaderCache;
     }
 
+    /**
+     * Character encoding of the resource content.
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -140,6 +141,9 @@ public class VelocityEndpoint extends ResourceEndpoint {
         return encoding;
     }
 
+    /**
+     * The URI of the properties file which is used for VelocityEngine initialization.
+     */
     public void setPropertiesFile(String file) {
         propertiesFile = file;
     }

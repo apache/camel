@@ -35,6 +35,26 @@ public class ManagedIdempotentConsumer extends ManagedProcessor implements Manag
     }
 
     @Override
+    public Boolean isEager() {
+        return getProcessor().isEager();
+    }
+
+    @Override
+    public Boolean isCompletionEager() {
+        return getProcessor().isCompletionEager();
+    }
+
+    @Override
+    public Boolean isSkipDuplicate() {
+        return getProcessor().isSkipDuplicate();
+    }
+
+    @Override
+    public Boolean isRemoveOnFailure() {
+        return getProcessor().isRemoveOnFailure();
+    }
+
+    @Override
     public long getDuplicateMessageCount() {
         return getProcessor().getDuplicateMessageCount();
     }
@@ -42,6 +62,11 @@ public class ManagedIdempotentConsumer extends ManagedProcessor implements Manag
     @Override
     public void resetDuplicateMessageCount() {
         getProcessor().resetDuplicateMessageCount();
+    }
+
+    @Override
+    public void clear() {
+        getProcessor().clear();
     }
 
 }

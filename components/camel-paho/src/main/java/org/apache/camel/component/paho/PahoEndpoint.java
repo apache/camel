@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.paho;
 
+import java.util.Set;
+
+import static java.lang.System.nanoTime;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -30,12 +34,23 @@ import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static java.lang.System.nanoTime;
 import static org.apache.camel.component.paho.PahoPersistence.MEMORY;
 
-@UriEndpoint(scheme = "paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
+@UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
+
+    // Constants
+
+    private static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
+
+    private static final int DEFAULT_QOS = 2;
+
+    private static final String DEFAULT_QOS_STRING = DEFAULT_QOS + "";
 
     // Configuration members
 
@@ -43,10 +58,10 @@ public class PahoEndpoint extends DefaultEndpoint {
     private String topic;
     @UriParam
     private String clientId = "camel-" + nanoTime();
-    @UriParam(defaultValue = "tcp://localhost:1883")
-    private String brokerUrl = "tcp://localhost:1883";
-    @UriParam(defaultValue = "2")
-    private int qos = 2;
+    @UriParam(defaultValue = DEFAULT_BROKER_URL)
+    private String brokerUrl = DEFAULT_BROKER_URL;
+    @UriParam(defaultValue = DEFAULT_QOS_STRING)
+    private int qos = DEFAULT_QOS;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = MEMORY;
 
@@ -110,6 +125,15 @@ public class PahoEndpoint extends DefaultEndpoint {
         if (connectOptions != null) {
             return connectOptions;
         }
+        Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
+        if (connectOptions.size() == 1) {
+            LOG.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
+            return connectOptions.iterator().next();
+        } else if (connectOptions.size() > 1) {
+            LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
+                            + "Please use 'connectOptions' endpoint option to select one.",
+                    connectOptions.size());
+        }
         return new MqttConnectOptions();
     }
 
@@ -119,6 +143,9 @@ public class PahoEndpoint extends DefaultEndpoint {
         return clientId;
     }
 
+    /**
+     * MQTT client identifier.
+     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
@@ -127,6 +154,9 @@ public class PahoEndpoint extends DefaultEndpoint {
         return brokerUrl;
     }
 
+    /**
+     * The URL of the MQTT broker.
+     */
     public void setBrokerUrl(String brokerUrl) {
         this.brokerUrl = brokerUrl;
     }
@@ -135,6 +165,9 @@ public class PahoEndpoint extends DefaultEndpoint {
         return topic;
     }
 
+    /**
+     * Name of the topic
+     */
     public void setTopic(String topic) {
         this.topic = topic;
     }
@@ -143,6 +176,9 @@ public class PahoEndpoint extends DefaultEndpoint {
         return qos;
     }
 
+    /**
+     * Client quality of service level (0-2).
+     */
     public void setQos(int qos) {
         this.qos = qos;
     }
@@ -153,6 +189,9 @@ public class PahoEndpoint extends DefaultEndpoint {
         return persistence;
     }
 
+    /**
+     * Client persistence to be used - memory or file.
+     */
     public void setPersistence(PahoPersistence persistence) {
         this.persistence = persistence;
     }
@@ -161,6 +200,9 @@ public class PahoEndpoint extends DefaultEndpoint {
         return client;
     }
 
+    /**
+     * To use the existing MqttClient instance as client.
+     */
     public void setClient(MqttClient client) {
         this.client = client;
     }
@@ -169,6 +211,9 @@ public class PahoEndpoint extends DefaultEndpoint {
         return connectOptions;
     }
 
+    /**
+     * Client connection options
+     */
     public void setConnectOptions(MqttConnectOptions connOpts) {
         this.connectOptions = connOpts;
     }

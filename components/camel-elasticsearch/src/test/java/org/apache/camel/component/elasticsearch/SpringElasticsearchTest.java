@@ -69,9 +69,9 @@ public class SpringElasticsearchTest extends CamelSpringTestSupport {
         body.put("content", "test");
 
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         producer.sendBodyAndHeaders(body, headers);
 

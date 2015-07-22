@@ -51,6 +51,9 @@ public class SesConfiguration {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -59,6 +62,9 @@ public class SesConfiguration {
         return amazonSESClient;
     }
 
+    /**
+     * To use the AmazonSimpleEmailService as the client
+     */
     public void setAmazonSESClient(AmazonSimpleEmailService amazonSESClient) {
         this.amazonSESClient = amazonSESClient;
     }
@@ -67,6 +73,9 @@ public class SesConfiguration {
         return from;
     }
 
+    /**
+     * The sender's email address.
+     */
     public void setFrom(String from) {
         this.from = from;
     }
@@ -75,10 +84,16 @@ public class SesConfiguration {
         return to;
     }
 
+    /**
+     * List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
+     */
     public void setTo(List<String> to) {
         this.to = to;
     }
-    
+
+    /**
+     * List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
+     */
     public void setTo(String to) {
         this.to = Arrays.asList(to.split(","));
     }
@@ -87,6 +102,9 @@ public class SesConfiguration {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -95,6 +113,9 @@ public class SesConfiguration {
         return subject;
     }
 
+    /**
+     * The subject which is used if the message header 'CamelAwsSesSubject' is not present.
+     */
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -103,6 +124,9 @@ public class SesConfiguration {
         return returnPath;
     }
 
+    /**
+     * The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header.
+     */
     public void setReturnPath(String returnPath) {
         this.returnPath = returnPath;
     }
@@ -111,6 +135,9 @@ public class SesConfiguration {
         return replyToAddresses;
     }
 
+    /**
+     * List of reply-to email address(es) for the message, override it using 'CamelAwsSesReplyToAddresses' header.
+     */
     public void setReplyToAddresses(List<String> replyToAddresses) {
         this.replyToAddresses = replyToAddresses;
     }
@@ -123,6 +150,9 @@ public class SesConfiguration {
         return amazonSESEndpoint;
     }
 
+    /**
+     * The region with which the AWS-SES client wants to work with.
+     */
     public void setAmazonSESEndpoint(String amazonSesEndpoint) {
         this.amazonSESEndpoint = amazonSesEndpoint;
     }

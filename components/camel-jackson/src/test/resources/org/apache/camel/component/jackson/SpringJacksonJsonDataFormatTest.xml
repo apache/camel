@@ -42,7 +42,7 @@
         </route>
 
         <route>
-            <from uri="direct:pretty"/>
+            <from uri="direct:inPretty"/>
             <marshal ref="pretty"/>
         </route>
 

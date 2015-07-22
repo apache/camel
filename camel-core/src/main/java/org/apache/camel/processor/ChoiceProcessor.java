@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -42,12 +43,13 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * 
  * @version 
  */
-public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
+public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
-    private final List<Processor> filters;
+    private String id;
+    private final List<FilterProcessor> filters;
     private final Processor otherwise;
 
-    public ChoiceProcessor(List<Processor> filters, Processor otherwise) {
+    public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
         this.filters = filters;
         this.otherwise = otherwise;
     }
@@ -83,7 +85,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
             // evaluate the predicate on filter predicate early to be faster
             // and avoid issues when having nested choices
             // as we should only pick one processor
-            boolean matches = true;
+            boolean matches = false;
             if (processor instanceof FilterProcessor) {
                 FilterProcessor filter = (FilterProcessor) processor;
                 try {
@@ -94,6 +96,9 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
                 } catch (Throwable e) {
                     exchange.setException(e);
                 }
+            } else {
+                // its the otherwise processor, so its a match
+                matches = true;
             }
 
             // check for error if so we should break out
@@ -141,7 +146,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
         return "choice";
     }
 
-    public List<Processor> getFilters() {
+    public List<FilterProcessor> getFilters() {
         return filters;
     }
 
@@ -165,6 +170,14 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
 
     public boolean hasNext() {
         return otherwise != null || (filters != null && !filters.isEmpty());
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     protected void doStart() throws Exception {

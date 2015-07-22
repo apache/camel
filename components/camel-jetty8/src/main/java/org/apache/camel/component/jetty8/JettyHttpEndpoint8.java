@@ -25,7 +25,8 @@ import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-@UriEndpoint(scheme = "jetty", syntax = "jetty:httpUri", consumerClass = HttpConsumer.class, label = "http")
+@UriEndpoint(scheme = "jetty", extendsScheme = "http", title = "Jetty",
+        syntax = "jetty:httpUri", consumerClass = HttpConsumer.class, label = "http")
 public class JettyHttpEndpoint8 extends JettyHttpEndpoint {
 
     public JettyHttpEndpoint8(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {

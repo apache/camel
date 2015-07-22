@@ -38,7 +38,6 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
   private val LOG = LoggerFactory.getLogger(classOf[RestSwaggerApiDeclarationServlet])
 
   val reader = new RestSwaggerReader()
-  var camelId: String = null
   val swaggerConfig: SwaggerConfig = ConfigFactory.config
   var cors: Boolean = false
   var initDone: Boolean = false
@@ -67,10 +66,6 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
     if (s != null) {
       cors = "true".equalsIgnoreCase(s)
     }
-    s = config.getInitParameter("camelId")
-    if (s != null) {
-      camelId = s
-    }
 
     val title = config.getInitParameter("api.title")
     val description = config.getInitParameter("api.description")
@@ -85,17 +80,36 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
 
   def getRestDefinitions(camelId: String) : mutable.Buffer[RestDefinition]
 
+  def findCamelContexts() : List[String]
+
   override protected def doGet(request: HttpServletRequest, response: HttpServletResponse) = {
     if (!initDone) {
       initBaseAndApiPaths(request)
     }
 
-    val route = request.getPathInfo
-    // render overview if the route is empty or is the root path
-    if (route != null && route != "" && route != "/") {
-      renderApiDeclaration(request, response)
+    var contextId: String = null
+    var route = request.getPathInfo
+
+    // render list of camel contexts as root
+    if (route == null || route == "" || route == "/") {
+      renderCamelContexts(request, response)
     } else {
-      renderResourceListing(request, response)
+      // first part is the camel context
+      if (route.startsWith("/")) {
+        route = route.substring(1)
+      }
+      // the remainder is the route part
+      contextId = route.split("/").head
+      if (route.startsWith(contextId)) {
+        route = route.substring(contextId.length)
+      }
+
+      if (route != null && route != "" && route != "/") {
+        // render overview if the route is empty or is the root path
+        renderApiDeclaration(request, response, contextId, route)
+      } else {
+        renderResourceListing(request, response, contextId)
+      }
     }
   }
 
@@ -108,7 +122,7 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
         base = ""
       }
       val path = translateContextPath(request)
-      if (url.getPort != 80) {
+      if (url.getPort != 80 && url.getPort != -1) {
         base = url.getProtocol + "://" + url.getHost + ":" + url.getPort + path + "/" + base
       } else {
         base = url.getProtocol + "://" + url.getHost + request.getContextPath + "/" + base
@@ -123,7 +137,7 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
         base = ""
       }
       val path = translateContextPath(request)
-      if (url.getPort != 80) {
+      if (url.getPort != 80 && url.getPort != -1) {
         base = url.getProtocol + "://" + url.getHost + ":" + url.getPort + path + "/" + base
       } else {
         base = url.getProtocol + "://" + url.getHost + request.getContextPath + "/" + base
@@ -150,9 +164,33 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
   }
 
   /**
+   * Renders a list of available CamelContexts in the JVM
+   */
+  def renderCamelContexts(request: HttpServletRequest, response: HttpServletResponse) = {
+    LOG.trace("renderCamelContexts")
+
+    if (cors) {
+      response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
+      response.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH")
+      response.addHeader("Access-Control-Allow-Origin", "*")
+    }
+
+    val contexts = findCamelContexts()
+    response.getWriter.print("[\n")
+    for (i <- 0 until contexts.size) {
+      val name = contexts(i)
+      response.getWriter.print("{\"name\": \"" + name + "\"}")
+      if (i < contexts.size - 1) {
+        response.getWriter.print(",\n")
+      }
+    }
+    response.getWriter.print("\n]")
+  }
+
+  /**
    * Renders the resource listing which is the overview of all the apis
    */
-  def renderResourceListing(request: HttpServletRequest, response: HttpServletResponse) = {
+  def renderResourceListing(request: HttpServletRequest, response: HttpServletResponse, contextId: String) = {
     LOG.trace("renderResourceListing")
 
     val queryParams = Map[String, List[String]]()
@@ -165,7 +203,7 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
       response.addHeader("Access-Control-Allow-Origin", "*")
     }
 
-    val rests = getRestDefinitions(camelId)
+    val rests = getRestDefinitions(contextId)
     if (rests != null) {
       val f = new SpecFilter
       val listings = RestApiListingCache.listing(rests, swaggerConfig).map(specs => {
@@ -193,11 +231,9 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
   /**
    * Renders the api listing of a single resource
    */
-  def renderApiDeclaration(request: HttpServletRequest, response: HttpServletResponse) = {
+  def renderApiDeclaration(request: HttpServletRequest, response: HttpServletResponse, contextId: String, docRoot: String) = {
     LOG.trace("renderApiDeclaration")
 
-    val route = request.getPathInfo
-    val docRoot = request.getPathInfo
     val f = new SpecFilter
     val queryParams = Map[String, List[String]]()
     val cookies = Map[String, String]()
@@ -210,7 +246,7 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
       response.addHeader("Access-Control-Allow-Origin", "*")
     }
 
-    val rests = getRestDefinitions(camelId)
+    val rests = getRestDefinitions(contextId)
     if (rests != null) {
       val listings = RestApiListingCache.listing(rests, swaggerConfig).map(specs => {
           (for (spec <- specs.values) yield {
@@ -218,10 +254,9 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
         }).filter(m => m.resourcePath == pathPart)
       }).toList.flatten
       listings.size match {
-        case 1 => {
+        case 1 =>
           LOG.debug("renderResourceListing write response -> {}", listings.head)
           response.getOutputStream.write(JsonSerializer.asJson(listings.head).getBytes("utf-8"))
-        }
         case _ => response.setStatus(404)
       }
     } else {

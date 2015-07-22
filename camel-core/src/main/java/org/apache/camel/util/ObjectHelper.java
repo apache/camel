@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -79,6 +80,15 @@ public final class ObjectHelper {
      * a String and Integer type as Camel will be able to coerce the types.
      */
     public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue) {
+        return typeCoerceEquals(converter, leftValue, rightValue, false);
+    }
+
+    /**
+     * A helper method for comparing objects for equality in which it uses type coercion to coerce
+     * types between the left and right values. This allows you test for equality for example with
+     * a String and Integer type as Camel will be able to coerce the types.
+     */
+    public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
         // sanity check
         if (leftValue == null && rightValue == null) {
             // they are equal
@@ -89,7 +99,7 @@ public final class ObjectHelper {
         }
 
         // try without type coerce
-        boolean answer = equal(leftValue, rightValue);
+        boolean answer = equal(leftValue, rightValue, ignoreCase);
         if (answer) {
             return true;
         }
@@ -101,14 +111,14 @@ public final class ObjectHelper {
 
         // convert left to right
         Object value = converter.tryConvertTo(rightValue.getClass(), leftValue);
-        answer = equal(value, rightValue);
+        answer = equal(value, rightValue, ignoreCase);
         if (answer) {
             return true;
         }
 
         // convert right to left
         value = converter.tryConvertTo(leftValue.getClass(), rightValue);
-        answer = equal(leftValue, value);
+        answer = equal(leftValue, value, ignoreCase);
         return answer;
     }
 
@@ -177,12 +187,25 @@ public final class ObjectHelper {
      * A helper method for comparing objects for equality while handling nulls
      */
     public static boolean equal(Object a, Object b) {
+        return equal(a, b, false);
+    }
+
+    /**
+     * A helper method for comparing objects for equality while handling nulls
+     */
+    public static boolean equal(Object a, Object b, boolean ignoreCase) {
         if (a == b) {
             return true;
         }
 
         if (a instanceof byte[] && b instanceof byte[]) {
             return equalByteArray((byte[])a, (byte[])b);
+        }
+
+        if (ignoreCase) {
+            if (a instanceof String && b instanceof String) {
+                return ((String) a).equalsIgnoreCase((String) b);
+            }
         }
 
         return a != null && b != null && a.equals(b);
@@ -1706,6 +1729,13 @@ public final class ObjectHelper {
         if (exception == null) {
             return null;
         }
+        
+        //check the suppressed exception first
+        for (Throwable throwable : exception.getSuppressed()) {
+            if (type.isInstance(throwable)) {
+                return type.cast(throwable);
+            }
+        }
 
         // walk the hierarchy and look for it
         for (final Throwable throwable : createExceptionIterable(exception)) {
@@ -1815,4 +1845,41 @@ public final class ObjectHelper {
         // value must be a number
         return value.equals(Float.NaN) || value.equals(Double.NaN);
     }
+    
+    /**
+     * Calling the Callable with the setting of TCCL with the camel context application classloader.
+     * 
+     * @param call the Callable instance
+     * @param exchange the exchange 
+     * @return the result of Callable return  
+     */
+    public static Object callWithTCCL(Callable<?> call, Exchange exchange) throws Exception {
+        ClassLoader apcl = null;
+        if (exchange != null && exchange.getContext() != null) {
+            apcl = exchange.getContext().getApplicationContextClassLoader();
+        }
+        return callWithTCCL(call, apcl);
+    }
+    
+    /**
+     * Calling the Callable with the setting of TCCL with a given classloader.
+     *
+     * @param call        the Callable instance
+     * @param classloader the class loader
+     * @return the result of Callable return  
+     */
+    public static Object callWithTCCL(Callable<?> call, ClassLoader classloader) throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            if (classloader != null) {
+                Thread.currentThread().setContextClassLoader(classloader);
+            }
+            return call.call();
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
+    }
+    
 }

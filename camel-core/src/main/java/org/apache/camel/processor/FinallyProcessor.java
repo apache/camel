@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,10 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class FinallyProcessor extends DelegateAsyncProcessor implements Traceable {
+public class FinallyProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FinallyProcessor.class);
+    private String id;
 
     public FinallyProcessor(Processor processor) {
         super(processor);
@@ -79,5 +81,13 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
 
     public String getTraceLabel() {
         return "finally";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

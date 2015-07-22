@@ -29,6 +29,7 @@ import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailureHandledEvent;
+import org.apache.camel.management.event.ExchangeFailureHandlingEvent;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.management.event.RouteAddedEvent;
@@ -92,27 +93,34 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        assertEquals(11, events.size());
+        assertEquals(12, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
         assertIsInstanceOf(RouteAddedEvent.class, events.get(1));
         assertIsInstanceOf(RouteStartedEvent.class, events.get(2));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(3));
         assertIsInstanceOf(ExchangeSendingEvent.class, events.get(4));
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(5));
-        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(6));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
 
-        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(8));
+        ExchangeFailureHandlingEvent e0 = assertIsInstanceOf(ExchangeFailureHandlingEvent.class, events.get(6));
+        assertEquals("should be DLC", true, e0.isDeadLetterChannel());
+        assertEquals("mock://dead", e0.getDeadLetterUri());
+
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(7));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(8));
+
+        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(9));
         assertEquals("should be DLC", true, e.isDeadLetterChannel());
+        assertTrue("should be marked as failure handled", e.isHandled());
+        assertFalse("should not be continued", e.isContinued());
         SendProcessor send = assertIsInstanceOf(SendProcessor.class, e.getFailureHandler());
         assertEquals("mock://dead", send.getDestination().getEndpointUri());
         assertEquals("mock://dead", e.getDeadLetterUri());
 
         // dead letter channel will mark the exchange as completed
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(9));
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(10));
         // and the last event should be the direct:start
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(10));
-        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(10);
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(11));
+        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(11);
         assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
     }
 
@@ -131,24 +139,75 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        assertEquals(11, events.size());
+        assertEquals(12, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
         assertIsInstanceOf(RouteAddedEvent.class, events.get(1));
         assertIsInstanceOf(RouteStartedEvent.class, events.get(2));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(3));
         assertIsInstanceOf(ExchangeSendingEvent.class, events.get(4));
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(5));
-        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(6));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
 
-        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(8));
+        ExchangeFailureHandlingEvent e0 = assertIsInstanceOf(ExchangeFailureHandlingEvent.class, events.get(6));
+        assertEquals("should NOT be DLC", false, e0.isDeadLetterChannel());
+
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(7));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(8));
+
+        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(9));
         assertEquals("should NOT be DLC", false, e.isDeadLetterChannel());
+        assertTrue("should be marked as failure handled", e.isHandled());
+        assertFalse("should not be continued", e.isContinued());
 
         // onException will handle the exception
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(9));
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(10));
         // and the last event should be the direct:start
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(10));
-        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(10);
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(11));
+        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(11);
+        assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
+    }
+
+    public void testExchangeDoTryDoCatch() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .doTry()
+                        .throwException(new IllegalArgumentException("Damn"))
+                    .doCatch(IllegalArgumentException.class)
+                        .to("mock:dead")
+                    .end();
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        assertEquals(12, events.size());
+        assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
+        assertIsInstanceOf(RouteAddedEvent.class, events.get(1));
+        assertIsInstanceOf(RouteStartedEvent.class, events.get(2));
+        assertIsInstanceOf(CamelContextStartedEvent.class, events.get(3));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(4));
+        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(5));
+
+        ExchangeFailureHandlingEvent e0 = assertIsInstanceOf(ExchangeFailureHandlingEvent.class, events.get(6));
+        assertEquals("should NOT be DLC", false, e0.isDeadLetterChannel());
+
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(7));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(8));
+
+        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(9));
+        assertEquals("should NOT be DLC", false, e.isDeadLetterChannel());
+        assertFalse("should not be marked as failure handled as it was continued instead", e.isHandled());
+        assertTrue("should be continued", e.isContinued());
+
+        // onException will handle the exception
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(10));
+        // and the last event should be the direct:start
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(11));
+        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(11);
         assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
     }
 

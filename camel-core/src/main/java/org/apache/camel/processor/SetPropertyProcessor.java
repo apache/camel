@@ -21,13 +21,15 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * A processor which sets the property on the exchange with an {@link org.apache.camel.Expression}
  */
-public class SetPropertyProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class SetPropertyProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+    private String id;
     private final String propertyName;
     private final Expression expression;
 
@@ -44,8 +46,15 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Object newProperty = expression.evaluate(exchange, Object.class);
+
+            if (exchange.getException() != null) {
+                // the expression threw an exception so we should break-out
+                callback.done(true);
+                return true;
+            }
+
             exchange.setProperty(propertyName, newProperty);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
         }
 
@@ -60,6 +69,22 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
 
     public String getTraceLabel() {
         return "setProperty[" + propertyName + ", " + expression + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 
     @Override

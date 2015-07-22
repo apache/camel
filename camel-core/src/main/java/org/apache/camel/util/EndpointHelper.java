@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -318,7 +317,7 @@ public final class EndpointHelper {
      *                                  <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
-        String valueNoHash = value.replaceAll("#", "");
+        String valueNoHash = StringHelper.replaceAll(value, "#", "");
         if (mandatory) {
             return CamelContextHelper.mandatoryLookup(context, valueNoHash, type);
         } else {
@@ -498,8 +497,11 @@ public final class EndpointHelper {
      * @throws URISyntaxException is thrown if uri is invalid
      */
     public static ExchangePattern resolveExchangePatternFromUrl(String url) throws URISyntaxException {
-        URI uri = new URI(url);
-        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        int idx = url.indexOf("?");
+        if (idx > 0) {
+            url = url.substring(idx + 1);
+        }
+        Map<String, Object> parameters = URISupport.parseQuery(url, true);
         String pattern = (String) parameters.get("exchangePattern");
         if (pattern != null) {
             return ExchangePattern.asEnum(pattern);

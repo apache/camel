@@ -34,6 +34,10 @@ abstract class HL7MLLPConfigAwareChannelHandlerFactory extends DefaultChannelHan
     public HL7MLLPConfigAwareChannelHandlerFactory(HL7MLLPConfig config) {
         this.config = config;
     }
+    
+    public void setValidate(boolean validate) {
+        config.setValidate(validate);
+    }
 
     public void setCharset(Charset charset) {
         config.setCharset(charset);

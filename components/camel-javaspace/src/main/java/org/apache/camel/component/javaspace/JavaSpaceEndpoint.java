@@ -31,46 +31,33 @@ import org.apache.camel.spi.UriPath;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "javaspace", syntax = "javaspace:url", consumerClass = JavaSpaceConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "javaspace", title = "JavaSpace", syntax = "javaspace:url", consumerClass = JavaSpaceConsumer.class, label = "messaging")
 public class JavaSpaceEndpoint extends DefaultEndpoint {
-
-    private final Map<?, ?> parameters;
 
     @UriPath @Metadata(required = "true")
     private final String url;
-    @UriParam(defaultValue = "1")
-    private int concurrentConsumers = 1;
-    @UriParam
+    @UriParam @Metadata(required = "true")
     private String spaceName;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "1")
+    private int concurrentConsumers = 1;
+    @UriParam(label = "consumer", defaultValue = "take", enums = "take,read")
+    private String verb = "take";
+    @UriParam(label = "consumer")
+    private String templateId;
+    @UriParam
     private boolean transactional;
     @UriParam
     private long transactionTimeout = Long.MAX_VALUE;
-    @UriParam(defaultValue = "take")
-    private String verb = "take";
-    @UriParam
-    private String templateId;
 
-    public JavaSpaceEndpoint(String endpointUri, String remaining, Map<?, ?> parameters, JavaSpaceComponent component) {
+    public JavaSpaceEndpoint(String endpointUri, String remaining, JavaSpaceComponent component) {
         super(endpointUri, component);
         this.url = remaining;
-        this.parameters = parameters;
-    }
-    
-    public boolean isTransactional() {
-        return transactional;
     }
 
-    public String getVerb() {
-        return verb;
-    }
-
-    public void setVerb(String verb) {
-        this.verb = verb;
-    }
-
-    public void setTransactional(boolean transactional) {
-        this.transactional = transactional;
+    public Consumer createConsumer(Processor processor) throws Exception {
+        JavaSpaceConsumer answer = new JavaSpaceConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {
@@ -86,28 +73,38 @@ public class JavaSpaceEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    /**
-     * @deprecated use {@link #getUrl()}
-     */
-    @Deprecated
-    public String getRemaining() {
-        return url;
+    public String getVerb() {
+        return verb;
     }
 
+    /**
+     * Specifies the verb for getting JavaSpace entries.
+     */
+    public void setVerb(String verb) {
+        this.verb = verb;
+    }
+
+    public boolean isTransactional() {
+        return transactional;
+    }
+
+    /**
+     * If true, sending and receiving entries is performed within a transaction.
+     */
+    public void setTransactional(boolean transactional) {
+        this.transactional = transactional;
+    }
+
+    /**
+     * The URL to the JavaSpace server
+     */
     public String getUrl() {
         return url;
     }
 
-    public Map<?, ?> getParameters() {
-        return parameters;
-    }
-
-    public Consumer createConsumer(Processor processor) throws Exception {
-        JavaSpaceConsumer answer = new JavaSpaceConsumer(this, processor);
-        configureConsumer(answer);
-        return answer;
-    }
-
+    /**
+     * Specifies the number of concurrent consumers getting entries from the JavaSpace.
+     */
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
@@ -120,6 +117,9 @@ public class JavaSpaceEndpoint extends DefaultEndpoint {
         return spaceName;
     }
 
+    /**
+     * Specifies the JavaSpace name.
+     */
     public void setSpaceName(String spaceName) {
         this.spaceName = spaceName;
     }
@@ -128,6 +128,9 @@ public class JavaSpaceEndpoint extends DefaultEndpoint {
         return templateId;
     }
 
+    /**
+     * If present, this option specifies the Spring bean ID of the template to use for reading/taking entries.
+     */
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
     }
@@ -136,6 +139,9 @@ public class JavaSpaceEndpoint extends DefaultEndpoint {
         return transactionTimeout;
     }
 
+    /**
+     * Specifies the transaction timeout in millis. By default there is no timeout.
+     */
     public void setTransactionTimeout(long transactionTimeout) {
         this.transactionTimeout = transactionTimeout;
     }

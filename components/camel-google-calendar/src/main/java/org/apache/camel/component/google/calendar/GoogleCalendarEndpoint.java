@@ -19,6 +19,7 @@ package org.apache.camel.component.google.calendar;
 import java.util.Map;
 
 import com.google.api.services.calendar.Calendar;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,7 +36,8 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a GoogleCalendar endpoint.
  */
-@UriEndpoint(scheme = "google-calendar", syntax = "google-calendar:apiName/methodName", consumerClass = GoogleCalendarConsumer.class, consumerPrefix = "consumer", label = "api,cloud")
+@UriEndpoint(scheme = "google-calendar", title = "Google Calendar", syntax = "google-calendar:apiName/methodName",
+consumerClass = GoogleCalendarConsumer.class, consumerPrefix = "consumer", label = "api,cloud")
 public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration> {
 
     @UriParam
@@ -115,5 +117,13 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         return apiProxy;
+    }
+    
+    public GoogleCalendarClientFactory getClientFactory() {
+        return ((GoogleCalendarComponent)getComponent()).getClientFactory();
+    }
+
+    public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
+        ((GoogleCalendarComponent)getComponent()).setClientFactory(clientFactory);
     }
 }

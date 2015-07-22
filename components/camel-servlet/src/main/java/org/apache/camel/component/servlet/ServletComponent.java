@@ -70,7 +70,12 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
+        // TODO we need to remove the Ref in Camel 3.0
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
+        if (binding == null) {
+            // just check the httpBinding parameter
+            binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
+        }
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
@@ -151,6 +156,9 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         return servletName;
     }
 
+    /**
+     * Default name of servlet to use. The default name is <tt>CamelServlet</tt>.
+     */
     public void setServletName(String servletName) {
         this.servletName = servletName;
     }
@@ -159,6 +167,9 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         return httpRegistry;
     }
 
+    /**
+     * To use a custom {@link org.apache.camel.component.servlet.HttpRegistry}.
+     */
     public void setHttpRegistry(HttpRegistry httpRegistry) {
         this.httpRegistry = httpRegistry;
     }

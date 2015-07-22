@@ -22,34 +22,42 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <!-- START SNIPPET: e1 -->
-        <route>
-            <from uri="direct:enricher-test-1"/>
-            <pollEnrich uri="seda:foo1" strategyRef="sampleAggregator"/>
-            <to uri="mock:mock"/>
-        </route>
-        <!-- END SNIPPET: e1 -->
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <!-- START SNIPPET: e1 -->
+    <route>
+      <from uri="direct:enricher-test-1"/>
+      <pollEnrich strategyRef="sampleAggregator">
+        <constant>seda:foo1</constant>
+      </pollEnrich>
+      <to uri="mock:mock"/>
+    </route>
+    <!-- END SNIPPET: e1 -->
 
-        <route>
-            <from uri="direct:enricher-test-2"/>
-            <pollEnrich uri="seda:foo2" timeout="1000" strategyRef="sampleAggregator"/>
-            <to uri="mock:mock"/>
-        </route>
+    <route>
+      <from uri="direct:enricher-test-2"/>
+      <pollEnrich timeout="1000" strategyRef="sampleAggregator">
+        <constant>seda:foo2</constant>
+      </pollEnrich>
+      <to uri="mock:mock"/>
+    </route>
 
-        <route>
-            <from uri="direct:enricher-test-3"/>
-            <pollEnrich uri="seda:foo3" timeout="-1" strategyRef="sampleAggregator"/>
-            <to uri="mock:mock"/>
-        </route>
+    <route>
+      <from uri="direct:enricher-test-3"/>
+      <pollEnrich timeout="-1" strategyRef="sampleAggregator">
+        <constant>seda:foo3</constant>
+      </pollEnrich>
+      <to uri="mock:mock"/>
+    </route>
 
-        <route>
-            <from uri="direct:enricher-test-4"/>
-            <pollEnrich uri="seda:foo4" strategyRef="sampleAggregator"/>
-            <to uri="mock:mock"/>
-        </route>
-    </camelContext>
+    <route>
+      <from uri="direct:enricher-test-4"/>
+      <pollEnrich strategyRef="sampleAggregator">
+        <constant>seda:foo4</constant>
+      </pollEnrich>
+      <to uri="mock:mock"/>
+    </route>
+  </camelContext>
 
-    <bean id="sampleAggregator" class="org.apache.camel.processor.enricher.SampleAggregator"/>
+  <bean id="sampleAggregator" class="org.apache.camel.processor.enricher.SampleAggregator"/>
 
 </beans>

@@ -36,17 +36,19 @@ public class ContextScanRouteBuilderFinder {
     private static final Logger LOG = LoggerFactory.getLogger(ContextScanRouteBuilderFinder.class);
     private final BlueprintContainer blueprintContainer;
     private final PackageScanFilter filter;
+    private final boolean includeNonSingletons;
 
-    public ContextScanRouteBuilderFinder(BlueprintCamelContext camelContext, PackageScanFilter filter) {
+    public ContextScanRouteBuilderFinder(BlueprintCamelContext camelContext, PackageScanFilter filter, boolean includeNonSingletons) {
         this.blueprintContainer = camelContext.getBlueprintContainer();
         this.filter = filter;
+        this.includeNonSingletons = includeNonSingletons;
     }
 
     /**
      * Appends all the {@link org.apache.camel.builder.RouteBuilder} instances that can be found in the context
      */
     public void appendBuilders(List<RoutesBuilder> list) {
-        Map<String, RoutesBuilder> beans = BlueprintContainerRegistry.lookupByType(blueprintContainer, RoutesBuilder.class);
+        Map<String, RoutesBuilder> beans = BlueprintContainerRegistry.lookupByType(blueprintContainer, RoutesBuilder.class, includeNonSingletons);
 
         for (Entry<String, RoutesBuilder> entry : beans.entrySet()) {
             String key = entry.getKey();

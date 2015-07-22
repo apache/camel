@@ -37,6 +37,7 @@ public class JpaComponent extends UriEndpointComponent {
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
     private boolean joinTransaction = true;
+    private boolean sharedEntityManager;
 
     public JpaComponent() {
         super(JpaEndpoint.class);
@@ -48,6 +49,9 @@ public class JpaComponent extends UriEndpointComponent {
         return entityManagerFactory;
     }
 
+    /**
+     * To use the {@link EntityManagerFactory}. This is strongly recommended to configure.
+     */
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -56,8 +60,37 @@ public class JpaComponent extends UriEndpointComponent {
         return transactionManager;
     }
 
+    /**
+     * To use the {@link PlatformTransactionManager} for managing transactions.
+     */
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public boolean isJoinTransaction() {
+        return joinTransaction;
+    }
+
+    /**
+     * The camel-jpa component will join transaction by default.
+     * You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction
+     * doesn't work with your JPA provider. This option can also be set globally on the JpaComponent,
+     * instead of having to set it on all endpoints.
+     */
+    public void setJoinTransaction(boolean joinTransaction) {
+        this.joinTransaction = joinTransaction;
+    }
+
+    public boolean isSharedEntityManager() {
+        return sharedEntityManager;
+    }
+
+    /**
+     * Whether to use Spring's SharedEntityManager for the consumer/producer.
+     * Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager.
+     */
+    public void setSharedEntityManager(boolean sharedEntityManager) {
+        this.sharedEntityManager = sharedEntityManager;
     }
 
     // Implementation methods
@@ -67,6 +100,7 @@ public class JpaComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String path, Map<String, Object> options) throws Exception {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
         endpoint.setJoinTransaction(isJoinTransaction());
+        endpoint.setSharedEntityManager(isSharedEntityManager());
 
         // lets interpret the next string as a class
         if (ObjectHelper.isNotEmpty(path)) {
@@ -139,11 +173,4 @@ public class JpaComponent extends UriEndpointComponent {
         }
     }
 
-    public boolean isJoinTransaction() {
-        return joinTransaction;
-    }
-
-    public void setJoinTransaction(boolean joinTransaction) {
-        this.joinTransaction = joinTransaction;
-    }
 }

@@ -38,12 +38,15 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.EndpointCompleter;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.eclipse.jetty.client.Address;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.RedirectListener;
+import org.eclipse.jetty.client.security.ProxyAuthorization;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,16 +58,29 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 
-    private static final int MAX_CONNECTIONS_PER_ADDRESS = 20;
     private static final int CONNECTION_TIMEOUT = 60000;
-    private static final int RESPONSE_TIMEOUT = 60000;
+    private static final long RESPONSE_TIMEOUT = 60000;
     private static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
     private static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
     private SalesforceLoginConfig loginConfig;
     private SalesforceEndpointConfig config;
 
+    // HTTP client parameters, map of property-name to value
+    private Map<String, Object> httpClientProperties;
+
+    // SSL parameters
     private SSLContextParameters sslContextParameters;
+
+    // Proxy host and port
+    private String httpProxyHost;
+    private Integer httpProxyPort;
+
+    // Proxy basic authentication
+    private String httpProxyUsername;
+    private String httpProxyPassword;
+
+    // DTO packages to scan
     private String[] packages;
 
     // component state
@@ -127,10 +143,12 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
         // if operation is APEX call, map remaining parameters to query params
         if (operationName == OperationName.APEX_CALL && !parameters.isEmpty()) {
-            Map<String, Object> queryParams = new HashMap<String, Object>(parameters);
+            Map<String, Object> queryParams = new HashMap<String, Object>(copy.getApexQueryParams());
+
+            // override component params with endpoint params
+            queryParams.putAll(parameters);
             parameters.clear();
 
-            queryParams.putAll(copy.getApexQueryParams());
             copy.setApexQueryParams(queryParams);
         }
 
@@ -161,16 +179,32 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
             if (config != null && config.getHttpClient() != null) {
                 httpClient = config.getHttpClient();
             } else {
-                final SslContextFactory sslContextFactory = new SslContextFactory();
-                final SSLContextParameters contextParameters =
-                    sslContextParameters != null ? sslContextParameters : new SSLContextParameters();
-                sslContextFactory.setSslContext(contextParameters.createSSLContext());
-                httpClient = new HttpClient(sslContextFactory);
+                httpClient = new HttpClient();
+                // default settings
                 httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
-                httpClient.setMaxConnectionsPerAddress(MAX_CONNECTIONS_PER_ADDRESS);
                 httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
                 httpClient.setTimeout(RESPONSE_TIMEOUT);
             }
+        }
+
+        // set ssl context parameters
+        final SSLContextParameters contextParameters = sslContextParameters != null
+            ? sslContextParameters : new SSLContextParameters();
+        final SslContextFactory sslContextFactory = httpClient.getSslContextFactory();
+        sslContextFactory.setSslContext(contextParameters.createSSLContext());
+
+        // set HTTP client parameters
+        if (httpClientProperties != null && !httpClientProperties.isEmpty()) {
+            IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(),
+                httpClient, new HashMap<String, Object>(httpClientProperties));
+        }
+
+        // set HTTP proxy settings
+        if (this.httpProxyHost != null && httpProxyPort != null) {
+            httpClient.setProxy(new Address(this.httpProxyHost, this.httpProxyPort));
+        }
+        if (this.httpProxyUsername != null && httpProxyPassword != null) {
+            httpClient.setProxyAuthentication(new ProxyAuthorization(this.httpProxyUsername, this.httpProxyPassword));
         }
 
         // add redirect listener to handle Salesforce redirects
@@ -235,7 +269,10 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
             if (httpClient != null) {
                 // shutdown http client connections
                 httpClient.stop();
-                httpClient.destroy();
+                // destroy http client if it was created by the component
+                if (config.getHttpClient() == null) {
+                    httpClient.destroy();
+                }
                 httpClient = null;
             }
         }
@@ -320,6 +357,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return loginConfig;
     }
 
+    /**
+     * To use the shared SalesforceLoginConfig as login configuration
+     */
     public void setLoginConfig(SalesforceLoginConfig loginConfig) {
         this.loginConfig = loginConfig;
     }
@@ -328,26 +368,93 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return config;
     }
 
+    /**
+     * To use the shared SalesforceLoginConfig as configuration
+     */
     public void setConfig(SalesforceEndpointConfig config) {
         this.config = config;
+    }
+
+    public Map<String, Object> getHttpClientProperties() {
+        return httpClientProperties;
+    }
+
+    /**
+     * Used for configuring HTTP client properties as key/value pairs
+     */
+    public void setHttpClientProperties(Map<String, Object> httpClientProperties) {
+        this.httpClientProperties = httpClientProperties;
     }
 
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public String getHttpProxyHost() {
+        return httpProxyHost;
+    }
+
+    /**
+     * To configure HTTP proxy host
+     */
+    public void setHttpProxyHost(String httpProxyHost) {
+        this.httpProxyHost = httpProxyHost;
+    }
+
+    public Integer getHttpProxyPort() {
+        return httpProxyPort;
+    }
+
+    /**
+     * To configure HTTP proxy port
+     */
+    public void setHttpProxyPort(Integer httpProxyPort) {
+        this.httpProxyPort = httpProxyPort;
+    }
+
+    public String getHttpProxyUsername() {
+        return httpProxyUsername;
+    }
+
+    /**
+     * To configure HTTP proxy username
+     */
+    public void setHttpProxyUsername(String httpProxyUsername) {
+        this.httpProxyUsername = httpProxyUsername;
+    }
+
+    public String getHttpProxyPassword() {
+        return httpProxyPassword;
+    }
+
+    /**
+     * To configure HTTP proxy password
+     */
+    public void setHttpProxyPassword(String httpProxyPassword) {
+        this.httpProxyPassword = httpProxyPassword;
     }
 
     public String[] getPackages() {
         return packages;
     }
 
+    /**
+     * Package names to scan for DTO classes (multiple packages can be separated by comma).
+     */
     public void setPackages(String[] packages) {
         this.packages = packages;
     }
 
+    /**
+     * Package names to scan for DTO classes (multiple packages can be separated by comma).
+     */
     public void setPackages(String packages) {
         // split using comma
         if (packages != null) {

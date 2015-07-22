@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
  * <code>ZooKeeperEndpoint</code>
  */
 @ManagedResource(description = "ZooKeeper Endpoint")
-@UriEndpoint(scheme = "zookeeper", syntax = "zookeeper:serverUrls/path", consumerClass = ZooKeeperConsumer.class, label = "clustering")
+@UriEndpoint(scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path", consumerClass = ZooKeeperConsumer.class, label = "clustering")
 public class ZooKeeperEndpoint extends DefaultEndpoint {
     @UriParam
     private ZooKeeperConfiguration configuration;
@@ -119,7 +119,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
 
     @ManagedAttribute
     public boolean getRepeat() {
-        return getConfiguration().shouldRepeat();
+        return getConfiguration().isRepeat();
     }
 
     @ManagedAttribute
@@ -149,7 +149,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
 
     @ManagedAttribute
     public boolean getCreate() {
-        return getConfiguration().shouldCreate();
+        return getConfiguration().isCreate();
     }
 
     @ManagedAttribute

@@ -51,15 +51,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.restlet.osgi</groupId>
+      <groupId>org.restlet.jee</groupId>
       <artifactId>org.restlet</artifactId>
-      <version>${restlet-version}</version>
     </dependency>
 
     <dependency>
-     <groupId>org.restlet.osgi</groupId>
+     <groupId>org.restlet.jee</groupId>
      <artifactId>org.restlet.ext.httpclient</artifactId>
-     <version>${restlet-version}</version>
     </dependency>
 
     <dependency>
@@ -124,20 +122,4 @@
       </plugin>
     </plugins>
   </build>
-
-    <!-- skip tests on windows -->
-    <profiles>
-        <profile>
-            <id>windows</id>
-            <activation>
-                <os>
-                    <family>Windows</family>
-                </os>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
-    </profiles>
-
 </project>

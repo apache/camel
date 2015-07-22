@@ -30,6 +30,7 @@ import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.component.olingo2.internal.Olingo2Constants;
 import org.apache.camel.component.olingo2.internal.Olingo2PropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
@@ -37,7 +38,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a Olingo2 endpoint.
  */
-@UriEndpoint(scheme = "olingo2", syntax = "olingo2:apiName/methodName", consumerClass = Olingo2Consumer.class, consumerPrefix = "consumer")
+@UriEndpoint(scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName", consumerClass = Olingo2Consumer.class, label = "cloud")
 public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration> {
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";
@@ -53,11 +54,16 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     private final Set<String> endpointPropertyNames;
 
+    @UriParam
+    private Olingo2Configuration configuration;
+
     private Olingo2AppWrapper apiProxy;
 
     public Olingo2Endpoint(String uri, Olingo2Component component,
                            Olingo2ApiName apiName, String methodName, Olingo2Configuration endpointConfiguration) {
         super(uri, component, apiName, methodName, Olingo2ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+
+        this.configuration = endpointConfiguration;
 
         // get all endpoint property names
         endpointPropertyNames = new HashSet<String>(getPropertiesHelper().getValidEndpointProperties(configuration));

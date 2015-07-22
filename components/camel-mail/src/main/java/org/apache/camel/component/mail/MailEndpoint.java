@@ -34,8 +34,10 @@ import org.apache.camel.spi.UriParam;
 /**
  * Endpoint for Camel Mail.
  */
-@UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", syntax = "imap:host:port", consumerClass = MailConsumer.class, label = "mail")
+@UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS", syntax = "imap:host:port", consumerClass = MailConsumer.class, label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {
+    @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer", description = "Milliseconds before the next poll.")
+    private long delay = MailConsumer.DEFAULT_CONSUMER_DELAY;
     @UriParam
     private MailConfiguration configuration;
     @UriParam
@@ -54,21 +56,27 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private MailBoxPostProcessAction postProcessAction;
 
     public MailEndpoint() {
+        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
+        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
+        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
     public MailEndpoint(String uri, MailComponent component, MailConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
     @Deprecated
     public MailEndpoint(String endpointUri, MailConfiguration configuration) {
         super(endpointUri);
         this.configuration = configuration;
+        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
     public MailEndpoint(String endpointUri) {
         this(endpointUri, new MailConfiguration());
+        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
     public Producer createProducer() throws Exception {
@@ -103,14 +111,10 @@ public class MailEndpoint extends ScheduledPollEndpoint {
      */
     public Consumer createConsumer(Processor processor, JavaMailSender sender) throws Exception {
         MailConsumer answer = new MailConsumer(this, processor, sender);
-
-        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
-        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
-        answer.setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
-
+        answer.setHandleFailedMessage(configuration.isHandleFailedMessage());
+        answer.setSkipFailedMessage(configuration.isSkipFailedMessage());
         answer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         configureConsumer(answer);
-
         return answer;
     }
 
@@ -155,6 +159,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return configuration;
     }
 
+    /**
+     * Sets the Mail configuration
+     */
     public void setConfiguration(MailConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -163,6 +170,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter headers.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -171,6 +181,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return contentTypeResolver;
     }
 
+    /**
+     * Resolver to determine Content-Type for file attachments.
+     */
     public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
     }
@@ -179,6 +192,11 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return maxMessagesPerPoll;
     }
 
+    /**
+     * Specifies the maximum number of messages to gather per poll. By default, no maximum is set.
+     * Can be used to set a limit of e.g. 1000 to avoid downloading thousands of files when the server starts up.
+     * Set a value of 0 or negative to disable this option.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
@@ -187,36 +205,31 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return searchTerm;
     }
 
+    /**
+     * Refers to a {@link javax.mail.search.SearchTerm} which allows to filter mails based on search criteria such as subject, body, from, sent after a certain date etc.
+     */
     public void setSearchTerm(SearchTerm searchTerm) {
         this.searchTerm = searchTerm;
     }
 
-    /**
-     * @return Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3
-     * or when IMAP server does not have the SORT capability.
-     * @see com.sun.mail.imap.SortTerm
-     */
     public SortTerm[] getSortTerm() {
         return sortTerm == null ? null : sortTerm.clone();
     }
 
     /**
-     * @param sortTerm {@link #getSortTerm()}
+     * Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3
+     * or when IMAP server does not have the SORT capability.
      */
     public void setSortTerm(SortTerm[] sortTerm) {
         this.sortTerm = sortTerm == null ? null : sortTerm.clone();
     }
 
-    /**
-     * @return Post processor that can e.g. delete old email. Gets called once the messages have been polled and
-     * processed.
-     */
     public MailBoxPostProcessAction getPostProcessAction() {
         return postProcessAction;
     }
 
     /**
-     * @param postProcessAction {@link #getPostProcessAction()}
+     * Refers to an {@link MailBoxPostProcessAction} for doing post processing tasks on the mailbox once the normal processing ended.
      */
     public void setPostProcessAction(MailBoxPostProcessAction postProcessAction) {
         this.postProcessAction = postProcessAction;

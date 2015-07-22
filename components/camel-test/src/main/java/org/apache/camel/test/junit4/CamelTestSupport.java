@@ -16,7 +16,11 @@
  */
 package org.apache.camel.test.junit4;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -37,6 +41,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -51,11 +56,13 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,10 +83,12 @@ public abstract class CamelTestSupport extends TestSupport {
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
+    protected boolean dumpRouteStats;
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<String, String>();
+    private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
 
     /**
      * Use the RouteBuilder or not
@@ -92,6 +101,18 @@ public abstract class CamelTestSupport extends TestSupport {
 
     public void setUseRouteBuilder(boolean useRouteBuilder) {
         this.useRouteBuilder = useRouteBuilder;
+    }
+
+    /**
+     * Whether to dump route coverage stats at the end of the test.
+     * <p/>
+     * This allows tooling or manual inspection of the stats, so you can generate a route trace diagram of which EIPs
+     * have been in use and which have not. Similar concepts as a code coverage report.
+     *
+     * @return <tt>true</tt> to write route coverage status in an xml file in the <tt>target/camel-route-coverage</tt> directory after the test has finished.
+     */
+    public boolean isDumpRouteCoverage() {
+        return false;
     }
 
     /**
@@ -238,10 +259,12 @@ public abstract class CamelTestSupport extends TestSupport {
 
     private void doSetUp() throws Exception {
         log.debug("setUp test");
-        if (!useJmx()) {
-            disableJMX();
-        } else {
+        // jmx is enabled if we have configured to use it, or if dump route coverage is enabled (it requires JMX)
+        boolean jmx = useJmx() || isDumpRouteCoverage();
+        if (jmx) {
             enableJMX();
+        } else {
+            disableJMX();
         }
 
         context = (ModelCamelContext)createCamelContext();
@@ -339,6 +362,32 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("********************************************************************************");
         log.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
         log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
+
+        // if we should dump route stats, then write that to a file
+        if (isDumpRouteCoverage()) {
+            String className = this.getClass().getSimpleName();
+            String dir = "target/camel-route-coverage";
+            String name = className + "-" + getTestMethodName() + ".xml";
+
+            ManagedCamelContextMBean managedCamelContext = context.getManagedCamelContext();
+            if (managedCamelContext == null) {
+                log.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
+            } else {
+                String xml = managedCamelContext.dumpRoutesCoverageAsXml();
+                String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml() + xml + "\n</camelRouteCoverage>";
+
+                File file = new File(dir);
+                // ensure dir exists
+                file.mkdirs();
+                file = new File(dir, name);
+
+                log.info("Dumping route coverage to file: " + file);
+                InputStream is = new ByteArrayInputStream(combined.getBytes());
+                OutputStream os = new FileOutputStream(file, false);
+                IOHelper.copyAndCloseInput(is, os);
+                IOHelper.close(os);
+            }
+        }
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
@@ -357,6 +406,19 @@ public abstract class CamelTestSupport extends TestSupport {
         LOG.debug("tearDownAfterClass test");
         doStopTemplates(threadConsumer.get(), threadTemplate.get());
         doStopCamelContext(threadCamelContext.get(), threadService.get());
+    }
+
+    /**
+     * Gathers test details as xml
+     */
+    private String gatherTestDetailsAsXml() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<test>\n");
+        sb.append("  <class>").append(getClass().getName()).append("</class>\n");
+        sb.append("  <method>").append(getTestMethodName()).append("</method>\n");
+        sb.append("  <time>").append(getCamelTestWatcher().timeTaken()).append("</time>\n");
+        sb.append("</test>\n");
+        return sb.toString();
     }
 
     /**
@@ -397,6 +459,11 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected Properties useOverridePropertiesWithPropertiesComponent() {
         return null;
+    }
+
+    @Rule
+    public CamelTestWatcher getCamelTestWatcher() {
+        return camelTestWatcher;
     }
 
     /**

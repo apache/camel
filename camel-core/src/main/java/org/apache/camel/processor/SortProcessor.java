@@ -25,14 +25,16 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * A processor that sorts the expression using a comparator
  */
-public class SortProcessor<T> extends ServiceSupport implements AsyncProcessor {
+public class SortProcessor<T> extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
 
+    private String id;
     private final Expression expression;
     private final Comparator<? super T> comparator;
 
@@ -71,6 +73,27 @@ public class SortProcessor<T> extends ServiceSupport implements AsyncProcessor {
 
     public String toString() {
         return "Sort[" + expression + "]";
+    }
+
+    @Override
+    public String getTraceLabel() {
+        return "sort[" + expression + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public Comparator<? super T> getComparator() {
+        return comparator;
     }
 
     @Override

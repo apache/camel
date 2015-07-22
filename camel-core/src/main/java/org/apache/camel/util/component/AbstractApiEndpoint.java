@@ -62,7 +62,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     protected final T configuration;
 
     // property name for Exchange 'In' message body
-    @UriParam
+    @UriParam(description = "Sets the name of a parameter to be passed in the exchange In Body")
     protected String inBody;
 
     // candidate methods based on method name and endpoint configuration

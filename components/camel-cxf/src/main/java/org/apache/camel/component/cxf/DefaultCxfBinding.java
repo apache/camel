@@ -41,7 +41,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -66,6 +65,7 @@ import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.message.MessageUtils;
+import org.apache.cxf.security.LoginSecurityContext;
 import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.invoker.MethodDispatcher;
@@ -248,7 +248,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         // propagate the security subject from CXF security context
         SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
-        if (securityContext != null && securityContext.getUserPrincipal() != null) {
+        if (securityContext instanceof LoginSecurityContext
+            && ((LoginSecurityContext)securityContext).getSubject() != null) {
+            camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, 
+                                                   ((LoginSecurityContext)securityContext).getSubject());
+        } else if (securityContext != null && securityContext.getUserPrincipal() != null) {
             Subject subject = new Subject();
             subject.getPrincipals().add(securityContext.getUserPrincipal());
             camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, subject);
@@ -690,7 +694,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         if (transportHeaders.size() > 0) {
             cxfContext.put(Message.PROTOCOL_HEADERS, transportHeaders);
-        }        
+        } else {
+            // no propagated transport headers does really mean no headers, not the ones
+            // from the previous request or response propagated with the invocation context
+            cxfContext.remove(Message.PROTOCOL_HEADERS);
+        }
     }
 
     protected static Object getContentFromCxf(Message message, DataFormat dataFormat) {
@@ -751,14 +759,20 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     protected static List<Source> getPayloadBodyElements(Message message, Map<String, String> nsMap) {
         // take the namespace attribute from soap envelop
-        Document soapEnv = (Document) message.getContent(Node.class);
-        if (soapEnv != null) {
-            NamedNodeMap attrs = soapEnv.getFirstChild().getAttributes();
-            for (int i = 0; i < attrs.getLength(); i++) {
-                Node node = attrs.item(i);
-                if (!node.getNodeValue().equals(Soap11.SOAP_NAMESPACE)
-                      && !node.getNodeValue().equals(Soap12.SOAP_NAMESPACE)) {
-                    nsMap.put(node.getLocalName(), node.getNodeValue());
+        Map<String, String> bodyNC = CastUtils.cast((Map<?, ?>)message.get("soap.body.ns.context"));
+        if (bodyNC != null) {
+            // if there is no Node and the addNamespaceContext option is enabled, this map is available
+            nsMap.putAll(bodyNC);
+        } else {
+            Document soapEnv = (Document) message.getContent(Node.class);
+            if (soapEnv != null) {
+                NamedNodeMap attrs = soapEnv.getFirstChild().getAttributes();
+                for (int i = 0; i < attrs.getLength(); i++) {
+                    Node node = attrs.item(i);
+                    if (!node.getNodeValue().equals(Soap11.SOAP_NAMESPACE)
+                        && !node.getNodeValue().equals(Soap12.SOAP_NAMESPACE)) {
+                        nsMap.put(node.getLocalName(), node.getNodeValue());
+                    }
                 }
             }
         }

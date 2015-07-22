@@ -16,22 +16,32 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <!--
-        Simple camel route which send every one minute a message on the console.
-    -->
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <route id="timer-to-console">
-            <from uri="timer://foo?fixedRate=true&amp;period=10s"/>
-            <transform>
-               <simple>Hello Web Application, how are you?</simple>
-            </transform>
-            <to uri="stream:out"/>
-        </route>
-    </camelContext>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route id="helloRoute">
+      <!-- incoming requests from the servlet is routed -->
+      <from uri="servlet:///hello"/>
+      <choice>
+        <when>
+          <!-- is there a header with the key name? -->
+          <header>name</header>
+          <!-- yes so return back a message to the user -->
+          <transform>
+             <simple>Hi I am ${sysenv.HOSTNAME}. Hello ${header.name} how are you today?</simple>
+          </transform>
+        </when>
+        <otherwise>
+          <!-- if no name parameter then output a syntax to the user -->
+          <transform>
+            <constant>Add a name parameter to uri, eg ?name=foo</constant>
+          </transform>
+        </otherwise>
+      </choice>
+    </route>
+  </camelContext>
 
 </beans>

@@ -48,7 +48,8 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  * Represents a <a href="http://camel.apache.org/ghttp.html">Google App Engine
  * HTTP endpoint</a>.
  */
-@UriEndpoint(scheme = "ghttp", syntax = "ghttp:httpUri", producerOnly = true, label = "cloud")
+@UriEndpoint(scheme = "ghttp", extendsScheme = "servlet", title = "Google HTTP",
+        syntax = "ghttp:httpUri", producerOnly = true, label = "cloud")
 public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSupport<GHttpEndpoint, HTTPRequest, HTTPResponse> {
 
     public static final String GHTTP_SCHEME = "ghttp";
@@ -88,7 +89,7 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
         if (query == null) {
             parameters = URISupport.parseParameters(uriObj);
         } else {
-            parameters = URISupport.parseQuery(query);
+            parameters = URISupport.parseQuery(query, false, true);
         }
         if (uriObj.getScheme().equals(GHTTPS_SCHEME)) {
             uriObj = new URI(HTTPS_SCHEME + ":" + uriObj.getRawSchemeSpecificPart());

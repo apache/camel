@@ -19,6 +19,7 @@ package org.apache.camel.cdi;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.apache.camel.impl.DefaultCamelContext;
@@ -31,9 +32,14 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class CdiCamelContext extends DefaultCamelContext {
 
+    private BeanManager beanManager;
+
     public CdiCamelContext() {
-        super(new CdiBeanRegistry());
-        setInjector(new CdiInjector(getInjector()));
+    }
+
+    @Inject
+    public void setBeanManager(Instance<BeanManager> beanManager) {
+        this.beanManager = beanManager.get();
     }
 
     @Inject
@@ -57,6 +63,15 @@ public class CdiCamelContext extends DefaultCamelContext {
     @PostConstruct
     @Override
     public void start() {
+        // make sure to use cdi capable bean registry and injector
+        if (!(getRegistry() instanceof CdiBeanRegistry)) {
+            setRegistry(new CdiBeanRegistry(beanManager));
+        }
+
+        if (!(getInjector() instanceof CdiInjector)) {
+            setInjector(new CdiInjector(getInjector()));
+        }
+
         try {
             super.start();
         } catch (Exception e) {

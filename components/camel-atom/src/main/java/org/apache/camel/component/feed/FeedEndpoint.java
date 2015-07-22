@@ -128,6 +128,9 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         return feedUri;
     }
 
+    /**
+     * The URI to the feed to poll.
+     */
     public void setFeedUri(String feedUri) {
         this.feedUri = feedUri;
     }

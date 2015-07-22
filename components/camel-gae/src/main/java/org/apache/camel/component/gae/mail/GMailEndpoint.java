@@ -35,12 +35,12 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents a <a href="http://camel.apache.org/gmail.html">Google App Engine Mail endpoint</a>.
  */
-@UriEndpoint(scheme = "gmail", syntax = "gmail:sender", producerOnly = true, label = "cloud,mail")
+@UriEndpoint(scheme = "gmail", title = "Google mail", syntax = "gmail:sender", producerOnly = true, label = "cloud,mail")
 public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSupport<GMailEndpoint, Message, Void> {
 
     private OutboundBinding<GMailEndpoint, Message, Void> outboundBinding;
     private MailService mailService;
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "The email of the sender") @Metadata(required = "true")
     private String sender;
     @UriParam
     private String subject;
@@ -77,6 +77,9 @@ public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSup
         return subject;
     }
 
+    /**
+     * Subject of the email.
+     */
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -85,6 +88,9 @@ public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSup
         return to;
     }
 
+    /**
+     * To-receiver of the email. This can be a single receiver or a comma-separated list of receivers.
+     */
     public void setTo(String to) {
         this.to = to;
     }
@@ -93,6 +99,9 @@ public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSup
         return cc;
     }
 
+    /**
+     * Cc-receiver of the email. This can be a single receiver or a comma-separated list of receivers.
+     */
     public void setCc(String cc) {
         this.cc = cc;
     }
@@ -101,6 +110,9 @@ public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSup
         return bcc;
     }
 
+    /**
+     * Bcc-receiver of the email. This can be a single receiver or a comma-separated list of receivers.
+     */
     public void setBcc(String bcc) {
         this.bcc = bcc;
     }

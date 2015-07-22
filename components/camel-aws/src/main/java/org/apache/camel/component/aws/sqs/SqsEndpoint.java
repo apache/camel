@@ -48,12 +48,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
- *
  */
-@UriEndpoint(scheme = "aws-sqs", syntax = "aws-sqs:queueName", consumerClass = SqsConsumer.class, label = "cloud,messaging")
+@UriEndpoint(scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueName", consumerClass = SqsConsumer.class, label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
     
     private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
@@ -63,7 +61,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
 
     @UriParam
     private SqsConfiguration configuration;
-    @UriParam
+    @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
@@ -77,6 +75,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to map headers to/from Camel.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
@@ -274,6 +275,11 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         return maxMessagesPerPoll;
     }
 
+    /**
+     * Gets the maximum number of messages as a limit to poll at each polling.
+     * <p/>
+     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }

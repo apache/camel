@@ -32,7 +32,8 @@
     <properties>
         <camel.osgi.export.pkg>
             org.apache.camel.component.sjms,
-            org.apache.camel.component.sjms.jms
+            org.apache.camel.component.sjms.jms,
+            org.apache.camel.component.sjms.batch
         </camel.osgi.export.pkg>
         <camel.osgi.private.pkg>
             org.apache.camel.component.sjms.consumer,
@@ -41,7 +42,8 @@
             org.apache.camel.component.sjms.tx
         </camel.osgi.private.pkg>
         <camel.osgi.export.service>
-            org.apache.camel.spi.ComponentResolver;component=sjms
+            org.apache.camel.spi.ComponentResolver;component=sjms,
+            org.apache.camel.spi.ComponentResolver;component=sjms-batch
         </camel.osgi.export.service>
     </properties>
 

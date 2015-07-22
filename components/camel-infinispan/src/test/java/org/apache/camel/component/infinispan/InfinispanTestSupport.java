@@ -26,6 +26,8 @@ import org.junit.Before;
 public class InfinispanTestSupport extends CamelTestSupport {
     protected static final String KEY_ONE = "keyOne";
     protected static final String VALUE_ONE = "valueOne";
+    protected static final String KEY_TWO = "keyTwo";
+    protected static final String VALUE_TWO = "valueTwo";
 
     protected BasicCacheContainer basicCacheContainer;
 

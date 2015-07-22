@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.reply;
 
 import javax.jms.Message;
+import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -47,9 +48,9 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
         this.timeout = timeout;
     }
 
-    public void onReply(String correlationId, Message reply) {
+    public void onReply(String correlationId, Message reply, Session session) {
         // create holder object with the the reply
-        ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, reply);
+        ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, reply, session);
         // process the reply
         replyManager.processReply(holder);
     }

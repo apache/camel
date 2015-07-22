@@ -25,12 +25,10 @@
     <version>2.16-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.camel.component.olingo2</groupId>
   <artifactId>camel-olingo2-parent</artifactId>
   <packaging>pom</packaging>
-
-  <name>Camel :: Olingo2 Component Parent</name>
-  <description>Parent project for Camel {Olingo2} Component</description>
+  <name>Camel :: Olingo2 :: Parent</name>
+  <description>Camel Olingo2 parent</description>
 
   <modules>
     <module>camel-olingo2-api</module>
@@ -48,7 +46,7 @@
               <childDelegation>false</childDelegation>
               <useFile>true</useFile>
               <forkCount>1</forkCount>
-	      <reuseForks>true</reuseForks>
+	            <reuseForks>true</reuseForks>
               <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
               <excludes>
                 <exclude>**/*XXXTest.java</exclude>

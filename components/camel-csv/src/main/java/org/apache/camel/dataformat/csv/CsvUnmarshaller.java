@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.csv;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -111,6 +112,7 @@ abstract class CsvUnmarshaller {
      */
     @SuppressWarnings("unchecked")
     private static final class StreamCsvUnmarshaller extends CsvUnmarshaller {
+
         private StreamCsvUnmarshaller(CSVFormat format, CsvDataFormat dataFormat) {
             super(format, dataFormat);
         }
@@ -121,7 +123,10 @@ abstract class CsvUnmarshaller {
             try {
                 reader = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
                 CSVParser parser = new CSVParser(reader, format);
-                return new CsvIterator(parser.iterator(), converter);
+                CsvIterator answer = new CsvIterator(parser, converter);
+                // add to UoW so we can close the iterator so it can release any resources
+                exchange.addOnCompletion(new CsvUnmarshalOnCompletion(answer));
+                return answer;
             } catch (Exception e) {
                 IOHelper.close(reader);
                 throw e;
@@ -134,12 +139,14 @@ abstract class CsvUnmarshaller {
      *
      * @param <T> Converted type
      */
-    private static final class CsvIterator<T> implements Iterator<T> {
+    private static final class CsvIterator<T> implements Iterator<T>, Closeable {
+        private final CSVParser parser;
         private final Iterator<CSVRecord> iterator;
         private final CsvRecordConverter<T> converter;
 
-        private CsvIterator(Iterator<CSVRecord> iterator, CsvRecordConverter<T> converter) {
-            this.iterator = iterator;
+        private CsvIterator(CSVParser parser, CsvRecordConverter<T> converter) {
+            this.parser = parser;
+            this.iterator = parser.iterator();
             this.converter = converter;
         }
 
@@ -156,6 +163,13 @@ abstract class CsvUnmarshaller {
         @Override
         public void remove() {
             iterator.remove();
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (!parser.isClosed()) {
+                parser.close();
+            }
         }
     }
     //endregion

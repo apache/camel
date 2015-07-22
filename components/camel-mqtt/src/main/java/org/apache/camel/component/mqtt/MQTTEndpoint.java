@@ -45,19 +45,20 @@ import org.slf4j.LoggerFactory;
 /**
  * MQTT endpoint
  */
-@UriEndpoint(scheme = "mqtt", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging")
 public class MQTTEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
 
     private static final int PUBLISH_MAX_RECONNECT_ATTEMPTS = 3;
 
     private CallbackConnection connection;
+    private volatile boolean connected;
+    private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<MQTTConsumer>();
+
     @UriPath @Metadata(required = "true")
     private String name;
     @UriParam
     private final MQTTConfiguration configuration;
-    private volatile boolean connected;
-    private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<MQTTConsumer>();
 
     public MQTTEndpoint(String uri, MQTTComponent component, MQTTConfiguration properties) {
         super(uri, component);
@@ -84,6 +85,9 @@ public class MQTTEndpoint extends DefaultEndpoint {
         return name;
     }
 
+    /**
+     * A logical name to use which is not the topic name.
+     */
     public void setName(String name) {
         this.name = name;
     }

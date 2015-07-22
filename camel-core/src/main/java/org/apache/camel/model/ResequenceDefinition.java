@@ -37,7 +37,6 @@ import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -53,16 +52,15 @@ import org.apache.camel.util.ObjectHelper;
 public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
     @Metadata(required = "false")
     @XmlElements({
-    @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
-    @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)}
-    )
+        @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
+        @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)}
+        )
     private ResequencerConfig resequencerConfig;
     @XmlTransient
     private BatchResequencerConfig batchConfig;
     @XmlTransient
     private StreamResequencerConfig streamConfig;
-    @XmlElementRef
-    @Required
+    @XmlElementRef @Metadata(required = "true")
     private ExpressionDefinition expression;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
@@ -352,10 +350,8 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         Expression expression = getExpression().createExpression(routeContext);
 
         // and wrap in unit of work
-        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
         CamelInternalProcessor internal = new CamelInternalProcessor(processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
-        internal.addAdvice(new CamelInternalProcessor.RouteContextAdvice(routeContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
@@ -366,6 +362,8 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), internal, expression, isAllowDuplicates, isReverse);
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
+        resequencer.setReverse(isReverse);
+        resequencer.setAllowDuplicates(isAllowDuplicates);
         if (config.getIgnoreInvalidExchanges() != null) {
             resequencer.setIgnoreInvalidExchanges(config.getIgnoreInvalidExchanges());
         }
@@ -385,11 +383,8 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         Processor processor = this.createChildProcessor(routeContext, true);
         Expression expression = getExpression().createExpression(routeContext);
 
-        // and wrap in unit of work
-        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
         CamelInternalProcessor internal = new CamelInternalProcessor(processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
-        internal.addAdvice(new CamelInternalProcessor.RouteContextAdvice(routeContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
@@ -402,7 +397,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         }
         comparator.setExpression(expression);
 
-        StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), internal, comparator);
+        StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), internal, comparator, expression);
         resequencer.setTimeout(config.getTimeout());
         resequencer.setCapacity(config.getCapacity());
         resequencer.setRejectOld(config.getRejectOld());

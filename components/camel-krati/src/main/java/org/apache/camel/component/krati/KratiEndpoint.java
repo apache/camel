@@ -40,19 +40,19 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents a Krati endpoint.
  */
-@UriEndpoint(scheme = "krati", syntax = "krati:path", consumerClass = KratiConsumer.class, label = "database,nosql")
+@UriEndpoint(scheme = "krati", title = "Krati", syntax = "krati:path", consumerClass = KratiConsumer.class, label = "database,nosql")
 public class KratiEndpoint extends ScheduledPollEndpoint {
 
     protected static Map<String, KratiDataStoreRegistration> dataStoreRegistry = new HashMap<String, KratiDataStoreRegistration>();
 
     @UriPath @Metadata(required = "true")
     protected String path;
-    @UriParam
-    protected String key;
-    @UriParam
-    protected String value;
-    @UriParam
+    @UriParam(label = "producer", enums = "CamelKratiPut,CamelKratiGet,CamelKratiDelete,CamelKratiDeleteAll")
     protected String operation;
+    @UriParam(label = "producer")
+    protected String key;
+    @UriParam(label = "producer")
+    protected String value;
     @UriParam(defaultValue = "100")
     protected int initialCapacity = 100;
     @UriParam(defaultValue = "64")
@@ -67,7 +67,7 @@ public class KratiEndpoint extends ScheduledPollEndpoint {
     protected SegmentFactory segmentFactory = new ChannelSegmentFactory();
     @UriParam
     protected HashFunction<byte[]> hashFunction = new FnvHashFunction();
-    @UriParam
+    @UriParam(label = "consumer")
     protected int maxMessagesPerPoll;
 
     public KratiEndpoint(String uri, KratiComponent component) throws URISyntaxException {
@@ -117,12 +117,8 @@ public class KratiEndpoint extends ScheduledPollEndpoint {
         return true;
     }
 
-
     /**
      * Returns the path from the URI.
-     *
-     * @param uri
-     * @return
      */
     protected String getPath(String uri) throws URISyntaxException {
         URI u = new URI(uri);
@@ -140,6 +136,9 @@ public class KratiEndpoint extends ScheduledPollEndpoint {
         return key;
     }
 
+    /**
+     * The key.
+     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -148,6 +147,9 @@ public class KratiEndpoint extends ScheduledPollEndpoint {
         return value;
     }
 
+    /**
+     * The Value.
+     */
     public void setValue(String value) {
         this.value = value;
     }
@@ -156,6 +158,9 @@ public class KratiEndpoint extends ScheduledPollEndpoint {
         return operation;
     }
 
+    /**
+     * Specifies the type of operation that will be performed to the datastore.
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -164,6 +169,9 @@ public class KratiEndpoint extends ScheduledPollEndpoint {
         return initialCapacity;
     }
 
+    /**
+     * The inital capcity of the store.
+     */
     public void setInitialCapacity(int initialCapacity) {
         this.initialCapacity = initialCapacity;
     }
@@ -172,6 +180,9 @@ public class KratiEndpoint extends ScheduledPollEndpoint {
         return segmentFileSize;
     }
 
+    /**
+     * Data store segments size in MB.
+     */
     public void setSegmentFileSize(int segmentFileSize) {
         this.segmentFileSize = segmentFileSize;
     }
@@ -180,6 +191,9 @@ public class KratiEndpoint extends ScheduledPollEndpoint {
         return segmentFactory;
     }
 
+    /**
+     * Sets the segment factory of the target store.
+     */
     public void setSegmentFactory(SegmentFactory segmentFactory) {
         this.segmentFactory = segmentFactory;
     }
@@ -188,10 +202,16 @@ public class KratiEndpoint extends ScheduledPollEndpoint {
         return hashFunction;
     }
 
+    /**
+     * The hash function to use.
+     */
     public void setHashFunction(HashFunction<byte[]> hashFunction) {
         this.hashFunction = hashFunction;
     }
 
+    /**
+     * Path of the datastore is the relative path of the folder that krati will use for its datastore.
+     */
     public String getPath() {
         return path;
     }
@@ -200,7 +220,32 @@ public class KratiEndpoint extends ScheduledPollEndpoint {
         return maxMessagesPerPoll;
     }
 
+    /**
+     * The maximum number of messages which can be received in one poll. This can be used to avoid reading in too much data and taking up too much memory.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public Serializer<Object> getKeySerializer() {
+        return keySerializer;
+    }
+
+    /**
+     * The serializer that will be used to serialize the key.
+     */
+    public void setKeySerializer(Serializer<Object> keySerializer) {
+        this.keySerializer = keySerializer;
+    }
+
+    public Serializer<Object> getValueSerializer() {
+        return valueSerializer;
+    }
+
+    /**
+     * The serializer that will be used to serialize the value.
+     */
+    public void setValueSerializer(Serializer<Object> valueSerializer) {
+        this.valueSerializer = valueSerializer;
     }
 }

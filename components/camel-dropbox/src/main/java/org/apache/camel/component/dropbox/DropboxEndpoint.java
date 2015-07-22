@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.dropbox.util.DropboxConstants.POLL_CONSUMER_DELAY;
 
-@UriEndpoint(scheme = "dropbox", syntax = "dropbox:operation", consumerClass = DropboxScheduledPollConsumer.class, label = "api,file")
+@UriEndpoint(scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", consumerClass = DropboxScheduledPollConsumer.class, label = "api,file")
 public class DropboxEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);

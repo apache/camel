@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Weather Endpoint
  */
-@UriEndpoint(scheme = "weather", syntax = "weather:name", consumerClass = WeatherConsumer.class, label = "api")
+@UriEndpoint(scheme = "weather", title = "Weather", syntax = "weather:name", consumerClass = WeatherConsumer.class, label = "api")
 public class WeatherEndpoint extends DefaultPollingEndpoint {
 
     @UriParam

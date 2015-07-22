@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.notnoop.apns.APNS;
+import com.notnoop.apns.ApnsNotification;
 import com.notnoop.exceptions.ApnsException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.apns.model.ApnsConstants;
@@ -64,8 +65,18 @@ public class ApnsProducer extends DefaultProducer {
     }
 
     private void notify(Exchange exchange) throws ApnsException {
-        String message = exchange.getIn().getBody(String.class);
+        MessageType messageType = getHeaderMessageType(exchange, MessageType.STRING);
 
+        if (messageType == MessageType.APNS_NOTIFICATION) {
+            ApnsNotification apnsNotification = exchange.getIn().getBody(ApnsNotification.class);
+            getEndpoint().getApnsService().push(apnsNotification);
+        } else {
+            constructNotificationAndNotify(exchange, messageType);
+        }
+    }
+
+    private void constructNotificationAndNotify(Exchange exchange, MessageType messageType) {
+        String payload;
         Collection<String> tokens;
         if (isTokensConfiguredUsingUri()) {
             if (hasTokensHeader(exchange)) {
@@ -76,13 +87,11 @@ public class ApnsProducer extends DefaultProducer {
             String tokensHeader = getHeaderTokens(exchange);
             tokens = extractTokensFromString(tokensHeader);
         }
-
-        MessageType messageType = getHeaderMessageType(exchange, MessageType.STRING);
-
-        String payload;
         if (messageType == MessageType.STRING) {
+            String message = exchange.getIn().getBody(String.class);
             payload = APNS.newPayload().alertBody(message).build();
         } else {
+            String message = exchange.getIn().getBody(String.class);
             payload = message;
         }
         Date expiry = exchange.getIn().getHeader(ApnsConstants.HEADER_EXPIRY, Date.class);

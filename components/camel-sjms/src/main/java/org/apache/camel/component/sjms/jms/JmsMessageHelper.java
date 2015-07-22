@@ -62,8 +62,23 @@ public final class JmsMessageHelper implements JmsConstants {
     }
 
     public static Exchange createExchange(Message message, Endpoint endpoint) {
+        return createExchange(message, endpoint, null);
+    }
+
+    /**
+     * Creates an Exchange from a JMS Message.
+     * @param message The JMS message.
+     * @param endpoint The Endpoint to use to create the Exchange object.
+     * @param keyFormatStrategy the a {@link KeyFormatStrategy} to used to
+     *                          format keys in a JMS 1.1 compliant manner. If null the
+     *                          {@link DefaultJmsKeyFormatStrategy} will be used.
+     * @return Populated Exchange.
+     */
+    public static Exchange createExchange(Message message, Endpoint endpoint, KeyFormatStrategy keyFormatStrategy) {
         Exchange exchange = endpoint.createExchange();
-        return populateExchange(message, exchange, false, ((SjmsEndpoint)endpoint).getJmsKeyFormatStrategy());
+        KeyFormatStrategy initialisedKeyFormatStrategy = (keyFormatStrategy == null)
+                ? new DefaultJmsKeyFormatStrategy() : keyFormatStrategy;
+        return populateExchange(message, exchange, false, initialisedKeyFormatStrategy);
     }
 
     @SuppressWarnings("unchecked")
@@ -204,6 +219,7 @@ public final class JmsMessageHelper implements JmsConstants {
             } else {
                 throw new JMSException("Null body is not allowed");
             }
+            break;
         default:
             break;
         }
@@ -221,11 +237,11 @@ public final class JmsMessageHelper implements JmsConstants {
      * @param jmsMessage        the {@link Message} to add or update the headers on
      * @param messageHeaders    a {@link Map} of String/Object pairs
      * @param keyFormatStrategy the a {@link KeyFormatStrategy} to used to
-     *                          format keys in a JMS 1.1 compliant manner. If null the
-     *                          {@link DefaultJmsKeyFormatStrategy} will be used.
+     *                          format keys in a JMS 1.1 compliant manner.
      * @return {@link Message}
      */
     private static Message setJmsMessageHeaders(final Message jmsMessage, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy) throws IllegalHeaderException {
+
         Map<String, Object> headers = new HashMap<String, Object>(messageHeaders);
         for (final Map.Entry<String, Object> entry : headers.entrySet()) {
             String headerName = entry.getKey();

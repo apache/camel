@@ -38,7 +38,8 @@ import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "ahc-ws,ahc-wss", syntax = "ahc-ws:httpUri", consumerClass = WsConsumer.class, label = "http,websocket")
+@UriEndpoint(scheme = "ahc-ws,ahc-wss", extendsScheme = "ahc,ahc", title = "AHC Websocket,AHC Secure Websocket",
+        syntax = "ahc-ws:httpUri", consumerClass = WsConsumer.class, label = "websocket")
 public class WsEndpoint extends AhcEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);
 
@@ -48,7 +49,6 @@ public class WsEndpoint extends AhcEndpoint {
 
     private final Set<WsConsumer> consumers  = new HashSet<WsConsumer>();
 
-    @UriParam
     private WebSocket websocket;
     @UriParam
     private boolean useStreaming;
@@ -81,14 +81,10 @@ public class WsEndpoint extends AhcEndpoint {
         return new WsConsumer(this, processor);
     }
 
-    WebSocket getWebSocket() {
+    WebSocket getWebSocket() throws Exception {
         synchronized (this) {
             if (websocket == null) {
-                try { 
-                    connect();
-                } catch (Exception e) {
-                    LOG.error("Failed to connect", e);
-                }
+                connect();
             }
         }
         return websocket;
@@ -98,15 +94,12 @@ public class WsEndpoint extends AhcEndpoint {
         this.websocket = websocket;
     }
 
-    /**
-     * @return the useStreaming
-     */
     public boolean isUseStreaming() {
         return useStreaming;
     }
 
     /**
-     * @param useStreaming the useStreaming to set
+     * To enable streaming to send data as multiple text fragments.
      */
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;
@@ -137,6 +130,7 @@ public class WsEndpoint extends AhcEndpoint {
     protected void doStop() throws Exception {
         if (websocket != null && websocket.isOpen()) {
             websocket.close();
+            websocket = null;
         }
         super.doStop();
     }
@@ -174,8 +168,6 @@ public class WsEndpoint extends AhcEndpoint {
             }
         }
 
-        
-
         @Override
         public void onMessage(String message) {
             LOG.debug("received message --> {}", message);
@@ -184,7 +176,6 @@ public class WsEndpoint extends AhcEndpoint {
             }
         }
 
-        
     }
     
     protected AsyncHttpProvider getAsyncHttpProvider(AsyncHttpClientConfig config) {

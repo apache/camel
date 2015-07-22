@@ -153,6 +153,13 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         // noop
         return true;
     }
+    
+    @ManagedOperation(description = "Clear the store")
+    public void clear() {
+        synchronized (cache) {
+            cache.clear();
+        }        
+    }
 
     public File getFileStore() {
         return fileStore;

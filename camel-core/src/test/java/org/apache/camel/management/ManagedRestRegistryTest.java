@@ -80,6 +80,7 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                restConfiguration().host("localhost");
                 rest("/say/hello/{name}")
                     .get().to("direct:hello").description("Calling direct route");
 

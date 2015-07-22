@@ -319,6 +319,12 @@ public class BeanInfo {
         if (!javaClass) {
             // it may have duplicate methods already, even from declared or from interfaces + declared
             for (Method source : methods) {
+
+                // skip bridge methods in duplicate checks (as the bridge method is inserted by the compiler due to type erasure)
+                if (source.isBridge()) {
+                    continue;
+                }
+
                 for (Method target : methods) {
                     // skip ourselves
                     if (ObjectHelper.isOverridingMethod(source, target, true)) {
@@ -753,20 +759,22 @@ public class BeanInfo {
             MethodInfo matched = null;
             int matchCounter = 0;
             for (MethodInfo methodInfo : operationList) {
-                if (methodInfo.getBodyParameterType().isInstance(body)) {
-                    return methodInfo;
-                }
-
-                // we should only try to convert, as we are looking for best match
-                Object value = exchange.getContext().getTypeConverter().tryConvertTo(methodInfo.getBodyParameterType(), exchange, body);
-                if (value != null) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Converted body from: {} to: {}",
-                                body.getClass().getCanonicalName(), methodInfo.getBodyParameterType().getCanonicalName());
+                if (methodInfo.getBodyParameterType() != null) {
+                    if (methodInfo.getBodyParameterType().isInstance(body)) {
+                        return methodInfo;
                     }
-                    matchCounter++;
-                    newBody = value;
-                    matched = methodInfo;
+
+                    // we should only try to convert, as we are looking for best match
+                    Object value = exchange.getContext().getTypeConverter().tryConvertTo(methodInfo.getBodyParameterType(), exchange, body);
+                    if (value != null) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Converted body from: {} to: {}",
+                                    body.getClass().getCanonicalName(), methodInfo.getBodyParameterType().getCanonicalName());
+                        }
+                        matchCounter++;
+                        newBody = value;
+                        matched = methodInfo;
+                    }
                 }
             }
             if (matchCounter > 1) {

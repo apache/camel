@@ -16,18 +16,23 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import java.io.File;
 import java.util.Collection;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFactory {
+
     private static final Logger LOG = LoggerFactory.getLogger(BatchGoogleCalendarClientFactory.class);
     private NetHttpTransport transport;
     private JacksonFactory jsonFactory;
@@ -38,16 +43,23 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
     }
 
     @Override
-    public Calendar makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken, String accessToken) {
+    public Calendar makeClient(String clientId, String clientSecret,
+            Collection<String> scopes, String applicationName, String refreshToken,
+            String accessToken, String emailAddress, String p12FileName) {
+                               
         Credential credential;
         try {
-            credential = authorize(clientId, clientSecret, scopes);
-
-            if (refreshToken != null && !"".equals(refreshToken)) {
-                credential.setRefreshToken(refreshToken);
-            } 
-            if (accessToken != null && !"".equals(accessToken)) {
-                credential.setAccessToken(accessToken);
+         // if emailAddress and p12FileName values are present, assume Google Service Account
+            if (null != emailAddress && !"".equals(emailAddress) && null != p12FileName && !"".equals(p12FileName)) {
+                credential = authorizeServiceAccount(emailAddress, p12FileName, scopes);
+            } else {
+                credential = authorize(clientId, clientSecret, scopes);
+                if (refreshToken != null && !"".equals(refreshToken)) {
+                    credential.setRefreshToken(refreshToken);
+                } 
+                if (accessToken != null && !"".equals(accessToken)) {
+                    credential.setAccessToken(accessToken);
+                }
             }
             return new Calendar.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
@@ -64,5 +76,17 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
             .setTransport(transport)
             .setClientSecrets(clientId, clientSecret)
             .build();
+    }
+    
+    private Credential authorizeServiceAccount(String emailAddress, String p12FileName, Collection<String> scopes) throws Exception {
+        HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        GoogleCredential credential = new GoogleCredential.Builder()
+                .setTransport(httpTransport)
+                .setJsonFactory(jsonFactory)
+                .setServiceAccountId(emailAddress)
+                .setServiceAccountPrivateKeyFromP12File(new File(p12FileName))
+                .setServiceAccountScopes(scopes)
+                .build();
+        return credential;
     }
 }

@@ -21,10 +21,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.deltaspike.core.api.provider.BeanProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +34,18 @@ import org.slf4j.LoggerFactory;
 public class CdiBeanRegistry implements Registry {
     private static final Logger LOG = LoggerFactory.getLogger(CdiBeanRegistry.class);
 
+    private final BeanManager beanManager;
+
+    public CdiBeanRegistry(BeanManager beanManager) {
+        this.beanManager = beanManager;
+    }
+
     @Override
     public Object lookupByName(final String name) {
         ObjectHelper.notEmpty(name, "name");
         LOG.trace("Looking up bean with name {}", name);
 
-        return BeanProvider.getContextualReference(name, true);
+        return CdiBeanManagerHelper.lookupBeanByName(beanManager, name);
     }
 
     @Override
@@ -48,7 +54,7 @@ public class CdiBeanRegistry implements Registry {
         ObjectHelper.notNull(type, "type");
 
         LOG.trace("Looking up bean with name {} of type {}", name, type);
-        return BeanProvider.getContextualReference(name, true, type);
+        return CdiBeanManagerHelper.lookupBeanByNameAndType(beanManager, name, type);
     }
 
     @Override
@@ -57,14 +63,15 @@ public class CdiBeanRegistry implements Registry {
 
         LOG.trace("Lookups based of type {}", type);
         Map<String, T> beans = new HashMap<String, T>();
-        Set<Bean<T>> definitions = BeanProvider.getBeanDefinitions(type, true, true);
+        Set<Bean<?>> definitions = beanManager.getBeans(type);
 
         if (definitions == null) {
             return beans;
         }
-        for (Bean<T> bean : definitions) {
+        for (Bean<?> bean : definitions) {
             if (bean.getName() != null) {
-                beans.put(bean.getName(), BeanProvider.getContextualReference(type, bean));
+                T obj = CdiBeanManagerHelper.lookupBeanByNameAndType(beanManager, bean.getName(), type);
+                beans.put(bean.getName(), obj);
             }
         }
         return beans;
@@ -76,14 +83,15 @@ public class CdiBeanRegistry implements Registry {
 
         LOG.trace("Lookups based of type {}", type);
         Set<T> beans = new HashSet<T>();
-        Set<Bean<T>> definitions = BeanProvider.getBeanDefinitions(type, true, true);
+        Set<Bean<?>> definitions = beanManager.getBeans(type);
 
         if (definitions == null) {
             return beans;
         }
-        for (Bean<T> bean : definitions) {
+        for (Bean<?> bean : definitions) {
             if (bean.getName() != null) {
-                beans.add(BeanProvider.getContextualReference(type, bean));
+                T obj = CdiBeanManagerHelper.lookupBeanByNameAndType(beanManager, bean.getName(), type);
+                beans.add(obj);
             }
         }
         return beans;

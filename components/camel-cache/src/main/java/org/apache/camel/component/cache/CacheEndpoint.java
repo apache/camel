@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "cache", syntax = "cache:cacheName", consumerClass = CacheConsumer.class, label = "cache")
+@UriEndpoint(scheme = "cache", title = "EHCache", syntax = "cache:cacheName", consumerClass = CacheConsumer.class, label = "cache")
 public class CacheEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(CacheEndpoint.class);
     @UriParam
@@ -88,6 +88,11 @@ public class CacheEndpoint extends DefaultEndpoint {
         return cacheManagerFactory;
     }
 
+    /**
+     * To use a custom CacheManagerFactory for creating the CacheManager to be used by this endpoint.
+     * <p/>
+     * By default the CacheManagerFactory configured on the component is used.
+     */
     public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
         this.cacheManagerFactory = cacheManagerFactory;
     }
@@ -162,6 +167,11 @@ public class CacheEndpoint extends DefaultEndpoint {
         return operation;
     }
 
+
+    /**
+     * The default cache operation to use.
+     * If an operation in the message header, then the operation from the header takes precedence.
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -170,6 +180,10 @@ public class CacheEndpoint extends DefaultEndpoint {
         return key;
     }
 
+    /**
+     * The default key to use.
+     * If a key is provided in the message header, then the key from the header takes precedence.
+     */
     public void setKey(String key) {
         this.key = key;
     }

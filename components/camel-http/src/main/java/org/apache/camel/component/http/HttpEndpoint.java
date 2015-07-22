@@ -46,43 +46,78 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "http,https", syntax = "http:httpUri", producerOnly = true, label = "http")
+@UriEndpoint(scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri", producerOnly = true, label = "http")
 public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
+    // Note: all options must be documented with description in annotations so extended components can access the documentation
+
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    private HttpBinding binding;
+
     private HttpComponent component;
-    @UriPath @Metadata(required = "true", label = "producer")
-    private URI httpUri;
     private HttpClientParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager;
-    @UriParam(defaultValue = "true")
-    private boolean throwExceptionOnFailure = true;
-    @UriParam
-    private boolean bridgeEndpoint;
-    @UriParam
-    private boolean matchOnUriPrefix;
-    @UriParam(defaultValue = "true")
-    private boolean chunked = true;
-    @UriParam
-    private boolean disableStreamCache;
-    @UriParam
-    private String proxyHost;
-    @UriParam
-    private int proxyPort;
-    @UriParam
-    private String authMethodPriority;
-    @UriParam
-    private boolean transferException;
-    @UriParam
-    private boolean traceEnabled;
-    @UriParam
-    private String httpMethodRestrict;
     private UrlRewrite urlRewrite;
-    @UriParam
+
+    @UriPath(label = "producer", description = "The url of the HTTP endpoint to call.") @Metadata(required = "true")
+    private URI httpUri;
+    @UriParam(description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    @UriParam(description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
+    private HttpBinding binding;
+    @UriParam(label = "producer", defaultValue = "true",
+            description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
+                    + " This allows you to get all responses regardless of the HTTP status code.")
+    private boolean throwExceptionOnFailure = true;
+    @UriParam(label = "producer",
+            description = "If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request."
+                    + " You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.")
+    private boolean bridgeEndpoint;
+    @UriParam(label = "consumer",
+            description = "Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.")
+    private boolean matchOnUriPrefix;
+    @UriParam(defaultValue = "true", description = "If this option is false Jetty servlet will disable the HTTP streaming and set the content-length header on the response")
+    private boolean chunked = true;
+    @UriParam(label = "consumer",
+            description = "Determines whether or not the raw input stream from Jetty is cached or not"
+                    + " (Camel will read the stream into a in memory/overflow to file, Stream caching) cache."
+                    + " By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel"
+                    + " can retrieve all data from the stream. However you can set this option to true when you for example need"
+                    + " to access the raw stream, such as streaming it directly to a file or other persistent store."
+                    + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
+                    + " if this option is false to support reading the stream multiple times."
+                    + " If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,"
+                    + " in case you do not need to read the message payload multiple times.")
+    private boolean disableStreamCache;
+    @UriParam(label = "producer", description = "The proxy host name")
+    private String proxyHost;
+    @UriParam(label = "producer", description = "The proxy port number")
+    private int proxyPort;
+    @UriParam(label = "producer", enums = "Basic,Digest,NTLM", description = "Authentication method for proxy, either as Basic, Digest or NTLM.")
+    private String authMethodPriority;
+    @UriParam(description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
+                    + " This allows you to get all responses regardless of the HTTP status code.")
+    private boolean transferException;
+    @UriParam(label = "consumer",
+            description = "Specifies whether to enable HTTP TRACE for this Jetty consumer. By default TRACE is turned off.")
+    private boolean traceEnabled;
+    @UriParam(label = "consumer",
+            description = "Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.")
+    private String httpMethodRestrict;
+    @UriParam(label = "consumer",
+            description = "To use a custom buffer size on the javax.servlet.ServletResponse.")
     private Integer responseBufferSize;
+    @UriParam(label = "producer",
+            description = "If this option is true, The http producer won't read response body and cache the input stream")
+    private boolean ignoreResponseBody;
+    @UriParam(label = "producer", defaultValue = "true",
+            description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
+                    + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
+    private boolean copyHeaders = true;
+    @UriParam(label = "consumer",
+            description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
+                    + " This can be turned on in case HTTP clients do not send streamed data.")
+    private boolean eagerCheckContentAvailable;
 
     public HttpEndpoint() {
     }
@@ -94,7 +129,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpConnectionManager httpConnectionManager) throws URISyntaxException {
         this(endPointURI, component, httpURI, new HttpClientParams(), httpConnectionManager, null);
     }
-    
+
     public HttpEndpoint(String endPointURI, HttpComponent component, HttpClientParams clientParams,
                         HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         this(endPointURI, component, null, clientParams, httpConnectionManager, clientConfigurer);
@@ -227,11 +262,18 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public HttpBinding getBinding() {
         if (binding == null) {
-            binding = new DefaultHttpBinding(this);
+            // create a new binding and use the options from this endpoint
+            binding = new DefaultHttpBinding();
+            binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            binding.setTransferException(isTransferException());
+            binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
         }
         return binding;
     }
 
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+     */
     public void setBinding(HttpBinding binding) {
         this.binding = binding;
     }
@@ -271,6 +313,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return httpConnectionManager;
     }
 
+    /**
+     * To use a custom HttpConnectionManager to manage connections
+     */
     public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
         this.httpConnectionManager = httpConnectionManager;
     }
@@ -279,6 +324,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -287,38 +335,65 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return throwExceptionOnFailure;
     }
 
+    /**
+     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
+     * This allows you to get all responses regardless of the HTTP status code.
+     */
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
-    
+
     public boolean isBridgeEndpoint() {
         return bridgeEndpoint;
     }
-    
+
+    /**
+     * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request.
+     * You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
+     */
     public void setBridgeEndpoint(boolean bridge) {
         this.bridgeEndpoint = bridge;
     }
-    
+
     public boolean isMatchOnUriPrefix() {
         return matchOnUriPrefix;
     }
-    
+
+    /**
+     * Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
+     * <p/>
+     * See more details at: http://camel.apache.org/how-do-i-let-jetty-match-wildcards.html
+     */
     public void setMatchOnUriPrefix(boolean match) {
         this.matchOnUriPrefix = match;
     }
-    
+
     public boolean isDisableStreamCache() {
         return this.disableStreamCache;
     }
-    
+
+    /**
+     * Determines whether or not the raw input stream from Jetty is cached or not
+     * (Camel will read the stream into a in memory/overflow to file, Stream caching) cache.
+     * By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel
+     * can retrieve all data from the stream. However you can set this option to true when you for example need
+     * to access the raw stream, such as streaming it directly to a file or other persistent store.
+     * DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body
+     * if this option is false to support reading the stream multiple times.
+     * If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,
+     * in case you do not need to read the message payload multiple times.
+     */
     public void setDisableStreamCache(boolean disable) {
         this.disableStreamCache = disable;
     }
-    
+
     public boolean isChunked() {
         return this.chunked;
     }
-    
+
+    /**
+     * If this option is false Jetty servlet will disable the HTTP streaming and set the content-length header on the response
+     */
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
     }
@@ -327,6 +402,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return proxyHost;
     }
 
+    /**
+     * The proxy host name
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -335,6 +413,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return proxyPort;
     }
 
+    /**
+     * The proxy port number
+     */
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
     }
@@ -343,6 +424,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return authMethodPriority;
     }
 
+    /**
+     * Authentication method for proxy, either as Basic, Digest or NTLM.
+     */
     public void setAuthMethodPriority(String authMethodPriority) {
         this.authMethodPriority = authMethodPriority;
     }
@@ -351,6 +435,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return transferException;
     }
 
+    /**
+     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
+     * This allows you to get all responses regardless of the HTTP status code.
+     */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
@@ -359,6 +447,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return this.traceEnabled;
     }
 
+    /**
+     * Specifies whether to enable HTTP TRACE for this Jetty consumer. By default TRACE is turned off.
+     */
     public void setTraceEnabled(boolean traceEnabled) {
         this.traceEnabled = traceEnabled;
     }
@@ -367,6 +458,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return httpMethodRestrict;
     }
 
+    /**
+     * Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc.
+     * Multiple methods can be specified separated by comma.
+     */
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
     }
@@ -375,6 +470,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return urlRewrite;
     }
 
+    /**
+     * Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints.
+     * See more details at http://camel.apache.org/urlrewrite.html
+     */
     public void setUrlRewrite(UrlRewrite urlRewrite) {
         this.urlRewrite = urlRewrite;
     }
@@ -383,7 +482,45 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return responseBufferSize;
     }
 
+    /**
+     * To use a custom buffer size on the javax.servlet.ServletResponse.
+     */
     public void setResponseBufferSize(Integer responseBufferSize) {
         this.responseBufferSize = responseBufferSize;
+    }
+
+    public boolean isIgnoreResponseBody() {
+        return ignoreResponseBody;
+    }
+
+    /**
+     * If this option is true, The http producer won't read response body and cache the input stream.
+     */
+    public void setIgnoreResponseBody(boolean ignoreResponseBody) {
+        this.ignoreResponseBody = ignoreResponseBody;
+    }
+
+    /**
+     * If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy.
+     * Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).
+     */
+    public boolean isCopyHeaders() {
+        return copyHeaders;
+    }
+
+    public void setCopyHeaders(boolean copyHeaders) {
+        this.copyHeaders = copyHeaders;
+    }
+
+    public boolean isEagerCheckContentAvailable() {
+        return eagerCheckContentAvailable;
+    }
+
+    /**
+     * Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present.
+     * This can be turned on in case HTTP clients do not send streamed data.
+     */
+    public void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable) {
+        this.eagerCheckContentAvailable = eagerCheckContentAvailable;
     }
 }

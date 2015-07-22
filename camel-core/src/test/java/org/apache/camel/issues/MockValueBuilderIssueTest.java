@@ -43,8 +43,8 @@ public class MockValueBuilderIssueTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should fail");
         } catch (Throwable e) {
-            assertEquals("Assertion error at index 0 on mock mock://result with predicate: exchangeProperty(foo) contains 4"
-                    + " evaluated as: 123 contains 4 on Exchange[Message: Hello World]", e.getMessage());
+            String s = "Assertion error at index 0 on mock mock://result with predicate: exchangeProperty(foo) contains 4 evaluated as: 123 contains 4";
+            assertTrue(e.getMessage().startsWith(s));
         }
     }
 

@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "xmlsecurity", syntax = "xmlsecurity:command/name", producerOnly = true, label = "security,transformation")
+@UriEndpoint(scheme = "xmlsecurity", title = "XML Security", syntax = "xmlsecurity:command/name", producerOnly = true, label = "security,transformation")
 public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -52,6 +52,9 @@ public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
         return command;
     }
 
+    /**
+     * Whether to sign or verify.
+     */
     public void setCommand(XmlCommand command) {
         this.command = command;
     }
@@ -60,6 +63,9 @@ public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
         return name;
     }
 
+    /**
+     * The name part in the URI can be chosen by the user to distinguish between different signer/verifier endpoints within the camel context.
+     */
     public void setName(String name) {
         this.name = name;
     }

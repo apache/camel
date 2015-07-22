@@ -56,6 +56,21 @@ public class SearchProducer extends Twitter4JProducer {
         if (te.getProperties().isFilterOld() && myLastId != 0) {
             query.setSinceId(myLastId);
         }
+        
+        // since id
+        Long sinceId = exchange.getIn().getHeader(TwitterConstants.TWITTER_SINCEID, Long.class);
+        if (sinceId == null) {
+            sinceId = te.getProperties().getSinceId();
+        }
+        if (ObjectHelper.isNotEmpty(sinceId)) {
+            query.setSinceId(sinceId);
+        }
+        
+        // max id
+        Long maxId = exchange.getIn().getHeader(TwitterConstants.TWITTER_MAXID, Long.class);
+        if (ObjectHelper.isNotEmpty(maxId)) {
+            query.setMaxId(maxId);
+        }
 
         // language
         String lang = exchange.getIn().getHeader(TwitterConstants.TWITTER_SEARCH_LANGUAGE, String.class);

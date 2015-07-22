@@ -29,7 +29,7 @@
   <!-- a bean for user services -->
   <bean id="userService" class="org.apache.camel.example.rest.UserService"/>
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
 
     <!-- configure rest to use the camel-servlet component, and use json binding mode -->
     <!-- and tell to output json in pretty print mode -->
@@ -49,12 +49,14 @@
       <!-- this is a rest GET to view an user by the given id -->
       <get uri="/{id}" outType="org.apache.camel.example.rest.User">
         <description>Find user by id</description>
+        <param name="id" type="path" description="The id of the user to get" dataType="int"/>
         <to uri="bean:userService?method=getUser(${header.id})"/>
       </get>
 
       <!-- this is a rest PUT to create/update an user -->
       <put type="org.apache.camel.example.rest.User">
         <description>Updates or create a user</description>
+        <param name="body" type="body" description="The user to update or create"/>
         <to uri="bean:userService?method=updateUser"/>
       </put>
 
@@ -63,7 +65,6 @@
         <description>Find all users</description>
         <to uri="bean:userService?method=listUsers"/>
       </get>
-
     </rest>
 
   </camelContext>

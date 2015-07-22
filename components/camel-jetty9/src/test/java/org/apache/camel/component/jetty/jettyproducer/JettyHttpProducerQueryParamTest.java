@@ -29,15 +29,11 @@ import org.junit.Test;
  */
 public class JettyHttpProducerQueryParamTest extends BaseJettyTest {
 
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/cheese";
+    private String url = "jetty://http://127.0.0.1:" + getPort() + "/cheese";
 
     @Test
     public void testQueryParameters() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
+        
         // give Jetty time to startup properly
         Thread.sleep(1000);
 

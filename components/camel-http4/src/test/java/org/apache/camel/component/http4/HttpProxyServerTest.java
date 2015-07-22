@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.component.http4.handler.HeaderValidationHandler;
 import org.apache.camel.component.http4.handler.ProxyAuthenticationValidationHandler;
 import org.apache.camel.util.URISupport;
@@ -39,8 +40,12 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolException;
 import org.apache.http.auth.AUTH;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.http.localserver.RequestBasicAuth;
+import org.apache.http.localserver.ResponseBasicUnauthorized;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseContent;
 import org.junit.After;
@@ -52,36 +57,47 @@ import org.junit.Test;
  * @version 
  */
 public class HttpProxyServerTest extends BaseHttpTest {
-
-    private LocalTestServer proxy;
-    private String user = "camel";
-    private String password = "password";
-
-    @Override
+    
+    private HttpServer proxy;
+    
     @Before
+    @Override
     public void setUp() throws Exception {
+        Map<String, String> expectedHeaders = new HashMap<String, String>();
+        expectedHeaders.put("Proxy-Connection", "Keep-Alive");
+        proxy = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders)).create();
+        proxy.start();
+
         super.setUp();
-        
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (proxy != null) {
+            proxy.stop();
+        }
+    }
+    
+    @Override
+    protected HttpProcessor getBasicHttpProcessor() {
         List<HttpRequestInterceptor> requestInterceptors = new ArrayList<HttpRequestInterceptor>();
         requestInterceptors.add(new RequestProxyBasicAuth());
         List<HttpResponseInterceptor> responseInterceptors = new ArrayList<HttpResponseInterceptor>();
         responseInterceptors.add(new ResponseContent());
         responseInterceptors.add(new ResponseProxyBasicUnauthorized());
         ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
-
-        proxy = new LocalTestServer(httpproc, null);
-        proxy.start();
+        return httpproc;
     }
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        if (proxy != null) {
-            proxy.stop();
-        }
-
-        super.tearDown();
-    }
     
     @Test
     public void testDifferentHttpProxyConfigured() throws Exception {
@@ -99,12 +115,8 @@ public class HttpProxyServerTest extends BaseHttpTest {
 
     @Test
     public void httpGetWithProxyAndWithoutUser() throws Exception {
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
-        expectedHeaders.put("Host", getHostName() + ":" + getPort());
-        expectedHeaders.put("Proxy-Connection", "Keep-Alive");
-        proxy.register("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders));
 
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?proxyAuthHost=" + getProxyHost() + "&proxyAuthPort=" + getProxyPort(), new Processor() {
+        Exchange exchange = template.request("http4://" + getProxyHost() + ":" + getProxyPort() + "?proxyAuthHost=" + getProxyHost() + "&proxyAuthPort=" + getProxyPort(), new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
@@ -112,83 +124,12 @@ public class HttpProxyServerTest extends BaseHttpTest {
         assertExchange(exchange);
     }
 
-    @Test
-    public void httpGetWithProxyInCamelContextAndWithoutUser() throws Exception {
-        context.getProperties().put("http.proxyHost", getProxyHost());
-        context.getProperties().put("http.proxyPort", String.valueOf(getProxyPort()));
-
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
-        expectedHeaders.put("Host", getHostName() + ":" + getPort());
-        expectedHeaders.put("Proxy-Connection", "Keep-Alive");
-
-        try {
-            proxy.register("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders));
-
-            Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort(), new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                }
-            });
-
-            assertExchange(exchange);
-        } finally {
-            context.getProperties().remove("http.proxyHost");
-            context.getProperties().remove("http.proxyPort");
-        }
-    }
-
-    @Test
-    public void httpGetWithDuplicateProxyConfigurationAndWithoutUser() throws Exception {
-        context.getProperties().put("http.proxyHost", "XXX");
-        context.getProperties().put("http.proxyPort", "11111");
-
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
-        expectedHeaders.put("Host", getHostName() + ":" + getPort());
-        expectedHeaders.put("Proxy-Connection", "Keep-Alive");
-
-        try {
-            proxy.register("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders));
-
-            Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?proxyAuthHost="
-                    + getProxyHost() + "&proxyAuthPort=" + getProxyPort(), new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                        }
-                    });
-
-            assertExchange(exchange);
-        } finally {
-            context.getProperties().remove("http.proxyHost");
-            context.getProperties().remove("http.proxyPort");
-        }
-    }
-
-    @Test
-    public void httpGetWithProxyAndWithUser() throws Exception {
-        proxy.register("*", new ProxyAuthenticationValidationHandler("GET", null, null, getExpectedContent(), user, password));
-
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?proxyAuthHost="
-                + getProxyHost() + "&proxyAuthPort=" + getProxyPort() + "&proxyAuthUsername=camel&proxyAuthPassword=password", new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                    }
-                });
-
-        assertExchange(exchange);
-    }
-    
-    public void httpGetPullEndpointWithProxyAndWithUser() {
-        proxy.register("*", new ProxyAuthenticationValidationHandler("GET", null, null, getExpectedContent(), user, password));
-
-        Exchange exchange = consumer.receive("http4://" + getHostName() + ":" + getPort() + "?proxyAuthHost="
-                + getProxyHost() + "&proxyAuthPort=" + getProxyPort() + "&proxyAuthUsername=camel&proxyAuthPassword=password");
-
-        assertExchange(exchange);
-    }
-
     private String getProxyHost() {
-        return proxy.getServiceAddress().getHostName();
+        return proxy.getInetAddress().getHostName();
     }
 
     private int getProxyPort() {
-        return proxy.getServiceAddress().getPort();
+        return proxy.getLocalPort();
     }
     
     class RequestProxyBasicAuth implements HttpRequestInterceptor {

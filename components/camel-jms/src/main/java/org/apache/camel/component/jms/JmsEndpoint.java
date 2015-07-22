@@ -25,6 +25,7 @@ import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
+import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
@@ -69,7 +70,7 @@ import org.springframework.util.ErrorHandler;
  * @version
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-@UriEndpoint(scheme = "jms", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
 public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
@@ -187,10 +188,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, JmsConsumer consumer) {
         if (destinationName != null) {
             listenerContainer.setDestinationName(destinationName);
-            log.debug("Using destinationName: {} on listenerContainer: ", destinationName, listenerContainer);
+            log.debug("Using destinationName: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else if (destination != null) {
             listenerContainer.setDestination(destination);
-            log.debug("Using destination: {} on listenerContainer: ", destinationName, listenerContainer);
+            log.debug("Using destination: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else {
             DestinationResolver resolver = getDestinationResolver();
             if (resolver != null) {
@@ -198,7 +199,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             } else {
                 throw new IllegalArgumentException("Neither destination, destinationName or destinationResolver are specified on this endpoint!");
             }
-            log.debug("Using destinationResolver: {} on listenerContainer: ", resolver, listenerContainer);
+            log.debug("Using destinationResolver: {} on listenerContainer: {}", resolver, listenerContainer);
         }
         listenerContainer.setPubSubDomain(pubSubDomain);
 
@@ -292,9 +293,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return exchange;
     }
 
-    public Exchange createExchange(Message message) {
+    public Exchange createExchange(Message message, Session session) {
         Exchange exchange = createExchange(getExchangePattern());
-        exchange.setIn(new JmsMessage(message, getBinding()));
+        exchange.setIn(new JmsMessage(message, session, getBinding()));
         return exchange;
     }
 
@@ -336,22 +337,30 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
 
     public JmsBinding getBinding() {
         if (binding == null) {
-            binding = new JmsBinding(this);
+            binding = createBinding();
         }
         return binding;
     }
 
     /**
+     * Creates the {@link org.apache.camel.component.jms.JmsBinding} to use.
+     */
+    protected JmsBinding createBinding() {
+        return new JmsBinding(this);
+    }
+
+    /**
      * Sets the binding used to convert from a Camel message to and from a JMS
      * message
-     *
-     * @param binding the binding to use
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
@@ -363,7 +372,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     /**
      * The kind of destination to use
-     * @param destinationType
      */
     public void setDestinationType(String destinationType) {
         this.destinationType = destinationType;
@@ -542,6 +550,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getConcurrentConsumers();
     }
 
+    @ManagedAttribute
+    public int getReplyToConcurrentConsumers() {
+        return getConfiguration().getReplyToConcurrentConsumers();
+    }
+
     public ConnectionFactory getConnectionFactory() {
         return getConfiguration().getConnectionFactory();
     }
@@ -598,6 +611,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public int getMaxConcurrentConsumers() {
         return getConfiguration().getMaxConcurrentConsumers();
+    }
+
+    @ManagedAttribute
+    public int getReplyToMaxConcurrentConsumers() {
+        return getConfiguration().getReplyToMaxConcurrentConsumers();
     }
 
     @ManagedAttribute
@@ -822,6 +840,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setConcurrentConsumers(concurrentConsumers);
     }
 
+    @ManagedAttribute
+    public void setReplyToConcurrentConsumers(int concurrentConsumers) {
+        getConfiguration().setReplyToConcurrentConsumers(concurrentConsumers);
+    }
+
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         getConfiguration().setConnectionFactory(connectionFactory);
     }
@@ -894,6 +917,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
         getConfiguration().setMaxConcurrentConsumers(maxConcurrentConsumers);
+    }
+
+    @ManagedAttribute
+    public void setReplyToMaxConcurrentConsumers(int maxConcurrentConsumers) {
+        getConfiguration().setReplyToMaxConcurrentConsumers(maxConcurrentConsumers);
     }
 
     @ManagedAttribute
@@ -1036,6 +1064,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsHeaderStrategy) {
         getConfiguration().setJmsKeyFormatStrategy(jmsHeaderStrategy);
+    }
+
+    public MessageCreatedStrategy getMessageCreatedStrategy() {
+        return getConfiguration().getMessageCreatedStrategy();
+    }
+
+    public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
+        getConfiguration().setMessageCreatedStrategy(messageCreatedStrategy);
     }
 
     @ManagedAttribute

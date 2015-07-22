@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
@@ -877,7 +878,7 @@ public final class ExpressionBuilder {
      * Returns the expression for the exchanges camelContext invoking methods defined
      * in a simple OGNL notation
      *
-     * @param ognl  methods to invoke on the body in a simple OGNL syntax
+     * @param ognl  methods to invoke on the context in a simple OGNL syntax
      */
     public static Expression camelContextOgnlExpression(final String ognl) {
         return new ExpressionAdapter() {
@@ -892,6 +893,25 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "camelContextOgnl(" + ognl + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchange invoking methods defined
+     * in a simple OGNL notation
+     *
+     * @param ognl  methods to invoke on the exchange in a simple OGNL syntax
+     */
+    public static Expression exchangeOgnlExpression(final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return new MethodCallExpression(exchange, ognl).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeOgnl(" + ognl + ")";
             }
         };
     }
@@ -1847,6 +1867,42 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "properties(" + key + ")";
+            }
+        };
+    }
+    
+    /**
+     * Returns a random number between min and max
+     */
+    public static Expression randomExpression(final int min, final int max) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Random random = new Random();
+                int randomNum = random.nextInt(max - min) + min;
+                return randomNum;
+            }
+
+            @Override
+            public String toString() {
+                return "random";
+            }
+        };
+    }
+    
+    /**
+     * Returns a random number between 0 and upperbound (exclusive)
+     */
+    public static Expression randomExpression(final int upperbound) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Random random = new Random();
+                int randomNum = random.nextInt(upperbound);
+                return randomNum;
+            }
+
+            @Override
+            public String toString() {
+                return "random";
             }
         };
     }

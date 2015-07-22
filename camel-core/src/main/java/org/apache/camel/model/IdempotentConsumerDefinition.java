@@ -38,10 +38,13 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IdempotentConsumerDefinition extends ExpressionNode {
+
     @XmlAttribute(required = true)
     private String messageIdRepositoryRef;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean eager;
+    @XmlAttribute
+    private Boolean completionEager;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean skipDuplicate;
     @XmlAttribute @Metadata(defaultValue = "true")
@@ -102,6 +105,26 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
      */
     public IdempotentConsumerDefinition eager(boolean eager) {
         setEager(eager);
+        return this;
+    }
+
+    /**
+     * Sets whether to complete the idempotent consumer eager or when the exchange is done.
+     * <p/>
+     * If this option is <tt>true</tt> to complete eager, then the idempotent consumer will trigger its completion
+     * when the exchange reached the end of the block of the idempotent consumer pattern. So if the exchange
+     * is continued routed after the block ends, then whatever happens there does not affect the state.
+     * <p/>
+     * If this option is <tt>false</tt> (default) to <b>not</b> complete eager, then the idempotent consumer
+     * will complete when the exchange is done being routed. So if the exchange is continued routed after the block ends,
+     * then whatever happens there <b>also</b> affect the state.
+     * For example if the exchange failed due to an exception, then the state of the idempotent consumer will be a rollback.
+     *
+     * @param completionEager   whether to complete eager or complete when the exchange is done
+     * @return builder
+     */
+    public IdempotentConsumerDefinition completionEager(boolean completionEager) {
+        setCompletionEager(completionEager);
         return this;
     }
 
@@ -185,6 +208,14 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.removeOnFailure = removeOnFailure;
     }
 
+    public Boolean getCompletionEager() {
+        return completionEager;
+    }
+
+    public void setCompletionEager(Boolean completionEager) {
+        this.completionEager = completionEager;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
@@ -203,8 +234,10 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         boolean eager = getEager() == null || getEager();
         boolean duplicate = getSkipDuplicate() == null || getSkipDuplicate();
         boolean remove = getRemoveOnFailure() == null || getRemoveOnFailure();
+        // these boolean should be false by default
+        boolean completionEager = getCompletionEager() != null && getCompletionEager();
 
-        return new IdempotentConsumer(expression, idempotentRepository, eager, duplicate, remove, childProcessor);
+        return new IdempotentConsumer(expression, idempotentRepository, eager, completionEager, duplicate, remove, childProcessor);
     }
 
     /**

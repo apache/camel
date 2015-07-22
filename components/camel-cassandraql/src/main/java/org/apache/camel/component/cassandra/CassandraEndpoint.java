@@ -36,7 +36,7 @@ import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 /**
  * Cassandra 2 CQL3 endpoint
  */
-@UriEndpoint(scheme = "cql", syntax = "cql:beanRef:hosts:port/keyspace", consumerClass = CassandraConsumer.class, label = "database,nosql")
+@UriEndpoint(scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", consumerClass = CassandraConsumer.class, label = "database,nosql")
 public class CassandraEndpoint extends DefaultEndpoint {
 
     private volatile CassandraSessionHolder sessionHolder;
@@ -185,6 +185,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return beanRef;
     }
 
+    /**
+     * Instead of using a hostname:port, refer to an existing configured Session or Cluster from the Camel registry to be used.
+     */
     public void setBean(String beanRef) {
         this.beanRef = beanRef;
     }
@@ -203,6 +206,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return hosts;
     }
 
+    /**
+     * Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma.
+     */
     public void setHosts(String hosts) {
         this.hosts = hosts;
     }
@@ -211,6 +217,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return port;
     }
 
+    /**
+     * Port number of cassansdra server(s)
+     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -219,6 +228,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return keyspace;
     }
 
+    /**
+     * Keyspace to use
+     */
     public void setKeyspace(String keyspace) {
         this.keyspace = keyspace;
     }
@@ -227,6 +239,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return cql;
     }
 
+    /**
+     * CQL query to perform. Can be overridden with the message header with key CamelCqlQuery.
+     */
     public void setCql(String cql) {
         this.cql = cql;
     }
@@ -235,6 +250,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return cluster;
     }
 
+    /**
+     * To use the Cluster instance (you would normally not use this option)
+     */
     public void setCluster(Cluster cluster) {
         this.cluster = cluster;
     }
@@ -247,6 +265,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         }
     }
 
+    /**
+     * To use the Session instance (you would normally not use this option)
+     */
     public void setSession(Session session) {
         this.session = session;
     }
@@ -255,6 +276,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return clusterName;
     }
 
+    /**
+     * Cluster name
+     */
     public void setClusterName(String clusterName) {
         this.clusterName = clusterName;
     }
@@ -263,6 +287,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return username;
     }
 
+    /**
+     * Username for session authentication
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -271,6 +298,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return password;
     }
 
+    /**
+     * Password for session authentication
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -279,6 +309,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return consistencyLevel;
     }
 
+    /**
+     * Consistency level to use
+     */
     public void setConsistencyLevel(ConsistencyLevel consistencyLevel) {
         this.consistencyLevel = consistencyLevel;
     }
@@ -287,6 +320,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return resultSetConversionStrategy;
     }
 
+    /**
+     * To use a custom class that implements logic for converting ResultSet into message body ALL, ONE, LIMIT_10, LIMIT_100...
+     */
     public void setResultSetConversionStrategy(ResultSetConversionStrategy resultSetConversionStrategy) {
         this.resultSetConversionStrategy = resultSetConversionStrategy;
     }

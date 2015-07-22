@@ -136,10 +136,10 @@ public class FacebookProducer extends DefaultAsyncProducer {
 
             // get the method to call
             if (filteredMethods.isEmpty()) {
-                final Set<String> missing = getMissingProperties(endpoint.getMethodName(),
+                final Set<String> missing = getMissingProperties(endpoint.getMethod(),
                     endpoint.getNameStyle(), argNames);
                 throw new RuntimeCamelException(String.format("Missing properties for %s, need one or more from %s",
-                        endpoint.getMethodName(), missing));
+                        endpoint.getMethod(), missing));
             } else if (filteredMethods.size() == 1) {
                 // found an exact match
                 method = filteredMethods.get(0);

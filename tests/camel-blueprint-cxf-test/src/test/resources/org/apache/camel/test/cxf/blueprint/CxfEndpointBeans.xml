@@ -44,6 +44,7 @@
       <cm:property name="transportId" value="http://cxf.apache.org/transports/http" />
       <cm:property name="serviceName" value="{http://org.apache.camel.component.cxf}myService" />
       <cm:property name="endpointName" value="{http://org.apache.camel.component.cxf}myEndpoint" />
+      <cm:property name="receiveTimeout" value="200" />
       <cm:property name="wsdlURL" value="wsdl/test.wsdl" />
     </cm:default-properties>
   </cm:property-placeholder>
@@ -92,7 +93,7 @@
 
   <!-- Setting the http conduit policy -->
   <http-conf:conduit name="{http://cxf.component.camel.apache.org/}HelloServicePort.http-conduit">
-    <http-conf:client ReceiveTimeout="500"
+    <http-conf:client ReceiveTimeout="${receiveTimeout}"
                       MaxRetransmits="1"
                       AllowChunking="false" />
   </http-conf:conduit>

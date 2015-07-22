@@ -65,7 +65,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         correlation.put(newCorrelationId, handler, requestTimeout);
     }
 
-    protected void handleReplyMessage(String correlationID, Message message) {
+    protected void handleReplyMessage(String correlationID, Message message, Session session) {
         ReplyHandler handler = correlation.get(correlationID);
         if (handler == null && endpoint.isUseMessageIDAsCorrelationID()) {
             handler = waitForProvisionCorrelationToBeUpdated(correlationID, message);
@@ -73,7 +73,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
 
         if (handler != null) {
             correlation.remove(correlationID);
-            handler.onReply(correlationID, message);
+            handler.onReply(correlationID, message, session);
         } else {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
@@ -175,9 +175,9 @@ public class QueueReplyManager extends ReplyManagerSupport {
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
-        answer.setConcurrentConsumers(endpoint.getConcurrentConsumers());
-        if (endpoint.getMaxConcurrentConsumers() > 0) {
-            answer.setMaxConcurrentConsumers(endpoint.getMaxConcurrentConsumers());
+        answer.setConcurrentConsumers(endpoint.getReplyToConcurrentConsumers());
+        if (endpoint.getReplyToMaxConcurrentConsumers() > 0) {
+            answer.setMaxConcurrentConsumers(endpoint.getReplyToMaxConcurrentConsumers());
         }
         answer.setConnectionFactory(endpoint.getConnectionFactory());
         String clientId = endpoint.getClientId();

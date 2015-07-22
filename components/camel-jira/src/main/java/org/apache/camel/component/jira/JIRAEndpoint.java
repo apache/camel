@@ -43,20 +43,20 @@ import org.apache.camel.spi.UriPath;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(scheme = "jira", syntax = "jira:type", label = "api,reporting")
+@UriEndpoint(scheme = "jira", title = "JIRA", syntax = "jira:type", label = "api,reporting")
 public class JIRAEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
     private JIRAType type;
-    @UriParam
+    @UriParam @Metadata(required = "true")
     private String serverUrl;
     @UriParam
     private String username;
     @UriParam
     private String password;
-    @UriParam
+    @UriParam(label = "consumer")
     private String jql;
-    @UriParam(defaultValue = "6000")
+    @UriParam(label = "consumer", defaultValue = "6000")
     private int delay = 6000;
 
     public JIRAEndpoint(String uri, JIRAComponent component) {
@@ -87,6 +87,9 @@ public class JIRAEndpoint extends DefaultEndpoint {
         return type;
     }
 
+    /**
+     * Operation to perform such as create a new issue or a new comment
+     */
     public void setType(JIRAType type) {
         this.type = type;
     }
@@ -95,6 +98,9 @@ public class JIRAEndpoint extends DefaultEndpoint {
         return serverUrl;
     }
 
+    /**
+     * URL to the JIRA server
+     */
     public void setServerUrl(String serverUrl) {
         this.serverUrl = serverUrl;
     }
@@ -103,6 +109,9 @@ public class JIRAEndpoint extends DefaultEndpoint {
         return username;
     }
 
+    /**
+     * Username for login
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -111,6 +120,9 @@ public class JIRAEndpoint extends DefaultEndpoint {
         return password;
     }
 
+    /**
+     * Password for login
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -119,6 +131,11 @@ public class JIRAEndpoint extends DefaultEndpoint {
         return jql;
     }
 
+    /**
+     * JQL is the query language from JIRA which allows you to retrieve the data you want.
+     * For example <tt>jql=project=MyProject</tt>
+     * Where MyProject is the product key in Jira.
+     */
     public void setJql(String jql) {
         this.jql = jql;
     }
@@ -126,7 +143,10 @@ public class JIRAEndpoint extends DefaultEndpoint {
     public int getDelay() {
         return delay;
     }
-     
+
+    /**
+     * Delay in seconds when querying JIRA using the consumer.
+     */
     public void setDelay(int delay) {
         this.delay = delay;
     }

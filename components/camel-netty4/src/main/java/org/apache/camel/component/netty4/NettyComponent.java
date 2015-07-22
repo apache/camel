@@ -87,24 +87,26 @@ public class NettyComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the NettyConfiguration as configuration when creating endpoints.
+     */
     public void setConfiguration(NettyConfiguration configuration) {
         this.configuration = configuration;
     }
-    
-    public void setExecutorService(EventExecutorGroup executorServcie) {
+
+    /**
+     * To use the given EventExecutorGroup
+     */
+    public void setExecutorService(EventExecutorGroup executorService) {
         this.executorService = executorService;
     }
 
-    public synchronized EventExecutorGroup getExecutorService() {
-        if (executorService == null) {
-            executorService = createExecutorService();
-        }
+    public EventExecutorGroup getExecutorService() {
         return executorService;
     }
 
     @Override
     protected void doStart() throws Exception {
-        
         if (configuration == null) {
             configuration = new NettyConfiguration();
         }

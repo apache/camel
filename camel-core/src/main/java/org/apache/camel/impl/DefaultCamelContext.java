@@ -38,7 +38,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -73,6 +74,9 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -176,8 +180,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
     private final Set<Route> routes = new LinkedHashSet<Route>();
-    private final List<Service> servicesToClose = new CopyOnWriteArrayList<Service>();
+    private final List<Service> servicesToStop = new CopyOnWriteArrayList<Service>();
     private final Set<StartupListener> startupListeners = new LinkedHashSet<StartupListener>();
+    private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
     private TypeConverter typeConverter;
     private TypeConverterRegistry typeConverterRegistry;
     private Injector injector;
@@ -265,6 +270,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // create endpoint registry at first since end users may access endpoints before CamelContext is started
         this.endpoints = new DefaultEndpointRegistry(this);
+
+        // add the derfer service startup listener
+        this.startupListeners.add(deferStartupListener);
 
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
@@ -706,19 +714,113 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return null;
     }
 
+    public Processor getProcessor(String id) {
+        for (Route route : getRoutes()) {
+            List<Processor> list = route.filter(id);
+            if (list.size() == 1) {
+                return list.get(0);
+            }
+        }
+        return null;
+    }
+
+    public <T extends Processor> T getProcessor(String id, Class<T> type) {
+        Processor answer = getProcessor(id);
+        if (answer != null) {
+            return type.cast(answer);
+        }
+        return null;
+    }
+
+    public <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type) {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
+        Processor processor = getProcessor(id);
+        ProcessorDefinition def = getProcessorDefinition(id);
+
+        if (processor != null && def != null) {
+            try {
+                ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForProcessor(this, processor, def);
+                return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
+            } catch (MalformedObjectNameException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return null;
+    }
+
+    public <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type) {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
+        Route route = getRoute(routeId);
+
+        if (route != null) {
+            try {
+                ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForRoute(route);
+                return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
+            } catch (MalformedObjectNameException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return null;
+    }
+
+    public ManagedCamelContextMBean getManagedCamelContext() {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
+        try {
+            ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(this);
+            return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedCamelContextMBean.class);
+        } catch (MalformedObjectNameException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
+    public ProcessorDefinition getProcessorDefinition(String id) {
+        for (RouteDefinition route : getRouteDefinitions()) {
+            Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+            while (it.hasNext()) {
+                ProcessorDefinition proc = it.next();
+                if (id.equals(proc.getId())) {
+                    return proc;
+                }
+            }
+        }
+        return null;
+    }
+
+    public <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type) {
+        ProcessorDefinition answer = getProcessorDefinition(id);
+        if (answer != null) {
+            return type.cast(answer);
+        }
+        return null;
+    }
+
     @Deprecated
     public void setRoutes(List<Route> routes) {
         throw new UnsupportedOperationException("Overriding existing routes is not supported yet, use addRouteCollection instead");
     }
 
     void removeRouteCollection(Collection<Route> routes) {
-        synchronized (routes) {
+        synchronized (this.routes) {
             this.routes.removeAll(routes);
         }
     }
 
     void addRouteCollection(Collection<Route> routes) throws Exception {
-        synchronized (routes) {
+        synchronized (this.routes) {
             this.routes.addAll(routes);
         }
     }
@@ -882,6 +984,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             resumeRouteService(routeService);
+            // must resume the route as well
+            Route route = getRoute(routeId);
+            ServiceHelper.resumeService(route);
         }
     }
 
@@ -1023,12 +1128,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
-            RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+            Route route = routeService.getRoutes().iterator().next();
+            RouteStartupOrder order = new DefaultRouteStartupOrder(1, route, routeService);
             routes.add(order);
 
             getShutdownStrategy().suspend(this, routes);
             // must suspend route service as well
             suspendRouteService(routeService);
+            // must suspend the route as well
+            ServiceHelper.suspendService(route);
         }
     }
 
@@ -1041,12 +1149,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
-            RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+            Route route = routeService.getRoutes().iterator().next();
+            RouteStartupOrder order = new DefaultRouteStartupOrder(1, route, routeService);
             routes.add(order);
 
             getShutdownStrategy().suspend(this, routes, timeout, timeUnit);
             // must suspend route service as well
             suspendRouteService(routeService);
+            // must suspend the route as well
+            ServiceHelper.suspendService(route);
         }
     }
 
@@ -1054,11 +1165,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(object, true);
     }
 
-    public void addService(Object object, boolean closeOnShutdown) throws Exception {
-        doAddService(object, closeOnShutdown);
+    public void addService(Object object, boolean stopOnShutdown) throws Exception {
+        doAddService(object, stopOnShutdown);
     }
 
-    private void doAddService(Object object, boolean closeOnShutdown) throws Exception {
+    private void doAddService(Object object, boolean stopOnShutdown) throws Exception {
         // inject CamelContext
         if (object instanceof CamelContextAware) {
             CamelContextAware aware = (CamelContextAware) object;
@@ -1085,9 +1196,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
             // do not add endpoints as they have their own list
             if (singleton && !(service instanceof Endpoint)) {
-                // only add to list of services to close if its not already there
-                if (closeOnShutdown && !hasService(service)) {
-                    servicesToClose.add(service);
+                // only add to list of services to stop if its not already there
+                if (stopOnShutdown && !hasService(service)) {
+                    servicesToStop.add(service);
                 }
             }
         }
@@ -1110,7 +1221,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onServiceRemove(this, service, null);
             }
-            return servicesToClose.remove(service);
+            return servicesToStop.remove(service);
         }
         return false;
     }
@@ -1118,19 +1229,45 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public boolean hasService(Object object) {
         if (object instanceof Service) {
             Service service = (Service) object;
-            return servicesToClose.contains(service);
+            return servicesToStop.contains(service);
         }
         return false;
     }
 
     @Override
     public <T> T hasService(Class<T> type) {
-        for (Service service : servicesToClose) {
+        for (Service service : servicesToStop) {
             if (type.isInstance(service)) {
                 return type.cast(service);
             }
         }
         return null;
+    }
+
+    public void deferStartService(Object object, boolean stopOnShutdown) throws Exception {
+        if (object instanceof Service) {
+            Service service = (Service) object;
+
+            // only add to services to close if its a singleton
+            // otherwise we could for example end up with a lot of prototype scope endpoints
+            boolean singleton = true; // assume singleton by default
+            if (object instanceof IsSingleton) {
+                singleton = ((IsSingleton) service).isSingleton();
+            }
+            // do not add endpoints as they have their own list
+            if (singleton && !(service instanceof Endpoint)) {
+                // only add to list of services to stop if its not already there
+                if (stopOnShutdown && !hasService(service)) {
+                    servicesToStop.add(service);
+                }
+            }
+            // are we already started?
+            if (isStarted()) {
+                ServiceHelper.startService(service);
+            } else {
+                deferStartupListener.addService(service);
+            }
+        }
     }
 
     public void addStartupListener(StartupListener listener) throws Exception {
@@ -1667,6 +1804,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             // selected rows to use for answer
             Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
+            Map<String, String[]> uriOptions = new LinkedHashMap<String, String[]>();
 
             // insert values from uri
             Map<String, Object> options = URISupport.parseParameters(u);
@@ -1707,8 +1845,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
 
-                // add as selected row
-                selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                // remember this option from the uri
+                uriOptions.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
@@ -1731,11 +1869,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     value = URISupport.sanitizePath(value);
                 }
 
-                // always include path options
-                if (includeAllOptions || "path".equals(kind)) {
-                    // add as selected row
+                boolean isUriOption = uriOptions.containsKey(name);
+
+                // always include from uri or path options
+                if (includeAllOptions || isUriOption || "path".equals(kind)) {
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        // add as selected row, but take the value from uri options if it was from there
+                        if (isUriOption) {
+                            selected.put(name, uriOptions.get(name));
+                        } else {
+                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        }
                     }
                 }
             }
@@ -2585,6 +2729,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // special for executorServiceManager as want to stop it manually
         doAddService(executorServiceManager, false);
         addService(producerServicePool);
+        addService(pollingConsumerServicePool);
         addService(inflightRepository);
         addService(asyncProcessorAwaitManager);
         addService(shutdownStrategy);
@@ -2680,7 +2825,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // stop consumers from the services to close first, such as POJO consumer (eg @Consumer)
         // which we need to stop after the routes, as a POJO consumer is essentially a route also
-        for (Service service : servicesToClose) {
+        for (Service service : servicesToStop) {
             if (service instanceof Consumer) {
                 shutdownServices(service);
             }
@@ -2716,8 +2861,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         // shutdown services as late as possible
-        shutdownServices(servicesToClose);
-        servicesToClose.clear();
+        shutdownServices(servicesToStop);
+        servicesToStop.clear();
 
         // must notify that we are stopped before stopping the management strategy
         EventHelper.notifyCamelContextStopped(this);
@@ -3454,7 +3599,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public InterceptStrategy getDefaultBacklogTracer() {
         if (defaultBacklogTracer == null) {
-            defaultBacklogTracer = new BacklogTracer(this);
+            defaultBacklogTracer = BacklogTracer.createTracer(this);
         }
         return defaultBacklogTracer;
     }

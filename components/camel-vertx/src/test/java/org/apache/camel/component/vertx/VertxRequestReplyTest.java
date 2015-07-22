@@ -50,12 +50,6 @@ public class VertxRequestReplyTest extends VertxBaseTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // camel-vertx cannot be ran with JDK 1.6
-                org.junit.Assume.assumeTrue(!isJava16());
-
-                VertxComponent vertx = getContext().getComponent("vertx", VertxComponent.class);
-                vertx.setPort(getPort());
-
                 from(startUri).to(middleUri).to(resultUri);
 
                 from(middleUri)

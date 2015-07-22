@@ -91,7 +91,12 @@ public class NettyProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
+        if (configuration.getWorkerGroup() == null) {
+            // create new pool which we should shutdown when stopping as its not shared
+            workerGroup = new NettyWorkerPoolBuilder().withWorkerCount(configuration.getWorkerCount())
+                .withName("NettyClientTCPWorker").build();
+        }
+        
         if (configuration.isProducerPoolEnabled()) {
             // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
             GenericObjectPool.Config config = new GenericObjectPool.Config();
@@ -228,9 +233,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
-                    // no success the set the caused exception and signal callback and break
-                    exchange.setException(channelFuture.cause());
-                    producerCallback.done(false);
+                    // no success then exit, (any exception has been handled by ClientChannelHandler#exceptionCaught)
                     return;
                 }
 
@@ -312,19 +315,12 @@ public class NettyProducer extends DefaultAsyncProducer {
     }
 
     protected EventLoopGroup getWorkerGroup() {
-
         // prefer using explicit configured thread pools
         EventLoopGroup wg = configuration.getWorkerGroup();
-        
         if (wg == null) {
-            // create new pool which we should shutdown when stopping as its not
-            // shared
-            workerGroup = new NettyWorkerPoolBuilder().withWorkerCount(configuration.getWorkerCount())
-                .withName("NettyClientTCPWorker").build();
             wg = workerGroup;
         }
         return wg;
-
     }
 
     protected ChannelFuture openConnection() throws Exception {

@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -30,7 +31,8 @@ import org.apache.camel.util.ExchangeHelper;
 /**
  * A processor which sets the body on the IN or OUT message with an {@link Expression}
  */
-public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+    private String id;
     private final Expression expression;
 
     public SetBodyProcessor(Expression expression) {
@@ -45,6 +47,12 @@ public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, 
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Object newBody = expression.evaluate(exchange, Object.class);
+
+            if (exchange.getException() != null) {
+                // the expression threw an exception so we should break-out
+                callback.done(true);
+                return true;
+            }
 
             boolean out = exchange.hasOut();
             Message old = out ? exchange.getOut() : exchange.getIn();
@@ -65,7 +73,7 @@ public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, 
                 old.setBody(newBody);
             }
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
         }
 
@@ -80,6 +88,18 @@ public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public String getTraceLabel() {
         return "setBody[" + expression + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 
     @Override

@@ -70,6 +70,9 @@ public class DockerComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
+    /**
+     * To use the shared docker configuration
+     */
     protected DockerConfiguration getConfiguration() {
         return configuration;
     }
@@ -78,6 +81,9 @@ public class DockerComponent extends DefaultComponent {
         return clients.get(clientProfile);
     }
 
+    /**
+     * To use the given docker client
+     */
     public void setClient(DockerClientProfile clientProfile, DockerClient client) {
         clients.put(clientProfile, client);
     }

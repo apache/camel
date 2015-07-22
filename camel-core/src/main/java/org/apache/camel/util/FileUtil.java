@@ -583,9 +583,15 @@ public final class FileUtil {
      * @throws IOException is thrown if error creating the new file
      */
     public static boolean createNewFile(File file) throws IOException {
+        // need to check first
+        if (file.exists()) {
+            return false;
+        }
         try {
             return file.createNewFile();
         } catch (IOException e) {
+            // and check again if the file was created as createNewFile may create the file
+            // but throw a permission error afterwards when using some NAS
             if (file.exists()) {
                 return true;
             } else {

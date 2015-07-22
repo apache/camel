@@ -28,6 +28,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -35,6 +36,7 @@ import org.apache.camel.processor.resequencer.ResequencerEngine;
 import org.apache.camel.processor.resequencer.SequenceElementComparator;
 import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -65,15 +67,17 @@ import org.slf4j.LoggerFactory;
  * 
  * @see ResequencerEngine
  */
-public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, AsyncProcessor, Navigate<Processor>, Traceable {
+public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
 
     private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
     private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
 
+    private String id;
     private final CamelContext camelContext;
     private final ExceptionHandler exceptionHandler;
     private final ResequencerEngine<Exchange> engine;
     private final Processor processor;
+    private final Expression expression;
     private Delivery delivery;
     private int capacity;
     private boolean ignoreInvalidExchanges;
@@ -84,13 +88,18 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
      * @param processor next processor that processes re-ordered exchanges.
      * @param comparator a sequence element comparator for exchanges.
      */
-    public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator) {
+    public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator, Expression expression) {
         ObjectHelper.notNull(camelContext, "CamelContext");
         this.camelContext = camelContext;
         this.engine = new ResequencerEngine<Exchange>(comparator);
         this.engine.setSequenceSender(this);
         this.processor = processor;
+        this.expression = expression;
         this.exceptionHandler = new LoggingExceptionHandler(camelContext, getClass());
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 
     /**
@@ -148,6 +157,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         engine.setRejectOld(rejectOld);
     }
 
+    public boolean isRejectOld() {
+        return engine.getRejectOld() != null && engine.getRejectOld();
+    }
+
     /**
      * Sets whether to ignore invalid exchanges which cannot be used by this stream resequencer.
      * <p/>
@@ -165,6 +178,14 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     public String getTraceLabel() {
         return "streamResequence";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

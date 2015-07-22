@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.lightcouch.CouchDbClient;
 
-@UriEndpoint(scheme = "couchdb", syntax = "couchdb:protocol:hostname:port/database", consumerClass = CouchDbConsumer.class, label = "database,nosql")
+@UriEndpoint(scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database", consumerClass = CouchDbConsumer.class, label = "database,nosql")
 public class CouchDbEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_STYLE = "main_only";
@@ -39,7 +39,7 @@ public class CouchDbEndpoint extends DefaultEndpoint {
 
     private static final String URI_ERROR = "Invalid URI. Format must be of the form couchdb:http[s]://hostname[:port]/database?[options...]";
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(enums = "http,https") @Metadata(required = "true")
     private String protocol;
     @UriPath @Metadata(required = "true")
     private String hostname;
@@ -47,7 +47,7 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     private int port;
     @UriPath @Metadata(required = "true")
     private String database;
-    @UriParam(defaultValue = DEFAULT_STYLE)
+    @UriParam(enums = "all_docs,main_only", defaultValue = DEFAULT_STYLE)
     private String style = DEFAULT_STYLE;
     @UriParam
     private String username;
@@ -55,7 +55,7 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam(defaultValue = "" + DEFAULT_HEARTBEAT)
     private long heartbeat = DEFAULT_HEARTBEAT;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean createDatabase;
     @UriParam(defaultValue = "true")
     private boolean deletes = true;
@@ -124,6 +124,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return protocol;
     }
 
+    /**
+     * The protocol to use for communicating with the database.
+     */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
@@ -132,6 +135,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return hostname;
     }
 
+    /**
+     * Hostname of the running couchdb instance
+     */
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
@@ -140,6 +146,10 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return style;
     }
 
+    /**
+     * Specifies how many revisions are returned in the changes array.
+     * The default, main_only, will only return the current "winning" revision; all_docs will return all leaf revisions (including conflicts and deleted former conflicts.)
+     */
     public void setStyle(String style) {
         this.style = style;
     }
@@ -148,6 +158,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return username;
     }
 
+    /**
+     * Username in case of authenticated databases
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -156,6 +169,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return database;
     }
 
+    /**
+     * Name of the database to use
+     */
     public void setDatabase(String database) {
         this.database = database;
     }
@@ -164,6 +180,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return password;
     }
 
+    /**
+     * Password for authenticated databases
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -172,6 +191,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return port;
     }
 
+    /**
+     * Port number for the running couchdb instance
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -180,6 +202,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return heartbeat;
     }
 
+    /**
+     * How often to send an empty message to keep socket alive in millis
+     */
     public void setHeartbeat(long heartbeat) {
         this.heartbeat = heartbeat;
     }
@@ -188,6 +213,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return createDatabase;
     }
 
+    /**
+     * Creates the database if it does not already exist
+     */
     public void setCreateDatabase(boolean createDatabase) {
         this.createDatabase = createDatabase;
     }
@@ -196,6 +224,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return deletes;
     }
 
+    /**
+     * Document deletes are published as events
+     */
     public void setDeletes(boolean deletes) {
         this.deletes = deletes;
     }
@@ -204,6 +235,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         return updates;
     }
 
+    /**
+     * Document inserts/updates are published as events
+     */
     public void setUpdates(boolean updates) {
         this.updates = updates;
     }

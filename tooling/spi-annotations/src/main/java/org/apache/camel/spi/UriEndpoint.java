@@ -37,8 +37,19 @@ public @interface UriEndpoint {
      * <p/>
      * Multiple scheme names can be defined as a comma separated value.
      * For example to associate <tt>http</tt> and <tt>https</tt> to the same endpoint implementation.
+     * <p/>
+     * The order of the scheme names here should be the same order as in {@link #extendsScheme()} so their are paired.
      */
     String scheme();
+
+    /**
+     * Used when an endpoint is extending another endpoint
+     * <p/>
+     * Multiple scheme names can be defined as a comma separated value.
+     * For example to associate <tt>ftp</tt> and <tt>ftps</tt> to the same endpoint implementation.
+     * The order of the scheme names here should be the same order as in {@link #scheme()} so their are paired.
+     */
+    String extendsScheme() default "";
 
     /**
      * Represent the URI syntax the endpoint must use.
@@ -72,6 +83,13 @@ public @interface UriEndpoint {
      * properties from the consumer properties
      */
     String consumerPrefix() default "";
+
+    /**
+     * A human readable title of this entity, such as the component name of the this endpoint.
+     * <p/>
+     * For example: JMS, MQTT, Netty HTTP, SAP NetWeaver
+     */
+    String title();
 
     /**
      * To associate this endpoint with label(s).

@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -33,16 +34,17 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 /**
  *
  */
-@UriEndpoint(scheme = "atmosphere-websocket", syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "http,websocket")
+@UriEndpoint(scheme = "atmosphere-websocket", extendsScheme = "servlet", title = "Atmosphere Websocket",
+        syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "websocket")
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;
 
-    @UriPath
+    @UriPath(description = "Name of websocket endpoint") @Metadata(required = "true")
     private String servicePath;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean sendToAll;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useStreaming;
     
     public WebsocketEndpoint(String endPointURI, WebsocketComponent component, URI httpUri, HttpClientParams params, HttpConnectionManager httpConnectionManager,
@@ -72,29 +74,23 @@ public class WebsocketEndpoint extends ServletEndpoint {
         return true;
     }
 
-    /**
-     * @return the sendToAll
-     */
     public boolean isSendToAll() {
         return sendToAll;
     }
 
     /**
-     * @param sendToAll the sendToAll to set
+     * Whether to send to all (broadcast) or send to a single receiver.
      */
     public void setSendToAll(boolean sendToAll) {
         this.sendToAll = sendToAll;
     }
     
-    /**
-     * @return the useStreaming
-     */
     public boolean isUseStreaming() {
         return useStreaming;
     }
 
     /**
-     * @param useStreaming the useStreaming to set
+     * To enable streaming to send data as multiple text fragments.
      */
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;

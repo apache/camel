@@ -18,8 +18,8 @@ package org.apache.camel.component.netty4;
 
 import java.net.InetSocketAddress;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 
@@ -43,8 +43,13 @@ public final class NettyPayloadHelper {
             // we should transfer the entire exchange over the wire (includes in/out)
             return DefaultExchangeHolder.marshal(exchange);
         } else {
-            // normal transfer using the body only
-            return exchange.getIn().getBody();
+            if (endpoint.getConfiguration().isUseByteBuf()) {
+                // Just leverage the type converter 
+                return exchange.getIn().getBody(ByteBuf.class);
+            } else {
+                // normal transfer using the body only
+                return exchange.getIn().getBody();
+            }
         }
     }
 
@@ -73,6 +78,8 @@ public final class NettyPayloadHelper {
             }
             // setup the sender address here for sending the response message back
             exchange.setProperty(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
+            // setup the remote address to the message header at the same time
+            exchange.getIn().setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
         } else {
             // normal transfer using the body only
             exchange.getIn().setBody(payload);

@@ -102,17 +102,17 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         assertTrue(exchangeThree.getException() instanceof RejectedExecutionException);
     }
     
-    public void testHalfOpenAfterMessageThreeSync() throws Exception {
+    public void testHalfOpenAfterTimeoutSync() throws Exception {
         String endpoint = "direct:start";
-        halfOpenAfterMessageThree(endpoint);
+        halfOpenAfterTimeout(endpoint);
     }
     
-    public void testHalfOpenAfterMessageThreeAsync() throws Exception {
+    public void testHalfOpenAfterTimeoutAsync() throws Exception {
         String endpoint = "direct:start-async";
-        halfOpenAfterMessageThree(endpoint);
+        halfOpenAfterTimeout(endpoint);
     }
     
-    private void halfOpenAfterMessageThree(String endpoint) throws InterruptedException, Exception {
+    private void halfOpenAfterTimeout(String endpoint) throws InterruptedException, Exception {
         expectsMessageCount(2, result);
 
         result.whenAnyExchangeReceived(new Processor() {
@@ -125,6 +125,7 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         Exchange exchangeOne = sendMessage(endpoint, "message one");
         Exchange exchangeTwo = sendMessage(endpoint, "message two");
         Exchange exchangeThree = sendMessage(endpoint, "message three");
+        Exchange exchangeFour = sendMessage(endpoint, "message four");
         assertMockEndpointsSatisfied();
         Thread.sleep(1000);
         result.reset();
@@ -135,15 +136,16 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
             }
         });
         expectsMessageCount(1, result);
-        Exchange exchangeFour = sendMessage(endpoint, "message four");
         Exchange exchangeFive = sendMessage(endpoint, "message five");
+        Exchange exchangeSix = sendMessage(endpoint, "message six");
         assertMockEndpointsSatisfied();
         
         assertTrue(exchangeOne.getException() instanceof MyCustomException);
         assertTrue(exchangeTwo.getException() instanceof MyCustomException);
         assertTrue(exchangeThree.getException() instanceof RejectedExecutionException);
-        assertTrue(exchangeFour.getException() instanceof MyCustomException);
-        assertTrue(exchangeFive.getException() instanceof RejectedExecutionException);
+        assertTrue(exchangeFour.getException() instanceof RejectedExecutionException);
+        assertTrue(exchangeFive.getException() instanceof MyCustomException);
+        assertTrue(exchangeSix.getException() instanceof RejectedExecutionException);
     }
     
     public void testHalfOpenToCloseTransitionSync() throws Exception {

@@ -51,6 +51,10 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_FALLBACK;
     private Boolean ignoreResourceNotFound;
 
+    public int getSystemPropertiesMode() {
+        return systemPropertiesMode;
+    }
+
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
         super.processProperties(beanFactoryToProcess, props);
@@ -111,6 +115,17 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     public void setIgnoreResourceNotFound(boolean ignoreResourceNotFound) {
         super.setIgnoreResourceNotFound(ignoreResourceNotFound);
         this.ignoreResourceNotFound = ignoreResourceNotFound;
+    }
+    
+    @Override
+    protected String resolvePlaceholder(String placeholder, Properties props) {
+        String value = props.getProperty(placeholder);
+        if (parser != null) {
+            // Just apply the parser to the place holder value to avoid configuring the other placeholder configure twice for the inside and outside camel context
+            return parser.parseProperty(placeholder, value, props);
+        } else {
+            return value;
+        }
     }
 
     @Override
@@ -215,7 +230,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
         public String resolvePlaceholder(String placeholderName) {
             String propVal = null;
-            if (systemPropertiesMode  == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            if (systemPropertiesMode == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 propVal = resolveSystemProperty(placeholderName);
             }
             if (propVal == null) {

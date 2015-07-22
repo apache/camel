@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.io.StringReader;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -51,7 +53,19 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    
+    @Test
+    public void testSendingAMessageUsingWiretapShouldNotDeleteStreamFileBeforeAllExcangesAreComplete() throws InterruptedException {
 
+        x.expectedMessageCount(1);
+        y.expectedMessageCount(1);
+        z.expectedMessageCount(1);
+
+        // the used file should contain more than one character in order to be streamed into the file system
+        template.sendBody("direct:a", this.getClass().getClassLoader().getResourceAsStream("org/apache/camel/processor/twoCharacters.txt"));
+
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected void setUp() throws Exception {
@@ -76,6 +90,8 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
             public void configure() {
                 // enable stream caching
                 context.setStreamCaching(true);
+                // set stream threshold to 1, in order to stream into the file system
+                context.getStreamCachingStrategy().setSpoolThreshold(1);
 
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
@@ -83,7 +99,8 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
                 from("direct:a").wireTap("direct:x").wireTap("direct:y").wireTap("direct:z");
 
                 from("direct:x").process(processor).to("mock:x");
-                from("direct:y").process(processor).to("mock:y");
+                // even if a process takes more time then the others the wire tap shall work
+                from("direct:y").delay(2000).process(processor).to("mock:y");
                 from("direct:z").process(processor).to("mock:z");
             }
         };

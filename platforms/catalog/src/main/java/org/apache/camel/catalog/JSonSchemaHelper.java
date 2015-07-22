@@ -25,7 +25,8 @@ import java.util.regex.Pattern;
 
 public final class JSonSchemaHelper {
 
-    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"");
+    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]");
+    private static final String QUOT = "&quot;";
 
     private JSonSchemaHelper() {
     }
@@ -51,7 +52,7 @@ public final class JSonSchemaHelper {
             // we need to find the group first
             if (!found) {
                 String s = line.trim();
-                found = s.startsWith("\"" + group + "\":");
+                found = s.startsWith("\"" + group + "\":") && s.endsWith("{");
                 continue;
             }
 
@@ -59,6 +60,9 @@ public final class JSonSchemaHelper {
             if (line.equals("  },") || line.equals("  }")) {
                 break;
             }
+
+            // need to safe encode \" so we can parse the line
+            line = line.replaceAll("\"\\\\\"\"", '"' + QUOT + '"');
 
             Map<String, String> row = new LinkedHashMap<String, String>();
             Matcher matcher = PATTERN.matcher(line);
@@ -75,6 +79,18 @@ public final class JSonSchemaHelper {
                     key = matcher.group(1);
                 } else {
                     String value = matcher.group(1);
+                    if (value == null) {
+                        value = matcher.group(2);
+                        // its an enum so strip out " and trim spaces after comma
+                        value = value.replaceAll("\"", "");
+                        value = value.replaceAll(", ", ",");
+                    }
+                    if (value != null) {
+                        value = value.trim();
+                        // decode
+                        value = value.replaceAll(QUOT, "\"");
+                        value = decodeJson(value);
+                    }
                     row.put(key, value);
                     // reset
                     key = null;
@@ -86,6 +102,48 @@ public final class JSonSchemaHelper {
         }
 
         return answer;
+    }
+
+    private static String decodeJson(String value) {
+        // json encodes a \ as \\ so we need to decode from \\ back to \
+        if ("\\\\".equals(value)) {
+            value = "\\";
+        }
+        return value;
+    }
+
+    public static boolean isPropertyRequired(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            boolean required = false;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("required")) {
+                required = "true".equals(row.get("required"));
+            }
+            if (found) {
+                return required;
+            }
+        }
+        return false;
+    }
+
+    public static String getPropertyDefaultValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String defaultValue = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("defaultValue")) {
+                defaultValue = row.get("defaultValue");
+            }
+            if (found) {
+                return defaultValue;
+            }
+        }
+        return null;
     }
 
 }

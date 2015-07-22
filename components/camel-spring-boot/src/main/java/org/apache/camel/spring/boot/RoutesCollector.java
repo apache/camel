@@ -16,57 +16,89 @@
  */
 package org.apache.camel.spring.boot;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.model.RoutesDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.io.Resource;
 
+/**
+ * Collects routes from the various sources (like Spring application context beans registry or opinionated classpath
+ * locations) and injects these into the Camel context.
+ */
 public class RoutesCollector implements ApplicationListener<ContextRefreshedEvent> {
+
+    // Static collaborators
 
     private static final Logger LOG = LoggerFactory.getLogger(RoutesCollector.class);
 
     // Collaborators
 
-    private final ApplicationContext applicationContext;
-
     private final List<CamelContextConfiguration> camelContextConfigurations;
 
     // Constructors
 
-    public RoutesCollector(ApplicationContext applicationContext, List<CamelContextConfiguration> camelContextConfigurations) {
-        this.applicationContext = applicationContext;
-        this.camelContextConfigurations = camelContextConfigurations;
+    public RoutesCollector(List<CamelContextConfiguration> camelContextConfigurations) {
+        this.camelContextConfigurations = new ArrayList<CamelContextConfiguration>(camelContextConfigurations);
     }
 
     // Overridden
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
-        LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
-        for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
+        ApplicationContext applicationContext = contextRefreshedEvent.getApplicationContext();
+        if (applicationContext.getParent() == null) {
+            CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
+            LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
+            for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
+                try {
+                    LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
+                    camelContext.addRoutes(routesBuilder);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            loadXmlRoutes(applicationContext, camelContext);
+
+            if (camelContextConfigurations != null) {
+                for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
+                    LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
+                    camelContextConfiguration.beforeApplicationStart(camelContext);
+                }
+            }
             try {
-                LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
-                camelContext.addRoutes(routesBuilder);
+                camelContext.start();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new CamelSpringBootInitializationException(e);
             }
+        } else {
+            LOG.debug("Not at root context - defer adding routes");
         }
-        if (camelContextConfigurations != null) {
-            for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
-                LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
-                camelContextConfiguration.beforeApplicationStart(camelContext);
-            }
-        }
+    }
+
+    // Helpers
+
+    private void loadXmlRoutes(ApplicationContext applicationContext, CamelContext camelContext) {
+        LOG.debug("Started XML routes detection. Scanning classpath (/camel/*.xml)...");
         try {
-            camelContext.start();
+            Resource[] xmlRoutes = applicationContext.getResources("classpath:camel/*.xml");
+            for (Resource xmlRoute : xmlRoutes) {
+                RoutesDefinition xmlDefinition = camelContext.loadRoutesDefinition(xmlRoute.getInputStream());
+                camelContext.addRouteDefinitions(xmlDefinition.getRoutes());
+            }
+        } catch (FileNotFoundException e) {
+            LOG.debug("No XMl routes found in the classpath (/camel/*.xml). Skipping XML routes detection.");
         } catch (Exception e) {
-            throw new CamelSpringBootInitializationException(e);
+            throw new RuntimeException(e);
         }
     }
 

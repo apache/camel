@@ -30,10 +30,11 @@ import org.apache.camel.spi.UriPath;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
-@UriEndpoint(scheme = "servlet", syntax = "servlet:servletName", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
+@UriEndpoint(scheme = "servlet", extendsScheme = "http", title = "Servlet",
+        syntax = "servlet:servletName", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
 public class ServletEndpoint extends HttpEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(label = "consumer") @Metadata(required = "true")
     private String servletName;
 
     public ServletEndpoint() {

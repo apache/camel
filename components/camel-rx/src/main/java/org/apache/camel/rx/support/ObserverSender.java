@@ -19,19 +19,22 @@ package org.apache.camel.rx.support;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.rx.RuntimeCamelRxException;
-
+import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.util.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Observer;
 
 /**
  * An {@link Observer} which sends events to a given {@link Endpoint}
  */
 public class ObserverSender<T> implements Observer<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(ObserverSender.class);
+
     private Producer producer;
 
     public ObserverSender(Endpoint endpoint) throws Exception {
-        this.producer = endpoint.createProducer();
+        this.producer = new UnitOfWorkProducer(endpoint.createProducer());
         ServiceHelper.startService(producer);
     }
 
@@ -41,7 +44,7 @@ public class ObserverSender<T> implements Observer<T> {
             try {
                 ServiceHelper.stopService(producer);
             } catch (Exception e) {
-                throw new RuntimeCamelRxException(e);
+                LOG.warn("Error stopping producer: " + producer + " due " + e.getMessage() + ". This exception is ignored.", e);
             } finally {
                 producer = null;
             }
@@ -66,7 +69,7 @@ public class ObserverSender<T> implements Observer<T> {
         try {
             producer.process(exchange);
         } catch (Exception e) {
-            throw new RuntimeCamelRxException(e);
+            exchange.setException(e);
         }
     }
 

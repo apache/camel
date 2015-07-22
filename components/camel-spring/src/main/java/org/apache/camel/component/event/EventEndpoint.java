@@ -39,7 +39,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  *
  * @version 
  */
-@UriEndpoint(scheme = "spring-event", syntax = "spring-event:name", consumerClass = EventConsumer.class, label = "spring,eventbus")
+@UriEndpoint(scheme = "spring-event", title = "Spring Event", syntax = "spring-event:name", consumerClass = EventConsumer.class, label = "spring,eventbus")
 public class EventEndpoint extends DefaultEndpoint implements ApplicationContextAware {
     private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;

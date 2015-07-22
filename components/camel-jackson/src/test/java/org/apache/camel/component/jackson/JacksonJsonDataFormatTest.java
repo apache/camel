@@ -29,12 +29,8 @@ public class JacksonJsonDataFormatTest extends JacksonMarshalTest {
                 from("direct:in").marshal().json(JsonLibrary.Jackson);
                 from("direct:back").unmarshal().json(JsonLibrary.Jackson).to("mock:reverse");
 
-                // no possible usage of the json() DSL method here as there's no prettyPrint option available through it
-                JacksonDataFormat prettyPrintDataFormat = new JacksonDataFormat();
-                prettyPrintDataFormat.setPrettyPrint(true);
-
-                from("direct:pretty").marshal(prettyPrintDataFormat);
-                from("direct:backPretty").unmarshal(prettyPrintDataFormat).to("mock:reverse");
+                from("direct:inPretty").marshal().json(JsonLibrary.Jackson, true);
+                from("direct:backPretty").unmarshal().json(JsonLibrary.Jackson).to("mock:reverse");
 
                 from("direct:inPojo").marshal().json(JsonLibrary.Jackson);
                 from("direct:backPojo").unmarshal().json(JsonLibrary.Jackson, TestPojo.class).to("mock:reversePojo");

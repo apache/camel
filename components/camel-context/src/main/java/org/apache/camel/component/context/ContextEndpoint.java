@@ -23,15 +23,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "context", syntax = "context:contextId:localEndpointUrl", label = "endpoint")
+@UriEndpoint(scheme = "context", title = "Camel Context", syntax = "context:contextId:localEndpointUrl", label = "endpoint")
 public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String contextId;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String localEndpointUrl;
 
     private final Endpoint delegate;
@@ -50,6 +51,9 @@ public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint
         return contextId;
     }
 
+    /**
+     * Is the ID you used to register the CamelContext into the Registry.
+     */
     public void setContextId(String contextId) {
         this.contextId = contextId;
     }
@@ -58,6 +62,13 @@ public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint
         return localEndpointUrl;
     }
 
+    /**
+     * Can be a valid Camel URI evaluated within the black box CamelContext.
+     * Or it can be a logical name which is mapped to any local endpoints.
+     * For example if you locally have endpoints like direct:invoices and seda:purchaseOrders
+     * inside a CamelContext of id supplyChain, then you can just use the URIs supplyChain:invoices
+     * or supplyChain:purchaseOrders to omit the physical endpoint kind and use pure logical URIs.
+     */
     public void setLocalEndpointUrl(String localEndpointUrl) {
         this.localEndpointUrl = localEndpointUrl;
     }

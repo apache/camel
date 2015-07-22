@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.swf;
 
+import java.util.Arrays;
+
 import com.amazonaws.services.simpleworkflow.flow.worker.GenericWorkflowWorker;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -23,7 +25,6 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.apache.camel.ExchangePattern.InOnly;
 
 public class SWFWorkflowConsumer extends DefaultConsumer {
@@ -39,7 +40,7 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     }
 
     public Object processWorkflow(Object[] parameters, long startTime, boolean replaying) throws Exception {
-        LOGGER.debug("Processing workflow task: " + parameters);
+        LOGGER.debug("Processing workflow task: " + Arrays.toString(parameters));
         Exchange exchange = endpoint.createExchange(parameters, SWFConstants.EXECUTE_ACTION);
         exchange.getIn().setHeader(SWFConstants.WORKFLOW_START_TIME, startTime);
         exchange.getIn().setHeader(SWFConstants.WORKFLOW_REPLAYING, replaying);
@@ -49,7 +50,7 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     }
 
     public void signalRecieved(Object[] parameters) throws Exception {
-        LOGGER.debug("signalRecieved: " + parameters);
+        LOGGER.debug("signalRecieved: " + Arrays.toString(parameters));
 
         Exchange exchange = endpoint.createExchange(parameters, SWFConstants.SIGNAL_RECEIVED_ACTION);
         exchange.setPattern(InOnly);

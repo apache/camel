@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
@@ -389,7 +388,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     /**
      * Advice to inject the current {@link RouteContext} into the {@link UnitOfWork} on the {@link Exchange}
+     *
+     * @deprecated this logic has been merged into {@link org.apache.camel.processor.CamelInternalProcessor.UnitOfWorkProcessorAdvice}
      */
+    @Deprecated
     public static class RouteContextAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
 
         private final RouteContext routeContext;
@@ -521,15 +523,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public static final class BacklogTracerAdvice implements CamelInternalProcessorAdvice {
 
-        private final Queue<DefaultBacklogTracerEventMessage> queue;
         private final BacklogTracer backlogTracer;
         private final ProcessorDefinition<?> processorDefinition;
         private final ProcessorDefinition<?> routeDefinition;
         private final boolean first;
 
-        public BacklogTracerAdvice(Queue<DefaultBacklogTracerEventMessage> queue, BacklogTracer backlogTracer,
-                                   ProcessorDefinition<?> processorDefinition, ProcessorDefinition<?> routeDefinition, boolean first) {
-            this.queue = queue;
+        public BacklogTracerAdvice(BacklogTracer backlogTracer, ProcessorDefinition<?> processorDefinition,
+                                   ProcessorDefinition<?> routeDefinition, boolean first) {
             this.backlogTracer = backlogTracer;
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;
@@ -539,16 +539,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public Object before(Exchange exchange) throws Exception {
             if (backlogTracer.shouldTrace(processorDefinition, exchange)) {
-                // ensure there is space on the queue
-                int drain = queue.size() - backlogTracer.getBacklogSize();
-                // and we need room for ourselves and possible also a first pseudo message as well
-                drain += first ? 2 : 1;
-                if (drain > 0) {
-                    for (int i = 0; i < drain; i++) {
-                        queue.poll();
-                    }
-                }
-
                 Date timestamp = new Date();
                 String toNode = processorDefinition.getId();
                 String exchangeId = exchange.getExchangeId();
@@ -560,10 +550,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 if (first) {
                     Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
                     DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
-                    queue.add(pseudo);
+                    backlogTracer.traceEvent(pseudo);
                 }
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), timestamp, routeId, toNode, exchangeId, messageAsXml);
-                queue.add(event);
+                backlogTracer.traceEvent(event);
             }
 
             return null;
@@ -617,37 +607,55 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
 
-        private final String routeId;
+        private final RouteContext routeContext;
 
-        public UnitOfWorkProcessorAdvice(String routeId) {
-            this.routeId = routeId;
+        public UnitOfWorkProcessorAdvice(RouteContext routeContext) {
+            this.routeContext = routeContext;
         }
 
         @Override
         public UnitOfWork before(Exchange exchange) throws Exception {
             // if the exchange doesn't have from route id set, then set it if it originated
             // from this unit of work
-            if (routeId != null && exchange.getFromRouteId() == null) {
+            if (routeContext != null && exchange.getFromRouteId() == null) {
+                String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
                 exchange.setFromRouteId(routeId);
             }
+
+            // only return UnitOfWork if we created a new as then its us that handle the lifecycle to done the created UoW
+            UnitOfWork created = null;
 
             if (exchange.getUnitOfWork() == null) {
                 // If there is no existing UoW, then we should start one and
                 // terminate it once processing is completed for the exchange.
-                UnitOfWork uow = createUnitOfWork(exchange);
-                exchange.setUnitOfWork(uow);
-                uow.start();
-                return uow;
+                created = createUnitOfWork(exchange);
+                exchange.setUnitOfWork(created);
+                created.start();
             }
 
-            return null;
+            // for any exchange we should push/pop route context so we can keep track of which route we are routing
+            if (routeContext != null) {
+                UnitOfWork existing = exchange.getUnitOfWork();
+                if (existing != null) {
+                    existing.pushRouteContext(routeContext);
+                }
+            }
+
+            return created;
         }
 
         @Override
         public void after(Exchange exchange, UnitOfWork uow) throws Exception {
+            UnitOfWork existing = exchange.getUnitOfWork();
+
             // execute done on uow if we created it, and the consumer is not doing it
             if (uow != null) {
                 UnitOfWorkHelper.doneUow(uow, exchange);
+            }
+
+            // after UoW is done lets pop the route context which must be done on every existing UoW
+            if (routeContext != null && existing != null) {
+                existing.popRouteContext();
             }
         }
 
@@ -664,8 +672,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         private final UnitOfWork parent;
 
-        public ChildUnitOfWorkProcessorAdvice(String routeId, UnitOfWork parent) {
-            super(routeId);
+        public ChildUnitOfWorkProcessorAdvice(RouteContext routeContext, UnitOfWork parent) {
+            super(routeContext);
             this.parent = parent;
         }
 

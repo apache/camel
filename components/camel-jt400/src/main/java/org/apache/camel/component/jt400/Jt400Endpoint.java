@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
-@UriEndpoint(scheme = "jt400", syntax = "jt400:userID:password/systemName/objectPath.type", consumerClass = Jt400DataQueueConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", consumerClass = Jt400DataQueueConsumer.class, label = "messaging")
 public class Jt400Endpoint extends DefaultPollingEndpoint {
 
     public static final String KEY = "KEY";
@@ -246,4 +246,9 @@ public class Jt400Endpoint extends DefaultPollingEndpoint {
     public void setSystemName(String systemName) {
         configuration.setSystemName(systemName);
     }
+
+    public void setSecured(boolean secured) { configuration.setSecured(secured); }
+
+    public boolean isSecured() { return configuration.isSecured(); }
+
 }

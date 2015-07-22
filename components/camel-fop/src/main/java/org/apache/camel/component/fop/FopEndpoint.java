@@ -34,23 +34,23 @@ import org.apache.fop.apps.FopFactory;
 /**
  * Represents a Fop endpoint.
  */
-@UriEndpoint(scheme = "fop", syntax = "fop:outputFormat", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, label = "transformation")
 public class FopEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
-    private String outputFormat;
+    private FopOutputType outputType;
     @UriParam
     private String userConfigURL;
     @UriParam
     private FopFactory fopFactory;
 
-    public FopEndpoint(String uri, FopComponent component, String outputFormat) {
+    public FopEndpoint(String uri, FopComponent component, FopOutputType outputType) {
         super(uri, component);
-        this.outputFormat = outputFormat;
+        this.outputType = outputType;
     }
 
     public Producer createProducer() throws Exception {
-        return new FopProducer(this, fopFactory, outputFormat);
+        return new FopProducer(this, fopFactory, outputType.getFormatExtended());
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -61,18 +61,24 @@ public class FopEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public String getOutputFormat() {
-        return outputFormat;
+    public FopOutputType getOutputType() {
+        return outputType;
     }
 
-    public void setOutputFormat(String outputFormat) {
-        this.outputFormat = outputFormat;
+    /**
+     * The primary output format is PDF but other output formats are also supported.
+     */
+    public void setOutputType(FopOutputType outputType) {
+        this.outputType = outputType;
     }
 
     public String getUserConfigURL() {
         return userConfigURL;
     }
 
+    /**
+     * The location of a configuration file which can be loaded from classpath or file system.
+     */
     public void setUserConfigURL(String userConfigURL) {
         this.userConfigURL = userConfigURL;
     }
@@ -81,6 +87,9 @@ public class FopEndpoint extends DefaultEndpoint {
         return fopFactory;
     }
 
+    /**
+     * Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory.
+     */
     public void setFopFactory(FopFactory fopFactory) {
         this.fopFactory = fopFactory;
     }

@@ -49,7 +49,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-stream</artifactId>
+      <artifactId>camel-servlet</artifactId>
       <version>${camel-version}</version>
     </dependency>
 
@@ -112,10 +112,10 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-version}</version>
+        <version>${jetty-plugin-version}</version>
         <configuration>
           <webAppConfig>
-            <contextPath>/</contextPath>
+            <contextPath>/${project.artifactId}</contextPath>
           </webAppConfig>
           <systemProperties>
             <!-- enable easy JMX connection to JConsole -->

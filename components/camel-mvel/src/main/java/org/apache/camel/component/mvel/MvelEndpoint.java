@@ -34,7 +34,7 @@ import org.mvel2.templates.CompiledTemplate;
 import org.mvel2.templates.TemplateCompiler;
 import org.mvel2.templates.TemplateRuntime;
 
-@UriEndpoint(scheme = "mvel", syntax = "mvel:resourceUri", producerOnly = true, label = "transformation,script")
+@UriEndpoint(scheme = "mvel", title = "MVEL", syntax = "mvel:resourceUri", producerOnly = true, label = "transformation,script")
 public class MvelEndpoint extends ResourceEndpoint {
 
     @UriParam
@@ -65,6 +65,9 @@ public class MvelEndpoint extends ResourceEndpoint {
         return encoding;
     }
 
+    /**
+     * Character encoding of the resource content.
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }

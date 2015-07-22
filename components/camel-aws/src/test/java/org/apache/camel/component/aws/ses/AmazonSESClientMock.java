@@ -22,9 +22,12 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
+import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
+import com.amazonaws.services.simpleemail.model.SendRawEmailResult;
 
 public class AmazonSESClientMock extends AmazonSimpleEmailServiceClient {
     private SendEmailRequest sendEmailRequest;
+    private SendRawEmailRequest sendRawEmailRequest;
 
     public AmazonSESClientMock() {
         super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
@@ -38,8 +41,21 @@ public class AmazonSESClientMock extends AmazonSimpleEmailServiceClient {
         
         return result;
     }
+    
+    @Override
+    public SendRawEmailResult sendRawEmail(SendRawEmailRequest sendRawEmailRequest) throws AmazonServiceException, AmazonClientException {
+        this.sendRawEmailRequest = sendRawEmailRequest;
+        SendRawEmailResult result = new SendRawEmailResult();
+        result.setMessageId("1");
+        
+        return result;
+    }
 
     public SendEmailRequest getSendEmailRequest() {
         return sendEmailRequest;
+    }
+    
+    public SendRawEmailRequest getSendRawEmailRequest() {
+        return sendRawEmailRequest;
     }
 }

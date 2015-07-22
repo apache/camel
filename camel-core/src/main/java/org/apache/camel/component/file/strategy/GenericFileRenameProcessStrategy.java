@@ -67,7 +67,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
             }
         } finally {
             if (exclusiveReadLockStrategy != null) {
-                exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+                exclusiveReadLockStrategy.releaseExclusiveReadLockOnRollback(operations, file, exchange);
             }
             deleteLocalWorkFile(exchange);
         }

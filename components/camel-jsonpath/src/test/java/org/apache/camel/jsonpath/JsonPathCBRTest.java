@@ -68,7 +68,6 @@ public class JsonPathCBRTest extends CamelTestSupport {
         sendMessageToBicycleRoute("direct:bicycle");
         resetMocks();
         sendMessageToBicycleRoute("direct:bicycle2");
-        
     }
     
     private void sendMessageToBicycleRoute(String startPoint) throws Exception {

@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents a ${name} endpoint.
  */
-@UriEndpoint(scheme = "${scheme}", syntax="${scheme}:name", consumerClass = ${name}Consumer.class, label = "${name}")
+@UriEndpoint(scheme = "${scheme}", title = "${name}", syntax="${scheme}:name", consumerClass = ${name}Consumer.class, label = "${name}")
 public class ${name}Endpoint extends DefaultEndpoint {
     @UriPath @Metadata(required = "true")
     private String name;
@@ -58,6 +58,9 @@ public class ${name}Endpoint extends DefaultEndpoint {
         return true;
     }
 
+    /**
+     * Some description of this option, and what it does
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -66,6 +69,9 @@ public class ${name}Endpoint extends DefaultEndpoint {
         return name;
     }
 
+    /**
+     * Some description of this option, and what it does
+     */
     public void setOption(int option) {
         this.option = option;
     }

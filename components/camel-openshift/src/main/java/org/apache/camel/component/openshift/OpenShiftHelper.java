@@ -66,7 +66,7 @@ public final class OpenShiftHelper {
     public static String getStateForApplication(IApplication application) {
         for (IGearGroup group : application.getGearGroups()) {
             for (IGear gear : group.getGears()) {
-                String state = gear.getState().name().toLowerCase(Locale.ENGLISH);
+                String state = gear.getState().getState().toLowerCase(Locale.ENGLISH);
                 return state;
             }
         }

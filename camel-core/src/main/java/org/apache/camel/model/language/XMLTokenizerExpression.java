@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @see XMLTokenizeLanguage
  */
-@Metadata(label = "language")
+@Metadata(label = "language", title = "XML Tokenize")
 @XmlRootElement(name = "xtokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLTokenizerExpression extends NamespaceAwareExpression {
@@ -96,7 +96,6 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
 
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
-        super.configureExpression(camelContext, expression);
         if (headerName != null) {
             setProperty(expression, "headerName", headerName);
         }
@@ -106,11 +105,11 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         if (group != null) {
             setProperty(expression, "group", group);
         }
+        super.configureExpression(camelContext, expression);
     }
 
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        super.configurePredicate(camelContext, predicate);
         if (headerName != null) {
             setProperty(predicate, "headerName", headerName);
         }
@@ -120,11 +119,7 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         if (group != null) {
             setProperty(predicate, "group", group);
         }
+        super.configurePredicate(camelContext, predicate);
     }
 
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        Expression answer = super.createExpression(camelContext);
-        return answer;
-    }
 }

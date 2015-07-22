@@ -19,7 +19,7 @@ package org.apache.camel.util;
 import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
 
 /**
- * Helper methods for working with Strings. 
+ * Helper methods for working with Strings.
  */
 public final class StringHelper {
 
@@ -28,10 +28,10 @@ public final class StringHelper {
      */
     private StringHelper() {
     }
-    
+
     /**
      * Ensures that <code>s</code> is friendly for a URL or file system.
-     * 
+     *
      * @param s String to be sanitized.
      * @return sanitized version of <code>s</code>.
      * @throws NullPointerException if <code>s</code> is <code>null</code>.
@@ -73,8 +73,8 @@ public final class StringHelper {
             return s;
         }
 
-        s = s.replaceAll("'", "");
-        s = s.replaceAll("\"", "");
+        s = replaceAll(s, "'", "");
+        s = replaceAll(s, "\"", "");
         return s;
     }
 
@@ -94,7 +94,7 @@ public final class StringHelper {
         // no quotes, so return as-is
         return s;
     }
-    
+
     public static boolean isQuoted(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return false;
@@ -121,7 +121,11 @@ public final class StringHelper {
             return "";
         }
         // must replace amp first, so we dont replace &lt; to amp later
-        return text.replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        text = replaceAll(text, "&", "&amp;");
+        text = replaceAll(text, "\"", "&quot;");
+        text = replaceAll(text, "<", "&lt;");
+        text = replaceAll(text, ">", "&gt;");
+        return text;
     }
 
     /**
@@ -145,6 +149,23 @@ public final class StringHelper {
     }
 
     /**
+     * Determines if the string is a fully qualified class name
+     */
+    public static boolean isClassName(String text) {
+        boolean result = false;
+        if (text != null) {
+            String[] split = text.split("\\.");
+            if (split.length > 0) {
+                String lastToken = split[split.length - 1];
+                if (lastToken.length() > 0) {
+                    result = Character.isUpperCase(lastToken.charAt(0));
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Does the expression have the language start token?
      *
      * @param expression the expression
@@ -157,11 +178,11 @@ public final class StringHelper {
         }
 
         // for the simple language the expression start token could be "${"
-        if ("simple".equalsIgnoreCase(language) && expression.indexOf("${") >= 0) {
+        if ("simple".equalsIgnoreCase(language) && expression.contains("${")) {
             return true;
         }
 
-        if (language != null && expression.indexOf("$" + language + "{") >= 0) {
+        if (language != null && expression.contains("$" + language + "{")) {
             return true;
         }
 

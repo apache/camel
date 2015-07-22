@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.jetty.websocket.WebSocket;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -53,9 +54,15 @@ public class WebsocketComponentServletTest {
 
     private WebsocketComponentServlet websocketComponentServlet;
 
+    private Map<String, WebSocketFactory> socketFactory;
+    
+    
     @Before
     public void setUp() throws Exception {
-        websocketComponentServlet = new WebsocketComponentServlet(sync);
+        socketFactory = new HashMap<String, WebSocketFactory>();
+        socketFactory.put("default", new DefaultWebsocketFactory());
+        
+        websocketComponentServlet = new WebsocketComponentServlet(sync, socketFactory);
     }
 
     @Test

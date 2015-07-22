@@ -22,13 +22,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * A processor which sets the header on the IN or OUT message with an {@link org.apache.camel.Expression}
  */
-public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+    private String id;
     private final String headerName;
     private final Expression expression;
 
@@ -46,12 +48,18 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
         try {
             Object newHeader = expression.evaluate(exchange, Object.class);
 
+            if (exchange.getException() != null) {
+                // the expression threw an exception so we should break-out
+                callback.done(true);
+                return true;
+            }
+
             boolean out = exchange.hasOut();
             Message old = out ? exchange.getOut() : exchange.getIn();
 
             old.setHeader(headerName, newHeader);
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
         }
 
@@ -66,6 +74,22 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
 
     public String getTraceLabel() {
         return "setHeader[" + headerName + ", " + expression + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 
     @Override

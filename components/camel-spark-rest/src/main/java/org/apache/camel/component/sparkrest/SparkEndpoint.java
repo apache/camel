@@ -28,9 +28,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import spark.route.HttpMethod;
 
-@UriEndpoint(scheme = "spark-rest", syntax = "spark-rest:verb:path", consumerOnly = true, consumerClass =  SparkConsumer.class, label = "rest")
+@UriEndpoint(scheme = "spark-rest", title = "Spark Rest", syntax = "spark-rest:verb:path", consumerOnly = true, consumerClass =  SparkConsumer.class, label = "rest")
 public class SparkEndpoint extends DefaultEndpoint {
-    @UriPath @Metadata(required = "true")
+    @UriPath(enums = "get,post,put,patch,delete,head,trace,connect,options") @Metadata(required = "true")
     private String verb;
     @UriPath @Metadata(required = "true")
     private String path;
@@ -49,6 +49,9 @@ public class SparkEndpoint extends DefaultEndpoint {
         return sparkConfiguration;
     }
 
+    /**
+     * To use the SparkConfiguration
+     */
     public void setSparkConfiguration(SparkConfiguration sparkConfiguration) {
         this.sparkConfiguration = sparkConfiguration;
     }
@@ -57,6 +60,9 @@ public class SparkEndpoint extends DefaultEndpoint {
         return sparkBinding;
     }
 
+    /**
+     * To use a custom SparkBinding to map to/from Camel message.
+     */
     public void setSparkBinding(SparkBinding sparkBinding) {
         this.sparkBinding = sparkBinding;
     }
@@ -65,6 +71,9 @@ public class SparkEndpoint extends DefaultEndpoint {
         return verb;
     }
 
+    /**
+     * get, post, put, patch, delete, head, trace, connect, or options.
+     */
     public void setVerb(String verb) {
         this.verb = verb;
     }
@@ -73,6 +82,9 @@ public class SparkEndpoint extends DefaultEndpoint {
         return path;
     }
 
+    /**
+     * The content path which support Spark syntax.
+     */
     public void setPath(String path) {
         this.path = path;
     }
@@ -81,6 +93,9 @@ public class SparkEndpoint extends DefaultEndpoint {
         return accept;
     }
 
+    /**
+     * Accept type such as: 'text/xml', or 'application/json'. By default we accept all kinds of types.
+     */
     public void setAccept(String accept) {
         this.accept = accept;
     }

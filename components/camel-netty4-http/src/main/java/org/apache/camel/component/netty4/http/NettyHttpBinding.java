@@ -34,8 +34,7 @@ public interface NettyHttpBinding {
     /**
      * Binds from Netty {@link HttpRequest} to Camel {@link Message}.
      * <p/>
-     * Will use {@link #populateCamelHeaders(io.netty.handler.codec.http.HttpRequest, java.util.Map, org.apache.camel.Exchange, NettyHttpConfiguration)}
-     * for populating the headers.
+     * Will use the <tt>populateCamelHeaders</tt> method for populating the headers.
      *
      * @param request       the netty http request
      * @param exchange      the exchange that should contain the returned message.
@@ -59,8 +58,7 @@ public interface NettyHttpBinding {
     /**
      * Binds from Netty {@link HttpResponse} to Camel {@link Message}.
      * <p/>
-     * Will use {@link #populateCamelHeaders(io.netty.handler.codec.http.HttpResponse, java.util.Map, org.apache.camel.Exchange, NettyHttpConfiguration)}
-     * for populating the headers.
+     * Will use the <tt>populateCamelHeaders</tt> method for populating the headers.
      *
      * @param response      the netty http response
      * @param exchange      the exchange that should contain the returned message.

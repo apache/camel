@@ -21,6 +21,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -34,7 +35,8 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor {
+public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
+    private String id;
     private final Class<?> type;
     private final String charset;
 
@@ -53,6 +55,14 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
     @Override
     public String toString() {
         return "convertBodyTo[" + type.getCanonicalName() + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -79,7 +89,7 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         Object value;
         try {
             value = old.getMandatoryBody(type);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
             callback.done(true);
             return true;
@@ -113,6 +123,10 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
 
     public Class<?> getType() {
         return type;
+    }
+
+    public String getCharset() {
+        return charset;
     }
 
     @Override

@@ -36,7 +36,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a GoogleMail endpoint.
  */
-@UriEndpoint(scheme = "google-mail", syntax = "google-mail:apiName/methodName", consumerClass = GoogleMailConsumer.class, consumerPrefix = "consumer", label = "api,cloud,mail")
+@UriEndpoint(scheme = "google-mail", title = "Google Mail", syntax = "google-mail:apiName/methodName", consumerClass = GoogleMailConsumer.class, consumerPrefix = "consumer", label = "api,cloud,mail")
 public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration> {
 
     // TODO create and manage API proxy
@@ -113,5 +113,13 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         return apiProxy;
+    }
+    
+    public GoogleMailClientFactory getClientFactory() {
+        return ((GoogleMailComponent)getComponent()).getClientFactory();
+    }
+
+    public void setClientFactory(GoogleMailClientFactory clientFactory) {
+        ((GoogleMailComponent)getComponent()).setClientFactory(clientFactory);
     }
 }

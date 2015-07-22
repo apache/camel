@@ -139,5 +139,16 @@ public class CassandraIdempotentRepositoryTest {
         // Then
         assertTrue(result);
     }
+    
+    @Test
+    public void testClear() {
+        // Given
+        String key = "Remove_Exists";
+        assertTrue(exists(key));
+        // When
+        idempotentRepository.clear();
+        // Then
+        assertFalse(idempotentRepository.contains(key));
+    }
 
 }

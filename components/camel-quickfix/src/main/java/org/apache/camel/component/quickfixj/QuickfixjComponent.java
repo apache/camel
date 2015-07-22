@@ -64,7 +64,7 @@ public class QuickfixjComponent extends UriEndpointComponent implements StartupL
                 }
                 if (engine == null) {
                     QuickfixjConfiguration configuration = configurations.get(remaining);
-                    SessionSettings settings = null;
+                    SessionSettings settings;
                     if (configuration != null) {
                         settings = configuration.createSessionSettings();
                     } else {
@@ -90,6 +90,7 @@ public class QuickfixjComponent extends UriEndpointComponent implements StartupL
 
                 endpoint = new QuickfixjEndpoint(engine, uri, this);
                 endpoint.setConfigurationName(remaining);
+                endpoint.setLazyCreateEngine(engine.isLazy());
                 engine.addEventListener(endpoint);
                 endpoints.put(uri, endpoint);
             }
@@ -143,29 +144,34 @@ public class QuickfixjComponent extends UriEndpointComponent implements StartupL
         return Collections.unmodifiableMap(provisionalEngines);
     }
 
+    /**
+     * To use the given MessageFactory
+     */
     public void setMessageFactory(MessageFactory messageFactory) {
         this.messageFactory = messageFactory;
     }
 
+    /**
+     * To use the given LogFactory
+     */
     public void setLogFactory(LogFactory logFactory) {
         this.logFactory = logFactory;
     }
 
+    /**
+     * To use the given MessageStoreFactory
+     */
     public void setMessageStoreFactory(MessageStoreFactory messageStoreFactory) {
         this.messageStoreFactory = messageStoreFactory;
-    }
-
-    /**
-     * @deprecated Don't use as setting the {@code forcedShutdown} property had/has no effect.
-     */
-    @Deprecated
-    public void setForcedShutdown(boolean forcedShutdown) {
     }
 
     public Map<String, QuickfixjConfiguration> getConfigurations() {
         return configurations;
     }
 
+    /**
+     * To use the given map of pre configured QuickFix configurations mapped to the key
+     */
     public void setConfigurations(Map<String, QuickfixjConfiguration> configurations) {
         this.configurations = configurations;
     }
@@ -177,8 +183,6 @@ public class QuickfixjComponent extends UriEndpointComponent implements StartupL
     /**
      * If set to <code>true</code>, the engines will be created and started when needed (when first message
      * is send)
-     *
-     * @param lazyCreateEngines
      */
     public void setLazyCreateEngines(boolean lazyCreateEngines) {
         this.lazyCreateEngines = lazyCreateEngines;

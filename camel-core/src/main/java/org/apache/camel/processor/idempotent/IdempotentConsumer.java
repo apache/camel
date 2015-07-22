@@ -27,7 +27,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExchangeIdempotentRepository;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -48,21 +50,24 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.camel.spi.IdempotentRepository
  * @see org.apache.camel.spi.ExchangeIdempotentRepository
  */
-public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
+public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
+    private String id;
     private final Expression messageIdExpression;
     private final AsyncProcessor processor;
     private final IdempotentRepository<String> idempotentRepository;
     private final boolean eager;
+    private final boolean completionEager;
     private final boolean skipDuplicate;
     private final boolean removeOnFailure;
     private final AtomicLong duplicateMessageCount = new AtomicLong();
 
     public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository<String> idempotentRepository,
-                              boolean eager, boolean skipDuplicate, boolean removeOnFailure, Processor processor) {
+                              boolean eager, boolean completionEager, boolean skipDuplicate, boolean removeOnFailure, Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
         this.eager = eager;
+        this.completionEager = completionEager;
         this.skipDuplicate = skipDuplicate;
         this.removeOnFailure = removeOnFailure;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
@@ -73,11 +78,19 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         return "IdempotentConsumer[" + messageIdExpression + " -> " + processor + "]";
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final String messageId = messageIdExpression.evaluate(exchange, String.class);
         if (messageId == null) {
             exchange.setException(new NoMessageIdException(exchange, messageIdExpression));
@@ -118,11 +131,15 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
             }
         }
 
-        // register our on completion callback
-        exchange.addOnCompletion(new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure));
+        final Synchronization onCompletion = new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure);
+        final AsyncCallback target = new IdempotentConsumerCallback(exchange, onCompletion, callback, completionEager);
+        if (!completionEager) {
+            // the scope is to do the idempotent completion work as an unit of work on the exchange when its done being routed
+            exchange.addOnCompletion(onCompletion);
+        }
 
         // process the exchange
-        return processor.process(exchange, callback);
+        return processor.process(exchange, target);
     }
 
     public List<Processor> next() {
@@ -167,6 +184,22 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         ServiceHelper.stopServices(processor);
     }
 
+    public boolean isEager() {
+        return eager;
+    }
+
+    public boolean isCompletionEager() {
+        return completionEager;
+    }
+
+    public boolean isSkipDuplicate() {
+        return skipDuplicate;
+    }
+
+    public boolean isRemoveOnFailure() {
+        return removeOnFailure;
+    }
+
     /**
      * Resets the duplicate message counter to <code>0L</code>.
      */
@@ -181,6 +214,13 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     }
 
     /**
+     * Clear the idempotent repository
+     */
+    public void clear() {
+        idempotentRepository.clear();
+    }
+
+    /**
      * A strategy method to allow derived classes to overload the behaviour of
      * processing a duplicate message
      *
@@ -191,4 +231,41 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         // noop
     }
 
+    /**
+     * {@link org.apache.camel.AsyncCallback} that is invoked when the idempotent consumer block ends
+     */
+    private static class IdempotentConsumerCallback implements AsyncCallback {
+        private final Exchange exchange;
+        private final Synchronization onCompletion;
+        private final AsyncCallback callback;
+        private final boolean completionEager;
+
+        public IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback, boolean completionEager) {
+            this.exchange = exchange;
+            this.onCompletion = onCompletion;
+            this.callback = callback;
+            this.completionEager = completionEager;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            try {
+                if (completionEager) {
+                    if (exchange.isFailed()) {
+                        onCompletion.onFailure(exchange);
+                    } else {
+                        onCompletion.onComplete(exchange);
+                    }
+                }
+                // if completion is not eager then the onCompletion is invoked as part of the UoW of the Exchange
+            } finally {
+                callback.done(doneSync);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "IdempotentConsumerCallback";
+        }
+    }
 }

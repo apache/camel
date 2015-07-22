@@ -48,7 +48,7 @@ import org.apache.camel.util.ResourceHelper;
  *
  * @version 
  */
-@UriEndpoint(scheme = "flatpack", syntax = "flatpack:type:resourceUri", consumerClass = FlatpackConsumer.class, label = "transformation")
+@UriEndpoint(scheme = "flatpack", title = "Flatpack", syntax = "flatpack:type:resourceUri", consumerClass = FlatpackConsumer.class, label = "transformation")
 public class FlatpackEndpoint extends DefaultPollingEndpoint {
 
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
@@ -207,10 +207,16 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         return type;
     }
 
+    /**
+     * Whether to use fixed or delimiter
+     */
     public void setType(FlatpackType type) {
         this.type = type;
     }
 
+    /**
+     * URL for loading the flatpack mapping file from classpath or file system
+     */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }
@@ -219,6 +225,9 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         return delimiter;
     }
 
+    /**
+     * The default character delimiter for delimited files.
+     */
     public void setDelimiter(char delimiter) {
         this.delimiter = delimiter;
     }
@@ -227,6 +236,9 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         return textQualifier;
     }
 
+    /**
+     * The text qualifier for delimited files.
+     */
     public void setTextQualifier(char textQualifier) {
         this.textQualifier = textQualifier;
     }
@@ -235,6 +247,9 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         return ignoreFirstRecord;
     }
 
+    /**
+     * Whether the first line is ignored for delimited files (for the column headers).
+     */
     public void setIgnoreFirstRecord(boolean ignoreFirstRecord) {
         this.ignoreFirstRecord = ignoreFirstRecord;
     }

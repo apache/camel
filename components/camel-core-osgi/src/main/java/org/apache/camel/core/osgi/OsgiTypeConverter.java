@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverters;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.FactoryFinder;
@@ -134,6 +135,10 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         getDelegate().addTypeConverter(toType, fromType, typeConverter);
     }
 
+    public void addTypeConverters(TypeConverters typeConverters) {
+        getDelegate().addTypeConverters(typeConverters);
+    }
+
     public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
         return getDelegate().removeTypeConverter(toType, fromType);
     }
@@ -178,13 +183,13 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         DefaultTypeConverter answer = new DefaultTypeConverter(new DefaultPackageScanClassResolver() {
             @Override
             public Set<ClassLoader> getClassLoaders() {
-                // we don't need any classloaders as we use osgi service tracker instead
+                // we don't need any classloaders as we use OSGi service tracker instead
                 return Collections.emptySet();
             }
         }, injector, factoryFinder);
 
         try {
-            // only load the core type converters, as osgi activator will keep track on bundles
+            // only load the core type converters, as OSGi activator will keep track on bundles
             // being installed/uninstalled and load type converters as part of that process
             answer.loadCoreTypeConverters();
         } catch (Exception e) {
@@ -201,7 +206,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
             Collections.sort(servicesList);
             for (ServiceReference<TypeConverterLoader> sr : servicesList) {
                 try {
-                    LOG.debug("loading the type converter from bundle{} ", sr.getBundle().getSymbolicName());
+                    LOG.debug("loading type converter from bundle: {}", sr.getBundle().getSymbolicName());
                     ((TypeConverterLoader)this.tracker.getService(sr)).load(answer);
                 } catch (Throwable t) {
                     throw new RuntimeCamelException("Error loading type converters from service: " + sr + " due: " + t.getMessage(), t);

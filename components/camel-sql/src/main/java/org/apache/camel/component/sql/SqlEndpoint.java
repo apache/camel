@@ -45,7 +45,7 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
  * question marks (that are parameter placeholders), sharp signs should be used.
  * This is because in camel question mark has other meaning.
  */
-@UriEndpoint(scheme = "sql", syntax = "sql:query", consumerClass = SqlConsumer.class, label = "database,sql")
+@UriEndpoint(scheme = "sql", title = "SQL", syntax = "sql:query", consumerClass = SqlConsumer.class, label = "database,sql")
 public class SqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
 
@@ -86,6 +86,8 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private boolean noop;
     @UriParam
     private String outputHeader;
+    @UriParam(label = "producer")
+    private boolean useMessageBodyForSql;
 
     public SqlEndpoint() {
     }
@@ -110,7 +112,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public Producer createProducer() throws Exception {
         SqlPrepareStatementStrategy prepareStrategy = prepareStatementStrategy != null ? prepareStatementStrategy : new DefaultSqlPrepareStatementStrategy(separator);
-        SqlProducer result = new SqlProducer(this, query, jdbcTemplate, prepareStrategy, batch, alwaysPopulateStatement);
+        SqlProducer result = new SqlProducer(this, query, jdbcTemplate, prepareStrategy, batch, alwaysPopulateStatement, useMessageBodyForSql);
         result.setParametersCount(parametersCount);
         return result;
     }
@@ -318,6 +320,19 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         this.outputHeader = outputHeader;
     }
 
+    public boolean isUseMessageBodyForSql() {
+        return useMessageBodyForSql;
+    }
+
+    /**
+     * Whether to use the message body as the SQL and then headers for parameters.
+     * <p/>
+     * If this option is enabled then the SQL in the uri is not used.
+     */
+    public void setUseMessageBodyForSql(boolean useMessageBodyForSql) {
+        this.useMessageBodyForSql = useMessageBodyForSql;
+    }
+
     public String getDataSourceRef() {
         return dataSourceRef;
     }
@@ -346,10 +361,11 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return "sql:" + UnsafeUriCharactersEncoder.encode(query);
     }
 
+    @SuppressWarnings("unchecked")
     protected List<?> queryForList(ResultSet rs, boolean allowMapToClass) throws SQLException {
         if (allowMapToClass && outputClass != null) {
-            Class<?> outputClzz = getCamelContext().getClassResolver().resolveClass(outputClass);
-            RowMapper rowMapper = new BeanPropertyRowMapper(outputClzz);
+            Class<?> outputClazz = getCamelContext().getClassResolver().resolveClass(outputClass);
+            RowMapper rowMapper = new BeanPropertyRowMapper(outputClazz);
             RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
             List<?> data = mapper.extractData(rs);
             return data;

@@ -19,7 +19,6 @@ package scala
 package dsl.builder
 
 import org.apache.camel.model.DataFormatDefinition
-import org.apache.camel.{Exchange, RoutesBuilder}
 import org.apache.camel.builder.{LoggingErrorHandlerBuilder, DeadLetterChannelBuilder, ErrorHandlerBuilder}
 
 import org.apache.camel.spi.Policy
@@ -30,7 +29,6 @@ import reflect.{ClassTag, classTag}
 import org.apache.camel.scala.dsl._
 
 import org.apache.camel.scala.dsl.languages.Languages
-import java.lang.String
 import java.util.Comparator
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -153,6 +151,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def loop(expression: Exchange => Any) = stack.top.loop(expression)
 
   def marshal(format: DataFormatDefinition) = stack.top.marshal(format)
+  def marshal(dataFormatRef: String) = stack.top.marshal(dataFormatRef)
   def multicast = stack.top.multicast
 
   def onCompletion = {
@@ -173,6 +172,9 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def process(processor: Processor) = stack.top.process(processor)
 
   def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
+  def removeHeader(name: String) = stack.top.removeHeader(name)
+  def removeHeaders(pattern: String) = stack.top.removeHeaders(pattern)
+  def removeHeaders(pattern: String, excludePatterns: String*) = stack.top.removeHeaders(pattern, excludePatterns:_*)
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
   def rollback = stack.top.rollback
   def routeId(id: String) = stack.top.routeId(id)
@@ -181,6 +183,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def routingSlip(header: String, separator: String) = stack.top.routingSlip(header, separator)
   def routingSlip(expression: Exchange => Any) = stack.top.routingSlip(expression)
 
+  def script(expression: Exchange => Any) = stack.top.script(expression)
   def setBody(expression : Exchange => Any) = stack.top.setBody(expression)
   def setFaultBody(expression: Exchange => Any) = stack.top.setFaultBody(expression)
   def setHeader(name: String, expression: Exchange => Any) = stack.top.setHeader(name, expression)
@@ -194,11 +197,13 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def threads = stack.top.threads
   def throttle(frequency: Frequency) = stack.top.throttle(frequency)
   def throwException(exception: Exception) = stack.top.throwException(exception)
+  def throwException(exceptionType: Class[_ <: Exception], message: String) = stack.top.throwException(exceptionType, message)
   def transacted = stack.top.transacted
   def transacted(uri: String) = stack.top.transacted
   def transform(expression: Exchange => Any) = stack.top.transform(expression)
 
   def unmarshal(format: DataFormatDefinition) = stack.top.unmarshal(format)
+  def unmarshal(dataFormatRef: String) = stack.top.unmarshal(dataFormatRef)
 
   def validate(expression: (Exchange) => Any) = stack.top.validate(expression)
 
@@ -207,6 +212,8 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def wireTap(uri: String, expression: Exchange => Any) = stack.top.wireTap(uri, expression)
 
   def to(uris: String*) = stack.top.to(uris: _*)
+  def toD(uri: String) = stack.top.toD(uri)
+  def toD(uri: String, ignoreInvalidEndpoint: Boolean) = stack.top.toD(uri, ignoreInvalidEndpoint)
   def -->(uris: String*) = stack.top.to(uris: _*)
 
 }

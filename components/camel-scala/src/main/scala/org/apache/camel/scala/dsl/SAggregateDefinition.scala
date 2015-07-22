@@ -45,6 +45,8 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
 
   def completionSize(count: Int) = wrap(target.completionSize(count))
   def completionTimeout(period: Period) = wrap(target.setCompletionTimeout(period.milliseconds))
+  def completionInterval(period: Period) =
+    wrap(target.setCompletionInterval(period.milliseconds))
 
   def closeCorrelationKeyOnCompletion(count: Int) = wrap(target.setCloseCorrelationKeyOnCompletion(count))
   def parallelProcessing = wrap(target.parallelProcessing)
@@ -65,6 +67,4 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
      val predicate = filter
      target.completionPredicate(predicate)
   }
-
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SAggregateDefinition]
 }

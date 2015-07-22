@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
  * Represents a <a href="http://camel.apache.org/glogin.html">GLogin
  * Endpoint</a>.
  */
-@UriEndpoint(scheme = "glogin", syntax = "glogin:hostName", producerOnly = true, label = "cloud")
+@UriEndpoint(scheme = "glogin", title = "Google Login", syntax = "glogin:hostName", producerOnly = true, label = "cloud")
 public class GLoginEndpoint extends DefaultEndpoint {
 
     private OutboundBinding<GLoginEndpoint, GLoginData, GLoginData> outboundBinding;

@@ -320,6 +320,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return httpClientConfigurer;
     }
 
+    /**
+     * To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
+     */
     public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
         this.httpClientConfigurer = httpClientConfigurer;
     }
@@ -328,6 +331,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return httpConnectionManager;
     }
 
+    /**
+     * To use a custom HttpConnectionManager to manage connections
+     */
     public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
         this.httpConnectionManager = httpConnectionManager;
     }
@@ -336,6 +342,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return httpBinding;
     }
 
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+     */
     public void setHttpBinding(HttpBinding httpBinding) {
         this.httpBinding = httpBinding;
     }
@@ -344,6 +353,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return httpConfiguration;
     }
 
+    /**
+     * To use the shared HttpConfiguration as base configuration.
+     */
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
     }

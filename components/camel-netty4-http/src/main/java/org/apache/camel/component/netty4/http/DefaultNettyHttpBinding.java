@@ -135,8 +135,13 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
         String path = uri.getPath();
-        if (configuration.getPath() != null && path.startsWith(configuration.getPath())) {
-            path = path.substring(configuration.getPath().length());
+        if (configuration.getPath() != null) {
+            // need to match by lower case as we want to ignore case on context-path
+            path = path.toLowerCase(Locale.US);
+            String match = configuration.getPath() != null ? configuration.getPath().toLowerCase(Locale.US) : null;
+            if (match != null && path.startsWith(match)) {
+                path = path.substring(configuration.getPath().length());
+            }
         }
         headers.put(Exchange.HTTP_PATH, path);
 
@@ -179,7 +184,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // add uri parameters as headers to the Camel message
         if (request.getUri().contains("?")) {
             String query = ObjectHelper.after(request.getUri(), "?");
-            Map<String, Object> uriParameters = URISupport.parseQuery(query);
+            Map<String, Object> uriParameters = URISupport.parseQuery(query, false, true);
 
             for (Map.Entry<String, Object> entry : uriParameters.entrySet()) {
                 String name = entry.getKey();
@@ -267,7 +272,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         LOG.trace("populateCamelHeaders: {}", response);
 
         headers.put(Exchange.HTTP_RESPONSE_CODE, response.getStatus().code());
-        headers.put(NettyHttpConstants.HTTP_RESPONSE_TEXT, response.getStatus().reasonPhrase());
+        headers.put(Exchange.HTTP_RESPONSE_TEXT, response.getStatus().reasonPhrase());
 
         for (String name : response.headers().names()) {
             // mapping the content-type
@@ -483,7 +488,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         if (configuration.isBridgeEndpoint()) {
             String queryString = message.getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
-                skipRequestHeaders = URISupport.parseQuery(queryString);
+                skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
             // Need to remove the Host key as it should be not used
             message.getHeaders().remove("host");

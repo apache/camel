@@ -67,6 +67,8 @@ public class EventNotifierExchangeSentParallelTest extends EventNotifierExchange
                 from("direct:foo").recipientList(header("foo")).parallelProcessing();
 
                 from("direct:cool").delay(1000);
+
+                from("direct:tap").wireTap("log:foo").to("mock:result");
             }
         };
     }

@@ -54,7 +54,8 @@ public class JpaProducer extends DefaultProducer {
 
     public void process(final Exchange exchange) {
         // resolve the entity manager before evaluating the expression
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, getEndpoint().isUsePassedInEntityManager());
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,
+                getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager());
         final Object values = expression.evaluate(exchange, Object.class);
 
         if (values != null) {
@@ -67,15 +68,28 @@ public class JpaProducer extends DefaultProducer {
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
                         for (Object element : array) {
-                            save(element);
+                            if (!getEndpoint().isRemove()) {
+                                save(element);
+                            } else {
+                                remove(element);
+                            }
                         }
                     } else if (values instanceof Collection) {
                         Collection<?> collection = (Collection<?>)values;
                         for (Object entity : collection) {
-                            save(entity);
+                            if (!getEndpoint().isRemove()) {
+                                save(entity);
+                            } else {
+                                remove(entity);
+                            }
                         }
                     } else {
-                        Object managedEntity = save(values);
+                        Object managedEntity = null;
+                        if (!getEndpoint().isRemove()) {
+                            managedEntity = save(values);
+                        } else {
+                            managedEntity = remove(values);
+                        }
                         if (!getEndpoint().isUsePersist()) {
                             exchange.getIn().setBody(managedEntity);
                         }
@@ -101,6 +115,17 @@ public class JpaProducer extends DefaultProducer {
                     } else {
                         return entityManager.merge(entity);
                     }
+                }
+                
+                /**
+                 * Remove the given entity end return the managed entity
+                 *
+                 * @return the managed entity
+                 */
+                private Object remove(final Object entity) {
+                    LOG.debug("remove: {}", entity);
+                    entityManager.remove(entity);
+                    return entity;
                 }
             });
         }

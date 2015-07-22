@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "quartz", syntax = "quartz:groupName/timerName", consumerOnly = true, consumerClass = QuartzConsumer.class, label = "scheduling")
+@UriEndpoint(scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/timerName", consumerOnly = true, consumerClass = QuartzConsumer.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
 
@@ -54,19 +54,19 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     private Trigger trigger;
     private JobDetail jobDetail = new JobDetail();
     private volatile boolean started;
+
     @UriPath(defaultValue = "Camel")
     private String groupName;
     @UriPath @Metadata(required = "true")
     private String timerName;
+    @UriParam
+    private String cron;
     @UriParam
     private boolean stateful;
     @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
     @UriParam
     private boolean pauseJob;
-    /** If it is true, the CamelContext name is used,
-     *  if it is false, use the CamelContext management name which could be changed during the deploy time 
-     **/
     @UriParam
     private boolean usingFixedCamelContextName;
 
@@ -196,6 +196,9 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         return groupName;
     }
 
+    /**
+     * The quartz group name to use. The combination of group name and timer name should be unique.
+     */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
@@ -204,8 +207,22 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         return timerName;
     }
 
+    /**
+     * The quartz timer name to use. The combination of group name and timer name should be unique.
+     */
     public void setTimerName(String timerName) {
         this.timerName = timerName;
+    }
+
+    public String getCron() {
+        return cron;
+    }
+
+    /**
+     * Specifies a cron expression to define when to trigger.
+     */
+    public void setCron(String cron) {
+        this.cron = cron;
     }
 
     public void setLoadBalancer(final LoadBalancer loadBalancer) {
@@ -232,6 +249,9 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         return this.stateful;
     }
 
+    /**
+     * Uses a Quartz StatefulJob instead of the default job.
+     */
     public void setStateful(final boolean stateful) {
         this.stateful = stateful;
     }
@@ -240,6 +260,12 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         return deleteJob;
     }
 
+    /**
+     * If set to true, then the trigger automatically delete when route stop.
+     * Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse
+     * pre-configured trigger with camel Uri. Just ensure the names match.
+     * Notice you cannot have both deleteJob and pauseJob set to true.
+     */
     public void setDeleteJob(boolean deleteJob) {
         this.deleteJob = deleteJob;
     }
@@ -248,20 +274,30 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         return pauseJob;
     }
 
+    /**
+     * If set to true, then the trigger automatically pauses when route stop.
+     * Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse
+     * pre-configured trigger with camel Uri. Just ensure the names match.
+     * Notice you cannot have both deleteJob and pauseJob set to true.
+     */
     public void setPauseJob(boolean pauseJob) {
         this.pauseJob = pauseJob;
     }
-
-    // Implementation methods
-    // -------------------------------------------------------------------------
 
     public boolean isUsingFixedCamelContextName() {
         return usingFixedCamelContextName;
     }
 
+    /**
+     * If it is true, JobDataMap uses the CamelContext name directly to reference the CamelContext,
+     * if it is false, JobDataMap uses use the CamelContext management name which could be changed during the deploy time.
+     */
     public void setUsingFixedCamelContextName(boolean usingFixedCamelContextName) {
         this.usingFixedCamelContextName = usingFixedCamelContextName;
     }
+
+    // Implementation methods
+    // -------------------------------------------------------------------------
 
     public synchronized void consumerStarted(final QuartzConsumer consumer) throws SchedulerException {
         ObjectHelper.notNull(trigger, "trigger");

@@ -55,10 +55,7 @@ public abstract class TestSupport extends Assert {
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    // CHECKSTYLE:OFF
-    @Rule
-    public TestName testName = new TestName();
-    // CHECKSTYLE:ON
+    private TestName testName = new TestName();
 
     // Builder methods for expressions used when testing
     // -------------------------------------------------------------------------
@@ -74,7 +71,7 @@ public abstract class TestSupport extends Assert {
      * Returns a value builder for the given property
      */
     public static ValueBuilder property(String name) {
-        return Builder.property(name);
+        return Builder.exchangeProperty(name);
     }    
     
     /**
@@ -143,17 +140,9 @@ public abstract class TestSupport extends Assert {
 
     public static <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
         assertNotNull("Expected an instance of type: " + expectedType.getName() + " but was null", value);
-        assertTrue("object should be a " + expectedType.getName() + " but was: " + value + " with type: "
+        assertTrue("Object should be of type " + expectedType.getName() + " but was: " + value + " with the type: "
                    + value.getClass().getName(), expectedType.isInstance(value));
         return expectedType.cast(value);
-    }
-    
-    public static <T extends Throwable> T assertThrowable(Class<T> expectedType, Throwable t) {
-        assertNotNull("Expected an exinstance of type: " + expectedType.getName() + " but was null", t);
-        if (!expectedType.isInstance(t)) {
-            throw new AssertionError("Unexpected throwable", t);
-        }
-        return expectedType.cast(t);
     }
 
     public static void assertEndpointUri(Endpoint endpoint, String uri) {
@@ -572,6 +561,16 @@ public abstract class TestSupport extends Assert {
     public static boolean isJava18() {
         String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
         return javaVersion.startsWith("1.8");
+    }
+
+    /**
+     * Gets the current test name
+     *
+     * @return the test name
+     */
+    @Rule
+    public TestName getTestName() {
+        return testName;
     }
 
     /**

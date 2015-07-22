@@ -24,9 +24,12 @@
     <route>
       <from uri="direct:start" />
       <unmarshal>
-        <csv delimiter="|" lazyLoad="true"/>
+        <csv delimiter="," lazyLoad="true"/>
       </unmarshal>
-      <to uri="mock:result" />
+      <split>
+        <simple>${body}</simple>
+        <to uri="mock:line" />
+      </split>
     </route>
   </camelContext>
 </beans>

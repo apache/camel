@@ -18,6 +18,7 @@ package org.apache.camel.component.atmosphere.websocket;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -29,8 +30,6 @@ import com.ning.http.client.ws.WebSocket;
 import com.ning.http.client.ws.WebSocketByteListener;
 import com.ning.http.client.ws.WebSocketTextListener;
 import com.ning.http.client.ws.WebSocketUpgradeHandler;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,7 +139,7 @@ public class TestClient {
         @Override
         public void onMessage(byte[] message) {
             received.add(message);
-            LOG.info("[ws] received bytes --> " + message);
+            LOG.info("[ws] received bytes --> " + Arrays.toString(message));
             latch.countDown();
         }
 

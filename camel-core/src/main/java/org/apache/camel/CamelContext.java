@@ -25,8 +25,12 @@ import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -219,10 +223,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * If the option <tt>closeOnShutdown</tt> is <tt>false</tt> then this context will not stop the service when the context stops.
      *
      * @param object the service
-     * @param closeOnShutdown whether to close the service when this CamelContext shutdown.
+     * @param stopOnShutdown whether to stop the service when this CamelContext shutdown.
      * @throws Exception can be thrown when starting the service
      */
-    void addService(Object object, boolean closeOnShutdown) throws Exception;
+    void addService(Object object, boolean stopOnShutdown) throws Exception;
 
     /**
      * Removes a service from this context.
@@ -251,6 +255,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the service instance or <tt>null</tt> if not already added.
      */
     <T> T hasService(Class<T> type);
+
+    /**
+     * Defers starting the service until {@link CamelContext} is started and has initialized all its prior services and routes.
+     * <p/>
+     * If {@link CamelContext} is already started then the service is started immediately.
+     *
+     * @param object the service
+     * @param stopOnShutdown whether to stop the service when this CamelContext shutdown. Setting this to <tt>true</tt> will keep a reference to the service in
+     *                       this {@link CamelContext} until the context is stopped. So do not use it for short lived services.
+     * @throws Exception can be thrown when starting the service, which is only attempted if {@link CamelContext} has already been started when calling this method.
+     */
+    void deferStartService(Object object, boolean stopOnShutdown) throws Exception;
 
     /**
      * Adds the given listener to be invoked when {@link CamelContext} have just been started.
@@ -499,6 +515,67 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the route or <tt>null</tt> if not found
      */
     Route getRoute(String id);
+
+    /**
+     * Gets the processor from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @return the processor or <tt>null</tt> if not found
+     */
+    Processor getProcessor(String id);
+
+    /**
+     * Gets the processor from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @param type the processor type
+     * @return the processor or <tt>null</tt> if not found
+     * @throws java.lang.ClassCastException is thrown if the type is not correct type
+     */
+    <T extends Processor> T getProcessor(String id, Class<T> type);
+
+    /**
+     * Gets the managed processor client api from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @param type the managed processor type from the {@link org.apache.camel.api.management.mbean} package.
+     * @return the processor or <tt>null</tt> if not found
+     * @throws IllegalArgumentException if the type is not compliant
+     */
+    <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type);
+
+    /**
+     * Gets the managed route client api with the given route id
+     *
+     * @param routeId id of the route
+     * @param type the managed route type from the {@link org.apache.camel.api.management.mbean} package.
+     * @return the route or <tt>null</tt> if not found
+     * @throws IllegalArgumentException if the type is not compliant
+     */
+    <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type);
+
+    /**
+     * Gets the managed Camel context client api
+     */
+    ManagedCamelContextMBean getManagedCamelContext();
+
+    /**
+     * Gets the processor definition from any of the routes which with the given id
+     *
+     * @param id id of the processor definition
+     * @return the processor definition or <tt>null</tt> if not found
+     */
+    ProcessorDefinition getProcessorDefinition(String id);
+
+    /**
+     * Gets the processor definition from any of the routes which with the given id
+     *
+     * @param id id of the processor definition
+     * @param type the processor definition type
+     * @return the processor definition or <tt>null</tt> if not found
+     * @throws java.lang.ClassCastException is thrown if the type is not correct type
+     */
+    <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type);
 
     /**
      * Adds a collection of routes to this context using the given builder

@@ -43,6 +43,8 @@ import org.apache.camel.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.isAssignableFrom;
+
 /**
  * Helper for introspections of beans.
  * <p/>
@@ -497,20 +499,25 @@ public final class IntrospectionSupport {
             Object ref = value;
             // try and lookup the reference based on the method
             if (context != null && refName != null && ref == null) {
-                ref = CamelContextHelper.lookup(context, refName.replaceAll("#", ""));
+                String s = StringHelper.replaceAll(refName, "#", "");
+                ref = CamelContextHelper.lookup(context, s);
                 if (ref == null) {
                     // try the next method if nothing was found
                     continue;
-                } else if (!parameterType.isAssignableFrom(ref.getClass())) {
+                } else {
                     // setter method has not the correct type
-                    continue;
+                    // (must use ObjectHelper.isAssignableFrom which takes primitive types into account)
+                    boolean assignable = isAssignableFrom(parameterType, ref.getClass());
+                    if (!assignable) {
+                        continue;
+                    }
                 }
             }
 
             try {
                 try {
                     // If the type is null or it matches the needed type, just use the value directly
-                    if (value == null || parameterType.isAssignableFrom(ref.getClass())) {
+                    if (value == null || isAssignableFrom(parameterType, ref.getClass())) {
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, ref);

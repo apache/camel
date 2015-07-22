@@ -47,16 +47,18 @@ import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.Form;
+import org.restlet.data.Header;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Preference;
 import org.restlet.data.Status;
 import org.restlet.engine.application.DecodeRepresentation;
-import org.restlet.engine.header.Header;
 import org.restlet.engine.header.HeaderConstants;
+import org.restlet.representation.ByteArrayRepresentation;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.InputRepresentation;
 import org.restlet.representation.Representation;
+import org.restlet.representation.StreamRepresentation;
 import org.restlet.util.Series;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -271,6 +273,9 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             response.setEntity(new InputRepresentation(out.getBody(InputStream.class), mediaType));
         } else if (body instanceof File) {
             response.setEntity(new FileRepresentation(out.getBody(File.class), mediaType));
+        } else if (body instanceof byte[]) {
+            byte[] bytes = out.getBody(byte[].class);
+            response.setEntity(new ByteArrayRepresentation(bytes, mediaType, bytes.length));
         } else {
             // fallback and use string
             String text = out.getBody(String.class);
@@ -334,8 +339,9 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 LOG.debug("Setting the Content-Type to be {}",  mediaType.toString());
                 exchange.getOut().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
             }
-            if (mediaType != null && mediaType.equals(MediaType.APPLICATION_OCTET_STREAM)) {
-                exchange.getOut().setBody(response.getEntity().getStream());
+            if (response.getEntity() instanceof StreamRepresentation) {
+                Representation representationDecoded = new DecodeRepresentation(response.getEntity());
+                exchange.getOut().setBody(representationDecoded.getStream());
             } else if (response.getEntity() instanceof Representation) {
                 Representation representationDecoded = new DecodeRepresentation(response.getEntity());
                 exchange.getOut().setBody(representationDecoded.getText());

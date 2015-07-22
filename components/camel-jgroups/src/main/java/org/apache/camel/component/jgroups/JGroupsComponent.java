@@ -28,10 +28,8 @@ import org.jgroups.Channel;
 public class JGroupsComponent extends UriEndpointComponent {
 
     private Channel channel;
-
     private String channelProperties;
-
-    private Boolean enableViewMessages;
+    private boolean enableViewMessages;
 
     public JGroupsComponent() {
         super(JGroupsEndpoint.class);
@@ -46,6 +44,9 @@ public class JGroupsComponent extends UriEndpointComponent {
         return channel;
     }
 
+    /**
+     * Channel to use
+     */
     public void setChannel(Channel channel) {
         this.channel = channel;
     }
@@ -54,15 +55,22 @@ public class JGroupsComponent extends UriEndpointComponent {
         return channelProperties;
     }
 
+    /**
+     * Specifies configuration properties of the JChannel used by the endpoint.
+     */
     public void setChannelProperties(String channelProperties) {
         this.channelProperties = channelProperties;
     }
 
-    public Boolean getEnableViewMessages() {
+    public boolean isEnableViewMessages() {
         return enableViewMessages;
     }
 
-    public void setEnableViewMessages(Boolean enableViewMessages) {
+    /**
+     * If set to true, the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances).
+     * By default only regular messages are consumed by the endpoint.
+     */
+    public void setEnableViewMessages(boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;
     }
 

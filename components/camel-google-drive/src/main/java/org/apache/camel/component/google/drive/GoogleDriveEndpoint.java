@@ -35,7 +35,8 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a GoogleDrive endpoint.
  */
-@UriEndpoint(scheme = "google-drive", syntax = "google:drive:apiName/methodName", consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer", label = "api,cloud,file")
+@UriEndpoint(scheme = "google-drive", title = "Google Drive", syntax = "google:drive:apiName/methodName",
+consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer", label = "api,cloud,file")
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
     private Object apiProxy;
 
@@ -128,5 +129,11 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
         return apiProxy;
     }
 
+    public GoogleDriveClientFactory getClientFactory() {
+        return ((GoogleDriveComponent)getComponent()).getClientFactory();
+    }
 
+    public void setClientFactory(GoogleDriveClientFactory clientFactory) {
+        ((GoogleDriveComponent)getComponent()).setClientFactory(clientFactory);
+    }
 }

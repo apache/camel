@@ -20,7 +20,7 @@ import java.lang.reflect.Proxy;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.processor.DeferServiceFactory;
 
 /**
  * A helper class for creating proxies which delegate to Camel
@@ -54,9 +54,8 @@ public final class ProxyHelper {
      * Creates a Proxy which sends the exchange to the endpoint.
      */
     public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T>[] interfaceClasses, MethodInfoCache methodCache) throws Exception {
-        Producer producer = endpoint.createProducer();
-        // ensure the producer is started
-        ServiceHelper.startService(producer);
+        Producer producer = DeferServiceFactory.createProducer(endpoint);
+        endpoint.getCamelContext().deferStartService(producer, true);
         return createProxyObject(endpoint, producer, cl, interfaceClasses, methodCache);
     }
 

@@ -42,7 +42,7 @@ import org.apache.camel.util.ResourceHelper;
  *
  * @version 
  */
-@UriEndpoint(scheme = "language", syntax = "language:languageName", producerOnly = true, label = "core,script")
+@UriEndpoint(scheme = "language", title = "Language", syntax = "language:languageName", producerOnly = true, label = "core,script")
 public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;

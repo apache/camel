@@ -24,6 +24,9 @@ RestBindingMode
 RestConfigurationDefinition
 RestDefinition
 RestHostNameResolver
+RestOperationParamDefinition
+RestParamType
 RestPropertyDefinition
 RestsDefinition
 VerbDefinition
+RestOperationResponseMsgDefinition

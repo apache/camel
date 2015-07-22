@@ -92,6 +92,9 @@ public class IBatisComponent extends UriEndpointComponent {
         return sqlMapClient;
     }
 
+    /**
+     * To use the given {@link com.ibatis.sqlmap.client.SqlMapClient}
+     */
     public void setSqlMapClient(SqlMapClient sqlMapClient) {
         this.sqlMapClient = sqlMapClient;
     }
@@ -100,6 +103,11 @@ public class IBatisComponent extends UriEndpointComponent {
         return sqlMapConfig;
     }
 
+    /**
+     * Location of iBatis xml configuration file.
+     * <p/>
+     * The default value is: SqlMapConfig.xml loaded from the classpath
+     */
     public void setSqlMapConfig(String sqlMapConfig) {
         this.sqlMapConfig = sqlMapConfig;
     }
@@ -107,7 +115,12 @@ public class IBatisComponent extends UriEndpointComponent {
     public boolean isUseTransactions() {
         return useTransactions;
     }
-    
+
+    /**
+     * Whether to use transactions.
+     * <p/>
+     * This option is by default true.
+     */
     public void setUseTransactions(boolean useTransactions) {
         this.useTransactions = useTransactions;
     }

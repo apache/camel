@@ -42,10 +42,12 @@ public class SnsProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         PublishRequest request = new PublishRequest();
+
         request.setTopicArn(getConfiguration().getTopicArn());
-        request.setMessage(exchange.getIn().getBody(String.class));
         request.setSubject(determineSubject(exchange));
-        
+        request.setMessageStructure(determineMessageStructure(exchange));
+        request.setMessage(exchange.getIn().getBody(String.class));
+
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
         
         PublishResult result = getEndpoint().getSNSClient().publish(request);
@@ -73,6 +75,15 @@ public class SnsProducer extends DefaultProducer {
         }
         
         return subject;
+    }
+
+    private String determineMessageStructure(Exchange exchange) {
+        String structure = exchange.getIn().getHeader(SnsConstants.MESSAGE_STRUCTURE, String.class);
+        if (structure == null) {
+            structure = getConfiguration().getMessageStructure();
+        }
+
+        return structure;
     }
     
     protected SnsConfiguration getConfiguration() {

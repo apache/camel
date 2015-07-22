@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -53,14 +54,22 @@ public class SplitterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        Set<String> ids = new HashSet<String>();
+        Set<String> ids2 = new HashSet<String>();
+
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (int i = 0; i < 4; i++) {
             Exchange exchange = list.get(i);
             Message in = exchange.getIn();
+            ids.add(in.getMessageId());
+            ids2.add(exchange.getExchangeId());
             assertNotNull("The in message should not be null.", in);
             assertProperty(exchange, Exchange.SPLIT_INDEX, i);
             assertProperty(exchange, Exchange.SPLIT_SIZE, 4);
         }
+
+        assertEquals("The sub messages should have unique message ids", 4, ids.size());
+        assertEquals("The sub messages should have unique exchange ids", 4, ids2.size());
     }
 
     public void testSplitterWithAggregationStrategy() throws Exception {
@@ -181,7 +190,7 @@ public class SplitterTest extends ContextTestSupport {
         Message out = result.getOut();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
+        // we aggregate parallel and therefore its not thread-safe when setting values
     }
 
     public void testSplitterWithStreamingAndFileBody() throws Exception {

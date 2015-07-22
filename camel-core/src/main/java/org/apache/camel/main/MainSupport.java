@@ -16,7 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -27,21 +26,16 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.view.ModelFileGenerator;
-import org.apache.camel.view.RouteDotGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,14 +46,12 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class MainSupport extends ServiceSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(MainSupport.class);
-    protected String dotOutputDir;
+    protected final List<MainListener> listeners = new ArrayList<MainListener>();
     protected final List<Option> options = new ArrayList<Option>();
     protected final CountDownLatch latch = new CountDownLatch(1);
     protected final AtomicBoolean completed = new AtomicBoolean(false);
     protected long duration = -1;
     protected TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-    protected String routesOutputFile;
-    protected boolean aggregateDot;
     protected boolean trace;
     protected List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
     protected String routeBuilderClasses;
@@ -103,20 +95,6 @@ public abstract class MainSupport extends ServiceSupport {
                 setRouteBuilderClasses(parameter);
             }
         });
-        addOption(new ParameterOption("o", "outdir",
-                "Sets the DOT output directory where the visual representations of the routes are generated",
-                "dot") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setDotOutputDir(parameter);
-            }
-        });
-        addOption(new ParameterOption("ad", "aggregate-dot",
-                "Aggregates all routes (in addition to individual route generation) into one context to create one monolithic DOT file for visual representations the entire system.",
-                "aggregate-dot") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setAggregateDot("true".equals(parameter));
-            }
-        });
         addOption(new ParameterOption("d", "duration",
                 "Sets the time duration that the application will run for, by default in milliseconds. You can use '10s' for 10 seconds etc",
                 "duration") {
@@ -134,11 +112,6 @@ public abstract class MainSupport extends ServiceSupport {
                 enableTrace();
             }
         });
-        addOption(new ParameterOption("out", "output", "Output all routes to the specified XML file", "filename") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setRoutesOutputFile(parameter);
-            }
-        });
     }
 
     /**
@@ -147,6 +120,7 @@ public abstract class MainSupport extends ServiceSupport {
     public void run() throws Exception {
         if (!completed.get()) {
             // if we have an issue starting then propagate the exception to caller
+            beforeStart();
             start();
             try {
                 afterStart();
@@ -154,6 +128,7 @@ public abstract class MainSupport extends ServiceSupport {
                 internalBeforeStop();
                 beforeStop();
                 stop();
+                afterStop();
             } catch (Exception e) {
                 // however while running then just log errors
                 LOG.error("Failed: " + e, e);
@@ -171,17 +146,65 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
+     * Adds a {@link org.apache.camel.main.MainListener} to receive callbacks when the main is started or stopping
+     *
+     * @param listener the listener
+     */
+    public void addMainListener(MainListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes the {@link org.apache.camel.main.MainListener}
+     *
+     * @param listener the listener
+     */
+    public void removeMainListener(MainListener listener) {
+        listeners.remove(listener);
+    }
+
+    /**
+     * Callback to run custom logic before CamelContext is being started.
+     * <p/>
+     * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
+     */
+    protected void beforeStart() throws Exception {
+        for (MainListener listener : listeners) {
+            listener.beforeStart(this);
+        }
+    }
+
+    /**
      * Callback to run custom logic after CamelContext has been started.
+     * <p/>
+     * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
      */
     protected void afterStart() throws Exception {
-        // noop
+        for (MainListener listener : listeners) {
+            listener.afterStart(this);
+        }
     }
 
     /**
      * Callback to run custom logic before CamelContext is being stopped.
+     * <p/>
+     * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
      */
     protected void beforeStop() throws Exception {
-        // noop
+        for (MainListener listener : listeners) {
+            listener.beforeStop(this);
+        }
+    }
+
+    /**
+     * Callback to run custom logic after CamelContext has been stopped.
+     * <p/>
+     * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
+     */
+    protected void afterStop() throws Exception {
+        for (MainListener listener : listeners) {
+            listener.afterStop(this);
+        }
     }
 
     private void internalBeforeStop() {
@@ -271,33 +294,12 @@ public abstract class MainSupport extends ServiceSupport {
         this.timeUnit = timeUnit;
     }
 
-    public String getDotOutputDir() {
-        return dotOutputDir;
-    }
-
     public void setRouteBuilderClasses(String builders) {
         this.routeBuilderClasses = builders;
     }
 
     public String getRouteBuilderClasses() {
         return routeBuilderClasses;
-    }
-
-    /**
-     * Sets the output directory of the generated DOT Files to show the visual
-     * representation of the routes. A null value disables the dot file
-     * generation.
-     */
-    public void setDotOutputDir(String dotOutputDir) {
-        this.dotOutputDir = dotOutputDir;
-    }
-
-    public void setAggregateDot(boolean aggregateDot) {
-        this.aggregateDot = aggregateDot;
-    }
-
-    public boolean isAggregateDot() {
-        return aggregateDot;
     }
 
     public boolean isTrace() {
@@ -309,14 +311,6 @@ public abstract class MainSupport extends ServiceSupport {
         for (CamelContext context : camelContexts) {
             context.setTracing(true);
         }
-    }
-
-    public void setRoutesOutputFile(String routesOutputFile) {
-        this.routesOutputFile = routesOutputFile;
-    }
-
-    public String getRoutesOutputFile() {
-        return routesOutputFile;
     }
 
     protected void doStop() throws Exception {
@@ -396,65 +390,15 @@ public abstract class MainSupport extends ServiceSupport {
     protected void postProcessContext() throws Exception {
         Map<String, CamelContext> map = getCamelContextMap();
         Set<Map.Entry<String, CamelContext>> entries = map.entrySet();
-        int size = entries.size();
         for (Map.Entry<String, CamelContext> entry : entries) {
-            String name = entry.getKey();
             CamelContext camelContext = entry.getValue();
             camelContexts.add(camelContext);
-            generateDot(name, camelContext, size);
             postProcessCamelContext(camelContext);
         }
-
-        if (isAggregateDot()) {
-            generateDot("aggregate", aggregateCamelContext(), 1);
-        }
-
-        if (!"".equals(getRoutesOutputFile())) {
-            outputRoutesToFile();
-        }
-    }
-
-    protected void outputRoutesToFile() throws IOException, JAXBException {
-        if (ObjectHelper.isNotEmpty(getRoutesOutputFile())) {
-            LOG.info("Generating routes as XML in the file named: " + getRoutesOutputFile());
-            ModelFileGenerator generator = createModelFileGenerator();
-            generator.marshalRoutesUsingJaxb(getRoutesOutputFile(), getRouteDefinitions());
-        }
-    }
-
-    protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(getModelJAXBContextFactory().newJAXBContext());
     }
 
     public ModelJAXBContextFactory getModelJAXBContextFactory() {
         return new DefaultModelJAXBContextFactory();
-    }
-
-    protected void generateDot(String name, CamelContext camelContext, int size) throws IOException {
-        String outputDir = dotOutputDir;
-        if (ObjectHelper.isNotEmpty(outputDir)) {
-            if (size > 1) {
-                outputDir += "/" + name;
-            }
-            RouteDotGenerator generator = new RouteDotGenerator(outputDir);
-            LOG.info("Generating DOT file for routes: " + outputDir + " for: " + camelContext + " with name: " + name);
-            generator.drawRoutes(camelContext);
-        }
-    }
-
-    /**
-     * Used for aggregate dot generation, generate a single camel context containing all of the available contexts.
-     */
-    private CamelContext aggregateCamelContext() throws Exception {
-        if (camelContexts.size() == 1) {
-            return camelContexts.get(0);
-        } else {
-            ModelCamelContext answer = new DefaultCamelContext();
-            for (CamelContext camelContext : camelContexts) {
-                answer.addRouteDefinitions(((ModelCamelContext)camelContext).getRouteDefinitions());
-            }
-            return answer;
-        }
     }
 
     protected void loadRouteBuilders(CamelContext camelContext) throws Exception {

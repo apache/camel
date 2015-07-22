@@ -58,6 +58,9 @@ public class XmlRpcConfiguration {
         return enabledForExtensions;
     }
 
+    /**
+     * Whether extensions are enabled. By default, the client or server is strictly compliant to the XML-RPC specification and extensions are disabled.
+     */
     public void setEnabledForExtensions(boolean enabledForExtensions) {
         this.enabledForExtensions = enabledForExtensions;
     }
@@ -66,6 +69,9 @@ public class XmlRpcConfiguration {
         return contentLengthOptional;
     }
 
+    /**
+     * Whether a "Content-Length" header may be omitted. The XML-RPC specification demands, that such a header be present.
+     */
     public void setContentLengthOptional(boolean contentLengthOptional) {
         this.contentLengthOptional = contentLengthOptional;
     }
@@ -74,6 +80,9 @@ public class XmlRpcConfiguration {
         return basicEncoding;
     }
 
+    /**
+     * Sets the encoding for basic authentication, null means UTF-8 is chosen.
+     */
     public void setBasicEncoding(String basicEncoding) {
         this.basicEncoding = basicEncoding;
     }
@@ -82,6 +91,9 @@ public class XmlRpcConfiguration {
         return encoding;
     }
 
+    /**
+     * Sets the requests encoding, null means UTF-8 is chosen.
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -90,6 +102,10 @@ public class XmlRpcConfiguration {
         return timeZone;
     }
 
+    /**
+     * The timezone, which is used to interpret date/time.
+     * Defaults to {@link TimeZone#getDefault()}.
+     */
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }
@@ -98,6 +114,9 @@ public class XmlRpcConfiguration {
         return gzipCompressing;
     }
 
+    /**
+     * Whether gzip compression is being used for transmitting the request.
+     */
     public void setGzipCompressing(boolean gzipCompressing) {
         this.gzipCompressing = gzipCompressing;
     }
@@ -106,6 +125,9 @@ public class XmlRpcConfiguration {
         return gzipRequesting;
     }
 
+    /**
+     * Whether gzip compression is being used for transmitting the request.
+     */
     public void setGzipRequesting(boolean gzipRequesting) {
         this.gzipRequesting = gzipRequesting;
     }
@@ -114,6 +136,9 @@ public class XmlRpcConfiguration {
         return basicUserName;
     }
 
+    /**
+     * The user name for basic authentication.
+     */
     public void setBasicUserName(String basicUserName) {
         this.basicUserName = basicUserName;
     }
@@ -122,6 +147,9 @@ public class XmlRpcConfiguration {
         return basicPassword;
     }
 
+    /**
+     * The password for basic authentication.
+     */
     public void setBasicPassword(String basicPassword) {
         this.basicPassword = basicPassword;
     }
@@ -130,6 +158,9 @@ public class XmlRpcConfiguration {
         return connectionTimeout;
     }
 
+    /**
+     * Set the connection timeout in milliseconds, 0 is to disable it
+     */
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
@@ -138,6 +169,9 @@ public class XmlRpcConfiguration {
         return replyTimeout;
     }
 
+    /**
+     * Set the reply timeout in milliseconds, 0 is to disable it.
+     */
     public void setReplyTimeout(int replyTimeout) {
         this.replyTimeout = replyTimeout;
     }
@@ -146,6 +180,10 @@ public class XmlRpcConfiguration {
         return enabledForExceptions;
     }
 
+    /**
+     * Whether the response should contain a "faultCause" element in case of errors.
+     * The "faultCause" is an exception, which the server has trapped and written into a byte stream as a serializable object.
+     */
     public void setEnabledForExceptions(boolean enabledForExceptions) {
         this.enabledForExceptions = enabledForExceptions;
     }
@@ -154,6 +192,9 @@ public class XmlRpcConfiguration {
         return xmlRpcServer;
     }
 
+    /**
+     * To use a custom XmlRpcRequestProcessor as server.
+     */
     public void setXmlRpcServer(XmlRpcRequestProcessor xmlRpcServer) {
         this.xmlRpcServer = xmlRpcServer;
     }
@@ -162,6 +203,9 @@ public class XmlRpcConfiguration {
         return userAgent;
     }
 
+    /**
+     * The http user agent header to set when doing xmlrpc requests
+     */
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
     }

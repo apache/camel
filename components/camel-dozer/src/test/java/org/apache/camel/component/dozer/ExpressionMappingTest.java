@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.dozer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -52,14 +55,19 @@ public class ExpressionMappingTest {
     @Test
     public void testExpressionMapping() throws Exception {
         resultEndpoint.expectedMessageCount(1);
-        final String headerName = "customerNumber";
-        final String headerVal = "CAFE-123";
+        Map<String, Object> headers = new HashMap<String, Object>();
+        final String customerNumber = "CAFE-123";
+        final String orderNumber = "ABC-000";
+        headers.put("customerNumber", customerNumber);
+        headers.put("orderNumber", orderNumber);
         ABCOrder abcOrder = new ABCOrder();
         // Header value should be mapped to custId in target model
-        startEndpoint.sendBodyAndHeader(abcOrder, headerName, headerVal);
+        startEndpoint.sendBodyAndHeaders(abcOrder, headers);
         // check results
         resultEndpoint.assertIsSatisfied();
         XYZOrder result = resultEndpoint.getExchanges().get(0).getIn().getBody(XYZOrder.class);
-        Assert.assertEquals(headerVal, result.getCustId());
+        Assert.assertEquals(customerNumber, result.getCustId());
+        Assert.assertEquals(orderNumber, result.getOrderId());
     }
+
 }

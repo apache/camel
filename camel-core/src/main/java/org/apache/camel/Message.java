@@ -239,6 +239,13 @@ public interface Message {
      * @param message the other message
      */
     void copyFrom(Message message);
+    
+    /**
+     * Copies the attachments of the other message into this message
+     *
+     * @param message the other message
+     */
+    void copyAttachments(Message message);
 
     /**
      * Returns the attachment specified by the id

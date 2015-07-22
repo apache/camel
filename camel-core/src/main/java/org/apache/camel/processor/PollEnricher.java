@@ -18,10 +18,17 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.impl.ConsumerCache;
+import org.apache.camel.impl.EmptyConsumerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -43,37 +50,48 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  *
  * @see Enricher
  */
-public class PollEnricher extends ServiceSupport implements AsyncProcessor {
+public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
+    private CamelContext camelContext;
+    private ConsumerCache consumerCache;
+    private String id;
     private AggregationStrategy aggregationStrategy;
-    private PollingConsumer consumer;
+    private final Expression expression;
     private long timeout;
     private boolean aggregateOnException;
-
-    /**
-     * Creates a new {@link PollEnricher}. The default aggregation strategy is to
-     * copy the additional data obtained from the enricher's resource over the
-     * input data. When using the copy aggregation strategy the enricher
-     * degenerates to a normal transformer.
-     *
-     * @param consumer consumer to resource endpoint.
-     */
-    public PollEnricher(PollingConsumer consumer) {
-        this(defaultAggregationStrategy(), consumer, 0);
-    }
+    private int cacheSize;
+    private boolean ignoreInvalidEndpoint;
 
     /**
      * Creates a new {@link PollEnricher}.
      *
-     * @param aggregationStrategy  aggregation strategy to aggregate input data and additional data.
-     * @param consumer consumer to resource endpoint.
+     * @param expression expression to use to compute the endpoint to poll from.
      * @param timeout timeout in millis
      */
-    public PollEnricher(AggregationStrategy aggregationStrategy, PollingConsumer consumer, long timeout) {
-        this.aggregationStrategy = aggregationStrategy;
-        this.consumer = consumer;
+    public PollEnricher(Expression expression, long timeout) {
+        this.expression = expression;
         this.timeout = timeout;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -120,6 +138,22 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
         this.aggregationStrategy = defaultAggregationStrategy();
     }
 
+    public int getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
+    public boolean isIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
+    }
+
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
@@ -146,6 +180,29 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
             return true;
         }
 
+        // which consumer to use
+        PollingConsumer consumer;
+        Endpoint endpoint;
+
+        // use dynamic endpoint so calculate the endpoint to use
+        Object recipient = null;
+        try {
+            recipient = expression.evaluate(exchange, Object.class);
+            endpoint = resolveEndpoint(exchange, recipient);
+            // acquire the consumer from the cache
+            consumer = consumerCache.acquirePollingConsumer(endpoint);
+        } catch (Throwable e) {
+            if (isIgnoreInvalidEndpoint()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                }
+            } else {
+                exchange.setException(e);
+            }
+            callback.done(true);
+            return true;
+        }
+
         Exchange resourceExchange;
         try {
             if (timeout < 0) {
@@ -168,6 +225,9 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
             exchange.setException(new CamelExchangeException("Error during poll", exchange, e));
             callback.done(true);
             return true;
+        } finally {
+            // return the consumer back to the cache
+            consumerCache.releasePollingConsumer(endpoint, consumer);
         }
 
         try {
@@ -207,6 +267,14 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
         return true;
     }
 
+    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
+        // trim strings as end users might have added spaces between separators
+        if (recipient instanceof String) {
+            recipient = ((String)recipient).trim();
+        }
+        return ExchangeHelper.resolveEndpoint(exchange, recipient);
+    }
+
     /**
      * Strategy to pre check polling.
      * <p/>
@@ -231,15 +299,32 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
 
     @Override
     public String toString() {
-        return "PollEnrich[" + consumer + "]";
+        return "PollEnrich[" + expression + "]";
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(aggregationStrategy, consumer);
+        if (consumerCache == null) {
+            // create consumer cache if we use dynamic expressions for computing the endpoints to poll
+            if (cacheSize < 0) {
+                consumerCache = new EmptyConsumerCache(this, camelContext);
+                LOG.debug("PollEnrich {} is not using ConsumerCache", this);
+            } else if (cacheSize == 0) {
+                consumerCache = new ConsumerCache(this, camelContext);
+                LOG.debug("PollEnrich {} using ConsumerCache with default cache size", this);
+            } else {
+                consumerCache = new ConsumerCache(this, camelContext, cacheSize);
+                LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
+            }
+        }
+        ServiceHelper.startServices(consumerCache, aggregationStrategy);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(consumer, aggregationStrategy);
+        ServiceHelper.stopServices(aggregationStrategy, consumerCache);
+    }
+
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(aggregationStrategy, consumerCache);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {

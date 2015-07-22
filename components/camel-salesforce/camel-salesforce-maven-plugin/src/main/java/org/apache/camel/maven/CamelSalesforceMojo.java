@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,6 +50,9 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -62,105 +66,148 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eclipse.jetty.client.Address;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.RedirectListener;
+import org.eclipse.jetty.client.security.ProxyAuthorization;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
- * Goal which generates POJOs for Salesforce SObjects
+ * Goal to generate DTOs for Salesforce SObjects
  */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class CamelSalesforceMojo extends AbstractMojo {
+
+    // default connect and call timeout
+    protected static final int DEFAULT_TIMEOUT = 60000;
+
     private static final String JAVA_EXT = ".java";
     private static final String PACKAGE_NAME_PATTERN = "^[a-z]+(\\.[a-z][a-z0-9]*)*$";
+
     private static final String SOBJECT_POJO_VM = "/sobject-pojo.vm";
     private static final String SOBJECT_QUERY_RECORDS_VM = "/sobject-query-records.vm";
     private static final String SOBJECT_PICKLIST_VM = "/sobject-picklist.vm";
 
     // used for velocity logging, to avoid creating velocity.log
     private static final Logger LOG = Logger.getLogger(CamelSalesforceMojo.class.getName());
-    private static final int TIMEOUT = 60000;
 
     /**
-     * Salesforce client id
+     * HTTP client properties.
+     */
+    @Parameter
+    protected Map<String, Object> httpClientProperties;
+
+    /**
+     * SSL Context parameters.
+     */
+    @Parameter(property = "camelSalesforce.sslContextParameters")
+    protected SSLContextParameters sslContextParameters;
+
+    /**
+     * HTTP Proxy host.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyHost")
+    protected String httpProxyHost;
+
+    /**
+     * HTTP Proxy port.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyPort")
+    protected Integer httpProxyPort;
+
+    /**
+     * Proxy authentication username.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyUsername")
+    protected String httpProxyUsername;
+
+    /**
+     * Proxy authentication password.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyPassword")
+    protected String httpProxyPassword;
+
+    /**
+     * Salesforce client id.
      */
     @Parameter(property = "camelSalesforce.clientId", required = true)
     protected String clientId;
 
     /**
-     * Salesforce client secret
+     * Salesforce client secret.
      */
     @Parameter(property = "camelSalesforce.clientSecret", required = true)
     protected String clientSecret;
 
     /**
-     * Salesforce user name
+     * Salesforce username.
      */
     @Parameter(property = "camelSalesforce.userName", required = true)
     protected String userName;
 
     /**
-     * Salesforce password
+     * Salesforce password.
      */
     @Parameter(property = "camelSalesforce.password", required = true)
     protected String password;
 
     /**
-     * Salesforce version
+     * Salesforce API version.
      */
     @Parameter(property = "camelSalesforce.version", defaultValue = SalesforceEndpointConfig.DEFAULT_VERSION)
     protected String version;
 
     /**
-     * Location of the file.
+     * Location of generated DTO files, defaults to target/generated-sources/camel-salesforce.
      */
     @Parameter(property = "camelSalesforce.outputDirectory",
         defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
     protected File outputDirectory;
 
     /**
-     * Salesforce URL.
+     * Salesforce login URL, defaults to https://login.salesforce.com.
      */
     @Parameter(property = "camelSalesforce.loginUrl", defaultValue = SalesforceLoginConfig.DEFAULT_LOGIN_URL)
     protected String loginUrl;
 
     /**
-     * Names of Salesforce SObject for which POJOs must be generated
+     * Names of Salesforce SObject for which DTOs must be generated.
      */
     @Parameter
     protected String[] includes;
 
     /**
-     * Do NOT generate POJOs for these Salesforce SObjects
+     * Do NOT generate DTOs for these Salesforce SObjects.
      */
     @Parameter
     protected String[] excludes;
 
     /**
-     * Include Salesforce SObjects that match pattern
+     * Include Salesforce SObjects that match pattern.
      */
     @Parameter(property = "camelSalesforce.includePattern")
     protected String includePattern;
 
     /**
-     * Exclude Salesforce SObjects that match pattern
+     * Exclude Salesforce SObjects that match pattern.
      */
     @Parameter(property = "camelSalesforce.excludePattern")
     protected String excludePattern;
 
     /**
-     * Java package name for generated POJOs
+     * Java package name for generated DTOs.
      */
     @Parameter(property = "camelSalesforce.packageName", defaultValue = "org.apache.camel.salesforce.dto")
     protected String packageName;
 
     private VelocityEngine engine;
+    private long responseTimeout;
 
     /**
-     * Execute the mojo to generate SObject POJOs
+     * Execute the mojo to generate SObject DTOs
      *
      * @throws MojoExecutionException
      */
-    // CHECKSTYLE:OFF
     public void execute() throws MojoExecutionException {
         // initialize velocity to load resources from class loader and use Log4J
         Properties velocityProperties = new Properties();
@@ -177,15 +224,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         // connect to Salesforce
-        final HttpClient httpClient = new HttpClient();
-        httpClient.registerListener(RedirectListener.class.getName());
-        httpClient.setConnectTimeout(TIMEOUT);
-        httpClient.setTimeout(TIMEOUT);
-        try {
-            httpClient.start();
-        } catch (Exception e) {
-            throw new MojoExecutionException("Error creating HTTP client: " + e.getMessage(), e);
-        }
+        final HttpClient httpClient = createHttpClient();
 
         final SalesforceSession session = new SalesforceSession(httpClient,
                 new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
@@ -221,7 +260,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
             try {
                 getLog().info("Getting Salesforce Objects...");
                 restClient.getGlobalObjects(callback);
-                if (!callback.await(TIMEOUT, TimeUnit.MILLISECONDS)) {
+                if (!callback.await(responseTimeout, TimeUnit.MILLISECONDS)) {
                     throw new MojoExecutionException("Timeout waiting for getGlobalObjects!");
                 }
                 final SalesforceException ex = callback.getException();
@@ -243,67 +282,11 @@ public class CamelSalesforceMojo extends AbstractMojo {
             // check if we are generating POJOs for all objects or not
             if ((includes != null && includes.length > 0)
                     || (excludes != null && excludes.length > 0)
-                    || (includePattern != null && !includePattern.trim().isEmpty())
-                    || (excludePattern != null && !excludePattern.trim().isEmpty())) {
+                    || ObjectHelper.isNotEmpty(includePattern)
+                    || ObjectHelper.isNotEmpty(excludePattern)) {
 
-                getLog().info("Looking for matching Object names...");
-                // create a list of accepted names
-                final Set<String> includedNames = new HashSet<String>();
-                if (includes != null && includes.length > 0) {
-                    for (String name : includes) {
-                        name = name.trim();
-                        if (name.isEmpty()) {
-                            throw new MojoExecutionException("Invalid empty name in includes");
-                        }
-                        includedNames.add(name);
-                    }
-                }
+                filterObjectNames(objectNames);
 
-                final Set<String> excludedNames = new HashSet<String>();
-                if (excludes != null && excludes.length > 0) {
-                    for (String name : excludes) {
-                        name = name.trim();
-                        if (name.isEmpty()) {
-                            throw new MojoExecutionException("Invalid empty name in excludes");
-                        }
-                        excludedNames.add(name);
-                    }
-                }
-
-                // check whether a pattern is in effect
-                Pattern incPattern;
-                if (includePattern != null && !includePattern.trim().isEmpty()) {
-                    incPattern = Pattern.compile(includePattern.trim());
-                } else if (includedNames.isEmpty()) {
-                    // include everything by default if no include names are set
-                    incPattern = Pattern.compile(".*");
-                } else {
-                    // include nothing by default if include names are set
-                    incPattern = Pattern.compile("^$");
-                }
-
-                // check whether a pattern is in effect
-                Pattern excPattern;
-                if (excludePattern != null && !excludePattern.trim().isEmpty()) {
-                    excPattern = Pattern.compile(excludePattern.trim());
-                } else {
-                    // exclude nothing by default
-                    excPattern = Pattern.compile("^$");
-                }
-
-                final Set<String> acceptedNames = new HashSet<String>();
-                for (String name : objectNames) {
-                    // name is included, or matches include pattern
-                    // and is not excluded and does not match exclude pattern
-                    if ((includedNames.contains(name) || incPattern.matcher(name).matches())
-                            && !excludedNames.contains(name) && !excPattern.matcher(name).matches()) {
-                        acceptedNames.add(name);
-                    }
-                }
-                objectNames.clear();
-                objectNames.addAll(acceptedNames);
-
-                getLog().info(String.format("Found %s matching Objects", objectNames.size()));
             } else {
                 getLog().warn(String.format("Generating Java classes for all %s Objects, this may take a while...", objectNames.size()));
             }
@@ -314,16 +297,16 @@ public class CamelSalesforceMojo extends AbstractMojo {
             getLog().info("Retrieving Object descriptions...");
             for (String name : objectNames) {
                 try {
-                        callback.reset();
-                        restClient.getDescription(name, callback);
-                        if (!callback.await(TIMEOUT, TimeUnit.MILLISECONDS)) {
-                            throw new MojoExecutionException("Timeout waiting for getDescription for sObject " + name);
-                        }
-                        final SalesforceException ex = callback.getException();
-                        if (ex != null) {
-                            throw ex;
-                        }
-                        descriptions.add(mapper.readValue(callback.getResponse(), SObjectDescription.class));
+                    callback.reset();
+                    restClient.getDescription(name, callback);
+                    if (!callback.await(responseTimeout, TimeUnit.MILLISECONDS)) {
+                        throw new MojoExecutionException("Timeout waiting for getDescription for sObject " + name);
+                    }
+                    final SalesforceException ex = callback.getException();
+                    if (ex != null) {
+                        throw ex;
+                    }
+                    descriptions.add(mapper.readValue(callback.getResponse(), SObjectDescription.class));
                 } catch (Exception e) {
                     String msg = "Error getting SObject description for '" + name + "': " + e.getMessage();
                     throw new MojoExecutionException(msg, e);
@@ -372,7 +355,129 @@ public class CamelSalesforceMojo extends AbstractMojo {
             }
         }
     }
-    // CHECKSTYLE:ON
+
+    protected void filterObjectNames(Set<String> objectNames) throws MojoExecutionException {
+        getLog().info("Looking for matching Object names...");
+        // create a list of accepted names
+        final Set<String> includedNames = new HashSet<String>();
+        if (includes != null && includes.length > 0) {
+            for (String name : includes) {
+                name = name.trim();
+                if (name.isEmpty()) {
+                    throw new MojoExecutionException("Invalid empty name in includes");
+                }
+                includedNames.add(name);
+            }
+        }
+
+        final Set<String> excludedNames = new HashSet<String>();
+        if (excludes != null && excludes.length > 0) {
+            for (String name : excludes) {
+                name = name.trim();
+                if (name.isEmpty()) {
+                    throw new MojoExecutionException("Invalid empty name in excludes");
+                }
+                excludedNames.add(name);
+            }
+        }
+
+        // check whether a pattern is in effect
+        Pattern incPattern;
+        if (includePattern != null && !includePattern.trim().isEmpty()) {
+            incPattern = Pattern.compile(includePattern.trim());
+        } else if (includedNames.isEmpty()) {
+            // include everything by default if no include names are set
+            incPattern = Pattern.compile(".*");
+        } else {
+            // include nothing by default if include names are set
+            incPattern = Pattern.compile("^$");
+        }
+
+        // check whether a pattern is in effect
+        Pattern excPattern;
+        if (excludePattern != null && !excludePattern.trim().isEmpty()) {
+            excPattern = Pattern.compile(excludePattern.trim());
+        } else {
+            // exclude nothing by default
+            excPattern = Pattern.compile("^$");
+        }
+
+        final Set<String> acceptedNames = new HashSet<String>();
+        for (String name : objectNames) {
+            // name is included, or matches include pattern
+            // and is not excluded and does not match exclude pattern
+            if ((includedNames.contains(name) || incPattern.matcher(name).matches())
+                    && !excludedNames.contains(name) && !excPattern.matcher(name).matches()) {
+                acceptedNames.add(name);
+            }
+        }
+        objectNames.clear();
+        objectNames.addAll(acceptedNames);
+
+        getLog().info(String.format("Found %s matching Objects", objectNames.size()));
+    }
+
+    protected HttpClient createHttpClient() throws MojoExecutionException {
+
+        final HttpClient httpClient = new HttpClient();
+
+        // default settings
+        httpClient.registerListener(RedirectListener.class.getName());
+        httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
+        httpClient.setConnectTimeout(DEFAULT_TIMEOUT);
+        httpClient.setTimeout(DEFAULT_TIMEOUT);
+
+        // set ssl context parameters
+        try {
+            final SSLContextParameters contextParameters = sslContextParameters != null
+                ? sslContextParameters : new SSLContextParameters();
+            final SslContextFactory sslContextFactory = httpClient.getSslContextFactory();
+            sslContextFactory.setSslContext(contextParameters.createSSLContext());
+        } catch (GeneralSecurityException e) {
+            throw new MojoExecutionException("Error creating default SSL context: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error creating default SSL context: " + e.getMessage(), e);
+        }
+
+        // set HTTP client parameters
+        if (httpClientProperties != null && !httpClientProperties.isEmpty()) {
+            try {
+                IntrospectionSupport.setProperties(httpClient, new HashMap<String, Object>(httpClientProperties));
+            } catch (Exception e) {
+                throw new MojoExecutionException("Error setting HTTP client properties: " + e.getMessage(), e);
+            }
+        }
+
+        // wait for 1 second longer than the HTTP client response timeout
+        responseTimeout = httpClient.getTimeout() + 1000L;
+
+        // set http proxy settings
+        if (this.httpProxyHost != null && httpProxyPort != null) {
+            httpClient.setProxy(new Address(this.httpProxyHost, this.httpProxyPort));
+        }
+        if (this.httpProxyUsername != null && httpProxyPassword != null) {
+            try {
+                httpClient.setProxyAuthentication(new ProxyAuthorization(this.httpProxyUsername, this.httpProxyPassword));
+            } catch (IOException e) {
+                throw new MojoExecutionException("Error configuring proxy authorization: " + e.getMessage(), e);
+            }
+        }
+
+        // add redirect listener to handle Salesforce redirects
+        // this is ok to do since the RedirectListener is in the same classloader as Jetty client
+        String listenerClass = RedirectListener.class.getName();
+        if (httpClient.getRegisteredListeners() == null
+            || !httpClient.getRegisteredListeners().contains(listenerClass)) {
+            httpClient.registerListener(listenerClass);
+        }
+
+        try {
+            httpClient.start();
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error creating HTTP client: " + e.getMessage(), e);
+        }
+        return httpClient;
+    }
 
     private void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws MojoExecutionException {
         // generate a source file for SObject
@@ -498,7 +603,8 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 {"duration", "javax.xml.datatype.Duration"},
                 {"NOTATION", "javax.xml.namespace.QName"}
 */
-                {"address", "String"}
+                {"address", "org.apache.camel.component.salesforce.api.dto.Address"},
+                {"location", "org.apache.camel.component.salesforce.api.dto.GeoLocation"}
             };
             LOOKUP_MAP = new HashMap<String, String>();
             for (String[] entry : typeMap) {

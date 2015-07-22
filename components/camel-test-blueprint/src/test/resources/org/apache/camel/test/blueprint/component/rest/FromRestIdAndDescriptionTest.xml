@@ -36,6 +36,23 @@
       <description lang="en">Bye Service</description>
       <get consumes="application/json">
         <description>Says bye to you</description>
+          <param name="header_count" type="header" description="header param description1" dataType="integer" defaultValue="1" allowMultiple="false" required="true" access="acc1">
+              <allowableValues>
+                  <value>1</value>
+                  <value>2</value>
+                  <value>3</value>
+                  <value>4</value>
+              </allowableValues>
+          </param>
+          <param name="header_letter" type="query" description="header param description2" dataType="string" defaultValue="b" allowMultiple="true" required="false" access="acc2">
+              <allowableValues>
+                  <value>a</value>
+                  <value>b</value>
+                  <value>c</value>
+                  <value>d</value>
+              </allowableValues>
+          </param>
+          <responseMessage code="300" message="test msg" responseModel="java.lang.Integer"/>
         <to uri="direct:bye"/>
       </get>
       <post>

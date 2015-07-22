@@ -152,6 +152,22 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} == '1'", false);
     }
 
+    public void testEqualIgnoreOperator() throws Exception {
+        // string to string comparison
+        assertPredicate("${in.header.foo} =~ 'abc'", true);
+        assertPredicate("${in.header.foo} =~ 'ABC'", true);
+        assertPredicate("${in.header.foo} =~ 'Abc'", true);
+        assertPredicate("${in.header.foo} =~ 'Def'", false);
+        assertPredicate("${in.header.foo} =~ '1'", false);
+
+        // integer to string comparison
+        assertPredicate("${in.header.bar} =~ '123'", true);
+        assertPredicate("${in.header.bar} =~ 123", true);
+        assertPredicate("${in.header.bar} =~ '444'", false);
+        assertPredicate("${in.header.bar} =~ 444", false);
+        assertPredicate("${in.header.bar} =~ '1'", false);
+    }
+
     public void testNotEqualOperator() throws Exception {
         // string to string comparison
         assertPredicate("${in.header.foo} != 'abc'", false);

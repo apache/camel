@@ -20,6 +20,7 @@ import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -88,7 +89,9 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         // if its an OPTIONS request then return which methods is allowed
-        if ("OPTIONS".equals(request.getMethod().name())) {
+        boolean isRestrictedToOptions = consumer.getEndpoint().getHttpMethodRestrict() != null
+                && consumer.getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
+        if ("OPTIONS".equals(request.getMethod().name()) && !isRestrictedToOptions) {
             String s;
             if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
                 s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
@@ -148,7 +151,12 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             // strip the starting endpoint path so the target is relative to the endpoint uri
             String path = consumer.getConfiguration().getPath();
             if (path != null && target.startsWith(path)) {
-                target = target.substring(path.length());
+                // need to match by lower case as we want to ignore case on context-path
+                path = path.toLowerCase(Locale.US);
+                String match = target.toLowerCase(Locale.US);
+                if (match.startsWith(path)) {
+                    target = target.substring(path.length());
+                }
             }
 
             // is it a restricted resource?

@@ -62,7 +62,10 @@ public final class DockerClientFactory {
         String serverAddress = DockerHelper.getProperty(DockerConstants.DOCKER_SERVER_ADDRESS, dockerConfiguration, message, String.class, dockerConfiguration.getServerAddress());
         String certPath = DockerHelper.getProperty(DockerConstants.DOCKER_CERT_PATH, dockerConfiguration, message, String.class, dockerConfiguration.getCertPath());
         Boolean secure = DockerHelper.getProperty(DockerConstants.DOCKER_SECURE, dockerConfiguration, message, Boolean.class, dockerConfiguration.isSecure());
-
+        Boolean loggingFilter = DockerHelper.getProperty(DockerConstants.DOCKER_LOGGING_FILTER, dockerConfiguration, message, Boolean.class, dockerConfiguration.isLoggingFilterEnabled());
+        Boolean followRedirectFilter = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_REDIRECT_FILTER, dockerConfiguration, message, 
+                Boolean.class, dockerConfiguration.isFollowRedirectFilterEnabled());
+        
         clientProfile.setHost(host);
         clientProfile.setPort(port);
         clientProfile.setEmail(email);
@@ -74,6 +77,8 @@ public final class DockerClientFactory {
         clientProfile.setMaxTotalConnections(maxTotalConnections);
         clientProfile.setMaxPerRouteConnections(maxPerRouteConnections);
         clientProfile.setSecure(secure);
+        clientProfile.setFollowRedirectFilter(followRedirectFilter);
+        clientProfile.setLoggingFilter(loggingFilter);
 
         DockerClient client = dockerComponent.getClient(clientProfile);
 
@@ -99,7 +104,15 @@ public final class DockerClientFactory {
         if (clientProfile.getCertPath() != null) {
             configBuilder.withDockerCertPath(clientProfile.getCertPath());
         }
+        
+        if (clientProfile.isFollowRedirectFilterEnabled() != null && clientProfile.isFollowRedirectFilterEnabled()) {
+            configBuilder.withFollowRedirectsFilter(clientProfile.isFollowRedirectFilterEnabled());
+        }
 
+        if (clientProfile.isLoggingFilterEnabled() != null && clientProfile.isLoggingFilterEnabled()) {
+            configBuilder.withLoggingFilter(clientProfile.isLoggingFilterEnabled());
+        }
+        
         DockerClientConfig config = configBuilder.build();
         DockerCmdExecFactory dockerClientFactory = new DockerCmdExecFactoryImpl();
         client = DockerClientBuilder.getInstance(config).withDockerCmdExecFactory(dockerClientFactory).build();

@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.properties;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Map;
 import java.util.Properties;
 
@@ -37,6 +40,12 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public class DefaultPropertiesResolver implements PropertiesResolver {
+
+    private final PropertiesComponent propertiesComponent;
+
+    public DefaultPropertiesResolver(PropertiesComponent propertiesComponent) {
+        this.propertiesComponent = propertiesComponent;
+    }
 
     public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
         Properties answer = new Properties();
@@ -69,15 +78,21 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         }
 
         InputStream is = null;
+        Reader reader = null;
         try {
             is = new FileInputStream(path);
-            answer.load(is);
+            if (propertiesComponent.getEncoding() != null) {
+                reader = new BufferedReader(new InputStreamReader(is, propertiesComponent.getEncoding()));
+                answer.load(reader);
+            } else {
+                answer.load(is);
+            }
         } catch (FileNotFoundException e) {
             if (!ignoreMissingLocation) {
                 throw e;
             }
         } finally {
-            IOHelper.close(is);
+            IOHelper.close(reader, is);
         }
 
         return answer;
@@ -91,15 +106,21 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         }
 
         InputStream is = context.getClassResolver().loadResourceAsStream(path);
+        Reader reader = null;
         if (is == null) {
             if (!ignoreMissingLocation) {
                 throw new FileNotFoundException("Properties file " + path + " not found in classpath");
             }
         } else {
             try {
-                answer.load(is);
+                if (propertiesComponent.getEncoding() != null) {
+                    reader = new BufferedReader(new InputStreamReader(is, propertiesComponent.getEncoding()));
+                    answer.load(reader);
+                } else {
+                    answer.load(is);
+                }
             } finally {
-                IOHelper.close(is);
+                IOHelper.close(reader, is);
             }
         }
         return answer;

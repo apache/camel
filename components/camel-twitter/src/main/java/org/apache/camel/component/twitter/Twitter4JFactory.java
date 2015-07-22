@@ -23,6 +23,7 @@ import org.apache.camel.component.twitter.consumer.directmessage.DirectMessageCo
 import org.apache.camel.component.twitter.consumer.search.SearchConsumer;
 import org.apache.camel.component.twitter.consumer.streaming.FilterConsumer;
 import org.apache.camel.component.twitter.consumer.streaming.SampleConsumer;
+import org.apache.camel.component.twitter.consumer.streaming.UserStreamingConsumer;
 import org.apache.camel.component.twitter.consumer.timeline.HomeConsumer;
 import org.apache.camel.component.twitter.consumer.timeline.MentionsConsumer;
 import org.apache.camel.component.twitter.consumer.timeline.RetweetsConsumer;
@@ -60,6 +61,7 @@ import org.slf4j.LoggerFactory;
  * streaming/
  * filter (POLLING ONLY)
  * sample (POLLING ONLY)
+ * user (POLLING ONLY)
  */
 public final class Twitter4JFactory {
 
@@ -90,6 +92,8 @@ public final class Twitter4JFactory {
                     return new SampleConsumer(te);
                 case FILTER:
                     return new FilterConsumer(te);
+                case USER:
+                    return new UserStreamingConsumer(te);
                 default:
                     break;
                 }

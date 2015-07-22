@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "language")
+@Metadata(label = "language", title = "XQuery")
 @XmlRootElement(name = "xquery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XQueryExpression extends NamespaceAwareExpression {
@@ -107,24 +107,24 @@ public class XQueryExpression extends NamespaceAwareExpression {
 
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
-        super.configureExpression(camelContext, expression);
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
             setProperty(expression, "headerName", getHeaderName());
         }
+        super.configureExpression(camelContext, expression);
     }
 
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        super.configurePredicate(camelContext, predicate);
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
             setProperty(predicate, "headerName", getHeaderName());
         }
+        super.configurePredicate(camelContext, predicate);
     }
 
 }

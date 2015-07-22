@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents an SSH endpoint.
  */
-@UriEndpoint(scheme = "ssh", syntax = "ssh:host:port", consumerClass = SshConsumer.class, label = "file")
+@UriEndpoint(scheme = "ssh", title = "SSH", syntax = "ssh:host:port", consumerClass = SshConsumer.class, label = "file")
 public class SshEndpoint extends ScheduledPollEndpoint {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -255,6 +255,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     /**
      * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
      */
+    @Deprecated
     public String getCertFilename() {
         return getConfiguration().getCertFilename();
     }
@@ -262,6 +263,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     /**
      * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
      */
+    @Deprecated
     public void setCertFilename(String certFilename) {
         getConfiguration().setCertFilename(certFilename);
     }

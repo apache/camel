@@ -396,6 +396,9 @@ public class MinaComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared mina configuration.
+     */
     public void setConfiguration(MinaConfiguration configuration) {
         this.configuration = configuration;
     }

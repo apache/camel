@@ -18,11 +18,9 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElements;
@@ -38,16 +36,7 @@ import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
-import org.apache.camel.processor.loadbalancer.CircuitBreakerLoadBalancer;
-import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
-import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
-import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
-import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
-import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
-import org.apache.camel.processor.loadbalancer.WeightedRandomLoadBalancer;
-import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -59,9 +48,6 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefinition> {
-    @XmlAttribute
-    @Deprecated
-    private String ref;
     @XmlElements({
             @XmlElement(required = false, name = "failover", type = FailoverLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
@@ -71,7 +57,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
             @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "weighted", type = WeightedLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "circuitBreaker", type = CircuitBreakerLoadBalancerDefinition.class)}
-    )
+        )
     private LoadBalancerDefinition loadBalancerType;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
@@ -97,21 +83,6 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         return true;
     }
 
-    public String getRef() {
-        return ref;
-    }
-
-    /**
-     * To use a custom load balancer.
-     * This option is deprecated, use the custom load balancer type instead.
-     *
-     * @deprecated use custom load balancer
-     */
-    @Deprecated
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
     public LoadBalancerDefinition getLoadBalancerType() {
         return loadBalancerType;
     }
@@ -126,30 +97,26 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         loadBalancerType = loadbalancer;
     }
 
-    protected Processor createOutputsProcessor(RouteContext routeContext,
-        Collection<ProcessorDefinition<?>> outputs) throws Exception {
-
-        LoadBalancer loadBalancer = LoadBalancerDefinition.getLoadBalancer(routeContext, loadBalancerType, ref);
-        for (ProcessorDefinition<?> processorType : outputs) {
-            Processor processor = createProcessor(routeContext, processorType);
-            loadBalancer.addProcessor(processor);
-        }
-        return loadBalancer;
-    }
-    
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        LoadBalancer loadBalancer = LoadBalancerDefinition.getLoadBalancer(routeContext, loadBalancerType, ref);
-        for (ProcessorDefinition<?> processorType : getOutputs()) {
-            // output must not be another load balancer
-            // check for instanceof as the code below as there is compilation errors on earlier versions of JDK6
-            // on Windows boxes or with IBM JDKs etc.
-            if (LoadBalanceDefinition.class.isInstance(processorType)) {
-                throw new IllegalArgumentException("Loadbalancer already configured to: " + loadBalancerType + ". Cannot set it to: " + processorType);
+        // the load balancer is stateful so we should only create it once in case its used from a context scoped error handler
+
+        LoadBalancer loadBalancer = loadBalancerType.getLoadBalancer(routeContext);
+        if (loadBalancer == null) {
+            // then create it and reuse it
+            loadBalancer = loadBalancerType.createLoadBalancer(routeContext);
+            loadBalancerType.setLoadBalancer(loadBalancer);
+            for (ProcessorDefinition<?> processorType : getOutputs()) {
+                // output must not be another load balancer
+                // check for instanceof as the code below as there is compilation errors on earlier versions of JDK6
+                // on Windows boxes or with IBM JDKs etc.
+                if (LoadBalanceDefinition.class.isInstance(processorType)) {
+                    throw new IllegalArgumentException("Loadbalancer already configured to: " + loadBalancerType + ". Cannot set it to: " + processorType);
+                }
+                Processor processor = createProcessor(routeContext, processorType);
+                processor = wrapChannel(routeContext, processor, processorType);
+                loadBalancer.addProcessor(processor);
             }
-            Processor processor = createProcessor(routeContext, processorType);
-            processor = wrapChannel(routeContext, processor, processorType);
-            loadBalancer.addProcessor(processor);
         }
         return loadBalancer;
     }
@@ -164,7 +131,9 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition loadBalance(LoadBalancer loadBalancer) {
-        setLoadBalancerType(new LoadBalancerDefinition(loadBalancer));
+        CustomLoadBalancerDefinition def = new CustomLoadBalancerDefinition();
+        def.setLoadBalancer(loadBalancer);
+        setLoadBalancerType(def);
         return this;
     }
     
@@ -204,10 +173,29 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition failover(int maximumFailoverAttempts, boolean inheritErrorHandler, boolean roundRobin, Class<?>... exceptions) {
-        FailOverLoadBalancer failover = new FailOverLoadBalancer(Arrays.asList(exceptions));
-        failover.setMaximumFailoverAttempts(maximumFailoverAttempts);
-        failover.setRoundRobin(roundRobin);
-        setLoadBalancerType(new LoadBalancerDefinition(failover));
+        return failover(maximumFailoverAttempts, inheritErrorHandler, roundRobin, false, exceptions);
+    }
+
+    /**
+     * Uses fail over load balancer
+     *
+     * @param maximumFailoverAttempts  maximum number of failover attempts before exhausting.
+     *                                 Use -1 to newer exhaust when round robin is also enabled.
+     *                                 If round robin is disabled then it will exhaust when there are no more endpoints to failover
+     * @param inheritErrorHandler      whether or not to inherit error handler.
+     *                                 If <tt>false</tt> then it will failover immediately in case of an exception
+     * @param roundRobin               whether or not to use round robin (which keeps state)
+     * @param sticky                   whether or not to use sticky (which keeps state)
+     * @param exceptions               exception classes which we want to failover if one of them was thrown
+     * @return the builder
+     */
+    public LoadBalanceDefinition failover(int maximumFailoverAttempts, boolean inheritErrorHandler, boolean roundRobin, boolean sticky, Class<?>... exceptions) {
+        FailoverLoadBalancerDefinition def = new FailoverLoadBalancerDefinition();
+        def.setExceptionTypes(Arrays.asList(exceptions));
+        def.setMaximumFailoverAttempts(maximumFailoverAttempts);
+        def.setRoundRobin(roundRobin);
+        def.setSticky(sticky);
+        setLoadBalancerType(def);
         this.setInheritErrorHandler(inheritErrorHandler);
         return this;
     }
@@ -232,11 +220,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition circuitBreaker(int threshold, long halfOpenAfter, Class<?>... exceptions) {
-        CircuitBreakerLoadBalancer breakerLoadBalancer = new CircuitBreakerLoadBalancer(Arrays.asList(exceptions));
-        breakerLoadBalancer.setThreshold(threshold);
-        breakerLoadBalancer.setHalfOpenAfter(halfOpenAfter);
-
-        setLoadBalancerType(new LoadBalancerDefinition(breakerLoadBalancer));
+        CircuitBreakerLoadBalancerDefinition def = new CircuitBreakerLoadBalancerDefinition();
+        def.setExceptionTypes(Arrays.asList(exceptions));
+        def.setThreshold(threshold);
+        def.setHalfOpenAfter(halfOpenAfter);
+        setLoadBalancerType(def);
         return this;
     }
     
@@ -249,20 +237,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition weighted(boolean roundRobin, String distributionRatio, String distributionRatioDelimiter) {
-        WeightedLoadBalancer weighted;
-        List<Integer> distributionRatioList = new ArrayList<Integer>();
-        
-        String[] ratios = distributionRatio.split(distributionRatioDelimiter);
-        for (String ratio : ratios) {
-            distributionRatioList.add(new Integer(ratio.trim()));
-        }
-        
-        if (!roundRobin) {
-            weighted = new WeightedRandomLoadBalancer(distributionRatioList);
-        } else {
-            weighted = new WeightedRoundRobinLoadBalancer(distributionRatioList);
-        }
-        setLoadBalancerType(new LoadBalancerDefinition(weighted));
+        WeightedLoadBalancerDefinition def = new WeightedLoadBalancerDefinition();
+        def.setRoundRobin(roundRobin);
+        def.setDistributionRatio(distributionRatio);
+        def.setDistributionRatioDelimiter(distributionRatioDelimiter);
+        setLoadBalancerType(def);
         return this;
     }
     
@@ -272,7 +251,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition roundRobin() {
-        setLoadBalancerType(new LoadBalancerDefinition(new RoundRobinLoadBalancer()));
+        setLoadBalancerType(new RoundRobinLoadBalancerDefinition());
         return this;
     }
 
@@ -282,7 +261,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition random() {
-        setLoadBalancerType(new LoadBalancerDefinition(new RandomLoadBalancer()));
+        setLoadBalancerType(new RandomLoadBalancerDefinition());
         return this;
     }
 
@@ -306,7 +285,9 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return  the builder
      */
     public LoadBalanceDefinition sticky(Expression correlationExpression) {
-        setLoadBalancerType(new LoadBalancerDefinition(new StickyLoadBalancer(correlationExpression)));
+        StickyLoadBalancerDefinition def = new StickyLoadBalancerDefinition();
+        def.setCorrelationExpression(new ExpressionSubElementDefinition(correlationExpression));
+        setLoadBalancerType(def);
         return this;
     }
 
@@ -316,7 +297,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition topic() {
-        setLoadBalancerType(new LoadBalancerDefinition(new TopicLoadBalancer()));
+        setLoadBalancerType(new TopicLoadBalancerDefinition());
         return this;
     }
 
@@ -333,10 +314,6 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
 
     @Override
     public String toString() {
-        if (loadBalancerType != null) {
-            return "LoadBalanceType[" + loadBalancerType + ", " + getOutputs() + "]";
-        } else {
-            return "LoadBalanceType[ref:" + ref + ", " + getOutputs() + "]";
-        }
+        return "LoadBalanceType[" + loadBalancerType + ", " + getOutputs() + "]";
     }
 }

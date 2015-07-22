@@ -26,15 +26,11 @@ import org.junit.Test;
  */
 public class JettyHttpProducerAsyncTimeoutTest extends BaseJettyTest {
 
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/timeout?httpClient.timeout=2000";
+    private String url = "jetty://http://127.0.0.1:" + getPort() + "/timeout?httpClient.timeout=2000";
 
     @Test
     public void testTimeout() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
+        
         // give Jetty time to startup properly
         Thread.sleep(1000);
 

@@ -26,16 +26,14 @@ import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
 import org.apache.camel.component.twitter.data.EndpointType;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
 
 /**
  * Twitter direct endpoint
  */
-@UriEndpoint(scheme = "twitter", syntax = "twitter:type", consumerClass = Twitter4JConsumer.class, label = "api,social")
 public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
 
-    @UriParam
+    // only TwitterEndpointPolling is annotated
+
     private TwitterConfiguration properties;
 
     public TwitterEndpointDirect(String uri, TwitterComponent component, TwitterConfiguration properties) {
@@ -123,16 +121,6 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
     @ManagedAttribute
     public boolean isFilterOld() {
         return getProperties().isFilterOld();
-    }
-
-    @ManagedAttribute
-    public void setDate(String date) {
-        getProperties().setDate(date);
-    }
-
-    @ManagedAttribute
-    public String getDate() {
-        return getProperties().getDate();
     }
 
     @ManagedAttribute

@@ -54,6 +54,9 @@ public class XQueryComponent extends UriEndpointComponent {
         return moduleURIResolver;
     }
 
+    /**
+     * To use the custom {@link ModuleURIResolver}
+     */
     public void setModuleURIResolver(ModuleURIResolver moduleURIResolver) {
         this.moduleURIResolver = moduleURIResolver;
     }

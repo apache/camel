@@ -17,6 +17,7 @@
 package org.apache.camel.component.websocket;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +107,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
                     @Override
                     public void onMessage(byte[] message) {
                         received.add(message);
-                        log.info("received --> " + message);
+                        log.info("received --> " + Arrays.toString(message));
                         latch.countDown();
                     }
 

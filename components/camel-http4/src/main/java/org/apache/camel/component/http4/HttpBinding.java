@@ -116,6 +116,34 @@ public interface HttpBinding {
     void setUseReaderForPayload(boolean useReaderForPayload);
 
     /**
+     * Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present.
+     * This can be turned on in case HTTP clients do not send streamed data.
+     */
+    boolean isEagerCheckContentAvailable();
+
+    /**
+     * Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present.
+     * This can be turned on in case HTTP clients do not send streamed data.
+     */
+    void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable);
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back
+     * serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or
+     * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is,
+     * instead of the HttpOperationFailedException. The caused exception is required to be serialized.
+     */
+    boolean isTransferException();
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back
+     * serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or
+     * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is,
+     * instead of the HttpOperationFailedException. The caused exception is required to be serialized.
+     */
+    void setTransferException(boolean transferException);
+
+    /**
      * Gets the header filter strategy
      *
      * @return the strategy

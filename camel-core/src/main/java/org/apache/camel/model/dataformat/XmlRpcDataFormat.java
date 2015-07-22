@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * xml-rpc data format
  */
-@Metadata(label = "dataformat,transformation")
+@Metadata(label = "dataformat,transformation", title = "XML RPC")
 @XmlRootElement(name = "xmlrpc")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlRpcDataFormat extends DataFormatDefinition {

@@ -27,9 +27,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.sonatype.plexus.build.incremental.BuildContext;
+
 public final class PackageHelper {
 
     private PackageHelper() {
+    }
+    
+    public static boolean haveResourcesChanged(Log log, MavenProject project, BuildContext buildContext, String suffix) {
+        String baseDir = project.getBasedir().getAbsolutePath();
+        for (Resource r : project.getBuild().getResources()) {
+            File file = new File(r.getDirectory());
+            if (file.isAbsolute()) {
+                file = new File(r.getDirectory().substring(baseDir.length() + 1));
+            }
+            String path = file.getPath() + "/" + suffix;
+            log.debug("checking  if " + path + " (" + r.getDirectory() + "/" + suffix + ") has changed.");
+            if (buildContext.hasDelta(path)) {
+                log.debug("Indeed " + suffix + " has changed.");
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -110,8 +132,8 @@ public final class PackageHelper {
 
         @Override
         public boolean accept(File pathname) {
-            // skip camel-jetty8 as its a duplicate of camel-jetty9
-            if ("camel-jetty8".equals(pathname)) {
+            // skip camel-jetty9 as its a duplicate of camel-jetty
+            if ("camel-jetty9".equals(pathname)) {
                 return false;
             }
             return pathname.isDirectory() || pathname.getName().endsWith(".json");

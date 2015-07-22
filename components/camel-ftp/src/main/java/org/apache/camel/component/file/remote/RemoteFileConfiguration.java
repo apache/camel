@@ -60,20 +60,24 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int timeout = 30000;
     @UriParam
     private int soTimeout;
+    @UriParam(defaultValue = "32768")
+    private int receiveBufferSize = 32 * 1024;
     @UriParam
     private boolean throwExceptionOnConnectFailed;
     @UriParam
     private String siteCommand;
     @UriParam(defaultValue = "true")
     private boolean stepwise = true;
-    @UriParam(defaultValue = "Auto")
-    private PathSeparator separator = PathSeparator.Auto;
+    @UriParam(defaultValue = "UNIX")
+    private PathSeparator separator = PathSeparator.UNIX;
     @UriParam
     private boolean streamDownload;
     @UriParam(defaultValue = "true")
     private boolean useList = true;
     @UriParam
     private boolean ignoreFileNotFoundOrPermissionError;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean sendNoop = true;
 
     public RemoteFileConfiguration() {
     }
@@ -197,6 +201,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return binary;
     }
 
+    /**
+     * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII (false).
+     */
     public void setBinary(boolean binary) {
         this.binary = binary;
     }
@@ -251,6 +258,19 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
+    }
+
+    public int getReceiveBufferSize() {
+        return receiveBufferSize;
+    }
+
+    /**
+     * The receive (download) buffer size
+     * <p/>
+     * Used only by FTPClient
+     */
+    public void setReceiveBufferSize(int receiveBufferSize) {
+        this.receiveBufferSize = receiveBufferSize;
     }
 
     public boolean isThrowExceptionOnConnectFailed() {
@@ -355,6 +375,20 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public void setIgnoreFileNotFoundOrPermissionError(boolean ignoreFileNotFoundOrPermissionError) {
         this.ignoreFileNotFoundOrPermissionError = ignoreFileNotFoundOrPermissionError;
+    }
+
+    public boolean isSendNoop() {
+        return sendNoop;
+    }
+
+    /**
+     * Whether to send a noop command as a pre-write check before uploading files to the FTP server.
+     * <p/>
+     * This is enabled by default as a validation of the connection is still valid, which allows to silently
+     * re-connect to be able to upload the file. However if this causes problems, you can turn this option off.
+     */
+    public void setSendNoop(boolean sendNoop) {
+        this.sendNoop = sendNoop;
     }
 
     /**

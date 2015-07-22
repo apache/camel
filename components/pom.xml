@@ -31,7 +31,7 @@
   <packaging>pom</packaging>
 
   <modules>
-	  <!-- we want to test these modules first to catch any errors early as possible -->
+    <!-- we want to test these modules first to catch any errors early as possible -->
     <module>camel-test</module>
     <module>camel-testng</module>
     <module>camel-test-blueprint</module>
@@ -54,7 +54,6 @@
     <module>camel-jetty</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
-    <module>camel-web-standalone</module>
     <module>camel-jms</module>
 
     <!-- regular modules in alphabetic order -->
@@ -81,6 +80,7 @@
     <module>camel-cdi</module>
     <module>camel-chunk</module>
     <module>camel-cmis</module>
+    <module>camel-coap</module>
     <module>camel-cometd</module>
     <module>camel-context</module>
     <module>camel-couchdb</module>
@@ -104,11 +104,13 @@
     <module>camel-gae</module>
     <module>camel-ganglia</module>
     <module>camel-geocoder</module>
+    <module>camel-git</module>
     <module>camel-github</module>
     <module>camel-google-calendar</module>
     <module>camel-google-drive</module>
     <module>camel-google-mail</module>
     <module>camel-gora</module>
+    <module>camel-grape</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
     <module>camel-guice</module>
@@ -173,6 +175,7 @@
     <module>camel-optaplanner</module>
     <module>camel-paho</module>
     <module>camel-paxlogging</module>
+    <module>camel-pdf</module>
     <module>camel-pgevent</module>
     <module>camel-printer</module>
     <module>camel-protobuf</module>
@@ -199,6 +202,7 @@
     <module>camel-smpp</module>
     <module>camel-snmp</module>
     <module>camel-sjms</module>
+    <module>camel-slack</module>
     <module>camel-soap</module>
     <module>camel-solr</module>
     <module>camel-spark-rest</module>
@@ -221,12 +225,12 @@
     <module>camel-swagger</module>
     <module>camel-tagsoup</module>
     <module>camel-twitter</module>
+    <module>camel-undertow</module>
     <module>camel-univocity-parsers</module>
     <module>camel-urlrewrite</module>
     <module>camel-velocity</module>
     <module>camel-vertx</module>
     <module>camel-weather</module>
-    <module>camel-web</module>
     <module>camel-websocket</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmljson</module>
@@ -241,35 +245,6 @@
 
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <!-- Eclipse m2e Lifecycle Management -->
-        <plugin>
-         <groupId>org.eclipse.m2e</groupId>
-         <artifactId>lifecycle-mapping</artifactId>
-         <version>${lifecycle-mapping-version}</version>
-         <configuration>
-           <lifecycleMappingMetadata>
-             <pluginExecutions>
-               <pluginExecution>
-                 <pluginExecutionFilter>
-                   <groupId>org.apache.camel</groupId>
-                   <artifactId>camel-package-maven-plugin</artifactId>
-                   <versionRange>${project.version}</versionRange>
-                   <goals>
-                     <goal>prepare-components</goal>
-                   </goals>
-                 </pluginExecutionFilter>
-                 <action>
-                   <ignore />
-                 </action>
-               </pluginExecution>
-             </pluginExecutions>
-           </lifecycleMappingMetadata>
-         </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.camel</groupId>
@@ -277,11 +252,19 @@
         <version>${project.version}</version>
         <executions>
           <execution>
+            <id>prepare</id>
             <goals>
               <goal>prepare-components</goal>
             </goals>
             <phase>generate-resources</phase>
-          </execution>
+         </execution>
+          <execution>
+            <id>validate</id>
+            <goals>
+              <goal>validate-components</goal>
+            </goals>
+            <phase>prepare-package</phase>
+         </execution>
         </executions>
       </plugin>
     </plugins>

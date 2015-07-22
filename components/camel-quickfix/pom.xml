@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
-      <version>${mina-version}</version>
+      <version>${mina2-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -81,5 +81,27 @@
       </exclusions>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>permgen</id>
+      <activation>
+        <jdk>(,1.7]</jdk>
+      </activation>
+      <build>
+        <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                <forkCount>1</forkCount>
+                <reuseForks>false</reuseForks>
+                <argLine>-XX:MaxPermSize=160m</argLine>
+              </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

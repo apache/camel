@@ -25,6 +25,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class SnsConfiguration implements Cloneable {
 
+    private String topicArn;
+
     // Common properties
     @UriPath @Metadata(required = "true")
     private String topicName;
@@ -41,10 +43,13 @@ public class SnsConfiguration implements Cloneable {
     @UriParam
     private String subject;
     @UriParam
-    private String topicArn;
-    @UriParam
     private String policy;
+    @UriParam
+    private String messageStructure;
 
+    /**
+     * The region with which the AWS-SNS client wants to work with.
+     */
     public void setAmazonSNSEndpoint(String awsSNSEndpoint) {
         this.amazonSNSEndpoint = awsSNSEndpoint;
     }
@@ -57,6 +62,9 @@ public class SnsConfiguration implements Cloneable {
         return subject;
     }
 
+    /**
+     * The subject which is used if the message header 'CamelAwsSnsSubject' is not present.
+     */
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -65,6 +73,9 @@ public class SnsConfiguration implements Cloneable {
         return topicArn;
     }
 
+    /**
+     * The Amazon Resource Name (ARN) assigned to the created topic.
+     */
     public void setTopicArn(String topicArn) {
         this.topicArn = topicArn;
     }
@@ -73,6 +84,9 @@ public class SnsConfiguration implements Cloneable {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -81,6 +95,9 @@ public class SnsConfiguration implements Cloneable {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -89,6 +106,9 @@ public class SnsConfiguration implements Cloneable {
         return amazonSNSClient;
     }
 
+    /**
+     * To use the AmazonSNS as the client
+     */
     public void setAmazonSNSClient(AmazonSNS amazonSNSClient) {
         this.amazonSNSClient = amazonSNSClient;
     }
@@ -97,6 +117,9 @@ public class SnsConfiguration implements Cloneable {
         return topicName;
     }
 
+    /**
+     * The name of the topic
+     */
     public void setTopicName(String topicName) {
         this.topicName = topicName;
     }
@@ -105,10 +128,24 @@ public class SnsConfiguration implements Cloneable {
         return policy;
     }
 
+    /**
+     * The policy for this queue
+     */
     public void setPolicy(String policy) {
         this.policy = policy;
     }
-    
+
+    public String getMessageStructure() {
+        return messageStructure;
+    }
+
+    /**
+     * The message structure to use such as json
+     */
+    public void setMessageStructure(String messageStructure) {
+        this.messageStructure = messageStructure;
+    }
+
     @Override
     public String toString() {
         return "SnsConfiguration[topicName=" + topicName
@@ -118,6 +155,7 @@ public class SnsConfiguration implements Cloneable {
             + ", subject=" + subject
             + ", topicArn=" + topicArn
             + ", policy=" + policy
+            + ", messageStructure=" + messageStructure
             + "]";
     }
 }
