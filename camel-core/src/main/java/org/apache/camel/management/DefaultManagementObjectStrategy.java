@@ -50,6 +50,7 @@ import org.apache.camel.management.mbean.ManagedIdempotentConsumer;
 import org.apache.camel.management.mbean.ManagedLoop;
 import org.apache.camel.management.mbean.ManagedMulticast;
 import org.apache.camel.management.mbean.ManagedPollEnricher;
+import org.apache.camel.management.mbean.ManagedProcess;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRecipientList;
@@ -78,6 +79,7 @@ import org.apache.camel.management.mbean.ManagedTransformer;
 import org.apache.camel.management.mbean.ManagedValidate;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.model.ThreadsDefinition;
@@ -243,7 +245,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 return false;
             }
 
-            // look for specialized processor which we should prefer to use
             if (target instanceof ConvertBodyProcessor) {
                 answer = new ManagedConvertBody(context, (ConvertBodyProcessor) target, definition);
             } else if (target instanceof Delayer) {
@@ -336,7 +337,9 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             }
         }
 
-        if (answer == null) {
+        if (answer == null && definition instanceof ProcessDefinition) {
+            answer = new ManagedProcess(context, target, (ProcessDefinition) definition);
+        } else if (answer == null) {
             // fallback to a generic processor
             answer = new ManagedProcessor(context, target, definition);
         }

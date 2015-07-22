@@ -14,26 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.api.management.mbean;
 
-import javax.management.MBeanServer;
+import org.apache.camel.api.management.ManagedAttribute;
 
-import org.apache.camel.ContextTestSupport;
+public interface ManagedProcessMBean extends ManagedProcessorMBean {
 
-/**
- * Base class for JMX tests.
- *
- * @version 
- */
-public abstract class ManagementTestSupport extends ContextTestSupport {
+    @ManagedAttribute(description = "Reference to the Processor to lookup in the registry to use")
+    String getRef();
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    protected MBeanServer getMBeanServer() {
-        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
-    }
+    @ManagedAttribute(description = "The class name of the Processor in use (may be null if not resolved yet)")
+    String getProcessorClassName();
 
 }

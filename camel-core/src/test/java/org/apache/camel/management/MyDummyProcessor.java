@@ -16,24 +16,13 @@
  */
 package org.apache.camel.management;
 
-import javax.management.MBeanServer;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
-import org.apache.camel.ContextTestSupport;
-
-/**
- * Base class for JMX tests.
- *
- * @version 
- */
-public abstract class ManagementTestSupport extends ContextTestSupport {
+public class MyDummyProcessor implements Processor {
 
     @Override
-    protected boolean useJmx() {
-        return true;
+    public void process(Exchange exchange) throws Exception {
+        exchange.getIn().setBody("Bye World");
     }
-
-    protected MBeanServer getMBeanServer() {
-        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
-    }
-
 }
