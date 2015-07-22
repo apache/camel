@@ -47,6 +47,7 @@ import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedFilter;
 import org.apache.camel.management.mbean.ManagedIdempotentConsumer;
+import org.apache.camel.management.mbean.ManagedLog;
 import org.apache.camel.management.mbean.ManagedLoop;
 import org.apache.camel.management.mbean.ManagedMulticast;
 import org.apache.camel.management.mbean.ManagedPollEnricher;
@@ -89,6 +90,7 @@ import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.processor.LoopProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -257,6 +259,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedRoutingSlip(context, (RoutingSlip) target, definition);
             } else if (target instanceof FilterProcessor) {
                 answer = new ManagedFilter(context, (FilterProcessor) target, definition);
+            } else if (target instanceof LogProcessor) {
+                answer = new ManagedLog(context, (LogProcessor) target, definition);
             } else if (target instanceof LoopProcessor) {
                 answer = new ManagedLoop(context, (LoopProcessor) target, definition);
             } else if (target instanceof RecipientList) {

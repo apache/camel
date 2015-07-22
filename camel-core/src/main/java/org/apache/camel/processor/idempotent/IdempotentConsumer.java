@@ -184,6 +184,22 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         ServiceHelper.stopServices(processor);
     }
 
+    public boolean isEager() {
+        return eager;
+    }
+
+    public boolean isCompletionEager() {
+        return completionEager;
+    }
+
+    public boolean isSkipDuplicate() {
+        return skipDuplicate;
+    }
+
+    public boolean isRemoveOnFailure() {
+        return removeOnFailure;
+    }
+
     /**
      * Resets the duplicate message counter to <code>0L</code>.
      */
