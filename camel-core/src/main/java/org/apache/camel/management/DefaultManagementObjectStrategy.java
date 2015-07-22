@@ -65,10 +65,12 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRoutingSlip;
 import org.apache.camel.management.mbean.ManagedSamplingThrottler;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
+import org.apache.camel.management.mbean.ManagedScript;
 import org.apache.camel.management.mbean.ManagedSendDynamicProcessor;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedSetBody;
+import org.apache.camel.management.mbean.ManagedSetExchangePattern;
 import org.apache.camel.management.mbean.ManagedSetHeader;
 import org.apache.camel.management.mbean.ManagedSetProperty;
 import org.apache.camel.management.mbean.ManagedSplitter;
@@ -90,6 +92,7 @@ import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.ErrorHandler;
+import org.apache.camel.processor.ExchangePatternProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.processor.LoopProcessor;
@@ -105,6 +108,7 @@ import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.RollbackProcessor;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.SamplingThrottler;
+import org.apache.camel.processor.ScriptProcessor;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.SetBodyProcessor;
@@ -293,6 +297,10 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedRemoveProperties(context, (RemovePropertiesProcessor) target, definition);
             } else if (target instanceof SetPropertyProcessor) {
                 answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, definition);
+            } else if (target instanceof ExchangePatternProcessor) {
+                answer = new ManagedSetExchangePattern(context, (ExchangePatternProcessor) target, definition);
+            } else if (target instanceof ScriptProcessor) {
+                answer = new ManagedScript(context, (ScriptProcessor) target, definition);
             } else if (target instanceof ThreadsProcessor) {
                 answer = new ManagedThreads(context, (ThreadsProcessor) target, definition);
             } else if (target instanceof TransformProcessor) {
