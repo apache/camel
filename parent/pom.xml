@@ -219,6 +219,7 @@
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.5.2</ical4j-version>
     <infinispan-version>6.0.2.Final</infinispan-version>
+    <interactivebrokers-api-version>9.72.05</interactivebrokers-api-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
@@ -949,6 +950,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-interactivebrokers</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

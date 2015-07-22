@@ -715,6 +715,11 @@
     <feature version='${project.version}'>camel-avro</feature>
     <bundle>mvn:org.apache.camel/camel-infinispan/${project.version}</bundle>
   </feature>
+  <feature name='camel-interactivebrokers' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:com.interactivebrokers.tws/tws-api/${interactivebrokers-api-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-interactivebrokers/${project.version}</bundle>
+  </feature>
   <feature name='camel-irc' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.irclib/${irclib-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
