@@ -80,6 +80,7 @@ import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThreads;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThroughputLogger;
+import org.apache.camel.management.mbean.ManagedThrowException;
 import org.apache.camel.management.mbean.ManagedTransformer;
 import org.apache.camel.management.mbean.ManagedValidate;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
@@ -121,6 +122,7 @@ import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.processor.TransformProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
@@ -307,6 +309,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedStop(context, (StopProcessor) target, definition);
             } else if (target instanceof ThreadsProcessor) {
                 answer = new ManagedThreads(context, (ThreadsProcessor) target, definition);
+            } else if (target instanceof ThrowExceptionProcessor) {
+                answer = new ManagedThrowException(context, (ThrowExceptionProcessor) target, definition);
             } else if (target instanceof TransformProcessor) {
                 answer = new ManagedTransformer(context, (TransformProcessor) target, definition);
             } else if (target instanceof PredicateValidatingProcessor) {
