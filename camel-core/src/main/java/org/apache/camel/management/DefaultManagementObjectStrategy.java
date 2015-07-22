@@ -49,6 +49,7 @@ import org.apache.camel.management.mbean.ManagedFilter;
 import org.apache.camel.management.mbean.ManagedIdempotentConsumer;
 import org.apache.camel.management.mbean.ManagedLog;
 import org.apache.camel.management.mbean.ManagedLoop;
+import org.apache.camel.management.mbean.ManagedMarshal;
 import org.apache.camel.management.mbean.ManagedMulticast;
 import org.apache.camel.management.mbean.ManagedPollEnricher;
 import org.apache.camel.management.mbean.ManagedProcess;
@@ -82,6 +83,7 @@ import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThroughputLogger;
 import org.apache.camel.management.mbean.ManagedThrowException;
 import org.apache.camel.management.mbean.ManagedTransformer;
+import org.apache.camel.management.mbean.ManagedUnmarshal;
 import org.apache.camel.management.mbean.ManagedValidate;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.ModelCamelContext;
@@ -98,6 +100,7 @@ import org.apache.camel.processor.ExchangePatternProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.processor.LoopProcessor;
+import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.PollEnricher;
@@ -124,6 +127,7 @@ import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.processor.TransformProcessor;
+import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
@@ -273,6 +277,10 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedLog(context, (LogProcessor) target, definition);
             } else if (target instanceof LoopProcessor) {
                 answer = new ManagedLoop(context, (LoopProcessor) target, definition);
+            } else if (target instanceof MarshalProcessor) {
+                answer = new ManagedMarshal(context, (MarshalProcessor) target, (org.apache.camel.model.MarshalDefinition) definition);
+            } else if (target instanceof UnmarshalProcessor) {
+                answer = new ManagedUnmarshal(context, (UnmarshalProcessor) target, (org.apache.camel.model.UnmarshalDefinition) definition);
             } else if (target instanceof RecipientList) {
                 answer = new ManagedRecipientList(context, (RecipientList) target, definition);
             } else if (target instanceof Splitter) {
