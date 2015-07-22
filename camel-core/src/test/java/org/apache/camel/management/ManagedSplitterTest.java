@@ -59,7 +59,12 @@ public class ManagedSplitterTest extends ManagementTestSupport {
         assertEquals(ServiceStatus.Started.name(), state);
 
         String uri = (String) mbeanServer.getAttribute(on, "Expression");
-        assertEquals("tokenize(body, ,)", uri);
+        assertEquals("Simple: ${body}", uri);
+
+        String xml = (String) mbeanServer.invoke(on, "dumpProcessorAsXml", null, null);
+        assertTrue(xml.contains("<split"));
+        assertTrue(xml.contains("</split>"));
+        assertTrue(xml.contains("<simple>${body}</simple>"));
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
@@ -80,7 +85,7 @@ public class ManagedSplitterTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split(body().tokenize(",")).id("mysend")
+                    .split(simple("${body}")).id("mysend")
                         .to("mock:foo");
             }
         };
