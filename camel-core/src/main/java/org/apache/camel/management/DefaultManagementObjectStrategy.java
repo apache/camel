@@ -74,6 +74,7 @@ import org.apache.camel.management.mbean.ManagedSetExchangePattern;
 import org.apache.camel.management.mbean.ManagedSetHeader;
 import org.apache.camel.management.mbean.ManagedSetProperty;
 import org.apache.camel.management.mbean.ManagedSplitter;
+import org.apache.camel.management.mbean.ManagedStop;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThreads;
@@ -115,6 +116,7 @@ import org.apache.camel.processor.SetBodyProcessor;
 import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.processor.SetPropertyProcessor;
 import org.apache.camel.processor.Splitter;
+import org.apache.camel.processor.StopProcessor;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.Throttler;
@@ -301,6 +303,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedSetExchangePattern(context, (ExchangePatternProcessor) target, definition);
             } else if (target instanceof ScriptProcessor) {
                 answer = new ManagedScript(context, (ScriptProcessor) target, definition);
+            } else if (target instanceof StopProcessor) {
+                answer = new ManagedStop(context, (StopProcessor) target, definition);
             } else if (target instanceof ThreadsProcessor) {
                 answer = new ManagedThreads(context, (ThreadsProcessor) target, definition);
             } else if (target instanceof TransformProcessor) {
