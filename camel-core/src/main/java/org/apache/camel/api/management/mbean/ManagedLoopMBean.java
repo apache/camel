@@ -20,6 +20,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedLoopMBean extends ManagedProcessorMBean {
 
+    @ManagedAttribute(description = "The language for the expression")
+    String getExpressionLanguage();
+
     @ManagedAttribute(description = "Expression to define how many times we should loop")
     String getExpression();
 

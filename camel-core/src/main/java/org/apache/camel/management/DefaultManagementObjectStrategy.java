@@ -280,7 +280,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof LogProcessor) {
                 answer = new ManagedLog(context, (LogProcessor) target, definition);
             } else if (target instanceof LoopProcessor) {
-                answer = new ManagedLoop(context, (LoopProcessor) target, definition);
+                answer = new ManagedLoop(context, (LoopProcessor) target, (org.apache.camel.model.LoopDefinition) definition);
             } else if (target instanceof MarshalProcessor) {
                 answer = new ManagedMarshal(context, (MarshalProcessor) target, (org.apache.camel.model.MarshalDefinition) definition);
             } else if (target instanceof UnmarshalProcessor) {
@@ -348,7 +348,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof BeanProcessor) {
                 answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
             } else if (target instanceof IdempotentConsumer) {
-                answer = new ManagedIdempotentConsumer(context, (IdempotentConsumer) target, definition);
+                answer = new ManagedIdempotentConsumer(context, (IdempotentConsumer) target, (org.apache.camel.model.IdempotentConsumerDefinition) definition);
             } else if (target instanceof AggregateProcessor) {
                 answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, (org.apache.camel.model.AggregateDefinition) definition);
             } else if (target instanceof Enricher) {

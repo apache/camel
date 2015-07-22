@@ -21,6 +21,12 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedIdempotentConsumerMBean extends ManagedProcessorMBean {
 
+    @ManagedAttribute(description = "The language for the expression")
+    String getExpressionLanguage();
+
+    @ManagedAttribute(description = "Expression used to calculate the correlation key to use for duplicate check")
+    String getExpression();
+
     @ManagedAttribute(description = "Whether to eagerly add the key to the idempotent repository or wait until the exchange is complete")
     Boolean isEager();
 
