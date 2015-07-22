@@ -363,11 +363,7 @@ public class QuickfixjComponentTest {
 
         // Create settings file with both acceptor and initiator
         
-<<<<<<< HEAD
         SessionSettings settings = new SessionSettings();
-=======
-        SessionSettings settings = new SessionSettings();        
->>>>>>> upstream/master
         settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
