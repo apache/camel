@@ -38,6 +38,7 @@ import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
+import org.apache.camel.management.mbean.ManagedConvertBody;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
@@ -76,6 +77,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.model.ThreadsDefinition;
+import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.Enricher;
@@ -234,7 +236,9 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             }
 
             // look for specialized processor which we should prefer to use
-            if (target instanceof Delayer) {
+            if (target instanceof ConvertBodyProcessor) {
+                answer = new ManagedConvertBody(context, (ConvertBodyProcessor) target, definition);
+            } else if (target instanceof Delayer) {
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
