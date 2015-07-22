@@ -18,26 +18,20 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedFilterMBean;
+import org.apache.camel.api.management.mbean.ManagedValidateMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 
 /**
  * @version 
  */
-@ManagedResource(description = "Managed Filter")
-public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {
-    private final FilterProcessor processor;
+@ManagedResource(description = "Managed Validate")
+public class ManagedValidate extends ManagedProcessor implements ManagedValidateMBean {
+    private final PredicateValidatingProcessor processor;
 
-    public ManagedFilter(CamelContext context, FilterProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedValidate(CamelContext context, PredicateValidatingProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
-    }
-
-    @Override
-    public synchronized void reset() {
-        processor.reset();
-        super.reset();
     }
 
     @Override
@@ -45,8 +39,4 @@ public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBea
         return processor.getPredicate().toString();
     }
 
-    @Override
-    public Long getFilteredCount() {
-        return processor.getFilteredCount();
-    }
 }

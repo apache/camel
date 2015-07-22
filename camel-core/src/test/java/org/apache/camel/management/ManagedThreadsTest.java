@@ -27,9 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version 
  */
-public class ManagedFilterTest extends ManagementTestSupport {
+public class ManagedThreadsTest extends ManagementTestSupport {
 
-    public void testManageFilter() throws Exception {
+    public void testManageThreads() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
@@ -58,23 +58,17 @@ public class ManagedFilterTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
-        Long count = (Long) mbeanServer.getAttribute(on, "FilteredCount");
-        assertEquals(1, count.longValue());
-
-        String uri = (String) mbeanServer.getAttribute(on, "Predicate");
-        assertEquals("header{header(foo)}", uri);
-
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(2, data.size());
-
-        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(4, data.size());
 
+        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
+        assertNotNull(data);
+        assertEquals(13, data.size());
+
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Filter out messages based using a predicate"));
+        assertTrue(json.contains("\"description\": \"Specifies that all steps after this node are processed asynchronously"));
     }
 
     @Override
@@ -83,7 +77,7 @@ public class ManagedFilterTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .filter(header("foo")).id("mysend")
+                    .threads(1, 2).id("mysend")
                         .to("mock:foo");
             }
         };

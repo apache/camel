@@ -66,9 +66,11 @@ import org.apache.camel.management.mbean.ManagedSetProperty;
 import org.apache.camel.management.mbean.ManagedSplitter;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
+import org.apache.camel.management.mbean.ManagedThreads;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThroughputLogger;
 import org.apache.camel.management.mbean.ManagedTransformer;
+import org.apache.camel.management.mbean.ManagedValidate;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
@@ -94,12 +96,14 @@ import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.processor.SetPropertyProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.StreamResequencer;
+import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.processor.TransformProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
+import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectStrategy;
@@ -206,13 +210,18 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                                                ProcessorDefinition<?> definition, Route route) {
         ManagedProcessor answer = null;
 
-        if (definition instanceof RecipientListDefinition || definition instanceof ThreadsDefinition) {
-            // special for RecipientListDefinition/ThreadsDefinition, as the processor is wrapped in a pipeline as last
+        if (definition instanceof RecipientListDefinition) {
+            // special for RecipientListDefinition, as the processor is wrapped in a pipeline as last
             Pipeline pipeline = (Pipeline) processor;
             Iterator<Processor> it = pipeline.getProcessors().iterator();
             while (it.hasNext()) {
                 processor = it.next();
             }
+        } else if (definition instanceof ThreadsDefinition) {
+            // special for ThreadsDefinition, as the processor is wrapped in a pipeline as first
+            Pipeline pipeline = (Pipeline) processor;
+            Iterator<Processor> it = pipeline.getProcessors().iterator();
+            processor = it.next();
         }
 
         // unwrap delegates as we want the real target processor
@@ -255,8 +264,12 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, definition);
             } else if (target instanceof SetPropertyProcessor) {
                 answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, definition);
+            } else if (target instanceof ThreadsProcessor) {
+                answer = new ManagedThreads(context, (ThreadsProcessor) target, definition);
             } else if (target instanceof TransformProcessor) {
                 answer = new ManagedTransformer(context, (TransformProcessor) target, definition);
+            } else if (target instanceof PredicateValidatingProcessor) {
+                answer = new ManagedValidate(context, (PredicateValidatingProcessor) target, definition);
             } else if (target instanceof WireTapProcessor) {
                 answer = new ManagedWireTapProcessor(context, (WireTapProcessor) target, definition);
             } else if (target instanceof SendDynamicProcessor) {
