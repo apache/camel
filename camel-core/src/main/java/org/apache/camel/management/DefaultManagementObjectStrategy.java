@@ -63,6 +63,7 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedSetBody;
 import org.apache.camel.management.mbean.ManagedSetHeader;
 import org.apache.camel.management.mbean.ManagedSetProperty;
+import org.apache.camel.management.mbean.ManagedSplitter;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThrottler;
@@ -91,6 +92,7 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.SetBodyProcessor;
 import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.processor.SetPropertyProcessor;
+import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThroughputLogger;
@@ -237,6 +239,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedLoop(context, (LoopProcessor) target, definition);
             } else if (target instanceof RecipientList) {
                 answer = new ManagedRecipientList(context, (RecipientList) target, definition);
+            } else if (target instanceof Splitter) {
+                answer = new ManagedSplitter(context, (Splitter) target, definition);
             } else if (target instanceof MulticastProcessor) {
                 answer = new ManagedMulticast(context, (MulticastProcessor) target, definition);
             } else if (target instanceof SamplingThrottler) {
