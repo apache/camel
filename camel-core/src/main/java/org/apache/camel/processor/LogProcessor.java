@@ -79,6 +79,14 @@ public class LogProcessor extends ServiceSupport implements AsyncProcessor, Trac
         this.id = id;
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public CamelLogger getLogger() {
+        return logger;
+    }
+
     @Override
     protected void doStart() throws Exception {
         // noop

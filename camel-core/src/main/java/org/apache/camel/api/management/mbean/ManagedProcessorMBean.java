@@ -53,4 +53,7 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Explain how this processor is configured")
     TabularData explain(boolean allOptions);
 
+    @ManagedOperation(description = "Dumps the processor as XML")
+    String dumpProcessorAsXml() throws Exception;
+
 }

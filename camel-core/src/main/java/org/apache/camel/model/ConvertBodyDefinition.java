@@ -52,12 +52,12 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
 
     public ConvertBodyDefinition(Class<?> typeClass) {
         setTypeClass(typeClass);
-        setType(typeClass.getName());
+        setType(typeClass.getCanonicalName());
     }
 
     public ConvertBodyDefinition(Class<?> typeClass, String charset) {
         setTypeClass(typeClass);
-        setType(typeClass.getName());
+        setType(typeClass.getCanonicalName());
         setCharset(charset);
     }
 

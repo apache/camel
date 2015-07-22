@@ -18,12 +18,15 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedFilterMBean extends ManagedProcessorMBean {
+public interface ManagedRollbackMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Predicate to determine if the message should be filtered or not")
-    String getPredicate();
+    @ManagedAttribute(description = "Message to use in rollback exception")
+    String getMessage();
 
-    @ManagedAttribute(description = "Gets the number of Exchanges that matched the filter predicate and therefore as filtered")
-    Long getFilteredCount();
+    @ManagedAttribute(description = "Mark the transaction for rollback only (cannot be overruled to commit)")
+    Boolean isMarkRollbackOnly();
+
+    @ManagedAttribute(description = "Mark only last sub transaction for rollback only")
+    Boolean isMarkRollbackOnlyLast();
 
 }

@@ -14,26 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.management.mbean;
 
-import javax.management.MBeanServer;
-
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedValidateMBean;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 
 /**
- * Base class for JMX tests.
- *
  * @version 
  */
-public abstract class ManagementTestSupport extends ContextTestSupport {
+@ManagedResource(description = "Managed Validate")
+public class ManagedValidate extends ManagedProcessor implements ManagedValidateMBean {
+    private final PredicateValidatingProcessor processor;
 
-    @Override
-    protected boolean useJmx() {
-        return true;
+    public ManagedValidate(CamelContext context, PredicateValidatingProcessor processor, ProcessorDefinition<?> definition) {
+        super(context, processor, definition);
+        this.processor = processor;
     }
 
-    protected MBeanServer getMBeanServer() {
-        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
+    @Override
+    public String getPredicate() {
+        return processor.getPredicate().toString();
     }
 
 }

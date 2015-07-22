@@ -18,35 +18,35 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedFilterMBean;
+import org.apache.camel.api.management.mbean.ManagedRemovePropertiesMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.RemovePropertiesProcessor;
 
 /**
  * @version 
  */
-@ManagedResource(description = "Managed Filter")
-public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {
-    private final FilterProcessor processor;
+@ManagedResource(description = "Managed RemoveProperties")
+public class ManagedRemoveProperties extends ManagedProcessor implements ManagedRemovePropertiesMBean {
+    private final RemovePropertiesProcessor processor;
+    private final String exclude;
 
-    public ManagedFilter(CamelContext context, FilterProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedRemoveProperties(CamelContext context, RemovePropertiesProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
+        if (processor.getExcludePattern() != null) {
+            exclude = processor.getExcludePattern().toString();
+        } else {
+            exclude = null;
+        }
     }
 
     @Override
-    public synchronized void reset() {
-        processor.reset();
-        super.reset();
+    public String getPattern() {
+        return processor.getPattern();
     }
 
     @Override
-    public String getPredicate() {
-        return processor.getPredicate().toString();
-    }
-
-    @Override
-    public Long getFilteredCount() {
-        return processor.getFilteredCount();
+    public String getExcludePattern() {
+        return exclude;
     }
 }

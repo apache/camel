@@ -27,9 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version 
  */
-public class ManagedFilterTest extends ManagementTestSupport {
+public class ManagedChoiceTest extends ManagementTestSupport {
 
-    public void testManageFilter() throws Exception {
+    public void testManageChoice() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
@@ -58,15 +58,9 @@ public class ManagedFilterTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
-        Long count = (Long) mbeanServer.getAttribute(on, "FilteredCount");
-        assertEquals(1, count.longValue());
-
-        String uri = (String) mbeanServer.getAttribute(on, "Predicate");
-        assertEquals("header{header(foo)}", uri);
-
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(2, data.size());
+        assertEquals(3, data.size());
 
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
@@ -74,7 +68,7 @@ public class ManagedFilterTest extends ManagementTestSupport {
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Filter out messages based using a predicate"));
+        assertTrue(json.contains("\"description\": \"Routes messages based on a series of predicates"));
     }
 
     @Override
@@ -83,8 +77,11 @@ public class ManagedFilterTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .filter(header("foo")).id("mysend")
-                        .to("mock:foo");
+                    .choice().id("mysend")
+                        .when(header("foo"))
+                            .to("mock:foo")
+                        .otherwise()
+                            .to("mock:bar");
             }
         };
     }

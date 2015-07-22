@@ -18,12 +18,9 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedFilterMBean extends ManagedProcessorMBean {
+public interface ManagedSplitterMBean extends ManagedMulticastMBean {
 
-    @ManagedAttribute(description = "Predicate to determine if the message should be filtered or not")
-    String getPredicate();
-
-    @ManagedAttribute(description = "Gets the number of Exchanges that matched the filter predicate and therefore as filtered")
-    Long getFilteredCount();
+    @ManagedAttribute(description = "Expression of how to split the message body, such as as-is, using a tokenizer, or using an xpath.")
+    String getExpression();
 
 }

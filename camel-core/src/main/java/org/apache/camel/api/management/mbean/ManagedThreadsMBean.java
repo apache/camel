@@ -18,12 +18,12 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedFilterMBean extends ManagedProcessorMBean {
+public interface ManagedThreadsMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Predicate to determine if the message should be filtered or not")
-    String getPredicate();
+    @ManagedAttribute(description = "Whether or not the caller should run the task when it was rejected by the thread pool")
+    Boolean isCallerRunsWhenRejected();
 
-    @ManagedAttribute(description = "Gets the number of Exchanges that matched the filter predicate and therefore as filtered")
-    Long getFilteredCount();
+    @ManagedAttribute(description = "How to handle tasks which cannot be accepted by the thread pool")
+    String getRejectedPolicy();
 
 }

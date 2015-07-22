@@ -27,9 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version 
  */
-public class ManagedFilterTest extends ManagementTestSupport {
+public class ManagedMarshalTest extends ManagementTestSupport {
 
-    public void testManageFilter() throws Exception {
+    public void testManageMarshal() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
@@ -58,11 +58,13 @@ public class ManagedFilterTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
-        Long count = (Long) mbeanServer.getAttribute(on, "FilteredCount");
-        assertEquals(1, count.longValue());
+        String name = (String) mbeanServer.getAttribute(on, "DataFormatName");
+        assertEquals("string", name);
 
-        String uri = (String) mbeanServer.getAttribute(on, "Predicate");
-        assertEquals("header{header(foo)}", uri);
+        String xml = (String) mbeanServer.invoke(on, "dumpProcessorAsXml", null, null);
+        assertTrue(xml.contains("<marshal"));
+        assertTrue(xml.contains("</marshal>"));
+        assertTrue(xml.contains("<string charset=\"iso-8859-1\"/>"));
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
@@ -74,7 +76,7 @@ public class ManagedFilterTest extends ManagementTestSupport {
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Filter out messages based using a predicate"));
+        assertTrue(json.contains("\"description\": \"Marshals data into a specified format for transmission over a transport or component"));
     }
 
     @Override
@@ -83,7 +85,7 @@ public class ManagedFilterTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .filter(header("foo")).id("mysend")
+                    .marshal().string("iso-8859-1").id("mysend")
                         .to("mock:foo");
             }
         };

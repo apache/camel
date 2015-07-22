@@ -18,35 +18,36 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedFilterMBean;
+import org.apache.camel.api.management.mbean.ManagedThrowExceptionMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.ThrowExceptionProcessor;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
  */
-@ManagedResource(description = "Managed Filter")
-public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {
-    private final FilterProcessor processor;
+@ManagedResource(description = "Managed ThrowException")
+public class ManagedThrowException extends ManagedProcessor implements ManagedThrowExceptionMBean {
+    private final ThrowExceptionProcessor processor;
 
-    public ManagedFilter(CamelContext context, FilterProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedThrowException(CamelContext context, ThrowExceptionProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
 
     @Override
-    public synchronized void reset() {
-        processor.reset();
-        super.reset();
+    public String getMessage() {
+        return processor.getMessage();
     }
 
     @Override
-    public String getPredicate() {
-        return processor.getPredicate().toString();
-    }
-
-    @Override
-    public Long getFilteredCount() {
-        return processor.getFilteredCount();
+    public String getExceptionType() {
+        if (processor.getType() != null) {
+            return ObjectHelper.name(processor.getType());
+        } else if (processor.getException() != null) {
+            return ObjectHelper.className(processor.getException());
+        } else {
+            return null;
+        }
     }
 }

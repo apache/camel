@@ -34,6 +34,7 @@ import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -170,5 +171,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
+    }
+
+    @Override
+    public String dumpProcessorAsXml() throws Exception {
+        return ModelHelper.dumpModelAsXml(context, definition);
     }
 }
