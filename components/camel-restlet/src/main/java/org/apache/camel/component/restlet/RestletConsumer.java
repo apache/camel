@@ -19,7 +19,6 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultConsumer;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -50,10 +49,16 @@ public class RestletConsumer extends DefaultConsumer {
         return new Restlet() {
             @Override
             public void handle(Request request, Response response) {
+                // must call super according to restlet documentation
+                super.handle(request, response);
+
                 LOG.debug("Consumer restlet handle request method: {}", request.getMethod());
 
+                Exchange exchange = null;
                 try {
-                    Exchange exchange = getEndpoint().createExchange();
+                    // we want to handle the UoW
+                    exchange = getEndpoint().createExchange();
+                    createUoW(exchange);
 
                     RestletBinding binding = getEndpoint().getRestletBinding();
                     binding.populateExchangeFromRestletRequest(request, response, exchange);
@@ -65,8 +70,12 @@ public class RestletConsumer extends DefaultConsumer {
                     }
                     binding.populateRestletResponseFromExchange(exchange, response);
 
-                } catch (Exception e) {
-                    throw new RuntimeCamelException("Cannot process request", e);
+                } catch (Throwable e) {
+                    getExceptionHandler().handleException("Error processing request", exchange, e);
+                } finally {
+                    if (exchange != null) {
+                        doneUoW(exchange);
+                    }
                 }
             }
         };

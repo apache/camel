@@ -18,35 +18,26 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedFilterMBean;
+import org.apache.camel.api.management.mbean.ManagedScriptMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.ScriptProcessor;
 
 /**
  * @version 
  */
-@ManagedResource(description = "Managed Filter")
-public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {
-    private final FilterProcessor processor;
+@ManagedResource(description = "Managed Script")
+public class ManagedScript extends ManagedProcessor implements ManagedScriptMBean {
+    private final ScriptProcessor processor;
+    private final String expression;
 
-    public ManagedFilter(CamelContext context, FilterProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedScript(CamelContext context, ScriptProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
+        this.expression = processor.getExpression().toString();
     }
 
     @Override
-    public synchronized void reset() {
-        processor.reset();
-        super.reset();
-    }
-
-    @Override
-    public String getPredicate() {
-        return processor.getPredicate().toString();
-    }
-
-    @Override
-    public Long getFilteredCount() {
-        return processor.getFilteredCount();
+    public String getExpression() {
+        return expression;
     }
 }

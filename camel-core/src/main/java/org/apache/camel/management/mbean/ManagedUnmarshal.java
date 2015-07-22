@@ -18,35 +18,33 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedFilterMBean;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.api.management.mbean.ManagedUnmarshalMBean;
+import org.apache.camel.model.UnmarshalDefinition;
+import org.apache.camel.processor.UnmarshalProcessor;
 
 /**
  * @version 
  */
-@ManagedResource(description = "Managed Filter")
-public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {
-    private final FilterProcessor processor;
+@ManagedResource(description = "Managed Unmarshal")
+public class ManagedUnmarshal extends ManagedProcessor implements ManagedUnmarshalMBean {
+    private final UnmarshalProcessor processor;
 
-    public ManagedFilter(CamelContext context, FilterProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedUnmarshal(CamelContext context, UnmarshalProcessor processor, UnmarshalDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
 
     @Override
-    public synchronized void reset() {
-        processor.reset();
-        super.reset();
+    public UnmarshalDefinition getDefinition() {
+        return (UnmarshalDefinition) super.getDefinition();
     }
 
     @Override
-    public String getPredicate() {
-        return processor.getPredicate().toString();
-    }
-
-    @Override
-    public Long getFilteredCount() {
-        return processor.getFilteredCount();
+    public String getDataFormatName() {
+        String name = getDefinition().getRef();
+        if (name == null && getDefinition().getDataFormatType() != null) {
+            name = getDefinition().getDataFormatType().getDataFormatName();
+        }
+        return name;
     }
 }

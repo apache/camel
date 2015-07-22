@@ -18,35 +18,29 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedFilterMBean;
+import org.apache.camel.api.management.mbean.ManagedConvertBodyMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.ConvertBodyProcessor;
 
 /**
  * @version 
  */
-@ManagedResource(description = "Managed Filter")
-public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {
-    private final FilterProcessor processor;
+@ManagedResource(description = "Managed ConvertBody")
+public class ManagedConvertBody extends ManagedProcessor implements ManagedConvertBodyMBean {
+    private final ConvertBodyProcessor processor;
 
-    public ManagedFilter(CamelContext context, FilterProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedConvertBody(CamelContext context, ConvertBodyProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
 
     @Override
-    public synchronized void reset() {
-        processor.reset();
-        super.reset();
+    public String getType() {
+        return processor.getType().getCanonicalName();
     }
 
     @Override
-    public String getPredicate() {
-        return processor.getPredicate().toString();
-    }
-
-    @Override
-    public Long getFilteredCount() {
-        return processor.getFilteredCount();
+    public String getCharset() {
+        return processor.getCharset();
     }
 }

@@ -18,12 +18,12 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedFilterMBean extends ManagedProcessorMBean {
+public interface ManagedThrowExceptionMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Predicate to determine if the message should be filtered or not")
-    String getPredicate();
+    @ManagedAttribute(description = "To create a new exception instance and use the given message as caused message (supports simple language)")
+    String getMessage();
 
-    @ManagedAttribute(description = "Gets the number of Exchanges that matched the filter predicate and therefore as filtered")
-    Long getFilteredCount();
+    @ManagedAttribute(description = "The class of the exception to create using the message")
+    String getExceptionType();
 
 }

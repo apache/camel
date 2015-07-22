@@ -17,36 +17,44 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedFilterMBean;
+import org.apache.camel.api.management.mbean.ManagedLogMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.LogProcessor;
+import org.slf4j.Marker;
 
 /**
  * @version 
  */
-@ManagedResource(description = "Managed Filter")
-public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {
-    private final FilterProcessor processor;
+@ManagedResource(description = "Managed Log")
+public class ManagedLog extends ManagedProcessor implements ManagedLogMBean {
+    private final LogProcessor processor;
 
-    public ManagedFilter(CamelContext context, FilterProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedLog(CamelContext context, LogProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
 
     @Override
-    public synchronized void reset() {
-        processor.reset();
-        super.reset();
+    public String getMessage() {
+        return processor.getExpression().toString();
     }
 
     @Override
-    public String getPredicate() {
-        return processor.getPredicate().toString();
+    public String getLoggingLevel() {
+        LoggingLevel level = processor.getLogger().getLevel();
+        return level != null ? level.name() : null;
     }
 
     @Override
-    public Long getFilteredCount() {
-        return processor.getFilteredCount();
+    public String getLogName() {
+        return processor.getLogger().getLog().getName();
+    }
+
+    @Override
+    public String getMarker() {
+        Marker marker = processor.getLogger().getMarker();
+        return marker != null ? marker.getName() : null;
     }
 }

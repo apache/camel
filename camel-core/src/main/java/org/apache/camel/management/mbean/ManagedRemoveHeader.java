@@ -14,26 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.management.mbean;
 
-import javax.management.MBeanServer;
-
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedRemoveHeaderMBean;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.RemoveHeaderProcessor;
 
 /**
- * Base class for JMX tests.
- *
  * @version 
  */
-public abstract class ManagementTestSupport extends ContextTestSupport {
+@ManagedResource(description = "Managed RemoveHeader")
+public class ManagedRemoveHeader extends ManagedProcessor implements ManagedRemoveHeaderMBean {
+    private final RemoveHeaderProcessor processor;
 
-    @Override
-    protected boolean useJmx() {
-        return true;
+    public ManagedRemoveHeader(CamelContext context, RemoveHeaderProcessor processor, ProcessorDefinition<?> definition) {
+        super(context, processor, definition);
+        this.processor = processor;
     }
 
-    protected MBeanServer getMBeanServer() {
-        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
+    @Override
+    public String getHeaderName() {
+        return processor.getHeaderName();
     }
 
 }

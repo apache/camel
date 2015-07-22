@@ -14,16 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.management.mbean;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedStopMBean;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.StopProcessor;
 
-public interface ManagedFilterMBean extends ManagedProcessorMBean {
+/**
+ * @version 
+ */
+@ManagedResource(description = "Managed Stop")
+public class ManagedStop extends ManagedProcessor implements ManagedStopMBean {
+    private final StopProcessor processor;
 
-    @ManagedAttribute(description = "Predicate to determine if the message should be filtered or not")
-    String getPredicate();
-
-    @ManagedAttribute(description = "Gets the number of Exchanges that matched the filter predicate and therefore as filtered")
-    Long getFilteredCount();
+    public ManagedStop(CamelContext context, StopProcessor processor, ProcessorDefinition<?> definition) {
+        super(context, processor, definition);
+        this.processor = processor;
+    }
 
 }
