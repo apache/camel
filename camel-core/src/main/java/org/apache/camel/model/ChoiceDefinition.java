@@ -29,6 +29,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -129,9 +130,10 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        List<Processor> filters = new ArrayList<Processor>();
+        List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
         for (WhenDefinition whenClause : whenClauses) {
-            filters.add(createProcessor(routeContext, whenClause));
+            FilterProcessor filter = (FilterProcessor) createProcessor(routeContext, whenClause);
+            filters.add(filter);
         }
         Processor otherwiseProcessor = null;
         if (otherwise != null) {
