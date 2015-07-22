@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedSplitterMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.processor.Splitter;
 
 /**
@@ -29,13 +29,23 @@ import org.apache.camel.processor.Splitter;
 public class ManagedSplitter extends ManagedMulticast implements ManagedSplitterMBean {
     private final Splitter processor;
 
-    public ManagedSplitter(CamelContext context, Splitter processor, ProcessorDefinition<?> definition) {
+    public ManagedSplitter(CamelContext context, Splitter processor, SplitDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
 
     @Override
+    public SplitDefinition getDefinition() {
+        return (SplitDefinition) super.getDefinition();
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
+    }
+
+    @Override
     public String getExpression() {
-        return processor.getExpression().toString();
+        return getDefinition().getExpression().getExpression();
     }
 }

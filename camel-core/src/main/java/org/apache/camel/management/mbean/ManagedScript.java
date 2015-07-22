@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedScriptMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.processor.ScriptProcessor;
 
 /**
@@ -28,16 +28,24 @@ import org.apache.camel.processor.ScriptProcessor;
 @ManagedResource(description = "Managed Script")
 public class ManagedScript extends ManagedProcessor implements ManagedScriptMBean {
     private final ScriptProcessor processor;
-    private final String expression;
 
-    public ManagedScript(CamelContext context, ScriptProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedScript(CamelContext context, ScriptProcessor processor, ScriptDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
-        this.expression = processor.getExpression().toString();
+    }
+
+    @Override
+    public ScriptDefinition getDefinition() {
+        return (ScriptDefinition) super.getDefinition();
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
     }
 
     @Override
     public String getExpression() {
-        return expression;
+        return getDefinition().getExpression().getExpression();
     }
 }

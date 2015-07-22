@@ -61,8 +61,11 @@ public class ManagedRecipientListTest extends ManagementTestSupport {
         Boolean parallel = (Boolean) mbeanServer.getAttribute(on, "ParallelProcessing");
         assertEquals(false, parallel.booleanValue());
 
+        String lan = (String) mbeanServer.getAttribute(on, "ExpressionLanguage");
+        assertEquals("header", lan);
+
         String uri = (String) mbeanServer.getAttribute(on, "Expression");
-        assertEquals("header(foo)", uri);
+        assertEquals("foo", uri);
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);

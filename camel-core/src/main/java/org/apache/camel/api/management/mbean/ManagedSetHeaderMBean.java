@@ -23,6 +23,9 @@ public interface ManagedSetHeaderMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Name of message header to set a new value")
     String getHeaderName();
 
+    @ManagedAttribute(description = "The language for the expression")
+    String getExpressionLanguage();
+
     @ManagedAttribute(description = "Expression to return the value of the header")
     String getExpression();
 

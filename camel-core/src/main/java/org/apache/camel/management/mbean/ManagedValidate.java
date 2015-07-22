@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedValidateMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 
 /**
@@ -29,14 +29,24 @@ import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 public class ManagedValidate extends ManagedProcessor implements ManagedValidateMBean {
     private final PredicateValidatingProcessor processor;
 
-    public ManagedValidate(CamelContext context, PredicateValidatingProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedValidate(CamelContext context, PredicateValidatingProcessor processor, ValidateDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
 
     @Override
+    public ValidateDefinition getDefinition() {
+        return (ValidateDefinition) super.getDefinition();
+    }
+
+    @Override
+    public String getPredicateLanguage() {
+        return getDefinition().getExpression().getLanguage();
+    }
+
+    @Override
     public String getPredicate() {
-        return processor.getPredicate().toString();
+        return getDefinition().getExpression().getExpression();
     }
 
 }

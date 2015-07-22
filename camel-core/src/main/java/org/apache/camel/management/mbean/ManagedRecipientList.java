@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedRecipientListMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.URISupport;
@@ -32,7 +32,7 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
     private final RecipientList processor;
     private String uri;
 
-    public ManagedRecipientList(CamelContext context, RecipientList processor, ProcessorDefinition<?> definition) {
+    public ManagedRecipientList(CamelContext context, RecipientList processor, RecipientListDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
@@ -41,10 +41,20 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
-        uri = processor.getExpression().toString();
+        uri = getDefinition().getExpression().getExpression();
         if (sanitize) {
             uri = URISupport.sanitizeUri(uri);
         }
+    }
+
+    @Override
+    public RecipientListDefinition getDefinition() {
+        return (RecipientListDefinition) super.getDefinition();
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
     }
 
     @Override

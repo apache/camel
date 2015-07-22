@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedRoutingSlipMBean;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.URISupport;
@@ -32,7 +33,7 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
     private final RoutingSlip processor;
     private String uri;
 
-    public ManagedRoutingSlip(CamelContext context, RoutingSlip processor, ProcessorDefinition<?> definition) {
+    public ManagedRoutingSlip(CamelContext context, RoutingSlip processor, RoutingSlipDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
@@ -41,10 +42,20 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
-        uri = processor.getExpression().toString();
+        uri = getDefinition().getExpression().getExpression();
         if (sanitize) {
             uri = URISupport.sanitizeUri(uri);
         }
+    }
+
+    @Override
+    public RoutingSlipDefinition getDefinition() {
+        return (RoutingSlipDefinition) super.getDefinition();
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
     }
 
     @Override

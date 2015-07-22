@@ -58,8 +58,11 @@ public class ManagedRoutingSlipTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
+        String lan = (String) mbeanServer.getAttribute(on, "ExpressionLanguage");
+        assertEquals("header", lan);
+
         String uri = (String) mbeanServer.getAttribute(on, "Expression");
-        assertEquals("header(whereTo)", uri);
+        assertEquals("whereTo", uri);
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
