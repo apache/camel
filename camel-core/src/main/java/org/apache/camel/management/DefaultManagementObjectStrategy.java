@@ -53,6 +53,8 @@ import org.apache.camel.management.mbean.ManagedPollEnricher;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRecipientList;
+import org.apache.camel.management.mbean.ManagedRemoveHeader;
+import org.apache.camel.management.mbean.ManagedRemoveProperty;
 import org.apache.camel.management.mbean.ManagedResequencer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRoutingSlip;
@@ -88,6 +90,8 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.RemoveHeaderProcessor;
+import org.apache.camel.processor.RemovePropertyProcessor;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.SamplingThrottler;
@@ -264,8 +268,12 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedResequencer(context, (StreamResequencer) target, definition);
             } else if (target instanceof SetBodyProcessor) {
                 answer = new ManagedSetBody(context, (SetBodyProcessor) target, definition);
+            } else if (target instanceof RemoveHeaderProcessor) {
+                answer = new ManagedRemoveHeader(context, (RemoveHeaderProcessor) target, definition);
             } else if (target instanceof SetHeaderProcessor) {
                 answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, definition);
+            } else if (target instanceof RemovePropertyProcessor) {
+                answer = new ManagedRemoveProperty(context, (RemovePropertyProcessor) target, definition);
             } else if (target instanceof SetPropertyProcessor) {
                 answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, definition);
             } else if (target instanceof ThreadsProcessor) {
