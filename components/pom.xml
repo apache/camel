@@ -124,6 +124,7 @@
     <module>camel-ibatis</module>
     <module>camel-ical</module>
     <module>camel-infinispan</module>
+    <module>camel-interactivebrokers</module>
     <module>camel-irc</module>
     <module>camel-jackson</module>
     <module>camel-javaspace</module>
