@@ -60,6 +60,7 @@ import org.apache.camel.management.mbean.ManagedRemoveHeaders;
 import org.apache.camel.management.mbean.ManagedRemoveProperties;
 import org.apache.camel.management.mbean.ManagedRemoveProperty;
 import org.apache.camel.management.mbean.ManagedResequencer;
+import org.apache.camel.management.mbean.ManagedRollback;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRoutingSlip;
 import org.apache.camel.management.mbean.ManagedSamplingThrottler;
@@ -101,6 +102,7 @@ import org.apache.camel.processor.RemoveHeadersProcessor;
 import org.apache.camel.processor.RemovePropertiesProcessor;
 import org.apache.camel.processor.RemovePropertyProcessor;
 import org.apache.camel.processor.Resequencer;
+import org.apache.camel.processor.RollbackProcessor;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.SamplingThrottler;
 import org.apache.camel.processor.SendDynamicProcessor;
@@ -273,6 +275,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedSamplingThrottler(context, (SamplingThrottler) target, definition);
             } else if (target instanceof Resequencer) {
                 answer = new ManagedResequencer(context, (Resequencer) target, definition);
+            } else if (target instanceof RollbackProcessor) {
+                answer = new ManagedRollback(context, (RollbackProcessor) target, definition);
             } else if (target instanceof StreamResequencer) {
                 answer = new ManagedResequencer(context, (StreamResequencer) target, definition);
             } else if (target instanceof SetBodyProcessor) {
