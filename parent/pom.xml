@@ -487,7 +487,7 @@
     <testng-version>6.8.21</testng-version>
     <twitter4j-bundle-version>4.0.4_1</twitter4j-bundle-version>
     <twitter4j-version>4.0.4</twitter4j-version>
-    <undertow-version>1.2.8.Final</undertow-version>
+    <undertow-version>1.2.9.Final</undertow-version>
     <univocity-parsers-version>1.2.1</univocity-parsers-version>
     <unix-socket-factory-version>2015-01-27T15-02-14</unix-socket-factory-version>
     <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>
