@@ -276,7 +276,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof RoutingSlip) {
                 answer = new ManagedRoutingSlip(context, (RoutingSlip) target, definition);
             } else if (target instanceof FilterProcessor) {
-                answer = new ManagedFilter(context, (FilterProcessor) target, definition);
+                answer = new ManagedFilter(context, (FilterProcessor) target, (org.apache.camel.model.FilterDefinition) definition);
             } else if (target instanceof LogProcessor) {
                 answer = new ManagedLog(context, (LogProcessor) target, definition);
             } else if (target instanceof LoopProcessor) {

@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
