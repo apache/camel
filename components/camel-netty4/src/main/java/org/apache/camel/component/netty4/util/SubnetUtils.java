@@ -93,16 +93,29 @@ public class SubnetUtils {
         /* Mask to convert unsigned int to a long (i.e. keep 32 bits) */
         private static final long UNSIGNED_INT_MASK = 0x0FFFFFFFFL;
 
-        private SubnetInfo() { }
+        private SubnetInfo() { 
+        }
 
-        private int netmask()       { return netmask; }
-        private int network()       { return network; }
-        private int address()       { return address; }
-        private int broadcast()     { return broadcast; }
+        private int netmask() {
+            return netmask; 
+        }
+        private int network() {
+            return network; 
+        }
+        private int address() {
+            return address;
+        }
+        private int broadcast() {
+            return broadcast; 
+        }
 
         // long versions of the values (as unsigned int) which are more suitable for range checking
-        private long networkLong()  { return network &  UNSIGNED_INT_MASK; }
-        private long broadcastLong() { return broadcast &  UNSIGNED_INT_MASK; }
+        private long networkLong()  { 
+            return network &  UNSIGNED_INT_MASK; 
+        }
+        private long broadcastLong() { 
+            return broadcast &  UNSIGNED_INT_MASK; 
+        }
 
         private int low() {
             return isInclusiveHostCount() ? network()
@@ -249,7 +262,9 @@ public class SubnetUtils {
      * Return a {@link SubnetInfo} instance that contains subnet-specific statistics
      * @return new instance
      */
-    public final SubnetInfo getInfo() { return new SubnetInfo(); }
+    public final SubnetInfo getInfo() { 
+        return new SubnetInfo(); 
+    }
 
     /*
      * Initialize the internal fields from the supplied CIDR mask

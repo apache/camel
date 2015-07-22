@@ -421,7 +421,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
         if (factoryBean instanceof JaxWsClientFactoryBean && handlers != null) {
             AnnotationHandlerChainBuilder
-            builder = new AnnotationHandlerChainBuilder();
+                builder = new AnnotationHandlerChainBuilder();
             Method m = factoryBean.getClass().getMethod("getServiceFactory");
             JaxWsServiceFactoryBean sf = (JaxWsServiceFactoryBean)m.invoke(factoryBean);
             @SuppressWarnings("rawtypes")
