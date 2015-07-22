@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedPollEnricherMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.URISupport;
@@ -32,7 +32,7 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
     private final PollEnricher processor;
     private String uri;
 
-    public ManagedPollEnricher(CamelContext context, PollEnricher processor, ProcessorDefinition<?> definition) {
+    public ManagedPollEnricher(CamelContext context, PollEnricher processor, PollEnrichDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
@@ -40,15 +40,25 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
-        uri = processor.getExpression().toString();
+        uri = getDefinition().getExpression().getExpression();
         if (sanitize) {
             uri = URISupport.sanitizeUri(uri);
         }
     }
 
     @Override
+    public PollEnrichDefinition getDefinition() {
+        return (PollEnrichDefinition) super.getDefinition();
+    }
+
+    @Override
     public PollEnricher getProcessor() {
         return processor;
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
     }
 
     @Override

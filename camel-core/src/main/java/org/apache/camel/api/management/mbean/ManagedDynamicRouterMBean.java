@@ -20,6 +20,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedDynamicRouterMBean extends ManagedProcessorMBean {
 
+    @ManagedAttribute(description = "The language for the expression")
+    String getExpressionLanguage();
+
     @ManagedAttribute(description = "Expression to call that returns the endpoint(s) to route to in the dynamic routing", mask = true)
     String getExpression();
 

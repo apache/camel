@@ -58,8 +58,11 @@ public class ManagedEnricherTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
+        String lan = (String) mbeanServer.getAttribute(on, "ExpressionLanguage");
+        assertEquals("simple", lan);
+
         String uri = (String) mbeanServer.getAttribute(on, "Expression");
-        assertEquals("Simple: direct:${header.whereto}", uri);
+        assertEquals("direct:${header.whereto}", uri);
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);

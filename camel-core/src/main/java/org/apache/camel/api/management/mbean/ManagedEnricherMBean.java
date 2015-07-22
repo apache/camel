@@ -20,6 +20,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedEnricherMBean extends ManagedProcessorMBean {
 
+    @ManagedAttribute(description = "The language for the expression")
+    String getExpressionLanguage();
+
     @ManagedAttribute(description = "Expression that computes the endpoint uri to use as the resource endpoint to enrich from", mask = true)
     String getExpression();
 

@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedDynamicRouterMBean;
+import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.spi.ManagementStrategy;
@@ -32,16 +33,21 @@ public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDyn
     private final DynamicRouter processor;
     private String uri;
 
-    public ManagedDynamicRouter(CamelContext context, DynamicRouter processor, ProcessorDefinition<?> definition) {
+    public ManagedDynamicRouter(CamelContext context, DynamicRouter processor, DynamicRouterDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
+    }
+
+    @Override
+    public DynamicRouterDefinition getDefinition() {
+        return (DynamicRouterDefinition) super.getDefinition();
     }
 
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
-        uri = processor.getExpression().toString();
+        uri = getDefinition().getExpression().getExpression();
         if (sanitize) {
             uri = URISupport.sanitizeUri(uri);
         }
@@ -50,6 +56,11 @@ public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDyn
     @Override
     public String getExpression() {
         return uri;
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
     }
 
     @Override

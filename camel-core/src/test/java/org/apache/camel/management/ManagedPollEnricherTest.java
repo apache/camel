@@ -62,8 +62,11 @@ public class ManagedPollEnricherTest extends ManagementTestSupport {
         Long timout = (Long) mbeanServer.getAttribute(on, "Timeout");
         assertEquals(1000, timout.longValue());
 
+        String lan = (String) mbeanServer.getAttribute(on, "ExpressionLanguage");
+        assertEquals("simple", lan);
+
         String uri = (String) mbeanServer.getAttribute(on, "Expression");
-        assertEquals("Simple: seda:${header.whereto}", uri);
+        assertEquals("seda:${header.whereto}", uri);
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
