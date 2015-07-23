@@ -36,7 +36,6 @@ import io.undertow.util.MimeMappings;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.http.HttpHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -48,7 +47,7 @@ import org.xnio.Pooled;
 
 /**
  * DefaultUndertowHttpBinding represent binding used by default, if user doesn't provide any.
- * By default {@link HttpHeaderFilterStrategy} is also used.
+ * By default {@link UndertowHeaderFilterStrategy} is also used.
  */
 public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
@@ -58,7 +57,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     private HeaderFilterStrategy headerFilterStrategy;
 
     public DefaultUndertowHttpBinding() {
-        this.headerFilterStrategy = new HttpHeaderFilterStrategy();
+        this.headerFilterStrategy = new UndertowHeaderFilterStrategy();
     }
 
     public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy) {

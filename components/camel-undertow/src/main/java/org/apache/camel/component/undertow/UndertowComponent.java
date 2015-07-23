@@ -28,12 +28,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.component.http.HttpBinding;
-import org.apache.camel.component.http.HttpClientConfigurer;
-import org.apache.camel.component.http.HttpComponent;
-import org.apache.camel.component.http.HttpConfiguration;
 import org.apache.camel.component.undertow.handlers.HttpCamelHandler;
 import org.apache.camel.component.undertow.handlers.NotFoundHandler;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -41,20 +38,20 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.commons.httpclient.HttpConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
  */
-public class UndertowComponent extends HttpComponent implements RestConsumerFactory {
+public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private UndertowHttpBinding undertowHttpBinding;
     private Map<Integer, UndertowRegistry> serversRegistry = new HashMap<Integer, UndertowRegistry>();
 
     public UndertowComponent() {
+        super(UndertowEndpoint.class);
         this.undertowHttpBinding = new DefaultUndertowHttpBinding();
     }
 
@@ -233,22 +230,6 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
         undertowRegistry.setServer(newServer);
     }
 
-    /**
-     * To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
-     */
-    @Override
-    public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
-        super.setHttpClientConfigurer(httpClientConfigurer);
-    }
-
-    /**
-     * To use a custom HttpConnectionManager to manage connections
-     */
-    @Override
-    public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
-        super.setHttpConnectionManager(httpConnectionManager);
-    }
-
     public UndertowHttpBinding getUndertowHttpBinding() {
         return undertowHttpBinding;
     }
@@ -260,19 +241,4 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
         this.undertowHttpBinding = undertowHttpBinding;
     }
 
-    /**
-     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-     */
-    @Override
-    public void setHttpBinding(HttpBinding httpBinding) {
-        super.setHttpBinding(httpBinding);
-    }
-
-    /**
-     * To use the shared HttpConfiguration as base configuration.
-     */
-    @Override
-    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
-        super.setHttpConfiguration(httpConfiguration);
-    }
 }
