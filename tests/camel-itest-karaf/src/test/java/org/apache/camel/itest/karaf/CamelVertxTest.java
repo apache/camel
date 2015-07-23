@@ -22,8 +22,6 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
-import static org.junit.Assume.assumeTrue;
-
 @RunWith(PaxExam.class)
 public class CamelVertxTest extends AbstractFeatureTest {
 
@@ -31,10 +29,11 @@ public class CamelVertxTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-//        Vert.x can be deployed only to Java 7 JVM
+        // vertx requires Java 1.8
         String javaVersion = System.getProperty("java.version");
-        assumeTrue(javaVersion.startsWith("1.7"));
-        testComponent(COMPONENT);
+        if (javaVersion.startsWith("1.8")) {
+            testComponent(COMPONENT);
+        }
     }
 
     @Configuration
