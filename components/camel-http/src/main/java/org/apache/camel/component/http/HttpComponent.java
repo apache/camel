@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -42,11 +41,9 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
  *
  * @version 
  */
-public class HttpComponent extends HeaderFilterStrategyComponent {
+public class HttpComponent extends HttpCommonComponent {
     protected HttpClientConfigurer httpClientConfigurer;
     protected HttpConnectionManager httpConnectionManager;
-    protected HttpBinding httpBinding;
-    protected HttpConfiguration httpConfiguration;
 
     public HttpComponent() {
         super(HttpEndpoint.class);
@@ -57,24 +54,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     }
 
     /**
-     * Connects the URL specified on the endpoint to the specified processor.
-     *
-     * @param consumer the consumer
-     * @throws Exception can be thrown
-     */
-    public void connect(HttpConsumer consumer) throws Exception {
-    }
-
-    /**
-     * Disconnects the URL specified on the endpoint from the specified processor.
-     *
-     * @param consumer the consumer
-     * @throws Exception can be thrown
-     */
-    public void disconnect(HttpConsumer consumer) throws Exception {
-    }
-
-    /** 
      * Creates the HttpClientConfigurer based on the given parameters
      * 
      * @param parameters the map of parameters 
@@ -311,11 +290,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return new HttpEndpoint(uri, component, clientParams, connectionManager, configurer);
     }
     
-    @Override
-    protected boolean useIntrospectionOnEndpoint() {
-        return false;
-    }
-
     public HttpClientConfigurer getHttpClientConfigurer() {
         return httpClientConfigurer;
     }
@@ -336,28 +310,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      */
     public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
         this.httpConnectionManager = httpConnectionManager;
-    }
-
-    public HttpBinding getHttpBinding() {
-        return httpBinding;
-    }
-
-    /**
-     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-     */
-    public void setHttpBinding(HttpBinding httpBinding) {
-        this.httpBinding = httpBinding;
-    }
-
-    public HttpConfiguration getHttpConfiguration() {
-        return httpConfiguration;
-    }
-
-    /**
-     * To use the shared HttpConfiguration as base configuration.
-     */
-    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
-        this.httpConfiguration = httpConfiguration;
     }
 
 }
