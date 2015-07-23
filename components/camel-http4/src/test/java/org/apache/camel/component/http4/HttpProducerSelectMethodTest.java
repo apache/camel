@@ -126,6 +126,21 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     }
 
     @Test
+    public void withMethodCommonHttpGetInHeader() throws Exception {
+        HttpComponent component = context.getComponent("http4", HttpComponent.class);
+
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myget");
+        HttpProducer producer = new HttpProducer(endpoiont);
+
+        Exchange exchange = producer.createExchange();
+        exchange.getIn().setBody("");
+        exchange.getIn().setHeader(Exchange.HTTP_METHOD, org.apache.camel.http.common.HttpMethods.GET);
+        producer.start();
+        producer.process(exchange);
+        producer.stop();
+    }
+
+    @Test
     public void withEndpointQuery() throws Exception {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
 

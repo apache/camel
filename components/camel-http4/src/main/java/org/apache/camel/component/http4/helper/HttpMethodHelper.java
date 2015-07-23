@@ -41,7 +41,6 @@ public final class HttpMethodHelper {
      * @return the created method
      * @throws URISyntaxException 
      */
-    @Deprecated
     public static HttpMethods createMethod(Exchange exchange, HttpEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
         // is a query string provided in the endpoint URI or in a header (header
         // overrules endpoint)
