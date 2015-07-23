@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
@@ -70,7 +71,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientParams clientParams,
                         HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component, httpURI);
-        this.component = component;
         this.clientParams = clientParams;
         this.httpClientConfigurer = clientConfigurer;
         this.httpConnectionManager = httpConnectionManager;
@@ -108,20 +108,20 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             answer.getHostConfiguration().setProxy(host, port);
         }
 
-        if (proxyHost != null) {
-            LOG.debug("Using proxy: {}:{}", proxyHost, proxyPort);
-            answer.getHostConfiguration().setProxy(proxyHost, proxyPort);
+        if (getProxyHost() != null) {
+            LOG.debug("Using proxy: {}:{}", getProxyHost(), getProxyPort());
+            answer.getHostConfiguration().setProxy(getProxyHost(), getProxyPort());
         }
 
-        if (authMethodPriority != null) {
+        if (getAuthMethodPriority() != null) {
             List<String> authPrefs = new ArrayList<String>();
-            Iterator<?> it = getCamelContext().getTypeConverter().convertTo(Iterator.class, authMethodPriority);
+            Iterator<?> it = getCamelContext().getTypeConverter().convertTo(Iterator.class, getAuthMethodPriority());
             int i = 1;
             while (it.hasNext()) {
                 Object value = it.next();
                 AuthMethod auth = getCamelContext().getTypeConverter().convertTo(AuthMethod.class, value);
                 if (auth == null) {
-                    throw new IllegalArgumentException("Unknown authMethod: " + value + " in authMethodPriority: " + authMethodPriority);
+                    throw new IllegalArgumentException("Unknown authMethod: " + value + " in authMethodPriority: " + getAuthMethodPriority());
                 }
                 LOG.debug("Using authSchemePriority #{}: {}", i, auth);
                 authPrefs.add(auth.name());

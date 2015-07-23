@@ -33,8 +33,12 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.component.http.helper.HttpMethodsHelper;
 import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.http.common.HttpConstants;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -366,7 +370,7 @@ public class HttpProducer extends DefaultProducer {
 
         // create http holder objects for the request
         RequestEntity requestEntity = createRequestEntity(exchange);
-        HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
+        HttpMethods methodToUse = HttpMethodsHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
         HttpMethod method = methodToUse.createMethod(url);
         if (queryString != null) {
             // need to encode query string

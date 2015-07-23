@@ -19,6 +19,7 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpMethod;
 import org.junit.Test;

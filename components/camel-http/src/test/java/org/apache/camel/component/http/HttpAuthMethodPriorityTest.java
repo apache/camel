@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -45,7 +46,7 @@ public class HttpAuthMethodPriorityTest extends CamelTestSupport {
             public void configure() {
                 // setup proxy details
                 HttpConfiguration config = new HttpConfiguration();
-                config.setAuthMethod(AuthMethod.Basic);
+                config.setAuthMethod("Basic");
                 config.setAuthUsername("myUser");
                 config.setAuthPassword("myPassword");
                 // to avoid NTLM

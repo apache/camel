@@ -25,6 +25,10 @@ import java.util.Set;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpCommonComponent;
+import org.apache.camel.http.common.HttpConfiguration;
+import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -74,7 +78,7 @@ public class HttpComponent extends HttpCommonComponent {
 
         // authentication can be endpoint configured
         String authUsername = getAndRemoveParameter(parameters, "authUsername", String.class);
-        AuthMethod authMethod = getAndRemoveParameter(parameters, "authMethod", AuthMethod.class);
+        String authMethod = getAndRemoveParameter(parameters, "authMethod", String.class);
         // validate that if auth username is given then the auth method is also provided
         if (authUsername != null && authMethod == null) {
             throw new IllegalArgumentException("Option authMethod must be provided to use authentication");
@@ -92,7 +96,7 @@ public class HttpComponent extends HttpCommonComponent {
 
         // proxy authentication can be endpoint configured
         String proxyAuthUsername = getAndRemoveParameter(parameters, "proxyAuthUsername", String.class);
-        AuthMethod proxyAuthMethod = getAndRemoveParameter(parameters, "proxyAuthMethod", AuthMethod.class);
+        String proxyAuthMethod = getAndRemoveParameter(parameters, "proxyAuthMethod", String.class);
         // validate that if proxy auth username is given then the proxy auth method is also provided
         if (proxyAuthUsername != null && proxyAuthMethod == null) {
             throw new IllegalArgumentException("Option proxyAuthMethod must be provided to use proxy authentication");
@@ -116,7 +120,7 @@ public class HttpComponent extends HttpCommonComponent {
      *
      * @return configurer to used
      */
-    protected HttpClientConfigurer configureAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username,
+    protected HttpClientConfigurer configureAuth(HttpClientConfigurer configurer, String authMethod, String username,
                                                  String password, String domain, String host, Set<AuthMethod> authMethods) {
 
         // no auth is in use
@@ -132,13 +136,15 @@ public class HttpComponent extends HttpCommonComponent {
         ObjectHelper.notNull(username, "authUsername");
         ObjectHelper.notNull(password, "authPassword");
 
-        // add it as a auth method used
-        authMethods.add(authMethod);
+        AuthMethod auth = getCamelContext().getTypeConverter().convertTo(AuthMethod.class, authMethod);
 
-        if (authMethod == AuthMethod.Basic || authMethod == AuthMethod.Digest) {
+        // add it as a auth method used
+        authMethods.add(auth);
+
+        if (auth == AuthMethod.Basic || auth == AuthMethod.Digest) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new BasicAuthenticationHttpClientConfigurer(false, username, password));
-        } else if (authMethod == AuthMethod.NTLM) {
+        } else if (auth == AuthMethod.NTLM) {
             // domain is mandatory for NTLM
             ObjectHelper.notNull(domain, "authDomain");
             return CompositeHttpConfigurer.combineConfigurers(configurer,
@@ -153,7 +159,7 @@ public class HttpComponent extends HttpCommonComponent {
      *
      * @return configurer to used
      */
-    protected HttpClientConfigurer configureProxyAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username,
+    protected HttpClientConfigurer configureProxyAuth(HttpClientConfigurer configurer, String authMethod, String username,
                                                       String password, String domain, String host, Set<AuthMethod> authMethods) {
         // no proxy auth is in use
         if (username == null && authMethod == null) {
@@ -168,13 +174,15 @@ public class HttpComponent extends HttpCommonComponent {
         ObjectHelper.notNull(username, "proxyAuthUsername");
         ObjectHelper.notNull(password, "proxyAuthPassword");
 
-        // add it as a auth method used
-        authMethods.add(authMethod);
+        AuthMethod auth = getCamelContext().getTypeConverter().convertTo(AuthMethod.class, authMethod);
 
-        if (authMethod == AuthMethod.Basic || authMethod == AuthMethod.Digest) {
+        // add it as a auth method used
+        authMethods.add(auth);
+
+        if (auth == AuthMethod.Basic || auth == AuthMethod.Digest) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new BasicAuthenticationHttpClientConfigurer(true, username, password));
-        } else if (authMethod == AuthMethod.NTLM) {
+        } else if (auth == AuthMethod.NTLM) {
             // domain is mandatory for NTML
             ObjectHelper.notNull(domain, "proxyAuthDomain");
             return CompositeHttpConfigurer.combineConfigurers(configurer,
@@ -312,4 +320,21 @@ public class HttpComponent extends HttpCommonComponent {
         this.httpConnectionManager = httpConnectionManager;
     }
 
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+     */
+    @Override
+    public void setHttpBinding(HttpBinding httpBinding) {
+        // need to override and call super for component docs
+        super.setHttpBinding(httpBinding);
+    }
+
+    /**
+     * To use the shared HttpConfiguration as base configuration.
+     */
+    @Override
+    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+        // need to override and call super for component docs
+        super.setHttpConfiguration(httpConfiguration);
+    }
 }
