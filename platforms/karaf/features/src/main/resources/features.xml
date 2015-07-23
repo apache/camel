@@ -715,6 +715,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet-spec-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http/${project.version}</bundle>
   </feature>
   <feature name='camel-http4' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -722,6 +723,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet-spec-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http4/${project.version}</bundle>
   </feature>
   <feature name='camel-ibatis' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -797,7 +799,7 @@
   <feature name='camel-jetty' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-http</feature>
+    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jetty-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jetty8/${project.version}</bundle>
   </feature>
@@ -805,7 +807,7 @@
     <details>camel-jetty9 intend to work with jetty9, so this feature only works in the karaf container which support jetty9, e.g. karaf 4.x</details>
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-http</feature>
+    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jetty-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jetty9/${project.version}</bundle>
   </feature>
@@ -1295,7 +1297,7 @@
   <feature name='camel-servlet' version='${project.version}' resolver='(obr)' start-level='50'>
     <details> camel-servlet need to access the http OSGi services </details>
     <feature>http</feature>
-    <feature version='${project.version}'>camel-http</feature>
+    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-servlet/${project.version}</bundle>
   </feature>
   <feature name='camel-servletlistener' version='${project.version}' resolver='(obr)' start-level='50'>
