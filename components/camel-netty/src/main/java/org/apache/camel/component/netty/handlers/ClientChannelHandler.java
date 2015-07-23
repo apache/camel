@@ -138,19 +138,18 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             LOG.trace("Message received: {}", messageEvent);
         }
 
-        if (producer.getConfiguration().getRequestTimeout() > 0) {
-            ChannelHandler handler = ctx.getPipeline().get("timeout");
-            if (handler != null) {
-                LOG.trace("Removing timeout channel as we received message");
-                ctx.getPipeline().remove(handler);
-            }
+        ChannelHandler handler = ctx.getPipeline().get("timeout");
+        if (handler != null) {
+            LOG.trace("Removing timeout channel as we received message");
+            ctx.getPipeline().remove(handler);
         }
-
+        
         Exchange exchange = getExchange(ctx);
         if (exchange == null) {
             // we just ignore the received message as the channel is closed
             return;
-        }
+        }     
+
         AsyncCallback callback = getAsyncCallback(ctx);
 
         Message message;
