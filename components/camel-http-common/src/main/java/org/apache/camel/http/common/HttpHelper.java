@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -50,6 +51,39 @@ public final class HttpHelper {
 
     private HttpHelper() {
         // Helper class
+    }
+
+    public static boolean isSecureConnection(String uri) {
+        return uri.startsWith("https");
+    }
+
+    public static int[] parserHttpVersion(String s) throws ProtocolException {
+        int major;
+        int minor;
+        if (s == null) {
+            throw new IllegalArgumentException("String may not be null");
+        }
+        if (!s.startsWith("HTTP/")) {
+            throw new ProtocolException("Invalid HTTP version string: " + s);
+        }
+        int i1 = "HTTP/".length();
+        int i2 = s.indexOf(".", i1);
+        if (i2 == -1) {
+            throw new ProtocolException("Invalid HTTP version number: " + s);
+        }
+        try {
+            major = Integer.parseInt(s.substring(i1, i2));
+        } catch (NumberFormatException e) {
+            throw new ProtocolException("Invalid HTTP major version number: " + s);
+        }
+        i1 = i2 + 1;
+        i2 = s.length();
+        try {
+            minor = Integer.parseInt(s.substring(i1, i2));
+        } catch (NumberFormatException e) {
+            throw new ProtocolException("Invalid HTTP minor version number: " + s);
+        }
+        return new int[]{major, minor};
     }
 
     @SuppressWarnings("deprecation")
