@@ -469,18 +469,36 @@ public final class HttpHelper {
      * @throws URISyntaxException
      */
     public static HttpMethods createMethod(Exchange exchange, HttpCommonEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
+        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
+        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        // We need also check the HTTP_URI header query part
+        String uriString = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+        // resolve placeholders in uriString
+        try {
+            uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
+        } catch (Exception e) {
+            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
+        }
+        if (uriString != null) {
+            URI uri = new URI(uriString);
+            queryString = uri.getQuery();
+        }
+        if (queryString == null) {
+            queryString = endpoint.getHttpUri().getRawQuery();
+        }
+
         // compute what method to use either GET or POST
         HttpMethods answer;
         HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
         if (m != null) {
             // always use what end-user provides in a header
             answer = m;
-        } else if (hasPayload) {
-            // use POST if we have payload
-            answer = HttpMethods.POST;
-        } else {
-            // fallback to GET
+        } else if (queryString != null) {
+            // if a query string is provided then use GET
             answer = HttpMethods.GET;
+        } else {
+            // fallback to POST if we have payload, otherwise GET
+            answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
         }
 
         return answer;

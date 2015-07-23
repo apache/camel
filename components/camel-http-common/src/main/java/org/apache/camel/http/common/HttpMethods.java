@@ -18,6 +18,6 @@ package org.apache.camel.http.common;
  */
 public enum HttpMethods {
 
-    GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE
+    GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE, PATCH
 
 }

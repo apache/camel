@@ -110,13 +110,12 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
             url = rewriteUrl;
         }
 
-        // TODO: should not use that
-        HttpMethods method = HttpHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
+        String methodName = HttpHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null).name();
 
         JettyContentExchange httpExchange = getEndpoint().createContentExchange();
         httpExchange.init(exchange, getBinding(), client, callback);
         httpExchange.setURL(url); // Url has to be set first
-        httpExchange.setMethod(method.name());
+        httpExchange.setMethod(methodName);
         
         if (getEndpoint().getHttpClientParameters() != null) {
             // For jetty 9 these parameters can not be set on the client
@@ -127,11 +126,11 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
             }
             String supportRedirect = (String)getEndpoint().getHttpClientParameters().get("supportRedirect");
             if (supportRedirect != null) {
-                httpExchange.setSupportRedirect(new Boolean(supportRedirect));
+                httpExchange.setSupportRedirect(Boolean.valueOf(supportRedirect));
             }
         }
 
-        LOG.trace("Using URL: {} with method: {}", url, method);
+        LOG.trace("Using URL: {} with method: {}", url, methodName);
 
         // if there is a body to send as data
         if (exchange.getIn().getBody() != null) {
