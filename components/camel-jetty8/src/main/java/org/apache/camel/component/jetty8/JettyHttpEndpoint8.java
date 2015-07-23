@@ -19,10 +19,10 @@ package org.apache.camel.component.jetty8;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.jetty.JettyContentExchange;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
+import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.UriEndpoint;
 
 @UriEndpoint(scheme = "jetty", extendsScheme = "http", title = "Jetty",

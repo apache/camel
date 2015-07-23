@@ -20,9 +20,9 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.http.DefaultHttpBinding;
-import org.apache.camel.component.http.HttpHeaderFilterStrategy;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;

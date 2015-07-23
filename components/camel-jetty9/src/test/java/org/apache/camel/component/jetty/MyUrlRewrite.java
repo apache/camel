@@ -17,7 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.Producer;
-import org.apache.camel.component.http.UrlRewrite;
+import org.apache.camel.http.common.UrlRewrite;
 
 /**
  *
