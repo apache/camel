@@ -19,9 +19,9 @@ package org.apache.camel.component.servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import org.apache.camel.component.http.CamelServlet;
-import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.http.common.CamelServlet;
+import org.apache.camel.http.common.HttpConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

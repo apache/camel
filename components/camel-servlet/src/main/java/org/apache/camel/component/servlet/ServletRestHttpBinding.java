@@ -18,8 +18,8 @@ package org.apache.camel.component.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.camel.component.http.DefaultHttpBinding;
-import org.apache.camel.component.http.HttpMessage;
+import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpMessage;
 
 public class ServletRestHttpBinding extends DefaultHttpBinding {
 

@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.urlrewrite.http;
+package org.apache.camel.component.urlrewrite;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Producer;
-import org.apache.camel.component.http.HttpServletUrlRewrite;
-import org.apache.camel.component.urlrewrite.UrlRewriteFilter;
+import org.apache.camel.http.common.HttpServletUrlRewrite;
 
 /**
  * The camel-http component implementation of the {@link HttpServletUrlRewrite}.

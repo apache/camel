@@ -22,17 +22,14 @@ import java.net.URISyntaxException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.http.HttpClientConfigurer;
-import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
 
 @UriEndpoint(scheme = "servlet", extendsScheme = "http", title = "Servlet",
         syntax = "servlet:servletName", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
-public class ServletEndpoint extends HttpEndpoint {
+public class ServletEndpoint extends HttpCommonEndpoint {
 
     @UriPath(label = "consumer") @Metadata(required = "true")
     private String servletName;
@@ -40,9 +37,8 @@ public class ServletEndpoint extends HttpEndpoint {
     public ServletEndpoint() {
     }
 
-    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params, HttpConnectionManager httpConnectionManager,
-                           HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
+    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri) throws URISyntaxException {
+        super(endPointURI, component, httpUri);
     }
 
     /**
