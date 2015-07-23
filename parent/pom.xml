@@ -196,8 +196,7 @@
     <grizzly-websockets-version>2.3.21</grizzly-websockets-version>
     <groovy-version>2.4.4</groovy-version>
     <gson-version>2.3.1</gson-version>
-    <guice-bundle-version>3.0_1</guice-bundle-version>
-    <guice-version>3.0</guice-version>
+    <guice-version>4.0</guice-version>
     <hadoop-bundle-version>1.2.1_1</hadoop-bundle-version>
     <hadoop-version>1.2.1</hadoop-version>
     <hadoop2-bundle-version>2.3.0_2</hadoop2-bundle-version>
