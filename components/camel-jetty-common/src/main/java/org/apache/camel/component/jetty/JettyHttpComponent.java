@@ -40,12 +40,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http.CamelServlet;
-import org.apache.camel.component.http.HttpBinding;
-import org.apache.camel.component.http.HttpComponent;
-import org.apache.camel.component.http.HttpConsumer;
-import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.camel.component.http.UrlRewrite;
+import org.apache.camel.http.common.CamelServlet;
+import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpCommonComponent;
+import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
@@ -91,7 +91,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class JettyHttpComponent extends HttpComponent implements RestConsumerFactory {
+public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory {
     public static final String TMP_DIR = "CamelJettyTempDir";
     
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
@@ -407,7 +407,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         context.getServletHandler().addFilterWithMapping(filterHolder, pathSpec, 0);
     }
 
-    private void enableMultipartFilter(HttpEndpoint endpoint, Server server, String connectorKey) throws Exception {
+    private void enableMultipartFilter(HttpCommonEndpoint endpoint, Server server, String connectorKey) throws Exception {
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         CamelContext camelContext = this.getCamelContext();
         FilterHolder filterHolder = new FilterHolder();
@@ -445,7 +445,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
     @Override
     public void disconnect(HttpConsumer consumer) throws Exception {
         // If the connector is not needed anymore then stop it
-        HttpEndpoint endpoint = consumer.getEndpoint();
+        HttpCommonEndpoint endpoint = consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
         
         synchronized (CONNECTORS) {
@@ -468,7 +468,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         }
     }
     
-    private String getConnectorKey(HttpEndpoint endpoint) {
+    private String getConnectorKey(HttpCommonEndpoint endpoint) {
         return endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
     }
 

@@ -426,4 +426,30 @@ public final class HttpHelper {
 
         return answer;
     }
+
+    /**
+     * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
+     *
+     * @param exchange  the exchange
+     * @return the created method
+     * @throws URISyntaxException
+     */
+    public static HttpMethods createMethod(Exchange exchange, HttpCommonEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
+        // compute what method to use either GET or POST
+        HttpMethods answer;
+        HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
+        if (m != null) {
+            // always use what end-user provides in a header
+            answer = m;
+        } else if (hasPayload) {
+            // use POST if we have payload
+            answer = HttpMethods.POST;
+        } else {
+            // fallback to GET
+            answer = HttpMethods.GET;
+        }
+
+        return answer;
+    }
+
 }

@@ -30,9 +30,9 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.http.HttpConstants;
-import org.apache.camel.component.http.HttpMethods;
-import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.http.common.HttpConstants;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.HttpMethods;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -110,13 +110,13 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
             url = rewriteUrl;
         }
 
-        HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
-        String method = methodToUse.createMethod(url).getName();
+        // TODO: should not use that
+        HttpMethods method = HttpHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
 
         JettyContentExchange httpExchange = getEndpoint().createContentExchange();
         httpExchange.init(exchange, getBinding(), client, callback);
         httpExchange.setURL(url); // Url has to be set first
-        httpExchange.setMethod(method);
+        httpExchange.setMethod(method.name());
         
         if (getEndpoint().getHttpClientParameters() != null) {
             // For jetty 9 these parameters can not be set on the client
