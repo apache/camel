@@ -126,12 +126,10 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             LOG.trace("Message received: {}", msg);
         }
 
-        if (producer.getConfiguration().getRequestTimeout() > 0) {
-            ChannelHandler handler = ctx.pipeline().get("timeout");
-            if (handler != null) {
-                LOG.trace("Removing timeout channel as we received message");
-                ctx.pipeline().remove(handler);
-            }
+        ChannelHandler handler = ctx.pipeline().get("timeout");
+        if (handler != null) {
+            LOG.trace("Removing timeout channel as we received message");
+            ctx.pipeline().remove(handler);
         }
 
         Exchange exchange = getExchange(ctx);

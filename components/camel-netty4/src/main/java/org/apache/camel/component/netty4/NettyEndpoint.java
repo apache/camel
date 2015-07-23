@@ -89,18 +89,8 @@ public class NettyEndpoint extends DefaultEndpoint {
     @Override
     protected String createEndpointUri() {
         ObjectHelper.notNull(configuration, "configuration");
-        return "netty4:" + getConfiguration().getProtocol() + "://" + getConfiguration().getHost() + ":" + getConfiguration().getPort() 
-                + ((getConfiguration().getRequestTimeout() > 0) ? "?requestTimeout=" + getConfiguration().getRequestTimeout() : "");
+        return "netty4:" + getConfiguration().getProtocol() + "://" + getConfiguration().getHost() + ":" + getConfiguration().getPort(); 
     }
-
-    @Override
-    public String getEndpointUri() {
-        if (getConfiguration().getRequestTimeout() > 0) {
-            return super.getEndpointUri() + "?requestTimeout=" + getConfiguration().getRequestTimeout();   
-        } else {
-            return super.getEndpointUri();    
-        }        
-    }    
     
     protected SSLSession getSSLSession(ChannelHandlerContext ctx) {
         final SslHandler sslHandler = ctx.pipeline().get(SslHandler.class);
