@@ -997,18 +997,16 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         int port = 0;
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config.getComponent() == null || config.getComponent().equals("jetty")) {
-            if (config.getScheme() != null) {
-                scheme = config.getScheme();
-            }
-            if (config.getHost() != null) {
-                host = config.getHost();
-            }
-            int num = config.getPort();
-            if (num > 0) {
-                port = num;
-            }
+        RestConfiguration config = getCamelContext().getRestConfiguration("jetty", true);
+        if (config.getScheme() != null) {
+            scheme = config.getScheme();
+        }
+        if (config.getHost() != null) {
+            host = config.getHost();
+        }
+        int num = config.getPort();
+        if (num > 0) {
+            port = num;
         }
 
         // if no explicit hostname set then resolve the hostname

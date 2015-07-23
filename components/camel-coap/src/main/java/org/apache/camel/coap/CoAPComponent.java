@@ -82,14 +82,11 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
                                    String consumes, 
                                    String produces,
                                    Map<String, Object> parameters) throws Exception {
-        RestConfiguration config = getCamelContext().getRestConfiguration();
+        RestConfiguration config = getCamelContext().getRestConfiguration("coap", true);
         Map<String, Object> map = new HashMap<String, Object>();
-        // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
+        // setup endpoint options
+        if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+            map.putAll(config.getEndpointProperties());
         }
 
         String query = URISupport.createQueryString(map);
@@ -118,14 +115,12 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
     protected void doStart() throws Exception {
         super.doStart();
 
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("coap"))) {
-            // configure additional options on spark configuration
-            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
-                setProperties(this, config.getComponentProperties());
-            }
-            defaultServer = getServer(config.getPort());
+        RestConfiguration config = getCamelContext().getRestConfiguration("coap", true);
+        // configure additional options on spark configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(this, config.getComponentProperties());
         }
+        defaultServer = getServer(config.getPort());
         
         for (CoapServer s : servers.values()) {
             s.start();

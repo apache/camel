@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,6 +35,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -477,7 +479,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) {
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
-
+        for (RestConfiguration config : camelContext.getRestConfigurations()) {
+            addRouteDefinition(camelContext, answer, config.getComponent());
+        }
+        return answer;
+    }
+    
+    private void addRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, String component) {
         for (VerbDefinition verb : getVerbs()) {
             // either the verb has a singular to or a embedded route
             RouteDefinition route = verb.getRoute();
@@ -491,6 +499,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             // add the binding
             RestBindingDefinition binding = new RestBindingDefinition();
+            binding.setComponent(component);
             binding.setType(verb.getType());
             binding.setOutType(verb.getOutType());
             // verb takes precedence over configuration on rest
@@ -557,6 +566,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
             String routeId = route.idOrCreate(camelContext.getNodeIdFactory());
             options.put("routeId", routeId);
+            if (component != null) {
+                options.put("componentName", component);
+            }
 
             // include optional description, which we favor from 1) to/route description 2) verb description 3) rest description
             // this allows end users to define general descriptions and override then per to/route or verb
@@ -635,8 +647,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             route.setRestDefinition(this);
             answer.add(route);
         }
-
-        return answer;
     }
 
     private String buildUri(VerbDefinition verb) {

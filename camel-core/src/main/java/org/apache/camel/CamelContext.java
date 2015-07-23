@@ -485,11 +485,33 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setRestConfiguration(RestConfiguration restConfiguration);
 
     /**
-     * Gets the current REST configuration
+     * Gets the default REST configuration
      *
      * @return the configuration, or <tt>null</tt> if none has been configured.
      */
     RestConfiguration getRestConfiguration();
+    
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
+     *
+     * @param restConfiguration the REST configuration
+     */
+    void addRestConfiguration(RestConfiguration restConfiguration);
+
+    /**
+     * Gets the REST configuration for the given component
+     * @param component the component name to get the configuration
+     * @param defaultIfNotFound determine if the default configuration is returned if there isn't a 
+     *        specific configuration for the given component  
+     * @return the configuration, or <tt>null</tt> if none has been configured.
+     */
+    RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound);
+    
+    /**
+     * Gets all the RestConfigurations 
+     * @return
+     */
+    Collection<RestConfiguration> getRestConfigurations();
 
     /**
      * Returns the order in which the route inputs was started.
