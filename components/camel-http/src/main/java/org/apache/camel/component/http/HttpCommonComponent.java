@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 
 public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent {
@@ -24,8 +23,7 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
     protected HttpBinding httpBinding;
     protected HttpConfiguration httpConfiguration;
 
-    // TODO: HttpCommonEndpoint
-    public HttpCommonComponent(Class<? extends Endpoint> endpointClass) {
+    public HttpCommonComponent(Class<? extends HttpCommonEndpoint> endpointClass) {
         super(endpointClass);
     }
 
