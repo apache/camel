@@ -18,6 +18,7 @@ package org.apache.camel.component.git.producer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.git.GitConstants;
@@ -25,8 +26,10 @@ import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -132,6 +135,10 @@ public class GitProducer extends DefaultProducer {
 
         case GitOperation.DELETE_TAG_OPERATION:
             doDeleteTag(exchange, operation);
+            break;
+            
+        case GitOperation.SHOW_BRANCHES:
+            doShowBranches(exchange, operation);
             break;
                 
         default:
@@ -364,6 +371,17 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
+    }
+    
+    protected void doShowBranches(Exchange exchange, String operation) throws Exception {
+        List<Ref> result = null;
+        try {
+            result = git.branchList().setListMode(ListMode.ALL).call();
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
+        exchange.getOut().setBody(result);
     }
 
     private Repository getLocalRepository() throws IOException {

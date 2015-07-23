@@ -786,6 +786,51 @@ public class GitProducerTest extends GitTestSupport {
         repository.close();
     }
     
+    @Test
+    public void showBranchesTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameToAdd);
+            }
+        });
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(filenameToAdd));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
+            }
+        });
+        
+        Git git = new Git(repository);
+        
+        template.sendBody("direct:create-branch", "");
+        
+        List<Ref> branches = template.requestBody("direct:show-branches", "", List.class);
+        
+        Boolean branchExists = false;
+        
+        for (Ref reference : branches) {
+            if (("refs/heads/" + branchTest).equals(reference.getName())) {
+                branchExists = true;
+            }
+        }
+        assertTrue(branchExists);
+        
+        repository.close();
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {            
@@ -827,6 +872,8 @@ public class GitProducerTest extends GitTestSupport {
                         .to("git://" + gitLocalRepo + "?operation=createTag&tagName=" + tagTest);
                 from("direct:delete-tag")
                         .to("git://" + gitLocalRepo + "?operation=deleteTag&tagName=" + tagTest);
+                from("direct:show-branches")
+                        .to("git://" + gitLocalRepo + "?operation=showBranches");
             } 
         };
     }
