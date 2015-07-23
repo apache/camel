@@ -55,6 +55,7 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
         case MY_FEED:
         case PRIVATE:
         case SENT:
+        case RECEIVED:
             return new YammerMessagePollingConsumer(this, processor);
         case USERS:
         case CURRENT:
