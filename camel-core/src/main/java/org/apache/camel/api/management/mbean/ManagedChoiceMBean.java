@@ -16,6 +16,13 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
+import org.apache.camel.api.management.ManagedOperation;
+
 public interface ManagedChoiceMBean extends ManagedProcessorMBean {
+
+    @ManagedOperation(description = "Statistics of the content based router for each predicate")
+    TabularData choiceStatistics();
 
 }

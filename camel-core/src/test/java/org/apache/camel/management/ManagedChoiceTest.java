@@ -35,10 +35,12 @@ public class ManagedChoiceTest extends ManagementTestSupport {
             return;
         }
 
-        MockEndpoint foo = getMockEndpoint("mock:foo");
-        foo.expectedMessageCount(1);
+        getMockEndpoint("mock:foo").expectedMessageCount(2);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
+        template.sendBodyAndHeader("direct:start", "Bye World", "foo", "456");
+        template.sendBodyAndHeader("direct:start", "Hi World", "bar", "789");
 
         assertMockEndpointsSatisfied();
 
@@ -58,7 +60,11 @@ public class ManagedChoiceTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
+        TabularData data = (TabularData) mbeanServer.invoke(on, "choiceStatistics", null, null);
+        assertNotNull(data);
+        assertEquals(2, data.size());
+
+        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(3, data.size());
 
