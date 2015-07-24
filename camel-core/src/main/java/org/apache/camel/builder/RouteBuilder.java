@@ -82,7 +82,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @return the builder
      */
     public RestConfigurationDefinition restConfiguration() {
-        return restConfiguration("default");
+        return restConfiguration("");
     }
 
     /**
@@ -97,7 +97,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         RestConfigurationDefinition restConfiguration = restConfigurations.get(component);
         if (restConfiguration == null) {
             restConfiguration = new RestConfigurationDefinition();
-            restConfiguration.component(component);
+            if (!component.isEmpty()) {
+                restConfiguration.component(component);
+            }
             restConfigurations.put(component, restConfiguration);
         }
         return restConfiguration;
@@ -425,7 +427,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (getRestConfiguration() != null) {
             for (Map.Entry<String, RestConfigurationDefinition> entry : getRestConfiguration().entrySet()) {
                 RestConfiguration config = entry.getValue().asRestConfiguration(getContext());
-                if ("default".equals(entry.getKey())) {
+                if ("".equals(entry.getKey())) {
                     camelContext.setRestConfiguration(config);
                 } else {
                     camelContext.addRestConfiguration(config);

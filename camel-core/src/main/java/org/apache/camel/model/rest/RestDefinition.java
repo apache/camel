@@ -566,7 +566,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
             String routeId = route.idOrCreate(camelContext.getNodeIdFactory());
             options.put("routeId", routeId);
-            if (component != null) {
+            if (component != null && !component.isEmpty()) {
                 options.put("componentName", component);
             }
 

@@ -2298,7 +2298,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public RestConfiguration getRestConfiguration() {
-        RestConfiguration config = restConfigurations.get("default");
+        RestConfiguration config = restConfigurations.get("");
         if (config == null) {
             config = new RestConfiguration();
             setRestConfiguration(config);
@@ -2307,7 +2307,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void setRestConfiguration(RestConfiguration restConfiguration) {
-        restConfigurations.put("default", restConfiguration);
+        restConfigurations.put("", restConfiguration);
     }
     public Collection<RestConfiguration> getRestConfigurations() {
         return restConfigurations.values();
@@ -2319,7 +2319,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
     public RestConfiguration getRestConfiguration(String component, boolean defaultIfNotExist) {
         if (component == null) {
-            component = "default";
+            component = "";
         }
         RestConfiguration config = restConfigurations.get(component);
         if (config == null && defaultIfNotExist) {
