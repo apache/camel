@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.undertow.util.HttpString;
+import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.URISupport;
@@ -43,13 +45,7 @@ public final class UndertowHelper {
      * @return the URL to invoke
      */
     public static String createURL(Exchange exchange, UndertowEndpoint endpoint) {
-        String uri = null;
-//        if (!(endpoint.isBridgeEndpoint())) {
-//            uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-//        }
-        if (uri == null) {
-            uri = endpoint.getHttpURI().toASCIIString();
-        }
+        String uri = uri = endpoint.getHttpURI().toASCIIString();
 
         // resolve placeholders in uri
         try {
@@ -124,4 +120,49 @@ public final class UndertowHelper {
 
         headers.put(key, value);
     }
+
+    /**
+     * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
+     *
+     * @param exchange the exchange
+     * @return the created method
+     * @throws URISyntaxException
+     */
+    public static HttpString createMethod(Exchange exchange, UndertowEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
+        // is a query string provided in the endpoint URI or in a header (header
+        // overrules endpoint)
+        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        // We need also check the HTTP_URI header query part
+        String uriString = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+        // resolve placeholders in uriString
+        try {
+            uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
+        } catch (Exception e) {
+            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
+        }
+        if (uriString != null) {
+            URI uri = new URI(uriString);
+            queryString = uri.getQuery();
+        }
+        if (queryString == null) {
+            queryString = endpoint.getHttpURI().getRawQuery();
+        }
+
+        // compute what method to use either GET or POST
+        HttpString answer;
+        String m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
+        if (m != null) {
+            // always use what end-user provides in a header
+            answer = new HttpString(m);
+        } else if (queryString != null) {
+            // if a query string is provided then use GET
+            answer = Methods.GET;
+        } else {
+            // fallback to POST if we have payload, otherwise GET
+            answer = hasPayload ? Methods.POST : Methods.GET;
+        }
+
+        return answer;
+    }
+
 }

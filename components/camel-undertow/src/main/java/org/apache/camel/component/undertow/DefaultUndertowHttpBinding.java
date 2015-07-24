@@ -270,20 +270,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
         Object body = message.getBody();
 
-        String method = message.getHeader(Exchange.HTTP_METHOD, String.class);
-
-        if (method == null) {
-            //fallback if method is not defined, check the body
-            if (body == null) {
-                clientRequest.setMethod(Methods.GET);
-            } else {
-                clientRequest.setMethod(Methods.POST);
-            }
-        } else {
-            //method set, use it
-            clientRequest.setMethod(new HttpString(method));
-        }
-
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
