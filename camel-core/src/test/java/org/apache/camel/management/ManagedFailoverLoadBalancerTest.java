@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -63,6 +64,9 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
         Integer attempts = (Integer) mbeanServer.getAttribute(on, "MaximumFailoverAttempts");
         assertEquals(3, attempts.intValue());
 
+        String exceptions = (String) mbeanServer.getAttribute(on, "Exceptions");
+        assertEquals("java.io.IOException,java.sql.SQLException", exceptions);
+
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(3, data.size());
@@ -82,7 +86,7 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().failover(3, false, true, true, IOException.class).id("mysend")
+                    .loadBalance().failover(3, false, true, true, IOException.class, SQLException.class).id("mysend")
                         .to("mock:foo", "mock:bar");
             }
         };

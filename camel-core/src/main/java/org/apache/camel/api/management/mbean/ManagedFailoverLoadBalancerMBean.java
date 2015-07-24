@@ -32,4 +32,7 @@ public interface ManagedFailoverLoadBalancerMBean extends ManagedProcessorMBean 
     @ManagedAttribute(description = "A value to indicate after X failover attempts we should exhaust (give up).")
     Integer getMaximumFailoverAttempts();
 
+    @ManagedAttribute(description = "The class names of the exceptions the load balancer uses (separated by comma)")
+    String getExceptions();
+
 }

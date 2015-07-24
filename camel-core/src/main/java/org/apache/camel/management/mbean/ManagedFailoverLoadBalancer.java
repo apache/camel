@@ -16,11 +16,14 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedFailoverLoadBalancerMBean;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
+import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * @version 
@@ -28,6 +31,7 @@ import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 @ManagedResource(description = "Managed Failover LoadBalancer")
 public class ManagedFailoverLoadBalancer extends ManagedProcessor implements ManagedFailoverLoadBalancerMBean {
     private final FailOverLoadBalancer processor;
+    private String exceptions;
 
     public ManagedFailoverLoadBalancer(CamelContext context, FailOverLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
@@ -52,5 +56,24 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
     @Override
     public Integer getMaximumFailoverAttempts() {
         return processor.getMaximumFailoverAttempts();
+    }
+
+    @Override
+    public String getExceptions() {
+        if (exceptions != null) {
+            return exceptions;
+        }
+
+        List<Class<?>> classes = processor.getExceptions();
+        if (classes == null || classes.isEmpty()) {
+            exceptions = "";
+        } else {
+            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            for (Class<?> clazz : classes) {
+                csb.append(clazz.getCanonicalName());
+            }
+            exceptions = csb.toString();
+        }
+        return exceptions;
     }
 }
