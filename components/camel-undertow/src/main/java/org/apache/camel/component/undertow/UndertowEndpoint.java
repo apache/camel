@@ -65,10 +65,9 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     @UriParam
     private Boolean transferException;
 
-    public UndertowEndpoint(String uri, UndertowComponent component, URI httpURI) throws URISyntaxException {
+    public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {
         super(uri, component);
         this.component = component;
-        this.httpURI = httpURI;
     }
 
     @Override
@@ -94,6 +93,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
 
     @Override
     public boolean isSingleton() {
+        return true;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        // true to allow dynamic URI options to be configured and passed to external system for eg. the UndertowProducer
         return true;
     }
 

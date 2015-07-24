@@ -33,6 +33,17 @@ public class UndertowProducerTest extends BaseUndertowTest {
     }
 
     @Test
+    public void testHttpSimpleWithQuery() throws Exception {
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+        getMockEndpoint("mock:input").expectedHeaderReceived("name", "me");
+
+        String out = template.requestBody("undertow:http://localhost:{{port}}/foo?name=me", null, String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testHttpSimpleHeader() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 

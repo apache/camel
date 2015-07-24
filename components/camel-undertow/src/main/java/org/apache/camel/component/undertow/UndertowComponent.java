@@ -53,13 +53,26 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String address = remaining;
-        URI httpUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(address));
-        URI endpointUri = URISupport.createRemainingURI(httpUri, parameters);
+        URI uriHttpUriAddress = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
+        URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
 
-        UndertowEndpoint endpoint = new UndertowEndpoint(endpointUri.toString(), this, httpUri);
+        // create the endpoint first
+        UndertowEndpoint endpoint = new UndertowEndpoint(endpointUri.toString(), this);
         endpoint.setUndertowHttpBinding(undertowHttpBinding);
         setProperties(endpoint, parameters);
+
+        // then re-create the http uri with the remaining parameters which the endpoint did not use
+        URI httpUri = URISupport.createRemainingURI(
+                new URI(uriHttpUriAddress.getScheme(),
+                        uriHttpUriAddress.getUserInfo(),
+                        uriHttpUriAddress.getHost(),
+                        uriHttpUriAddress.getPort(),
+                        uriHttpUriAddress.getPath(),
+                        uriHttpUriAddress.getQuery(),
+                        uriHttpUriAddress.getFragment()),
+                parameters);
+        endpoint.setHttpURI(httpUri);
+
         return endpoint;
     }
 

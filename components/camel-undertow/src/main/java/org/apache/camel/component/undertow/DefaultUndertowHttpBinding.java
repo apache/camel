@@ -137,7 +137,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 if (value != null && value.trim().startsWith("Basic")) {
                     if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
-                        UndertowUtils.appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
+                        UndertowHelper.appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
                     }
                 }
             }
@@ -149,7 +149,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 LOG.trace("HTTP-header: {}", value);
                 if (headerFilterStrategy != null
                     && !headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
-                    UndertowUtils.appendHeader(headersMap, name.toString(), value);
+                    UndertowHelper.appendHeader(headersMap, name.toString(), value);
                 }
             }
         }
@@ -168,7 +168,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                     LOG.trace("URI-Parameter: {}", value);
                     if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                        UndertowUtils.appendHeader(headersMap, name, value);
+                        UndertowHelper.appendHeader(headersMap, name, value);
                     }
                 }
             }
@@ -194,7 +194,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 if (value != null && value.trim().startsWith("Basic")) {
                     if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
-                        UndertowUtils.appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
+                        UndertowHelper.appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
                     }
                 }
             }
@@ -206,7 +206,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 LOG.trace("HTTP-header: {}", value);
                 if (headerFilterStrategy != null
                     && !headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
-                    UndertowUtils.appendHeader(headersMap, name.toString(), value);
+                    UndertowHelper.appendHeader(headersMap, name.toString(), value);
                 }
             }
         }

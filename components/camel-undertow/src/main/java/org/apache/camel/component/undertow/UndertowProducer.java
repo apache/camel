@@ -17,6 +17,7 @@
 package org.apache.camel.component.undertow;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.ByteBuffer;
 
 import io.undertow.client.ClientCallback;
@@ -71,9 +72,15 @@ public class UndertowProducer extends DefaultAsyncProducer {
             IoFuture<ClientConnection> connect = client.connect(endpoint.getHttpURI(), worker,
                     new ByteBufferSlicePool(BufferAllocator.DIRECT_BYTE_BUFFER_ALLOCATOR, 8192, 8192 * 8192), OptionMap.EMPTY);
 
+            // creating the url to use takes 2-steps
+            String url = UndertowHelper.createURL(exchange, getEndpoint());
+            URI uri = UndertowHelper.createURI(exchange, url, getEndpoint());
+            // get the url from the uri
+            url = uri.toASCIIString();
+
             ClientRequest request = new ClientRequest();
             request.setProtocol(Protocols.HTTP_1_1);
-            request.setPath(endpoint.getHttpURI().getPath());
+            request.setPath(url);
 
             Object body = getRequestBody(request, exchange);
 
@@ -86,7 +93,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
 
             connect.get().sendRequest(request, new UndertowProducerCallback(bodyAsByte, exchange, callback));
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
