@@ -83,6 +83,7 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
 
     // Properties
     //-------------------------------------------------------------------------
+
     public int getNumberOfHashGroups() {
         return numberOfHashGroups;
     }

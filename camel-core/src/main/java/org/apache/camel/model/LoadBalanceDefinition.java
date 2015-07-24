@@ -286,7 +286,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      */
     public LoadBalanceDefinition sticky(Expression correlationExpression) {
         StickyLoadBalancerDefinition def = new StickyLoadBalancerDefinition();
-        def.setCorrelationExpression(new ExpressionSubElementDefinition(correlationExpression));
+        def.setCorrelationExpression(correlationExpression);
         setLoadBalancerType(def);
         return this;
     }

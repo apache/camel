@@ -18,7 +18,7 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedRandomLoadBalancerMBean;
+import org.apache.camel.api.management.mbean.ManagedRoundRobinLoadBalancerMBean;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 
@@ -26,7 +26,7 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
  * @version 
  */
 @ManagedResource(description = "Managed RoundRobin LoadBalancer")
-public class ManagedRoundRobinLoadBalancer extends ManagedProcessor implements ManagedRandomLoadBalancerMBean {
+public class ManagedRoundRobinLoadBalancer extends ManagedProcessor implements ManagedRoundRobinLoadBalancerMBean {
     private final RoundRobinLoadBalancer processor;
 
     public ManagedRoundRobinLoadBalancer(CamelContext context, RoundRobinLoadBalancer processor, LoadBalanceDefinition definition) {

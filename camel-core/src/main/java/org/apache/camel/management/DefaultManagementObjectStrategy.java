@@ -78,6 +78,7 @@ import org.apache.camel.management.mbean.ManagedSetExchangePattern;
 import org.apache.camel.management.mbean.ManagedSetHeader;
 import org.apache.camel.management.mbean.ManagedSetProperty;
 import org.apache.camel.management.mbean.ManagedSplitter;
+import org.apache.camel.management.mbean.ManagedStickyLoadBalancer;
 import org.apache.camel.management.mbean.ManagedStop;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
@@ -137,6 +138,7 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.EventNotifier;
@@ -293,6 +295,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedRandomLoadBalancer(context, (RandomLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
             } else if (target instanceof RoundRobinLoadBalancer) {
                 answer = new ManagedRoundRobinLoadBalancer(context, (RoundRobinLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
+            } else if (target instanceof StickyLoadBalancer) {
+                answer = new ManagedStickyLoadBalancer(context, (StickyLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
             } else if (target instanceof RecipientList) {
                 answer = new ManagedRecipientList(context, (RecipientList) target, (RecipientListDefinition) definition);
             } else if (target instanceof Splitter) {
