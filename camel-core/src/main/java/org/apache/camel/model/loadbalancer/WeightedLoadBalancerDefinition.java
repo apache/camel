@@ -59,11 +59,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         List<Integer> distributionRatioList = new ArrayList<Integer>();
         
         try {
-            if (distributionRatioDelimiter == null) {
-                distributionRatioDelimiter = ",";
-            }
-            
-            String[] ratios = distributionRatio.split(distributionRatioDelimiter);
+            String[] ratios = distributionRatio.split(getDistributionRatioDelimiter());
             for (String ratio : ratios) {
                 distributionRatioList.add(new Integer(ratio.trim()));
             }
@@ -107,7 +103,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     }
 
     public String getDistributionRatioDelimiter() {
-        return distributionRatioDelimiter;
+        return distributionRatioDelimiter == null ? "," : distributionRatioDelimiter;
     }
 
     /**

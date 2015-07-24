@@ -86,9 +86,11 @@ import org.apache.camel.management.mbean.ManagedThreads;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThroughputLogger;
 import org.apache.camel.management.mbean.ManagedThrowException;
+import org.apache.camel.management.mbean.ManagedTopicLoadBalancer;
 import org.apache.camel.management.mbean.ManagedTransformer;
 import org.apache.camel.management.mbean.ManagedUnmarshal;
 import org.apache.camel.management.mbean.ManagedValidate;
+import org.apache.camel.management.mbean.ManagedWeightedLoadBalancer;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessDefinition;
@@ -139,6 +141,8 @@ import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
+import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
+import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.EventNotifier;
@@ -297,6 +301,10 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedRoundRobinLoadBalancer(context, (RoundRobinLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
             } else if (target instanceof StickyLoadBalancer) {
                 answer = new ManagedStickyLoadBalancer(context, (StickyLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
+            } else if (target instanceof TopicLoadBalancer) {
+                answer = new ManagedTopicLoadBalancer(context, (TopicLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
+            } else if (target instanceof WeightedLoadBalancer) {
+                answer = new ManagedWeightedLoadBalancer(context, (WeightedLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
             } else if (target instanceof RecipientList) {
                 answer = new ManagedRecipientList(context, (RecipientList) target, (RecipientListDefinition) definition);
             } else if (target instanceof Splitter) {
