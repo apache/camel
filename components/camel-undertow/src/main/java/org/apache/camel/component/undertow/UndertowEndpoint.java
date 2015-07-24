@@ -33,6 +33,7 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +46,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private UndertowComponent component;
+    private SSLContext sslContext;
 
     @UriPath
     private URI httpURI;
@@ -53,7 +55,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
     @UriParam
-    private SSLContext sslContext;
+    private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private String httpMethodRestrict;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -107,6 +109,10 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
         return exchange;
     }
 
+    public SSLContext getSslContext() {
+        return sslContext;
+    }
+
     public URI getHttpURI() {
         return httpURI;
     }
@@ -152,15 +158,15 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
         undertowHttpBinding.setHeaderFilterStrategy(headerFilterStrategy);
     }
 
-    public SSLContext getSslContext() {
-        return sslContext;
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
     }
 
     /**
      * To configure security using SSLContextParameters
      */
-    public void setSslContext(SSLContext sslContext) {
-        this.sslContext = sslContext;
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public Boolean getThrowExceptionOnFailure() {
@@ -198,4 +204,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
         this.undertowHttpBinding = undertowHttpBinding;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (sslContextParameters != null) {
+            sslContext = sslContextParameters.createSSLContext();
+        }
+    }
 }

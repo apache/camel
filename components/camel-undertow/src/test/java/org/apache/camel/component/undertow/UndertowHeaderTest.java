@@ -24,15 +24,30 @@ public class UndertowHeaderTest extends BaseUndertowTest {
 
     @Test
     public void testHttpHeaders() throws Exception {
-        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:input").expectedMessageCount(1);
         getMockEndpoint("mock:input").expectedHeaderReceived("param", "true");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/headers");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URI, "/headers");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_QUERY, "param=true");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "/headers");
 
-        String out = template.requestBody("http://localhost:" + getPort() + "/headers?param=true", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:" + getPort() + "/headers?param=true", null, String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHttpHeadersPost() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/headers");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URI, "/headers");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_QUERY, "");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "/headers");
+
+        String out = template.requestBody("http://localhost:" + getPort() + "/headers", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();

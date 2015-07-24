@@ -19,7 +19,6 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import javax.net.ssl.SSLContext;
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -31,13 +30,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.undertow.handlers.HttpCamelHandler;
 import org.apache.camel.component.undertow.handlers.NotFoundHandler;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,55 +44,21 @@ import org.slf4j.LoggerFactory;
 public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
-    private UndertowHttpBinding undertowHttpBinding;
-    private Map<Integer, UndertowRegistry> serversRegistry = new HashMap<Integer, UndertowRegistry>();
+    private UndertowHttpBinding undertowHttpBinding = new DefaultUndertowHttpBinding();
+    private final Map<Integer, UndertowRegistry> serversRegistry = new HashMap<Integer, UndertowRegistry>();
 
     public UndertowComponent() {
         super(UndertowEndpoint.class);
-        this.undertowHttpBinding = new DefaultUndertowHttpBinding();
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        //extract parameters from URI
-        Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
-        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
-        SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
-        Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
-        Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
-        String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
-
         String address = remaining;
         URI httpUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(address));
         URI endpointUri = URISupport.createRemainingURI(httpUri, parameters);
 
         UndertowEndpoint endpoint = new UndertowEndpoint(endpointUri.toString(), this, httpUri);
-
-        if (endpoint.getUndertowHttpBinding() == null) {
-            endpoint.setUndertowHttpBinding(undertowHttpBinding);
-        }
-
-        //set parameters if they exists in URI
-        if (httpMethodRestrict != null) {
-            endpoint.setHttpMethodRestrict(httpMethodRestrict);
-        }
-        if (matchOnUriPrefix != null) {
-            endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
-        }
-        if (headerFilterStrategy != null) {
-            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
-        }
-        if (sslContextParameters != null) {
-            SSLContext sslContext = sslContextParameters.createSSLContext();
-            endpoint.setSslContext(sslContext);
-        }
-        if (throwExceptionOnFailure != null) {
-            endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
-        }
-        if (transferException != null) {
-            endpoint.setTransferException(transferException);
-        }
-
+        endpoint.setUndertowHttpBinding(undertowHttpBinding);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -162,6 +125,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        serversRegistry.clear();
     }
 
     protected Undertow rebuildServer(UndertowRegistry registy) {
