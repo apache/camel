@@ -424,8 +424,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         getRestCollection().setCamelContext(camelContext);
 
         // setup rest configuration before adding the rests
-        if (getRestConfiguration() != null) {
-            for (Map.Entry<String, RestConfigurationDefinition> entry : getRestConfiguration().entrySet()) {
+        if (getRestConfigurations() != null) {
+            for (Map.Entry<String, RestConfigurationDefinition> entry : getRestConfigurations().entrySet()) {
                 RestConfiguration config = entry.getValue().asRestConfiguration(getContext());
                 if ("".equals(entry.getKey())) {
                     camelContext.setRestConfiguration(config);
@@ -449,7 +449,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return restCollection;
     }
 
-    public Map<String, RestConfigurationDefinition> getRestConfiguration() {
+    public Map<String, RestConfigurationDefinition> getRestConfigurations() {
         return restConfigurations;
     }
 

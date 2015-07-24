@@ -479,6 +479,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) {
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
+        if (camelContext.getRestConfigurations().isEmpty()) {
+            camelContext.getRestConfiguration();
+        }
         for (RestConfiguration config : camelContext.getRestConfigurations()) {
             addRouteDefinition(camelContext, answer, config.getComponent());
         }

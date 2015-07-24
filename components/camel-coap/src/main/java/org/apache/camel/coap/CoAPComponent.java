@@ -92,7 +92,8 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         String query = URISupport.createQueryString(map);
         
         
-        String url = config.getScheme() + "://" + config.getHost();
+        String url = (config.getScheme() == null ? "coap" : config.getScheme())
+            + "://" + config.getHost();
         if (config.getPort() != -1) {
             url += ":" + config.getPort();
         }

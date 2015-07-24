@@ -19,6 +19,7 @@ package org.apache.camel.coap;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -33,14 +34,28 @@ import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.junit.Test;
 
 public class CoAPRestComponentTest extends CamelTestSupport {
-    int coapport = AvailablePortFinder.getNextAvailable();
-    int jettyport = AvailablePortFinder.getNextAvailable();
+    static int coapport = AvailablePortFinder.getNextAvailable();
+    static int jettyport = AvailablePortFinder.getNextAvailable();
+    
+    
+    /*
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    } 
+    */   
     
     @Test
     public void testCoAP() throws Exception {
         NetworkConfig.createStandardWithoutFile();
         CoapClient client;
         CoapResponse rsp;
+        
+        
+        URL url = new URL("http://localhost:" + jettyport + "/TestResource/Ducky");
+        URLConnection connect = url.openConnection();
+        InputStream ins = connect.getInputStream();
+        assertEquals("Hello Ducky", IOConverter.toString(new InputStreamReader(ins)));
+
         
         client = new CoapClient("coap://localhost:" + coapport + "/TestResource/Ducky");
         client.setTimeout(1000000);
@@ -55,11 +70,8 @@ public class CoAPRestComponentTest extends CamelTestSupport {
         assertEquals("Hello Ducky", rsp.getResponseText());
         rsp = client.post("data", MediaTypeRegistry.TEXT_PLAIN);
         assertEquals("Hello Ducky: data", rsp.getResponseText());
+        assertEquals(MediaTypeRegistry.TEXT_PLAIN, rsp.getOptions().getContentFormat());
         
-        
-        URL url = new URL("http://localhost:" + jettyport + "/TestResource/Ducky");
-        InputStream ins = url.openConnection().getInputStream();
-        assertEquals("Hello Ducky", IOConverter.toString(new InputStreamReader(ins)));
     }
 
     @Override
@@ -85,7 +97,12 @@ public class CoAPRestComponentTest extends CamelTestSupport {
                 from("direct:post1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
+                        String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+                        if (!"text/plain".equals(ct)) {
+                            throw new Exception("No content type");
+                        }
                         exchange.getOut().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
+                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, ct);
                     }
                 });
             }

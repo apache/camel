@@ -24,6 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.Message;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.network.Exchange;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.eclipse.californium.core.server.resources.Resource;
@@ -86,13 +88,19 @@ final class CamelCoapResource extends CoapResource {
             camelExchange = consumer.getEndpoint().createExchange();
             consumer.createUoW(camelExchange);
             
-            for (String s : exchange.getRequest().getOptions().getUriQuery()) {
+            OptionSet options = exchange.getRequest().getOptions();
+            for (String s : options.getUriQuery()) {
                 int i = s.indexOf('=');
                 if (i == -1) {
                     camelExchange.getIn().setHeader(s, "");
                 } else {
                     camelExchange.getIn().setHeader(s.substring(0, i), s.substring(i + 1));
                 }
+            }
+            
+            if (options.hasContentFormat()) {
+                String mt = MediaTypeRegistry.toString(options.getContentFormat());
+                camelExchange.getIn().setHeader(org.apache.camel.Exchange.CONTENT_TYPE, mt);
             }
             
             List<String> path = exchange.getRequest().getOptions().getUriPath();
@@ -121,7 +129,8 @@ final class CamelCoapResource extends CoapResource {
             consumer.getProcessor().process(camelExchange);            
             Message target = camelExchange.hasOut() ? camelExchange.getOut() : camelExchange.getIn();
             
-            cexchange.respond(ResponseCode.CONTENT, target.getBody(byte[].class));
+            int format = MediaTypeRegistry.parse(target.getHeader(org.apache.camel.Exchange.CONTENT_TYPE, String.class));
+            cexchange.respond(ResponseCode.CONTENT, target.getBody(byte[].class), format);
 
         } catch (Exception e) {
             cexchange.respond(ResponseCode.INTERNAL_SERVER_ERROR, e.getMessage());
