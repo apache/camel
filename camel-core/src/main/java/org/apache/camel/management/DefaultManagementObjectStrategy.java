@@ -56,6 +56,7 @@ import org.apache.camel.management.mbean.ManagedPollEnricher;
 import org.apache.camel.management.mbean.ManagedProcess;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
+import org.apache.camel.management.mbean.ManagedRandomLoadBalancer;
 import org.apache.camel.management.mbean.ManagedRecipientList;
 import org.apache.camel.management.mbean.ManagedRemoveHeader;
 import org.apache.camel.management.mbean.ManagedRemoveHeaders;
@@ -63,6 +64,7 @@ import org.apache.camel.management.mbean.ManagedRemoveProperties;
 import org.apache.camel.management.mbean.ManagedRemoveProperty;
 import org.apache.camel.management.mbean.ManagedResequencer;
 import org.apache.camel.management.mbean.ManagedRollback;
+import org.apache.camel.management.mbean.ManagedRoundRobinLoadBalancer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRoutingSlip;
 import org.apache.camel.management.mbean.ManagedSamplingThrottler;
@@ -133,6 +135,8 @@ import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
+import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
+import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.EventNotifier;
@@ -285,6 +289,10 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedMarshal(context, (MarshalProcessor) target, (org.apache.camel.model.MarshalDefinition) definition);
             } else if (target instanceof UnmarshalProcessor) {
                 answer = new ManagedUnmarshal(context, (UnmarshalProcessor) target, (org.apache.camel.model.UnmarshalDefinition) definition);
+            } else if (target instanceof RandomLoadBalancer) {
+                answer = new ManagedRandomLoadBalancer(context, (RandomLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
+            } else if (target instanceof RoundRobinLoadBalancer) {
+                answer = new ManagedRoundRobinLoadBalancer(context, (RoundRobinLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
             } else if (target instanceof RecipientList) {
                 answer = new ManagedRecipientList(context, (RecipientList) target, (RecipientListDefinition) definition);
             } else if (target instanceof Splitter) {
