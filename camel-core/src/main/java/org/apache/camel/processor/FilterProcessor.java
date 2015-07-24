@@ -54,7 +54,6 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         }
 
         if (matches) {
-            filtered++;
             return processor.process(exchange, callback);
         } else {
             callback.done(true);

@@ -21,11 +21,17 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
 
+    @ManagedAttribute(description = "The language for the expression")
+    String getCorrelationExpressionLanguage();
+
     @ManagedAttribute(description = "Correlation Expression")
     String getCorrelationExpression();
 
     @ManagedAttribute(description = "Completion timeout in millis")
     long getCompletionTimeout();
+
+    @ManagedAttribute(description = "The language for the expression")
+    String getCompletionTimeoutLanguage();
 
     @ManagedAttribute(description = "Completion timeout expression")
     String getCompletionTimeoutExpression();
@@ -35,6 +41,9 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Completion size")
     int getCompletionSize();
+
+    @ManagedAttribute(description = "The language for the expression")
+    String getCompletionSizeExpressionLanguage();
 
     @ManagedAttribute(description = "Completion size expression")
     String getCompletionSizeExpression();
@@ -56,6 +65,9 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Whether or not to eager check for completion when a new incoming Exchange has been received")
     boolean isEagerCheckCompletion();
+
+    @ManagedAttribute(description = "The language for the predicate")
+    String getCompletionPredicateLanguage();
 
     @ManagedAttribute(description = "A Predicate to indicate when an aggregated exchange is complete")
     String getCompletionPredicate();
@@ -113,6 +125,5 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Sets whether statistics is enabled")
     void setStatisticsEnabled(boolean statisticsEnabled);
-
 
 }
