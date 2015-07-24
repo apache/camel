@@ -54,8 +54,20 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
         this.halfOpenAfter = halfOpenAfter;
     }
 
+    public long getHalfOpenAfter() {
+        return halfOpenAfter;
+    }
+
     public void setThreshold(int threshold) {
         this.threshold = threshold;
+    }
+
+    public int getThreshold() {
+        return threshold;
+    }
+
+    public int getState() {
+        return state.get();
     }
 
     @Override
@@ -115,7 +127,7 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
     }
 
     private boolean calculateState(final Exchange exchange, final AsyncCallback callback) {
-        boolean output = false;
+        boolean output;
         if (state.get() == STATE_HALF_OPEN) {
             if (failures.get() == 0) {
                 output = closeCircuit(exchange, callback);
@@ -164,7 +176,26 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
     }
 
     private void logState() {
-        log.debug("State {}, failures {}, closed since {}", new Object[]{state.get(), failures.get(), System.currentTimeMillis() - lastFailure});
+        if (log.isDebugEnabled()) {
+            log.debug(dumpState());
+        }
+    }
+
+    public String dumpState() {
+        int num = state.get();
+        String state;
+        if (num == 0) {
+            state = "closed";
+        } else if (num == 1) {
+            state = "half open";
+        } else {
+            state = "open";
+        }
+        if (lastFailure > 0) {
+            return String.format("State %s, failures %d, closed since %d", state, failures.get(), System.currentTimeMillis() - lastFailure);
+        } else {
+            return String.format("State %s, failures %d", state, failures.get());
+        }
     }
 
     private boolean executeProcessor(final Exchange exchange, final AsyncCallback callback) {
