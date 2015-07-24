@@ -20,8 +20,11 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedCustomLoadBalancerMBean extends ManagedProcessorMBean {
 
+    @ManagedAttribute(description = "Reference to the custom load balancer to lookup from the registry to be used")
+    String getRef();
+
     @ManagedAttribute(description = "The custom load balancer class name")
-    String getCustomLoadBalancerClassName();
+    String getLoadBalancerClassName();
 
     @ManagedAttribute(description = "Number of processors in the load balancer")
     Integer getSize();

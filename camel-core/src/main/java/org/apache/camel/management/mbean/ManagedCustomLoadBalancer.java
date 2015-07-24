@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedCustomLoadBalancerMBean;
 import org.apache.camel.model.LoadBalanceDefinition;
+import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -36,7 +37,18 @@ public class ManagedCustomLoadBalancer extends ManagedProcessor implements Manag
     }
 
     @Override
-    public String getCustomLoadBalancerClassName() {
+    public LoadBalanceDefinition getDefinition() {
+        return (LoadBalanceDefinition) super.getDefinition();
+    }
+
+    @Override
+    public String getRef() {
+        CustomLoadBalancerDefinition def = (CustomLoadBalancerDefinition) getDefinition().getLoadBalancerType();
+        return def.getRef();
+    }
+
+    @Override
+    public String getLoadBalancerClassName() {
         return ObjectHelper.className(processor);
     }
 

@@ -41,6 +41,7 @@ import org.apache.camel.management.mbean.ManagedCircuitBreakerLoadBalancer;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedConvertBody;
+import org.apache.camel.management.mbean.ManagedCustomLoadBalancer;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
@@ -94,11 +95,13 @@ import org.apache.camel.management.mbean.ManagedUnmarshal;
 import org.apache.camel.management.mbean.ManagedValidate;
 import org.apache.camel.management.mbean.ManagedWeightedLoadBalancer;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
+import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.model.ThreadsDefinition;
+import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.Delayer;
@@ -142,6 +145,7 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.loadbalancer.CircuitBreakerLoadBalancer;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
+import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
@@ -385,6 +389,14 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedPollEnricher(context, (PollEnricher) target, (org.apache.camel.model.PollEnrichDefinition) definition);
             } else if (target instanceof org.apache.camel.spi.ManagementAware) {
                 return ((org.apache.camel.spi.ManagementAware<Processor>) target).getManagedObject(processor);
+            }
+
+            // special for custom load balancer
+            if (definition instanceof LoadBalanceDefinition) {
+                LoadBalanceDefinition lb = (LoadBalanceDefinition) definition;
+                if (lb.getLoadBalancerType() instanceof CustomLoadBalancerDefinition) {
+                    answer = new ManagedCustomLoadBalancer(context, (LoadBalancer) target, (LoadBalanceDefinition) definition);
+                }
             }
 
             if (answer != null) {
