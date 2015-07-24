@@ -121,12 +121,10 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             SparkBase.setPort(getPort());
         } else {
             // if no explicit port configured, then use port from rest configuration
-            RestConfiguration config = getCamelContext().getRestConfiguration();
-            if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
-                int port = config.getPort();
-                if (port > 0) {
-                    SparkBase.setPort(port);
-                }
+            RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
+            int port = config.getPort();
+            if (port > 0) {
+                SparkBase.setPort(port);
             }
         }
         if (getIpAddress() != null) {
@@ -134,12 +132,10 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         }
 
         // configure component options
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
-            // configure additional options on spark configuration
-            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
-                setProperties(sparkConfiguration, config.getComponentProperties());
-            }
+        RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
+        // configure additional options on spark configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(sparkConfiguration, config.getComponentProperties());
         }
     }
 
@@ -178,12 +174,10 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         }
 
         // build query string, and append any endpoint configuration properties
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
+        RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
+        // setup endpoint options
+        if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+            map.putAll(config.getEndpointProperties());
         }
 
         String query = URISupport.createQueryString(map);

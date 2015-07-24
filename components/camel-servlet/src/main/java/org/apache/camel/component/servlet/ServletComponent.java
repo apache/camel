@@ -172,15 +172,12 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         path = FileUtil.stripLeadingSeparator(path);
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
+        RestConfiguration config = getCamelContext().getRestConfiguration("servlet", true);
 
         Map<String, Object> map = new HashMap<String, Object>();
-        // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals("servlet")) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
+        // setup endpoint options
+        if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+            map.putAll(config.getEndpointProperties());
         }
 
         String query = URISupport.createQueryString(map);

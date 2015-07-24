@@ -92,18 +92,16 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         String scheme = "http";
         String host = "";
         int port = 0;
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config.getComponent() == null || config.getComponent().equals("undertow")) {
-            if (config.getScheme() != null) {
-                scheme = config.getScheme();
-            }
-            if (config.getHost() != null) {
-                host = config.getHost();
-            }
-            int num = config.getPort();
-            if (num > 0) {
-                port = num;
-            }
+        RestConfiguration config = getCamelContext().getRestConfiguration("undertow", true);
+        if (config.getScheme() != null) {
+            scheme = config.getScheme();
+        }
+        if (config.getHost() != null) {
+            host = config.getHost();
+        }
+        int num = config.getPort();
+        if (num > 0) {
+            port = num;
         }
 
         Map<String, Object> map = new HashMap<String, Object>();
