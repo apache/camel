@@ -24,6 +24,7 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
@@ -35,6 +36,13 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
         if (isPlatform("aix")) {
             return;
         }
+
+        MockEndpoint foo = getMockEndpoint("mock:foo");
+        foo.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
+
+        assertMockEndpointsSatisfied();
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
@@ -67,6 +75,9 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
         String exceptions = (String) mbeanServer.getAttribute(on, "Exceptions");
         assertEquals("java.io.IOException,java.sql.SQLException", exceptions);
 
+        String id = (String) mbeanServer.getAttribute(on, "LastGoodProcessorId");
+        assertEquals("foo", id);
+
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(3, data.size());
@@ -87,7 +98,7 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .loadBalance().failover(3, false, true, true, IOException.class, SQLException.class).id("mysend")
-                        .to("mock:foo", "mock:bar");
+                        .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };
     }

@@ -48,7 +48,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
     // stateful counter
     private final AtomicInteger counter = new AtomicInteger(-1);
-    private final AtomicInteger lastGoodIndex = new AtomicInteger();
+    private final AtomicInteger lastGoodIndex = new AtomicInteger(-1);
 
     public FailOverLoadBalancer() {
         this.exceptions = null;
@@ -73,6 +73,10 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public int getLastGoodIndex() {
+        return lastGoodIndex.get();
     }
 
     public List<Class<?>> getExceptions() {
@@ -158,7 +162,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
         // get the next processor
         if (isSticky()) {
-            index.set(lastGoodIndex.get());
+            int idx = lastGoodIndex.get();
+            if (idx == -1) {
+                idx = 0;
+            }
+            index.set(idx);
         } else if (isRoundRobin()) {
             if (counter.incrementAndGet() >= processors.size()) {
                 counter.set(0);
@@ -358,4 +366,25 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     public String getTraceLabel() {
         return "failover";
     }
+
+    public void reset() {
+        // reset state
+        lastGoodIndex.set(-1);
+        counter.set(-1);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // reset state
+        reset();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // noop
+    }
+
 }

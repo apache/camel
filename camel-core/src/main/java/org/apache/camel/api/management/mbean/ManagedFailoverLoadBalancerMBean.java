@@ -35,4 +35,7 @@ public interface ManagedFailoverLoadBalancerMBean extends ManagedProcessorMBean 
     @ManagedAttribute(description = "The class names of the exceptions the load balancer uses (separated by comma)")
     String getExceptions();
 
+    @ManagedAttribute(description = "Processor id of the last known good processor that succeed processing the exchange")
+    String getLastGoodProcessorId();
+
 }

@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedFailoverLoadBalancerMBean;
 import org.apache.camel.model.LoadBalanceDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.util.CollectionStringBuffer;
 
@@ -36,6 +37,17 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
     public ManagedFailoverLoadBalancer(CamelContext context, FailOverLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
+    }
+
+    @Override
+    public LoadBalanceDefinition getDefinition() {
+        return (LoadBalanceDefinition) super.getDefinition();
+    }
+
+    @Override
+    public synchronized void reset() {
+        super.reset();
+        processor.reset();
     }
 
     @Override
@@ -76,4 +88,18 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
         }
         return exceptions;
     }
+
+    @Override
+    public String getLastGoodProcessorId() {
+        int idx = processor.getLastGoodIndex();
+        if (idx != -1) {
+            LoadBalanceDefinition def = getDefinition();
+            ProcessorDefinition<?> output = def.getOutputs().get(idx);
+            if (output != null) {
+                return output.getId();
+            }
+        }
+        return null;
+    }
+
 }
