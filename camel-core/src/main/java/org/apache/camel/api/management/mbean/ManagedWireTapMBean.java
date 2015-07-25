@@ -16,7 +16,10 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedWireTapMBean extends ManagedProcessorMBean {
 
@@ -31,5 +34,8 @@ public interface ManagedWireTapMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Uses a copy of the original exchange")
     Boolean isCopy();
+
+    @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
+    TabularData endpointStatistics();
 
 }
