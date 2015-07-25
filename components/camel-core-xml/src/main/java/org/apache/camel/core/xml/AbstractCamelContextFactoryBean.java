@@ -454,6 +454,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             if (loadStatisticsEnabled != null) {
                 getContext().getManagementStrategy().setLoadStatisticsEnabled(loadStatisticsEnabled);
             }
+
+            Boolean extendedStatisticsEnabled = CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getExtendedStatisticsEnabled());
+            if (extendedStatisticsEnabled != null) {
+                getContext().getManagementStrategy().setExtendedStatisticsEnabled(extendedStatisticsEnabled);
+            }
         }
     }
 
