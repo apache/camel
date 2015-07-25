@@ -17,6 +17,7 @@
 package org.apache.camel.component.splunk;
 
 import com.splunk.Service;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -57,6 +58,8 @@ public class SplunkConfiguration {
     private String source;
     @UriParam(label = "producer")
     private int tcpReceiverPort;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean raw;
 
     @UriParam(label = "consumer")
     private int count;
@@ -145,6 +148,17 @@ public class SplunkConfiguration {
      */
     public void setTcpReceiverPort(int tcpReceiverPort) {
         this.tcpReceiverPort = tcpReceiverPort;
+    }
+
+    public boolean isRaw() {
+        return raw;
+    }
+
+    /**
+     * Should the payload be inserted raw
+     */
+    public void setRaw(boolean raw) {
+        this.raw = raw;
     }
 
     public String getSourceType() {
@@ -260,7 +274,7 @@ public class SplunkConfiguration {
     public boolean isStreaming() {
         return streaming != null ? streaming : false;
     }
-    
+
     /**
      * Sets streaming mode.
      * <p>
@@ -269,7 +283,7 @@ public class SplunkConfiguration {
     public void setStreaming(boolean streaming) {
         this.streaming = streaming;
     }
-    
+
     public int getConnectionTimeout() {
         return connectionTimeout;
     }

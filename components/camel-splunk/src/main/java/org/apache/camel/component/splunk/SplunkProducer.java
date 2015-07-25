@@ -17,6 +17,7 @@
 package org.apache.camel.component.splunk;
 
 import com.splunk.Args;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.apache.camel.component.splunk.support.DataWriter;
@@ -46,7 +47,11 @@ public class SplunkProducer extends DefaultProducer {
             if (!dataWriter.isConnected()) {
                 dataWriter.start();
             }
-            dataWriter.write(exchange.getIn().getMandatoryBody(SplunkEvent.class));
+            if (endpoint.getConfiguration().isRaw()) {
+                dataWriter.write(exchange.getIn().getMandatoryBody(String.class));
+            } else {
+                dataWriter.write(exchange.getIn().getMandatoryBody(SplunkEvent.class));
+            }
         } catch (Exception e) {
             if (endpoint.reset(e)) {
                 dataWriter.stop();

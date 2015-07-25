@@ -46,14 +46,18 @@ public abstract class SplunkDataWriter implements DataWriter {
     protected abstract Socket createSocket(Service service) throws IOException;
 
     public void write(SplunkEvent event) throws Exception {
-        LOG.debug("writing event to splunk:" + event);
-        doWrite(event);
+        doWrite(event.toString());
     }
 
-    protected void doWrite(SplunkEvent event) throws IOException {
+    public void write(String event) throws Exception {
+        doWrite(event + SplunkEvent.LINEBREAK);
+    }
+
+    protected void doWrite(String event) throws IOException {
+        LOG.debug("writing event to splunk:" + event);
         OutputStream ostream = socket.getOutputStream();
-        Writer writer = new OutputStreamWriter(ostream, "UTF8");
-        writer.write(event.toString());
+        Writer writer = new OutputStreamWriter(ostream, "UTF-8");
+        writer.write(event);
         writer.flush();
     }
 
