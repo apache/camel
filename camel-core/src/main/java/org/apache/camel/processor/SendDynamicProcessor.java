@@ -171,6 +171,7 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
                 LOG.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, cacheSize);
             }
         }
+        ServiceHelper.startService(producerCache);
     }
 
     protected void doStop() throws Exception {
