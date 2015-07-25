@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedRandomLoadBalancerMBean;
 import org.apache.camel.model.LoadBalanceDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 
 /**
@@ -35,7 +36,26 @@ public class ManagedRandomLoadBalancer extends ManagedProcessor implements Manag
     }
 
     @Override
+    public LoadBalanceDefinition getDefinition() {
+        return (LoadBalanceDefinition) super.getDefinition();
+    }
+
+    @Override
     public Integer getSize() {
         return processor.getProcessors().size();
     }
+
+    @Override
+    public String getLastChosenProcessorId() {
+        int idx = processor.getLastChosenProcessorIndex();
+        if (idx != -1) {
+            LoadBalanceDefinition def = getDefinition();
+            ProcessorDefinition<?> output = def.getOutputs().get(idx);
+            if (output != null) {
+                return output.getId();
+            }
+        }
+        return null;
+    }
+
 }

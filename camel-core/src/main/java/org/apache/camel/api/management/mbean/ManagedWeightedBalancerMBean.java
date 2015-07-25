@@ -32,4 +32,7 @@ public interface ManagedWeightedBalancerMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "The delimiter")
     String getDistributionRatioDelimiter();
 
+    @ManagedAttribute(description = "Processor id of the last chosen processor")
+    String getLastChosenProcessorId();
+
 }

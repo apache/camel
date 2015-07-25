@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedStickyLoadBalancerMBean;
 import org.apache.camel.model.LoadBalanceDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 
@@ -56,4 +57,18 @@ public class ManagedStickyLoadBalancer extends ManagedProcessor implements Manag
     public Integer getSize() {
         return processor.getProcessors().size();
     }
+
+    @Override
+    public String getLastChosenProcessorId() {
+        int idx = processor.getLastChosenProcessorIndex();
+        if (idx != -1) {
+            LoadBalanceDefinition def = getDefinition();
+            ProcessorDefinition<?> output = def.getOutputs().get(idx);
+            if (output != null) {
+                return output.getId();
+            }
+        }
+        return null;
+    }
+
 }

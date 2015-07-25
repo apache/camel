@@ -23,4 +23,7 @@ public interface ManagedRoundRobinLoadBalancerMBean extends ManagedProcessorMBea
     @ManagedAttribute(description = "Number of processors in the load balancer")
     Integer getSize();
 
+    @ManagedAttribute(description = "Processor id of the last chosen processor")
+    String getLastChosenProcessorId();
+
 }

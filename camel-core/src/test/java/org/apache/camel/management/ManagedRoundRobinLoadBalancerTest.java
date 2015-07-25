@@ -22,6 +22,7 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
@@ -33,6 +34,17 @@ public class ManagedRoundRobinLoadBalancerTest extends ManagementTestSupport {
         if (isPlatform("aix")) {
             return;
         }
+
+        MockEndpoint foo = getMockEndpoint("mock:foo");
+        foo.expectedMessageCount(1);
+
+        MockEndpoint bar = getMockEndpoint("mock:bar");
+        bar.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
+        template.sendBodyAndHeader("direct:start", "Bye World", "foo", "123");
+
+        assertMockEndpointsSatisfied();
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
@@ -52,6 +64,9 @@ public class ManagedRoundRobinLoadBalancerTest extends ManagementTestSupport {
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "Size");
         assertEquals(2, size.intValue());
+
+        String last = (String) mbeanServer.getAttribute(on, "LastChosenProcessorId");
+        assertEquals("bar", last);
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
@@ -73,7 +88,7 @@ public class ManagedRoundRobinLoadBalancerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .loadBalance().roundRobin().id("mysend")
-                        .to("mock:foo", "mock:bar");
+                        .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };
     }

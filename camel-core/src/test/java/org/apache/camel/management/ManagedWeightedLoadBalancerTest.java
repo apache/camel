@@ -22,6 +22,7 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
@@ -33,6 +34,18 @@ public class ManagedWeightedLoadBalancerTest extends ManagementTestSupport {
         if (isPlatform("aix")) {
             return;
         }
+
+        MockEndpoint foo = getMockEndpoint("mock:foo");
+        foo.expectedMessageCount(1);
+
+        MockEndpoint bar = getMockEndpoint("mock:bar");
+        bar.expectedMessageCount(2);
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
+        template.sendBodyAndHeader("direct:start", "Bye World", "foo", "123");
+        template.sendBodyAndHeader("direct:start", "Hi World", "foo", "123");
+
+        assertMockEndpointsSatisfied();
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
@@ -62,6 +75,9 @@ public class ManagedWeightedLoadBalancerTest extends ManagementTestSupport {
         String delim = (String) mbeanServer.getAttribute(on, "DistributionRatioDelimiter");
         assertEquals(",", delim);
 
+        String last = (String) mbeanServer.getAttribute(on, "LastChosenProcessorId");
+        assertEquals("bar", last);
+
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(2, data.size());
@@ -82,7 +98,7 @@ public class ManagedWeightedLoadBalancerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .loadBalance().weighted(true, "1,2").id("mysend")
-                        .to("mock:foo", "mock:bar");
+                        .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };
     }

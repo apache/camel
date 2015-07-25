@@ -34,21 +34,13 @@ import org.apache.camel.Processor;
  */
 public class StickyLoadBalancer extends QueueLoadBalancer {
     private Expression correlationExpression;
-    private QueueLoadBalancer loadBalancer;
+    private RoundRobinLoadBalancer loadBalancer;
     private int numberOfHashGroups = 64 * 1024;
     private final Map<Object, Processor> stickyMap = new HashMap<Object, Processor>();
 
     public StickyLoadBalancer(Expression correlationExpression) {
-        this(correlationExpression, new RoundRobinLoadBalancer());
-    }
-
-    public StickyLoadBalancer(Expression correlationExpression, QueueLoadBalancer loadBalancer) {
         this.correlationExpression = correlationExpression;
-        this.loadBalancer = loadBalancer;
-    }
-    
-    public Expression getCorrelationExpression() {
-        return correlationExpression;
+        this.loadBalancer = new RoundRobinLoadBalancer();
     }
 
     protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
@@ -80,6 +72,13 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
         super.removeProcessor(processor);
     }
 
+    public int getLastChosenProcessorIndex() {
+        return loadBalancer.getLastChosenProcessorIndex();
+    }
+
+    public Expression getCorrelationExpression() {
+        return correlationExpression;
+    }
 
     // Properties
     //-------------------------------------------------------------------------

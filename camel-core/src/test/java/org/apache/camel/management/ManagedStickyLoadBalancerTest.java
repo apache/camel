@@ -28,11 +28,13 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedStickyLoadBalancerTest extends ManagementTestSupport {
 
-    public void testManageRandomLoadBalancer() throws Exception {
+    public void testManageStickyLoadBalancer() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
         }
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "num", "123");
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
@@ -59,6 +61,14 @@ public class ManagedStickyLoadBalancerTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "Expression");
         assertEquals("num", uri);
 
+        String last = (String) mbeanServer.getAttribute(on, "LastChosenProcessorId");
+        assertTrue("foo".equals(last) || "bar".equals(last));
+
+        template.sendBodyAndHeader("direct:start", "Bye World", "num", "123");
+
+        String last2 = (String) mbeanServer.getAttribute(on, "LastChosenProcessorId");
+        assertEquals("Should be sticky", last, last2);
+
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(2, data.size());
@@ -79,7 +89,7 @@ public class ManagedStickyLoadBalancerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .loadBalance().sticky(header("num")).id("mysend")
-                        .to("mock:foo", "mock:bar");
+                        .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };
     }

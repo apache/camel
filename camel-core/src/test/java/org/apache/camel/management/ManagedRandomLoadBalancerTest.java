@@ -34,6 +34,8 @@ public class ManagedRandomLoadBalancerTest extends ManagementTestSupport {
             return;
         }
 
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
+
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -52,6 +54,9 @@ public class ManagedRandomLoadBalancerTest extends ManagementTestSupport {
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "Size");
         assertEquals(2, size.intValue());
+
+        String last = (String) mbeanServer.getAttribute(on, "LastChosenProcessorId");
+        assertTrue("foo".equals(last) || "bar".equals(last));
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
@@ -73,7 +78,7 @@ public class ManagedRandomLoadBalancerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .loadBalance().random().id("mysend")
-                        .to("mock:foo", "mock:bar");
+                        .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };
     }

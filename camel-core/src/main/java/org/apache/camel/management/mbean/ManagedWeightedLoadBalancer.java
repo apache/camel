@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedWeightedBalancerMBean;
 import org.apache.camel.model.LoadBalanceDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 
@@ -74,4 +75,18 @@ public class ManagedWeightedLoadBalancer extends ManagedProcessor implements Man
             return null;
         }
     }
+
+    @Override
+    public String getLastChosenProcessorId() {
+        int idx = processor.getLastChosenProcessorIndex();
+        if (idx != -1) {
+            LoadBalanceDefinition def = getDefinition();
+            ProcessorDefinition<?> output = def.getOutputs().get(idx);
+            if (output != null) {
+                return output.getId();
+            }
+        }
+        return null;
+    }
+
 }
