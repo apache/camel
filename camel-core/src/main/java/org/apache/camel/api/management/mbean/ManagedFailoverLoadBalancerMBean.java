@@ -16,7 +16,10 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedFailoverLoadBalancerMBean extends ManagedProcessorMBean {
 
@@ -37,5 +40,8 @@ public interface ManagedFailoverLoadBalancerMBean extends ManagedProcessorMBean 
 
     @ManagedAttribute(description = "Processor id of the last known good processor that succeed processing the exchange")
     String getLastGoodProcessorId();
+
+    @ManagedOperation(description = "Statistics of the content based router for each exception")
+    TabularData exceptionStatistics();
 
 }

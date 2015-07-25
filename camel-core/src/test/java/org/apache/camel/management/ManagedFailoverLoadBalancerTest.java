@@ -22,6 +22,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -37,8 +39,15 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
             return;
         }
 
-        MockEndpoint foo = getMockEndpoint("mock:foo");
-        foo.expectedMessageCount(1);
+        getMockEndpoint("mock:foo").whenAnyExchangeReceived(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                throw new IOException("Forced");
+            }
+        });
+
+        MockEndpoint bar = getMockEndpoint("mock:bar");
+        bar.expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
 
@@ -76,9 +85,13 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
         assertEquals("java.io.IOException,java.sql.SQLException", exceptions);
 
         String id = (String) mbeanServer.getAttribute(on, "LastGoodProcessorId");
-        assertEquals("foo", id);
+        assertEquals("bar", id);
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
+        TabularData data = (TabularData) mbeanServer.invoke(on, "exceptionStatistics", null, null);
+        assertNotNull(data);
+        assertEquals(2, data.size());
+
+        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(3, data.size());
 

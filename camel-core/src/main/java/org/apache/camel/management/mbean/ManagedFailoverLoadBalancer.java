@@ -16,15 +16,24 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Iterator;
 import java.util.List;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedFailoverLoadBalancerMBean;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.loadbalancer.ExceptionFailureStatistics;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
@@ -101,5 +110,45 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
         }
         return null;
     }
+
+    @Override
+    public TabularData exceptionStatistics() {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.loadbalancerExceptionsTabularType());
+
+            ExceptionFailureStatistics statistics = processor.getExceptionFailureStatistics();
+
+            Iterator<Class<?>> it = statistics.getExceptions();
+            boolean empty = true;
+            while (it.hasNext()) {
+                empty = false;
+                Class<?> exception = it.next();
+                String name = ObjectHelper.name(exception);
+                long counter = statistics.getFailureCounter(exception);
+
+                CompositeType ct = CamelOpenMBeanTypes.loadbalancerExceptionsCompositeType();
+                CompositeData data = new CompositeDataSupport(ct,
+                        new String[]{"exception", "failures"},
+                        new Object[]{name, counter});
+                answer.put(data);
+            }
+            if (empty) {
+                // use Exception as a single general
+                String name = ObjectHelper.name(Exception.class);
+                long counter = statistics.getFailureCounter(Exception.class);
+
+                CompositeType ct = CamelOpenMBeanTypes.loadbalancerExceptionsCompositeType();
+                CompositeData data = new CompositeDataSupport(ct,
+                        new String[]{"exception", "failures"},
+                        new Object[]{name, counter});
+                answer.put(data);
+            }
+
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
 
 }

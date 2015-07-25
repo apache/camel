@@ -49,6 +49,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     // stateful counter
     private final AtomicInteger counter = new AtomicInteger(-1);
     private final AtomicInteger lastGoodIndex = new AtomicInteger(-1);
+    private final ExceptionFailureStatistics statistics = new ExceptionFailureStatistics();
 
     public FailOverLoadBalancer() {
         this.exceptions = null;
@@ -63,6 +64,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
             }
         }
+
+        statistics.init(exceptions);
     }
 
     @Override
@@ -132,6 +135,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                         break;
                     }
                 }
+            }
+
+            if (answer) {
+                // record the failure in the statistics
+                statistics.onHandledFailure(exchange.getException());
             }
         }
 
@@ -365,6 +373,10 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
     public String getTraceLabel() {
         return "failover";
+    }
+
+    public ExceptionFailureStatistics getExceptionFailureStatistics() {
+        return statistics;
     }
 
     public void reset() {

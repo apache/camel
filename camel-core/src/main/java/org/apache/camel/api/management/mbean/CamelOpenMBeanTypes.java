@@ -158,4 +158,14 @@ public final class CamelOpenMBeanTypes {
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.LONG});
     }
 
+    public static TabularType loadbalancerExceptionsTabularType() throws OpenDataException {
+        CompositeType ct = loadbalancerExceptionsCompositeType();
+        return new TabularType("exception", "Exception statistics", ct, new String[]{"exception"});
+    }
+
+    public static CompositeType loadbalancerExceptionsCompositeType() throws OpenDataException {
+        return new CompositeType("exceptions", "Exceptions", new String[]{"exception", "failures"},
+                new String[]{"Exception", "Failures"},
+                new OpenType[]{SimpleType.STRING, SimpleType.LONG});
+    }
 }
