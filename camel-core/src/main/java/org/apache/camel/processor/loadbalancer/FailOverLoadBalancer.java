@@ -46,7 +46,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     private boolean sticky;
     private int maximumFailoverAttempts = -1;
 
-    // stateful counter
+    // stateful statistics
     private final AtomicInteger counter = new AtomicInteger(-1);
     private final AtomicInteger lastGoodIndex = new AtomicInteger(-1);
     private final ExceptionFailureStatistics statistics = new ExceptionFailureStatistics();
@@ -383,6 +383,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         // reset state
         lastGoodIndex.set(-1);
         counter.set(-1);
+        statistics.reset();
     }
 
     @Override

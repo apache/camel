@@ -31,8 +31,10 @@ public class ExceptionFailureStatistics {
     private final AtomicLong fallbackCounter = new AtomicLong();
 
     public void init(List<Class<?>> exceptions) {
-        for (Class<?> exception : exceptions) {
-            counters.put(exception, new AtomicLong());
+        if (exceptions != null) {
+            for (Class<?> exception : exceptions) {
+                counters.put(exception, new AtomicLong());
+            }
         }
     }
 

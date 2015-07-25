@@ -22,6 +22,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -37,10 +39,24 @@ public class ManagedCircuitBreakerLoadBalancerTest extends ManagementTestSupport
             return;
         }
 
-        MockEndpoint foo = getMockEndpoint("mock:foo");
-        foo.expectedMessageCount(1);
+        getMockEndpoint("mock:foo").whenExchangeReceived(1, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                throw new SQLException("Forced");
+            }
+        });
 
-        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
+        MockEndpoint foo = getMockEndpoint("mock:foo");
+        foo.expectedBodiesReceived("Hello World", "Bye World");
+
+        try {
+            template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
+            fail("Should fail");
+        } catch (Exception e) {
+            assertIsInstanceOf(SQLException.class, e.getCause());
+            assertEquals("Forced", e.getCause().getMessage());
+        }
+        template.sendBodyAndHeader("direct:start", "Bye World", "foo", "123");
 
         assertMockEndpointsSatisfied();
 
@@ -76,9 +92,13 @@ public class ManagedCircuitBreakerLoadBalancerTest extends ManagementTestSupport
         assertEquals("closed", cbState);
 
         String dump = (String) mbeanServer.invoke(on, "dumpState", null, null);
-        assertEquals("State closed, failures 0", dump);
+        assertTrue(dump.startsWith("State closed, failures 0, closed since"));
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
+        TabularData data = (TabularData) mbeanServer.invoke(on, "exceptionStatistics", null, null);
+        assertNotNull(data);
+        assertEquals(2, data.size());
+
+        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(2, data.size());
 

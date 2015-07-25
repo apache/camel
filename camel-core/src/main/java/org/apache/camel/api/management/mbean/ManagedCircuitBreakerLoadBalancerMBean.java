@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -38,5 +40,8 @@ public interface ManagedCircuitBreakerLoadBalancerMBean extends ManagedProcessor
 
     @ManagedOperation(description = "Dumps the state of the load balancer")
     String dumpState();
+
+    @ManagedOperation(description = "Statistics of the content based router for each exception")
+    TabularData exceptionStatistics();
 
 }

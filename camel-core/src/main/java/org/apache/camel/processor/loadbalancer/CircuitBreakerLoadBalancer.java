@@ -39,15 +39,19 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
     private int threshold;
     private long halfOpenAfter;
     private long lastFailure;
+
+    // stateful statistics
     private AtomicInteger failures = new AtomicInteger();
     private AtomicInteger state = new AtomicInteger(STATE_CLOSED);
+    private final ExceptionFailureStatistics statistics = new ExceptionFailureStatistics();
+
+    public CircuitBreakerLoadBalancer() {
+        this(null);
+    }
 
     public CircuitBreakerLoadBalancer(List<Class<?>> exceptions) {
         this.exceptions = exceptions;
-    }
-
-    public CircuitBreakerLoadBalancer() {
-        this.exceptions = null;
+        statistics.init(exceptions);
     }
 
     public void setHalfOpenAfter(long halfOpenAfter) {
@@ -84,21 +88,38 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
         return exceptions;
     }
 
+    /**
+     * Has the given Exchange failed
+     */
     protected boolean hasFailed(Exchange exchange) {
+        if (exchange == null) {
+            return false;
+        }
+
         boolean answer = false;
 
         if (exchange.getException() != null) {
             if (exceptions == null || exceptions.isEmpty()) {
+                // always failover if no exceptions defined
                 answer = true;
             } else {
                 for (Class<?> exception : exceptions) {
+                    // will look in exception hierarchy
                     if (exchange.getException(exception) != null) {
                         answer = true;
                         break;
                     }
                 }
             }
+
+            if (answer) {
+                // record the failure in the statistics
+                statistics.onHandledFailure(exchange.getException());
+            }
         }
+
+        log.trace("Failed: {} for exchangeId: {}", answer, exchange.getExchangeId());
+
         return answer;
     }
 
@@ -242,6 +263,32 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
     public String getTraceLabel() {
         return "circuitbreaker";
     }
+
+    public ExceptionFailureStatistics getExceptionFailureStatistics() {
+        return statistics;
+    }
+
+    public void reset() {
+        // reset state
+        failures.set(0);
+        state.set(STATE_CLOSED);
+        statistics.reset();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // reset state
+        reset();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // noop
+    }
+
 
     class CircuitBreakerCallback implements AsyncCallback {
         private final AsyncCallback callback;

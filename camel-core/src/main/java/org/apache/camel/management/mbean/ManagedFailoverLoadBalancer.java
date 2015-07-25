@@ -150,5 +150,4 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
         }
     }
 
-
 }
