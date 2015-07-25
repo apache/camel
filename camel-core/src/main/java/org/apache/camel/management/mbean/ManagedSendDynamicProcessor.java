@@ -58,6 +58,14 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
         }
     }
 
+    @Override
+    public synchronized void reset() {
+        super.reset();
+        if (processor.getEndpointUtilizationStatistics() != null) {
+            processor.getEndpointUtilizationStatistics().clear();
+        }
+    }
+
     public SendDynamicProcessor getProcessor() {
         return processor;
     }

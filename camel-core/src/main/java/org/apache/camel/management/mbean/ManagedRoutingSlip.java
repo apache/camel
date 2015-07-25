@@ -59,6 +59,14 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
     }
 
     @Override
+    public synchronized void reset() {
+        super.reset();
+        if (processor.getEndpointUtilizationStatistics() != null) {
+            processor.getEndpointUtilizationStatistics().clear();
+        }
+    }
+
+    @Override
     public RoutingSlipDefinition getDefinition() {
         return (RoutingSlipDefinition) super.getDefinition();
     }

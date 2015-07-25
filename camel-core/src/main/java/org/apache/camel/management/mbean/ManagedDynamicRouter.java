@@ -64,6 +64,14 @@ public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDyn
     }
 
     @Override
+    public synchronized void reset() {
+        super.reset();
+        if (processor.getEndpointUtilizationStatistics() != null) {
+            processor.getEndpointUtilizationStatistics().clear();
+        }
+    }
+
+    @Override
     public String getExpression() {
         return uri;
     }

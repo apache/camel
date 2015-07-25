@@ -58,6 +58,14 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
         }
     }
 
+    @Override
+    public synchronized void reset() {
+        super.reset();
+        if (processor.getEndpointUtilizationStatistics() != null) {
+            processor.getEndpointUtilizationStatistics().clear();
+        }
+    }
+
     public WireTapProcessor getProcessor() {
         return processor;
     }

@@ -59,6 +59,14 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
     }
 
     @Override
+    public synchronized void reset() {
+        super.reset();
+        if (processor.getEndpointUtilizationStatistics() != null) {
+            processor.getEndpointUtilizationStatistics().clear();
+        }
+    }
+
+    @Override
     public RecipientListDefinition getDefinition() {
         return (RecipientListDefinition) super.getDefinition();
     }
