@@ -16,7 +16,10 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedEnricherMBean extends ManagedProcessorMBean {
 
@@ -37,5 +40,8 @@ public interface ManagedEnricherMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Whether to aggregate when there was an exception thrown during calling the resource endpoint")
     Boolean isAggregateOnException();
+
+    @ManagedOperation(description = "Statistics of the endpoints that has been enriched from")
+    TabularData endpointStatistics();
 
 }

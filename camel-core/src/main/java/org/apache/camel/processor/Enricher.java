@@ -30,6 +30,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -90,6 +91,10 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return producerCache.getEndpointUtilizationStatistics();
     }
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
