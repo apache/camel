@@ -23,13 +23,12 @@ import java.util.Map;
 import com.splunk.Args;
 import com.splunk.Index;
 import com.splunk.IndexCollection;
-import com.splunk.Input;
 import com.splunk.InputCollection;
 import com.splunk.Service;
+import com.splunk.TcpInput;
 
 import org.apache.camel.CamelContext;
 
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
@@ -69,8 +68,8 @@ final class MockConnectionSettings extends SplunkConfiguration {
             when(service.getIndexes()).thenReturn(indexColl);
             InputCollection inputCollection = mock(InputCollection.class);
             when(service.getInputs()).thenReturn(inputCollection);
-            Input input = mock(Input.class);
-            when(service.open(anyInt())).thenReturn(socket);
+            TcpInput input = mock(TcpInput.class);
+            when(input.attach()).thenReturn(socket);
             when(inputCollection.get(anyString())).thenReturn(input);
             when(indexColl.get(anyString())).thenReturn(index);
             when(index.attach(isA(Args.class))).thenReturn(socket);
