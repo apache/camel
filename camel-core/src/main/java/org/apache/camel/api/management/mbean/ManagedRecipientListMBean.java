@@ -16,7 +16,10 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedRecipientListMBean extends ManagedProcessorMBean {
 
@@ -49,5 +52,8 @@ public interface ManagedRecipientListMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "The total timeout specified in millis, when using parallel processing.")
     Long getTimeout();
+
+    @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
+    TabularData endpointStatistics();
 
 }

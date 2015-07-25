@@ -16,13 +16,22 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Map;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedDynamicRouterMBean;
 import org.apache.camel.model.DynamicRouterDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DynamicRouter;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -32,6 +41,7 @@ import org.apache.camel.util.URISupport;
 public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDynamicRouterMBean {
     private final DynamicRouter processor;
     private String uri;
+    private boolean sanitize;
 
     public ManagedDynamicRouter(CamelContext context, DynamicRouter processor, DynamicRouterDefinition definition) {
         super(context, processor, definition);
@@ -46,7 +56,7 @@ public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDyn
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
+        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
         uri = getDefinition().getExpression().getExpression();
         if (sanitize) {
             uri = URISupport.sanitizeUri(uri);
@@ -77,4 +87,34 @@ public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDyn
     public Boolean isIgnoreInvalidEndpoints() {
         return processor.isIgnoreInvalidEndpoints();
     }
+
+    @Override
+    public TabularData endpointStatistics() {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
+
+            EndpointUtilizationStatistics stats = processor.getEndpointUtilizationStatistics();
+            if (stats != null) {
+                for (Map.Entry<String, Long> entry : stats.getStatistics().entrySet()) {
+                    CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();
+                    String url = entry.getKey();
+                    if (sanitize) {
+                        url = URISupport.sanitizeUri(url);
+                    }
+
+                    Long hits = entry.getValue();
+                    if (hits == null) {
+                        hits = 0L;
+                    }
+
+                    CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
+                    answer.put(data);
+                }
+            }
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
 }

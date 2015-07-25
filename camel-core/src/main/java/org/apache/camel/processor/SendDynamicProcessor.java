@@ -29,6 +29,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -176,6 +177,10 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
 
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(producerCache);
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return producerCache.getEndpointUtilizationStatistics();
     }
 
     public CamelContext getCamelContext() {

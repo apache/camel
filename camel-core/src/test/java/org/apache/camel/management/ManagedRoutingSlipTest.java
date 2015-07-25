@@ -20,6 +20,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,6 +30,13 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedRoutingSlipTest extends ManagementTestSupport {
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getManagementStrategy().setExtendedStatisticsEnabled(true);
+        return context;
+    }
+
     public void testManageRoutingSlip() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -36,9 +44,12 @@ public class ManagedRoutingSlipTest extends ManagementTestSupport {
         }
 
         MockEndpoint foo = getMockEndpoint("mock:foo");
-        foo.expectedMessageCount(1);
+        foo.expectedMessageCount(2);
 
-        template.sendBodyAndHeader("direct:start", "Hello World", "whereTo", "direct:foo");
+        MockEndpoint bar = getMockEndpoint("mock:bar");
+        bar.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "whereTo", "direct:foo,direct:foo,direct:bar");
 
         assertMockEndpointsSatisfied();
 
@@ -64,7 +75,11 @@ public class ManagedRoutingSlipTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "Expression");
         assertEquals("whereTo", uri);
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
+        TabularData data = (TabularData) mbeanServer.invoke(on, "endpointStatistics", null, null);
+        assertNotNull(data);
+        assertEquals(2, data.size());
+
+        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(3, data.size());
 
@@ -87,6 +102,9 @@ public class ManagedRoutingSlipTest extends ManagementTestSupport {
 
                 from("direct:foo")
                     .to("mock:foo");
+
+                from("direct:bar")
+                    .to("mock:bar");
             }
         };
     }

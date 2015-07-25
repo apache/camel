@@ -232,6 +232,20 @@ public interface ManagementStrategy extends Service {
     boolean isLoadStatisticsEnabled();
 
     /**
+     * Sets whether extended statistics is enabled, such as each EIP keep tracks of per endpoint utilization.
+     *
+     * @param flag <tt>true</tt> to enable extended statistics
+     */
+    void setExtendedStatisticsEnabled(boolean flag);
+
+    /**
+     * Gets whether extended statistics is enabled
+     *
+     * @return <tt>true</tt> if enabled
+     */
+    boolean isExtendedStatisticsEnabled();
+
+    /**
      * Sets the statistics level
      * <p/>
      * Default is {@link org.apache.camel.ManagementStatisticsLevel#All}

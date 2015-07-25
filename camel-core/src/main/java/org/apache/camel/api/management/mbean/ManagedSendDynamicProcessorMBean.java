@@ -16,7 +16,10 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedSendDynamicProcessorMBean extends ManagedProcessorMBean {
 
@@ -31,5 +34,8 @@ public interface ManagedSendDynamicProcessorMBean extends ManagedProcessorMBean 
 
     @ManagedAttribute(description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
     Boolean isIgnoreInvalidEndpoint();
+
+    @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
+    TabularData endpointStatistics();
 
 }
