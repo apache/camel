@@ -90,6 +90,7 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listRuntimeEndpointsTabularType());
 
             EndpointRegistry staticRegistry = getContext().getEndpointRegistry();
+            int index = 0;
 
             for (RuntimeEndpointRegistry.Statistic stat : registry.getEndpointStatistics()) {
                 CompositeType ct = CamelOpenMBeanTypes.listRuntimeEndpointsCompositeType();
@@ -103,9 +104,12 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
                 String routeId = stat.getRouteId();
                 String direction = stat.getDirection();
 
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "routeId", "direction", "static", "dynamic"},
-                        new Object[]{url, routeId, direction, isStatic, isDynamic});
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"index", "url", "routeId", "direction", "static", "dynamic"},
+                        new Object[]{index, url, routeId, direction, isStatic, isDynamic});
                 answer.put(data);
+
+                // use a counter as the single index in the TabularData as we do not want a multi-value index
+                index++;
             }
             return answer;
         } catch (Exception e) {
