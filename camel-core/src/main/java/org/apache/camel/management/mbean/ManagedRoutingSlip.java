@@ -67,6 +67,11 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
     }
 
     @Override
+    public Boolean isSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
     public RoutingSlipDefinition getDefinition() {
         return (RoutingSlipDefinition) super.getDefinition();
     }
@@ -97,7 +102,7 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
     }
 
     @Override
-    public TabularData endpointStatistics() {
+    public TabularData extendedInformation() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 

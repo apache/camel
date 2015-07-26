@@ -60,6 +60,11 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
     }
 
     @Override
+    public Boolean isSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
     public Integer getSize() {
         return processor.getProcessors().size();
     }

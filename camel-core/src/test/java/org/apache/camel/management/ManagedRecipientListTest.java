@@ -81,7 +81,7 @@ public class ManagedRecipientListTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "Expression");
         assertEquals("whereto", uri);
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "endpointStatistics", null, null);
+        TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
         assertEquals(2, data.size());
 

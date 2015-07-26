@@ -67,6 +67,11 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
     }
 
     @Override
+    public Boolean isSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
     public RecipientListDefinition getDefinition() {
         return (RecipientListDefinition) super.getDefinition();
     }
@@ -122,7 +127,7 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
     }
 
     @Override
-    public TabularData endpointStatistics() {
+    public TabularData extendedInformation() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 

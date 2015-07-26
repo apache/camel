@@ -72,6 +72,11 @@ public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDyn
     }
 
     @Override
+    public Boolean isSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
     public String getExpression() {
         return uri;
     }
@@ -97,7 +102,7 @@ public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDyn
     }
 
     @Override
-    public TabularData endpointStatistics() {
+    public TabularData extendedInformation() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 

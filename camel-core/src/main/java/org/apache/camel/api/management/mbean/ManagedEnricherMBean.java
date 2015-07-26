@@ -21,7 +21,7 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedEnricherMBean extends ManagedProcessorMBean {
+public interface ManagedEnricherMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
 
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();
@@ -42,6 +42,6 @@ public interface ManagedEnricherMBean extends ManagedProcessorMBean {
     Boolean isAggregateOnException();
 
     @ManagedOperation(description = "Statistics of the endpoints that has been enriched from")
-    TabularData endpointStatistics();
+    TabularData extendedInformation();
 
 }

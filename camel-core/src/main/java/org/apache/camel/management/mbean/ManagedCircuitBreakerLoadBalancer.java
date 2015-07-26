@@ -49,6 +49,11 @@ public class ManagedCircuitBreakerLoadBalancer extends ManagedProcessor implemen
     }
 
     @Override
+    public Boolean isSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
     public Integer getSize() {
         return processor.getProcessors().size();
     }

@@ -66,6 +66,11 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
         }
     }
 
+    @Override
+    public Boolean isSupportExtendedInformation() {
+        return true;
+    }
+
     public WireTapProcessor getProcessor() {
         return processor;
     }
@@ -87,7 +92,7 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
     }
 
     @Override
-    public TabularData endpointStatistics() {
+    public TabularData extendedInformation() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 

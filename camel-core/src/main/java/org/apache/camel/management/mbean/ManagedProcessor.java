@@ -90,6 +90,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         return definition.getIndex();
     }
 
+    public Boolean isSupportExtendedInformation() {
+        return false;
+    }
+
     public Route getRoute() {
         return route;
     }

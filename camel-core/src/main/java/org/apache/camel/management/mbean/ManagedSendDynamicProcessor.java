@@ -66,6 +66,11 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
         }
     }
 
+    @Override
+    public Boolean isSupportExtendedInformation() {
+        return true;
+    }
+
     public SendDynamicProcessor getProcessor() {
         return processor;
     }
@@ -91,7 +96,7 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
     }
 
     @Override
-    public TabularData endpointStatistics() {
+    public TabularData extendedInformation() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 

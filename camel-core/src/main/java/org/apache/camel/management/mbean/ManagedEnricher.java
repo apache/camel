@@ -66,6 +66,11 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
     }
 
     @Override
+    public Boolean isSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
     public EnrichDefinition getDefinition() {
         return (EnrichDefinition) super.getDefinition();
     }
@@ -106,7 +111,7 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
     }
 
     @Override
-    public TabularData endpointStatistics() {
+    public TabularData extendedInformation() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 

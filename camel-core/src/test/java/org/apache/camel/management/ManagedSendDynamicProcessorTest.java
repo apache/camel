@@ -78,7 +78,7 @@ public class ManagedSendDynamicProcessorTest extends ManagementTestSupport {
         String pattern = (String) mbeanServer.getAttribute(on, "MessageExchangePattern");
         assertNull(pattern);
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "endpointStatistics", null, null);
+        TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
         assertEquals(2, data.size());
 
