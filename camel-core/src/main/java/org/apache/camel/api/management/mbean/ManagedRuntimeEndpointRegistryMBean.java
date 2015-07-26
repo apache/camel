@@ -34,6 +34,12 @@ public interface ManagedRuntimeEndpointRegistryMBean extends ManagedServiceMBean
     @ManagedAttribute(description = "Whether gathering runtime usage is enabled or not.")
     void setEnabled(boolean enabled);
 
+    @ManagedAttribute(description = "Maximum number of endpoints to keep in the cache per route.")
+    int getLimit();
+
+    @ManagedAttribute(description = "Number of endpoints currently in the cache.")
+    int size();
+
     @ManagedOperation(description = " Gets all the endpoint uris captured during runtime that are in-use.")
     List<String> getAllEndpoints(boolean includeInputs);
 

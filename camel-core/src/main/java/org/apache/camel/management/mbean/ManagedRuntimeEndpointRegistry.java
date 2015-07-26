@@ -66,6 +66,16 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
     }
 
     @Override
+    public int getLimit() {
+        return registry.getLimit();
+    }
+
+    @Override
+    public int size() {
+        return registry.size();
+    }
+
+    @Override
     public List<String> getAllEndpoints(boolean includeInputs) {
         return registry.getAllEndpoints(includeInputs);
     }
