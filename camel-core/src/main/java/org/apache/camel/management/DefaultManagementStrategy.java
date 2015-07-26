@@ -58,10 +58,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementNamingStrategy managementNamingStrategy;
     private ManagementObjectStrategy managementObjectStrategy;
-    private Boolean onlyManageProcessorWithCustomId;
     private ManagementAgent managementAgent;
-    private ManagementStatisticsLevel statisticsLevel;
-    private Boolean loadStatisticsEnabled;
     private CamelContext camelContext;
 
     public DefaultManagementStrategy() {
@@ -125,12 +122,24 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         this.managementAgent = managementAgent;
     }
 
+    @Deprecated
     public void onlyManageProcessorWithCustomId(boolean flag) {
-        onlyManageProcessorWithCustomId = flag;
+        LOG.warn("Using @deprecated option onlyManageProcessorWithCustomId on ManagementStrategy. Configure this on ManagementAgent instead.");
+        if (managementAgent != null) {
+            getManagementAgent().setOnlyRegisterProcessorWithCustomId(flag);
+        } else {
+            throw new IllegalStateException("Not started");
+        }
     }
 
+    @Deprecated
     public boolean isOnlyManageProcessorWithCustomId() {
-        return onlyManageProcessorWithCustomId != null && onlyManageProcessorWithCustomId;
+        if (managementAgent != null) {
+            boolean only = getManagementAgent().getOnlyRegisterProcessorWithCustomId() != null && getManagementAgent().getOnlyRegisterProcessorWithCustomId();
+            return only;
+        } else {
+            throw new IllegalStateException("Not started");
+        }
     }
 
     public boolean manageProcessor(ProcessorDefinition<?> definition) {
@@ -186,7 +195,9 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         return null;
     }
 
+    @Deprecated
     public void setStatisticsLevel(ManagementStatisticsLevel level) {
+        LOG.warn("Using @deprecated option statisticsLevel on ManagementStrategy. Configure this on ManagementAgent instead.");
         if (managementAgent != null) {
             getManagementAgent().setStatisticsLevel(level);
         } else {
@@ -194,6 +205,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         }
     }
 
+    @Deprecated
     public ManagementStatisticsLevel getStatisticsLevel() {
         if (managementAgent != null) {
             return getManagementAgent().getStatisticsLevel();
@@ -202,6 +214,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         }
     }
 
+    @Deprecated
     public boolean isLoadStatisticsEnabled() {
         if (managementAgent != null) {
             boolean load = getManagementAgent().getLoadStatisticsEnabled() != null && getManagementAgent().getLoadStatisticsEnabled();
@@ -211,7 +224,9 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         }
     }
 
+    @Deprecated
     public void setLoadStatisticsEnabled(boolean loadStatisticsEnabled) {
+        LOG.warn("Using @deprecated option loadStatisticsEnabled on ManagementStrategy. Configure this on ManagementAgent instead.");
         if (managementAgent != null) {
             getManagementAgent().setLoadStatisticsEnabled(loadStatisticsEnabled);
         } else {
@@ -245,14 +260,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
             // set the naming strategy using the domain name from the agent
             if (managementNamingStrategy == null) {
                 setManagementNamingStrategy(new DefaultManagementNamingStrategy(managementAgent.getMBeanObjectDomainName()));
-            }
-            if (statisticsLevel != null) {
-                LOG.warn("Using @deprecated option statisticsLevel on ManagementStrategy. Configure this on ManagementAgent instead.");
-                managementAgent.setStatisticsLevel(statisticsLevel);
-            }
-            if (onlyManageProcessorWithCustomId != null) {
-                LOG.warn("Using @deprecated option onlyManageProcessorWithCustomId on ManagementStrategy. Configure this on ManagementAgent instead.");
-                managementAgent.setOnlyRegisterProcessorWithCustomId(onlyManageProcessorWithCustomId);
             }
         }
         if (managementNamingStrategy instanceof CamelContextAware) {

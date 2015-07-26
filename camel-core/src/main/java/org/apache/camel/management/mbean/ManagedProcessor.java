@@ -35,6 +35,7 @@ import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -56,7 +57,11 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.processor = processor;
         this.definition = definition;
         this.id = definition.idOrCreate(context.getNodeIdFactory());
+    }
 
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
         boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended();
         setStatisticsEnabled(enabled);
     }

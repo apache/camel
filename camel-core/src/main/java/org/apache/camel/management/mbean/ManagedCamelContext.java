@@ -37,6 +37,7 @@ import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
+import org.apache.camel.spi.ManagementStrategy;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
@@ -73,7 +74,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public ManagedCamelContext(ModelCamelContext context) {
         this.context = context;
-        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        boolean enabled = context.getManagementStrategy().getManagementAgent() != null && context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
     }
 
