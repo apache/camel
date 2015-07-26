@@ -103,19 +103,13 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
      * Level of granularity for performance statistics enabled
      */
     @XmlAttribute
-    private String statisticsLevel = ManagementStatisticsLevel.All.name();
+    private String statisticsLevel = ManagementStatisticsLevel.Default.name();
 
     /**
      * A flag that indicates whether Load statistics is enabled
      */
     @XmlAttribute
     private String loadStatisticsEnabled;
-
-    /**
-     * A flag that indicates whether extended statistics is enabled
-     */
-    @XmlAttribute
-    private String extendedStatisticsEnabled;
 
     /**
      * A flag that indicates whether to include hostname in JMX MBean names.
@@ -233,14 +227,6 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
-    public String getExtendedStatisticsEnabled() {
-        return extendedStatisticsEnabled;
-    }
-
-    public void setExtendedStatisticsEnabled(String extendedStatisticsEnabled) {
-        this.extendedStatisticsEnabled = extendedStatisticsEnabled;
-    }
-
     public String getIncludeHostName() {
         return includeHostName;
     }
@@ -285,9 +271,6 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         }
         if (loadStatisticsEnabled != null) {
             sb.append(", loadStatisticsEnabled=").append(loadStatisticsEnabled);
-        }
-        if (extendedStatisticsEnabled != null) {
-            sb.append(", extendedStatisticsEnabled=").append(extendedStatisticsEnabled);
         }
         if (onlyRegisterProcessorWithCustomId != null) {
             sb.append(", onlyRegisterProcessorWithCustomId=").append(onlyRegisterProcessorWithCustomId);
