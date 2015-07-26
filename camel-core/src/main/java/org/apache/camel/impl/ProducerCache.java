@@ -67,9 +67,6 @@ public class ProducerCache extends ServiceSupport {
 
     public ProducerCache(Object source, CamelContext camelContext, int cacheSize) {
         this(source, camelContext, camelContext.getProducerServicePool(), createLRUCache(cacheSize));
-        if (producers instanceof LRUCache) {
-            maxCacheSize = ((LRUCache) producers).getMaxCacheSize();
-        }
     }
 
     public ProducerCache(Object source, CamelContext camelContext, Map<String, Producer> cache) {
@@ -81,6 +78,9 @@ public class ProducerCache extends ServiceSupport {
         this.camelContext = camelContext;
         this.pool = producerServicePool;
         this.producers = cache;
+        if (producers instanceof LRUCache) {
+            maxCacheSize = ((LRUCache) producers).getMaxCacheSize();
+        }
 
         // only if JMX is enabled
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
@@ -451,7 +451,6 @@ public class ProducerCache extends ServiceSupport {
             if (extendedStatistics) {
                 statistics.onHit(key);
             }
-
         }
 
         return answer;
