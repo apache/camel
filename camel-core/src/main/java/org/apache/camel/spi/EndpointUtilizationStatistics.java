@@ -23,18 +23,41 @@ import java.util.Map;
  */
 public interface EndpointUtilizationStatistics {
 
-    // TODO: document me
-
+    /**
+     * Maximum number of elements that we can have information about
+     */
     int maxCapacity();
 
+    /**
+     * Current number of endpoints we have information about
+     */
     int size();
 
-    void onHit(String key);
+    /**
+     * Callback when an endpoint is being utilizated by an {@link org.apache.camel.Processor} EIP
+     * such as sending a message to a dynamic endpoint.
+     *
+     * @param uri  the endpoint uri
+     */
+    void onHit(String uri);
 
-    void remove(String key);
+    /**
+     * To remove an endpoint from tracking information about its utilization
+     *
+     * @param uri  the endpoint uri
+     */
+    void remove(String uri);
 
+    /**
+     * Gets the endpoint utilization statistics.
+     *
+     * @return a map with uri and number of usage of the endpoint.
+     */
     Map<String, Long> getStatistics();
 
+    /**
+     * Clears all information.
+     */
     void clear();
 
 }

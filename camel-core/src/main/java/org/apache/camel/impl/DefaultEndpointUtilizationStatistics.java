@@ -41,20 +41,20 @@ public class DefaultEndpointUtilizationStatistics implements EndpointUtilization
     }
 
     @Override
-    public synchronized void onHit(String key) {
-        Long counter = map.get(key);
+    public synchronized void onHit(String uri) {
+        Long counter = map.get(uri);
         if (counter == null) {
             counter = 1L;
-            map.put(key, counter);
+            map.put(uri, counter);
         } else {
             counter++;
-            map.put(key, counter);
+            map.put(uri, counter);
         }
     }
 
     @Override
-    public void remove(String key) {
-        map.remove(key);
+    public void remove(String uri) {
+        map.remove(uri);
     }
 
     @Override
