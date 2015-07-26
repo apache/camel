@@ -410,7 +410,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         boolean disabled = false;
         if (camelJMXAgent != null) {
-            disabled = CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getDisabled());
+            disabled = camelJMXAgent.getDisabled() != null && CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getDisabled());
         }
 
         if (disabled) {
