@@ -17,13 +17,47 @@
 package org.apache.camel.spi;
 
 import java.util.List;
+import java.util.Map;
 
-import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 
 /**
  * A registry which listen for runtime usage of {@link org.apache.camel.Endpoint} during routing in Camel.
  */
-public interface RuntimeEndpointRegistry extends Service {
+public interface RuntimeEndpointRegistry extends StaticService {
+
+    /**
+     * Statistics gathered about the endpoint.
+     */
+    public interface Statistic {
+
+        /**
+         * The route id (if the endpoint is associated with a route)
+         */
+        String getRouteId();
+
+        /**
+         * Whether the endpoint is used as input
+         * <p/>
+         * Notice an endpoint can be used as both input and output, such as when its linking two routes
+         */
+        boolean isInput();
+
+        /**
+         * Whether the endpoint is used as output
+         * <p/>
+         * Notice an endpoint can be used as both input and output, such as when its linking two routes
+         */
+        boolean isOutput();
+
+        /**
+         * Usage of the endpoint, such as how many messages it has received / sent to
+         * <p/>
+         * This information is only available if {@link org.apache.camel.ManagementStatisticsLevel} is configured as
+         * {@link org.apache.camel.ManagementStatisticsLevel#Extended}.
+         */
+        long getHits();
+    }
 
     /**
      * Whether gathering runtime usage is enabled or not.
@@ -71,4 +105,10 @@ public interface RuntimeEndpointRegistry extends Service {
      * @param includeInputs whether to include route inputs
      */
     List<String> getEndpointsPerRoute(String routeId, boolean includeInputs);
+
+    /**
+     * Gets details about all the endpoint captured from the given route during runtime routing that are in-use of the routes.
+     */
+    Map<String, Statistic> getStatistics();
+
 }

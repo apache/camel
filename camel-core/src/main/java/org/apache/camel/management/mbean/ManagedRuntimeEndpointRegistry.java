@@ -17,23 +17,37 @@
 package org.apache.camel.management.mbean;
 
 import java.util.List;
+import java.util.Map;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedRuntimeEndpointRegistryMBean;
+import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
-/**
- *
- */
 @ManagedResource(description = "Managed RuntimeEndpointRegistry")
 public class ManagedRuntimeEndpointRegistry extends ManagedService implements ManagedRuntimeEndpointRegistryMBean {
 
     private final RuntimeEndpointRegistry registry;
+    private boolean sanitize;
 
     public ManagedRuntimeEndpointRegistry(CamelContext context, RuntimeEndpointRegistry registry) {
         super(context, registry);
         this.registry = registry;
+    }
+
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
     }
 
     @Override
@@ -59,5 +73,37 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
     @Override
     public List<String> getEndpointsPerRoute(String routeId, boolean includeInputs) {
         return registry.getEndpointsPerRoute(routeId, includeInputs);
+    }
+
+    @Override
+    public TabularData listEndpoints() {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listRuntimeEndpointsTabularType());
+
+            EndpointRegistry staticRegistry = getContext().getEndpointRegistry();
+
+            Map<String, RuntimeEndpointRegistry.Statistic> stats = registry.getStatistics();
+            for (Map.Entry<String, RuntimeEndpointRegistry.Statistic> entry : stats.entrySet()) {
+                CompositeType ct = CamelOpenMBeanTypes.listRuntimeEndpointsCompositeType();
+
+                String url = entry.getKey();
+
+                Boolean isStatic = staticRegistry.isStatic(url);
+                Boolean isDynamic = staticRegistry.isDynamic(url);
+                if (sanitize) {
+                    url = URISupport.sanitizeUri(url);
+                }
+                String routeId = entry.getValue().getRouteId();
+                Boolean input = entry.getValue().isInput();
+                Boolean output = entry.getValue().isOutput();
+
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "routeId", "input", "output", "static", "dynamic"},
+                        new Object[]{url, routeId, input, output, isStatic, isDynamic});
+                answer.put(data);
+            }
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 }

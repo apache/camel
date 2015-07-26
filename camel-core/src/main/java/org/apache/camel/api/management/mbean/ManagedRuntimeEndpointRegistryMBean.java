@@ -18,6 +18,8 @@ package org.apache.camel.api.management.mbean;
 
 import java.util.List;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -37,5 +39,8 @@ public interface ManagedRuntimeEndpointRegistryMBean extends ManagedServiceMBean
 
     @ManagedOperation(description = " Gets all the endpoint uris captured during runtime that are in-use for the given route.")
     List<String> getEndpointsPerRoute(String routeId, boolean includeInputs);
+
+    @ManagedOperation(description = "Lists all the endpoints in the registry (url)")
+    TabularData listEndpoints();
 
 }

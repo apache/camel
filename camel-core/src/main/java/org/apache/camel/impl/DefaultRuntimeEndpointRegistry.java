@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,6 +81,34 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             answer.addAll(uris.keySet());
         }
         return Collections.unmodifiableList(answer);
+    }
+
+    @Override
+    public Map<String, Statistic> getStatistics() {
+        Map<String, Statistic> answer = new LinkedHashMap<String, Statistic>();
+
+        // inputs
+        for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
+            String routeId = entry.getKey();
+            for (String uri : entry.getValue()) {
+                answer.put(uri, new EndpointRuntimeStatistics(routeId, true, false, 0));
+            }
+        }
+
+        // outputs
+        for (Map.Entry<String, Map<String, String>> entry : outputs.entrySet()) {
+            String routeId = entry.getKey();
+            for (String uri : entry.getValue().keySet()) {
+                if (answer.containsKey(uri)) {
+                    // both input and output
+                    answer.put(uri, new EndpointRuntimeStatistics(routeId, true, true, 0));
+                } else {
+                    answer.put(uri, new EndpointRuntimeStatistics(routeId, false, true, 0));
+                }
+            }
+        }
+
+        return answer;
     }
 
     @Override
@@ -171,5 +200,40 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         return enabled && event instanceof ExchangeSendingEvent
                 || event instanceof RouteAddedEvent
                 || event instanceof RouteRemovedEvent;
+    }
+
+    private static class EndpointRuntimeStatistics implements Statistic {
+
+        private final String routeId;
+        private final boolean input;
+        private final boolean output;
+        private final long hits;
+
+        private EndpointRuntimeStatistics(String routeId, boolean input, boolean output, long hits) {
+            this.routeId = routeId;
+            this.input = input;
+            this.output = output;
+            this.hits = hits;
+        }
+
+        @Override
+        public String getRouteId() {
+            return routeId;
+        }
+
+        @Override
+        public boolean isInput() {
+            return input;
+        }
+
+        @Override
+        public boolean isOutput() {
+            return output;
+        }
+
+        @Override
+        public long getHits() {
+            return hits;
+        }
     }
 }
