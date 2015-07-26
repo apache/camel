@@ -18,12 +18,12 @@ package org.apache.camel.spi;
 
 import java.util.List;
 
-import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 
 /**
  * A registry which listen for runtime usage of {@link org.apache.camel.Endpoint} during routing in Camel.
  */
-public interface RuntimeEndpointRegistry extends Service {
+public interface RuntimeEndpointRegistry extends StaticService {
 
     /**
      * Whether gathering runtime usage is enabled or not.
