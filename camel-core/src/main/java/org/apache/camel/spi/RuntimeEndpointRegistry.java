@@ -17,7 +17,6 @@
 package org.apache.camel.spi;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.StaticService;
 
@@ -32,23 +31,21 @@ public interface RuntimeEndpointRegistry extends StaticService {
     public interface Statistic {
 
         /**
+         * The endpoint uri
+         */
+        String getUri();
+
+        /**
          * The route id (if the endpoint is associated with a route)
          */
         String getRouteId();
 
         /**
-         * Whether the endpoint is used as input
+         * Whether the endpoint is used as input our output
          * <p/>
-         * Notice an endpoint can be used as both input and output, such as when its linking two routes
+         * The returned value can either be <tt>in</tt> or <tt>out</tt>
          */
-        boolean isInput();
-
-        /**
-         * Whether the endpoint is used as output
-         * <p/>
-         * Notice an endpoint can be used as both input and output, such as when its linking two routes
-         */
-        boolean isOutput();
+        String getDirection();
 
         /**
          * Usage of the endpoint, such as how many messages it has received / sent to
@@ -82,9 +79,9 @@ public interface RuntimeEndpointRegistry extends StaticService {
     void setLimit(int limit);
 
     /**
-     * Clears the runtime usage gathered
+     * Clears the registry
      */
-    void reset();
+    void clear();
 
     /**
      * Number of endpoints currently in the cache.
@@ -109,6 +106,6 @@ public interface RuntimeEndpointRegistry extends StaticService {
     /**
      * Gets details about all the endpoint captured from the given route during runtime routing that are in-use of the routes.
      */
-    Map<String, Statistic> getStatistics();
+    List<Statistic> getEndpointStatistics();
 
 }

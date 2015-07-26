@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,14 +83,14 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
-    public Map<String, Statistic> getStatistics() {
-        Map<String, Statistic> answer = new LinkedHashMap<String, Statistic>();
+    public List<Statistic> getEndpointStatistics() {
+        List<Statistic> answer = new ArrayList<Statistic>();
 
         // inputs
         for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
             String routeId = entry.getKey();
             for (String uri : entry.getValue()) {
-                answer.put(uri, new EndpointRuntimeStatistics(routeId, true, false, 0));
+                answer.add(new EndpointRuntimeStatistics(uri, routeId, "in", 0));
             }
         }
 
@@ -99,12 +98,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         for (Map.Entry<String, Map<String, String>> entry : outputs.entrySet()) {
             String routeId = entry.getKey();
             for (String uri : entry.getValue().keySet()) {
-                if (answer.containsKey(uri)) {
-                    // both input and output
-                    answer.put(uri, new EndpointRuntimeStatistics(routeId, true, true, 0));
-                } else {
-                    answer.put(uri, new EndpointRuntimeStatistics(routeId, false, true, 0));
-                }
+                answer.add(new EndpointRuntimeStatistics(uri, routeId, "out", 0));
             }
         }
 
@@ -122,7 +116,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
-    public void reset() {
+    public void clear() {
         inputs.clear();
         outputs.clear();
     }
@@ -146,7 +140,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     protected void doStop() throws Exception {
-        reset();
+        clear();
     }
 
     @Override
@@ -204,34 +198,30 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     private static class EndpointRuntimeStatistics implements Statistic {
 
+        private final String uri;
         private final String routeId;
-        private final boolean input;
-        private final boolean output;
+        private final String direction;
         private final long hits;
 
-        private EndpointRuntimeStatistics(String routeId, boolean input, boolean output, long hits) {
+        private EndpointRuntimeStatistics(String uri, String routeId, String direction, long hits) {
+            this.uri = uri;
             this.routeId = routeId;
-            this.input = input;
-            this.output = output;
+            this.direction = direction;
             this.hits = hits;
         }
 
-        @Override
+        public String getUri() {
+            return uri;
+        }
+
         public String getRouteId() {
             return routeId;
         }
 
-        @Override
-        public boolean isInput() {
-            return input;
+        public String getDirection() {
+            return direction;
         }
 
-        @Override
-        public boolean isOutput() {
-            return output;
-        }
-
-        @Override
         public long getHits() {
             return hits;
         }

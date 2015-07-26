@@ -17,7 +17,6 @@
 package org.apache.camel.management.mbean;
 
 import java.util.List;
-import java.util.Map;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
@@ -51,8 +50,8 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
     }
 
     @Override
-    public void reset() {
-        registry.reset();
+    public void clear() {
+        registry.clear();
     }
 
     @Override
@@ -71,7 +70,7 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
     }
 
     @Override
-    public int size() {
+    public int getSize() {
         return registry.size();
     }
 
@@ -86,29 +85,26 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
     }
 
     @Override
-    public TabularData listEndpoints() {
+    public TabularData endpointStatistics() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listRuntimeEndpointsTabularType());
 
             EndpointRegistry staticRegistry = getContext().getEndpointRegistry();
 
-            Map<String, RuntimeEndpointRegistry.Statistic> stats = registry.getStatistics();
-            for (Map.Entry<String, RuntimeEndpointRegistry.Statistic> entry : stats.entrySet()) {
+            for (RuntimeEndpointRegistry.Statistic stat : registry.getEndpointStatistics()) {
                 CompositeType ct = CamelOpenMBeanTypes.listRuntimeEndpointsCompositeType();
 
-                String url = entry.getKey();
-
+                String url = stat.getUri();
                 Boolean isStatic = staticRegistry.isStatic(url);
                 Boolean isDynamic = staticRegistry.isDynamic(url);
                 if (sanitize) {
                     url = URISupport.sanitizeUri(url);
                 }
-                String routeId = entry.getValue().getRouteId();
-                Boolean input = entry.getValue().isInput();
-                Boolean output = entry.getValue().isOutput();
+                String routeId = stat.getRouteId();
+                String direction = stat.getDirection();
 
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "routeId", "input", "output", "static", "dynamic"},
-                        new Object[]{url, routeId, input, output, isStatic, isDynamic});
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "routeId", "direction", "static", "dynamic"},
+                        new Object[]{url, routeId, direction, isStatic, isDynamic});
                 answer.put(data);
             }
             return answer;
