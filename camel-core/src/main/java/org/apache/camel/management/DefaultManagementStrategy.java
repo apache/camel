@@ -187,19 +187,36 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     }
 
     public void setStatisticsLevel(ManagementStatisticsLevel level) {
-        this.statisticsLevel = level;
+        if (managementAgent != null) {
+            getManagementAgent().setStatisticsLevel(level);
+        } else {
+            throw new IllegalStateException("Not started");
+        }
     }
 
     public ManagementStatisticsLevel getStatisticsLevel() {
-        return statisticsLevel;
+        if (managementAgent != null) {
+            return getManagementAgent().getStatisticsLevel();
+        } else {
+            throw new IllegalStateException("Not started");
+        }
     }
 
     public boolean isLoadStatisticsEnabled() {
-        return loadStatisticsEnabled;
+        if (managementAgent != null) {
+            boolean load = getManagementAgent().getLoadStatisticsEnabled() != null && getManagementAgent().getLoadStatisticsEnabled();
+            return load;
+        } else {
+            throw new IllegalStateException("Not started");
+        }
     }
 
     public void setLoadStatisticsEnabled(boolean loadStatisticsEnabled) {
-        this.loadStatisticsEnabled = loadStatisticsEnabled;
+        if (managementAgent != null) {
+            getManagementAgent().setLoadStatisticsEnabled(loadStatisticsEnabled);
+        } else {
+            throw new IllegalStateException("Not started");
+        }
     }
 
     protected void doStart() throws Exception {

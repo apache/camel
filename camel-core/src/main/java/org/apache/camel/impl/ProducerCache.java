@@ -81,7 +81,13 @@ public class ProducerCache extends ServiceSupport {
         this.camelContext = camelContext;
         this.pool = producerServicePool;
         this.producers = cache;
-        this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+
+        // only if JMX is enabled
+        if (camelContext.getManagementStrategy().getManagementAgent() != null) {
+            this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+        } else {
+            this.extendedStatistics = false;
+        }
     }
 
     public boolean isEventNotifierEnabled() {

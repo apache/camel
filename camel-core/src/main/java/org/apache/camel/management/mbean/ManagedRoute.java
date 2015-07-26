@@ -64,7 +64,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         this.route = route;
         this.context = context;
         this.description = route.getDescription();
-        boolean enabled = context.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
     }
 
