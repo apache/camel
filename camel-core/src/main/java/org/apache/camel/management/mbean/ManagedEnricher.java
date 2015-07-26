@@ -66,7 +66,7 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
     }
 
     @Override
-    public Boolean isSupportExtendedInformation() {
+    public Boolean getSupportExtendedInformation() {
         return true;
     }
 

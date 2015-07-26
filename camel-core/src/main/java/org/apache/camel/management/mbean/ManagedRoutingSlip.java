@@ -67,7 +67,7 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
     }
 
     @Override
-    public Boolean isSupportExtendedInformation() {
+    public Boolean getSupportExtendedInformation() {
         return true;
     }
 

@@ -42,7 +42,7 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     Integer getIndex();
 
     @ManagedAttribute(description = "Whether this processor supports extended JMX information")
-    Boolean isSupportExtendedInformation();
+    Boolean getSupportExtendedInformation();
 
     @ManagedOperation(description = "Start Processor")
     void start() throws Exception;

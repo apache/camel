@@ -67,7 +67,7 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
     }
 
     @Override
-    public Boolean isSupportExtendedInformation() {
+    public Boolean getSupportExtendedInformation() {
         return true;
     }
 

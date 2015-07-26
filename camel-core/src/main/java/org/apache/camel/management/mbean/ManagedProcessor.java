@@ -90,7 +90,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         return definition.getIndex();
     }
 
-    public Boolean isSupportExtendedInformation() {
+    public Boolean getSupportExtendedInformation() {
         return false;
     }
 

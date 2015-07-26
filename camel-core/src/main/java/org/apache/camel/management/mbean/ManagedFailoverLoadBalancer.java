@@ -60,7 +60,7 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
     }
 
     @Override
-    public Boolean isSupportExtendedInformation() {
+    public Boolean getSupportExtendedInformation() {
         return true;
     }
 

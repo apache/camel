@@ -49,7 +49,7 @@ public class ManagedCircuitBreakerLoadBalancer extends ManagedProcessor implemen
     }
 
     @Override
-    public Boolean isSupportExtendedInformation() {
+    public Boolean getSupportExtendedInformation() {
         return true;
     }
 

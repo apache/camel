@@ -58,7 +58,7 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
     }
 
     @Override
-    public Boolean isSupportExtendedInformation() {
+    public Boolean getSupportExtendedInformation() {
         return true;
     }
 

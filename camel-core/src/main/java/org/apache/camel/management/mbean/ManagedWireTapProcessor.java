@@ -67,7 +67,7 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
     }
 
     @Override
-    public Boolean isSupportExtendedInformation() {
+    public Boolean getSupportExtendedInformation() {
         return true;
     }
 

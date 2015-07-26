@@ -72,7 +72,7 @@ public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDyn
     }
 
     @Override
-    public Boolean isSupportExtendedInformation() {
+    public Boolean getSupportExtendedInformation() {
         return true;
     }
 
