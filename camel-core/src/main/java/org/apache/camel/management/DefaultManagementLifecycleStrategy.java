@@ -449,8 +449,6 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                 managedBacklogDebuggers.put(backlogDebugger, md);
             }
             return md;
-        } else if (service instanceof EventNotifier) {
-            answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
         } else if (service instanceof Producer) {
             answer = getManagementObjectStrategy().getManagedObjectForProducer(context, (Producer) service);
         } else if (service instanceof Consumer) {
@@ -478,6 +476,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedRuntimeEndpointRegistry(context, (RuntimeEndpointRegistry) service);
         } else if (service instanceof StreamCachingStrategy) {
             answer = new ManagedStreamCachingStrategy(context, (StreamCachingStrategy) service);
+        } else if (service instanceof EventNotifier) {
+            answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);
