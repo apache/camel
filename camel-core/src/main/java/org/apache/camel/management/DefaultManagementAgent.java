@@ -25,7 +25,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import javax.management.JMException;
@@ -41,6 +43,7 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.support.ServiceSupport;
@@ -67,18 +70,21 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private JMXConnectorServer cs;
     private Registry registry;
 
-    private Integer registryPort;
-    private Integer connectorPort;
-    private String mBeanServerDefaultDomain;
-    private String mBeanObjectDomainName;
-    private String serviceUrlPath;
+    private Integer registryPort = DEFAULT_REGISTRY_PORT;
+    private Integer connectorPort = DEFAULT_CONNECTION_PORT;
+    private String mBeanServerDefaultDomain = DEFAULT_DOMAIN;
+    private String mBeanObjectDomainName = DEFAULT_DOMAIN;
+    private String serviceUrlPath = DEFAULT_SERVICE_URL_PATH;
     private Boolean usePlatformMBeanServer = true;
-    private Boolean createConnector;
-    private Boolean onlyRegisterProcessorWithCustomId;
-    private Boolean registerAlways;
+    private Boolean createConnector = false;
+    private Boolean onlyRegisterProcessorWithCustomId = false;
+    private Boolean loadStatisticsEnabled = false;
+    private Boolean registerAlways = false;
     private Boolean registerNewRoutes = true;
-    private Boolean mask;
-    private Boolean includeHostName;
+    private Boolean mask = true;
+    private Boolean includeHostName = false;
+    private String managementNamePattern = "#name#";
+    private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.Default;
 
     public DefaultManagementAgent() {
     }
@@ -87,46 +93,77 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         this.camelContext = camelContext;
     }
 
-    protected void finalizeSettings() {
-        if (registryPort == null) {
-            registryPort = Integer.getInteger(JmxSystemPropertyKeys.REGISTRY_PORT, DEFAULT_REGISTRY_PORT);
+    protected void finalizeSettings() throws Exception {
+        // JVM system properties take precedence over any configuration
+        Map<String, Object> values = new LinkedHashMap<String, Object>();
+
+        if (System.getProperty(JmxSystemPropertyKeys.REGISTRY_PORT) != null) {
+            registryPort = Integer.getInteger(JmxSystemPropertyKeys.REGISTRY_PORT);
+            values.put(JmxSystemPropertyKeys.REGISTRY_PORT, registryPort);
         }
-        if (connectorPort == null) {
-            connectorPort = Integer.getInteger(JmxSystemPropertyKeys.CONNECTOR_PORT, DEFAULT_CONNECTION_PORT);
+        if (System.getProperty(JmxSystemPropertyKeys.CONNECTOR_PORT) != null) {
+            connectorPort = Integer.getInteger(JmxSystemPropertyKeys.CONNECTOR_PORT);
+            values.put(JmxSystemPropertyKeys.CONNECTOR_PORT, connectorPort);
         }
-        if (mBeanServerDefaultDomain == null) {
-            mBeanServerDefaultDomain = System.getProperty(JmxSystemPropertyKeys.DOMAIN, DEFAULT_DOMAIN);
+        if (System.getProperty(JmxSystemPropertyKeys.DOMAIN) != null) {
+            mBeanServerDefaultDomain = System.getProperty(JmxSystemPropertyKeys.DOMAIN);
+            values.put(JmxSystemPropertyKeys.DOMAIN, mBeanServerDefaultDomain);
         }
-        if (mBeanObjectDomainName == null) {
-            mBeanObjectDomainName = System.getProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN, DEFAULT_DOMAIN);
+        if (System.getProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN) != null) {
+            mBeanObjectDomainName = System.getProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN);
+            values.put(JmxSystemPropertyKeys.MBEAN_DOMAIN, mBeanObjectDomainName);
         }
-        if (serviceUrlPath == null) {
-            serviceUrlPath = System.getProperty(JmxSystemPropertyKeys.SERVICE_URL_PATH, DEFAULT_SERVICE_URL_PATH);
-        }
-        if (createConnector == null) {
-            createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
-        }
-        if (onlyRegisterProcessorWithCustomId == null) {
-            onlyRegisterProcessorWithCustomId = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
-        }
-        // "Use platform mbean server" is true by default
-        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null) {
-            usePlatformMBeanServer = Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
-        }
-        if (System.getProperty(JmxSystemPropertyKeys.REGISTER_ALWAYS) != null) {
-            registerAlways = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_ALWAYS);
-        }
-        if (System.getProperty(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES) != null) {
-            registerNewRoutes = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES);
-        }
-        if (System.getProperty(JmxSystemPropertyKeys.MASK) != null) {
-            mask = Boolean.getBoolean(JmxSystemPropertyKeys.MASK);
-        }
-        if (System.getProperty(JmxSystemPropertyKeys.INCLUDE_HOST_NAME) != null) {
-            includeHostName = Boolean.getBoolean(JmxSystemPropertyKeys.INCLUDE_HOST_NAME);
+        if (System.getProperty(JmxSystemPropertyKeys.SERVICE_URL_PATH) != null) {
+            serviceUrlPath = System.getProperty(JmxSystemPropertyKeys.SERVICE_URL_PATH);
+            values.put(JmxSystemPropertyKeys.SERVICE_URL_PATH, serviceUrlPath);
         }
         if (System.getProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR) != null) {
             createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
+            values.put(JmxSystemPropertyKeys.CREATE_CONNECTOR, createConnector);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID) != null) {
+            onlyRegisterProcessorWithCustomId = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
+            values.put(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID, onlyRegisterProcessorWithCustomId);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null) {
+            usePlatformMBeanServer = Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
+            values.put(JmxSystemPropertyKeys.USE_PLATFORM_MBS, usePlatformMBeanServer);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.REGISTER_ALWAYS) != null) {
+            registerAlways = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_ALWAYS);
+            values.put(JmxSystemPropertyKeys.REGISTER_ALWAYS, registerAlways);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES) != null) {
+            registerNewRoutes = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES);
+            values.put(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES, registerNewRoutes);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.MASK) != null) {
+            mask = Boolean.getBoolean(JmxSystemPropertyKeys.MASK);
+            values.put(JmxSystemPropertyKeys.MASK, mask);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.INCLUDE_HOST_NAME) != null) {
+            includeHostName = Boolean.getBoolean(JmxSystemPropertyKeys.INCLUDE_HOST_NAME);
+            values.put(JmxSystemPropertyKeys.INCLUDE_HOST_NAME, includeHostName);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR) != null) {
+            createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
+            values.put(JmxSystemPropertyKeys.CREATE_CONNECTOR, createConnector);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.LOAD_STATISTICS_ENABLED) != null) {
+            loadStatisticsEnabled = Boolean.getBoolean(JmxSystemPropertyKeys.LOAD_STATISTICS_ENABLED);
+            values.put(JmxSystemPropertyKeys.LOAD_STATISTICS_ENABLED, loadStatisticsEnabled);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL) != null) {
+            statisticsLevel = camelContext.getTypeConverter().mandatoryConvertTo(ManagementStatisticsLevel.class, System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL));
+            values.put(JmxSystemPropertyKeys.STATISTICS_LEVEL, statisticsLevel);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN) != null) {
+            managementNamePattern = System.getProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN);
+            values.put(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN, managementNamePattern);
+        }
+
+        if (!values.isEmpty()) {
+            LOG.info("ManagementAgent detected JVM system properties: {}", values);
         }
     }
 
@@ -232,6 +269,30 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     public void setIncludeHostName(Boolean includeHostName) {
         this.includeHostName = includeHostName;
+    }
+
+    public String getManagementNamePattern() {
+        return managementNamePattern;
+    }
+
+    public void setManagementNamePattern(String managementNamePattern) {
+        this.managementNamePattern = managementNamePattern;
+    }
+
+    public Boolean getLoadStatisticsEnabled() {
+        return loadStatisticsEnabled;
+    }
+
+    public void setLoadStatisticsEnabled(Boolean loadStatisticsEnabled) {
+        this.loadStatisticsEnabled = loadStatisticsEnabled;
+    }
+
+    public ManagementStatisticsLevel getStatisticsLevel() {
+        return statisticsLevel;
+    }
+
+    public void setStatisticsLevel(ManagementStatisticsLevel statisticsLevel) {
+        this.statisticsLevel = statisticsLevel;
     }
 
     public CamelContext getCamelContext() {

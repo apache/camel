@@ -758,7 +758,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         // that then delegates to the real mbean which we register later in the onServiceAdd method
         DelegatePerformanceCounter pc = new DelegatePerformanceCounter();
         // set statistics enabled depending on the option
-        boolean enabled = camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
+        boolean enabled = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended();
         pc.setStatisticsEnabled(enabled);
 
         // and add it as a a registered counter that will be used lazy when Camel
@@ -793,7 +793,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         }
 
         // only if custom id assigned
-        if (getManagementStrategy().isOnlyManageProcessorWithCustomId()) {
+        boolean only = getManagementStrategy().getManagementAgent().getOnlyRegisterProcessorWithCustomId() != null
+                && getManagementStrategy().getManagementAgent().getOnlyRegisterProcessorWithCustomId();
+        if (only) {
             return processor.hasCustomIdAssigned();
         }
 
@@ -908,8 +910,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         @Override
         public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             // we are disabled either if configured explicit, or if level is off
-            boolean disabled = !camelContext.getManagementStrategy().isLoadStatisticsEnabled()
-                    || camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.Off;
+            boolean load = camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled() != null
+                    && camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled();
+            boolean disabled = !load || camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.Off;
 
             LOG.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
             if (!disabled) {

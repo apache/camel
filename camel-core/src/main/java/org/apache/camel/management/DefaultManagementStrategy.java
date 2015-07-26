@@ -58,11 +58,10 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementNamingStrategy managementNamingStrategy;
     private ManagementObjectStrategy managementObjectStrategy;
-    private boolean onlyManageProcessorWithCustomId;
+    private Boolean onlyManageProcessorWithCustomId;
     private ManagementAgent managementAgent;
-    private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
-    private boolean loadStatisticsEnabled;
-    private boolean extendedStatisticsEnabled;
+    private ManagementStatisticsLevel statisticsLevel;
+    private Boolean loadStatisticsEnabled;
     private CamelContext camelContext;
 
     public DefaultManagementStrategy() {
@@ -131,7 +130,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     }
 
     public boolean isOnlyManageProcessorWithCustomId() {
-        return onlyManageProcessorWithCustomId;
+        return onlyManageProcessorWithCustomId != null && onlyManageProcessorWithCustomId;
     }
 
     public boolean manageProcessor(ProcessorDefinition<?> definition) {
@@ -203,14 +202,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
-    public boolean isExtendedStatisticsEnabled() {
-        return extendedStatisticsEnabled;
-    }
-
-    public void setExtendedStatisticsEnabled(boolean extendedStatisticsEnabled) {
-        this.extendedStatisticsEnabled = extendedStatisticsEnabled;
-    }
-
     protected void doStart() throws Exception {
         LOG.info("JMX is disabled");
         doStartManagementStrategy();
@@ -237,6 +228,14 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
             // set the naming strategy using the domain name from the agent
             if (managementNamingStrategy == null) {
                 setManagementNamingStrategy(new DefaultManagementNamingStrategy(managementAgent.getMBeanObjectDomainName()));
+            }
+            if (statisticsLevel != null) {
+                LOG.warn("Using @deprecated option statisticsLevel on ManagementStrategy. Configure this on ManagementAgent instead.");
+                managementAgent.setStatisticsLevel(statisticsLevel);
+            }
+            if (onlyManageProcessorWithCustomId != null) {
+                LOG.warn("Using @deprecated option onlyManageProcessorWithCustomId on ManagementStrategy. Configure this on ManagementAgent instead.");
+                managementAgent.setOnlyRegisterProcessorWithCustomId(onlyManageProcessorWithCustomId);
             }
         }
         if (managementNamingStrategy instanceof CamelContextAware) {

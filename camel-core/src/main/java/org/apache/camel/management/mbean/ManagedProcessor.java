@@ -25,7 +25,6 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -58,7 +57,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.definition = definition;
         this.id = definition.idOrCreate(context.getNodeIdFactory());
 
-        boolean enabled = context.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
+        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended();
         setStatisticsEnabled(enabled);
     }
 

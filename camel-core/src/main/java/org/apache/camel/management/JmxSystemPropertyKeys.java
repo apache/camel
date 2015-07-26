@@ -50,6 +50,12 @@ public final class JmxSystemPropertyKeys {
     // whether all processors or only processors with a custom id given should be registered
     public static final String ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID = "org.apache.camel.jmx.onlyRegisterProcessorWithCustomId";
 
+    // whether to enable gathering load statistics in the background
+    public static final String LOAD_STATISTICS_ENABLED = "org.apache.camel.jmx.loadStatisticsEnabled";
+
+    // the level of statistics enabled
+    public static final String STATISTICS_LEVEL = "org.apache.camel.jmx.statisticsLevel";
+
     // whether to register always
     public static final String REGISTER_ALWAYS = "org.apache.camel.jmx.registerAlways";
 

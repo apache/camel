@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -33,7 +34,7 @@ public class ManagedSendDynamicProcessorTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getManagementStrategy().setExtendedStatisticsEnabled(true);
+        context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.Extended);
         return context;
     }
 
