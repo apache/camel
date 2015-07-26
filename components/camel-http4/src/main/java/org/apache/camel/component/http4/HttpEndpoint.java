@@ -252,7 +252,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.httpClientConfigurer = httpClientConfigurer;
     }
 
-    public HttpBinding getHttpBinding() {
+    public HttpBinding getBinding() {
         if (binding == null) {
             // create a new binding and use the options from this endpoint
             binding = new DefaultHttpBinding(this);
