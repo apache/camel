@@ -44,6 +44,7 @@ import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -790,6 +791,24 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     @Metadata(description = "To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which are used to customize how a response should be written for the producer.")
     public void setJettyHttpBinding(JettyHttpBinding jettyHttpBinding) {
         this.jettyHttpBinding = jettyHttpBinding;
+    }
+
+    /**
+     * Not to be used - use JettyHttpBinding instead.
+     */
+    @Override
+    @Metadata(description = "Not to be used - use JettyHttpBinding instead.")
+    public void setHttpBinding(HttpBinding httpBinding) {
+        throw new IllegalArgumentException("Not to be used - use JettyHttpBinding instead.");
+    }
+
+    /**
+     * Jetty component does not use HttpConfiguration.
+     */
+    @Override
+    @Metadata(description = "Jetty component does not use HttpConfiguration.")
+    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+        throw new IllegalArgumentException("Jetty component does not use HttpConfiguration.");
     }
 
     public synchronized MBeanContainer getMbContainer() {
