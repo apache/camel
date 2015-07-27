@@ -49,6 +49,20 @@ public class CsvMarshalTest extends CamelTestSupport {
     }
 
     @Test
+    public void shouldMarshalListsOneRow() throws Exception {
+        output.expectedMessageCount(1);
+
+        template.sendBody("direct:default", Arrays.<List>asList(
+                Arrays.asList("1"),
+                Arrays.asList("one")
+        ));
+        output.assertIsSatisfied();
+
+        String[] actuals = readOutputLines();
+        assertArrayEquals(new String[]{"1", "one"}, actuals);
+    }
+
+    @Test
     public void shouldMarshalMaps() throws Exception {
         output.expectedMessageCount(1);
 
