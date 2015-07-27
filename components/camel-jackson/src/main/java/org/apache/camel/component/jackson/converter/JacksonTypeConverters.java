@@ -22,28 +22,46 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
+import org.apache.camel.component.jackson.JacksonConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 public final class JacksonTypeConverters {
 
-    private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
+    private final ObjectMapper defaultMapper = new ObjectMapper();
+    private boolean init;
+    private Boolean enabled;
 
-    private JacksonTypeConverters() {
+    public JacksonTypeConverters() {
     }
 
     @FallbackConverter
-    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+
+        // only do this if enabled
+        if (!init && exchange != null) {
+            // init to see if this is enabled
+            String text = exchange.getContext().getProperties().get(JacksonConstants.ENABLE_TYPE_CONVERTER);
+            enabled = "true".equalsIgnoreCase(text);
+            init = true;
+        }
+
+        if (enabled == null || !enabled) {
+            return null;
+        }
+
+
         if (isNotPojoType(type)) {
             return null;
         }
 
-        if (value instanceof Map) {
+        if (exchange != null && value instanceof Map) {
             ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
             if (mapper.canSerialize(type)) {
                 return mapper.convertValue(value, type);
             }
         }
+
         // Just return null to let other fallback converter to do the job
         return null;
     }
@@ -57,12 +75,12 @@ public final class JacksonTypeConverters {
         return isString || isNumber;
     }
 
-    private static ObjectMapper resolveObjectMapper(Registry registry) {
+    private ObjectMapper resolveObjectMapper(Registry registry) {
         Set<ObjectMapper> mappers = registry.findByType(ObjectMapper.class);
         if (mappers.size() == 1) {
             return mappers.iterator().next();
         }
-        return DEFAULT_MAPPER;
+        return defaultMapper;
     }
 
 }
