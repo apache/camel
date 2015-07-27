@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.util.concurrent.ExecutorService;
 
 import kafka.message.MessageAndMetadata;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -36,7 +37,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
-    
+
     @UriParam(description = "If the option is true, then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message.", defaultValue = "false")
     private boolean bridgeEndpoint;
 
@@ -80,8 +81,20 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
             keyClassName = msgClassName;
         }
 
-        Class k = getCamelContext().getClassResolver().resolveMandatoryClass(keyClassName);
-        Class v = getCamelContext().getClassResolver().resolveMandatoryClass(msgClassName);
+        ClassLoader cl = getClass().getClassLoader();
+
+        Class<?> k;
+        try {
+            k = cl.loadClass(keyClassName);
+        } catch (ClassNotFoundException x) {
+            k = getCamelContext().getClassResolver().resolveMandatoryClass(keyClassName);
+        }
+        Class<?> v;
+        try {
+            v = cl.loadClass(msgClassName);
+        } catch (ClassNotFoundException x) {
+            v = getCamelContext().getClassResolver().resolveMandatoryClass(msgClassName);
+        }
         return createProducer(k, v, this);
     }
 
