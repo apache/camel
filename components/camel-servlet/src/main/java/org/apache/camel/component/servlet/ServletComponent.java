@@ -205,9 +205,8 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         setProperties(endpoint, parameters);
 
         // use the rest binding
-        HttpBinding binding = new ServletRestHttpBinding();
+        HttpBinding binding = new ServletRestHttpBinding(endpoint);
         binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());
-        binding.setTransferException(endpoint.isTransferException());
         binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
         endpoint.setBinding(binding);
 
