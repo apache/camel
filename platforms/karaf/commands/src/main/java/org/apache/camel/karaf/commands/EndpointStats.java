@@ -24,7 +24,7 @@ import org.apache.felix.gogo.commands.Option;
 @Command(scope = "camel", name = "endpoint-stats", description = "Display endpoint runtime statistics")
 public class EndpointStats extends CamelCommandSupport {
 
-    @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
+    @Argument(index = 0, name = "name", description = "The name of the Camel context (support wildcard)", required = false, multiValued = false)
     String name;
 
     @Option(name = "--filter", aliases = "-f", description = "Filter the list by in,out,static,dynamic",

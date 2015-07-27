@@ -19,6 +19,7 @@ package org.apache.camel.commands;
 import java.io.PrintStream;
 import java.net.URLDecoder;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +28,9 @@ import org.apache.camel.util.URISupport;
 /**
  * Display endpoint runtime statistics for a CamelContext
  */
-public class EndpointStatisticCommand extends AbstractContextCommand {
+public class EndpointStatisticCommand extends AbstractCamelCommand {
 
+    private static final String CONTEXT_COLUMN_LABEL = "Context";
     private static final String URI_COLUMN_LABEL = "Uri";
     private static final String ROUTE_COLUMN_LABEL = "Route Id";
     private static final String DIRECTION_COLUMN_LABEL = "Direction";
@@ -46,27 +48,43 @@ public class EndpointStatisticCommand extends AbstractContextCommand {
     private static final int MAX_COLUMN_WIDTH = 120;
     private static final int MIN_COLUMN_WIDTH = 12;
 
+    String context;
     boolean decode = true;
     private String[] filter;
 
     public EndpointStatisticCommand(String context, boolean decode, String[] filter) {
-        super(context);
+        this.context = context;
         this.decode = decode;
         this.filter = filter;
     }
 
     @Override
-    protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
-        List<Map<String, String>> endpoints = camelController.getEndpointRuntimeStatistics(contextName);
+    public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
+        List<Map<String, String>> contexts = camelController.getCamelContexts(context);
 
-        final Map<String, Integer> columnWidths = computeColumnWidths(endpoints);
+        boolean header = false;
+
+        Map<String, List<Map<String, String>>> allEndpoints = new LinkedHashMap<>();
+
+        for (Map<String, String> context : contexts) {
+            String contextName = context.get("name");
+            List<Map<String, String>> endpoints = camelController.getEndpointRuntimeStatistics(contextName);
+            allEndpoints.put(contextName, endpoints);
+        }
+
+        final Map<String, Integer> columnWidths = computeColumnWidths(allEndpoints);
         final String headerFormat = buildFormatString(columnWidths, true);
         final String rowFormat = buildFormatString(columnWidths, false);
 
-        if (endpoints.size() > 0) {
-            out.println(String.format(headerFormat, URI_COLUMN_LABEL, ROUTE_COLUMN_LABEL, DIRECTION_COLUMN_LABEL, STATIC_COLUMN_LABEL, DYNAMIC_COLUMN_LABEL, HITS_COLUMN_LABEL));
-            out.println(String.format(headerFormat, "---", "--------", "---------", "------", "-------", "----"));
-            for (Map<String, String> row : endpoints) {
+        for (Map.Entry<String, List<Map<String, String>>> entry : allEndpoints.entrySet()) {
+            String contextName = entry.getKey();
+            for (Map<String, String> row : entry.getValue()) {
+
+                if (!header) {
+                    out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, URI_COLUMN_LABEL, ROUTE_COLUMN_LABEL, DIRECTION_COLUMN_LABEL, STATIC_COLUMN_LABEL, DYNAMIC_COLUMN_LABEL, HITS_COLUMN_LABEL));
+                    out.println(String.format(headerFormat, "-------", "---", "--------", "---------", "------", "-------", "----"));
+                    header = true;
+                }
 
                 String uri = row.get("uri");
                 if (decode) {
@@ -83,7 +101,7 @@ public class EndpointStatisticCommand extends AbstractContextCommand {
 
                 // should we filter
                 if (isValidRow(direction, isStatic, isDynamic)) {
-                    out.println(String.format(rowFormat, uri, routeId, direction, isStatic, isDynamic, hits));
+                    out.println(String.format(rowFormat, contextName, uri, routeId, direction, isStatic, isDynamic, hits));
                 }
             }
         }
@@ -115,10 +133,11 @@ public class EndpointStatisticCommand extends AbstractContextCommand {
         return answer;
     }
 
-    private Map<String, Integer> computeColumnWidths(final Iterable<Map<String, String>> endpoints) throws Exception {
-        if (endpoints == null) {
+    private Map<String, Integer> computeColumnWidths(Map<String, List<Map<String, String>>> allEndpoints) throws Exception {
+        if (allEndpoints == null) {
             throw new IllegalArgumentException("Unable to determine column widths from null Iterable<Endpoint>");
         } else {
+            int maxContextLen = 0;
             int maxUriLen = 0;
             int maxRouteIdLen = 0;
             int maxDirectionLen = 0;
@@ -126,36 +145,40 @@ public class EndpointStatisticCommand extends AbstractContextCommand {
             int maxDynamicLen = 0;
             int maxHitsLen = 0;
 
-            for (Map<String, String> row : endpoints) {
-                final String name = row.get("camelContextName");
+            for (Map.Entry<String, List<Map<String, String>>> entry : allEndpoints.entrySet()) {
+                String contextName = entry.getKey();
+                for (Map<String, String> row : entry.getValue()) {
+                    maxContextLen = Math.max(maxContextLen, contextName == null ? 0 : contextName.length());
 
-                String uri = row.get("uri");
-                if (decode) {
-                    // decode uri so its more human readable
-                    uri = URLDecoder.decode(uri, "UTF-8");
+                    String uri = row.get("uri");
+                    if (decode) {
+                        // decode uri so its more human readable
+                        uri = URLDecoder.decode(uri, "UTF-8");
+                    }
+                    // sanitize and mask uri so we dont see passwords
+                    uri = URISupport.sanitizeUri(uri);
+
+                    maxUriLen = Math.max(maxUriLen, uri == null ? 0 : uri.length());
+
+                    final String routeId = row.get("routeId");
+                    maxRouteIdLen = Math.max(maxRouteIdLen, routeId == null ? 0 : routeId.length());
+
+                    final String direction = row.get("direction");
+                    maxDirectionLen = Math.max(maxDirectionLen, direction == null ? 0 : direction.length());
+
+                    final String isStatic = row.get("static");
+                    maxStaticLen = Math.max(maxStaticLen, isStatic == null ? 0 : isStatic.length());
+
+                    final String isDynamic = row.get("dynamic");
+                    maxDynamicLen = Math.max(maxDynamicLen, isDynamic == null ? 0 : isDynamic.length());
+
+                    final String hits = row.get("hits");
+                    maxHitsLen = Math.max(maxHitsLen, hits == null ? 0 : hits.length());
                 }
-                // sanitize and mask uri so we dont see passwords
-                uri = URISupport.sanitizeUri(uri);
-
-                maxUriLen = Math.max(maxUriLen, uri == null ? 0 : uri.length());
-
-                final String routeId = row.get("routeId");
-                maxRouteIdLen = Math.max(maxRouteIdLen, routeId == null ? 0 : routeId.length());
-
-                final String direction = row.get("direction");
-                maxDirectionLen = Math.max(maxDirectionLen, direction == null ? 0 : direction.length());
-
-                final String isStatic = row.get("static");
-                maxStaticLen = Math.max(maxStaticLen, isStatic == null ? 0 : isStatic.length());
-
-                final String isDynamic = row.get("dynamic");
-                maxDynamicLen = Math.max(maxDynamicLen, isDynamic == null ? 0 : isDynamic.length());
-
-                final String hits = row.get("hits");
-                maxHitsLen = Math.max(maxHitsLen, hits == null ? 0 : hits.length());
             }
 
             final Map<String, Integer> retval = new Hashtable<String, Integer>();
+            retval.put(CONTEXT_COLUMN_LABEL, maxContextLen);
             retval.put(URI_COLUMN_LABEL, maxUriLen);
             retval.put(ROUTE_COLUMN_LABEL, maxRouteIdLen);
             retval.put(DIRECTION_COLUMN_LABEL, maxDirectionLen);
@@ -181,6 +204,9 @@ public class EndpointStatisticCommand extends AbstractContextCommand {
         }
         columnWidthIncrement = DEFAULT_COLUMN_WIDTH_INCREMENT;
 
+        int contextLen = Math.min(columnWidths.get(CONTEXT_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+        contextLen = Math.max(MIN_COLUMN_WIDTH, contextLen);
+
         int uriLen = Math.min(columnWidths.get(URI_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         uriLen = Math.max(MIN_COLUMN_WIDTH, uriLen);
 
@@ -199,6 +225,7 @@ public class EndpointStatisticCommand extends AbstractContextCommand {
         // last row does not have min width
 
         final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
+        retval.append(fieldPreamble).append("%-").append(contextLen).append('.').append(contextLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(uriLen).append('.').append(uriLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(routeIdLen).append('.').append(routeIdLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(directionLen).append('.').append(directionLen).append('s').append(fieldPostamble).append(' ');
