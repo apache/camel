@@ -179,6 +179,15 @@
         <null/>
       </completers>
     </command>
+    <command name="camel/endpoint-stats">
+      <action class="org.apache.camel.karaf.commands.EndpointStats">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
     <command name="camel/endpoint-explain">
       <action class="org.apache.camel.karaf.commands.EndpointExplain">
         <property name="camelController" ref="camelController"/>

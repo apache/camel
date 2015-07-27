@@ -191,6 +191,15 @@ public interface CamelController {
     List<Map<String, String>> getEndpoints(String camelContextName) throws Exception;
 
     /**
+     * Return endpoint runtime statistics
+     *
+     * @param camelContextName the Camel context.
+     * @return a list of key/value pairs with endpoint runtime statistics
+     * @throws java.lang.Exception can be thrown
+     */
+    List<Map<String, String>> getEndpointRuntimeStatistics(String camelContextName) throws Exception;
+
+    /**
      * Return the definition of the REST services as XML for the given Camel context.
      *
      * @param camelContextName the Camel context.

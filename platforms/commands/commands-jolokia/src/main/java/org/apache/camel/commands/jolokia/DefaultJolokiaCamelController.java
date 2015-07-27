@@ -538,6 +538,42 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
+    public List<Map<String, String>> getEndpointRuntimeStatistics(String camelContextName) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=services,name=DefaultRuntimeEndpointRegistry", found.getDomain(), found.getKeyProperty("context"));
+            ObjectName on = ObjectName.getInstance(pattern);
+
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "endpointStatistics()"));
+            if (response != null) {
+                JSONObject data = response.getValue();
+                for (Object obj : data.values()) {
+                    JSONObject data2 = (JSONObject) obj;
+                    JSONObject service = (JSONObject) data2.values().iterator().next();
+
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("index", asString(service.get("index")));
+                    row.put("url", asString(service.get("url")));
+                    row.put("routeId", asString(service.get("routeId")));
+                    row.put("direction", asString(service.get("direction")));
+                    row.put("static", asString(service.get("static")));
+                    row.put("dynamic", asString(service.get("dynamic")));
+                    row.put("hits", asString(service.get("hits")));
+                    answer.add(row);
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
     public List<Map<String, String>> getRestServices(String camelContextName) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
