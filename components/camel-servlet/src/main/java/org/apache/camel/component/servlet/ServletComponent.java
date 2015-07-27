@@ -196,7 +196,11 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         setProperties(endpoint, parameters);
 
         // use the rest binding
-        endpoint.setBinding(new ServletRestHttpBinding());
+        HttpBinding binding = new ServletRestHttpBinding();
+        binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());
+        binding.setTransferException(endpoint.isTransferException());
+        binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
+        endpoint.setBinding(binding);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
