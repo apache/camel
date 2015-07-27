@@ -19,9 +19,18 @@ package org.apache.camel.component.servlet;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpMessage;
 
 public class ServletRestHttpBinding extends DefaultHttpBinding {
+
+    public ServletRestHttpBinding() {
+    }
+
+    @Deprecated
+    public ServletRestHttpBinding(HttpCommonEndpoint endpoint) {
+        super(endpoint);
+    }
 
     @Override
     protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
