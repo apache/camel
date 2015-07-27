@@ -232,6 +232,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                 }
             }
         } else if (extended && event instanceof ExchangeCreatedEvent) {
+            // we only capture details in extended mode
             ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
             Endpoint endpoint = ece.getExchange().getFromEndpoint();
             String routeId = ece.getExchange().getFromRouteId();
@@ -240,7 +241,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             if (key != null) {
                 inputUtilization.onHit(key);
             }
-        } else {
+        } else if (event instanceof ExchangeSendingEvent) {
             ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
             Endpoint endpoint = ese.getEndpoint();
             String routeId = getRouteId(ese.getExchange());
