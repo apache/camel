@@ -103,9 +103,10 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
                 }
                 String routeId = stat.getRouteId();
                 String direction = stat.getDirection();
+                long hits = stat.getHits();
 
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"index", "url", "routeId", "direction", "static", "dynamic"},
-                        new Object[]{index, url, routeId, direction, isStatic, isDynamic});
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"index", "url", "routeId", "direction", "static", "dynamic", "hits"},
+                        new Object[]{index, url, routeId, direction, isStatic, isDynamic, hits});
                 answer.put(data);
 
                 // use a counter as the single index in the TabularData as we do not want a multi-value index

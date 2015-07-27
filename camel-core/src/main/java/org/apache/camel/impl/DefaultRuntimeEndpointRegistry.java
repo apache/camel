@@ -25,24 +25,43 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.RouteAddedEvent;
 import org.apache.camel.management.event.RouteRemovedEvent;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 
-public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements RuntimeEndpointRegistry {
+public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements CamelContextAware, RuntimeEndpointRegistry {
+
+    private CamelContext camelContext;
 
     // route id -> endpoint urls
     private Map<String, Set<String>> inputs;
     private Map<String, Map<String, String>> outputs;
     private int limit = 1000;
     private boolean enabled = true;
+    private boolean extended;
+    private EndpointUtilizationStatistics inputUtilization;
+    private EndpointUtilizationStatistics outputUtilization;
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -90,7 +109,14 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
             String routeId = entry.getKey();
             for (String uri : entry.getValue()) {
-                answer.add(new EndpointRuntimeStatistics(uri, routeId, "in", 0));
+                Long hits = 0L;
+                if (extended) {
+                    hits = inputUtilization.getStatistics().get(uri);
+                    if (hits == null) {
+                        hits = 0L;
+                    }
+                }
+                answer.add(new EndpointRuntimeStatistics(uri, routeId, "in", hits));
             }
         }
 
@@ -98,7 +124,14 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         for (Map.Entry<String, Map<String, String>> entry : outputs.entrySet()) {
             String routeId = entry.getKey();
             for (String uri : entry.getValue().keySet()) {
-                answer.add(new EndpointRuntimeStatistics(uri, routeId, "out", 0));
+                Long hits = 0L;
+                if (extended) {
+                    hits = outputUtilization.getStatistics().get(uri);
+                    if (hits == null) {
+                        hits = 0L;
+                    }
+                }
+                answer.add(new EndpointRuntimeStatistics(uri, routeId, "out", hits));
             }
         }
 
@@ -119,6 +152,12 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     public void clear() {
         inputs.clear();
         outputs.clear();
+        if (inputUtilization != null) {
+            inputUtilization.clear();
+        }
+        if (outputUtilization != null) {
+            outputUtilization.clear();
+        }
     }
 
     @Override
@@ -130,17 +169,28 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "camelContext", this);
+
         if (inputs == null) {
             inputs = new HashMap<String, Set<String>>();
         }
         if (outputs == null) {
             outputs = new HashMap<String, Map<String, String>>();
         }
+        if (getCamelContext().getManagementStrategy().getManagementAgent() != null) {
+            extended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+        }
+        if (extended) {
+            inputUtilization = new DefaultEndpointUtilizationStatistics(limit);
+            outputUtilization = new DefaultEndpointUtilizationStatistics(limit);
+        }
+        ServiceHelper.startServices(inputUtilization, outputUtilization);
     }
 
     @Override
     protected void doStop() throws Exception {
         clear();
+        ServiceHelper.stopServices(inputUtilization, outputUtilization);
     }
 
     @Override
@@ -162,6 +212,15 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             String routeId = rse.getRoute().getId();
             inputs.remove(routeId);
             outputs.remove(routeId);
+            if (extended) {
+                String uri = rse.getRoute().getEndpoint().getEndpointUri();
+                inputUtilization.remove(uri);
+            }
+        } else if (extended && event instanceof ExchangeCreatedEvent) {
+            ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
+            Endpoint endpoint = ece.getExchange().getFromEndpoint();
+            String uri = endpoint.getEndpointUri();
+            inputUtilization.onHit(uri);
         } else {
             ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
             Endpoint endpoint = ese.getEndpoint();
@@ -171,6 +230,9 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             Map<String, String> uris = outputs.get(routeId);
             if (uris != null && !uris.containsKey(uri)) {
                 uris.put(uri, uri);
+            }
+            if (extended) {
+                outputUtilization.onHit(uri);
             }
         }
     }
@@ -191,7 +253,8 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     public boolean isEnabled(EventObject event) {
-        return enabled && event instanceof ExchangeSendingEvent
+        return enabled && event instanceof ExchangeCreatedEvent
+                || event instanceof ExchangeSendingEvent
                 || event instanceof RouteAddedEvent
                 || event instanceof RouteRemovedEvent;
     }
