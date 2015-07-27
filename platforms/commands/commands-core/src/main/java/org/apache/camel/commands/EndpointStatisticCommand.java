@@ -194,7 +194,7 @@ public class EndpointStatisticCommand extends AbstractContextCommand {
         staticLen = Math.max(MIN_COLUMN_WIDTH, staticLen);
 
         int dynamicLen = Math.min(columnWidths.get(DYNAMIC_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-        dynamicLen = Math.max(MIN_COLUMN_WIDTH, staticLen);
+        dynamicLen = Math.max(MIN_COLUMN_WIDTH, dynamicLen);
 
         // last row does not have min width
 
