@@ -111,9 +111,12 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             for (String uri : entry.getValue()) {
                 Long hits = 0L;
                 if (extended) {
-                    hits = inputUtilization.getStatistics().get(uri);
-                    if (hits == null) {
-                        hits = 0L;
+                    String key = asUtilizationKey(routeId, uri);
+                    if (key != null) {
+                        hits = inputUtilization.getStatistics().get(key);
+                        if (hits == null) {
+                            hits = 0L;
+                        }
                     }
                 }
                 answer.add(new EndpointRuntimeStatistics(uri, routeId, "in", hits));
@@ -126,9 +129,12 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             for (String uri : entry.getValue().keySet()) {
                 Long hits = 0L;
                 if (extended) {
-                    hits = outputUtilization.getStatistics().get(uri);
-                    if (hits == null) {
-                        hits = 0L;
+                    String key = asUtilizationKey(routeId, uri);
+                    if (key != null) {
+                        hits = outputUtilization.getStatistics().get(key);
+                        if (hits == null) {
+                            hits = 0L;
+                        }
                     }
                 }
                 answer.add(new EndpointRuntimeStatistics(uri, routeId, "out", hits));
@@ -152,6 +158,12 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     public void clear() {
         inputs.clear();
         outputs.clear();
+        reset();
+    }
+
+    @Override
+    public void reset() {
+        // its safe to call clear as reset
         if (inputUtilization != null) {
             inputUtilization.clear();
         }
@@ -214,13 +226,20 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             outputs.remove(routeId);
             if (extended) {
                 String uri = rse.getRoute().getEndpoint().getEndpointUri();
-                inputUtilization.remove(uri);
+                String key = asUtilizationKey(routeId, uri);
+                if (key != null) {
+                    inputUtilization.remove(key);
+                }
             }
         } else if (extended && event instanceof ExchangeCreatedEvent) {
             ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
             Endpoint endpoint = ece.getExchange().getFromEndpoint();
+            String routeId = ece.getExchange().getFromRouteId();
             String uri = endpoint.getEndpointUri();
-            inputUtilization.onHit(uri);
+            String key = asUtilizationKey(routeId, uri);
+            if (key != null) {
+                inputUtilization.onHit(key);
+            }
         } else {
             ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
             Endpoint endpoint = ese.getEndpoint();
@@ -232,7 +251,10 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                 uris.put(uri, uri);
             }
             if (extended) {
-                outputUtilization.onHit(uri);
+                String key = asUtilizationKey(routeId, uri);
+                if (key != null) {
+                    outputUtilization.onHit(key);
+                }
             }
         }
     }
@@ -257,6 +279,14 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                 || event instanceof ExchangeSendingEvent
                 || event instanceof RouteAddedEvent
                 || event instanceof RouteRemovedEvent;
+    }
+
+    private static String asUtilizationKey(String routeId, String uri) {
+        if (routeId == null || uri == null) {
+            return null;
+        } else {
+            return routeId + "|" + uri;
+        }
     }
 
     private static class EndpointRuntimeStatistics implements Statistic {

@@ -84,6 +84,11 @@ public interface RuntimeEndpointRegistry extends StaticService {
     void clear();
 
     /**
+     * Reset the statistic counters
+     */
+    void reset();
+
+    /**
      * Number of endpoints currently in the cache.
      */
     int size();

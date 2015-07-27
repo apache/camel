@@ -55,6 +55,11 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
     }
 
     @Override
+    public void reset() {
+        registry.reset();
+    }
+
+    @Override
     public boolean isEnabled() {
         return registry.isEnabled();
     }

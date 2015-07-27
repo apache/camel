@@ -27,6 +27,9 @@ public interface ManagedRuntimeEndpointRegistryMBean extends ManagedServiceMBean
     @ManagedOperation(description = "Clears the registry")
     void clear();
 
+    @ManagedOperation(description = "Reset the statistic counters")
+    void reset();
+
     @ManagedAttribute(description = "Whether gathering runtime usage is enabled or not")
     boolean isEnabled();
 
