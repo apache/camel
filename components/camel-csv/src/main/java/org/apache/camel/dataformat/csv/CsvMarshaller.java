@@ -74,7 +74,7 @@ abstract class CsvMarshaller {
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
         CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream), format);
         try {
-            List<?> list = ExchangeHelper.convertToType(exchange, List.class, object);
+            List<?> list = exchange.getContext().getTypeConverter().tryConvertTo(List.class, exchange, object);
             if (list != null) {
                 for (Object child : list) {
                     printer.printRecord(getRecordValues(exchange, child));
@@ -88,7 +88,7 @@ abstract class CsvMarshaller {
     }
 
     private Iterable<?> getRecordValues(Exchange exchange, Object data) throws NoTypeConversionAvailableException {
-        Map<?, ?> map = ExchangeHelper.convertToType(exchange, Map.class, data);
+        Map<?, ?> map = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, data);
         if (map != null) {
             return getMapRecordValues(map);
         }
