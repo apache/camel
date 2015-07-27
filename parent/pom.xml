@@ -443,7 +443,7 @@
     <solr-version-range>[4.10,5)</solr-version-range>
     <spark-rest-version>2.0.0</spark-rest-version>
     <spark-rest-bundle-version>2.0.0_1</spark-rest-bundle-version>
-    <splunk-version>1.3.2.0_1</splunk-version>
+    <splunk-version>1.4.0.0_1</splunk-version>
     <spring-batch-version>3.0.3.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.3.RELEASE_1</spring-batch-bundle-version>
     <spring-boot-version>1.2.5.RELEASE</spring-boot-version>
