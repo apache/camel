@@ -460,7 +460,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 agent.setMask(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getMask()));
             }
             if (camelJMXAgent.getLoadStatisticsEnabled() != null) {
-                agent.setMask(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getLoadStatisticsEnabled()));
+                agent.setLoadStatisticsEnabled(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getLoadStatisticsEnabled()));
+            }
+            if (camelJMXAgent.getEndpointRuntimeStatisticsEnabled() != null) {
+                agent.setEndpointRuntimeStatisticsEnabled(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getEndpointRuntimeStatisticsEnabled()));
             }
             if (camelJMXAgent.getStatisticsLevel() != null) {
                 String level = CamelContextHelper.parseText(getContext(), camelJMXAgent.getStatisticsLevel());

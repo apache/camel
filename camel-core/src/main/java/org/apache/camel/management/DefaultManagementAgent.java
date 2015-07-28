@@ -79,6 +79,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean createConnector = false;
     private Boolean onlyRegisterProcessorWithCustomId = false;
     private Boolean loadStatisticsEnabled = false;
+    private Boolean endpointRuntimeStatisticsEnabled = true;
     private Boolean registerAlways = false;
     private Boolean registerNewRoutes = true;
     private Boolean mask = true;
@@ -152,6 +153,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         if (System.getProperty(JmxSystemPropertyKeys.LOAD_STATISTICS_ENABLED) != null) {
             loadStatisticsEnabled = Boolean.getBoolean(JmxSystemPropertyKeys.LOAD_STATISTICS_ENABLED);
             values.put(JmxSystemPropertyKeys.LOAD_STATISTICS_ENABLED, loadStatisticsEnabled);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.ENDPOINT_RUNTIME_STATISTICS_ENABLED) != null) {
+            endpointRuntimeStatisticsEnabled = Boolean.getBoolean(JmxSystemPropertyKeys.ENDPOINT_RUNTIME_STATISTICS_ENABLED);
+            values.put(JmxSystemPropertyKeys.ENDPOINT_RUNTIME_STATISTICS_ENABLED, endpointRuntimeStatisticsEnabled);
         }
         if (System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL) != null) {
             statisticsLevel = camelContext.getTypeConverter().mandatoryConvertTo(ManagementStatisticsLevel.class, System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL));
@@ -285,6 +290,14 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     public void setLoadStatisticsEnabled(Boolean loadStatisticsEnabled) {
         this.loadStatisticsEnabled = loadStatisticsEnabled;
+    }
+
+    public Boolean getEndpointRuntimeStatisticsEnabled() {
+        return endpointRuntimeStatisticsEnabled;
+    }
+
+    public void setEndpointRuntimeStatisticsEnabled(Boolean endpointRuntimeStatisticsEnabled) {
+        this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
     }
 
     public ManagementStatisticsLevel getStatisticsLevel() {

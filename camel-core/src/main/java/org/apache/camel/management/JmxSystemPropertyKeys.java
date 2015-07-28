@@ -53,6 +53,9 @@ public final class JmxSystemPropertyKeys {
     // whether to enable gathering load statistics in the background
     public static final String LOAD_STATISTICS_ENABLED = "org.apache.camel.jmx.loadStatisticsEnabled";
 
+    // whether to enable gathering endpoint runtime statistics
+    public static final String ENDPOINT_RUNTIME_STATISTICS_ENABLED = "org.apache.camel.jmx.endpointRuntimeStatisticsEnabled";
+
     // the level of statistics enabled
     public static final String STATISTICS_LEVEL = "org.apache.camel.jmx.statisticsLevel";
 

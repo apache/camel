@@ -319,6 +319,22 @@ public interface ManagementAgent extends Service {
     Boolean getLoadStatisticsEnabled();
 
     /**
+     * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints).
+     * <p/>
+     * The default value is <tt>true</tt>
+     *
+     * @param flag <tt>false</tt> to disable endpoint runtime statistics
+     */
+    void setEndpointRuntimeStatisticsEnabled(Boolean flag);
+
+    /**
+     * Gets whether load statistics is enabled
+     *
+     * @return <tt>true</tt> if enabled
+     */
+    Boolean getEndpointRuntimeStatisticsEnabled();
+
+    /**
      * Sets the statistics level
      * <p/>
      * Default is {@link org.apache.camel.ManagementStatisticsLevel#Default}

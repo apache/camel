@@ -51,7 +51,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     private Map<String, Map<String, String>> outputs;
     private int limit = 1000;
     private boolean enabled = true;
-    private boolean extended;
+    private volatile boolean extended;
     private EndpointUtilizationStatistics inputUtilization;
     private EndpointUtilizationStatistics outputUtilization;
 
@@ -190,11 +190,17 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             outputs = new HashMap<String, Map<String, String>>();
         }
         if (getCamelContext().getManagementStrategy().getManagementAgent() != null) {
-            extended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+            Boolean isEnabled = getCamelContext().getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
+            boolean isExtended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+            // extended mode is either if we use Extended statistics level or the option is explicit enabled
+            extended = isExtended || isEnabled != null && isEnabled;
         }
         if (extended) {
             inputUtilization = new DefaultEndpointUtilizationStatistics(limit);
             outputUtilization = new DefaultEndpointUtilizationStatistics(limit);
+        }
+        if (extended) {
+            log.info("Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})", limit);
         }
         ServiceHelper.startServices(inputUtilization, outputUtilization);
     }

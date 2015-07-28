@@ -112,6 +112,12 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     private String loadStatisticsEnabled;
 
     /**
+     * A flag that indicates whether endpoint runtime statistics is enabled
+     */
+    @XmlAttribute
+    private String endpointRuntimeStatisticsEnabled;
+
+    /**
      * A flag that indicates whether to include hostname in JMX MBean names.
      */
     @XmlAttribute
@@ -227,6 +233,14 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
+    public String getEndpointRuntimeStatisticsEnabled() {
+        return endpointRuntimeStatisticsEnabled;
+    }
+
+    public void setEndpointRuntimeStatisticsEnabled(String endpointRuntimeStatisticsEnabled) {
+        this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
+    }
+
     public String getIncludeHostName() {
         return includeHostName;
     }
@@ -278,6 +292,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         }
         if (loadStatisticsEnabled != null) {
             csb.append("loadStatisticsEnabled=" + loadStatisticsEnabled);
+        }
+        if (endpointRuntimeStatisticsEnabled != null) {
+            csb.append("endpointRuntimeStatisticsEnabled=" + endpointRuntimeStatisticsEnabled);
         }
         if (onlyRegisterProcessorWithCustomId != null) {
             csb.append("onlyRegisterProcessorWithCustomId=" + onlyRegisterProcessorWithCustomId);
