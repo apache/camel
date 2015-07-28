@@ -36,7 +36,7 @@ public class EndpointStatisticCommand extends AbstractCamelCommand {
     private static final String DIRECTION_COLUMN_LABEL = "Direction";
     private static final String STATIC_COLUMN_LABEL = "Static";
     private static final String DYNAMIC_COLUMN_LABEL = "Dynamic";
-    private static final String HITS_COLUMN_LABEL = "Hits";
+    private static final String HITS_COLUMN_LABEL = "Total #";
 
     private static final int DEFAULT_COLUMN_WIDTH_INCREMENT = 0;
     private static final String DEFAULT_FIELD_PREAMBLE = " ";
@@ -82,7 +82,7 @@ public class EndpointStatisticCommand extends AbstractCamelCommand {
 
                 if (!header) {
                     out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, URI_COLUMN_LABEL, ROUTE_COLUMN_LABEL, DIRECTION_COLUMN_LABEL, STATIC_COLUMN_LABEL, DYNAMIC_COLUMN_LABEL, HITS_COLUMN_LABEL));
-                    out.println(String.format(headerFormat, "-------", "---", "--------", "---------", "------", "-------", "----"));
+                    out.println(String.format(headerFormat, "-------", "---", "--------", "---------", "------", "-------", "-------"));
                     header = true;
                 }
 
