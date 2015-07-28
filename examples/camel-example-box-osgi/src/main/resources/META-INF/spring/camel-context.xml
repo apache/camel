@@ -26,7 +26,7 @@
   <bean id="placeholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="locations">
       <list>
-        <value>file:box.com.properties</value>
+        <value>file:box.properties</value>
       </list>
     </property>
     <property name="ignoreResourceNotFound" value="true" />
