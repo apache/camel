@@ -207,7 +207,7 @@
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.21</hawtdispatch-version>
-    <hazelcast-version>3.5</hazelcast-version>
+    <hazelcast-version>3.5.1</hazelcast-version>
     <hbase-version>0.98.5-hadoop2</hbase-version>
     <hbase-bundle-version>0.98.5-hadoop2_2</hbase-bundle-version>
     <hibernate-validator-version>5.2.0.Final</hibernate-validator-version>
