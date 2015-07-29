@@ -213,31 +213,23 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         return this.throttleEntries;
     }
     
-    /**
-     * @return the username
-     */
     public String getUsername() {
         return username;
     }
 
     /**
-     * Sets the username to be used for basic authentication
-     * @param username the username to set
+     * Sets the username to be used for basic authentication when polling from a HTTP feed
      */
     public void setUsername(String username) {
         this.username = username;
     }
 
-    /**
-     * @return the password
-     */
     public String getPassword() {
         return password;
     }
 
     /**
-     * Sets the password to be used for basic authentication
-     * @param password the password to set
+     * Sets the password to be used for basic authentication when polling from a HTTP feed
      */
     public void setPassword(String password) {
         this.password = password;
