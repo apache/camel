@@ -557,6 +557,12 @@ public class BeanInfo {
         final List<MethodInfo> localOperationsWithCustomAnnotation = new ArrayList<MethodInfo>(operationsWithCustomAnnotation);
         final List<MethodInfo> localOperationsWithHandlerAnnotation = new ArrayList<MethodInfo>(operationsWithHandlerAnnotation);
 
+        // remove all abstract methods
+        removeAllAbstractMethods(localOperationsWithBody);
+        removeAllAbstractMethods(localOperationsWithNoBody);
+        removeAllAbstractMethods(localOperationsWithCustomAnnotation);
+        removeAllAbstractMethods(localOperationsWithHandlerAnnotation);
+
         if (name != null) {
             // filter all lists to only include methods with this name
             removeNonMatchingMethods(localOperationsWithHandlerAnnotation, name);
@@ -831,11 +837,6 @@ public class BeanInfo {
             return false;
         }
 
-        // must not be abstract
-        if (Modifier.isAbstract(method.getModifiers())) {
-            return false;
-        }
-
         // return type must not be an Exchange and it should not be a bridge method
         if ((method.getReturnType() != null && Exchange.class.isAssignableFrom(method.getReturnType())) || method.isBridge()) {
             return false;
@@ -977,6 +978,17 @@ public class BeanInfo {
             MethodInfo info = it.next();
             if (!matchMethod(info.getMethod(), name)) {
                 // method does not match so remove it
+                it.remove();
+            }
+        }
+    }
+
+    private void removeAllAbstractMethods(List<MethodInfo> methods) {
+        Iterator<MethodInfo> it = methods.iterator();
+        while (it.hasNext()) {
+            MethodInfo info = it.next();
+            if (Modifier.isAbstract(info.getMethod().getModifiers())) {
+                // we cannot invoke an abstract method
                 it.remove();
             }
         }
