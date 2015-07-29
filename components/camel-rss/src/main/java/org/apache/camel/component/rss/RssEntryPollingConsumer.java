@@ -37,7 +37,7 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
     @Override
     protected void populateList(Object feed) throws Exception {
         if (list == null) {
-            list = ((SyndFeed)feed).getEntries();
+            list = ((SyndFeed) feed).getEntries();
             if (endpoint.isSortEntries()) {
                 sortEntries();
             }
@@ -52,7 +52,7 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
 
     @Override
     protected Object createFeed() throws Exception {
-        if ( ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
+        if (ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
             return RssUtils.createFeed(endpoint.getFeedUri(), RssEntryPollingConsumer.class.getClassLoader());
         } else {
             return RssUtils.createFeed(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword(), RssEntryPollingConsumer.class.getClassLoader());

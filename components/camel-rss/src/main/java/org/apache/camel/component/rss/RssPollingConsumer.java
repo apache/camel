@@ -31,7 +31,7 @@ public class RssPollingConsumer extends FeedPollingConsumer {
 
     @Override
     protected Object createFeed() throws Exception {
-        if ( ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
+        if (ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
             return RssUtils.createFeed(endpoint.getFeedUri());
         } else {
             return RssUtils.createFeed(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword());

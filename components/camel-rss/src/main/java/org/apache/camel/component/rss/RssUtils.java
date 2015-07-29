@@ -17,12 +17,12 @@
 package org.apache.camel.component.rss;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
-import java.net.HttpURLConnection;
 import org.apache.commons.codec.binary.Base64;
 
 public final class RssUtils {

@@ -23,12 +23,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- * 
- * @author Alexander Friedrichs
- */
 public class RssEntryPollingConsumerWithBasicAuthTest extends CamelTestSupport {
-    
+
     @Test
     public void testListOfEntriesIsSplitIntoPieces() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -41,7 +37,7 @@ public class RssEntryPollingConsumerWithBasicAuthTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("rss:http://localhost:"+JettyTestServer.getInstance().port+"/?splitEntries=true&sortEntries=true&consumer.delay=100&username=camel&password=camelPass").to("mock:result");
+                from("rss:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&sortEntries=true&consumer.delay=100&username=camel&password=camelPass").to("mock:result");
             }
         };
     }

@@ -1,18 +1,18 @@
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with this
- * work for additional information regarding copyright ownership. The ASF
- * licenses this file to You under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.component.rss;
 
@@ -22,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -33,25 +34,23 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.security.Credential;
-import static org.junit.Assert.fail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author Alexander Friedrichs
- */
-public class JettyTestServer {
+import static org.junit.Assert.fail;
+
+public final class JettyTestServer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyTestServer.class);
-    private static JettyTestServer _INSTANCE;
+    private static JettyTestServer instance;
+
+    public int port;
 
     private Server server;
-    public int port;
 
     private JettyTestServer() {
     }
-    
+
     public void startServer() {
         server = new Server(0);
 
@@ -83,7 +82,6 @@ public class JettyTestServer {
     }
 
     private SecurityHandler basicAuth(String username, String password, String realm) {
-
         HashLoginService l = new HashLoginService();
         l.putUser(username, Credential.getCredential(password), new String[]{"user"});
         l.setName(realm);
@@ -104,14 +102,13 @@ public class JettyTestServer {
         csh.setLoginService(l);
 
         return csh;
-
     }
 
     public static JettyTestServer getInstance() {
-        if (_INSTANCE == null) {
-            _INSTANCE = new JettyTestServer();
+        if (instance == null) {
+            instance = new JettyTestServer();
         }
-        return _INSTANCE;
+        return instance;
     }
 
     private class MyHttpServlet extends HttpServlet {
@@ -119,9 +116,9 @@ public class JettyTestServer {
         private static final long serialVersionUID = 5594945031962091041L;
 
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-                throws ServletException, IOException {
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             resp.getWriter().write(FileUtils.readFileToString(new File("src/test/data/rss20.xml")));
         }
     }
+
 }
