@@ -17,34 +17,34 @@
 package org.apache.camel.component.atom;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
-/**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
- */
-public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
+public class AtomPollingConsumerWithBasicAuthTest extends AtomPollingConsumerTest {
 
-    @Test
-    public void testConsumeIdleMessages() throws Exception {
-        Thread.sleep(110);
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(2);
-        assertMockEndpointsSatisfied();
-        assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
-        assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
-    }
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("atom:file:src/test/data/empty-feed.atom?splitEntries=true&consumer.delay=50&consumer.initialDelay=0"
-                        + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
+                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=false&username=camel&password=camelPass")
                         .to("mock:result");
+
+                // this is a bit weird syntax that normally is not used using the feedUri parameter
+                from("atom:?feedUri=http://localhost:" + JettyTestServer.getInstance().port + "/&splitEntries=false&username=camel&password=camelPass")
+                        .to("mock:result2");
             }
         };
+    }
+
+    @BeforeClass
+    public static void startServer() {
+        JettyTestServer.getInstance().startServer();
+    }
+
+    @AfterClass
+    public static void stopServer() {
+        JettyTestServer.getInstance().stopServer();
     }
 
 }

@@ -14,37 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atom;
+package org.apache.camel.component.rss;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
+ * 
+ * @author Alexander Friedrichs
  */
-public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
-
+public class RssEntryPollingConsumerWithBasicAuthTest extends CamelTestSupport {
+    
     @Test
-    public void testConsumeIdleMessages() throws Exception {
-        Thread.sleep(110);
+    public void testListOfEntriesIsSplitIntoPieces() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(2);
-        assertMockEndpointsSatisfied();
-        assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
-        assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
+        mock.expectedMessageCount(10);
+        mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("atom:file:src/test/data/empty-feed.atom?splitEntries=true&consumer.delay=50&consumer.initialDelay=0"
-                        + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
-                        .to("mock:result");
+                from("rss:http://localhost:"+JettyTestServer.getInstance().port+"/?splitEntries=true&sortEntries=true&consumer.delay=100&username=camel&password=camelPass").to("mock:result");
             }
         };
     }
 
+    @BeforeClass
+    public static void startServer() {
+        JettyTestServer.getInstance().startServer();
+    }
+
+    @AfterClass
+    public static void stopServer() {
+        JettyTestServer.getInstance().stopServer();
+    }
 }

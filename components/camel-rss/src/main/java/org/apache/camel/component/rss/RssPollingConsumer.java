@@ -18,6 +18,7 @@ package org.apache.camel.component.rss;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedPollingConsumer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Consumer to poll RSS feeds and return the full feed.
@@ -30,7 +31,11 @@ public class RssPollingConsumer extends FeedPollingConsumer {
 
     @Override
     protected Object createFeed() throws Exception {
-        return RssUtils.createFeed(endpoint.getFeedUri());
+        if ( ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
+            return RssUtils.createFeed(endpoint.getFeedUri());
+        } else {
+            return RssUtils.createFeed(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword());
+        }
     }
 
 }

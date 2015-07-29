@@ -47,6 +47,10 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     private boolean sortEntries;
     @UriParam(defaultValue = "true")
     private boolean throttleEntries = true;
+    @UriParam
+    private String username;
+    @UriParam
+    private String password;
 
     public FeedEndpoint() {
     }
@@ -207,6 +211,36 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
     public boolean isThrottleEntries() {
         return this.throttleEntries;
+    }
+    
+    /**
+     * @return the username
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Sets the username to be used for basic authentication
+     * @param username the username to set
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Sets the password to be used for basic authentication
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     // Implementation methods

@@ -23,6 +23,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Consumer to poll RSS feeds and return each entry from the feed step by step.
@@ -51,7 +52,11 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
 
     @Override
     protected Object createFeed() throws Exception {
-        return RssUtils.createFeed(endpoint.getFeedUri(), RssEntryPollingConsumer.class.getClassLoader());
+        if ( ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
+            return RssUtils.createFeed(endpoint.getFeedUri(), RssEntryPollingConsumer.class.getClassLoader());
+        } else {
+            return RssUtils.createFeed(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword(), RssEntryPollingConsumer.class.getClassLoader());
+        }
     }
 
     @Override
