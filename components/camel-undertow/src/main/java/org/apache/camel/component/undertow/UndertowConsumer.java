@@ -16,7 +16,12 @@
  */
 package org.apache.camel.component.undertow;
 
+import io.undertow.server.HttpHandler;
+
+import java.net.URI;
+
 import org.apache.camel.Processor;
+import org.apache.camel.component.undertow.handlers.HttpCamelHandler;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +47,17 @@ public class UndertowConsumer extends DefaultConsumer {
         super.doStart();
         LOG.debug("Undertow consumer is starting");
         getEndpoint().getComponent().registerConsumer(this);
-        getEndpoint().getComponent().startServer(this);
+
+        UndertowHostFactory factory = UndertowHostFactory.Locator.getUndertowHostFactory();
+        if (factory == null) {
+            factory = new DefaultUndertowHostFactory();
+        }
+
+        URI httpUri = getEndpoint().getHttpURI();
+        UndertowHost host = factory.createUndertowHost();
+
+        host.validateEndpointURI(httpUri);
+        host.registerHandler(httpUri.getPath(), new HttpCamelHandler(this));
     }
 
     @Override
@@ -51,4 +66,22 @@ public class UndertowConsumer extends DefaultConsumer {
         getEndpoint().getComponent().unregisterConsumer(this);
     }
 
+    class DefaultUndertowHostFactory implements UndertowHostFactory {
+
+        @Override
+        public UndertowHost createUndertowHost() {
+            return new UndertowHost () {
+
+                @Override
+                public void validateEndpointURI(URI httpURI) {
+                    // all URIs are good
+                }
+
+                @Override
+                public void registerHandler(String path, HttpHandler handler) {
+                    getEndpoint().getComponent().startServer(UndertowConsumer.this);
+                }
+            };
+        }
+    }
 }
