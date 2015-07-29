@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -41,7 +43,6 @@ import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
@@ -60,6 +61,7 @@ import org.apache.camel.util.URISupport;
  */
 public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor, ShutdownPrepared, Navigate<Processor> {
 
+    protected final AtomicInteger redeliverySleepCounter = new AtomicInteger();
     protected ScheduledExecutorService executorService;
     protected final CamelContext camelContext;
     protected final Processor deadLetter;
@@ -427,8 +429,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         // async delayed redelivery was disabled or we are transacted so we must be synchronous
                         // as the transaction manager requires to execute in the same thread context
                         try {
+                            // we are doing synchronous redelivery and use thread sleep, so we keep track using a counter how many are sleeping
+                            redeliverySleepCounter.incrementAndGet();
                             data.currentRedeliveryPolicy.sleep(data.redeliveryDelay);
+                            redeliverySleepCounter.decrementAndGet();
                         } catch (InterruptedException e) {
+                            redeliverySleepCounter.decrementAndGet();
                             // we was interrupted so break out
                             exchange.setException(e);
                             // mark the exchange to stop continue routing when interrupted
@@ -1313,6 +1319,18 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return false;
     }
 
+    /**
+     * Gets the number of exchanges that are pending for redelivery
+     */
+    public int getPendingRedeliveryCount() {
+        int answer = redeliverySleepCounter.get();
+        if (executorService != null && executorService instanceof ThreadPoolExecutor) {
+            answer += ((ThreadPoolExecutor) executorService).getQueue().size();
+        }
+
+        return answer;
+    }
+
     @Override
     protected void doStart() throws Exception {
         ServiceHelper.startServices(output, outputAsync, deadLetter);
@@ -1336,6 +1354,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         // reset flag when starting
         preparingShutdown = false;
+        redeliverySleepCounter.set(0);
     }
 
     @Override
