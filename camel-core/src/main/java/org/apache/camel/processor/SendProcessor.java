@@ -59,6 +59,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     protected Endpoint destination;
     protected ExchangePattern destinationExchangePattern;
     protected String id;
+    protected volatile long counter;
 
     public SendProcessor(Endpoint destination) {
         this(destination, null);
@@ -121,6 +122,8 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // we should preserve existing MEP so remember old MEP
         // if you want to permanently to change the MEP then use .setExchangePattern in the DSL
         final ExchangePattern existingPattern = exchange.getPattern();
+
+        counter++;
 
         // if we have a producer then use that as its optimized
         if (producer != null) {
@@ -193,6 +196,14 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // set property which endpoint we send to
         exchange.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
         return exchange;
+    }
+
+    public long getCounter() {
+        return counter;
+    }
+
+    public void reset() {
+        counter = 0;
     }
 
     protected void doStart() throws Exception {

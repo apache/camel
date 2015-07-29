@@ -47,7 +47,7 @@
     </bean>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <endpoint id="input" uri="undertow:https://localhost:#{dynaPort}/spring?sslContextParametersRef=sslContextParameters"/>
+        <endpoint id="input" uri="undertow:https://localhost:#{dynaPort}/spring?sslContextParameters=#sslContextParameters"/>
 
         <route>
             <from ref="input"/>

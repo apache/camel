@@ -43,6 +43,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Uptime")
     String getUptime();
 
+    @ManagedAttribute(description = "Camel Management StatisticsLevel")
+    String getManagementStatisticsLevel();
+
     @ManagedAttribute(description = "Camel Properties")
     Map<String, String> getProperties();
 

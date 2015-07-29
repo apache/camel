@@ -32,7 +32,7 @@ public class JettyHttpHeadersTest extends BaseJettyTest {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_QUERY, "beer=yes");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "");
 
-        String out = template.requestBody("http://localhost:{{port}}/foo?beer=yes", "Hello World", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo?beer=yes", "Hello World", Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();

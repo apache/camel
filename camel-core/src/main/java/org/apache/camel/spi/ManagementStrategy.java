@@ -207,44 +207,56 @@ public interface ManagementStrategy extends Service {
      * Default is false.
      *
      * @param flag <tt>true</tt> will only manage if custom id was set.
+     * @deprecated use {@link org.apache.camel.spi.ManagementAgent}
      */
+    @Deprecated
     void onlyManageProcessorWithCustomId(boolean flag);
 
     /**
      * Checks whether only to manage processors if they have been configured with a custom id
      *
      * @return true or false
+     * @deprecated use {@link org.apache.camel.spi.ManagementAgent}
      */
+    @Deprecated
     boolean isOnlyManageProcessorWithCustomId();
 
     /**
      * Sets whether load statistics is enabled.
      *
      * @param flag <tt>true</tt> to enable load statistics
+     * @deprecated use {@link org.apache.camel.spi.ManagementAgent}
      */
+    @Deprecated
     void setLoadStatisticsEnabled(boolean flag);
 
     /**
      * Gets whether load statistics is enabled
      *
      * @return <tt>true</tt> if enabled
+     * @deprecated use {@link org.apache.camel.spi.ManagementAgent}
      */
+    @Deprecated
     boolean isLoadStatisticsEnabled();
 
     /**
      * Sets the statistics level
      * <p/>
-     * Default is {@link org.apache.camel.ManagementStatisticsLevel#All}
+     * Default is {@link org.apache.camel.ManagementStatisticsLevel#Default}
      *
      * @param level the new level
+     * @deprecated use {@link org.apache.camel.spi.ManagementAgent}
      */
+    @Deprecated
     void setStatisticsLevel(ManagementStatisticsLevel level);
 
     /**
      * Gets the statistics level
      *
      * @return the level
+     * @deprecated use {@link org.apache.camel.spi.ManagementAgent}
      */
+    @Deprecated
     ManagementStatisticsLevel getStatisticsLevel();
 
 }

@@ -142,12 +142,10 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         super.doStart();
 
         // configure component options
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
-            // configure additional options on spark configuration
-            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
-                setProperties(this, config.getComponentProperties());
-            }
+        RestConfiguration config = getCamelContext().getRestConfiguration("restlet", true);
+        // configure additional options on spark configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(this, config.getComponentProperties());
         }
 
         component.start();
@@ -685,18 +683,16 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         int port = this.getPort();
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config.getComponent() == null || config.getComponent().equals("restlet")) {
-            if (config.getScheme() != null) {
-                scheme = config.getScheme();
-            }
-            if (config.getHost() != null) {
-                host = config.getHost();
-            }
-            int num = config.getPort();
-            if (num > 0) {
-                port = num;
-            }
+        RestConfiguration config = getCamelContext().getRestConfiguration("restlet", true);
+        if (config.getScheme() != null) {
+            scheme = config.getScheme();
+        }
+        if (config.getHost() != null) {
+            host = config.getHost();
+        }
+        int num = config.getPort();
+        if (num > 0) {
+            port = num;
         }
 
         // if no explicit hostname set then resolve the hostname

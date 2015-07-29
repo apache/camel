@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.eclipse.californium.core.CoapServer;
 
@@ -33,6 +34,8 @@ import org.eclipse.californium.core.CoapServer;
 public class CoAPEndpoint extends DefaultEndpoint {
     @UriPath
     private URI uri;
+    @UriParam(defaultValue = "*")
+    private String coapMethod = "*";
         
     private CoAPComponent component;
     
@@ -46,6 +49,17 @@ public class CoAPEndpoint extends DefaultEndpoint {
         this.component = component;
     }
 
+    public void setCoapMethod(String m) {
+        coapMethod = m;
+    }
+    /**
+     * The CoAP method this endpoint binds to. Default is to bind to all ("*") but can
+     * be restricted to GET, POST, PUT, DELETE 
+     * @return
+     */
+    public String getCoapMethod() {
+        return coapMethod;
+    }
     public Producer createProducer() throws Exception {
         return new CoAPProducer(this);
     }

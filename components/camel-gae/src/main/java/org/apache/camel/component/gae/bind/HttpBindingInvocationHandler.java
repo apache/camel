@@ -21,8 +21,8 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.http.HttpBinding;
-import org.apache.camel.component.http.HttpMessage;
+import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpMessage;
 
 /**
  * Post-processes {@link HttpBinding} invocations by delegating to an

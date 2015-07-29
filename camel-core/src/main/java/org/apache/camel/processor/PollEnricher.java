@@ -28,6 +28,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.EmptyConsumerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -92,6 +93,10 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return consumerCache.getEndpointUtilizationStatistics();
     }
 
     public AggregationStrategy getAggregationStrategy() {

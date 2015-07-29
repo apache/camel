@@ -20,6 +20,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedValidateMBean extends ManagedProcessorMBean {
 
+    @ManagedAttribute(description = "The language for the predicate")
+    String getPredicateLanguage();
+
     @ManagedAttribute(description = "Predicate to determine if the message is valid or not")
     String getPredicate();
 

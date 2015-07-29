@@ -358,7 +358,9 @@ public class HazelcastAggregationRepository extends ServiceSupport
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
         LOG.trace("Confirming an exchange with ID {}.", exchangeId);
-        persistedCache.remove(exchangeId);
+        if (useRecovery) {
+            persistedCache.remove(exchangeId);
+        }
     }
 
     @Override

@@ -99,7 +99,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     public SjmsEndpoint(String uri, Component component, String remaining) {
         super(uri, component);
         DestinationNameParser parser = new DestinationNameParser();
-        topic = parser.isTopic(remaining);
+        this.topic = parser.isTopic(remaining);
         this.destinationName = parser.getShortName(remaining);
     }
 

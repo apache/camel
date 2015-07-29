@@ -16,9 +16,15 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import javax.management.openmbean.TabularData;
 
-public interface ManagedPollEnricherMBean extends ManagedProcessorMBean {
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+
+public interface ManagedPollEnricherMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
+
+    @ManagedAttribute(description = "The language for the expression")
+    String getExpressionLanguage();
 
     @ManagedAttribute(description = "Expression that computes the endpoint uri to use as the resource endpoint to poll enrich from", mask = true)
     String getExpression();
@@ -34,5 +40,8 @@ public interface ManagedPollEnricherMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Whether to aggregate when there was an exception thrown during calling the resource endpoint")
     Boolean isAggregateOnException();
+
+    @ManagedOperation(description = "Statistics of the endpoints that has been poll enriched from")
+    TabularData extendedInformation();
 
 }

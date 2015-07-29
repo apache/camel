@@ -94,6 +94,7 @@
         <include>org.apache.camel:camel-hdfs2</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-http</include>
+        <include>org.apache.camel:camel-http-common</include>
         <include>org.apache.camel:camel-http4</include>
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-ical</include>

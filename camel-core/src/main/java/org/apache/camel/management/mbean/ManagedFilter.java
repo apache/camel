@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedFilterMBean;
+import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.FilterProcessor;
 
@@ -29,9 +30,14 @@ import org.apache.camel.processor.FilterProcessor;
 public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {
     private final FilterProcessor processor;
 
-    public ManagedFilter(CamelContext context, FilterProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedFilter(CamelContext context, FilterProcessor processor, FilterDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
+    }
+
+    @Override
+    public FilterDefinition getDefinition() {
+        return (FilterDefinition) super.getDefinition();
     }
 
     @Override
@@ -42,7 +48,12 @@ public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBea
 
     @Override
     public String getPredicate() {
-        return processor.getPredicate().toString();
+        return getDefinition().getExpression().getExpression();
+    }
+
+    @Override
+    public String getPredicateLanguage() {
+        return getDefinition().getExpression().getLanguage();
     }
 
     @Override

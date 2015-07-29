@@ -21,8 +21,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.Expression;
+import org.apache.camel.model.ExpressionNodeHelper;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.spi.Metadata;
@@ -58,6 +61,12 @@ public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
      */
     public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
         this.correlationExpression = correlationExpression;
+    }
+
+    public void setCorrelationExpression(Expression expression) {
+        ExpressionDefinition def = ExpressionNodeHelper.toExpressionDefinition(expression);
+        this.correlationExpression = new ExpressionSubElementDefinition();
+        this.correlationExpression.setExpressionType(def);
     }
 
     @Override

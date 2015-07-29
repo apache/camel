@@ -20,19 +20,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.taskqueue.TaskOptions;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.gae.bind.InboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBinding;
-import org.apache.camel.component.http.DefaultHttpBinding;
-import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Binds the {@link TaskOptions} of the task queueing service to a Camel
  * {@link Exchange} for outbound communication. For inbound communication a
- * {@link HttpMessage} is bound to {@link Exchange}.
+ * {@link org.apache.camel.http.common.HttpMessage} is bound to {@link Exchange}.
  */
 public class GTaskBinding implements 
     OutboundBinding <GTaskEndpoint, TaskOptions, Void>,
@@ -98,7 +95,7 @@ public class GTaskBinding implements
      * @see GTaskBinding#GTASK_QUEUE_NAME
      * @see GTaskBinding#GTASK_TASK_NAME
      * @see GTaskBinding#GTASK_RETRY_COUNT
-     * @see DefaultHttpBinding#readRequest(HttpServletRequest, HttpMessage)
+     * @see org.apache.camel.http.common.DefaultHttpBinding#readRequest(HttpServletRequest, org.apache.camel.http.common.HttpMessage)
      */
     public Exchange readRequest(GTaskEndpoint endpoint, Exchange exchange, HttpServletRequest request) {
         readRequestHeaders(endpoint, exchange, request);

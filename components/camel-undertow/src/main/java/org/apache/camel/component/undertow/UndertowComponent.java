@@ -19,7 +19,6 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import javax.net.ssl.SSLContext;
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -28,78 +27,52 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.component.http.HttpBinding;
-import org.apache.camel.component.http.HttpClientConfigurer;
-import org.apache.camel.component.http.HttpComponent;
-import org.apache.camel.component.http.HttpConfiguration;
 import org.apache.camel.component.undertow.handlers.HttpCamelHandler;
 import org.apache.camel.component.undertow.handlers.NotFoundHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.commons.httpclient.HttpConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
  */
-public class UndertowComponent extends HttpComponent implements RestConsumerFactory {
+public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
-    private UndertowHttpBinding undertowHttpBinding;
-    private Map<Integer, UndertowRegistry> serversRegistry = new HashMap<Integer, UndertowRegistry>();
+    private UndertowHttpBinding undertowHttpBinding = new DefaultUndertowHttpBinding();
+    private final Map<Integer, UndertowRegistry> serversRegistry = new HashMap<Integer, UndertowRegistry>();
 
     public UndertowComponent() {
-        this.undertowHttpBinding = new DefaultUndertowHttpBinding();
+        super(UndertowEndpoint.class);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        //extract parameters from URI
-        Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
-        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
-        SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
-        Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
-        Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
-        String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
+        URI uriHttpUriAddress = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
+        URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
 
-        String address = remaining;
-        URI httpUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(address));
-        URI endpointUri = URISupport.createRemainingURI(httpUri, parameters);
-
-        UndertowEndpoint endpoint = new UndertowEndpoint(endpointUri.toString(), this, httpUri);
-
-        if (endpoint.getUndertowHttpBinding() == null) {
-            endpoint.setUndertowHttpBinding(undertowHttpBinding);
-        }
-
-        //set parameters if they exists in URI
-        if (httpMethodRestrict != null) {
-            endpoint.setHttpMethodRestrict(httpMethodRestrict);
-        }
-        if (matchOnUriPrefix != null) {
-            endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
-        }
-        if (headerFilterStrategy != null) {
-            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
-        }
-        if (sslContextParameters != null) {
-            SSLContext sslContext = sslContextParameters.createSSLContext();
-            endpoint.setSslContext(sslContext);
-        }
-        if (throwExceptionOnFailure != null) {
-            endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
-        }
-        if (transferException != null) {
-            endpoint.setTransferException(transferException);
-        }
-
+        // create the endpoint first
+        UndertowEndpoint endpoint = new UndertowEndpoint(endpointUri.toString(), this);
+        endpoint.setUndertowHttpBinding(undertowHttpBinding);
         setProperties(endpoint, parameters);
+
+        // then re-create the http uri with the remaining parameters which the endpoint did not use
+        URI httpUri = URISupport.createRemainingURI(
+                new URI(uriHttpUriAddress.getScheme(),
+                        uriHttpUriAddress.getUserInfo(),
+                        uriHttpUriAddress.getHost(),
+                        uriHttpUriAddress.getPort(),
+                        uriHttpUriAddress.getPath(),
+                        uriHttpUriAddress.getQuery(),
+                        uriHttpUriAddress.getFragment()),
+                parameters);
+        endpoint.setHttpURI(httpUri);
+
         return endpoint;
     }
 
@@ -119,18 +92,16 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
         String scheme = "http";
         String host = "";
         int port = 0;
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config.getComponent() == null || config.getComponent().equals("undertow")) {
-            if (config.getScheme() != null) {
-                scheme = config.getScheme();
-            }
-            if (config.getHost() != null) {
-                host = config.getHost();
-            }
-            int num = config.getPort();
-            if (num > 0) {
-                port = num;
-            }
+        RestConfiguration config = getCamelContext().getRestConfiguration("undertow", true);
+        if (config.getScheme() != null) {
+            scheme = config.getScheme();
+        }
+        if (config.getHost() != null) {
+            host = config.getHost();
+        }
+        int num = config.getPort();
+        if (num > 0) {
+            port = num;
         }
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -165,6 +136,7 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        serversRegistry.clear();
     }
 
     protected Undertow rebuildServer(UndertowRegistry registy) {
@@ -233,22 +205,6 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
         undertowRegistry.setServer(newServer);
     }
 
-    /**
-     * To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
-     */
-    @Override
-    public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
-        super.setHttpClientConfigurer(httpClientConfigurer);
-    }
-
-    /**
-     * To use a custom HttpConnectionManager to manage connections
-     */
-    @Override
-    public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
-        super.setHttpConnectionManager(httpConnectionManager);
-    }
-
     public UndertowHttpBinding getUndertowHttpBinding() {
         return undertowHttpBinding;
     }
@@ -260,19 +216,4 @@ public class UndertowComponent extends HttpComponent implements RestConsumerFact
         this.undertowHttpBinding = undertowHttpBinding;
     }
 
-    /**
-     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-     */
-    @Override
-    public void setHttpBinding(HttpBinding httpBinding) {
-        super.setHttpBinding(httpBinding);
-    }
-
-    /**
-     * To use the shared HttpConfiguration as base configuration.
-     */
-    @Override
-    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
-        super.setHttpConfiguration(httpConfiguration);
-    }
 }

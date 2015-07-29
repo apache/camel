@@ -66,6 +66,17 @@ public final class CamelOpenMBeanTypes {
                 new OpenType[]{SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN});
     }
 
+    public static TabularType listRuntimeEndpointsTabularType() throws OpenDataException {
+        CompositeType ct = listRuntimeEndpointsCompositeType();
+        return new TabularType("listRuntimeEndpoints", "Lists all the input and output endpoints gathered during runtime", ct, new String[]{"index"});
+    }
+
+    public static CompositeType listRuntimeEndpointsCompositeType() throws OpenDataException {
+        return new CompositeType("endpoints", "Endpoints", new String[]{"index", "url", "routeId", "direction", "static", "dynamic", "hits"},
+                new String[]{"Index", "Url", "Route Id", "Direction", "Static", "Dynamic", "Hits"},
+                new OpenType[]{SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN, SimpleType.LONG});
+    }
+
     public static TabularType explainComponentTabularType() throws OpenDataException {
         CompositeType ct = explainComponentCompositeType();
         return new TabularType("explainComponent", "Explain how this component is configured", ct, new String[]{"option"});
@@ -145,6 +156,39 @@ public final class CamelOpenMBeanTypes {
         return new CompositeType("exchanges", "Exchanges", new String[]{"exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration"},
                 new String[]{"Exchange Id", "From RouteId", "RouteId", "NodeId", "Elapsed", "Duration"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType choiceTabularType() throws OpenDataException {
+        CompositeType ct = choiceCompositeType();
+        return new TabularType("choice", "Choice statistics", ct, new String[]{"predicate"});
+    }
+
+    public static CompositeType choiceCompositeType() throws OpenDataException {
+        return new CompositeType("predicates", "Predicates", new String[]{"predicate", "language", "matches"},
+                new String[]{"Predicate", "Language", "Matches"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.LONG});
+    }
+
+    public static TabularType loadbalancerExceptionsTabularType() throws OpenDataException {
+        CompositeType ct = loadbalancerExceptionsCompositeType();
+        return new TabularType("exception", "Exception statistics", ct, new String[]{"exception"});
+    }
+
+    public static CompositeType loadbalancerExceptionsCompositeType() throws OpenDataException {
+        return new CompositeType("exceptions", "Exceptions", new String[]{"exception", "failures"},
+                new String[]{"Exception", "Failures"},
+                new OpenType[]{SimpleType.STRING, SimpleType.LONG});
+    }
+
+    public static TabularType endpointsUtilizationTabularType() throws OpenDataException {
+        CompositeType ct = endpointsUtilizationCompositeType();
+        return new TabularType("endpointsUtilization", "Endpoint utilization statistics", ct, new String[]{"url"});
+    }
+
+    public static CompositeType endpointsUtilizationCompositeType() throws OpenDataException {
+        return new CompositeType("endpoints", "Endpoints", new String[]{"url", "hits"},
+                new String[]{"Url", "Hits"},
+                new OpenType[]{SimpleType.STRING, SimpleType.LONG});
     }
 
 }

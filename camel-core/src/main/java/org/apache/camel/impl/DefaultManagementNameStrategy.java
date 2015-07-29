@@ -43,7 +43,7 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
     private String namePattern;
 
     public DefaultManagementNameStrategy(CamelContext camelContext) {
-        this(camelContext, System.getProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN, "#name#"), "#name#-#counter#");
+        this(camelContext, null, "#name#-#counter#");
     }
 
     public DefaultManagementNameStrategy(CamelContext camelContext, String defaultPattern, String nextPattern) {
@@ -68,7 +68,7 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
             String pattern = getNamePattern();
             if (pattern == null) {
                 // fallback and use the default pattern which is the same name as the CamelContext has been given
-                pattern = defaultPattern;
+                pattern = defaultPattern != null ? defaultPattern : camelContext.getManagementStrategy().getManagementAgent().getManagementNamePattern();
             }
             name = resolveManagementName(pattern, camelContext.getName(), true);
         }

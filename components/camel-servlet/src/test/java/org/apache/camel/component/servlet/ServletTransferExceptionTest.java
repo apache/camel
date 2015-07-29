@@ -23,8 +23,8 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpConstants;
-import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.http.common.HttpConstants;
+import org.apache.camel.http.common.HttpHelper;
 import org.junit.Test;
 
 /**

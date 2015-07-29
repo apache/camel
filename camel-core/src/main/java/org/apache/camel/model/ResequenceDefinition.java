@@ -68,6 +68,12 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     public ResequenceDefinition() {
     }
 
+    public ResequenceDefinition(Expression expression) {
+        if (expression != null) {
+            setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
+        }
+    }
+
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }

@@ -17,6 +17,7 @@
 package org.apache.camel.component.http4;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -53,8 +54,8 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
 
     @Test
     public void testHttpBindingRef() {
-        assertSame(testBinding, endpoint1.getHttpBinding());
-        assertSame(testBinding, endpoint2.getHttpBinding());
+        assertSame(testBinding, endpoint1.getBinding());
+        assertSame(testBinding, endpoint2.getBinding());
     }
 
     @Test

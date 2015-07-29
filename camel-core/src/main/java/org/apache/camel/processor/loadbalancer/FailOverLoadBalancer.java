@@ -46,9 +46,10 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     private boolean sticky;
     private int maximumFailoverAttempts = -1;
 
-    // stateful counter
+    // stateful statistics
     private final AtomicInteger counter = new AtomicInteger(-1);
-    private final AtomicInteger lastGoodIndex = new AtomicInteger();
+    private final AtomicInteger lastGoodIndex = new AtomicInteger(-1);
+    private final ExceptionFailureStatistics statistics = new ExceptionFailureStatistics();
 
     public FailOverLoadBalancer() {
         this.exceptions = null;
@@ -63,6 +64,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
             }
         }
+
+        statistics.init(exceptions);
     }
 
     @Override
@@ -73,6 +76,10 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public int getLastGoodIndex() {
+        return lastGoodIndex.get();
     }
 
     public List<Class<?>> getExceptions() {
@@ -129,6 +136,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                     }
                 }
             }
+
+            if (answer) {
+                // record the failure in the statistics
+                statistics.onHandledFailure(exchange.getException());
+            }
         }
 
         log.trace("Should failover: {} for exchangeId: {}", answer, exchange.getExchangeId());
@@ -158,7 +170,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
         // get the next processor
         if (isSticky()) {
-            index.set(lastGoodIndex.get());
+            int idx = lastGoodIndex.get();
+            if (idx == -1) {
+                idx = 0;
+            }
+            index.set(idx);
         } else if (isRoundRobin()) {
             if (counter.incrementAndGet() >= processors.size()) {
                 counter.set(0);
@@ -358,4 +374,30 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     public String getTraceLabel() {
         return "failover";
     }
+
+    public ExceptionFailureStatistics getExceptionFailureStatistics() {
+        return statistics;
+    }
+
+    public void reset() {
+        // reset state
+        lastGoodIndex.set(-1);
+        counter.set(-1);
+        statistics.reset();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // reset state
+        reset();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // noop
+    }
+
 }

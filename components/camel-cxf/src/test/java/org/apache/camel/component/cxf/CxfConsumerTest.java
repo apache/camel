@@ -85,18 +85,16 @@ public class CxfConsumerTest extends CamelTestSupport {
                         Map<String, Object> map = new HashMap<String, Object>();
                         map.put("org.apache.cxf.stax.force-start-document", Boolean.TRUE);
                         exchange.getOut().setHeader(Client.RESPONSE_CONTEXT, map);
-                    }
-                })
-                .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION)).process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        Message in = exchange.getIn();
-                        // Get the parameter list
-                        List<?> parameter = in.getBody(List.class);
-                        // Put the result back
-                        exchange.getOut().setBody(parameter.get(0));
-                    }
-                });
-
+                    }})
+                    .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION)).process(new Processor() {
+                        public void process(final Exchange exchange) {
+                            Message in = exchange.getIn();
+                            // Get the parameter list
+                            List<?> parameter = in.getBody(List.class);
+                            // Put the result back
+                            exchange.getOut().setBody(parameter.get(0));
+                        }
+                    });
             }
         };
     }

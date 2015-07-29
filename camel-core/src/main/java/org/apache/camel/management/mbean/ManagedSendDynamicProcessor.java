@@ -16,12 +16,22 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Map;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedSendDynamicProcessorMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -31,6 +41,7 @@ import org.apache.camel.util.URISupport;
 public class ManagedSendDynamicProcessor extends ManagedProcessor implements ManagedSendDynamicProcessorMBean {
     private final SendDynamicProcessor processor;
     private String uri;
+    private boolean sanitize;
 
     public ManagedSendDynamicProcessor(CamelContext context, SendDynamicProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
@@ -39,12 +50,25 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
 
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
+        this.sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
         if (sanitize) {
             uri = URISupport.sanitizeUri(processor.getUri());
         } else {
             uri = processor.getUri();
         }
+    }
+
+    @Override
+    public synchronized void reset() {
+        super.reset();
+        if (processor.getEndpointUtilizationStatistics() != null) {
+            processor.getEndpointUtilizationStatistics().clear();
+        }
+    }
+
+    @Override
+    public Boolean getSupportExtendedInformation() {
+        return true;
     }
 
     public SendDynamicProcessor getProcessor() {
@@ -69,6 +93,35 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
 
     public Boolean isIgnoreInvalidEndpoint() {
         return processor.isIgnoreInvalidEndpoint();
+    }
+
+    @Override
+    public TabularData extendedInformation() {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
+
+            EndpointUtilizationStatistics stats = processor.getEndpointUtilizationStatistics();
+            if (stats != null) {
+                for (Map.Entry<String, Long> entry : stats.getStatistics().entrySet()) {
+                    CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();
+                    String url = entry.getKey();
+                    if (sanitize) {
+                        url = URISupport.sanitizeUri(url);
+                    }
+
+                    Long hits = entry.getValue();
+                    if (hits == null) {
+                        hits = 0L;
+                    }
+
+                    CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
+                    answer.put(data);
+                }
+            }
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
 }

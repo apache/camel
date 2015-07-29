@@ -26,4 +26,34 @@ public interface ManagedThreadsMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "How to handle tasks which cannot be accepted by the thread pool")
     String getRejectedPolicy();
 
+    @ManagedAttribute(description = "Core pool size")
+    int getCorePoolSize();
+
+    @ManagedAttribute(description = "Pool size")
+    int getPoolSize();
+
+    @ManagedAttribute(description = "Maximum pool size")
+    int getMaximumPoolSize();
+
+    @ManagedAttribute(description = "Largest pool size")
+    int getLargestPoolSize();
+
+    @ManagedAttribute(description = "Active count")
+    int getActiveCount();
+
+    @ManagedAttribute(description = "Task count")
+    long getTaskCount();
+
+    @ManagedAttribute(description = "Completed task count")
+    long getCompletedTaskCount();
+
+    @ManagedAttribute(description = "Task queue size")
+    long getTaskQueueSize();
+
+    @ManagedAttribute(description = "Keep alive time in seconds")
+    long getKeepAliveTime();
+
+    @ManagedAttribute(description = "Whether core threads is allowed to timeout if no tasks in queue to process")
+    boolean isAllowCoreThreadTimeout();
+
 }

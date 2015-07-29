@@ -17,53 +17,53 @@
 package org.apache.camel.component.jackson;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import static java.util.Collections.singleton;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.junit.Assert;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import static org.apache.camel.component.jackson.converter.JacksonTypeConverters.convertTo;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+public class JacksonConversionsSimpleTest extends CamelTestSupport {
 
-public class JacksonConversionsSimpleTest extends Assert {
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // enable jackson type converter by setting this property on CamelContext
+        context.getProperties().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+        return context;
+    }
 
     @Test
     public void shouldNotConvertMapToString() {
-        Object convertedObject = convertTo(String.class, null, new HashMap<String, String>(), null);
-        assertNull(convertedObject);
+        Exchange exchange = new DefaultExchange(context);
+
+        Map<String, String> body = new HashMap<String, String>();
+        Object convertedObject = context.getTypeConverter().convertTo(String.class, exchange, body);
+        // will do a toString which is an empty map
+        assertEquals(body.toString(), convertedObject);
     }
 
     @Test
     public void shouldNotConvertMapToNumber() {
-        Object convertedObject = convertTo(Long.class, null, new HashMap<String, String>(), null);
+        Exchange exchange = new DefaultExchange(context);
+
+        Object convertedObject = context.getTypeConverter().convertTo(Long.class, exchange, new HashMap<String, String>());
         assertNull(convertedObject);
     }
 
     @Test
     public void shouldNotConvertMapToPrimitive() {
-        Object convertedObject = convertTo(long.class, null, new HashMap<String, String>(), null);
+        Exchange exchange = new DefaultExchange(context);
+        Object convertedObject = context.getTypeConverter().convertTo(long.class, exchange, new HashMap<String, String>());
+
         assertNull(convertedObject);
-    }
-
-    @Test
-    public void shouldResolveMapperFromRegistry() {
-        // Given
-        Exchange exchange = mock(Exchange.class, RETURNS_DEEP_STUBS);
-        ObjectMapper mapper = mock(ObjectMapper.class);
-        given(exchange.getContext().getRegistry().findByType(eq(ObjectMapper.class))).willReturn(singleton(mapper));
-
-        // When
-        convertTo(TestPojo.class, exchange, new HashMap<String, String>(), null);
-
-        // Then
-        verify(mapper).canSerialize(TestPojo.class);
     }
 
 }

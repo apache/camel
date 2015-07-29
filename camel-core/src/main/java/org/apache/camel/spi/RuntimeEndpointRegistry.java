@@ -18,12 +18,43 @@ package org.apache.camel.spi;
 
 import java.util.List;
 
-import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 
 /**
  * A registry which listen for runtime usage of {@link org.apache.camel.Endpoint} during routing in Camel.
  */
-public interface RuntimeEndpointRegistry extends Service {
+public interface RuntimeEndpointRegistry extends StaticService {
+
+    /**
+     * Statistics gathered about the endpoint.
+     */
+    public interface Statistic {
+
+        /**
+         * The endpoint uri
+         */
+        String getUri();
+
+        /**
+         * The route id (if the endpoint is associated with a route)
+         */
+        String getRouteId();
+
+        /**
+         * Whether the endpoint is used as input our output
+         * <p/>
+         * The returned value can either be <tt>in</tt> or <tt>out</tt>
+         */
+        String getDirection();
+
+        /**
+         * Usage of the endpoint, such as how many messages it has received / sent to
+         * <p/>
+         * This information is only available if {@link org.apache.camel.ManagementStatisticsLevel} is configured as
+         * {@link org.apache.camel.ManagementStatisticsLevel#Extended}.
+         */
+        long getHits();
+    }
 
     /**
      * Whether gathering runtime usage is enabled or not.
@@ -48,7 +79,12 @@ public interface RuntimeEndpointRegistry extends Service {
     void setLimit(int limit);
 
     /**
-     * Clears the runtime usage gathered
+     * Clears the registry
+     */
+    void clear();
+
+    /**
+     * Reset the statistic counters
      */
     void reset();
 
@@ -71,4 +107,10 @@ public interface RuntimeEndpointRegistry extends Service {
      * @param includeInputs whether to include route inputs
      */
     List<String> getEndpointsPerRoute(String routeId, boolean includeInputs);
+
+    /**
+     * Gets details about all the endpoint captured from the given route during runtime routing that are in-use of the routes.
+     */
+    List<Statistic> getEndpointStatistics();
+
 }

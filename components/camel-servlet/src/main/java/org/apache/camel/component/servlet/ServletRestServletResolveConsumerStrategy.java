@@ -23,11 +23,11 @@ import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.camel.component.http.HttpConsumer;
-import org.apache.camel.component.http.HttpServletResolveConsumerStrategy;
+import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.HttpServletResolveConsumerStrategy;
 
 /**
- * A {@link org.apache.camel.component.http.HttpServletResolveConsumerStrategy} that supports the Rest DSL.
+ * A {@link org.apache.camel.http.common.HttpServletResolveConsumerStrategy} that supports the Rest DSL.
  */
 public class ServletRestServletResolveConsumerStrategy extends HttpServletResolveConsumerStrategy {
 

@@ -17,18 +17,21 @@
 package org.apache.camel.component.hbase.filters;
 
 import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 
-public class ModelAwareFilterList extends FilterList implements ModelAwareFilter<FilterList> {
+public class ModelAwareFilterList implements ModelAwareFilter<FilterList> {
+
+    FilterList fl;
 
     /**
-     * Default constructor, filters nothing. Required though for RPC
-     * deserialization.
+     * Default constructor, filters nothing. Required though for RPC deserialization.
      */
     public ModelAwareFilterList() {
+        fl = new FilterList(); //it's worth to prevent the class against null pointer on fl
     }
 
     /**
@@ -38,7 +41,7 @@ public class ModelAwareFilterList extends FilterList implements ModelAwareFilter
      * @param rowFilters list of filters
      */
     public ModelAwareFilterList(List<Filter> rowFilters) {
-        super(rowFilters);
+        fl = new FilterList(rowFilters);
     }
 
     /**
@@ -46,8 +49,8 @@ public class ModelAwareFilterList extends FilterList implements ModelAwareFilter
      *
      * @param operator Operator to process filter set with.
      */
-    public ModelAwareFilterList(Operator operator) {
-        super(operator);
+    public ModelAwareFilterList(FilterList.Operator operator) {
+        fl = new FilterList(operator);
     }
 
     /**
@@ -56,8 +59,8 @@ public class ModelAwareFilterList extends FilterList implements ModelAwareFilter
      * @param operator   Operator to process filter set with.
      * @param rowFilters Set of row filters.
      */
-    public ModelAwareFilterList(Operator operator, List<Filter> rowFilters) {
-        super(operator, rowFilters);
+    public ModelAwareFilterList(FilterList.Operator operator, List<Filter> rowFilters) {
+        fl = new FilterList(operator, rowFilters);
     }
 
     /**
@@ -66,7 +69,7 @@ public class ModelAwareFilterList extends FilterList implements ModelAwareFilter
     @Override
     public void apply(CamelContext context, HBaseRow rowModel) {
         for (Filter filter : getFilters()) {
-            if (ModelAwareFilter.class.isAssignableFrom(filter.getClass())) {
+            if (ModelAwareFilter.class.isAssignableFrom(filter.getClass())) { //probably and is assignable from filter
                 ((ModelAwareFilter<?>) filter).apply(context, rowModel);
             }
         }
@@ -75,7 +78,15 @@ public class ModelAwareFilterList extends FilterList implements ModelAwareFilter
     /**
      * Wraps an existing {@link FilterList} filter into a {@link ModelAwareFilterList}.
      */
-    public ModelAwareFilterList wrap(FilterList filter) {
+    public static ModelAwareFilterList wrap(FilterList filter) {
         return new ModelAwareFilterList(filter.getOperator(), filter.getFilters());
+    }
+
+    public List<Filter> getFilters() {
+        return fl.getFilters();
+    }
+
+    public void addFilter(Filter filter) {
+        getFilters().add(filter);
     }
 }

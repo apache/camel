@@ -16,7 +16,9 @@
  */
 package org.apache.camel.builder;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -48,7 +50,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     protected Logger log = LoggerFactory.getLogger(getClass());
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RestsDefinition restCollection = new RestsDefinition();
-    private RestConfigurationDefinition restConfiguration;
+    private Map<String, RestConfigurationDefinition> restConfigurations;
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public RouteBuilder() {
@@ -80,12 +82,28 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @return the builder
      */
     public RestConfigurationDefinition restConfiguration() {
+        return restConfiguration("");
+    }
+
+    /**
+     * Configures the REST service for the given component
+     *
+     * @return the builder
+     */
+    public RestConfigurationDefinition restConfiguration(String component) {
+        if (restConfigurations == null) {
+            restConfigurations = new HashMap<String, RestConfigurationDefinition>();
+        }
+        RestConfigurationDefinition restConfiguration = restConfigurations.get(component);
         if (restConfiguration == null) {
             restConfiguration = new RestConfigurationDefinition();
+            if (!component.isEmpty()) {
+                restConfiguration.component(component);
+            }
+            restConfigurations.put(component, restConfiguration);
         }
         return restConfiguration;
     }
-
     /**
      * Creates a new REST service
      *
@@ -406,9 +424,15 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         getRestCollection().setCamelContext(camelContext);
 
         // setup rest configuration before adding the rests
-        if (getRestConfiguration() != null) {
-            RestConfiguration config = getRestConfiguration().asRestConfiguration(getContext());
-            camelContext.setRestConfiguration(config);
+        if (getRestConfigurations() != null) {
+            for (Map.Entry<String, RestConfigurationDefinition> entry : getRestConfigurations().entrySet()) {
+                RestConfiguration config = entry.getValue().asRestConfiguration(getContext());
+                if ("".equals(entry.getKey())) {
+                    camelContext.setRestConfiguration(config);
+                } else {
+                    camelContext.addRestConfiguration(config);
+                }
+            }
         }
         camelContext.addRestDefinitions(getRestCollection().getRests());
 
@@ -425,8 +449,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return restCollection;
     }
 
-    public RestConfigurationDefinition getRestConfiguration() {
-        return restConfiguration;
+    public Map<String, RestConfigurationDefinition> getRestConfigurations() {
+        return restConfigurations;
     }
 
     public void setRestCollection(RestsDefinition restCollection) {

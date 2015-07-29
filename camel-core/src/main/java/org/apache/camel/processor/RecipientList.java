@@ -30,6 +30,7 @@ import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -183,6 +184,10 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
             recipient = ((String)recipient).trim();
         }
         return ExchangeHelper.resolveEndpoint(exchange, recipient);
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return producerCache.getEndpointUtilizationStatistics();
     }
 
     protected void doStart() throws Exception {

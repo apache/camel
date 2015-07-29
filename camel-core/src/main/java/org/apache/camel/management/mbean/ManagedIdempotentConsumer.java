@@ -19,14 +19,29 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedIdempotentConsumerMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 
 @ManagedResource(description = "Managed Idempotent Consumer")
 public class ManagedIdempotentConsumer extends ManagedProcessor implements ManagedIdempotentConsumerMBean {
 
-    public ManagedIdempotentConsumer(CamelContext context, IdempotentConsumer idempotentConsumer, ProcessorDefinition<?> definition) {
+    public ManagedIdempotentConsumer(CamelContext context, IdempotentConsumer idempotentConsumer, IdempotentConsumerDefinition definition) {
         super(context, idempotentConsumer, definition);
+    }
+
+    @Override
+    public IdempotentConsumerDefinition getDefinition() {
+        return (IdempotentConsumerDefinition) super.getDefinition();
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
+    }
+
+    @Override
+    public String getExpression() {
+        return getDefinition().getExpression().getExpression();
     }
 
     @Override

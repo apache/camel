@@ -41,8 +41,10 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.util.JsonSchemaHelper;
 
 /**
@@ -71,6 +73,10 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("status", context.getStatus().name());
             answer.put("uptime", context.getUptime());
             answer.put("suspended", context.getStatus().isSuspended());
+            if (context.getManagementStrategy().getManagementAgent() != null) {
+                String level = context.getManagementStrategy().getManagementAgent().getStatisticsLevel().name();
+                answer.put("managementStatisticsLevel", level);
+            }
             answer.put("allowUseOriginalMessage", context.isAllowUseOriginalMessage());
             answer.put("messageHistory", context.isMessageHistory());
             answer.put("tracing", context.isTracing());
@@ -417,6 +423,37 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                     row.put("camelContextName", context.getName());
                     row.put("uri", endpoint.getEndpointUri());
                     row.put("state", getEndpointState(endpoint));
+                    answer.add(row);
+                }
+            }
+        }
+        return answer;
+    }
+
+    public List<Map<String, String>> getEndpointRuntimeStatistics(String camelContextName) throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        if (camelContextName != null) {
+            CamelContext context = this.getLocalCamelContext(camelContextName);
+            if (context != null) {
+                EndpointRegistry staticRegistry = context.getEndpointRegistry();
+                for (RuntimeEndpointRegistry.Statistic stat : context.getRuntimeEndpointRegistry().getEndpointStatistics()) {
+
+                    String url = stat.getUri();
+                    String routeId = stat.getRouteId();
+                    String direction = stat.getDirection();
+                    Boolean isStatic = staticRegistry.isStatic(url);
+                    Boolean isDynamic = staticRegistry.isDynamic(url);
+                    long hits = stat.getHits();
+
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("camelContextName", context.getName());
+                    row.put("uri", url);
+                    row.put("routeId", routeId);
+                    row.put("direction", direction);
+                    row.put("static", isStatic.toString());
+                    row.put("dynamic", isDynamic.toString());
+                    row.put("hits", "" + hits);
                     answer.add(row);
                 }
             }

@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.util.StopWatch;
 import org.junit.Ignore;
 import org.junit.Test;

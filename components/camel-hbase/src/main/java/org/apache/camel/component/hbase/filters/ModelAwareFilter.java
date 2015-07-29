@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.hadoop.hbase.filter.Filter;
 
-public interface ModelAwareFilter<T extends Filter> extends Filter {
+public interface ModelAwareFilter<T extends Filter> {
 
     /**
      * Applies the message to {@link Filter} to context.

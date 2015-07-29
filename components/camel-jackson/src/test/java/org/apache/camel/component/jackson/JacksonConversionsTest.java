@@ -19,11 +19,20 @@ package org.apache.camel.component.jackson;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class JacksonConversionsTest extends CamelTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // enable jackson type converter by setting this property on CamelContext
+        context.getProperties().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+        return context;
+    }
 
     @Test
     public void shouldConvertMapToPojo() {

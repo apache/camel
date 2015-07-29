@@ -48,6 +48,8 @@ public class WeightedRoundRobinLoadBalancer extends WeightedLoadBalancer {
                 counter++;
             }
         }
+
+        lastIndex = counter;
        
         return processors.get(counter++);
     }

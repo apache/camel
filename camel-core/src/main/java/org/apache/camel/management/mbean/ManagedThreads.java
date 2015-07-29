@@ -16,6 +16,10 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedThreadsMBean;
@@ -45,6 +49,97 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
             return processor.getRejectedPolicy().name();
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public int getCorePoolSize() {
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) processor.getExecutorService()).getCorePoolSize();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int getPoolSize() {
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) processor.getExecutorService()).getPoolSize();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int getMaximumPoolSize() {
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) processor.getExecutorService()).getMaximumPoolSize();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int getLargestPoolSize() {
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) processor.getExecutorService()).getLargestPoolSize();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int getActiveCount() {
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) processor.getExecutorService()).getActiveCount();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public long getTaskCount() {
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) processor.getExecutorService()).getTaskCount();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public long getCompletedTaskCount() {
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) processor.getExecutorService()).getCompletedTaskCount();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public long getTaskQueueSize() {
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            BlockingQueue queue = ((ThreadPoolExecutor) processor.getExecutorService()).getQueue();
+            return queue != null ? queue.size() : 0;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public long getKeepAliveTime() {
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) processor.getExecutorService()).getKeepAliveTime(TimeUnit.SECONDS);
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public boolean isAllowCoreThreadTimeout() {
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) processor.getExecutorService()).allowsCoreThreadTimeOut();
+        } else {
+            return false;
         }
     }
 

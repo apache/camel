@@ -18,7 +18,6 @@ package org.apache.camel.component.sjms;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelException;
@@ -33,7 +32,6 @@ import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +58,6 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         validateMepAndReplyTo(parameters);
-        uri = normalizeUri(uri);
         SjmsEndpoint endpoint = new SjmsEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         if (endpoint.isTransacted()) {
@@ -73,38 +70,6 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
             endpoint.setDestinationCreationStrategy(destinationCreationStrategy);
         }
         return endpoint;
-    }
-
-    /**
-     * Helper method used to detect the type of endpoint and add the "queue"
-     * protocol if it is a default endpoint URI.
-     *
-     * @param uri The value passed into our call to create an endpoint
-     * @return String
-     * @throws Exception
-     */
-    private static String normalizeUri(String uri) throws Exception {
-        String tempUri = uri;
-        String endpointName = tempUri.substring(0, tempUri.indexOf(":"));
-        tempUri = tempUri.substring(endpointName.length());
-        if (tempUri.startsWith("://")) {
-            tempUri = tempUri.substring(3);
-        }
-        String protocol = null;
-        if (tempUri.indexOf(":") > 0) {
-            protocol = tempUri.substring(0, tempUri.indexOf(":"));
-        }
-        if (ObjectHelper.isEmpty(protocol)) {
-            protocol = "queue";
-        } else if (protocol != null && (protocol.equals("queue") || protocol.equals("topic"))) {
-            tempUri = tempUri.substring(protocol.length() + 1);
-        } else {
-            throw new Exception("Unsupported Protocol: " + protocol);
-        }
-
-        String path = tempUri;
-        uri = endpointName + "://" + protocol + ":" + path;
-        return uri;
     }
 
     /**

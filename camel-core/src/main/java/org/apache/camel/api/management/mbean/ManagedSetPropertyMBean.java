@@ -23,6 +23,9 @@ public interface ManagedSetPropertyMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Name of exchange property to set a new value")
     String getPropertyName();
 
+    @ManagedAttribute(description = "The language for the expression")
+    String getExpressionLanguage();
+
     @ManagedAttribute(description = "Expression to return the value of the message exchange property")
     String getExpression();
 

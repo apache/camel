@@ -1410,8 +1410,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public FilterDefinition filter(ExpressionDefinition expression) {
-        FilterDefinition filter = new FilterDefinition();
-        filter.setExpression(expression);
+        FilterDefinition filter = new FilterDefinition(expression);
         addOutput(filter);
         return filter;
     }
@@ -1438,8 +1437,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ValidateDefinition validate(Expression expression) {
-        ValidateDefinition answer = new ValidateDefinition();
-        answer.setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
+        ValidateDefinition answer = new ValidateDefinition(expression);
         addOutput(answer);
         return answer;
     }
@@ -1453,8 +1451,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ValidateDefinition validate(Predicate predicate) {
-        ValidateDefinition answer = new ValidateDefinition();
-        answer.setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
+        ValidateDefinition answer = new ValidateDefinition(predicate);
         addOutput(answer);
         return answer;
     }
@@ -1976,8 +1973,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ResequenceDefinition resequence(Expression expression) {
-        ResequenceDefinition answer = new ResequenceDefinition();
-        answer.setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
+        ResequenceDefinition answer = new ResequenceDefinition(expression);
         addOutput(answer);
         return answer;
     }
@@ -2135,8 +2131,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public LoopDefinition loop(Expression expression) {
-        LoopDefinition loop = new LoopDefinition();
-        loop.setExpression(new ExpressionDefinition(expression));
+        LoopDefinition loop = new LoopDefinition(expression);
         addOutput(loop);
         return loop;
     }
@@ -2150,8 +2145,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public LoopDefinition loop(int count) {
-        LoopDefinition loop = new LoopDefinition();
-        loop.setExpression(new ConstantExpression(Integer.toString(count)));
+        LoopDefinition loop = new LoopDefinition(new ConstantExpression(Integer.toString(count)));
         addOutput(loop);
         return loop;
     }

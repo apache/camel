@@ -61,8 +61,11 @@ public class ManagedFilterTest extends ManagementTestSupport {
         Long count = (Long) mbeanServer.getAttribute(on, "FilteredCount");
         assertEquals(1, count.longValue());
 
+        String lan = (String) mbeanServer.getAttribute(on, "PredicateLanguage");
+        assertEquals("header", lan);
+
         String uri = (String) mbeanServer.getAttribute(on, "Predicate");
-        assertEquals("header{header(foo)}", uri);
+        assertEquals("foo", uri);
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);

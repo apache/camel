@@ -58,8 +58,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int connectTimeout = 10000;
     @UriParam(defaultValue = "30000")
     private int timeout = 30000;
-    @UriParam
-    private int soTimeout;
+    @UriParam(defaultValue = "300000")
+    private int soTimeout = 300000;
     @UriParam(defaultValue = "32768")
     private int receiveBufferSize = 32 * 1024;
     @UriParam
