@@ -916,6 +916,7 @@
   <feature name='camel-kafka' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.scala-lang/scala-library/${scala-2.10-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}</bundle>
+    <bundle dependency="true">wrap:mvn:com.101tec/zkclient/${zkclient-version}$Bundle-Version=${zkclient-version}&amp;Export-Package=*;-noimport:=true;version="${zkclient-version}"</bundle>
     <bundle dependency='true'>wrap:mvn:com.yammer.metrics/metrics-core/${yammer-metrics-version}$Bundle-Version=${yammer-metrics-version}&amp;Export-Package=*;-noimport:=true;version="${yammer-metrics-version}"</bundle>
     <bundle dependency='true'>wrap:mvn:com.yammer.metrics/metrics-annotation/${yammer-metrics-version}$Bundle-Version=${yammer-metrics-version}&amp;Export-Package=*;-noimport:=true;version="${yammer-metrics-version}"</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.kafka-clients/${kafka-clients-bundle-version}</bundle>
