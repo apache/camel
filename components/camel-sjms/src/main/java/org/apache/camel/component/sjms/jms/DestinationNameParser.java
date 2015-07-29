@@ -32,6 +32,12 @@ public class DestinationNameParser {
         if (destinationName == null) {
             throw new IllegalArgumentException("destinationName is null");
         }
-        return destinationName.substring(destinationName.lastIndexOf(":") + 1);
+        if (destinationName.startsWith("queue:")) {
+            return destinationName.substring(6);
+        } else if (destinationName.startsWith("topic:")) {
+            return destinationName.substring(6);
+        } else {
+            return destinationName;
+        }
     }
 }
