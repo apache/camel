@@ -296,7 +296,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         }
     }
 
-    private static class EndpointRuntimeStatistics implements Statistic {
+    private static final class EndpointRuntimeStatistics implements Statistic {
 
         private final String uri;
         private final String routeId;
