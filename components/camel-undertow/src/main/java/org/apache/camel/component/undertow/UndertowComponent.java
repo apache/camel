@@ -139,31 +139,6 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         serversRegistry.clear();
     }
 
-    protected Undertow rebuildServer(UndertowRegistry registy) {
-        Undertow.Builder result = Undertow.builder();
-        int port = registy.getPort();
-        if (registy.getSslContext() != null) {
-            result = result.addHttpsListener(registy.getPort(), registy.getHost(), registy.getSslContext());
-        } else {
-            result = result.addHttpListener(registy.getPort(), registy.getHost());
-        }
-        PathHandler path = Handlers.path(new NotFoundHandler());
-        for (URI key : registy.getConsumersRegistry().keySet()) {
-            UndertowConsumer consumer = registy.getConsumersRegistry().get(key);
-            URI httpUri = consumer.getEndpoint().getHttpURI();
-            if (consumer.getEndpoint().getMatchOnUriPrefix()) {
-                path.addPrefixPath(httpUri.getPath(), new HttpCamelHandler(consumer));
-
-            } else {
-                path.addExactPath(httpUri.getPath(), new HttpCamelHandler(consumer));
-
-            }
-            LOG.debug("Rebuild for path: {}", httpUri.getPath());
-        }
-        result = result.setHandler(path);
-        return result.build();
-    }
-
     public void registerConsumer(UndertowConsumer consumer) {
         int port = consumer.getEndpoint().getHttpURI().getPort();
         if (serversRegistry.containsKey(port)) {
@@ -195,7 +170,6 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         int port = consumer.getEndpoint().getHttpURI().getPort();
         LOG.info("Starting server on port: {}", port);
         UndertowRegistry undertowRegistry = serversRegistry.get(port);
-
         if (undertowRegistry.getServer() != null) {
             //server is running, we need to stop it first and then rebuild
             undertowRegistry.getServer().stop();
@@ -214,6 +188,29 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
      */
     public void setUndertowHttpBinding(UndertowHttpBinding undertowHttpBinding) {
         this.undertowHttpBinding = undertowHttpBinding;
+    }
+
+    private Undertow rebuildServer(UndertowRegistry registy) {
+        Undertow.Builder result = Undertow.builder();
+        if (registy.getSslContext() != null) {
+            result = result.addHttpsListener(registy.getPort(), registy.getHost(), registy.getSslContext());
+        } else {
+            result = result.addHttpListener(registy.getPort(), registy.getHost());
+        }
+        PathHandler path = Handlers.path(new NotFoundHandler());
+        for (URI key : registy.getConsumersRegistry().keySet()) {
+            UndertowConsumer consumer = registy.getConsumersRegistry().get(key);
+            URI httpUri = consumer.getEndpoint().getHttpURI();
+            HttpCamelHandler handler = new HttpCamelHandler(consumer);
+            if (consumer.getEndpoint().getMatchOnUriPrefix()) {
+                path.addPrefixPath(httpUri.getPath(), handler);
+            } else {
+                path.addExactPath(httpUri.getPath(), handler);
+            }
+            LOG.debug("Rebuild for path: {}", httpUri.getPath());
+        }
+        result = result.setHandler(path);
+        return result.build();
     }
 
 }
