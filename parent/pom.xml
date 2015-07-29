@@ -515,9 +515,10 @@
     <xstream-version>1.4.8</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
-    <zxing-version>3.0.0</zxing-version>
-	<zxing-bundle-version>3.0.1_1</zxing-bundle-version>
+    <zkclient-version>0.3</zkclient-version>
     <zookeeper-version>3.4.6</zookeeper-version>
+    <zxing-version>3.2.0</zxing-version>
+    <zxing-bundle-version>3.2.0_1</zxing-bundle-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
