@@ -32,6 +32,11 @@ import org.apache.camel.util.IntrospectionSupport;
 public class AbstractOlingo2TestSupport extends CamelTestSupport {
 
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
+    private Properties properties = new Properties();
+
+    protected void setDefaultTestProperty(String key, String value) {
+        properties.setProperty(key, value);
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -39,7 +44,6 @@ public class AbstractOlingo2TestSupport extends CamelTestSupport {
         final CamelContext context = super.createCamelContext();
 
         // read Olingo component configuration from TEST_OPTIONS_PROPERTIES
-        final Properties properties = new Properties();
         try {
             properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
         } catch (Exception e) {
