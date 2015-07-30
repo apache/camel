@@ -26,9 +26,12 @@ public interface UndertowHostFactory {
      */
     UndertowHost createUndertowHost();
 
-    public class Locator {
+    public final class Locator {
 
         private static UndertowHostFactory globalFactory;
+
+        private Locator() {
+        }
 
         public static UndertowHostFactory getUndertowHostFactory() {
             return globalFactory;

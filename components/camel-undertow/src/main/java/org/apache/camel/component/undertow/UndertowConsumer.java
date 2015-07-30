@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.undertow;
 
-import io.undertow.server.HttpHandler;
-
 import java.net.URI;
 
+import io.undertow.server.HttpHandler;
 import org.apache.camel.Processor;
 import org.apache.camel.component.undertow.handlers.HttpCamelHandler;
 import org.apache.camel.impl.DefaultConsumer;
@@ -70,7 +69,7 @@ public class UndertowConsumer extends DefaultConsumer {
 
         @Override
         public UndertowHost createUndertowHost() {
-            return new UndertowHost () {
+            return new UndertowHost() {
 
                 @Override
                 public void validateEndpointURI(URI httpURI) {

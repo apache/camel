@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.undertow;
 
-import io.undertow.server.HttpServerExchange;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import javax.net.ssl.SSLContext;
 
+import io.undertow.server.HttpServerExchange;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

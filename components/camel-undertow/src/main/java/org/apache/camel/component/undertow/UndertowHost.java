@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.undertow;
 
-import io.undertow.server.HttpHandler;
-
 import java.net.URI;
+
+import io.undertow.server.HttpHandler;
 
 /**
  * An undertow host abstraction
