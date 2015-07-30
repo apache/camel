@@ -17,12 +17,14 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -57,7 +59,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
 
         // create the endpoint first
-        UndertowEndpoint endpoint = new UndertowEndpoint(endpointUri.toString(), this);
+        UndertowEndpoint endpoint = createEndpointInstance(endpointUri, this);
         endpoint.setUndertowHttpBinding(undertowHttpBinding);
         setProperties(endpoint, parameters);
 
@@ -74,6 +76,10 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         endpoint.setHttpURI(httpUri);
 
         return endpoint;
+    }
+
+    protected UndertowEndpoint createEndpointInstance(URI endpointUri, UndertowComponent component) throws URISyntaxException {
+        return new UndertowEndpoint(endpointUri.toString(), component);
     }
 
     @Override
@@ -158,7 +164,10 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         }
         if (serversRegistry.get(port).isEmpty()) {
             //if there no Consumer left, we can shut down server
-            serversRegistry.get(port).getServer().stop();
+            Undertow server = serversRegistry.get(port).getServer();
+            if (server != null) {
+                server.stop();
+            }
             serversRegistry.remove(port);
         } else {
             //call startServer to rebuild otherwise
@@ -179,18 +188,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         undertowRegistry.setServer(newServer);
     }
 
-    public UndertowHttpBinding getUndertowHttpBinding() {
-        return undertowHttpBinding;
-    }
-
-    /**
-     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-     */
-    public void setUndertowHttpBinding(UndertowHttpBinding undertowHttpBinding) {
-        this.undertowHttpBinding = undertowHttpBinding;
-    }
-
-    private Undertow rebuildServer(UndertowRegistry registy) {
+    protected Undertow rebuildServer(UndertowRegistry registy) {
         Undertow.Builder result = Undertow.builder();
         if (registy.getSslContext() != null) {
             result = result.addHttpsListener(registy.getPort(), registy.getHost(), registy.getSslContext());
@@ -213,4 +211,14 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         return result.build();
     }
 
+    public UndertowHttpBinding getUndertowHttpBinding() {
+        return undertowHttpBinding;
+    }
+
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+     */
+    public void setUndertowHttpBinding(UndertowHttpBinding undertowHttpBinding) {
+        this.undertowHttpBinding = undertowHttpBinding;
+    }
 }
