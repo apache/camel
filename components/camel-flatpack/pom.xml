@@ -52,14 +52,9 @@
       <version>${flatpack-version}</version>
     </dependency>
     <dependency> 
-	    <groupId>org.jdom</groupId> 
-	    <artifactId>jdom</artifactId> 
-	    <version>${jdom-version}</version> 
-	  </dependency>
-    <dependency> 
-      <groupId>jexcelapi</groupId> 
-      <artifactId>jxl</artifactId> 
-      <version>${jexcelapi-version}</version>
+      <groupId>org.jdom</groupId>
+	  <artifactId>jdom</artifactId>
+	  <version>${jdom-version}</version>
     </dependency>
 
 	  <!-- logging -->
