@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.camel.component.exec.ExecCommand;
 import org.apache.camel.component.exec.ExecCommandExecutor;
@@ -79,7 +80,7 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
         } catch (IOException ioe) {
             // workaround to ignore if the stream was already closes due some race condition in commons-exec
             String msg = ioe.getMessage();
-            if ("Stream closed".equals(msg)) {
+            if (msg != null && "stream closed".equals(msg.toLowerCase(Locale.ENGLISH))) {
                 LOG.debug("Ignoring Stream closed IOException", ioe);
                 // if the size is zero, we have no output, so construct the result
                 // with null (required by ExecResult)
