@@ -39,12 +39,11 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarInputStream;
-
-import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;
-import de.kalpatec.pojosr.framework.launch.BundleDescriptor;
-import de.kalpatec.pojosr.framework.launch.ClasspathScanner;
-import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
-import de.kalpatec.pojosr.framework.launch.PojoServiceRegistryFactory;
+import org.apache.felix.connect.PojoServiceRegistryFactoryImpl;
+import org.apache.felix.connect.launch.BundleDescriptor;
+import org.apache.felix.connect.launch.ClasspathScanner;
+import org.apache.felix.connect.launch.PojoServiceRegistry;
+import org.apache.felix.connect.launch.PojoServiceRegistryFactory;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.FileUtil;
@@ -69,6 +68,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.test.junit4.TestSupport.createDirectory;
 import static org.apache.camel.test.junit4.TestSupport.deleteDirectory;
@@ -136,7 +136,7 @@ public final class CamelBlueprintHelper {
         }
 
         // setup pojosr to use our bundles
-        Map<String, List<BundleDescriptor>> config = new HashMap<String, List<BundleDescriptor>>();
+        Map<String, Object> config = new HashMap<String, Object>();
         config.put(PojoServiceRegistryFactory.BUNDLE_DESCRIPTORS, bundles);
 
         // create pojorsr osgi service registry
@@ -435,7 +435,7 @@ public final class CamelBlueprintHelper {
 
             answer = new BundleDescriptor(
                     bundle.getClass().getClassLoader(),
-                    new URL("jar:" + file.toURI().toString() + "!/"),
+                    "jar:" + file.toURI().toString() + "!/",
                     headers);
         } finally {
             IOHelper.close(jis, fis);

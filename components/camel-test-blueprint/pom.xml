@@ -31,15 +31,11 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.test.blueprint*</camel.osgi.export.pkg>
+        <felix-connect-version>0.1.0</felix-connect-version>
+        <felix-fileinstall-version>3.5.0</felix-fileinstall-version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <!-- Make sure we use the version of osgi.core that we specify for compiling -->
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
@@ -69,11 +65,6 @@
             <version>${aries-blueprint-proxy-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.aries.proxy</groupId>
-            <artifactId>org.apache.aries.proxy.impl</artifactId>
-            <version>${aries-blueprint-proxy-impl-version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
             <artifactId>org.apache.aries.blueprint.api</artifactId>
         </dependency>
@@ -96,14 +87,9 @@
             <version>${aries-blueprint-proxy-impl-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.aries.proxy</groupId>
-            <artifactId>org.apache.aries.proxy.api</artifactId>
-            <version>${aries-blueprint-proxy-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.pojosr</groupId>
-            <artifactId>de.kalpatec.pojosr.framework</artifactId>
-            <version>${pojosr-version}</version>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.connect</artifactId>
+            <version>${felix-connect-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.osgi</groupId>
@@ -150,7 +136,7 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.fileinstall</artifactId>
-            <version>${felix-fileinstall-pojosr-version}</version>
+            <version>${felix-fileinstall-version}</version>
                 <!-- exclude the following dependency which otherwise would pop up a lot of compilation
                      errors both by this and the camel-maven-plugin modules under eclipse. -->
                 <exclusions>
