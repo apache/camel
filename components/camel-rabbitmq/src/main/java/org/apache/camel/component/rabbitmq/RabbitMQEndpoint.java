@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.TrustManager;
 
@@ -332,7 +333,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    public Connection connect(ExecutorService executor) throws IOException {
+    public Connection connect(ExecutorService executor) throws IOException, TimeoutException {
         if (getAddresses() == null) {
             return getOrCreateConnectionFactory().newConnection(executor);
         } else {
