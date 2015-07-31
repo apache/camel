@@ -15,7 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0" name='camel-${project.version}'>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name='camel-${project.version}'>
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
   <repository>mvn:org.apache.jclouds.karaf/jclouds-karaf/${jclouds-version}/xml/features</repository>
   <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${pax-cdi-version}/xml/features</repository>
