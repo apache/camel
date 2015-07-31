@@ -32,7 +32,7 @@ public class SplunkConfiguration {
 
     @UriPath(description = "Name has no purpose") @Metadata(required = "true")
     private String name;
-    @UriParam(defaultValue = "http")
+    @UriParam(defaultValue = "https")
     private String scheme = Service.DEFAULT_SCHEME;
     @UriParam(defaultValue = "localhost")
     private String host = Service.DEFAULT_HOST;

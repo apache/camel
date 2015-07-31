@@ -133,7 +133,10 @@ public class SplunkConnectionFactory {
 
         Future<Service> future = executor.submit(new Callable<Service>() {
             public Service call() throws Exception {
-                Service.setSslSecurityProtocol(getSslProtocol());
+                if (Service.DEFAULT_SCHEME.equals(getScheme())) {
+                    LOG.debug("Https in use. Setting SSL protocol to {}", getSslProtocol());
+                    Service.setSslSecurityProtocol(getSslProtocol());
+                }
                 return Service.connect(args);
             }
         });
