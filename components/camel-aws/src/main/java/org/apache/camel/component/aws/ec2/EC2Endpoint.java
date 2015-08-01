@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.aws.ec2;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -75,8 +77,16 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
     }
 
     AmazonEC2Client createEc2Client() {
+        AmazonEC2Client client = null;
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonEC2Client client = new AmazonEC2Client(credentials);
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            client = new AmazonEC2Client(credentials, clientConfiguration);
+        } else {
+            client = new AmazonEC2Client(credentials);
+        }
         return client;
     }
 }

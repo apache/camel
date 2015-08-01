@@ -20,10 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
+    transient int lastIndex;
+
     private List<Integer> distributionRatioList = new ArrayList<Integer>();
     private List<DistributionRatio> runtimeRatios = new ArrayList<DistributionRatio>();
 
-    transient int lastIndex;
     
     public WeightedLoadBalancer(List<Integer> distributionRatios) {
         deepCloneDistributionRatios(distributionRatios);

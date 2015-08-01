@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.rabbitmq.client.AMQP;
@@ -64,7 +65,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
     /**
      * Open connection
      */
-    private void openConnection() throws IOException {
+    private void openConnection() throws IOException, TimeoutException {
         log.trace("Creating connection...");
         this.conn = getEndpoint().connect(executor);
         log.debug("Created connection: {}", conn);
@@ -129,14 +130,20 @@ public class RabbitMQConsumer extends DefaultConsumer {
     }
 
     /**
-     * If needed, close Connection and Channels
+     * If needed, close Connection and Channels 
      */
-    private void closeConnectionAndChannel() throws IOException {
+    private void closeConnectionAndChannel() throws IOException, TimeoutException {
         if (startConsumerCallable != null) {
             startConsumerCallable.stop();
         }
         for (RabbitConsumer consumer : this.consumers) {
-            consumer.stop();
+            try {
+                consumer.stop();
+            }
+            catch (TimeoutException e) {
+                log.error("Timeout occured");
+                throw e;
+            }
         }
         this.consumers.clear();
         if (conn != null) {
@@ -248,11 +255,17 @@ public class RabbitMQConsumer extends DefaultConsumer {
         /**
          * Unbind consumer from channel
          */
-        public void stop() throws IOException {
+        public void stop() throws IOException, TimeoutException {
             if (tag != null) {
                 channel.basicCancel(tag);
             }
-            channel.close();
+            try {
+                channel.close();
+            }
+            catch (TimeoutException e) {
+                log.error("Timeout occured");
+                throw e;
+            }
         }
     }
 

@@ -34,8 +34,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents an Undertow endpoint.
@@ -43,7 +41,6 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
     consumerClass = UndertowConsumer.class, label = "http")
 public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private UndertowComponent component;
     private SSLContext sslContext;

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Address;
@@ -172,7 +173,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals("Get a wrong endpoint address.", new Address("server2", 12345), endpoint.getAddresses()[1]);
     }
 
-    private ConnectionFactory createConnectionFactory(String uri) {
+    private ConnectionFactory createConnectionFactory(String uri) throws TimeoutException {
         RabbitMQEndpoint endpoint = context.getEndpoint(uri, RabbitMQEndpoint.class);
         try {
             endpoint.connect(Executors.newSingleThreadExecutor());

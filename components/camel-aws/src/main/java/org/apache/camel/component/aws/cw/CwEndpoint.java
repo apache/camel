@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.aws.cw;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -92,8 +94,16 @@ public class CwEndpoint extends DefaultEndpoint {
     }
 
     AmazonCloudWatch createCloudWatchClient() {
+        AmazonCloudWatch client = null;
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonCloudWatch client = new AmazonCloudWatchClient(credentials);
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            client = new AmazonCloudWatchClient(credentials, clientConfiguration);
+        } else {
+            client = new AmazonCloudWatchClient(credentials);
+        }
         return client;
     }
 }

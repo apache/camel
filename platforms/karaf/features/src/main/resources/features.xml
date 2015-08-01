@@ -15,7 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0" name='camel-${project.version}'>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name='camel-${project.version}'>
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
   <repository>mvn:org.apache.jclouds.karaf/jclouds-karaf/${jclouds-version}/xml/features</repository>
   <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${pax-cdi-version}/xml/features</repository>
@@ -37,8 +37,11 @@
     <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-catalog/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${project.version}</bundle>
+    <conditional>
+      <condition>shell</condition>
+      <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
+      <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${project.version}</bundle>
+    </conditional>
     <!-- allow camel to access its own mbeans for karaf commands and other needs -->
     <config name="jmx.acl.org.apache.camel">
       * = *
@@ -406,8 +409,9 @@
   <feature name='camel-flatpack' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jexcelapi/${jexcelapi-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:net.sf.flatpack/flatpack/${flatpack-version}</bundle>
+    <!-- when flatpack 3.4.3 is released, we can use this as the jexcelapi deps will be optional.  Tell then, use the latest smx bundle -->
+    <!--bundle dependency='true'>mvn:net.sf.flatpack/flatpack/${flatpack-version}</bundle-->
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.flatpack/3.2.0_2</bundle>
     <bundle>mvn:org.apache.camel/camel-flatpack/${project.version}</bundle>
   </feature>
   <feature name='camel-fop' version='${project.version}' resolver='(obr)' start-level='50'>

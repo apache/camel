@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.olingo2.api;
+package org.apache.camel.component.olingo2;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,20 +26,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
+import org.apache.camel.component.olingo2.api.Olingo2App;
+import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchQueryRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchResponse;
 import org.apache.camel.component.olingo2.api.batch.Operation;
-import org.apache.camel.component.olingo2.api.impl.AbstractFutureCallback;
 import org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl;
 import org.apache.camel.component.olingo2.api.impl.SystemQueryOption;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.concurrent.FutureCallback;
-import org.apache.http.entity.ByteArrayEntity;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -48,7 +44,6 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
-import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.servicedocument.Collection;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.junit.AfterClass;
@@ -56,7 +51,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -64,13 +58,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
- * Integration test for {@link org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl}.
- * To test run the sample Olingo2 Server as outlined at
- * http://olingo.apache.org/doc/tutorials/Olingo2V2BasicClientSample.html
+ * Integration test for {@link org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl}
+ * using the sample Olingo2 Server dynamically downloaded and started during the test.
  */
-public class Olingo2AppIntegrationTest {
+public class Olingo2AppAPITest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Olingo2AppIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Olingo2AppAPITest.class);
+    private static final int PORT = AvailablePortFinder.getNextAvailable();  
+
     private static final long TIMEOUT = 10;
 
     private static final String MANUFACTURERS = "Manufacturers";
@@ -96,26 +91,44 @@ public class Olingo2AppIntegrationTest {
     private static final String TEST_CAR_LINK_MANUFACTURER = "Cars('1')/$links/Manufacturer";
     private static final String COUNT_OPTION = "/$count";
 
-    private static final String TEST_SERVICE_URL = "http://localhost:8080/MyFormula.svc";
+    private static final String TEST_SERVICE_URL = "http://localhost:" + PORT + "/MyFormula.svc";
     //    private static final String TEST_SERVICE_URL = "http://localhost:8080/cars-annotations-sample/MyFormula.svc";
 //    private static final ContentType TEST_FORMAT = ContentType.APPLICATION_XML_CS_UTF_8;
     private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
-    private static final String INDEX = "/index.jsp";
-    private static final Pattern LINK_PATTERN = Pattern.compile("[^(]+\\('([^']+)'\\)");
+//    private static final Pattern LINK_PATTERN = Pattern.compile("[^(]+\\('([^']+)'\\)");
     private static final String ID_PROPERTY = "Id";
 
     private static Olingo2App olingoApp;
-    private static final String GEN_SAMPLE_DATA = "genSampleData=true";
     private static Edm edm;
+
+    private static Olingo2SampleServer server;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
+        startServers(PORT);
+        Olingo2SampleServer.generateSampleData(TEST_SERVICE_URL);
+        setupClient();
+    }
 
+    @AfterClass
+    public static void afterClass() throws Exception {
+        if (olingoApp != null) {
+            olingoApp.close();
+        }
+        if (server != null) {
+            server.stop();
+            server.destroy();
+        }
+    }
+
+    protected static void startServers(int port) throws Exception {
+        server = new Olingo2SampleServer(port, "/olingo2_ref");
+        server.start();
+    }
+
+    protected static void setupClient() throws Exception {
         olingoApp = new Olingo2AppImpl(TEST_SERVICE_URL + "/");
         olingoApp.setContentType(TEST_FORMAT.toString());
-
-        LOG.info("Generate sample data ");
-        generateSampleData(TEST_SERVICE_URL);
 
         LOG.info("Read Edm ");
         final TestOlingo2ResponseHandler<Edm> responseHandler = new TestOlingo2ResponseHandler<Edm>();
@@ -127,11 +140,6 @@ public class Olingo2AppIntegrationTest {
 
         // wait for generated data to be registered in server
         Thread.sleep(2000);
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        olingoApp.close();
     }
 
     @Test
@@ -530,33 +538,6 @@ public class Olingo2AppIntegrationTest {
         for (int i = 0; i < indentLevel; i++) {
             builder.append("  ");
         }
-    }
-
-    private static void generateSampleData(String serviceUrl) throws IOException {
-        final HttpPost httpUriRequest = new HttpPost(serviceUrl.substring(0, serviceUrl.lastIndexOf('/')) + INDEX);
-        httpUriRequest.setEntity(new ByteArrayEntity(GEN_SAMPLE_DATA.getBytes()));
-        ((Olingo2AppImpl)olingoApp).execute(httpUriRequest, ContentType.APPLICATION_FORM_URLENCODED,
-            new FutureCallback<HttpResponse>() {
-                @Override
-                public void completed(HttpResponse result) {
-                    try {
-                        AbstractFutureCallback.checkStatus(result);
-                        LOG.info("Sample data generated  {}", result.getStatusLine());
-                    } catch (ODataApplicationException e) {
-                        LOG.error("Sample data generation error: " + e.getMessage(), e);
-                    }
-                }
-
-                @Override
-                public void failed(Exception ex) {
-                    LOG.error("Error generating sample data " + ex.getMessage(), ex);
-                }
-
-                @Override
-                public void cancelled() {
-                    LOG.error("Sample data generation canceled!");
-                }
-            });
     }
 
     private static final class TestOlingo2ResponseHandler<T> implements Olingo2ResponseHandler<T> {

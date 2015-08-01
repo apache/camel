@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -52,7 +53,7 @@ public class RabbitMQConsumerIntTest extends CamelTestSupport {
     }
 
     @Test
-    public void sentMessageIsReceived() throws InterruptedException, IOException {
+    public void sentMessageIsReceived() throws InterruptedException, IOException, TimeoutException {
 
         to.expectedMessageCount(1);
         to.expectedHeaderReceived(RabbitMQConstants.REPLY_TO, "myReply");

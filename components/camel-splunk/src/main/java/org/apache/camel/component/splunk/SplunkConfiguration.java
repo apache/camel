@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.splunk;
 
+import com.splunk.SSLSecurityProtocol;
 import com.splunk.Service;
 
 import org.apache.camel.spi.Metadata;
@@ -31,12 +32,14 @@ public class SplunkConfiguration {
 
     @UriPath(description = "Name has no purpose") @Metadata(required = "true")
     private String name;
-    @UriParam(defaultValue = "http")
+    @UriParam(defaultValue = "https")
     private String scheme = Service.DEFAULT_SCHEME;
     @UriParam(defaultValue = "localhost")
     private String host = Service.DEFAULT_HOST;
     @UriParam(defaultValue = "8089")
     private int port = Service.DEFAULT_PORT;
+    @UriParam(enums = "TLSv1.2,TLSv1.1,TLSv1,SSLv3", defaultValue = "TLSv1.2")
+    private SSLSecurityProtocol sslProtocol = SSLSecurityProtocol.TLSv1_2;
     @UriParam
     private String app;
     @UriParam
@@ -216,6 +219,19 @@ public class SplunkConfiguration {
         this.port = port;
     }
 
+    public SSLSecurityProtocol getSslProtocol() {
+        return sslProtocol;
+    }
+
+    /**
+     * Set the ssl protocol to use
+     * 
+     * @param sslProtocol
+     */
+    public void setSslProtocol(SSLSecurityProtocol sslProtocol) {
+        this.sslProtocol = sslProtocol;
+    }
+
     public String getScheme() {
         return scheme;
     }
@@ -340,6 +356,7 @@ public class SplunkConfiguration {
         splunkConnectionFactory.setConnectionTimeout(getConnectionTimeout());
         splunkConnectionFactory.setScheme(getScheme());
         splunkConnectionFactory.setUseSunHttpsHandler(isUseSunHttpsHandler());
+        splunkConnectionFactory.setSslProtocol(getSslProtocol());
         return splunkConnectionFactory;
     }
 }

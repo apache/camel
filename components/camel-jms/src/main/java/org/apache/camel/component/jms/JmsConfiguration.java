@@ -204,6 +204,7 @@ public class JmsConfiguration implements Cloneable {
     private MessageListenerContainerFactory messageListenerContainerFactory;
     @UriParam
     private boolean includeSentJMSMessageID;
+    @UriParam
     private DefaultTaskExecutorType defaultTaskExecutorType;
     @UriParam
     private boolean includeAllJMSXProperties;

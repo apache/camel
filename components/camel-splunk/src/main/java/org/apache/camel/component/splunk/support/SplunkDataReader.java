@@ -220,6 +220,8 @@ public class SplunkDataReader {
             args.setDispatchEarliestTime(earliestTime);
             args.setDispatchLatestTime(latestTime);
             job = search.dispatch(args);
+        } else {
+            throw new RuntimeException("Unable to find saved search '" + getSavedSearch() + "'.");
         }
         while (!job.isDone()) {
             Thread.sleep(2000);
