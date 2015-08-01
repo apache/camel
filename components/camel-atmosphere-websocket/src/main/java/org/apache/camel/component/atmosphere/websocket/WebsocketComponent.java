@@ -20,12 +20,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
-
 
 public class WebsocketComponent extends ServletComponent {
     private Map<String, WebSocketStore> stores;
@@ -39,12 +35,8 @@ public class WebsocketComponent extends ServletComponent {
     }
     
     @Override
-    protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component,
-                                                    URI httpUri, HttpClientParams params,
-                                                    HttpConnectionManager httpConnectionManager,
-                                                    HttpClientConfigurer clientConfigurer) throws Exception {
-        
-        return new WebsocketEndpoint(endpointUri, (WebsocketComponent)component, httpUri, params, httpConnectionManager, clientConfigurer);
+    protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component, URI httpUri) throws Exception {
+        return new WebsocketEndpoint(endpointUri, (WebsocketComponent)component, httpUri);
     }
     
     WebSocketStore getWebSocketStore(String name) {

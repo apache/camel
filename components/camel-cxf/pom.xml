@@ -168,7 +168,14 @@
       <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
+    <!-- http client tests -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-http</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <!-- test for the cxf jms transport -->
     <dependency>
        <groupId>org.apache.activemq</groupId>
@@ -306,7 +313,7 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <forkCount>1</forkCount>
-	  <reuseForks>true</reuseForks>
+	        <reuseForks>true</reuseForks>
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <reportFormat>brief</reportFormat>
           <useFile>false</useFile>

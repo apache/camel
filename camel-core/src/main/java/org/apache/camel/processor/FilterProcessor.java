@@ -46,11 +46,23 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         boolean matches = false;
+
         try {
-            matches = predicate.matches(exchange);
-        } catch (Throwable e) {
+            matches = matches(exchange);
+        } catch (Exception e) {
             exchange.setException(e);
         }
+
+        if (matches) {
+            return processor.process(exchange, callback);
+        } else {
+            callback.done(true);
+            return true;
+        }
+    }
+
+    public boolean matches(Exchange exchange) {
+        boolean matches = predicate.matches(exchange);
 
         LOG.debug("Filter matches: {} for exchange: {}", matches, exchange);
 
@@ -59,11 +71,9 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
 
         if (matches) {
             filtered++;
-            return processor.process(exchange, callback);
-        } else {
-            callback.done(true);
-            return true;
         }
+
+        return matches;
     }
 
     @Override

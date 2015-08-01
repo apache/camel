@@ -36,7 +36,6 @@ import io.undertow.util.MimeMappings;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.http.HttpHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -48,7 +47,7 @@ import org.xnio.Pooled;
 
 /**
  * DefaultUndertowHttpBinding represent binding used by default, if user doesn't provide any.
- * By default {@link HttpHeaderFilterStrategy} is also used.
+ * By default {@link UndertowHeaderFilterStrategy} is also used.
  */
 public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
@@ -58,7 +57,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     private HeaderFilterStrategy headerFilterStrategy;
 
     public DefaultUndertowHttpBinding() {
-        this.headerFilterStrategy = new HttpHeaderFilterStrategy();
+        this.headerFilterStrategy = new UndertowHeaderFilterStrategy();
     }
 
     public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy) {
@@ -138,7 +137,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 if (value != null && value.trim().startsWith("Basic")) {
                     if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
-                        UndertowUtils.appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
+                        UndertowHelper.appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
                     }
                 }
             }
@@ -150,7 +149,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 LOG.trace("HTTP-header: {}", value);
                 if (headerFilterStrategy != null
                     && !headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
-                    UndertowUtils.appendHeader(headersMap, name.toString(), value);
+                    UndertowHelper.appendHeader(headersMap, name.toString(), value);
                 }
             }
         }
@@ -169,7 +168,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                     LOG.trace("URI-Parameter: {}", value);
                     if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                        UndertowUtils.appendHeader(headersMap, name, value);
+                        UndertowHelper.appendHeader(headersMap, name, value);
                     }
                 }
             }
@@ -195,7 +194,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 if (value != null && value.trim().startsWith("Basic")) {
                     if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
-                        UndertowUtils.appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
+                        UndertowHelper.appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
                     }
                 }
             }
@@ -207,7 +206,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 LOG.trace("HTTP-header: {}", value);
                 if (headerFilterStrategy != null
                     && !headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
-                    UndertowUtils.appendHeader(headersMap, name.toString(), value);
+                    UndertowHelper.appendHeader(headersMap, name.toString(), value);
                 }
             }
         }
@@ -270,20 +269,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     public Object toHttpRequest(ClientRequest clientRequest, Message message) {
 
         Object body = message.getBody();
-
-        String method = message.getHeader(Exchange.HTTP_METHOD, String.class);
-
-        if (method == null) {
-            //fallback if method is not defined, check the body
-            if (body == null) {
-                clientRequest.setMethod(Methods.GET);
-            } else {
-                clientRequest.setMethod(Methods.POST);
-            }
-        } else {
-            //method set, use it
-            clientRequest.setMethod(new HttpString(method));
-        }
 
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);

@@ -665,13 +665,7 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         final String boundary = BOUNDARY_PREFIX + UUID.randomUUID();
         InputStream batchRequest = EntityProvider.writeBatchRequest(parts, boundary);
-        // add two blank lines before all --batch boundaries
-        // otherwise Olingo2 EntityProvider parser barfs in the server!!!
-        final byte[] bytes = EntityProvider.readBinary(batchRequest);
-        final String batchRequestBody = new String(bytes, Consts.UTF_8);
-        batchRequest = new ByteArrayInputStream(batchRequestBody.replaceAll(
-            "--(batch_)", "\r\n\r\n--$1").getBytes(Consts.UTF_8));
-
+        // two blank lines are already added. No need to add extra blank lines
         final String contentHeader = BATCH_CONTENT_TYPE + BOUNDARY_PARAMETER + boundary;
         return ODataResponse.entity(batchRequest).contentHeader(contentHeader).build();
     }

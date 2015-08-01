@@ -16,9 +16,12 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import javax.management.openmbean.TabularData;
 
-public interface ManagedWireTapMBean extends ManagedProcessorMBean {
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+
+public interface ManagedWireTapMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
 
     @ManagedAttribute(description = "The uri of the endpoint to wiretap to. The uri can be dynamic computed using the expressions.", mask = true)
     String getUri();
@@ -31,5 +34,8 @@ public interface ManagedWireTapMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Uses a copy of the original exchange")
     Boolean isCopy();
+
+    @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
+    TabularData extendedInformation();
 
 }

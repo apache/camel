@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedSetBodyMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.processor.SetBodyProcessor;
 
 /**
@@ -28,16 +28,24 @@ import org.apache.camel.processor.SetBodyProcessor;
 @ManagedResource(description = "Managed SetBody")
 public class ManagedSetBody extends ManagedProcessor implements ManagedSetBodyMBean {
     private final SetBodyProcessor processor;
-    private final String expression;
 
-    public ManagedSetBody(CamelContext context, SetBodyProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedSetBody(CamelContext context, SetBodyProcessor processor, SetBodyDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
-        this.expression = processor.getExpression().toString();
+    }
+
+    @Override
+    public SetBodyDefinition getDefinition() {
+        return (SetBodyDefinition) super.getDefinition();
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
     }
 
     @Override
     public String getExpression() {
-        return expression;
+        return getDefinition().getExpression().getExpression();
     }
 }

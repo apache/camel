@@ -18,7 +18,6 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 import java.io.Writer;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.jetty.server.handler.ErrorHandler;

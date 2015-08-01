@@ -16,12 +16,22 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Map;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedEnricherMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.processor.Enricher;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -31,24 +41,48 @@ import org.apache.camel.util.URISupport;
 public class ManagedEnricher extends ManagedProcessor implements ManagedEnricherMBean {
     private final Enricher processor;
     private String uri;
+    private boolean sanitize;
 
-    public ManagedEnricher(CamelContext context, Enricher processor, ProcessorDefinition<?> definition) {
+    public ManagedEnricher(CamelContext context, Enricher processor, EnrichDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
 
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
-        uri = processor.getExpression().toString();
+        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
+        uri = getDefinition().getExpression().getExpression();
         if (sanitize) {
             uri = URISupport.sanitizeUri(uri);
         }
     }
 
     @Override
+    public synchronized void reset() {
+        super.reset();
+        if (processor.getEndpointUtilizationStatistics() != null) {
+            processor.getEndpointUtilizationStatistics().clear();
+        }
+    }
+
+    @Override
+    public Boolean getSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
+    public EnrichDefinition getDefinition() {
+        return (EnrichDefinition) super.getDefinition();
+    }
+
+    @Override
     public Enricher getProcessor() {
         return processor;
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
     }
 
     @Override
@@ -75,4 +109,34 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
     public Boolean isAggregateOnException() {
         return processor.isAggregateOnException();
     }
+
+    @Override
+    public TabularData extendedInformation() {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
+
+            EndpointUtilizationStatistics stats = processor.getEndpointUtilizationStatistics();
+            if (stats != null) {
+                for (Map.Entry<String, Long> entry : stats.getStatistics().entrySet()) {
+                    CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();
+                    String url = entry.getKey();
+                    if (sanitize) {
+                        url = URISupport.sanitizeUri(url);
+                    }
+
+                    Long hits = entry.getValue();
+                    if (hits == null) {
+                        hits = 0L;
+                    }
+
+                    CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
+                    answer.put(data);
+                }
+            }
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
 }

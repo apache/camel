@@ -34,15 +34,12 @@ import org.apache.camel.component.gae.bind.HttpBindingInvocationHandler;
 import org.apache.camel.component.gae.bind.InboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBindingSupport;
-import org.apache.camel.component.http.HttpBinding;
-import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
+import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
  * Represents a <a href="http://camel.apache.org/ghttp.html">Google App Engine
@@ -62,12 +59,9 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
     private OutboundBinding<GHttpEndpoint, HTTPRequest, HTTPResponse> outboundBinding;
     private InboundBinding<GHttpEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding;
     
-    public GHttpEndpoint(String endpointUri, ServletComponent component,
-            URI httpUri, HttpClientParams params,
-            HttpConnectionManager httpConnectionManager,
-            HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+    public GHttpEndpoint(String endpointUri, ServletComponent component, URI httpUri) throws URISyntaxException {
         // set the endpoint uri with httpUri as we need to create http producer here
-        super(httpUri.toString(), component, httpUri, params, httpConnectionManager, clientConfigurer);
+        super(httpUri.toString(), component, httpUri);
         urlFetchService = URLFetchServiceFactory.getURLFetchService();
     }
 
@@ -129,12 +123,12 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
     }
 
     /**
-     * Proxies the {@link HttpBinding} returned by {@link super#getBinding()}
+     * Proxies the {@link org.apache.camel.http.common.HttpBinding} returned by {@link super#getBinding()}
      * with a dynamic proxy. The proxy's invocation handler further delegates to
      * {@link InboundBinding#readRequest(org.apache.camel.Endpoint, Exchange, Object)}
      * .
      * 
-     * @return proxied {@link HttpBinding}.
+     * @return proxied {@link org.apache.camel.http.common.HttpBinding}.
      */
     @Override
     public HttpBinding getBinding() {

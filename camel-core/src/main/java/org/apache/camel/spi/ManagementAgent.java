@@ -20,6 +20,7 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Service;
 
 /**
@@ -286,5 +287,69 @@ public interface ManagementAgent extends Service {
      * @param includeHostName <tt>true</tt> to include host name in the MBean names.
      */
     void setIncludeHostName(Boolean includeHostName);
+
+    /**
+     * The naming pattern for creating the CamelContext management name.
+     * <p/>
+     * The default pattern is <tt>#name#</tt>
+     */
+    String getManagementNamePattern();
+
+    /**
+     * The naming pattern for creating the CamelContext management name.
+     * <p/>
+     * The default pattern is <tt>#name#</tt>
+     */
+    void setManagementNamePattern(String managementNamePattern);
+
+    /**
+     * Sets whether load statistics is enabled (gathers load statistics using a background thread per CamelContext).
+     * <p/>
+     * The default value is <tt>false</tt>
+     *
+     * @param flag <tt>true</tt> to enable load statistics
+     */
+    void setLoadStatisticsEnabled(Boolean flag);
+
+    /**
+     * Gets whether load statistics is enabled
+     *
+     * @return <tt>true</tt> if enabled
+     */
+    Boolean getLoadStatisticsEnabled();
+
+    /**
+     * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints).
+     * <p/>
+     * The default value is <tt>true</tt>
+     *
+     * @param flag <tt>false</tt> to disable endpoint runtime statistics
+     */
+    void setEndpointRuntimeStatisticsEnabled(Boolean flag);
+
+    /**
+     * Gets whether load statistics is enabled
+     *
+     * @return <tt>true</tt> if enabled
+     */
+    Boolean getEndpointRuntimeStatisticsEnabled();
+
+    /**
+     * Sets the statistics level
+     * <p/>
+     * Default is {@link org.apache.camel.ManagementStatisticsLevel#Default}
+     * <p/>
+     * The level can be set to <tt>Extended</tt> to gather additional information
+     *
+     * @param level the new level
+     */
+    void setStatisticsLevel(ManagementStatisticsLevel level);
+
+    /**
+     * Gets the statistics level
+     *
+     * @return the level
+     */
+    ManagementStatisticsLevel getStatisticsLevel();
 
 }

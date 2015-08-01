@@ -16,9 +16,15 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import javax.management.openmbean.TabularData;
 
-public interface ManagedRecipientListMBean extends ManagedProcessorMBean {
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+
+public interface ManagedRecipientListMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
+
+    @ManagedAttribute(description = "The language for the expression")
+    String getExpressionLanguage();
 
     @ManagedAttribute(description = "Expression that returns which endpoints (url) to send the message to (the recipients).", mask = true)
     String getExpression();
@@ -46,5 +52,8 @@ public interface ManagedRecipientListMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "The total timeout specified in millis, when using parallel processing.")
     Long getTimeout();
+
+    @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
+    TabularData extendedInformation();
 
 }

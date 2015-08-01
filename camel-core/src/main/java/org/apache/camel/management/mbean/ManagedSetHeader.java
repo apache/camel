@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedSetHeaderMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.processor.SetHeaderProcessor;
 
 /**
@@ -28,12 +28,15 @@ import org.apache.camel.processor.SetHeaderProcessor;
 @ManagedResource(description = "Managed SetHeader")
 public class ManagedSetHeader extends ManagedProcessor implements ManagedSetHeaderMBean {
     private final SetHeaderProcessor processor;
-    private final String expression;
 
-    public ManagedSetHeader(CamelContext context, SetHeaderProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedSetHeader(CamelContext context, SetHeaderProcessor processor, SetHeaderDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
-        this.expression = processor.getExpression().toString();
+    }
+
+    @Override
+    public SetHeaderDefinition getDefinition() {
+        return (SetHeaderDefinition) super.getDefinition();
     }
 
     @Override
@@ -42,7 +45,12 @@ public class ManagedSetHeader extends ManagedProcessor implements ManagedSetHead
     }
 
     @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
+    }
+
+    @Override
     public String getExpression() {
-        return expression;
+        return getDefinition().getExpression().getExpression();
     }
 }

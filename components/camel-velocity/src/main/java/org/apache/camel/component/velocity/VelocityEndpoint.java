@@ -42,7 +42,7 @@ import org.apache.velocity.runtime.log.CommonsLogLogChute;
 
 @UriEndpoint(scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
 public class VelocityEndpoint extends ResourceEndpoint {
-    
+
     private VelocityEngine velocityEngine;
 
     @UriParam(defaultValue = "true")
@@ -102,7 +102,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
             }
 
             log.debug("Initializing VelocityEngine with properties {}", properties);
-            // help the velocityEngine to load the CamelVelocityClasspathResourceLoader 
+            // help the velocityEngine to load the CamelVelocityClasspathResourceLoader
             ClassLoader old = Thread.currentThread().getContextClassLoader();
             try {
                 ClassLoader delegate = new CamelVelocityDelegateClassLoader(old);
@@ -196,6 +196,13 @@ public class VelocityEndpoint extends ResourceEndpoint {
         Context velocityContext = exchange.getIn().getHeader(VelocityConstants.VELOCITY_CONTEXT, Context.class);
         if (velocityContext == null) {
             Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> supplementalMap = exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);
+            if (supplementalMap != null) {
+                variableMap.putAll(supplementalMap);
+            }
+
             velocityContext = new VelocityContext(variableMap);
         }
 

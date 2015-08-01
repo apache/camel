@@ -18,12 +18,10 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class UndertowProducerTest extends BaseUndertowTest {
 
-    @Ignore
     @Test
     public void testHttpSimple() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
@@ -34,7 +32,28 @@ public class UndertowProducerTest extends BaseUndertowTest {
         assertMockEndpointsSatisfied();
     }
 
-    @Ignore
+    @Test
+    public void testHttpSimpleWithQuery() throws Exception {
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+        getMockEndpoint("mock:input").expectedHeaderReceived("name", "me");
+
+        String out = template.requestBody("undertow:http://localhost:{{port}}/foo?name=me", null, String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHttpSimpleWithExchangeHttpQuery() throws Exception {
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+        getMockEndpoint("mock:input").expectedHeaderReceived("name", "me");
+
+        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", null, Exchange.HTTP_QUERY, "name=me", String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Test
     public void testHttpSimpleHeader() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
@@ -45,7 +64,6 @@ public class UndertowProducerTest extends BaseUndertowTest {
         assertMockEndpointsSatisfied();
     }
 
-    @Ignore
     @Test
     public void testHttpSimpleHeaderAndBody() throws Exception {
 

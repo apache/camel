@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedSetPropertyMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.processor.SetPropertyProcessor;
 
 /**
@@ -28,12 +28,15 @@ import org.apache.camel.processor.SetPropertyProcessor;
 @ManagedResource(description = "Managed SetProperty")
 public class ManagedSetProperty extends ManagedProcessor implements ManagedSetPropertyMBean {
     private final SetPropertyProcessor processor;
-    private final String expression;
 
-    public ManagedSetProperty(CamelContext context, SetPropertyProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedSetProperty(CamelContext context, SetPropertyProcessor processor, SetPropertyDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
-        this.expression = processor.getExpression().toString();
+    }
+
+    @Override
+    public SetPropertyDefinition getDefinition() {
+        return (SetPropertyDefinition) super.getDefinition();
     }
 
     @Override
@@ -42,7 +45,12 @@ public class ManagedSetProperty extends ManagedProcessor implements ManagedSetPr
     }
 
     @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
+    }
+
+    @Override
     public String getExpression() {
-        return expression;
+        return getDefinition().getExpression().getExpression();
     }
 }

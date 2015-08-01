@@ -17,64 +17,67 @@
 package org.apache.camel.coap;
 
 
-import org.apache.camel.Message;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.eclipse.californium.core.CoapResource;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import org.eclipse.californium.core.network.Exchange;
-import org.eclipse.californium.core.server.resources.CoapExchange;
+import org.eclipse.californium.core.server.resources.Resource;
 
 /**
  * The CoAP consumer.
  */
 public class CoAPConsumer extends DefaultConsumer {
     private final CoAPEndpoint endpoint;
-    private CoapResource resource;
+    private List<CoapResource> resources = new LinkedList<>();
 
     public CoAPConsumer(final CoAPEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
-        this.endpoint = endpoint;
-        
-        String path = endpoint.getUri().getPath();
-        if (path.startsWith("/")) {
-            path = path.substring(1);
-        }
-        
-        this.resource = new CoapResource(path) {
-
-            @Override
-            public void handleRequest(Exchange exchange) {
-                CoapExchange cexchange = new CoapExchange(exchange, this);
-                org.apache.camel.Exchange camelExchange = endpoint.createExchange();
-                byte bytes[] = exchange.getCurrentRequest().getPayload();
-                camelExchange.getIn().setBody(bytes);
-                try {
-                    processor.process(camelExchange);
-                    
-                    
-                    Message target = camelExchange.hasOut() ? camelExchange.getOut() : camelExchange.getIn();
-                    
-                    cexchange.respond(ResponseCode.CONTENT, target.getBody(byte[].class));
-
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-            
-        };
+        this.endpoint = endpoint;        
+    }
+    
+    public CoAPEndpoint getCoapEndpoint() {
+        return endpoint;
     }
     
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        endpoint.getCoapServer().add(resource);
+        
+        String path = endpoint.getUri().getPath();
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        Resource cr = endpoint.getCoapServer().getRoot();
+        while (!path.isEmpty()) {
+            int idx = path.indexOf('/');
+            String part1 = path;
+            if (idx != -1) {
+                part1 = path.substring(0, idx);
+                path = path.substring(idx + 1);
+            } else {
+                path = "";
+            }
+            Resource child = cr.getChild(part1);
+            if (child == null) {
+                child = new CamelCoapResource(part1, this);
+                cr.add(child);
+                cr = child;
+            } else if (path.isEmpty()) {
+                ((CamelCoapResource)child).addConsumer(this);
+            } else {
+                cr = child;
+            }
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        endpoint.getCoapServer().remove(resource);
+        for (CoapResource r : resources) {
+            r.getParent().remove(r);
+        }
+        resources.clear();
         super.doStop();
     }
 }

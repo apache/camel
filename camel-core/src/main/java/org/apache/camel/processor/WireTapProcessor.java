@@ -34,6 +34,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -101,6 +102,10 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return dynamicProcessor.getEndpointUtilizationStatistics();
     }
 
     public void process(Exchange exchange) throws Exception {

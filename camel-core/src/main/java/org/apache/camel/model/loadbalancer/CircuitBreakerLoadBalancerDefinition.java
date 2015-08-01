@@ -58,6 +58,12 @@ public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition
     }
 
     @Override
+    protected int getMaximumNumberOfOutputs() {
+        // we can only support 1 output
+        return 1;
+    }
+
+    @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         CircuitBreakerLoadBalancer answer;
 

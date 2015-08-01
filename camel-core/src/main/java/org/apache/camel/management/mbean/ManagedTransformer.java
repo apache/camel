@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedTransformMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.processor.TransformProcessor;
 
 /**
@@ -28,16 +28,24 @@ import org.apache.camel.processor.TransformProcessor;
 @ManagedResource(description = "Managed Transformer")
 public class ManagedTransformer extends ManagedProcessor implements ManagedTransformMBean {
     private final TransformProcessor processor;
-    private final String expression;
 
-    public ManagedTransformer(CamelContext context, TransformProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedTransformer(CamelContext context, TransformProcessor processor, TransformDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
-        this.expression = processor.getExpression().toString();
+    }
+
+    @Override
+    public TransformDefinition getDefinition() {
+        return (TransformDefinition) super.getDefinition();
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
     }
 
     @Override
     public String getExpression() {
-        return expression;
+        return getDefinition().getExpression().getExpression();
     }
 }

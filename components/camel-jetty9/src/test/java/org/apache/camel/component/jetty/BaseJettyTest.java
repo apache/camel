@@ -20,9 +20,8 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.http.DefaultHttpBinding;
-import org.apache.camel.component.http.HttpHeaderFilterStrategy;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -106,9 +105,7 @@ public abstract class BaseJettyTest extends CamelTestSupport {
         JettyHttpComponent jetty = (JettyHttpComponent)context.getComponent("jetty");
         HttpHeaderFilterStrategy filterStrat = new HttpHeaderFilterStrategy();
         filterStrat.setAllowNullValues(true);
-        @SuppressWarnings("deprecation")
-        DefaultHttpBinding httpBinding = new DefaultHttpBinding(filterStrat);
-        jetty.setHttpBinding(httpBinding);
+        jetty.setHeaderFilterStrategy(filterStrat);
     }
 
     protected boolean isJetty8() {

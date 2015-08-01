@@ -24,9 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.AuthMethod;
 import org.apache.camel.component.http.HttpComponent;
-import org.apache.camel.component.http.HttpConfiguration;
+import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.impl.JndiRegistry;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -82,7 +81,7 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 HttpConfiguration config = new HttpConfiguration();
-                config.setAuthMethod(AuthMethod.Basic);
+                config.setAuthMethod("Basic");
                 config.setAuthUsername("donald");
                 config.setAuthPassword("duck");
 

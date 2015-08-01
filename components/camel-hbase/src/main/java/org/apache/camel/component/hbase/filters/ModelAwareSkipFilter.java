@@ -23,8 +23,6 @@ import org.apache.hadoop.hbase.filter.SkipFilter;
 
 public class ModelAwareSkipFilter extends SkipFilter implements ModelAwareFilter<SkipFilter> {
 
-    public ModelAwareSkipFilter() {
-    }
 
     public ModelAwareSkipFilter(Filter filter) {
         super(filter);
@@ -43,7 +41,7 @@ public class ModelAwareSkipFilter extends SkipFilter implements ModelAwareFilter
     /**
      * Wraps an existing {@link SkipFilter} filter into a {@link ModelAwareSkipFilter}.
      */
-    public ModelAwareSkipFilter wrap(SkipFilter filter) {
+    public static ModelAwareSkipFilter wrap(SkipFilter filter) {
         return new ModelAwareSkipFilter(filter.getFilter());
     }
 }

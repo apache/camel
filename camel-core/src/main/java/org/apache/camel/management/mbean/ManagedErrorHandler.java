@@ -456,4 +456,14 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
         redelivery.getRedeliveryPolicy().setAllowRedeliveryWhileStopping(allow);
     }
+
+    public Integer getPendingRedeliveryCount() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getPendingRedeliveryCount();
+    }
+
 }

@@ -18,6 +18,8 @@ package org.apache.camel.component.jackson;
 
 public final class JacksonConstants {
 
+    public static final String ENABLE_TYPE_CONVERTER = "CamelJacksonEnableTypeConverter";
+
     public static final String UNMARSHAL_TYPE = "CamelJacksonUnmarshalType";
 
     private JacksonConstants() {

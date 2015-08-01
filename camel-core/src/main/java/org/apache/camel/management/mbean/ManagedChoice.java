@@ -16,11 +16,23 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.List;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedChoiceMBean;
+import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
@@ -34,4 +46,59 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
         this.processor = processor;
     }
 
+    @Override
+    public ChoiceDefinition getDefinition() {
+        return (ChoiceDefinition) super.getDefinition();
+    }
+
+    @Override
+    public synchronized void reset() {
+        processor.reset();
+        super.reset();
+    }
+
+    @Override
+    public Boolean getSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
+    public TabularData choiceStatistics() {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.choiceTabularType());
+
+            List<WhenDefinition> whens = getDefinition().getWhenClauses();
+            List<FilterProcessor> filters = processor.getFilters();
+
+            for (int i = 0; i < filters.size(); i++) {
+                WhenDefinition when = whens.get(i);
+                FilterProcessor filter = filters.get(i);
+
+                CompositeType ct = CamelOpenMBeanTypes.choiceCompositeType();
+                String predicate = when.getExpression().getExpression();
+                String language = when.getExpression().getLanguage();
+                Long matches = filter.getFilteredCount();
+
+                CompositeData data = new CompositeDataSupport(ct,
+                        new String[]{"predicate", "language", "matches"},
+                        new Object[]{predicate, language, matches});
+                answer.put(data);
+            }
+            if (getDefinition().getOtherwise() != null) {
+                CompositeType ct = CamelOpenMBeanTypes.choiceCompositeType();
+                String predicate = "otherwise";
+                String language = "";
+                Long matches = processor.getNotFilteredCount();
+
+                CompositeData data = new CompositeDataSupport(ct,
+                        new String[]{"predicate", "language", "matches"},
+                        new Object[]{predicate, language, matches});
+                answer.put(data);
+            }
+
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
 }

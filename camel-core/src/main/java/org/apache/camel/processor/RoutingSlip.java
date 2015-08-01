@@ -34,6 +34,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -407,6 +408,10 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
 
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(producerCache);
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return producerCache.getEndpointUtilizationStatistics();
     }
 
     /**

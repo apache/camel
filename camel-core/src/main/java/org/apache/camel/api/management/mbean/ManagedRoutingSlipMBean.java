@@ -16,9 +16,15 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import javax.management.openmbean.TabularData;
 
-public interface ManagedRoutingSlipMBean extends ManagedProcessorMBean {
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+
+public interface ManagedRoutingSlipMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
+
+    @ManagedAttribute(description = "The language for the expression")
+    String getExpressionLanguage();
 
     @ManagedAttribute(description = "Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.", mask = true)
     String getExpression();
@@ -31,5 +37,8 @@ public interface ManagedRoutingSlipMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
     Boolean isIgnoreInvalidEndpoints();
+
+    @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
+    TabularData extendedInformation();
 
 }

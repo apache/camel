@@ -19,14 +19,13 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpOperationFailedException;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.impl.JndiRegistry;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;

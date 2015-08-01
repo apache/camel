@@ -18,22 +18,17 @@ package org.apache.camel.component.gae.task;
 
 import java.net.URI;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.InboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBinding;
-import org.apache.camel.component.http.HttpClientConfigurer;
-import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.camel.http.common.HttpConsumer;
 
 /**
  * The <a href="http://camel.apache.org/gtask.html">Google App Engine Task
@@ -79,12 +74,8 @@ public class GTaskComponent extends ServletComponent {
     }
 
     @Override
-    protected ServletEndpoint createServletEndpoint(String endpointUri,
-            ServletComponent component, URI httpUri, HttpClientParams params,
-            HttpConnectionManager httpConnectionManager,
-            HttpClientConfigurer clientConfigurer) throws Exception {
-        return new GTaskEndpoint(endpointUri, component, httpUri, params,
-                httpConnectionManager, clientConfigurer);
+    protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component, URI httpUri) throws Exception {
+        return new GTaskEndpoint(endpointUri, component, httpUri);
     }
 
     @Override

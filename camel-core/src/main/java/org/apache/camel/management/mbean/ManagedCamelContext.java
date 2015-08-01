@@ -37,8 +37,6 @@ import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
-import org.w3c.dom.Document;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
@@ -59,9 +57,11 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.w3c.dom.Document;
 
 /**
  * @version
@@ -73,7 +73,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public ManagedCamelContext(ModelCamelContext context) {
         this.context = context;
-        boolean enabled = context.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        boolean enabled = context.getManagementStrategy().getManagementAgent() != null && context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
     }
 
@@ -99,6 +104,14 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public String getUptime() {
         return context.getUptime();
+    }
+
+    public String getManagementStatisticsLevel() {
+        if (context.getManagementStrategy().getManagementAgent() != null) {
+            return context.getManagementStrategy().getManagementAgent().getStatisticsLevel().name();
+        } else {
+            return null;
+        }
     }
 
     public String getClassResolver() {

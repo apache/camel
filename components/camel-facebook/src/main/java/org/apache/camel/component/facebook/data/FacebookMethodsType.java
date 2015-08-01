@@ -248,6 +248,8 @@ public enum FacebookMethodsType {
     GETFRIENDS_WITH_OPTIONS(ResponseList.class, "getFriends", Reading.class, FacebookConstants.READING_PPROPERTY),
     GETFRIENDS_WITH_ID(ResponseList.class, "getFriends", String.class, "userId"),
     GETFRIENDS_WITH_ID_OPTIONS(ResponseList.class, "getFriends", String.class, "userId", Reading.class, FacebookConstants.READING_PPROPERTY),
+    GETTAGGABLEFRIENDS(ResponseList.class, "getTaggableFriends"),
+    GETTAGGABLEFRIENDS_WITH_OPTIONS(ResponseList.class, "getTaggableFriends", Reading.class, FacebookConstants.READING_PPROPERTY),
     GETMUTUALFRIENDS(ResponseList.class, "getMutualFriends", String.class, "friendUserId"),
     GETMUTUALFRIENDS_WITH_OPTIONS(ResponseList.class, "getMutualFriends", String.class, "friendUserId", Reading.class, FacebookConstants.READING_PPROPERTY),
     GETMUTUALFRIENDS_WITH_ID(ResponseList.class, "getMutualFriends", String.class, "userId1", String.class, "userId2"),
@@ -317,6 +319,10 @@ public enum FacebookMethodsType {
     GETLOCATIONS_WITH_OPTIONS(ResponseList.class, "getLocations", Reading.class, FacebookConstants.READING_PPROPERTY),
     GETLOCATIONS_WITH_ID(ResponseList.class, "getLocations", String.class, "userId"),
     GETLOCATIONS_WITH_ID_OPTIONS(ResponseList.class, "getLocations", String.class, "userId", Reading.class, FacebookConstants.READING_PPROPERTY),
+    GETTAGGEDPLACES(ResponseList.class, "getTaggedPlaces"),
+    GETTAGGEDPLACES_OPTIONS(ResponseList.class, "getTaggedPlaces", Reading.class, FacebookConstants.READING_PPROPERTY),
+    GETTAGGEDPLACES_WITH_ID(ResponseList.class, "getTaggedPlaces", String.class, "userId"),
+    GETTAGGEDPLACES_WITH_ID_OPTIONS(ResponseList.class, "getTaggedPlaces", String.class, "userId", Reading.class, FacebookConstants.READING_PPROPERTY),
 
     // MessageMethods
     GETINBOX(InboxResponseList.class, "getInbox"),

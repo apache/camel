@@ -21,15 +21,14 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.Filter;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.component.http.HttpConsumer;
-import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IntrospectionSupport;
@@ -40,7 +39,7 @@ import org.eclipse.jetty.server.Handler;
 /**
  * @version 
  */
-public abstract class JettyHttpEndpoint extends HttpEndpoint {
+public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
 
     private List<Handler> handlers;
     private HttpClient client;

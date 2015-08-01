@@ -27,8 +27,8 @@ import org.apache.camel.Exchange;
 import org.eclipse.jetty.client.HttpClient;
 
 public interface JettyContentExchange {
-    void init(Exchange exchange, JettyHttpBinding jettyBinding, 
-              final HttpClient client, AsyncCallback callback);
+
+    void init(Exchange exchange, JettyHttpBinding jettyBinding, final HttpClient client, AsyncCallback callback);
 
     // Methods to prepare the request
     void setRequestContentType(String contentType);
@@ -50,8 +50,7 @@ public interface JettyContentExchange {
     void setSupportRedirect(boolean supportRedirect);
 
     /*
-     * Send using jetty HttpClient and return. The callback will be called when the response 
-     * arrives  
+     * Send using jetty HttpClient and return. The callback will be called when the response arrives
      */
     void send(HttpClient client) throws IOException;
 

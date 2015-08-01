@@ -58,8 +58,11 @@ public class ManagedSplitterTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
-        String uri = (String) mbeanServer.getAttribute(on, "Expression");
-        assertEquals("Simple: ${body}", uri);
+        String lan = (String) mbeanServer.getAttribute(on, "Expression");
+        assertEquals("${body}", lan);
+
+        String exp = (String) mbeanServer.getAttribute(on, "Expression");
+        assertEquals("${body}", exp);
 
         String xml = (String) mbeanServer.invoke(on, "dumpProcessorAsXml", null, null);
         assertTrue(xml.contains("<split"));

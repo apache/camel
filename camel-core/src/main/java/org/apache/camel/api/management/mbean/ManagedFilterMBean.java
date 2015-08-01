@@ -20,6 +20,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedFilterMBean extends ManagedProcessorMBean {
 
+    @ManagedAttribute(description = "The language for the predicate")
+    String getPredicateLanguage();
+
     @ManagedAttribute(description = "Predicate to determine if the message should be filtered or not")
     String getPredicate();
 

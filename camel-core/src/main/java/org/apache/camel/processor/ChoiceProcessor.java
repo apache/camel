@@ -48,6 +48,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
     private String id;
     private final List<FilterProcessor> filters;
     private final Processor otherwise;
+    private transient long notFiltered;
 
     public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
         this.filters = filters;
@@ -89,8 +90,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
             if (processor instanceof FilterProcessor) {
                 FilterProcessor filter = (FilterProcessor) processor;
                 try {
-                    matches = filter.getPredicate().matches(exchange);
-                    exchange.setProperty(Exchange.FILTER_MATCHED, matches);
+                    matches = filter.matches(exchange);
                     // as we have pre evaluated the predicate then use its processor directly when routing
                     processor = filter.getProcessor();
                 } catch (Throwable e) {
@@ -98,6 +98,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
                 }
             } else {
                 // its the otherwise processor, so its a match
+                notFiltered++;
                 matches = true;
             }
 
@@ -154,6 +155,23 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
         return otherwise;
     }
 
+    /**
+     * Gets the number of Exchanges that did not match any predicate and are routed using otherwise
+     */
+    public long getNotFilteredCount() {
+        return notFiltered;
+    }
+
+    /**
+     * Reset counters.
+     */
+    public void reset() {
+        for (FilterProcessor filter : getFilters()) {
+            filter.reset();
+        }
+        notFiltered = 0;
+    }
+
     public List<Processor> next() {
         if (!hasNext()) {
             return null;
@@ -187,4 +205,5 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(otherwise, filters);
     }
+
 }

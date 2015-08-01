@@ -45,14 +45,14 @@ public interface JettyHttpBinding {
     /**
      * Sets the header filter strategy to use.
      * <p/>
-     * Will default use {@link org.apache.camel.component.http.HttpHeaderFilterStrategy}
+     * Will default use {@link org.apache.camel.http.common.HttpHeaderFilterStrategy}
      *
      * @param headerFilterStrategy the custom strategy
      */
     void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
 
     /**
-     * Whether to throw {@link org.apache.camel.component.http.HttpOperationFailedException}
+     * Whether to throw {@link org.apache.camel.http.common.HttpOperationFailedException}
      * in case of response code != 200.
      *
      * @param throwExceptionOnFailure <tt>true</tt> to throw exception
@@ -60,7 +60,7 @@ public interface JettyHttpBinding {
     void setThrowExceptionOnFailure(boolean throwExceptionOnFailure);
 
     /**
-     * Whether to throw {@link org.apache.camel.component.http.HttpOperationFailedException}
+     * Whether to throw {@link org.apache.camel.http.common.HttpOperationFailedException}
      * in case of response code != 200.
      *
      * @return <tt>true</tt> to throw exception

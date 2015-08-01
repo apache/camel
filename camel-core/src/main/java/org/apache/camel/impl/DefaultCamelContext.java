@@ -34,10 +34,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -196,7 +198,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ManagementMBeanAssembler managementMBeanAssembler;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
-    private RestConfiguration restConfiguration = new RestConfiguration();
+    private Map<String, RestConfiguration> restConfigurations = new ConcurrentHashMap<>();
     private RestRegistry restRegistry = new DefaultRestRegistry();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<RoutePolicyFactory>();
@@ -2296,13 +2298,40 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public RestConfiguration getRestConfiguration() {
-        return restConfiguration;
+        RestConfiguration config = restConfigurations.get("");
+        if (config == null) {
+            config = new RestConfiguration();
+            setRestConfiguration(config);
+        }
+        return config;
     }
 
     public void setRestConfiguration(RestConfiguration restConfiguration) {
-        this.restConfiguration = restConfiguration;
+        restConfigurations.put("", restConfiguration);
+    }
+    public Collection<RestConfiguration> getRestConfigurations() {
+        return restConfigurations.values();
     }
 
+
+    public void addRestConfiguration(RestConfiguration restConfiguration) {
+        restConfigurations.put(restConfiguration.getComponent(), restConfiguration);        
+    }
+    public RestConfiguration getRestConfiguration(String component, boolean defaultIfNotExist) {
+        if (component == null) {
+            component = "";
+        }
+        RestConfiguration config = restConfigurations.get(component);
+        if (config == null && defaultIfNotExist) {
+            config = getRestConfiguration();
+            if (config != null && config.getComponent() != null && !component.equals(component)) {
+                config = new RestConfiguration();
+                restConfigurations.put(component, config);
+            }
+        }
+        return config;
+    }
+    
     public List<InterceptStrategy> getInterceptStrategies() {
         return interceptStrategies;
     }

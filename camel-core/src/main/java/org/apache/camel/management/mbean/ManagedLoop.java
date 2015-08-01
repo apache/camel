@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedLoopMBean;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.processor.LoopProcessor;
 
 /**
@@ -28,17 +28,25 @@ import org.apache.camel.processor.LoopProcessor;
 @ManagedResource(description = "Managed Loop")
 public class ManagedLoop extends ManagedProcessor implements ManagedLoopMBean {
     private final LoopProcessor processor;
-    private final String uri;
 
-    public ManagedLoop(CamelContext context, LoopProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedLoop(CamelContext context, LoopProcessor processor, LoopDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
-        this.uri = processor.getExpression().toString();
+    }
+
+    @Override
+    public LoopDefinition getDefinition() {
+        return (LoopDefinition) super.getDefinition();
+    }
+
+    @Override
+    public String getExpressionLanguage() {
+        return getDefinition().getExpression().getLanguage();
     }
 
     @Override
     public String getExpression() {
-        return uri;
+        return getDefinition().getExpression().getExpression();
     }
 
     @Override

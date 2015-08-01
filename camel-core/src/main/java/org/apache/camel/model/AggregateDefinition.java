@@ -125,19 +125,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     public AggregateDefinition(Predicate predicate) {
-        if (predicate != null) {
-            setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
-        }
-    }    
+        this(ExpressionNodeHelper.toExpressionDefinition(predicate));
+    }
     
-    public AggregateDefinition(Expression correlationExpression) {
-        if (correlationExpression != null) {
-            setExpression(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
-        }
+    public AggregateDefinition(Expression expression) {
+        this(ExpressionNodeHelper.toExpressionDefinition(expression));
     }
 
     public AggregateDefinition(ExpressionDefinition correlationExpression) {
-        this.expression = correlationExpression;
+        setExpression(correlationExpression);
+
+        ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
+        cor.setExpressionType(correlationExpression);
+        setCorrelationExpression(cor);
     }
 
     public AggregateDefinition(Expression correlationExpression, AggregationStrategy aggregationStrategy) {

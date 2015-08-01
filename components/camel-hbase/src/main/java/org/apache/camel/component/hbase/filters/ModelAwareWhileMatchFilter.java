@@ -23,9 +23,6 @@ import org.apache.hadoop.hbase.filter.WhileMatchFilter;
 
 public class ModelAwareWhileMatchFilter extends WhileMatchFilter implements ModelAwareFilter<WhileMatchFilter> {
 
-    public ModelAwareWhileMatchFilter() {
-    }
-
     public ModelAwareWhileMatchFilter(Filter filter) {
         super(filter);
     }
@@ -43,7 +40,7 @@ public class ModelAwareWhileMatchFilter extends WhileMatchFilter implements Mode
     /**
      * Wraps an existing {@link WhileMatchFilter} filter into a {@link ModelAwareWhileMatchFilter}.
      */
-    public ModelAwareWhileMatchFilter wrap(WhileMatchFilter filter) {
+    public static ModelAwareWhileMatchFilter wrap(WhileMatchFilter filter) {
         return new ModelAwareWhileMatchFilter(filter.getFilter());
     }
 
