@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.dataformat.bindy.util.AnnotationModelLoader;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PackageScanFilter;
+import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,60 +40,20 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     protected Set<Class<?>> models;
     protected Set<String> modelClassNames;
     protected String crlf;
-    private AnnotationModelLoader modelsLoader;
     
-    private String[] packageNames;
     private String locale;
     private Class<?> type;
-
-    public BindyAbstractFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
-        this.modelsLoader = new AnnotationModelLoader(resolver);
-        this.packageNames = packageNames;
-
+    
+    public BindyAbstractFactory(Class<?> type) throws Exception {
+        this.type = type;
+        
         if (LOG.isDebugEnabled()) {
-            for (String str : this.packageNames) {
-                LOG.debug("Package name: {}", str);
-            }
+            LOG.debug("Class name: {}", type.getName());
         }
-
+        
         initModel();
     }
     
-    public BindyAbstractFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
-        this.modelsLoader = new AnnotationModelLoader(resolver);
-        this.type = type;
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Class name: {}", type.getName());
-        }
-        
-        initModel();
-    }
-
-    public BindyAbstractFactory(PackageScanClassResolver resolver, Class<?> type, PackageScanFilter scanFilter) throws Exception {
-        this.modelsLoader = new AnnotationModelLoader(resolver, scanFilter);
-        this.type = type;
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Class name: {}", type.getName());
-        }
-        
-        initModel();
-    }
-
-    public BindyAbstractFactory(PackageScanClassResolver resolver, String[] packageNames, PackageScanFilter scanFilter) throws Exception {
-        this.modelsLoader = new AnnotationModelLoader(resolver, scanFilter);
-        this.packageNames = packageNames;
-        
-        if (LOG.isDebugEnabled()) {
-            for (String str : this.packageNames) {
-                LOG.debug("Package name: {}", str);
-            }
-        }
-
-        initModel();
-    }
-
     /**
      * method uses to initialize the model representing the classes who will
      * bind the data. This process will scan for classes according to the
@@ -104,29 +62,35 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      * @throws Exception
      */
     public void initModel() throws Exception {
-        // Find classes defined as Model
-        if (packageNames != null)  {
-            initModelClasses(this.packageNames);
-        } else if (type != null) {
-            // use the package name from the type as it may refer to types in the same package
-            String pckName = type.getPackage().getName();
-            initModelClasses(pckName);
-
-        } else {
-            throw new IllegalArgumentException("Either packagenames or type should be configured");
-        }
-        
+        models = new HashSet<Class<?>>();
         modelClassNames = new HashSet<String>();
-        for (Class<?> clazz : models) {
-            modelClassNames.add(clazz.getName());
-        }
+        
+        loadModels(type);
     }
-
+    
     /**
-     * Find all the classes defined as model
+     * Recursively load model.
+     *  
+     * @param root
      */
-    private void initModelClasses(String... packageNames) throws Exception {
-        models = modelsLoader.loadModels(packageNames);
+    private void loadModels(Class<?> root) {
+        models.add(root);
+        modelClassNames.add(root.getName());
+        
+        for (Field field : root.getDeclaredFields()) {
+            Link linkField = field.getAnnotation(Link.class);
+
+            if (linkField != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Class linked: {}, Field: {}", field.getType(), field);
+                }
+                
+                models.add(field.getType());
+                modelClassNames.add(field.getType().getName());
+                
+                loadModels(field.getType());
+            }
+        }
     }
 
     /**

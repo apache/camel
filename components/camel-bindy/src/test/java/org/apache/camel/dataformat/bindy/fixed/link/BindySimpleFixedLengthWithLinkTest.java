@@ -16,10 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.fixed.link;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -62,23 +58,11 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
 
         // check the model
         Exchange exchange = unmarshallResult.getReceivedExchanges().get(0);
-        List<HashMap<String, Object>> results = (List) exchange.getIn().getBody();
-        String orderKey = "org.apache.camel.dataformat.bindy.fixed.link.BindySimpleFixedLengthWithLinkTest$Order";
-
-        for (int i = 0; i < results.size(); i++) {
-            Map<String, Object> map = results.get(i);
-            for (String key : map.keySet()) {
-                if (key.equals(orderKey)) {
-                    Order order = (Order) map.get(orderKey);
-                    assertEquals("AAA", order.fieldA);
-                    assertEquals("CCC", order.fieldC);
-                    assertEquals("BBB", order.subRec.fieldB);
-                }
-            }
-
-        }
-
-
+        Order order = exchange.getIn().getBody(Order.class);
+        
+        assertEquals("AAA", order.fieldA);
+        assertEquals("CCC", order.fieldC);
+        assertEquals("BBB", order.subRec.fieldB);
     }
 
     // *************************************************************************
@@ -92,7 +76,7 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setPackages(new String[]{"org.apache.camel.dataformat.bindy.fixed.link"});
+                bindy.setClassType(Order.class);
                 bindy.setLocale("en");
                 bindy.setType(BindyType.Fixed);
 

@@ -164,8 +164,8 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat formatOptional = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
-        BindyCsvDataFormat formatMandatory = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory");
+        BindyCsvDataFormat formatOptional = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
+        BindyCsvDataFormat formatMandatory = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory.Order.class);
 
         public void configure() {
             from("direct:start1").unmarshal(formatOptional).to("mock:result1");
