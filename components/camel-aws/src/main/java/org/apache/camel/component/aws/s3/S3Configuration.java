@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -55,6 +56,10 @@ public class S3Configuration implements Cloneable {
     private String storageClass;
     @UriParam(label = "producer")
     private String serverSideEncryption;
+    @UriParam
+    private String proxyHost;
+    @UriParam
+    private Integer proxyPort;
 
     public long getPartSize() {
         return partSize;
@@ -220,5 +225,27 @@ public class S3Configuration implements Cloneable {
      */
     public void setServerSideEncryption(String serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
+    }
+    
+    /**
+     * To define a proxy host when instantiating the SQS client
+     */
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    /**
+     * To define a proxy port when instantiating the SQS client
+     */
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
     }
 }
