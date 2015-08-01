@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.cw;
 import java.util.Date;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -45,6 +46,10 @@ public class CwConfiguration implements Cloneable {
     private String unit;
     @UriParam
     private Date timestamp;
+    @UriParam
+    private String proxyHost;
+    @UriParam
+    private Integer proxyPort;
 
     /**
      * The region with which the AWS-CW client wants to work with.
@@ -144,6 +149,29 @@ public class CwConfiguration implements Cloneable {
     public void setAmazonCwClient(AmazonCloudWatch amazonCwClient) {
         this.amazonCwClient = amazonCwClient;
     }
+    
+    
+    /**
+     * To define a proxy host when instantiating the SQS client
+     */
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    /**
+     * To define a proxy port when instantiating the SQS client
+     */
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
 
     @Override
     public String toString() {
@@ -153,6 +181,8 @@ public class CwConfiguration implements Cloneable {
                 + ", secretKey=xxxxxxxxxxxxxxx"
                 + ", value=" + value
                 + ", unit=" + unit
+                + ", proxyHost=" + proxyHost
+                + ", proxyPort=" + proxyPort
                 + "]";
     }
 
