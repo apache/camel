@@ -210,7 +210,7 @@
     <hazelcast-version>3.5.1</hazelcast-version>
     <hbase-version>0.98.5-hadoop2</hbase-version>
     <hbase-bundle-version>0.98.5-hadoop2_2</hbase-bundle-version>
-    <hibernate-validator-version>5.2.0.Final</hibernate-validator-version>
+    <hibernate-validator-version>5.2.1.Final</hibernate-validator-version>
     <!-- Spring 3.2.x and 4.0.x still stick to JPA 2.0. Hibernate 4.3.x upgraded to JPA 2.1. -->
     <hibernate-version>4.2.16.Final</hibernate-version>
     <hk2-version>2.3.0</hk2-version>
