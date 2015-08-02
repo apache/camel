@@ -89,7 +89,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     @Override
-    public void preWriteCheck() throws Exception {
+    public void preWriteCheck(Exchange exchange) throws Exception {
         // before writing send a noop to see if the connection is alive and works
         boolean noop = false;
         if (loggedIn) {
@@ -114,6 +114,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
                 } else {
                     connectIfNecessary();
                 }
+                getOperations().sendSiteCommands(getEndpoint().getConfiguration(), exchange);
             } catch (Exception e) {
                 loggedIn = false;
 
@@ -134,6 +135,11 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             // ignore just log a warning
             log.warn("Exception occurred during disconnecting from: " + getEndpoint() + " " + e.getMessage());
         }
+    }
+
+    @Override
+    protected boolean isUploadFile() {
+        return getEndpoint().isUpload();
     }
 
     @Override

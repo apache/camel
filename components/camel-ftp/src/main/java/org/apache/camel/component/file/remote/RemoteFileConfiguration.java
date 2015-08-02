@@ -47,6 +47,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int soTimeout;
     private boolean throwExceptionOnConnectFailed;
     private String siteCommand;
+    private boolean siteCommandCapture = false;
     private boolean stepwise = true;
     private PathSeparator separator = PathSeparator.Auto;
     private boolean streamDownload;
@@ -57,7 +58,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     public RemoteFileConfiguration(URI uri) {
         configure(uri);
     }
-    
+
     @Override
     public boolean needToNormalize() {
         return false;
@@ -230,6 +231,25 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         this.siteCommand = siteCommand;
     }
 
+    public boolean isSiteCommandCapture() {
+        return siteCommandCapture;
+    }
+
+    /**
+     * Capture the output of the site commands. The output of the site commands will be returned
+     * in the exchange's body as a List<String> with the output of each executed site command
+     * as a list element in order of execution. The order of execution is defined by the order
+     * of the site commands in the siteCommand option (each separated by a newline character).
+     * If false, the body remains untouched.
+     * <p/>
+     * The default is false.
+     *
+     * @param siteCommandCapture if true, capture site command output.
+     */
+    public void setSiteCommandCapture(boolean siteCommandCapture) {
+        this.siteCommandCapture = siteCommandCapture;
+    }
+
     public boolean isStepwise() {
         return stepwise;
     }
@@ -261,7 +281,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     public void setSeparator(PathSeparator separator) {
         this.separator = separator;
     }
-    
+
     public boolean isStreamDownload() {
         return streamDownload;
     }
@@ -271,7 +291,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      * the remote files are streamed to the route as they are read.  When set to false, the remote files
      * are loaded into memory before being sent into the route.
      *
-     * @param streamDownload 
+     * @param streamDownload
      */
     public void setStreamDownload(boolean streamDownload) {
         this.streamDownload = streamDownload;

@@ -38,6 +38,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     private boolean disconnect;
     private boolean fastExistsCheck;
     private boolean download = true;
+    private boolean upload = true;
 
     public RemoteFileEndpoint() {
         // no args constructor for spring bean endpoint configuration
@@ -207,5 +208,13 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     public void setDownload(boolean download) {
         this.download = download;
+    }
+
+    public boolean isUpload() {
+        return this.upload;
+    }
+
+    public void setUpload(boolean upload) {
+        this.upload = upload;
     }
 }

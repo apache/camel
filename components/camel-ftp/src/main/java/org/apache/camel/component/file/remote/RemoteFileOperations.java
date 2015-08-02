@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
@@ -65,4 +66,17 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      */
     boolean sendSiteCommand(String command) throws GenericFileOperationFailedException;
 
+    /**
+     * Sends the site commands to the remote server which are specified in the
+     * configuration option siteCommand. If option siteCommandCapture is true,
+     * the output of each site command will be captured and returned as a List<String>
+     * in the body.
+     * <p/>
+     * Works with the producer only.
+     *
+     * @param configuration the configuration
+     * @param exchange the exchange; if null, output will not be captured
+     * @throws GenericFileOperationFailedException can be thrown
+     */
+    void sendSiteCommands(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException;
 }

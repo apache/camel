@@ -38,7 +38,7 @@ import org.junit.Before;
 public abstract class FtpServerTestSupport extends BaseServerTestSupport {
 
     protected static final String FTP_ROOT_DIR = "./target/res/home";
-    protected static final File USERS_FILE = new File("./src/test/resources/users.properties");
+    protected static final File USERS_FILE = new File(FtpServerTestSupport.class.getResource( "/users.properties" ).getFile());
     protected static final String DEFAULT_LISTENER = "default";
 
     protected FtpServer ftpServer;

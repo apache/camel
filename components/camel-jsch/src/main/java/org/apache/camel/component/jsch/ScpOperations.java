@@ -212,7 +212,12 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         // TODO: not really used, maybe implement at a later time
         return true;
     }
-    
+
+    @Override
+    public void sendSiteCommands(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
+        // TODO: not really used, maybe implement at a later time
+    }
+
     private Session createSession(ScpConfiguration config) {
         ObjectHelper.notNull(config, "ScpConfiguration");
         try {
