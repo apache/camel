@@ -26,61 +26,65 @@
 
   <artifactId>camel-cdi</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: CDI</name>
-  <description>Camel Contexts and Dependency Injection (JSR-299) support</description>
+  <name>Camel :: CDI Component</name>
+  <description>Camel Contexts and Dependency Injection Support</description>
 
   <properties>
     <camel.osgi.import>
       !org.apache.camel.cdi.*,
       !org.apache.deltaspike.cdise.api.*,
-      org.apache.deltaspike.core.api.*;resolution:=optional,
       ${camel.osgi.import.defaults},
       *
     </camel.osgi.import>
     <camel.osgi.export.pkg>
-      org.apache.camel.cdi;${camel.osgi.version},
-      org.apache.camel.cdi.internal;${camel.osgi.version},
-      org.apache.camel.cdi.component.*;${camel.osgi.version}
+      org.apache.camel.cdi;${camel.osgi.version}
     </camel.osgi.export.pkg>
     <camel.osgi.provide.capability>
       org.ops4j.pax.cdi.extension; extension=camel-cdi-extension
     </camel.osgi.provide.capability>
-    <camel.osgi.require.capability>
-      osgi.extender;filter:="(osgi.extender=pax.cdi)",
-      org.ops4j.pax.cdi.extension;filter:="(extension=deltaspike-core-api)"
-    </camel.osgi.require.capability>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- test dependencies -->
+
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+        <artifactId>shrinkwrap-descriptors-bom</artifactId>
+        <version>${shrinkwrap-descriptors-version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>${arquillian-version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
+
+    <!-- compile dependencies -->
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
 
-    <!-- cdi api -->
-    <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>${cdi-api-version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- DeltaSpike -->
+    <!-- DeltaSpike is only used to provide Main support thus optional -->
     <dependency>
       <groupId>org.apache.deltaspike.core</groupId>
       <artifactId>deltaspike-core-api</artifactId>
       <version>${deltaspike-version}</version>
+      <optional>true</optional>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.deltaspike.core</groupId>
-      <artifactId>deltaspike-core-impl</artifactId>
-      <version>${deltaspike-version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <!-- only required for the Main -->
     <dependency>
       <groupId>org.apache.deltaspike.cdictrl</groupId>
       <artifactId>deltaspike-cdictrl-api</artifactId>
@@ -88,74 +92,288 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- logging -->
+    <!-- provided dependencies -->
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core-osgi</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>${osgi-version}</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- test dependencies -->
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-context</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>${hamcrest-version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jul-to-slf4j</artifactId>
       <version>${slf4j-version}</version>
       <scope>test</scope>
     </dependency>
-  </dependencies>
 
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>${arquillian-version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+      <artifactId>shrinkwrap-descriptors-depchain</artifactId>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
 
   <profiles>
     <profile>
-      <id>owb</id>
+      <id>weld-1.0</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>**/*Cdi12Test.java</exclude>
+                <!-- Weld does not resolve observer method based on the runtime type of the event object, e.g. @Observe Long for a Long object fired with Event<Object> -->
+                <exclude>**/RawEventEndpointTest.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
       <dependencies>
+
+        <!-- provided dependencies -->
+
+        <dependency>
+          <groupId>javax.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
+          <version>${cdi-api-1.0-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>javax.el</groupId>
+          <artifactId>javax.el-api</artifactId>
+          <version>${javax.el-api-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <!-- test dependencies -->
+
+        <dependency>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-core</artifactId>
+          <version>${weld1-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
+          <version>${arquillian-weld-se-embedded-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>weld-1.2</id>
+
+      <dependencies>
+
+        <!-- provided dependencies -->
+
+        <dependency>
+          <groupId>javax.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
+          <version>${cdi-api-1.2-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <!-- test dependencies -->
+
+        <dependency>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-core-impl</artifactId>
+          <version>${weld2-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
+          <version>${arquillian-weld-se-embedded-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>owb-1.0</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>**/*Cdi12Test.java</exclude>
+                <!-- OWB does not call the InjectionTarget#preDestroy method -->
+                <exclude>**/UnstoppedCamelContext*Test.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+      <dependencies>
+
+        <!-- provided dependencies -->
+
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-servlet_3.0_spec</artifactId>
-          <scope>test</scope>
+          <artifactId>geronimo-jcdi_1.0_spec</artifactId>
+          <version>${geronimo-jcdi-1.0-spec-version}</version>
+          <scope>provided</scope>
         </dependency>
+
         <dependency>
-          <groupId>org.apache.deltaspike.cdictrl</groupId>
-          <artifactId>deltaspike-cdictrl-owb</artifactId>
-          <version>${deltaspike-version}</version>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-atinject_1.0_spec</artifactId>
+          <version>${geronimo-atinject-1.0-spec-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-interceptor_1.1_spec</artifactId>
+          <version>${geronimo-interceptor-1.1-spec-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <!-- test dependencies -->
+
+        <dependency>
+          <groupId>org.apache.openwebbeans.arquillian</groupId>
+          <artifactId>owb-arquillian-standalone</artifactId>
+          <version>${openwebbeans1-version}</version>
           <scope>test</scope>
         </dependency>
+
+        <dependency>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>openwebbeans-impl</artifactId>
+          <version>${openwebbeans1-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>owb-1.2</id>
+
+      <dependencies>
+
+        <!-- provided dependencies -->
+
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jcdi_1.1_spec</artifactId>
+          <version>${geronimo-jcdi-1.1-spec-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-atinject_1.0_spec</artifactId>
+          <version>${geronimo-atinject-1.0-spec-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-annotation_1.2_spec</artifactId>
+          <version>${geronimo-annotation-1.2-spec-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-interceptor_1.2_spec</artifactId>
+          <version>${geronimo-interceptor-1.2-spec-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <!-- test dependencies -->
+
+        <dependency>
+          <groupId>org.apache.openwebbeans.arquillian</groupId>
+          <artifactId>owb-arquillian-standalone</artifactId>
+          <version>${openwebbeans-version}</version>
+          <scope>test</scope>
+        </dependency>
+
         <dependency>
           <groupId>org.apache.openwebbeans</groupId>
           <artifactId>openwebbeans-impl</artifactId>
           <version>${openwebbeans-version}</version>
           <scope>test</scope>
         </dependency>
-        <dependency>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>openwebbeans-spi</artifactId>
-          <version>${openwebbeans-version}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
 
-    <profile>
-      <id>weld2</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.deltaspike.cdictrl</groupId>
-          <artifactId>deltaspike-cdictrl-weld</artifactId>
-          <version>${deltaspike-version}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.weld.se</groupId>
-          <artifactId>weld-se-core</artifactId>
-          <version>${weld2-version}</version>
-          <scope>provided</scope>
-        </dependency>
       </dependencies>
     </profile>
 

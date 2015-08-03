@@ -35,11 +35,11 @@
       <artifactId>camel-cdi</artifactId>
     </dependency>
 
-    <!-- cdi api -->
+    <!-- CDI API -->
     <dependency>
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
-      <version>1.2</version>
+      <version>${cdi-api-1.2-version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -56,19 +56,28 @@
       <version>${weld2-version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.deltaspike.core</groupId>
+      <artifactId>deltaspike-core-api</artifactId>
+      <version>${deltaspike-version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.deltaspike.cdictrl</groupId>
       <artifactId>deltaspike-cdictrl-weld</artifactId>
       <version>${deltaspike-version}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- use log4j as logger -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
   </dependencies>

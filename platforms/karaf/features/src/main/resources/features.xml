@@ -874,7 +874,9 @@
     <bundle>mvn:org.apache.camel/camel-josql/${project.version}</bundle>
   </feature>
   <feature name='camel-jpa' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${geronimo-annotation-spec-version}</bundle>
+    <bundle dependency='true'>
+      mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${geronimo-annotation-1.0-spec-version}
+    </bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/${geronimo-jpa2-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet-spec-version}</bundle>
     <feature version='${spring-version-range-karaf}'>spring-tx</feature>

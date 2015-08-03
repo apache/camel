@@ -20,13 +20,11 @@ import javax.inject.Inject;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
 
 /**
  * Configures all our Camel routes, components, endpoints and beans
  */
-@ContextName
 public class MyRoutes extends RouteBuilder {
 
     @Inject
@@ -38,7 +36,7 @@ public class MyRoutes extends RouteBuilder {
     private Endpoint resultEndpoint;
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         // you can configure the route rule with Java DSL here
 
         from(inputEndpoint)
