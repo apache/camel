@@ -122,7 +122,7 @@
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
-    <cxf-version>3.0.5</cxf-version>
+    <cxf-version>3.0.6</cxf-version>
     <cxf-version-range>[2.7,4.0)</cxf-version-range>
     <cxf-xjc-utils-version>3.0.3</cxf-xjc-utils-version>
     <deltaspike-version>1.2.1</deltaspike-version>
