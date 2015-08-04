@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.aws.ses;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -85,8 +87,16 @@ public class SesEndpoint extends DefaultEndpoint {
     }
 
     private AmazonSimpleEmailService createSESClient() {
+        AmazonSimpleEmailService client = null;
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonSimpleEmailService client = new AmazonSimpleEmailServiceClient(credentials);
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            client = new AmazonSimpleEmailServiceClient(credentials, clientConfiguration);
+        } else {
+            client = new AmazonSimpleEmailServiceClient(credentials);
+        }
         return client;
     }
 }

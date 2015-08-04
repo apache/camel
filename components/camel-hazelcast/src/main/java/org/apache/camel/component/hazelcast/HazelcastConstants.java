@@ -30,6 +30,7 @@ public final class HazelcastConstants {
     public static final String TOPIC_PREFIX = "topic:";
     public static final String SEDA_PREFIX = "seda:";
     public static final String LIST_PREFIX = "list:";
+    public static final String SET_PREFIX = "set:";
 
     /*
      * incoming header properties

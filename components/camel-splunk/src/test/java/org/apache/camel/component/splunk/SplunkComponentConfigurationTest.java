@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.splunk;
 
+import com.splunk.SSLSecurityProtocol;
 import com.splunk.Service;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -36,6 +37,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
         assertEquals(5000, endpoint.getConfiguration().getConnectionTimeout());
         assertFalse(endpoint.getConfiguration().isUseSunHttpsHandler());
         assertFalse(endpoint.getConfiguration().isRaw());
+        assertEquals(SSLSecurityProtocol.TLSv1_2, endpoint.getConfiguration().getSslProtocol());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -50,7 +52,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
 
         SplunkEndpoint endpoint = (SplunkEndpoint)component
             .createEndpoint("splunk://tcp?username=test&password=pw&host=myhost&port=3333&" + "tcpReceiverPort=4444&index=myindex&sourceType=testSource&"
-                            + "source=test&owner=me&app=fantasticapp&useSunHttpsHandler=true&raw=true");
+                            + "source=test&owner=me&app=fantasticapp&useSunHttpsHandler=true&raw=true&sslProtocol=SSLv3");
         assertEquals("myhost", endpoint.getConfiguration().getHost());
         assertEquals(3333, endpoint.getConfiguration().getPort());
         assertEquals("test", endpoint.getConfiguration().getUsername());
@@ -63,6 +65,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
         assertEquals("fantasticapp", endpoint.getConfiguration().getApp());
         assertTrue(endpoint.getConfiguration().isUseSunHttpsHandler());
         assertTrue(endpoint.getConfiguration().isRaw());
+        assertEquals(SSLSecurityProtocol.SSLv3, endpoint.getConfiguration().getSslProtocol());
     }
 
     @Test

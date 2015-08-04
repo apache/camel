@@ -42,6 +42,10 @@ public class SqsConfiguration {
     private String queueOwnerAWSAccountId;
     @UriParam
     private String region;
+    @UriParam
+    private String proxyHost;
+    @UriParam
+    private Integer proxyPort;
 
     // consumer properties
     @UriParam(label = "consumer", defaultValue = "true")
@@ -331,6 +335,28 @@ public class SqsConfiguration {
         this.concurrentConsumers = concurrentConsumers;
     }
 
+    /**
+     * To define a proxy host when instantiating the SQS client
+     */
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    /**
+     * To define a proxy port when instantiating the SQS client
+     */
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
     @Override
     public String toString() {
         return "SqsConfiguration[queueName=" + queueName
@@ -354,6 +380,8 @@ public class SqsConfiguration {
             + ", queueOwnerAWSAccountId=" + queueOwnerAWSAccountId
             + ", concurrentConsumers=" + concurrentConsumers
             + ", region=" + region
+            + ", proxyHost=" + proxyHost
+            + ", proxyPort=" + proxyPort
             + "]";
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -24,6 +25,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
+
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.junit.After;
@@ -58,7 +60,7 @@ public class RabbitMQSpringIntTest {
         return connection != null && connection.isOpen();
     }
 
-    private Connection openConnection() throws IOException {
+    private Connection openConnection() throws IOException, TimeoutException {
         if (!isConnectionOpened()) {
             LOGGER.info("Open connection");
             connection = connectionFactory.newConnection();
@@ -70,7 +72,7 @@ public class RabbitMQSpringIntTest {
         return channel != null && channel.isOpen();
     }
 
-    private Channel openChannel() throws IOException {
+    private Channel openChannel() throws IOException, TimeoutException {
         if (!isChannelOpened()) {
             LOGGER.info("Open channel");
             channel = openConnection().createChannel();
@@ -79,12 +81,12 @@ public class RabbitMQSpringIntTest {
     }
 
     @Before
-    public void bindQueueExchange() throws IOException {
+    public void bindQueueExchange() throws IOException, TimeoutException {
         openChannel();
     }
 
     @After
-    public void closeConnection() {
+    public void closeConnection() throws TimeoutException {
         if (isChannelOpened()) {
             try {
                 LOGGER.info("Close channel");

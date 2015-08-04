@@ -17,12 +17,14 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -57,7 +59,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
 
         // create the endpoint first
-        UndertowEndpoint endpoint = new UndertowEndpoint(endpointUri.toString(), this);
+        UndertowEndpoint endpoint = createEndpointInstance(endpointUri, this);
         endpoint.setUndertowHttpBinding(undertowHttpBinding);
         setProperties(endpoint, parameters);
 
@@ -74,6 +76,10 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         endpoint.setHttpURI(httpUri);
 
         return endpoint;
+    }
+
+    protected UndertowEndpoint createEndpointInstance(URI endpointUri, UndertowComponent component) throws URISyntaxException {
+        return new UndertowEndpoint(endpointUri.toString(), component);
     }
 
     @Override
@@ -139,31 +145,6 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         serversRegistry.clear();
     }
 
-    protected Undertow rebuildServer(UndertowRegistry registy) {
-        Undertow.Builder result = Undertow.builder();
-        int port = registy.getPort();
-        if (registy.getSslContext() != null) {
-            result = result.addHttpsListener(registy.getPort(), registy.getHost(), registy.getSslContext());
-        } else {
-            result = result.addHttpListener(registy.getPort(), registy.getHost());
-        }
-        PathHandler path = Handlers.path(new NotFoundHandler());
-        for (URI key : registy.getConsumersRegistry().keySet()) {
-            UndertowConsumer consumer = registy.getConsumersRegistry().get(key);
-            URI httpUri = consumer.getEndpoint().getHttpURI();
-            if (consumer.getEndpoint().getMatchOnUriPrefix()) {
-                path.addPrefixPath(httpUri.getPath(), new HttpCamelHandler(consumer));
-
-            } else {
-                path.addExactPath(httpUri.getPath(), new HttpCamelHandler(consumer));
-
-            }
-            LOG.debug("Rebuild for path: {}", httpUri.getPath());
-        }
-        result = result.setHandler(path);
-        return result.build();
-    }
-
     public void registerConsumer(UndertowConsumer consumer) {
         int port = consumer.getEndpoint().getHttpURI().getPort();
         if (serversRegistry.containsKey(port)) {
@@ -183,7 +164,10 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         }
         if (serversRegistry.get(port).isEmpty()) {
             //if there no Consumer left, we can shut down server
-            serversRegistry.get(port).getServer().stop();
+            Undertow server = serversRegistry.get(port).getServer();
+            if (server != null) {
+                server.stop();
+            }
             serversRegistry.remove(port);
         } else {
             //call startServer to rebuild otherwise
@@ -195,7 +179,6 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         int port = consumer.getEndpoint().getHttpURI().getPort();
         LOG.info("Starting server on port: {}", port);
         UndertowRegistry undertowRegistry = serversRegistry.get(port);
-
         if (undertowRegistry.getServer() != null) {
             //server is running, we need to stop it first and then rebuild
             undertowRegistry.getServer().stop();
@@ -203,6 +186,29 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         Undertow newServer = rebuildServer(undertowRegistry);
         newServer.start();
         undertowRegistry.setServer(newServer);
+    }
+
+    protected Undertow rebuildServer(UndertowRegistry registy) {
+        Undertow.Builder result = Undertow.builder();
+        if (registy.getSslContext() != null) {
+            result = result.addHttpsListener(registy.getPort(), registy.getHost(), registy.getSslContext());
+        } else {
+            result = result.addHttpListener(registy.getPort(), registy.getHost());
+        }
+        PathHandler path = Handlers.path(new NotFoundHandler());
+        for (URI key : registy.getConsumersRegistry().keySet()) {
+            UndertowConsumer consumer = registy.getConsumersRegistry().get(key);
+            URI httpUri = consumer.getEndpoint().getHttpURI();
+            HttpCamelHandler handler = new HttpCamelHandler(consumer);
+            if (consumer.getEndpoint().getMatchOnUriPrefix()) {
+                path.addPrefixPath(httpUri.getPath(), handler);
+            } else {
+                path.addExactPath(httpUri.getPath(), handler);
+            }
+            LOG.debug("Rebuild for path: {}", httpUri.getPath());
+        }
+        result = result.setHandler(path);
+        return result.build();
     }
 
     public UndertowHttpBinding getUndertowHttpBinding() {
@@ -215,5 +221,4 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     public void setUndertowHttpBinding(UndertowHttpBinding undertowHttpBinding) {
         this.undertowHttpBinding = undertowHttpBinding;
     }
-
 }

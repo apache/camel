@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -25,6 +26,7 @@ import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -188,8 +190,16 @@ public class S3Endpoint extends ScheduledPollEndpoint {
      * Provide the possibility to override this method for an mock implementation
      */
     AmazonS3 createS3Client() {
+        AmazonS3 client = null;
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonS3 client = new AmazonS3Client(credentials);
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            client = new AmazonS3Client(credentials, clientConfiguration);
+        } else {
+            client = new AmazonS3Client(credentials);
+        }
         return client;
     }
 
