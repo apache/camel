@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ManagementAgent;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -34,6 +36,15 @@ public class JMXAgentPropertiesTest extends JMXAgentTest {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfigUsingProperties.xml");
+    }
+    
+    public void testEnableUseHostIPAddress() throws Exception{
+    	
+    	CamelContext ctx = createCamelContext();
+    	ManagementAgent agent = ctx.getManagementStrategy().getManagementAgent();
+    	agent.start();
+    	assertTrue(agent.getUseHostIPAddress());
+    	
     }
 
 }
