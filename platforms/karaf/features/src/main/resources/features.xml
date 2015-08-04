@@ -409,9 +409,7 @@
   <feature name='camel-flatpack' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
-    <!-- when flatpack 3.4.3 is released, we can use this as the jexcelapi deps will be optional.  Tell then, use the latest smx bundle -->
-    <!--bundle dependency='true'>mvn:net.sf.flatpack/flatpack/${flatpack-version}</bundle-->
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.flatpack/3.2.0_2</bundle>
+    <bundle dependency='true'>mvn:net.sf.flatpack/flatpack/${flatpack-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-flatpack/${project.version}</bundle>
   </feature>
   <feature name='camel-fop' version='${project.version}' resolver='(obr)' start-level='50'>
