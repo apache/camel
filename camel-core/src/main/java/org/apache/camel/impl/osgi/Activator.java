@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.osgi;
 
+import static org.osgi.framework.wiring.BundleRevision.PACKAGE_NAMESPACE;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,6 +66,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
@@ -85,9 +88,13 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     private BundleTracker tracker;
     private Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<Long, List<BaseService>>();
     private long bundleId;
+    
+    // Map from package name to the capability we export for this package
+    private Map<String, BundleCapability> packageCapabilities = new HashMap<>();
 
     public void start(BundleContext context) throws Exception {
         LOG.info("Camel activator starting");
+        cachePackageCapabilities(context);
         bundleId = context.getBundle().getBundleId();
         BundleContext systemBundleContext = context.getBundle(0).getBundleContext();
         tracker = new BundleTracker(systemBundleContext, Bundle.ACTIVE, this);
@@ -99,6 +106,20 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         LOG.info("Camel activator stopping");
         tracker.close();
         LOG.info("Camel activator stopped");
+    }
+    
+    /**
+     * Caches the package capabilities that are needed for a set of interface classes
+     *  
+     * @param classes interfaces we want to track
+     */
+    private void cachePackageCapabilities(BundleContext context) {
+        BundleWiring ourWiring = context.getBundle().adapt(BundleWiring.class);
+        List<BundleCapability> ourExports = ourWiring.getCapabilities(PACKAGE_NAMESPACE);
+        for (BundleCapability ourExport : ourExports) {
+            String ourPkgName = (String) ourExport.getAttributes().get(PACKAGE_NAMESPACE);
+            packageCapabilities.put(ourPkgName, ourExport);
+        }
     }
 
     public Object addingBundle(Bundle bundle, BundleEvent event) {
@@ -152,7 +173,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     protected void registerComponents(Bundle bundle, List<BaseService> resolvers) {
-        if (checkCompat(bundle, Component.class)) {
+        if (canSee(bundle, Component.class)) {
             Map<String, String> components = new HashMap<String, String>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_COMPONENT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
@@ -167,7 +188,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     protected void registerLanguages(Bundle bundle, List<BaseService> resolvers) {
-        if (checkCompat(bundle, Language.class)) {
+        if (canSee(bundle, Language.class)) {
             Map<String, String> languages = new HashMap<String, String>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_LANGUAGE); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
@@ -188,7 +209,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     protected void registerDataFormats(Bundle bundle, List<BaseService> resolvers) {
-        if (checkCompat(bundle, DataFormat.class)) {
+        if (canSee(bundle, DataFormat.class)) {
             Map<String, String> dataformats = new HashMap<String, String>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_DATAFORMAT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
@@ -203,7 +224,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     protected void registerTypeConverterLoader(Bundle bundle, List<BaseService> resolvers) {
-        if (checkCompat(bundle, TypeConverter.class)) {
+        if (canSee(bundle, TypeConverter.class)) {
             URL url1 = bundle.getEntry(META_INF_TYPE_CONVERTER);
             URL url2 = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
             if (url1 != null || url2 != null) {
@@ -211,6 +232,24 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 resolvers.add(new BundleTypeConverterLoader(bundle, url2 != null));
             }
         }
+    }
+    
+    /**
+     * Check if bundle can see the given class
+     * @param bundle
+     * @param clazz
+     * @return
+     */
+    protected boolean canSee(Bundle bundle, Class<?> clazz) {
+        BundleCapability packageCap = packageCapabilities.get(clazz.getPackage().getName());
+        BundleWiring wiring = bundle.adapt(BundleWiring.class);
+        List<BundleWire> imports = wiring.getRequiredWires(PACKAGE_NAMESPACE);
+        for (BundleWire importWire : imports) {
+            if (packageCap.equals(importWire.getCapability())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected static class BundleComponentResolver extends BaseResolver<Component> implements ComponentResolver {
@@ -520,19 +559,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         }
         return properties;
     }
-
-    protected static boolean checkCompat(Bundle bundle, Class<?> clazz) {
-        // Check bundle compatibility
-        try {
-            if (bundle.loadClass(clazz.getName()) != clazz) {
-                return false;
-            }
-        } catch (Throwable t) {
-            return false;
-        }
-        return true;
-    }
-
+    
     protected static Set<String> getConverterPackages(URL resource) {
         Set<String> packages = new LinkedHashSet<String>();
         if (resource != null) {
