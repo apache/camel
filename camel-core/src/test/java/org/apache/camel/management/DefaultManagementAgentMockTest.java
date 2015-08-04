@@ -16,14 +16,6 @@
  */
 package org.apache.camel.management;
 
-import javax.management.JMException;
-import javax.management.MBeanServer;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-
-import org.apache.camel.spi.ManagementAgent;
-import org.junit.Test;
-
 import static org.easymock.EasyMock.createStrictMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -31,6 +23,16 @@ import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.ManagementAgent;
+import org.junit.Test;
 
 /**
  * Tests proper behavior of DefaultManagementAgent when
@@ -74,6 +76,30 @@ public class DefaultManagementAgentMockTest {
 
         assertFalse(agent.isRegistered(sourceObjectName));
         verify(mbeanServer);
+    }
+    
+	@Test
+	public void testShouldUseHostIPAddressWhenFlagisTrue() throws Exception {
+		System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, "true");
+		System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
+		CamelContext ctx = new DefaultCamelContext();
+
+		ManagementAgent agent = new DefaultManagementAgent(ctx);
+		agent.start();
+
+		assertTrue(agent.getUseHostIPAddress());
+	}
+    
+    @Test
+    public void shouldUseHostNameWhenFlagisFalse() throws Exception{
+    	System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, "false");
+    	System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
+		CamelContext ctx = new DefaultCamelContext();
+
+		ManagementAgent agent = new DefaultManagementAgent(ctx);
+		agent.start();
+		
+		assertFalse(agent.getUseHostIPAddress());
     }
 
 }
