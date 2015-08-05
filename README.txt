@@ -60,6 +60,9 @@ If you need support or help then read this page first
 
 If you hit any problems please talk to us on the Camel Forums
   http://camel.apache.org/discussion-forums.html
+  
+If you want to read a book on Camel, try:
+  Camel in Action, Second Editon, http://www.manning.com/ibsen2/
 
 Please help us make Apache Camel better - we appreciate any feedback 
 you may have.
