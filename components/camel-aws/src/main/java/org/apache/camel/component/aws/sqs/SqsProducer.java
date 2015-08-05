@@ -66,7 +66,7 @@ public class SqsProducer extends DefaultProducer {
 
     private void addDelay(SendMessageRequest request, Exchange exchange) {
         Integer headerValue = exchange.getIn().getHeader(SqsConstants.DELAY_HEADER, Integer.class);
-        Integer delayValue = Integer.valueOf(0);
+        Integer delayValue;
         if (headerValue == null) {
             LOG.trace("Using the config delay");
             delayValue = getEndpoint().getConfiguration().getDelaySeconds();
