@@ -90,7 +90,7 @@ public abstract class AbstractCamelRunner implements Runnable {
     }
 
     protected void createCamelContext(final BundleContext bundleContext, final Map<String, String> props) {
-        if (null != bundleContext) {
+        if (bundleContext != null) {
             context = new OsgiDefaultCamelContext(bundleContext, registry);
             // Setup the application context classloader with the bundle classloader
             context.setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
