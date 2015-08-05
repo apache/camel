@@ -58,6 +58,9 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
 
     @Produce(uri = "direct:inputNotConsistent")
     ProducerTemplate notConsistentProducerTemplate;
+    
+    @Produce(uri = "direct:loadBalancingPolicy")
+    ProducerTemplate loadBalancingPolicyTemplate;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -78,6 +81,8 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
                         .to("cql://localhost/camel_ks?cql=" + CQL);
                 from("direct:inputNoParameter")
                         .to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL);
+                from("direct:loadBalancingPolicy")
+                        .to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL + "&loadBalancingPolicy=RoundRobinPolicy");
                 from("direct:inputNotConsistent")
                         .to(NOT_CONSISTENT_URI);
             }
@@ -120,6 +125,22 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
     @Test
     public void testRequestMessageCql() throws Exception {
         Object response = producerTemplate.requestBodyAndHeader(new Object[]{"Claus 2", "Ibsen 2", "c_ibsen"},
+                CassandraConstants.CQL_QUERY, "update camel_user set first_name=?, last_name=? where login=?");
+
+        Cluster cluster = CassandraUnitUtils.cassandraCluster();
+        Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
+        ResultSet resultSet = session.execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
+        Row row = resultSet.one();
+        assertNotNull(row);
+        assertEquals("Claus 2", row.getString("first_name"));
+        assertEquals("Ibsen 2", row.getString("last_name"));
+        session.close();
+        cluster.close();
+    }
+    
+    @Test
+    public void testLoadBalancing() throws Exception {
+        Object response = loadBalancingPolicyTemplate.requestBodyAndHeader(new Object[]{"Claus 2", "Ibsen 2", "c_ibsen"},
                 CassandraConstants.CQL_QUERY, "update camel_user set first_name=?, last_name=? where login=?");
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
