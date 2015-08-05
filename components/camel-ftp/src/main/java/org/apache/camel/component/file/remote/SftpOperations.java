@@ -46,6 +46,7 @@ import com.jcraft.jsch.UserInfo;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -163,7 +164,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
     protected Session createSession(final RemoteFileConfiguration configuration) throws JSchException {
         final JSch jsch = new JSch();
-        JSch.setLogger(new JSchLogger());
+        JSch.setLogger(new JSchLogger(endpoint.getConfiguration().getJschLoggingLevel()));
 
         SftpConfiguration sftpConfig = (SftpConfiguration) configuration;
 
@@ -332,19 +333,25 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
     private static final class JSchLogger implements com.jcraft.jsch.Logger {
 
+        private final LoggingLevel loggingLevel;
+
+        private JSchLogger(LoggingLevel loggingLevel) {
+            this.loggingLevel = loggingLevel;
+        }
+
         public boolean isEnabled(int level) {
             switch (level) {
             case FATAL:
                 // use ERROR as FATAL
-                return LOG.isErrorEnabled();
+                return loggingLevel.isGE(LoggingLevel.ERROR) && LOG.isErrorEnabled();
             case ERROR:
-                return LOG.isErrorEnabled();
+                return loggingLevel.isGE(LoggingLevel.ERROR) && LOG.isErrorEnabled();
             case WARN:
-                return LOG.isWarnEnabled();
+                return loggingLevel.isGE(LoggingLevel.WARN) && LOG.isWarnEnabled();
             case INFO:
-                return LOG.isInfoEnabled();
+                return loggingLevel.isGE(LoggingLevel.INFO) && LOG.isInfoEnabled();
             default:
-                return LOG.isDebugEnabled();
+                return loggingLevel.isGE(LoggingLevel.DEBUG) && LOG.isDebugEnabled();
             }
         }
 
@@ -352,19 +359,19 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             switch (level) {
             case FATAL:
                 // use ERROR as FATAL
-                LOG.error("JSCH -> " + message);
+                LOG.error("JSCH -> {}", message);
                 break;
             case ERROR:
-                LOG.error("JSCH -> " + message);
+                LOG.error("JSCH -> {}", message);
                 break;
             case WARN:
-                LOG.warn("JSCH -> " + message);
+                LOG.warn("JSCH -> {}", message);
                 break;
             case INFO:
-                LOG.info("JSCH -> " + message);
+                LOG.info("JSCH -> {}", message);
                 break;
             default:
-                LOG.debug("JSCH -> " + message);
+                LOG.debug("JSCH -> {}", message);
                 break;
             }
         }
