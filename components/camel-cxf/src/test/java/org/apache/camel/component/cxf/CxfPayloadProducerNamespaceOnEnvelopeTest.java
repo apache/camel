@@ -26,6 +26,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -94,8 +95,7 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport 
         };
     }
 
-// need cxf-3.0.6
-//    @Test
+    @Test
     public void testInvokeRouter() {
         Object returnValue = template.requestBody("direct:router", REQUEST_PAYLOAD);
         assertNotNull(returnValue);
