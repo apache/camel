@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -57,15 +58,11 @@ public abstract class AbstractCamelRunner implements Runnable {
     protected ModelCamelContext context;
     protected SimpleRegistry registry = new SimpleRegistry();
 
-    // Configured fields
-    private String camelContextId = "camel-runner-default";
-    private boolean active;   
-
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture starter;
     private volatile boolean activated;
     private volatile boolean started;
-
+    protected volatile boolean active;
 
     public synchronized void activate(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
         if (activated) {
@@ -86,7 +83,7 @@ public abstract class AbstractCamelRunner implements Runnable {
         // Configure fields from properties
         configure(context, this, log, true);
 
-        setupCamelContext(bundleContext, camelContextId);
+        setupCamelContext(bundleContext);
     }
 
     protected void createCamelContext(final BundleContext bundleContext, final Map<String, String> props) {
@@ -100,11 +97,18 @@ public abstract class AbstractCamelRunner implements Runnable {
             context = new DefaultCamelContext(registry);
         }
         setupPropertiesComponent(context, props, log);
+
+        String name = props.remove("camelContextId");
+        if (name != null) {
+            context.setNameStrategy(new ExplicitCamelContextNameStrategy(name));
+        }
+
+        // ensure we publish this CamelContext to the OSGi service registry
+        context.getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
     }
     
-    protected void setupCamelContext(final BundleContext bundleContext, final String camelContextId) throws Exception {
+    protected void setupCamelContext(final BundleContext bundleContext) throws Exception {
         // Set up CamelContext
-        context.setNameStrategy(new ExplicitCamelContextNameStrategy(camelContextId));
         context.setUseMDCLogging(true);
         context.setUseBreadcrumb(true);
 
@@ -188,7 +192,6 @@ public abstract class AbstractCamelRunner implements Runnable {
         try {
             if (!active) {
                 context.setAutoStartup(false);
-                log.info(camelContextId + " autoStartup disabled (active property is false)");
             }
             context.start();
             started = true;
