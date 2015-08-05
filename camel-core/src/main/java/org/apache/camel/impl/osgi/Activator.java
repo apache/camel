@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.osgi;
 
-import static org.osgi.framework.wiring.BundleRevision.PACKAGE_NAMESPACE;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,6 +70,8 @@ import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.osgi.framework.wiring.BundleRevision.PACKAGE_NAMESPACE;
+
 public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     public static final String META_INF_COMPONENT = "META-INF/services/org/apache/camel/component/";
@@ -86,11 +86,11 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
     private BundleTracker tracker;
-    private Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<Long, List<BaseService>>();
+    private final Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<Long, List<BaseService>>();
     private long bundleId;
     
     // Map from package name to the capability we export for this package
-    private Map<String, BundleCapability> packageCapabilities = new HashMap<>();
+    private final Map<String, BundleCapability> packageCapabilities = new HashMap<>();
 
     public void start(BundleContext context) throws Exception {
         LOG.info("Camel activator starting");
@@ -110,8 +110,6 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     
     /**
      * Caches the package capabilities that are needed for a set of interface classes
-     *  
-     * @param classes interfaces we want to track
      */
     private void cachePackageCapabilities(BundleContext context) {
         BundleWiring ourWiring = context.getBundle().adapt(BundleWiring.class);
@@ -236,9 +234,6 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     
     /**
      * Check if bundle can see the given class
-     * @param bundle
-     * @param clazz
-     * @return
      */
     protected boolean canSee(Bundle bundle, Class<?> clazz) {
         BundleCapability packageCap = packageCapabilities.get(clazz.getPackage().getName());
@@ -357,7 +352,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         public void register() {
             if (hasFallbackTypeConverter) {
                 // The FallbackTypeConverter should have a higher ranking
-                doRegister(TypeConverterLoader.class, Constants.SERVICE_RANKING, new Integer(100));
+                doRegister(TypeConverterLoader.class, Constants.SERVICE_RANKING, 100);
             } else {
                 // The default service ranking is Integer(0);
                 doRegister(TypeConverterLoader.class);
