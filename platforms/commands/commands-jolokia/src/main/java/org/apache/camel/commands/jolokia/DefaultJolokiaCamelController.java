@@ -571,6 +571,22 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
                     answer.add(row);
                 }
             }
+
+            // sort the list
+            Collections.sort(answer, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> endpoint1, Map<String, String> endpoint2) {
+                    String route1 = endpoint1.get("routeId");
+                    String route2 = endpoint2.get("routeId");
+                    int num = route1.compareTo(route2);
+                    if (num == 0) {
+                        String uri1 = endpoint1.get("uri");
+                        String uri2 = endpoint2.get("uri");
+                        num = uri1.compareTo(uri2);
+                    }
+                    return num;
+                }
+            });
         }
 
         return answer;
