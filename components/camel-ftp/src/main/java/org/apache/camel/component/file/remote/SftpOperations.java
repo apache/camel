@@ -345,15 +345,15 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             switch (level) {
             case FATAL:
                 // use ERROR as FATAL
-                return loggingLevel.isGE(LoggingLevel.ERROR) && LOG.isErrorEnabled();
+                return loggingLevel.isEnabled(LoggingLevel.ERROR) && LOG.isErrorEnabled();
             case ERROR:
-                return loggingLevel.isGE(LoggingLevel.ERROR) && LOG.isErrorEnabled();
+                return loggingLevel.isEnabled(LoggingLevel.ERROR) && LOG.isErrorEnabled();
             case WARN:
-                return loggingLevel.isGE(LoggingLevel.WARN) && LOG.isWarnEnabled();
+                return loggingLevel.isEnabled(LoggingLevel.WARN) && LOG.isWarnEnabled();
             case INFO:
-                return loggingLevel.isGE(LoggingLevel.INFO) && LOG.isInfoEnabled();
+                return loggingLevel.isEnabled(LoggingLevel.INFO) && LOG.isInfoEnabled();
             default:
-                return loggingLevel.isGE(LoggingLevel.DEBUG) && LOG.isDebugEnabled();
+                return loggingLevel.isEnabled(LoggingLevel.DEBUG) && LOG.isDebugEnabled();
             }
         }
 

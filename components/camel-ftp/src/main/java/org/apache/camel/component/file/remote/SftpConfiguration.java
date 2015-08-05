@@ -211,9 +211,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Sets the logging level of JSCH activity.
-     * <p/>
-     * Because JSCH is verbose by default at INFO level, the default value is <tt>WARN</tt>
+     * The logging level to use for JSCH activity logging.
+     * As JSCH is verbose at by default at INFO level the threshold is WARN by default.
      */
     public void setJschLoggingLevel(LoggingLevel jschLoggingLevel) {
         this.jschLoggingLevel = jschLoggingLevel;
