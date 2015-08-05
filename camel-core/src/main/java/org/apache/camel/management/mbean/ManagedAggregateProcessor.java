@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedAggregateProcessorMBean;
 import org.apache.camel.model.AggregateDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.spi.ManagementStrategy;
 
@@ -187,6 +186,14 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
         } else {
             return 0;
         }
+    }
+
+    public int getClosedCorrelationKeysCacheSize() {
+        return processor.getClosedCorrelationKeysCacheSize();
+    }
+
+    public void clearClosedCorrelationKeysCache() {
+        processor.clearClosedCorrelationKeysCache();
     }
 
     public long getTotalIn() {
