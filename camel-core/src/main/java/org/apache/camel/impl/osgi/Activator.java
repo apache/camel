@@ -237,6 +237,10 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
      * Check if bundle can see the given class
      */
     protected boolean canSee(Bundle bundle, Class<?> clazz) {
+        if (bundle.getBundleId() == bundleId) {
+            // Need extra handling of camel core as it does not import the api
+            return true;
+        }
         BundleCapability packageCap = packageCapabilities.get(clazz.getPackage().getName());
         BundleWiring wiring = bundle.adapt(BundleWiring.class);
         List<BundleWire> imports = wiring.getRequiredWires(PACKAGE_NAMESPACE);
