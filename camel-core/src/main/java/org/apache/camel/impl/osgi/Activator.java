@@ -101,6 +101,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public void stop(BundleContext context) throws Exception {
         LOG.info("Camel activator stopping");
         tracker.close();
+        packageCapabilities.clear();
         LOG.info("Camel activator stopped");
     }
     
