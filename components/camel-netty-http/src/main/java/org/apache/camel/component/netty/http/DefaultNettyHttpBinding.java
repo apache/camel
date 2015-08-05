@@ -158,10 +158,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 String value = request.headers().get(name);
                 // store a special header that this request was authenticated using HTTP Basic
                 if (value != null && value.trim().startsWith("Basic")) {
-                    if (headerFilterStrategy != null
-                            && !headerFilterStrategy.applyFilterToExternalHeaders(NettyHttpConstants.HTTP_AUTHENTICATION, "Basic", exchange)) {
-                        NettyHttpHelper.appendHeader(headers, NettyHttpConstants.HTTP_AUTHENTICATION, "Basic");
-                    }
+                    NettyHttpHelper.appendHeader(headers, NettyHttpConstants.HTTP_AUTHENTICATION, "Basic");
                 }
             }
 
