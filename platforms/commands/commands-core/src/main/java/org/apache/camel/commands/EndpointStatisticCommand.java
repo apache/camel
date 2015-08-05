@@ -222,6 +222,9 @@ public class EndpointStatisticCommand extends AbstractCamelCommand {
         int dynamicLen = Math.min(columnWidths.get(DYNAMIC_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         dynamicLen = Math.max(MIN_COLUMN_WIDTH, dynamicLen);
 
+        int totalLen = Math.min(columnWidths.get(HITS_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+        totalLen = Math.max(MIN_COLUMN_WIDTH, totalLen);
+
         // last row does not have min width
 
         final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
@@ -231,7 +234,7 @@ public class EndpointStatisticCommand extends AbstractCamelCommand {
         retval.append(fieldPreamble).append("%-").append(directionLen).append('.').append(directionLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(staticLen).append('.').append(staticLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(dynamicLen).append('.').append(dynamicLen).append('s').append(fieldPostamble).append(' ');
-        retval.append(fieldPreamble).append("%s").append(fieldPostamble).append(' ');
+        retval.append(fieldPreamble).append("%").append(totalLen).append('.').append(totalLen).append('s').append(fieldPostamble).append(' ');
 
         return retval.toString();
     }
