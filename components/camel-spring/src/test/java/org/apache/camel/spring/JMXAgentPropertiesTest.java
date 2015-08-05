@@ -23,8 +23,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Test that verifies JMX properties can be configured via Spring.
- *
- * @version 
  */
 public class JMXAgentPropertiesTest extends JMXAgentTest {
 
@@ -37,14 +35,12 @@ public class JMXAgentPropertiesTest extends JMXAgentTest {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfigUsingProperties.xml");
     }
-    
-    public void testEnableUseHostIPAddress() throws Exception{
-    	
-    	CamelContext ctx = createCamelContext();
-    	ManagementAgent agent = ctx.getManagementStrategy().getManagementAgent();
-    	agent.start();
-    	assertTrue(agent.getUseHostIPAddress());
-    	
+
+    public void testEnableUseHostIPAddress() throws Exception {
+        CamelContext ctx = createCamelContext();
+        ManagementAgent agent = ctx.getManagementStrategy().getManagementAgent();
+        agent.start();
+        assertTrue(agent.getUseHostIPAddress());
     }
 
 }
