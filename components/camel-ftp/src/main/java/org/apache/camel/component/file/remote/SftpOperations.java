@@ -66,6 +66,8 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * SFTP remote file operations
+ * <p/>
+ * The JSCH session and channel are not thread-safe so we need to synchronize access to using this operation.
  */
 public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
     private static final Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
@@ -92,7 +94,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         this.endpoint = (SftpEndpoint) endpoint;
     }
 
-    public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
+    public synchronized boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
         if (isConnected()) {
             // already connected
             return true;
@@ -377,11 +379,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    public boolean isConnected() throws GenericFileOperationFailedException {
+    public synchronized boolean isConnected() throws GenericFileOperationFailedException {
         return session != null && session.isConnected() && channel != null && channel.isConnected();
     }
 
-    public void disconnect() throws GenericFileOperationFailedException {
+    public synchronized void disconnect() throws GenericFileOperationFailedException {
         if (session != null && session.isConnected()) {
             session.disconnect();
         }
@@ -390,7 +392,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    public boolean deleteFile(String name) throws GenericFileOperationFailedException {
+    public synchronized boolean deleteFile(String name) throws GenericFileOperationFailedException {
         LOG.debug("Deleting file: {}", name);
         try {
             channel.rm(name);
@@ -400,7 +402,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
+    public synchronized boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         LOG.debug("Renaming file: {} to: {}", from, to);
         try {
             channel.rename(from, to);
@@ -410,7 +412,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+    public synchronized boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         // must normalize directory first
         directory = endpoint.getConfiguration().normalizePath(directory);
 
@@ -480,7 +482,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         return success;
     }
 
-    public String getCurrentDirectory() throws GenericFileOperationFailedException {
+    public synchronized String getCurrentDirectory() throws GenericFileOperationFailedException {
         LOG.trace("getCurrentDirectory()");
         try {
             String answer = channel.pwd();
@@ -491,7 +493,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
+    public synchronized void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         LOG.trace("changeCurrentDirectory({})", path);
         if (ObjectHelper.isEmpty(path)) {
             return;
@@ -555,7 +557,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    public void changeToParentDirectory() throws GenericFileOperationFailedException {
+    public synchronized void changeToParentDirectory() throws GenericFileOperationFailedException {
         LOG.trace("changeToParentDirectory()");
         String current = getCurrentDirectory();
 
@@ -568,11 +570,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         changeCurrentDirectory(parent);
     }
 
-    public List<ChannelSftp.LsEntry> listFiles() throws GenericFileOperationFailedException {
+    public synchronized List<ChannelSftp.LsEntry> listFiles() throws GenericFileOperationFailedException {
         return listFiles(".");
     }
 
-    public List<ChannelSftp.LsEntry> listFiles(String path) throws GenericFileOperationFailedException {
+    public synchronized List<ChannelSftp.LsEntry> listFiles(String path) throws GenericFileOperationFailedException {
         LOG.trace("listFiles({})", path);
         if (ObjectHelper.isEmpty(path)) {
             // list current directory if file path is not given
@@ -596,7 +598,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public synchronized boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
         LOG.trace("retrieveFile({})", name);
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
             // local work directory is configured so we should store file content as files in this local directory
@@ -607,8 +609,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
     
-    @Override
-    public void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+    public synchronized void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
         InputStream is = exchange.getIn().getHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, InputStream.class);
         
         if (is != null) {
@@ -769,7 +770,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         return true;
     }
 
-    public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public synchronized boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
 
@@ -933,7 +934,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    public boolean existsFile(String name) throws GenericFileOperationFailedException {
+    public synchronized boolean existsFile(String name) throws GenericFileOperationFailedException {
         LOG.trace("existsFile({})", name);
         if (endpoint.isFastExistsCheck()) {
             return fastExistsFile(name);
@@ -993,7 +994,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
     }
 
-    public boolean sendNoop() throws GenericFileOperationFailedException {
+    public synchronized boolean sendNoop() throws GenericFileOperationFailedException {
         if (isConnected()) {
             try {
                 session.sendIgnore();
@@ -1006,7 +1007,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         return false;
     }
 
-    public boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
+    public synchronized boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
         // is not implemented
         return true;
     }
