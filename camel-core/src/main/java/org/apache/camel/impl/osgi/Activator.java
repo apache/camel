@@ -88,7 +88,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     private long bundleId;
 
     // Map from package name to the capability we export for this package
-    private final Map<String, BundleCapability> packageCapabilities = new HashMap<>();
+    private final Map<String, BundleCapability> packageCapabilities = new HashMap<String, BundleCapability>();
 
     public void start(BundleContext context) throws Exception {
         LOG.info("Camel activator starting");
