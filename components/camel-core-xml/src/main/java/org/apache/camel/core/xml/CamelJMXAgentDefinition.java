@@ -26,8 +26,6 @@ import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * The JAXB type class for the configuration of jmxAgent
- *
- * @version 
  */
 @XmlRootElement(name = "jmxAgent")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -122,6 +120,12 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
      */
     @XmlAttribute
     private String includeHostName;
+
+    /**
+     * A flag that indicates whether to use hostname or IP Address in the service url.
+     */
+    @XmlAttribute
+    private String useHostIPAddress;
 
     /**
      * A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
@@ -257,6 +261,14 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.mask = mask;
     }
 
+    public String getUseHostIPAddress() {
+        return useHostIPAddress;
+    }
+
+    public void setUseHostIPAddress(String useHostIPAddress) {
+        this.useHostIPAddress = useHostIPAddress;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -307,6 +319,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         }
         if (includeHostName != null) {
             csb.append("includeHostName=" + includeHostName);
+        }
+        if (useHostIPAddress != null) {
+            csb.append("useHostIPAddress=" + useHostIPAddress);
         }
         if (mask != null) {
             csb.append("mask=" + mask);

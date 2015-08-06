@@ -17,11 +17,13 @@
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class BaseQuartzTest extends CamelTestSupport {
 
-    protected boolean isEnableJmx() {
+    @Override
+    protected boolean useJmx() {
         return true;
     }
 
@@ -30,7 +32,7 @@ public class BaseQuartzTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
-        quartz.setEnableJmx(isEnableJmx());
+        quartz.setEnableJmx(useJmx());
 
         return context;
     }

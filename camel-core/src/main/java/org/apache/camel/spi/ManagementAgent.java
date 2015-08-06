@@ -351,5 +351,18 @@ public interface ManagementAgent extends Service {
      * @return the level
      */
     ManagementStatisticsLevel getStatisticsLevel();
+    
+    /**
+     * Gets whether host IP Address to be used instead of host name.
+     *
+     * @return <tt>true</tt> if included
+     */
+    Boolean getUseHostIPAddress();
+
+    /**
+     * Sets whether to use host IP Address 
+     * @param useHostIPAddress <tt>true</tt> to use IP Address.
+     */
+    void setUseHostIPAddress(Boolean useHostIPAddress);
 
 }

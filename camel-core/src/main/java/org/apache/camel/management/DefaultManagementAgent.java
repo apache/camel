@@ -84,6 +84,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean registerNewRoutes = true;
     private Boolean mask = true;
     private Boolean includeHostName = false;
+    private Boolean useHostIPAddress = false;
     private String managementNamePattern = "#name#";
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.Default;
 
@@ -165,6 +166,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         if (System.getProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN) != null) {
             managementNamePattern = System.getProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN);
             values.put(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN, managementNamePattern);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS) != null) {
+            useHostIPAddress = Boolean.getBoolean(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS);
+            values.put(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, useHostIPAddress);
         }
 
         if (!values.isEmpty()) {
@@ -274,6 +279,14 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     public void setIncludeHostName(Boolean includeHostName) {
         this.includeHostName = includeHostName;
+    }
+
+    public Boolean getUseHostIPAddress() {
+        return useHostIPAddress != null && useHostIPAddress;
+    }
+
+    public void setUseHostIPAddress(Boolean useHostIPAddress) {
+        this.useHostIPAddress = useHostIPAddress;
     }
 
     public String getManagementNamePattern() {
@@ -465,9 +478,13 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         if (canAccessSystemProps) {
             try {
-                hostName = InetAddress.getLocalHost().getHostName();
+                if (useHostIPAddress) {
+                    hostName = InetAddress.getLocalHost().getHostAddress();
+                } else {
+                    hostName = InetAddress.getLocalHost().getHostName();
+                }
             } catch (UnknownHostException uhe) {
-                LOG.info("Cannot determine localhost name. Using default: " + DEFAULT_REGISTRY_PORT, uhe);
+                LOG.info("Cannot determine localhost name or address. Using default: " + DEFAULT_REGISTRY_PORT, uhe);
                 hostName = DEFAULT_HOST;
             }
         } else {

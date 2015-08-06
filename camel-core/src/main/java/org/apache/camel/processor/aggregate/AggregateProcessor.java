@@ -783,6 +783,26 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         timeoutMap.put(key, exchange.getExchangeId(), timeout);
     }
 
+    /**
+     * Current number of closed correlation keys in the memory cache
+     */
+    public int getClosedCorrelationKeysCacheSize() {
+        if (closedCorrelationKeys != null) {
+            return closedCorrelationKeys.size();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Clear all the closed correlation keys stored in the cache
+     */
+    public void clearClosedCorrelationKeysCache() {
+        if (closedCorrelationKeys != null) {
+            closedCorrelationKeys.clear();
+        }
+    }
+
     public AggregateProcessorStatistics getStatistics() {
         return statistics;
     }
