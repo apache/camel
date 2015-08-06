@@ -16,7 +16,10 @@
  */
 package org.apache.camel.coap;
 
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.californium.core.CoapClient;
@@ -25,14 +28,23 @@ import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.junit.Test;
 
 public class CoAPComponentTest extends CamelTestSupport {
-    int port = AvailablePortFinder.getNextAvailable();
+    static final int PORT = AvailablePortFinder.getNextAvailable();
+    
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate sender;
     
     @Test
     public void testCoAP() throws Exception {
         NetworkConfig.createStandardWithoutFile();
-        CoapClient client = new CoapClient("coap://localhost:" + port + "/TestResource");
+        CoapClient client = new CoapClient("coap://localhost:" + PORT + "/TestResource");
         CoapResponse rsp = client.get();
         assertEquals("Hello ", rsp.getResponseText());
+        
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello");
+        sender.sendBody("Hello");
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -40,11 +52,13 @@ public class CoAPComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("coap://localhost:" + port + "/TestResource")
+                from("coap://localhost:" + PORT + "/TestResource")
                     .convertBodyTo(String.class)
                     .to("log:exch")
                     .transform(body().prepend("Hello "))
-                    .to("log:exch");                
+                    .to("log:exch");    
+                
+                from("direct:start").to("coap://localhost:" + PORT + "/TestResource").to("mock:result");
             }
         };
     }
