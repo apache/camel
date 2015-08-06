@@ -57,17 +57,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty-common</artifactId>
-      <exclusions>
-        <!-- must use the servlet-api that jetty 9 provides which is 3.1 -->
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-servlet_3.0_spec</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
       <version>${jetty9-version}</version>
@@ -104,6 +93,17 @@
       <version>${jetty9-version}</version>
     </dependency>
 
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jetty-common</artifactId>
+        <exclusions>
+            <!-- must use the servlet-api that jetty 9 provides which is 3.1 -->
+            <exclusion>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-servlet_3.0_spec</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
