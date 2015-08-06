@@ -198,9 +198,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(addressUri, parameters);
         // create endpoint after all known parameters have been extracted from parameters
+
+        // include component scheme in the uri
+        String scheme = ObjectHelper.before(uri, ":");
+        endpointUri = new URI(scheme + ":" + endpointUri);
+
         JettyHttpEndpoint endpoint = createEndpoint(endpointUri, httpUri);
-        
-        
+
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
