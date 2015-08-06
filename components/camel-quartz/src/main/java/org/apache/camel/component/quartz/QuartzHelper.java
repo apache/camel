@@ -28,7 +28,8 @@ public final class QuartzHelper {
         if (camelContext.getManagementName() != null) {
             return camelContext.getManagementName();
         } else {
-            return camelContext.getManagementNameStrategy().getName();
+            // fallback as name
+            return camelContext.getName();
         }
     }
 }

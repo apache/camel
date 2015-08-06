@@ -456,6 +456,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             if (camelJMXAgent.getIncludeHostName() != null) {
                 agent.setIncludeHostName(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getIncludeHostName()));
             }
+            if (camelJMXAgent.getUseHostIPAddress() != null) {
+                agent.setUseHostIPAddress(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getUseHostIPAddress()));
+            }
             if (camelJMXAgent.getMask() != null) {
                 agent.setMask(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getMask()));
             }

@@ -54,7 +54,7 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Ignore invalid correlation keys")
     boolean isIgnoreInvalidCorrelationKeys();
 
-    @ManagedAttribute(description = "Whether to close the correlation group on completion")
+    @ManagedAttribute(description = "Whether to close the correlation group on completion if this value is > 0.")
     Integer getCloseCorrelationKeyOnCompletion();
 
     @ManagedAttribute(description = "Parallel mode")
@@ -89,6 +89,12 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedOperation(description = "To force complete of all groups")
     int forceCompletionOfAllGroups();
+
+    @ManagedAttribute(description = "Current number of closed correlation keys in the memory cache")
+    int getClosedCorrelationKeysCacheSize();
+
+    @ManagedOperation(description = "Clear all the closed correlation keys stored in the cache")
+    void clearClosedCorrelationKeysCache();
 
     @ManagedAttribute(description = "Total number of exchanges arrived into the aggregator")
     long getTotalIn();

@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 import java.security.KeyPair;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -59,6 +60,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private int compression;
     @UriParam
     private String preferredAuthentications;
+    @UriParam(defaultValue = "WARN")
+    private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -244,5 +247,17 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     
     public String getPreferredAuthentications() {
         return preferredAuthentications;
+    }
+
+    public LoggingLevel getJschLoggingLevel() {
+        return jschLoggingLevel;
+    }
+
+    /**
+     * The logging level to use for JSCH activity logging.
+     * As JSCH is verbose at by default at INFO level the threshold is WARN by default.
+     */
+    public void setJschLoggingLevel(LoggingLevel jschLoggingLevel) {
+        this.jschLoggingLevel = jschLoggingLevel;
     }
 }

@@ -66,10 +66,10 @@ public class SWFConfiguration {
     private String stateResultType;
     @UriParam(label = "producer,workflow")
     private String terminationDetails;
-    @UriParam(label = "producer,workflow", defaultValue = "300")
-    private String executionStartToCloseTimeout = "300";
-    @UriParam(label = "producer,workflow", defaultValue = "300")
-    private String taskStartToCloseTimeout = "300";
+    @UriParam(label = "producer,workflow", defaultValue = "3600")
+    private String executionStartToCloseTimeout = "3600";
+    @UriParam(label = "producer,workflow", defaultValue = "600")
+    private String taskStartToCloseTimeout = "600";
     @UriParam
     private DataConverter dataConverter;
     @UriParam(label = "producer,activity")

@@ -457,6 +457,25 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                     answer.add(row);
                 }
             }
+
+            // sort the list
+            Collections.sort(answer, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> endpoint1, Map<String, String> endpoint2) {
+                    // sort by route id
+                    String route1 = endpoint1.get("routeId");
+                    String route2 = endpoint2.get("routeId");
+                    int num = route1.compareTo(route2);
+                    if (num == 0) {
+                        // we want in before out
+                        String dir1 = endpoint1.get("direction");
+                        String dir2 = endpoint2.get("direction");
+                        num = dir1.compareTo(dir2);
+                    }
+                    return num;
+                }
+
+            });
         }
         return answer;
     }

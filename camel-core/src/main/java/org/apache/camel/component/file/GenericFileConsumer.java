@@ -432,17 +432,22 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
             log.debug("About to process file: {} using exchange: {}", target, exchange);
 
-            // process the exchange using the async consumer to support async routing engine
-            // which can be supported by this file consumer as all the done work is
-            // provided in the GenericFileOnCompletion
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // noop
-                    if (log.isTraceEnabled()) {
-                        log.trace("Done processing file: {} {}", target, doneSync ? "synchronously" : "asynchronously");
+            if (endpoint.isSynchronous()) {
+                // process synchronously
+                getProcessor().process(exchange);
+            } else {
+                // process the exchange using the async consumer to support async routing engine
+                // which can be supported by this file consumer as all the done work is
+                // provided in the GenericFileOnCompletion
+                getAsyncProcessor().process(exchange, new AsyncCallback() {
+                    public void done(boolean doneSync) {
+                        // noop
+                        if (log.isTraceEnabled()) {
+                            log.trace("Done processing file: {} {}", target, doneSync ? "synchronously" : "asynchronously");
+                        }
                     }
-                }
-            });
+                });
+            }
 
         } catch (Exception e) {
             // remove file from the in progress list due to failure

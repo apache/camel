@@ -73,6 +73,10 @@ public final class JmxSystemPropertyKeys {
 
     // To configure the default management name pattern using a JVM system property
     public static final String MANAGEMENT_NAME_PATTERN = "org.apache.camel.jmx.managementNamePattern";
+    
+    // flag to enable host ip address instead of host name 
+    public static final String USE_HOST_IP_ADDRESS = "org.apache.camel.jmx.useHostIPAddress";
+
 
     private JmxSystemPropertyKeys() {
         // not instantiated
