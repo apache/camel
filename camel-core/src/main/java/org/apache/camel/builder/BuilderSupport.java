@@ -47,7 +47,7 @@ public abstract class BuilderSupport {
     }
 
     protected BuilderSupport(CamelContext context) {
-        this.context = context.adapt(ModelCamelContext.class);
+        this.context = context != null ? context.adapt(ModelCamelContext.class) : null;
     }
 
     // Builder methods
