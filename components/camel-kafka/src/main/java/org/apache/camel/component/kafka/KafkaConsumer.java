@@ -121,11 +121,11 @@ public class KafkaConsumer extends DefaultConsumer {
     class BatchingConsumerTask implements Runnable {
 
         private KafkaStream<byte[], byte[]> stream;
-        private CyclicBarrier berrier;
+        private CyclicBarrier barrier;
 
-        public BatchingConsumerTask(KafkaStream<byte[], byte[]> stream, CyclicBarrier berrier) {
+        public BatchingConsumerTask(KafkaStream<byte[], byte[]> stream, CyclicBarrier barrier) {
             this.stream = stream;
-            this.berrier = berrier;
+            this.barrier = barrier;
         }
 
         public void run() {
@@ -160,7 +160,7 @@ public class KafkaConsumer extends DefaultConsumer {
                 if (processed >= endpoint.getBatchSize() || consumerTimeout 
                     || (processed > 0 && !hasNext)) { // Need to commit the offset for the last round
                     try {
-                        berrier.await(endpoint.getBarrierAwaitTimeoutMs(), TimeUnit.MILLISECONDS);
+                        barrier.await(endpoint.getBarrierAwaitTimeoutMs(), TimeUnit.MILLISECONDS);
                         if (!consumerTimeout) {
                             processed = 0;
                         }
