@@ -243,10 +243,16 @@ public abstract class ServiceSupport implements StatefulService {
         return !isStoppingOrStopped();
     }
 
+    /**
+     * Is the service in progress of being stopped or already stopped
+     */
     public boolean isStoppingOrStopped() {
         return stopping.get() || stopped.get();
     }
 
+    /**
+     * Is the service in progress of being suspended or already suspended
+     */
     public boolean isSuspendingOrSuspended() {
         return suspending.get() || suspended.get();
     }
