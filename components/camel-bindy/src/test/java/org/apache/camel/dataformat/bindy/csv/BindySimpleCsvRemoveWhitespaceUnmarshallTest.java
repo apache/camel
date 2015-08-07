@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.bindy.csv;
 
 
 import java.util.List;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
