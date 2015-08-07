@@ -29,7 +29,6 @@ import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +57,8 @@ public abstract class BuilderSupport {
      * Returns a value builder for the given header
      */
     public ValueBuilder header(String name) {
-        HeaderExpression expression = new HeaderExpression(name);
-        return new ValueBuilder(expression);
+        Expression exp = new HeaderExpression(name);
+        return new ValueBuilder(exp);
     }
 
     /**
@@ -69,16 +68,16 @@ public abstract class BuilderSupport {
      */
     @Deprecated
     public ValueBuilder property(String name) {
-        ExchangePropertyExpression expression = new ExchangePropertyExpression(name);
-        return new ValueBuilder(expression);
+        Expression exp = new ExchangePropertyExpression(name);
+        return new ValueBuilder(exp);
     }
     
     /**
      * Returns a value builder for the given exchange property
      */
     public ValueBuilder exchangeProperty(String name) {
-        ExchangePropertyExpression expression = new ExchangePropertyExpression(name);
-        return new ValueBuilder(expression);
+        Expression exp = new ExchangePropertyExpression(name);
+        return new ValueBuilder(exp);
     }
 
     /**
@@ -91,15 +90,29 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the inbound message body as a
      * specific type
+     *
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public <T> ValueBuilder body(Class<T> type) {
+        return bodyAs(type);
+    }
+
+    /**
+     * Returns a predicate and value builder for the inbound message body as a
+     * specific type
+     */
+    public <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
     }
 
     /**
      * Returns a predicate and value builder for the outbound body on an
      * exchange
+     *
+     * @deprecated use {@link #body()}
      */
+    @Deprecated
     public ValueBuilder outBody() {
         return Builder.outBody();
     }
@@ -107,7 +120,10 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
+     *
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public <T> ValueBuilder outBody(Class<T> type) {
         return Builder.outBodyAs(type);
     }
@@ -123,7 +139,10 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the fault message body as a
      * specific type
+     *
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public <T> ValueBuilder faultBodyAs(Class<T> type) {
         return Builder.faultBodyAs(type);
     }
@@ -217,13 +236,7 @@ public abstract class BuilderSupport {
      */
     @Deprecated
     public ValueBuilder bean(Object beanOrBeanRef, String method) {
-        MethodCallExpression expression;
-        if (beanOrBeanRef instanceof String) {
-            expression = new MethodCallExpression((String) beanOrBeanRef, method);
-        } else {
-            expression = new MethodCallExpression(beanOrBeanRef, method);
-        }
-        return new ValueBuilder(expression);
+        return Builder.bean(beanOrBeanRef, method);
     }
 
     /**
@@ -236,8 +249,7 @@ public abstract class BuilderSupport {
      */
     @Deprecated
     public ValueBuilder bean(Class<?> beanType) {
-        MethodCallExpression expression = new MethodCallExpression(beanType);
-        return new ValueBuilder(expression);
+        return Builder.bean(beanType);
     }
     
     /**
@@ -251,8 +263,7 @@ public abstract class BuilderSupport {
      */
     @Deprecated
     public ValueBuilder bean(Class<?> beanType, String method) {
-        MethodCallExpression expression = new MethodCallExpression(beanType, method);
-        return new ValueBuilder(expression);
+        return Builder.bean(beanType, method);
     }
 
     /**
@@ -279,13 +290,7 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public ValueBuilder method(Object beanOrBeanRef, String method) {
-        MethodCallExpression expression;
-        if (beanOrBeanRef instanceof String) {
-            expression = new MethodCallExpression((String) beanOrBeanRef, method);
-        } else {
-            expression = new MethodCallExpression(beanOrBeanRef, method);
-        }
-        return new ValueBuilder(expression);
+        return Builder.bean(beanOrBeanRef, method);
     }
 
     /**
@@ -296,8 +301,7 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public ValueBuilder method(Class<?> beanType) {
-        MethodCallExpression expression = new MethodCallExpression(beanType);
-        return new ValueBuilder(expression);
+        return Builder.bean(beanType);
     }
 
     /**
@@ -309,8 +313,7 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public ValueBuilder method(Class<?> beanType, String method) {
-        MethodCallExpression expression = new MethodCallExpression(beanType, method);
-        return new ValueBuilder(expression);
+        return Builder.bean(beanType, method);
     }
 
     /**
@@ -318,7 +321,9 @@ public abstract class BuilderSupport {
      *
      * @param uri endpoint uri to send the exchange to
      * @return the builder
+     * @deprecated not in use, and not available in XML DSL
      */
+    @Deprecated
     public ValueBuilder sendTo(String uri) {
         return Builder.sendTo(uri);
     }
