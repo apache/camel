@@ -44,6 +44,7 @@ public class KafkaEndpointTest {
         assertEquals("somekey", exchange.getIn().getHeader(KafkaConstants.KEY));
         assertEquals("topic", exchange.getIn().getHeader(KafkaConstants.TOPIC));
         assertEquals(4, exchange.getIn().getHeader(KafkaConstants.PARTITION));
+        assertEquals(56L, exchange.getIn().getHeader(KafkaConstants.OFFSET));
     }
 
     @Test
