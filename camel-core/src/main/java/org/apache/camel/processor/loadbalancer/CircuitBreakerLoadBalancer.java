@@ -225,6 +225,9 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
             throw new IllegalStateException("No processors could be chosen to process CircuitBreaker");
         }
 
+        // store state as exchange property
+        exchange.setProperty(Exchange.CIRCUIT_BREAKER_STATE, stateAsString());
+
         AsyncProcessor albp = AsyncProcessorConverterHelper.convert(processor);
         // Added a callback for processing the exchange in the callback
         boolean sync = albp.process(exchange, new CircuitBreakerCallback(exchange, callback));
@@ -254,6 +257,17 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
         exchange.setException(new RejectedExecutionException("CircuitBreaker Open: failures: " + failures + ", lastFailure: " + lastFailure));
         callback.done(true);
         return true;
+    }
+
+    private String stateAsString() {
+        int num = state.get();
+        if (num == STATE_CLOSED) {
+            return "closed";
+        } else if (num == STATE_HALF_OPEN) {
+            return "halfOpen";
+        } else {
+            return "open";
+        }
     }
 
     public String toString() {
