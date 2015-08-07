@@ -247,6 +247,10 @@ public abstract class ServiceSupport implements StatefulService {
         return stopping.get() || stopped.get();
     }
 
+    public boolean isSuspendingOrSuspended() {
+        return suspending.get() || suspended.get();
+    }
+
     /**
      * Implementations override this method to support customized start/stop.
      * <p/>
