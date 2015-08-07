@@ -204,14 +204,7 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
 
     public String dumpState() {
         int num = state.get();
-        String state;
-        if (num == 0) {
-            state = "closed";
-        } else if (num == 1) {
-            state = "half open";
-        } else {
-            state = "open";
-        }
+        String state = stateAsString(num);
         if (lastFailure > 0) {
             return String.format("State %s, failures %d, closed since %d", state, failures.get(), System.currentTimeMillis() - lastFailure);
         } else {
@@ -226,7 +219,7 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
         }
 
         // store state as exchange property
-        exchange.setProperty(Exchange.CIRCUIT_BREAKER_STATE, stateAsString());
+        exchange.setProperty(Exchange.CIRCUIT_BREAKER_STATE, stateAsString(state.get()));
 
         AsyncProcessor albp = AsyncProcessorConverterHelper.convert(processor);
         // Added a callback for processing the exchange in the callback
@@ -259,14 +252,13 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
         return true;
     }
 
-    private String stateAsString() {
-        int num = state.get();
+    private static String stateAsString(int num) {
         if (num == STATE_CLOSED) {
             return "closed";
         } else if (num == STATE_HALF_OPEN) {
-            return "halfOpen";
+            return "half opened";
         } else {
-            return "open";
+            return "opened";
         }
     }
 
