@@ -142,7 +142,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         dataFormat.setMapping(mapping);
         dataFormat.setStreamName(streamName);
         dataFormat.setEncoding(encoding);
-        dataFormat.setIgnoreInvalidRecords(ignoreInvalidRecords);
+        dataFormat.setIgnoreUnidentifiedRecords(ignoreUnidentifiedRecords);
         dataFormat.setIgnoreUnexpectedRecords(ignoreUnexpectedRecords);
         dataFormat.setIgnoreInvalidRecords(ignoreInvalidRecords);
         return dataFormat(dataFormat);
