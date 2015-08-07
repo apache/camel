@@ -44,6 +44,7 @@ import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
@@ -872,6 +873,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition parallelProcessing() {
         setParallelProcessing(true);
+        return this;
+    }
+
+    /**
+     * When aggregated are completed they are being send out of the aggregator.
+     * This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency.
+     * If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads.
+     */
+    public AggregateDefinition parallelProcessing(boolean parallelProcessing) {
+        setParallelProcessing(parallelProcessing);
         return this;
     }
 

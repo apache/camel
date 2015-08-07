@@ -291,6 +291,17 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         return this;
     }
 
+    /**
+     * If enabled then the on completion process will run asynchronously by a separate thread from a thread pool.
+     * By default this is false, meaning the on completion process will run synchronously using the same caller thread as from the route.
+     *
+     * @return the builder
+     */
+    public OnCompletionDefinition parallelProcessing(boolean parallelProcessing) {
+        setParallelProcessing(parallelProcessing);
+        return this;
+    }
+
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }

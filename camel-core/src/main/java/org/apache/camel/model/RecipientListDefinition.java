@@ -290,6 +290,18 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     /**
+     * If enabled then sending messages to the recipients occurs concurrently.
+     * Note the caller thread will still wait until all messages has been fully processed, before it continues.
+     * Its only the sending and processing the replies from the recipients which happens concurrently.
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> parallelProcessing(boolean parallelProcessing) {
+        setParallelProcessing(parallelProcessing);
+        return this;
+    }
+
+    /**
      * If enabled then the aggregate method on AggregationStrategy can be called concurrently.
      * Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe.
      * By default this is false meaning that Camel synchronizes the call to the aggregate method.
