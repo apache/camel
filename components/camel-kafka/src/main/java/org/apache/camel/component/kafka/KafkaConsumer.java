@@ -20,11 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.ConsumerIterator;
@@ -134,14 +132,14 @@ public class KafkaConsumer extends DefaultConsumer {
 
             int processed = 0;
             boolean consumerTimeout;
-            MessageAndMetadata<byte[], byte[]> mm = null;
+            MessageAndMetadata<byte[], byte[]> mm;
             ConsumerIterator<byte[], byte[]> it = stream.iterator();
             boolean hasNext = true;
             while (hasNext) {
-
                 try {
                     consumerTimeout = false;
-                    if (it.hasNext()) {
+                    // only poll the next message if we are allowed to run and are not suspending
+                    if (isRunAllowed() && !isSuspendingOrSuspended() && it.hasNext()) {
                         mm = it.next();
                         Exchange exchange = endpoint.createKafkaExchange(mm);
                         try {
@@ -155,7 +153,7 @@ public class KafkaConsumer extends DefaultConsumer {
                         hasNext = false;
                     }
                 } catch (ConsumerTimeoutException e) {
-                    LOG.debug(e.getMessage(), e);
+                    LOG.debug("Consumer timeout occurred due " + e.getMessage(), e);
                     consumerTimeout = true;
                 }
 
@@ -166,14 +164,9 @@ public class KafkaConsumer extends DefaultConsumer {
                         if (!consumerTimeout) {
                             processed = 0;
                         }
-                    } catch (InterruptedException e) {
-                        LOG.error(e.getMessage(), e);
+                    } catch (Exception e) {
+                        getExceptionHandler().handleException("Error waiting for batch to complete", e);
                         break;
-                    } catch (BrokenBarrierException e) {
-                        LOG.error(e.getMessage(), e);
-                        break;
-                    } catch (TimeoutException e) {
-                        LOG.error(e.getMessage(), e);
                     }
                 }
             }
@@ -203,12 +196,15 @@ public class KafkaConsumer extends DefaultConsumer {
         }
 
         public void run() {
-            for (MessageAndMetadata<byte[], byte[]> mm : stream) {
+            ConsumerIterator<byte[], byte[]> it = stream.iterator();
+            // only poll the next message if we are allowed to run and are not suspending
+            while (isRunAllowed() && it.hasNext()) {
+                MessageAndMetadata<byte[], byte[]> mm = it.next();
                 Exchange exchange = endpoint.createKafkaExchange(mm);
                 try {
                     processor.process(exchange);
                 } catch (Exception e) {
-                    LOG.error(e.getMessage(), e);
+                    getExceptionHandler().handleException("Error during processing", exchange, e);
                 }
             }
         }
