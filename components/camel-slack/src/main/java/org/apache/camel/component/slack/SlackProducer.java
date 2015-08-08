@@ -56,7 +56,7 @@ public class SlackProducer extends DefaultProducer {
 
         // Set the post body
         String json = asJson(slackMessage);
-        StringEntity body = new StringEntity(json);
+        StringEntity body = new StringEntity(json,"UTF-8");
 
         // Do the post
         httpPost.setEntity(body);
