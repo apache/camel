@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverters;
 
 /**
@@ -79,13 +80,6 @@ public interface TypeConverterRegistry extends StaticService {
          * @param statisticsEnabled <tt>true</tt> to enable
          */
         void setStatisticsEnabled(boolean statisticsEnabled);
-    }
-
-    /**
-     * What to do if attempting to add a duplicate type converter
-     */
-    enum TypeConverterExists {
-        Overwrite, Ignore, Fail
     }
 
     /**

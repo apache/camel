@@ -23,8 +23,8 @@ import junit.framework.TestCase;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
-import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.TypeConverterSupport;
 
 /**
@@ -66,7 +66,7 @@ public class TypeConverterRegistryTest extends TestCase {
 
     public void testAddDuplicateTypeConverterIgnore() {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getTypeConverterRegistry().setTypeConverterExists(TypeConverterRegistry.TypeConverterExists.Ignore);
+        context.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Ignore);
         context.getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(LoggingLevel.INFO);
 
         context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
@@ -75,7 +75,7 @@ public class TypeConverterRegistryTest extends TestCase {
 
     public void testAddDuplicateTypeConverterFail() {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getTypeConverterRegistry().setTypeConverterExists(TypeConverterRegistry.TypeConverterExists.Fail);
+        context.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Fail);
 
         context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
         try {

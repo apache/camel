@@ -36,6 +36,7 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverters;
@@ -69,7 +70,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final PackageScanClassResolver resolver;
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
-    protected TypeConverterExists typeConverterExists = TypeConverterExists.Overwrite;
+    protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
     protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
     protected final Statistics statistics = new UtilizationStatistics();
     protected final AtomicLong noopCounter = new AtomicLong();
@@ -387,7 +388,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
             // if converter is not null then a duplicate exists
             if (converter != null) {
-                if (typeConverterExists == TypeConverterExists.Overwrite) {
+                if (typeConverterExists == TypeConverterExists.Override) {
                     CamelLogger logger = new CamelLogger(log, typeConverterExistsLoggingLevel);
                     logger.log("Overriding type converter from: " + converter + " to: " + typeConverter);
                 } else if (typeConverterExists == TypeConverterExists.Ignore) {
