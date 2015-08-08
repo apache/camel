@@ -21,7 +21,10 @@ import java.io.InputStream;
 
 import junit.framework.TestCase;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterExistsException;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.TypeConverterSupport;
 
 /**
@@ -52,6 +55,35 @@ public class TypeConverterRegistryTest extends TestCase {
 
         assertNotNull(order);
         assertEquals(123, order.getId());
+    }
+
+    public void testAddDuplicateTypeConverter() {
+        DefaultCamelContext context = new DefaultCamelContext();
+
+        context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
+        context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
+    }
+
+    public void testAddDuplicateTypeConverterIgnore() {
+        DefaultCamelContext context = new DefaultCamelContext();
+        context.getTypeConverterRegistry().setTypeConverterExists(TypeConverterRegistry.TypeConverterExists.Ignore);
+        context.getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(LoggingLevel.INFO);
+
+        context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
+        context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
+    }
+
+    public void testAddDuplicateTypeConverterFail() {
+        DefaultCamelContext context = new DefaultCamelContext();
+        context.getTypeConverterRegistry().setTypeConverterExists(TypeConverterRegistry.TypeConverterExists.Fail);
+
+        context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
+        try {
+            context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
+            fail("Should have thrown exception");
+        } catch (TypeConverterExistsException e) {
+            // expected
+        }
     }
 
     public void testRemoveTypeConverter() {

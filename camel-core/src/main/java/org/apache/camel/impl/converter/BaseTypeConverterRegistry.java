@@ -381,23 +381,29 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // as race conditions can lead to many threads trying to promote the same fallback converter
 
         if (typeConverter != converter) {
-            // duplicate detected
-            if (typeConverterExists == TypeConverterExists.Overwrite) {
-                if (converter != null) {
+
+            // add the converter unless we should ignore
+            boolean add = true;
+
+            // if converter is not null then a duplicate exists
+            if (converter != null) {
+                if (typeConverterExists == TypeConverterExists.Overwrite) {
                     CamelLogger logger = new CamelLogger(log, typeConverterExistsLoggingLevel);
                     logger.log("Overriding type converter from: " + converter + " to: " + typeConverter);
+                } else if (typeConverterExists == TypeConverterExists.Ignore) {
+                    CamelLogger logger = new CamelLogger(log, typeConverterExistsLoggingLevel);
+                    logger.log("Ignoring duplicate type converter from: " + converter + " to: " + typeConverter);
+                    add = false;
+                } else {
+                    // we should fail
+                    throw new TypeConverterExistsException(toType, fromType);
                 }
+            }
+
+            if (add) {
                 typeMappings.put(key, typeConverter);
                 // remove any previous misses, as we added the new type converter
                 misses.remove(key);
-            } else if (typeConverterExists == TypeConverterExists.Ignore) {
-                if (converter != null) {
-                    CamelLogger logger = new CamelLogger(log, typeConverterExistsLoggingLevel);
-                    logger.log("Ignore duplicate type converter from: " + converter + " to: " + typeConverter);
-                }
-            } else {
-                // we should fail
-                throw new TypeConverterExistsException(toType, fromType);
             }
         }
     }
