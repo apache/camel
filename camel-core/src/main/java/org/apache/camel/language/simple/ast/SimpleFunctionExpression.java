@@ -348,14 +348,18 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.fileNameExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext")) {
             return ExpressionBuilder.fileNameNoExtensionExpression();
-        } else if (ObjectHelper.equal(remainder, "name.ext")) {
+        } else if (ObjectHelper.equal(remainder, "name.noext.single")) {
+            return ExpressionBuilder.fileNameNoExtensionSingleExpression();
+        } else if (ObjectHelper.equal(remainder, "name.ext") || ObjectHelper.equal(remainder, "ext")) {
             return ExpressionBuilder.fileExtensionExpression();
+        } else if (ObjectHelper.equal(remainder, "name.ext.single")) {
+            return ExpressionBuilder.fileExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname")) {
             return ExpressionBuilder.fileOnlyNameExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
             return ExpressionBuilder.fileOnlyNameNoExtensionExpression();
-        } else if (ObjectHelper.equal(remainder, "ext")) {
-            return ExpressionBuilder.fileExtensionExpression();
+        } else if (ObjectHelper.equal(remainder, "onlyname.noext.single")) {
+            return ExpressionBuilder.fileOnlyNameNoExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "parent")) {
             return ExpressionBuilder.fileParentExpression();
         } else if (ObjectHelper.equal(remainder, "path")) {
