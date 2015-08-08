@@ -83,6 +83,14 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
         return registry.size();
     }
 
+    public String getTypeConverterExistsLoggingLevel() {
+        return registry.getTypeConverterExistsLoggingLevel().name();
+    }
+
+    public String getTypeConverterExists() {
+        return registry.getTypeConverterExists().name();
+    }
+
     public boolean hasTypeConverter(String fromType, String toType) {
         try {
             Class<?> from = getContext().getClassResolver().resolveMandatoryClass(fromType);

@@ -69,8 +69,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final PackageScanClassResolver resolver;
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
-    protected TypeConverterAddDuplicate addDuplicateTypeConverter = TypeConverterAddDuplicate.Overwrite;
-    protected LoggingLevel addDuplicateTypeConverterLoggingLevel = LoggingLevel.WARN;
+    protected TypeConverterExists typeConverterExists = TypeConverterExists.Overwrite;
+    protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
     protected final Statistics statistics = new UtilizationStatistics();
     protected final AtomicLong noopCounter = new AtomicLong();
     protected final AtomicLong attemptCounter = new AtomicLong();
@@ -382,17 +382,17 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         if (typeConverter != converter) {
             // duplicate detected
-            if (addDuplicateTypeConverter == TypeConverterAddDuplicate.Overwrite) {
+            if (typeConverterExists == TypeConverterExists.Overwrite) {
                 if (converter != null) {
-                    CamelLogger logger = new CamelLogger(log, addDuplicateTypeConverterLoggingLevel);
+                    CamelLogger logger = new CamelLogger(log, typeConverterExistsLoggingLevel);
                     logger.log("Overriding type converter from: " + converter + " to: " + typeConverter);
                 }
                 typeMappings.put(key, typeConverter);
                 // remove any previous misses, as we added the new type converter
                 misses.remove(key);
-            } else if (addDuplicateTypeConverter == TypeConverterAddDuplicate.Ignore) {
+            } else if (typeConverterExists == TypeConverterExists.Ignore) {
                 if (converter != null) {
-                    CamelLogger logger = new CamelLogger(log, addDuplicateTypeConverterLoggingLevel);
+                    CamelLogger logger = new CamelLogger(log, typeConverterExistsLoggingLevel);
                     logger.log("Ignore duplicate type converter from: " + converter + " to: " + typeConverter);
                 }
             } else {
@@ -613,20 +613,20 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return typeMappings.size();
     }
 
-    public LoggingLevel getAddDuplicateTypeConverterLoggingLevel() {
-        return addDuplicateTypeConverterLoggingLevel;
+    public LoggingLevel getTypeConverterExistsLoggingLevel() {
+        return typeConverterExistsLoggingLevel;
     }
 
-    public void setAddDuplicateTypeConverterLoggingLevel(LoggingLevel addTypeConverterExistsLoggingLevel) {
-        this.addDuplicateTypeConverterLoggingLevel = addTypeConverterExistsLoggingLevel;
+    public void setTypeConverterExistsLoggingLevel(LoggingLevel typeConverterExistsLoggingLevel) {
+        this.typeConverterExistsLoggingLevel = typeConverterExistsLoggingLevel;
     }
 
-    public TypeConverterAddDuplicate getAddDuplicateTypeConverter() {
-        return addDuplicateTypeConverter;
+    public TypeConverterExists getTypeConverterExists() {
+        return typeConverterExists;
     }
 
-    public void setAddDuplicateTypeConverter(TypeConverterAddDuplicate addDuplicateTypeConverter) {
-        this.addDuplicateTypeConverter = addDuplicateTypeConverter;
+    public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
+        this.typeConverterExists = typeConverterExists;
     }
 
     @Override

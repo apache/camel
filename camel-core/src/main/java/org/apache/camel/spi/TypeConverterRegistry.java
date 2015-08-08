@@ -84,7 +84,7 @@ public interface TypeConverterRegistry extends StaticService {
     /**
      * What to do if attempting to add a duplicate type converter
      */
-    enum TypeConverterAddDuplicate {
+    enum TypeConverterExists {
         Overwrite, Ignore, Fail
     }
 
@@ -173,27 +173,27 @@ public interface TypeConverterRegistry extends StaticService {
      * <p/>
      * The default logging level is <tt>WARN</tt>
      */
-    LoggingLevel getAddDuplicateTypeConverterLoggingLevel();
+    LoggingLevel getTypeConverterExistsLoggingLevel();
 
     /**
      * The logging level to use when logging that a type converter already exists when attempting to add a duplicate type converter.
      * <p/>
      * The default logging level is <tt>WARN</tt>
      */
-    void setAddDuplicateTypeConverterLoggingLevel(LoggingLevel loggingLevel);
+    void setTypeConverterExistsLoggingLevel(LoggingLevel typeConverterExistsLoggingLevel);
 
     /**
      * What should happen when attempting to add a duplicate type converter.
      * <p/>
      * The default behavior is to override the existing.
      */
-    TypeConverterAddDuplicate getAddDuplicateTypeConverter();
+    TypeConverterExists getTypeConverterExists();
 
     /**
      * What should happen when attempting to add a duplicate type converter.
      * <p/>
      * The default behavior is to override the existing.
      */
-    void setAddDuplicateTypeConverter(TypeConverterAddDuplicate addDuplicateTypeConverter);
+    void setTypeConverterExists(TypeConverterExists typeConverterExists);
 
 }
