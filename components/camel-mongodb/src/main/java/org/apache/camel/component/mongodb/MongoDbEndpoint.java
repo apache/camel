@@ -282,7 +282,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     public Exchange createMongoDbExchange(DBObject dbObj) {
-        Exchange exchange = new DefaultExchange(this.getCamelContext(), getExchangePattern());
+        Exchange exchange = super.createExchange();
         Message message = new DefaultMessage();
         message.setHeader(MongoDbConstants.DATABASE, database);
         message.setHeader(MongoDbConstants.COLLECTION, collection);
