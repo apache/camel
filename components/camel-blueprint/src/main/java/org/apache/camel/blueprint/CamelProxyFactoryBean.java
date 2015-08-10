@@ -105,7 +105,8 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
             }
         }
 
-        boolean bind = getBinding() != null ? getBinding() : false;
+        // binding is enabled by default
+        boolean bind = getBinding() != null ? getBinding() : true;
 
         try {
             producer = endpoint.createProducer();

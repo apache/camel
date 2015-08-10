@@ -30,7 +30,7 @@ public final class ProxyBuilder {
 
     private final CamelContext camelContext;
     private Endpoint endpoint;
-    private boolean binding;
+    private boolean binding = true;
 
     public ProxyBuilder(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -60,6 +60,8 @@ public final class ProxyBuilder {
 
     /**
      * Whether to use binding or not.
+     * <p/>
+     * Binding is enabled by default. Set this to <tt>false</tt> to use old behavior without binding.
      * <p/>
      * If binding is enabled then Camel will bind the method parameters to the input {@link org.apache.camel.Message}
      * on the {@link org.apache.camel.Exchange} when invoking the proxy.

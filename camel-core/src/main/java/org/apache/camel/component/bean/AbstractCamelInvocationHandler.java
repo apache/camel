@@ -107,20 +107,25 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
             int index = 0;
             for (Annotation[] row : method.getParameterAnnotations()) {
                 Object value = args[index];
-                for (Annotation ann : row) {
-                    if (ann.annotationType().isAssignableFrom(Header.class)) {
-                        Header header = (Header) ann;
-                        String name = header.value();
-                        exchange.getIn().setHeader(name, value);
-                    } else if (ann.annotationType().isAssignableFrom(ExchangeProperty.class)) {
-                        ExchangeProperty ep = (ExchangeProperty) ann;
-                        String name = ep.value();
-                        exchange.setProperty(name, value);
-                    } else if (ann.annotationType().isAssignableFrom(Body.class)) {
-                        exchange.getIn().setBody(value);
-                    } else {
-                        // assume its message body when there is no annotations
-                        exchange.getIn().setBody(value);
+                if (row == null || row.length == 0) {
+                    // assume its message body when there is no annotations
+                    exchange.getIn().setBody(value);
+                } else {
+                    for (Annotation ann : row) {
+                        if (ann.annotationType().isAssignableFrom(Header.class)) {
+                            Header header = (Header) ann;
+                            String name = header.value();
+                            exchange.getIn().setHeader(name, value);
+                        } else if (ann.annotationType().isAssignableFrom(ExchangeProperty.class)) {
+                            ExchangeProperty ep = (ExchangeProperty) ann;
+                            String name = ep.value();
+                            exchange.setProperty(name, value);
+                        } else if (ann.annotationType().isAssignableFrom(Body.class)) {
+                            exchange.getIn().setBody(value);
+                        } else {
+                            // assume its message body when there is no annotations
+                            exchange.getIn().setBody(value);
+                        }
                     }
                 }
                 index++;
