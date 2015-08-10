@@ -216,7 +216,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     }
 
     private Exchange createExchange(ExchangePattern pattern, com.amazonaws.services.sqs.model.Message msg) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         message.setBody(msg.getBody());
         message.setHeaders(new HashMap<String, Object>(msg.getAttributes()));

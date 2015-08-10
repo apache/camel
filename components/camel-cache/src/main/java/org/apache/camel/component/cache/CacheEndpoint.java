@@ -97,15 +97,12 @@ public class CacheEndpoint extends DefaultEndpoint {
         this.cacheManagerFactory = cacheManagerFactory;
     }
 
-    public Exchange createCacheExchange(String operation, String key,
-            Object value) {
-        Exchange exchange = new DefaultExchange(this.getCamelContext(),
-                getExchangePattern());
-        Message message = new DefaultMessage();
+    public Exchange createCacheExchange(String operation, String key, Object value) {
+        Exchange exchange = super.createExchange();
+        Message message = exchange.getIn();
         message.setHeader(CacheConstants.CACHE_OPERATION, operation);
         message.setHeader(CacheConstants.CACHE_KEY, key);
         message.setBody(value);
-        exchange.setIn(message);
         return exchange;
     }
 

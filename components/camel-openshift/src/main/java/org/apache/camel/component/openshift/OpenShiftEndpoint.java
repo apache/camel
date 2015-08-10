@@ -22,7 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -77,7 +76,7 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
     }
 
     public Exchange createExchange(IApplication application) {
-        Exchange exchange = new DefaultExchange(this);
+        Exchange exchange = super.createExchange();
         exchange.getIn().setBody(application);
         return exchange;
     }

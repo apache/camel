@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.javaspace;
 
-import java.util.Map;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -62,11 +59,6 @@ public class JavaSpaceEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         return new JavaSpaceProducer(this);
-    }
-
-    @Override
-    public DefaultExchange createExchange() {
-        return new DefaultExchange(getCamelContext(), getExchangePattern());
     }
 
     public boolean isSingleton() {

@@ -288,7 +288,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange(pattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
         return exchange;
     }

@@ -27,8 +27,6 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -108,9 +106,9 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public Exchange createKafkaExchange(MessageAndMetadata<byte[], byte[]> mm) {
-        Exchange exchange = new DefaultExchange(this, getExchangePattern());
+        Exchange exchange = super.createExchange();
 
-        Message message = new DefaultMessage();
+        Message message = exchange.getIn();
         message.setHeader(KafkaConstants.PARTITION, mm.partition());
         message.setHeader(KafkaConstants.TOPIC, mm.topic());
         message.setHeader(KafkaConstants.OFFSET, mm.offset());
@@ -118,7 +116,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
             message.setHeader(KafkaConstants.KEY, new String(mm.key()));
         }
         message.setBody(mm.message());
-        exchange.setIn(message);
 
         return exchange;
     }

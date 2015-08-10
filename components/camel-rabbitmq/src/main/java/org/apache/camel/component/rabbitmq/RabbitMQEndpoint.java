@@ -51,7 +51,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -180,15 +179,13 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     }
 
     public Exchange createRabbitExchange(Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
-        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
-
+        Exchange exchange = super.createExchange();
         setRabbitExchange(exchange, envelope, properties, body);
         return exchange;
     }
 
     /**
      * Gets the message converter to convert between rabbit and camel
-     * @return
      */
     protected RabbitMQMessageConverter getMessageConverter() {
         return messageConverter;
@@ -255,10 +252,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     /**
      * Sends the body that is on the exchange
-     * @param camelExchange
-     * @param channel
-     * @param properties
-     * @throws IOException
      */
     public void publishExchangeToChannel(Exchange camelExchange, Channel channel, String routingKey) throws IOException {
         Message msg;
@@ -305,7 +298,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         Boolean mandatory = camelExchange.getIn().getHeader(RabbitMQConstants.MANDATORY, isMandatory(), Boolean.class);
         Boolean immediate = camelExchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE, isImmediate(), Boolean.class);
 
-
         LOG.debug("Sending message to exchange: {} with CorrelationId = {}", rabbitExchange, properties.getCorrelationId());
 
         channel.basicPublish(rabbitExchange, routingKey, mandatory, immediate, properties, body);
@@ -313,9 +305,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     /**
      * Extracts name of the rabbitmq exchange
-     * 
-     * @param msg
-     * @return
      */
     protected String getExchangeName(Message msg) {
         String exchangeName = msg.getHeader(RabbitMQConstants.EXCHANGE_NAME, String.class);
