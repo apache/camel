@@ -18,11 +18,9 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.Body;
 import org.apache.camel.Header;
-import org.apache.camel.InOnly;
 
 public interface MyAuditService {
 
-    @InOnly
     void auditMessage(@Header("uuid") String uuid, @Body String body);
 
 }

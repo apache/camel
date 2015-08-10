@@ -45,6 +45,8 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
     private String serviceRef;
     @XmlAttribute
     private String serviceInterface;
+    @XmlAttribute
+    private Boolean binding;
     @XmlTransient
     private Endpoint endpoint;
     @XmlTransient
@@ -103,11 +105,13 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
             }
         }
 
+        boolean bind = getBinding() != null ? getBinding() : false;
+
         try {
             producer = endpoint.createProducer();
             ServiceHelper.startService(producer);
             Class<?> clazz = blueprintContainer.loadClass(getServiceInterface());
-            serviceProxy = ProxyHelper.createProxy(endpoint, producer, clazz);
+            serviceProxy = ProxyHelper.createProxy(endpoint, bind, producer, clazz);
         } catch (Exception e) {
             throw new FailedToCreateProducerException(endpoint, e);
         }
@@ -131,6 +135,14 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
 
     public void setServiceRef(String serviceRef) {
         this.serviceRef = serviceRef;
+    }
+
+    public Boolean getBinding() {
+        return binding;
+    }
+
+    public void setBinding(Boolean binding) {
+        this.binding = binding;
     }
 
     public String getServiceInterface() {

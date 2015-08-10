@@ -39,6 +39,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
     private String serviceRef;
     private CamelContext camelContext;
     private String camelContextId;
+    private Boolean binding;
     private ApplicationContext applicationContext;
     private Endpoint endpoint;
     private Object serviceProxy;
@@ -70,10 +71,12 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
             }
         }
 
+        boolean bind = getBinding() != null ? getBinding() : false;
+
         try {
             producer = endpoint.createProducer();
             ServiceHelper.startService(producer);
-            serviceProxy = ProxyHelper.createProxy(endpoint, producer, getServiceInterface());
+            serviceProxy = ProxyHelper.createProxy(endpoint, bind, producer, getServiceInterface());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(endpoint, e);
         }
@@ -109,6 +112,14 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
 
     public void setServiceRef(String serviceRef) {
         this.serviceRef = serviceRef;
+    }
+
+    public Boolean getBinding() {
+        return binding;
+    }
+
+    public void setBinding(Boolean binding) {
+        this.binding = binding;
     }
 
     public Endpoint getEndpoint() {
