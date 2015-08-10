@@ -26,8 +26,6 @@ import org.apache.camel.Headers;
  */
 public interface MyListener {
 
-    String sayHello(String name);
-    
-    String greet(@Headers Map<String, Object>headers, @Body String name);
+    String greet(@Headers Map<String, Object> headers, @Body String name);
 
 }

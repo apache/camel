@@ -23,6 +23,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -37,6 +38,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Header;
+import org.apache.camel.Headers;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
@@ -99,6 +101,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
 
     public abstract Object doInvokeProxy(final Object proxy, final Method method, final Object[] args) throws Throwable;
 
+    @SuppressWarnings("unchecked")
     protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding) throws Throwable {
         final Exchange exchange = new DefaultExchange(endpoint, pattern);
         // use method info to map to exchange
@@ -116,6 +119,11 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                             Header header = (Header) ann;
                             String name = header.value();
                             exchange.getIn().setHeader(name, value);
+                        } else if (ann.annotationType().isAssignableFrom(Headers.class)) {
+                            Map map = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, value);
+                            if (map != null) {
+                                exchange.getIn().getHeaders().putAll(map);
+                            }
                         } else if (ann.annotationType().isAssignableFrom(ExchangeProperty.class)) {
                             ExchangeProperty ep = (ExchangeProperty) ann;
                             String name = ep.value();
