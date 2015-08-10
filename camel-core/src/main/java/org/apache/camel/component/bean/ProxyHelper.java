@@ -37,15 +37,29 @@ public final class ProxyHelper {
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
+     *
+     * @deprecated use the same method name with binding as parameter
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public static <T> T createProxyObject(Endpoint endpoint, Producer producer, ClassLoader classLoader, Class<T>[] interfaces, MethodInfoCache methodCache) {
-        return (T) Proxy.newProxyInstance(classLoader, interfaces.clone(), new CamelInvocationHandler(endpoint, producer, methodCache));
+        return createProxyObject(endpoint, false, producer, classLoader, interfaces, methodCache);
     }
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
+    @SuppressWarnings("unchecked")
+    public static <T> T createProxyObject(Endpoint endpoint, boolean binding, Producer producer, ClassLoader classLoader, Class<T>[] interfaces, MethodInfoCache methodCache) {
+        return (T) Proxy.newProxyInstance(classLoader, interfaces.clone(), new CamelInvocationHandler(endpoint, binding, producer, methodCache));
+    }
+
+    /**
+     * Creates a Proxy which sends the exchange to the endpoint.
+     *
+     * @deprecated use the same method name with binding as parameter
+     */
+    @Deprecated
     public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T> interfaceClass, MethodInfoCache methodCache) throws Exception {
         return createProxy(endpoint, cl, toArray(interfaceClass), methodCache);
     }
@@ -53,10 +67,27 @@ public final class ProxyHelper {
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
+    public static <T> T createProxy(Endpoint endpoint, boolean binding, ClassLoader cl, Class<T> interfaceClass, MethodInfoCache methodCache) throws Exception {
+        return createProxy(endpoint, binding, cl, toArray(interfaceClass), methodCache);
+    }
+
+    /**
+     * Creates a Proxy which sends the exchange to the endpoint.
+     *
+     * @deprecated use the same method name with binding as parameter
+     */
+    @Deprecated
     public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T>[] interfaceClasses, MethodInfoCache methodCache) throws Exception {
+        return createProxy(endpoint, false, cl, interfaceClasses, methodCache);
+    }
+
+    /**
+     * Creates a Proxy which sends the exchange to the endpoint.
+     */
+    public static <T> T createProxy(Endpoint endpoint, boolean binding, ClassLoader cl, Class<T>[] interfaceClasses, MethodInfoCache methodCache) throws Exception {
         Producer producer = DeferServiceFactory.createProducer(endpoint);
         endpoint.getCamelContext().deferStartService(producer, true);
-        return createProxyObject(endpoint, producer, cl, interfaceClasses, methodCache);
+        return createProxyObject(endpoint, binding, producer, cl, interfaceClasses, methodCache);
     }
 
     /**
@@ -68,9 +99,19 @@ public final class ProxyHelper {
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
+     *
+     * @deprecated use the same method name with binding as parameter
      */
+    @Deprecated
     public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T>... interfaceClasses) throws Exception {
-        return createProxy(endpoint, cl, interfaceClasses, createMethodInfoCache(endpoint));
+        return createProxy(endpoint, false, cl, interfaceClasses);
+    }
+
+    /**
+     * Creates a Proxy which sends the exchange to the endpoint.
+     */
+    public static <T> T createProxy(Endpoint endpoint, boolean binding, ClassLoader cl, Class<T>... interfaceClasses) throws Exception {
+        return createProxy(endpoint, binding, cl, interfaceClasses, createMethodInfoCache(endpoint));
     }
 
     /**
@@ -82,9 +123,19 @@ public final class ProxyHelper {
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
+     *
+     * @deprecated use the same method name with binding as parameter
      */
+    @Deprecated
     public static <T> T createProxy(Endpoint endpoint, Class<T>... interfaceClasses) throws Exception {
-        return createProxy(endpoint, getClassLoader(interfaceClasses), interfaceClasses);
+        return createProxy(endpoint, false, interfaceClasses);
+    }
+
+    /**
+     * Creates a Proxy which sends the exchange to the endpoint.
+     */
+    public static <T> T createProxy(Endpoint endpoint, boolean binding, Class<T>... interfaceClasses) throws Exception {
+        return createProxy(endpoint, binding, getClassLoader(interfaceClasses), interfaceClasses);
     }
 
     /**

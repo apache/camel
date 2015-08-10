@@ -99,45 +99,39 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
 
     public abstract Object doInvokeProxy(final Object proxy, final Method method, final Object[] args) throws Throwable;
 
-    protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args) throws Throwable {
+    protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding) throws Throwable {
         final Exchange exchange = new DefaultExchange(endpoint, pattern);
         // use method info to map to exchange
 
-        // we support @Header, @Body and @ExchangeProperty to map to Exchange
-        boolean found = false;
-
-        int index = 0;
-        for (Annotation[] row : method.getParameterAnnotations()) {
-            Object value = args[index];
-            for (Annotation ann : row) {
-                if (ann.annotationType().isAssignableFrom(Header.class)) {
-                    Header header = (Header) ann;
-                    String name = header.value();
-                    exchange.getIn().setHeader(name, value);
-                    found = true;
-                } else if (ann.annotationType().isAssignableFrom(ExchangeProperty.class)) {
-                    ExchangeProperty ep = (ExchangeProperty) ann;
-                    String name = ep.value();
-                    exchange.setProperty(name, value);
-                    found = true;
-                } else if (ann.annotationType().isAssignableFrom(Body.class)) {
-                    exchange.getIn().setBody(value);
-                    found = true;
-                } else {
-                    // assume its message body when there is no annotations
-                    exchange.getIn().setBody(value);
+        if (binding) {
+            int index = 0;
+            for (Annotation[] row : method.getParameterAnnotations()) {
+                Object value = args[index];
+                for (Annotation ann : row) {
+                    if (ann.annotationType().isAssignableFrom(Header.class)) {
+                        Header header = (Header) ann;
+                        String name = header.value();
+                        exchange.getIn().setHeader(name, value);
+                    } else if (ann.annotationType().isAssignableFrom(ExchangeProperty.class)) {
+                        ExchangeProperty ep = (ExchangeProperty) ann;
+                        String name = ep.value();
+                        exchange.setProperty(name, value);
+                    } else if (ann.annotationType().isAssignableFrom(Body.class)) {
+                        exchange.getIn().setBody(value);
+                    } else {
+                        // assume its message body when there is no annotations
+                        exchange.getIn().setBody(value);
+                    }
                 }
+                index++;
             }
-            index++;
-        }
-
-        // backwards compatible where the body is a BeanInvocation
-        if (!found) {
+        } else {
+            // no binding so use the old behavior with BeanInvocation as the body
             BeanInvocation invocation = new BeanInvocation(method, args);
             exchange.getIn().setBody(invocation);
         }
 
-        if (found) {
+        if (binding) {
             LOG.trace("Binding to service interface as @Body,@Header,@ExchangeProperty detected when calling proxy method: {}", method);
         } else {
             LOG.trace("No binding to service interface as @Body,@Header,@ExchangeProperty not detected. Using BeanInvocation as message body when calling proxy method: {}");

@@ -30,6 +30,7 @@ public final class ProxyBuilder {
 
     private final CamelContext camelContext;
     private Endpoint endpoint;
+    private boolean binding;
 
     public ProxyBuilder(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -58,6 +59,21 @@ public final class ProxyBuilder {
     }
 
     /**
+     * Whether to use binding or not.
+     * <p/>
+     * If binding is enabled then Camel will bind the method parameters to the input {@link org.apache.camel.Message}
+     * on the {@link org.apache.camel.Exchange} when invoking the proxy.
+     *
+     * @param binding <tt>true</tt> to use binding, <tt>false</tt> to use the old behavior with using a {@link org.apache.camel.component.bean.BeanInvocation}
+     *                as a provisional message body
+     * @return the builder
+     */
+    public ProxyBuilder binding(boolean binding) {
+        this.binding = binding;
+        return this;
+    }
+
+    /**
      * Builds the proxy.
      *
      * @param interfaceClass  the service interface
@@ -81,7 +97,7 @@ public final class ProxyBuilder {
      */
     public <T> T build(Class<T>... interfaceClasses) throws Exception {
         ObjectHelper.notNull(endpoint, "endpoint");
-        return ProxyHelper.createProxy(endpoint, interfaceClasses);
+        return ProxyHelper.createProxy(endpoint, binding, interfaceClasses);
     }
 
 }
