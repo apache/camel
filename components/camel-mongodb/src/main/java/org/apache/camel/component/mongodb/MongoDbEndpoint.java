@@ -283,12 +283,11 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public Exchange createMongoDbExchange(DBObject dbObj) {
         Exchange exchange = super.createExchange();
-        Message message = new DefaultMessage();
+        Message message = exchange.getIn();
         message.setHeader(MongoDbConstants.DATABASE, database);
         message.setHeader(MongoDbConstants.COLLECTION, collection);
         message.setHeader(MongoDbConstants.FROM_TAILABLE, true);
         message.setBody(dbObj);
-        exchange.setIn(message);
         return exchange;
     }
 
