@@ -64,13 +64,12 @@ public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
         assertEquals("Could not find zookeper endpoint: " + s, 1, s.size());
         ObjectName zepName = new ArrayList<ObjectName>(s).get(0);
 
-        verifyManagedAttribute(zepName, "Path", "/someotherpath");
-        verifyManagedAttribute(zepName, "Create", true);
-        verifyManagedAttribute(zepName, "Repeat", true);
-        verifyManagedAttribute(zepName, "ListChildren", true);
-        verifyManagedAttribute(zepName, "AwaitExistence", true);
-        verifyManagedAttribute(zepName, "Timeout", 12345);
-        verifyManagedAttribute(zepName, "Backoff", 12345L);
+        verifyManagedAttribute(zepName, "Path", "/node");
+        verifyManagedAttribute(zepName, "Create", false);
+        verifyManagedAttribute(zepName, "Repeat", false);
+        verifyManagedAttribute(zepName, "ListChildren", false);
+        verifyManagedAttribute(zepName, "Timeout", 1000);
+        verifyManagedAttribute(zepName, "Backoff", 2000L);
 
         getMBeanServer().invoke(zepName, "clearServers", null, JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("clearServers", null)));
         getMBeanServer().invoke(zepName, "addServer", new Object[]{"someserver:12345"},
@@ -78,29 +77,25 @@ public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
     }
 
     private void verifyManagedAttribute(ObjectName zepName, String attributeName, String attributeValue) throws Exception {
-        getMBeanServer().setAttribute(zepName, new Attribute(attributeName, attributeValue));
         assertEquals(attributeValue, getMBeanServer().getAttribute(zepName, attributeName));
     }
 
     private void verifyManagedAttribute(ObjectName zepName, String attributeName, Integer attributeValue) throws Exception {
-        getMBeanServer().setAttribute(zepName, new Attribute(attributeName, attributeValue));
         assertEquals(attributeValue, getMBeanServer().getAttribute(zepName, attributeName));
     }
 
     private void verifyManagedAttribute(ObjectName zepName, String attributeName, Boolean attributeValue) throws Exception {
-        getMBeanServer().setAttribute(zepName, new Attribute(attributeName, attributeValue));
         assertEquals(attributeValue, getMBeanServer().getAttribute(zepName, attributeName));
     }
 
     private void verifyManagedAttribute(ObjectName zepName, String attributeName, Long attributeValue) throws Exception {
-        getMBeanServer().setAttribute(zepName, new Attribute(attributeName, attributeValue));
         assertEquals(attributeValue, getMBeanServer().getAttribute(zepName, attributeName));
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("zookeeper://localhost:" + ZooKeeperTestSupport.getServerPort() + "/node").to("mock:test");
+                from("zookeeper://localhost:" + ZooKeeperTestSupport.getServerPort() + "/node?timeout=1000&backoff=2000").to("mock:test");
             }
         };
     }

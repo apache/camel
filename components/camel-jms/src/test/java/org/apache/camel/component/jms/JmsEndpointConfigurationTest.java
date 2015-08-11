@@ -310,7 +310,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(1000L, endpoint.getRequestTimeoutCheckerInterval());
         assertEquals(0, endpoint.getRunningMessageListeners());
         assertNull(endpoint.getSelector());
-        assertEquals(ServiceStatus.Started.toString(), endpoint.getStatus());
+        assertEquals(ServiceStatus.Started, endpoint.getStatus());
         assertEquals(-1, endpoint.getTimeToLive());
         assertNull(endpoint.getTransactionName());
         assertEquals(-1, endpoint.getTransactionTimeout());
