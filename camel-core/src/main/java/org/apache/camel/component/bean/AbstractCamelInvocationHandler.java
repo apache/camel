@@ -104,9 +104,11 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
     @SuppressWarnings("unchecked")
     protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding) throws Throwable {
         final Exchange exchange = new DefaultExchange(endpoint, pattern);
-        // use method info to map to exchange
 
         if (binding) {
+            // in binding mode we bind the passed in arguments (args) to the created exchange
+            // using the existing Camel @Body, @Header, @Headers, @ExchangeProperty annotations
+            // if no annotation then its bound as the message body
             int index = 0;
             for (Annotation[] row : method.getParameterAnnotations()) {
                 Object value = args[index];
