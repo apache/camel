@@ -65,8 +65,8 @@
     <avro-bundle-version>1.7.7_1</avro-bundle-version>
     <avro-ipc-bundle-version>1.7.7_1</avro-ipc-bundle-version>
     <awaitility.version>1.6.3</awaitility.version>
-    <aws-java-sdk-bundle-version>1.10.2_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.10.2</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.10.8_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.10.8</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
