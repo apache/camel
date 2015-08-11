@@ -38,11 +38,9 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -418,7 +416,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.selector = selector;
     }
 
-    @ManagedAttribute
     public boolean isSingleton() {
         return true;
     }
@@ -1215,32 +1212,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setReplyToType(String replyToType) {
         ReplyToType type = ReplyToType.valueOf(replyToType);
         configuration.setReplyToType(type);
-    }
-
-    @ManagedAttribute(description = "Camel ID")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri", mask = true)
-    @Override
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Service State")
-    public String getState() {
-        ServiceStatus status = this.getStatus();
-        // if no status exists then its stopped
-        if (status == null) {
-            status = ServiceStatus.Stopped;
-        }
-        return status.name();
     }
 
     @ManagedAttribute(description = "Number of running message listeners")
