@@ -236,6 +236,8 @@
                 <exclude>**/OSGI-INF/bundle.info</exclude>
                 <exclude>**/test_rsa*</exclude>
                 <exclude>**/examples/*/src/**/data/**/*.xml</exclude>
+                <exclude>**/dependency-reduced-pom.xml</exclude>
+
               </excludes>
             </configuration>
           </plugin>
