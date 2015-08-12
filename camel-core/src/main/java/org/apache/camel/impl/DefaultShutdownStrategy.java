@@ -595,13 +595,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
                 for (RouteStartupOrder order : routes) {
                     int inflight = context.getInflightRepository().size(order.getRoute().getId());
-                    for (Consumer consumer : order.getInputs()) {
-                        // include any additional pending exchanges on some consumers which may have internal
-                        // memory queues such as seda
-                        if (consumer instanceof ShutdownAware) {
-                            inflight += ((ShutdownAware) consumer).getPendingExchangesSize();
-                        }
-                    }
+                    inflight += getPendingInflightExchanges(order);
                     if (inflight > 0) {
                         String routeId = order.getRoute().getId();
                         routeInflight.put(routeId, inflight);
@@ -676,6 +670,30 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             }
         }
 
+    }
+
+    /**
+     * Calculates the total number of inflight exchanges for the given route
+     *
+     * @param order the route
+     * @return number of inflight exchanges
+     */
+    protected static int getPendingInflightExchanges(RouteStartupOrder order) {
+        int inflight = 0;
+
+        // the consumer is the 1st service so we always get the consumer
+        // the child services are EIPs in the routes which may also have pending
+        // inflight exchanges (such as the aggregator)
+        for (Service service : order.getServices()) {
+            Set<Service> children = ServiceHelper.getChildServices(service);
+            for (Service child : children) {
+                if (child instanceof ShutdownAware) {
+                    inflight += ((ShutdownAware) child).getPendingExchangesSize();
+                }
+            }
+        }
+
+        return inflight;
     }
 
     /**

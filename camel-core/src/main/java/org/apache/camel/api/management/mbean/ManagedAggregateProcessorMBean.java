@@ -78,6 +78,9 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Indicates to complete all current aggregated exchanges when the context is stopped")
     boolean isForceCompletionOnStop();
 
+    @ManagedAttribute(description = "Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped")
+    boolean isCompleteAllOnStop();
+
     @ManagedAttribute(description = "Number of completed exchanges which are currently in-flight")
     int getInProgressCompleteExchanges();
 
