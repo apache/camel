@@ -572,10 +572,19 @@ public class PropertiesComponentTest extends ContextTestSupport {
         System.clearProperty("beer");
     }
 
+    public void testCamelProperties() throws Exception {
+        context.start();
+
+        assertEquals("Hello Camel", context.getProperties().get("foo"));
+        assertEquals("cool.name", context.getProperties().get("bar"));
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.addComponent("properties", new PropertiesComponent("classpath:org/apache/camel/component/properties/myproperties.properties"));
+        context.getProperties().put("foo", "Hello {{cool.name}}");
+        context.getProperties().put("bar", "cool.name");
         return context;
     }
 

@@ -39,7 +39,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -2663,6 +2662,23 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     private void doStartCamel() throws Exception {
+
+        // custom properties may use property placeholders so resolve those early on
+        if (properties != null && !properties.isEmpty()) {
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (value != null) {
+                    String replaced = resolvePropertyPlaceholders(value);
+                    if (!value.equals(replaced)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Camel property with key {} replaced value from {} -> {}", new Object[]{key, value, replaced});
+                        }
+                        entry.setValue(replaced);
+                    }
+                }
+            }
+        }
 
         if (classResolver instanceof CamelContextAware) {
             ((CamelContextAware) classResolver).setCamelContext(this);
