@@ -3091,7 +3091,6 @@
             </goals>
             <configuration>
               <strict>true</strict>
-              <skip>true</skip>
             </configuration>
           </execution>
         </executions>
