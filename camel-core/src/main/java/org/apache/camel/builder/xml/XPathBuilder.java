@@ -194,6 +194,13 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
 
     /**
      * Evaluates the given xpath using the provided body.
+     * <p/>
+     * The evaluation uses by default {@link javax.xml.xpath.XPathConstants#NODESET} as the type
+     * used during xpath evaluation. The output from xpath is then afterwards type converted
+     * using Camel's type converter to the given type.
+     * <p/>
+     * If you want to evaluate xpath using a different type, then call {@link #setResultType(Class)}
+     * prior to calling this evaluate method.
      *
      * @param context the camel context
      * @param body    the body
@@ -230,6 +237,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         dummy.getIn().setBody(body);
 
         setResultQName(XPathConstants.STRING);
+        setResultType(String.class);
         try {
             return evaluate(dummy, String.class);
         } finally {

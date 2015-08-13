@@ -30,16 +30,15 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
@@ -332,6 +331,17 @@ public class XPathTest extends ContextTestSupport {
 
         Boolean bool = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>true</bar></foo>", Boolean.class);
         assertEquals(true, bool.booleanValue());
+    }
+
+    public void testNotUsingExchangeResultType() throws Exception {
+        String xml = "<xml><a>1</a><a>2</a></xml>";
+
+        // will evaluate as NodeSet
+        XPathBuilder xpb = new XPathBuilder("/xml/a/text()");
+        assertEquals("12", xpb.evaluate(context, xml, String.class));
+
+        xpb.setResultType(String.class);
+        assertEquals("1", xpb.evaluate(context, xml));
     }
 
     public void testXPathSplit() throws Exception {
