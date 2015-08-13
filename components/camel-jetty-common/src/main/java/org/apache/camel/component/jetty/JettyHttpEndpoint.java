@@ -192,6 +192,7 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
             jettyBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             jettyBinding.setThrowExceptionOnFailure(isThrowExceptionOnFailure());
             jettyBinding.setTransferException(isTransferException());
+            jettyBinding.setOkStatusCodeRange(getOkStatusCodeRange());
         }
         return jettyBinding;
     }

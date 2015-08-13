@@ -25,14 +25,10 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class HttpCommonEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     // Note: all options must be documented with description in annotations so extended components can access the documentation
-
-    private static final Logger LOG = LoggerFactory.getLogger(HttpCommonEndpoint.class);
 
     HttpCommonComponent component;
     UrlRewrite urlRewrite;
@@ -96,6 +92,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
                     + " This can be turned on in case HTTP clients do not send streamed data.")
     boolean eagerCheckContentAvailable;
+    @UriParam(label = "producer", defaultValue = "200-299",
+            description = "The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.")
+    private String okStatusCodeRange = "200-299";
 
     public HttpCommonEndpoint() {
     }
@@ -380,4 +379,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         this.eagerCheckContentAvailable = eagerCheckContentAvailable;
     }
 
+    public String getOkStatusCodeRange() {
+        return okStatusCodeRange;
+    }
+
+    /**
+     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * <p/>
+     * The default range is <tt>200-299</tt>
+     */
+    public void setOkStatusCodeRange(String okStatusCodeRange) {
+        this.okStatusCodeRange = okStatusCodeRange;
+    }
 }
