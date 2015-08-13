@@ -256,7 +256,6 @@
           </dependencies>
           <configuration>
             <localCheckout>true</localCheckout>
-            <pushChanges>true</pushChanges>
             <tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
