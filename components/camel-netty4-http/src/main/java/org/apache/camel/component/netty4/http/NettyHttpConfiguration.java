@@ -57,6 +57,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private int chunkedMaxContentLength = 1024 * 1024;
     @UriParam(label = "consumer", defaultValue = "8192")
     private int maxHeaderSize = 8192;
+    @UriParam(label = "producer", defaultValue = "200-299")
+    private String okStatusCodeRange = "200-299";
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -242,6 +244,19 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     
     public void setAllowDefaultCodec(boolean allowDefaultCodec) {
         throw new UnsupportedOperationException("You cannot setAllowDefaultCodec here.");
+    }
+
+    public String getOkStatusCodeRange() {
+        return okStatusCodeRange;
+    }
+
+    /**
+     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * <p/>
+     * The default range is <tt>200-299</tt>
+     */
+    public void setOkStatusCodeRange(String okStatusCodeRange) {
+        this.okStatusCodeRange = okStatusCodeRange;
     }
 
 }
