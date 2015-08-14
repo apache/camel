@@ -1320,7 +1320,7 @@
   </feature>
   <feature name='camel-sip' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jain-sip-api-1.2/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jain-sip-api-1.2.1/${servicemix-specs-2.5.0-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jain-sip-ri/${jain-sip-ri-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-sip/${project.version}</bundle>
   </feature>
