@@ -31,7 +31,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.NIOFSDirectory;
-import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,7 +143,7 @@ public class LuceneIndexer {
     private void openIndexWriter() throws IOException {
         IndexWriterConfig indexWriterConfig;
         // use create or append so we can reuse existing index if already exists
-        indexWriterConfig = new IndexWriterConfig(Version.LUCENE_4_10_3, getAnalyzer()).setOpenMode(OpenMode.CREATE_OR_APPEND);
+        indexWriterConfig = new IndexWriterConfig(LuceneConstants.LUCENE_VERSION, getAnalyzer()).setOpenMode(OpenMode.CREATE_OR_APPEND);
         indexWriter = new IndexWriter(niofsDirectory, indexWriterConfig);
     }
 

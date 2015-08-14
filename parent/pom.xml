@@ -144,8 +144,8 @@
     <ehcache-version>2.10.0</ehcache-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
-    <elasticsearch-bundle-version>1.4.4_1</elasticsearch-bundle-version>
-    <elasticsearch-version>1.4.4</elasticsearch-version>
+    <elasticsearch-bundle-version>1.7.1_1</elasticsearch-bundle-version>
+    <elasticsearch-version>1.7.1</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <embedmongo-version>1.50.0</embedmongo-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
@@ -328,8 +328,8 @@
     <logback-version>1.1.3</logback-version>
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
-    <lucene-bundle-version>4.10.3_1</lucene-bundle-version>
-    <lucene-version>4.10.3</lucene-version>
+    <lucene-bundle-version>4.10.4_1</lucene-bundle-version>
+    <lucene-version>4.10.4</lucene-version>
     <lucene-version-range>[4.5,5)</lucene-version-range>
     <lightcouch-version>0.1.8</lightcouch-version>
     <lightcouch-bundle-version>0.1.8_1</lightcouch-bundle-version>
@@ -444,8 +444,8 @@
     <snakeyaml-version>1.16</snakeyaml-version>
     <snappy-version>1.1.1.7</snappy-version>
     <snmp4j-version>2.3.4_1</snmp4j-version>
-    <solr-bundle-version>4.10.2_1</solr-bundle-version>
-    <solr-version>4.10.2</solr-version>
+    <solr-bundle-version>4.10.4_1</solr-bundle-version>
+    <solr-version>4.10.4</solr-version>
     <solr-version-range>[4.10,5)</solr-version-range>
     <spark-rest-version>2.2</spark-rest-version>
     <spark-rest-bundle-version>2.2_1</spark-rest-bundle-version>
