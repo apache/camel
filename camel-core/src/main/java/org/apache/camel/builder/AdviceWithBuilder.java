@@ -149,7 +149,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
         } else if (toString != null) {
             builder.getAdviceWithTasks().add(AdviceWithTasks.removeByToString(route, toString, selectLast, selectFirst, selectFrom, selectTo, maxDeep));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByType(route, type, selectFirst, selectFirst, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByType(route, type, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         }
     }
 
