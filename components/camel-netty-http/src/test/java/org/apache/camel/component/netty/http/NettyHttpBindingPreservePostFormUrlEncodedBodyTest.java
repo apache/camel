@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
+import org.jboss.netty.channel.UpstreamMessageEvent;
+import org.jboss.netty.handler.codec.http.DefaultHttpRequest;
 import org.junit.Test;
 
 public class NettyHttpBindingPreservePostFormUrlEncodedBodyTest extends BaseNettyTest {
@@ -55,6 +57,10 @@ public class NettyHttpBindingPreservePostFormUrlEncodedBodyTest extends BaseNett
                         assertEquals("Get a wrong form parameter from the message header", "x", exchange.getIn().getHeader("b1"));
                         assertEquals("Get a wrong form parameter from the message header", "y", exchange.getIn().getHeader("b2"));
 
+                        UpstreamMessageEvent event = (UpstreamMessageEvent) exchange.getIn().getHeader("CamelNettyMessageEvent");
+                        DefaultHttpRequest request = (DefaultHttpRequest) event.getMessage();
+                        assertNotEquals("Relative path should NOT be used in POST", "/myapp/myservice?query1=a&query2=b", request.getUri());
+                                                
                         // send a response
                         exchange.getOut().getHeaders().clear();
                         exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
