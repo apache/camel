@@ -59,6 +59,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean chunked = true;
     @UriParam(label = "consumer", defaultValue = "8192")
     private int maxHeaderSize = 8192;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean useRelativePath;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -201,4 +203,14 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         throw new UnsupportedOperationException("You cannot setAllowDefaultCodec here.");
     }
 
+    /**
+     * Sets whether to use a relative path in HTTP requests.
+     */
+    public void setUseRelativePath(boolean useRelativePath) {
+        this.useRelativePath = useRelativePath;
+    }
+
+    public boolean isUseRelativePath() {
+        return this.useRelativePath;        
+    }
 }

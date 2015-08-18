@@ -439,8 +439,16 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             return (HttpRequest) message.getBody();
         }
 
+        String uriForRequest = uri;
+        if (configuration.isUseRelativePath()) {
+            int indexOfPath = uri.indexOf((new URI(uri)).getPath());
+            if (indexOfPath > 0) {
+                uriForRequest = uri.substring(indexOfPath);               
+            } 
+        }
+        
         // just assume GET for now, we will later change that to the actual method to use
-        HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri);
+        HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uriForRequest);
 
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
 

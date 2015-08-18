@@ -446,8 +446,16 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             return (HttpRequest) message.getBody();
         }
 
+        String uriForRequest = uri;
+        if (configuration.isUseRelativePath()) {
+            int indexOfPath = uri.indexOf((new URI(uri)).getPath());
+            if (indexOfPath > 0) {
+                uriForRequest = uri.substring(indexOfPath);               
+            } 
+        }
+        
         // just assume GET for now, we will later change that to the actual method to use
-        HttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri);
+        HttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uriForRequest);
         
         Object body = message.getBody();
         if (body != null) {
@@ -465,7 +473,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 }
             }
             if (buffer != null) {
-                request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri, buffer);
+                request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uriForRequest, buffer);
                 int len = buffer.readableBytes();
                 // set content-length
                 request.headers().set(HttpHeaders.Names.CONTENT_LENGTH, len);
