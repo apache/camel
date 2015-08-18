@@ -56,6 +56,7 @@ public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
                         assertEquals("Get a wrong query parameter from the message header", "b", exchange.getIn().getHeader("query2"));
                         assertEquals("Get a wrong form parameter from the message header", "x", exchange.getIn().getHeader("b1"));
                         assertEquals("Get a wrong form parameter from the message header", "y", exchange.getIn().getHeader("b2"));
+                        assertEquals("Get a wrong form parameter from the message header", "localhost:" + getPort(), exchange.getIn().getHeader("host"));
                         
                         NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();                        
                         FullHttpRequest request = in.getHttpRequest();

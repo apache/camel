@@ -531,9 +531,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // must include HOST header as required by HTTP 1.1
         // use URI as its faster than URL (no DNS lookup)
         URI u = new URI(uri);
-        String host = u.getHost();
-        request.headers().set(HttpHeaders.Names.HOST, host);
-        LOG.trace("Host: {}", host);
+        String hostHeader = u.getHost() 
+                + (configuration.isUseRelativePath() ? ":" + u.getPort() : "");
+        request.headers().set(HttpHeaders.Names.HOST, hostHeader);
+        LOG.trace("Host: {}", hostHeader);
 
         // configure connection to accordingly to keep alive configuration
         // favor using the header from the message
