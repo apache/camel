@@ -162,6 +162,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         validateInputs();
         PgEventConsumer consumer = new PgEventConsumer(this, processor);
+        configureConsumer(consumer);
         return consumer;
     }
 
