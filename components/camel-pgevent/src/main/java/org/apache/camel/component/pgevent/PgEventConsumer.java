@@ -49,22 +49,28 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
 
     @Override
     public void notification(int processId, String channel, String payload) {
-        Exchange outOnly = endpoint.createExchange();
-        Message msg = outOnly.getOut();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Notification processId: {}, channel: {}, payload: {}", new Object[]{processId, channel, payload});
+        }
+
+        Exchange exchange = endpoint.createExchange();
+        Message msg = exchange.getIn();
         msg.setHeader("channel", channel);
         msg.setBody(payload);
-        outOnly.setOut(msg);
+
         try {
-            getProcessor().process(outOnly);
+            getProcessor().process(exchange);
         } catch (Exception ex) {
-            LOG.error("Unable to process incoming notification from PostgreSQL: processId='" + processId + "', channel='" + channel + "', payload='" + payload + "'", ex);
+            String cause = "Unable to process incoming notification from PostgreSQL: processId='" + processId + "', channel='" + channel + "', payload='" + payload + "'";
+            getExceptionHandler().handleException(cause, ex);
         }
     }
 
     @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        dbConnection.removeNotificationListener(endpoint.getChannel());
-        dbConnection.close();
+    protected void doStop() throws Exception {
+        if (dbConnection != null) {
+            dbConnection.removeNotificationListener(endpoint.getChannel());
+            dbConnection.close();
+        }
     }
 }
