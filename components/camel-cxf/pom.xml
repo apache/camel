@@ -188,6 +188,7 @@
 		<groupId>org.apache.cxf</groupId>
 		<artifactId>cxf-rt-features-clustering</artifactId>
 		<version>${cxf-version}</version>
+                <scope>test</scope>
 	</dependency>
     
     <dependency>
