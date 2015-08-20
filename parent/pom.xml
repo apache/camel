@@ -462,7 +462,7 @@
     <spring-version-range>[3.2,5)</spring-version-range>
     <!-- However, spring-dm does not support spring 4.x so import-range must be 3.x for the -->
     <!-- Karaf features file. -->
-    <spring-version-range-karaf>[3.0,4)</spring-version-range-karaf>
+    <spring-version-range-karaf>[3.2,4)</spring-version-range-karaf>
     <spring-version>${spring4-version}</spring-version>
     <spring32-version>3.2.13.RELEASE</spring32-version>
     <spring40-version>4.0.9.RELEASE</spring40-version>
