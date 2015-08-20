@@ -783,6 +783,24 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jaxb/${project.version}</bundle>
   </feature>
+  <feature name='camel-jbpm' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.openengsb.wrapped/com.google.protobuf/2.4.1.w1</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/${javax-inject-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-jaxrs/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-xc/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-core/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.kie/kie-internal/${jbpm-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.kie/kie-api/${jbpm-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.kie.remote/kie-remote-common/${jbpm-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.kie.remote/kie-remote-jaxb/${jbpm-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.kie.remote/kie-remote-client/${jbpm-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-jbpm/${project.version}</bundle>
+  </feature>
   <feature name='camel-jclouds' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${jclouds-version}'>jclouds</feature>
     <feature version='${jclouds-version}'>jclouds-blobstore</feature>
@@ -1132,11 +1150,11 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/${javax-inject-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-optaplanner/${project.version}</bundle>
   </feature>
-  <feature name='camel-paho' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:org.eclipse.paho/org.eclipse.paho.client.mqttv3/${paho-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-paho/${project.version}</bundle>
-  </feature>
+  <!--<feature name='camel-paho' version='${project.version}' resolver='(obr)' start-level='50'>-->
+    <!--<feature version='${project.version}'>camel-core</feature>-->
+    <!--<bundle>mvn:org.eclipse.paho/org.eclipse.paho.client.mqttv3/${paho-version}</bundle>-->
+    <!--<bundle>mvn:org.apache.camel/camel-paho/${project.version}</bundle>-->
+  <!--</feature>-->
   <feature name='camel-paxlogging' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-paxlogging/${project.version}</bundle>
