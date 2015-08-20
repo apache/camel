@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.olingo2;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,6 +42,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
+import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
@@ -95,6 +98,7 @@ public class Olingo2AppAPITest {
     //    private static final String TEST_SERVICE_URL = "http://localhost:8080/cars-annotations-sample/MyFormula.svc";
 //    private static final ContentType TEST_FORMAT = ContentType.APPLICATION_XML_CS_UTF_8;
     private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
+    private static final String TEST_FORMAT_STRING = TEST_FORMAT.toString();
 //    private static final Pattern LINK_PATTERN = Pattern.compile("[^(]+\\('([^']+)'\\)");
     private static final String ID_PROPERTY = "Id";
 
@@ -128,7 +132,7 @@ public class Olingo2AppAPITest {
 
     protected static void setupClient() throws Exception {
         olingoApp = new Olingo2AppImpl(TEST_SERVICE_URL + "/");
-        olingoApp.setContentType(TEST_FORMAT.toString());
+        olingoApp.setContentType(TEST_FORMAT_STRING);
 
         LOG.info("Read Edm ");
         final TestOlingo2ResponseHandler<Edm> responseHandler = new TestOlingo2ResponseHandler<Edm>();
@@ -171,6 +175,20 @@ public class Olingo2AppAPITest {
     }
 
     @Test
+    public void testReadUnparsedFeed() throws Exception {
+        final TestOlingo2ResponseHandler<InputStream> responseHandler = new TestOlingo2ResponseHandler<InputStream>();
+
+        olingoApp.uread(edm, MANUFACTURERS, null, responseHandler);
+
+        final InputStream rawfeed = responseHandler.await();
+        assertNotNull("Data feed", rawfeed);
+        // for this test, we just let EP to verify the stream data 
+        final ODataFeed dataFeed = EntityProvider.readFeed(TEST_FORMAT_STRING, edm.getEntitySets().get(2), 
+                                                           rawfeed, EntityProviderReadProperties.init().build());
+        LOG.info("Entries:  {}", prettyPrint(dataFeed));
+    }
+
+    @Test
     public void testReadEntry() throws Exception {
         final TestOlingo2ResponseHandler<ODataEntry> responseHandler = new TestOlingo2ResponseHandler<ODataEntry>();
 
@@ -191,6 +209,36 @@ public class Olingo2AppAPITest {
         olingoApp.read(edm, TEST_MANUFACTURER, queryParams, responseHandler);
 
         ODataEntry entryExpanded = responseHandler.await();
+        LOG.info("Single Entry with expanded Cars relation:  {}", prettyPrint(entryExpanded));
+    }
+
+    @Test
+    public void testReadUnparsedEntry() throws Exception {
+        final TestOlingo2ResponseHandler<InputStream> responseHandler = new TestOlingo2ResponseHandler<InputStream>();
+
+        olingoApp.uread(edm, TEST_MANUFACTURER, null, responseHandler);
+        InputStream rawentry = responseHandler.await();
+        ODataEntry entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edm.getEntitySets().get(2), 
+                                                    rawentry, EntityProviderReadProperties.init().build());
+        LOG.info("Single Entry:  {}", prettyPrint(entry));
+
+        responseHandler.reset();
+
+        olingoApp.uread(edm, TEST_CAR, null, responseHandler);
+        rawentry = responseHandler.await();
+        entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edm.getEntitySets().get(0), 
+                                         rawentry, EntityProviderReadProperties.init().build());
+        LOG.info("Single Entry:  {}", prettyPrint(entry));
+
+        responseHandler.reset();
+        final Map<String, String> queryParams = new HashMap<String, String>();
+        queryParams.put(SystemQueryOption.$expand.toString(), CARS);
+
+        olingoApp.uread(edm, TEST_MANUFACTURER, queryParams, responseHandler);
+
+        rawentry = responseHandler.await();
+        ODataEntry entryExpanded = EntityProvider.readEntry(TEST_FORMAT_STRING, edm.getEntitySets().get(2), 
+                                                            rawentry, EntityProviderReadProperties.init().build());
         LOG.info("Single Entry with expanded Cars relation:  {}", prettyPrint(entryExpanded));
     }
 

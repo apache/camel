@@ -191,11 +191,26 @@ public final class Olingo2AppImpl implements Olingo2App {
             new AbstractFutureCallback<T>(responseHandler) {
 
                 @Override
-                @SuppressWarnings("unchecked")
                 public void onCompleted(HttpResponse result) throws IOException {
-
                     readContent(uriInfo, result.getEntity() != null ? result.getEntity().getContent() : null,
                         responseHandler);
+                }
+
+            });
+    }
+
+    @Override
+    public void uread(final Edm edm, final String resourcePath, final Map<String, String> queryParams,
+                      final Olingo2ResponseHandler<InputStream> responseHandler) {
+
+        final UriInfoWithType uriInfo = parseUri(edm, resourcePath, queryParams);
+
+        execute(new HttpGet(createUri(resourcePath, queryParams)), getResourceContentType(uriInfo),
+            new AbstractFutureCallback<InputStream>(responseHandler) {
+
+                @Override
+                public void onCompleted(HttpResponse result) throws IOException {
+                    responseHandler.onResponse(result.getEntity() != null ? result.getEntity().getContent() : null);
                 }
 
             });
