@@ -16,19 +16,30 @@
  */
 package org.apache.camel.component.optaplanner;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.commons.lang.ObjectUtils;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.optaplanner.core.impl.score.director.ScoreDirector;
+import org.optaplanner.core.impl.solver.ProblemFactChange;
 import org.optaplanner.examples.cloudbalancing.domain.CloudBalance;
+import org.optaplanner.examples.cloudbalancing.domain.CloudComputer;
+import org.optaplanner.examples.cloudbalancing.domain.CloudProcess;
 import org.optaplanner.examples.cloudbalancing.persistence.CloudBalancingGenerator;
 
 /**
  * OptaPlanner unit test with Camel
  */
-public class OptaPlannerTest extends CamelTestSupport {
+public class OptaPlannerConsumerTest extends CamelTestSupport {
 
     @Test
-    public void testCloudBalance4computers12processes() throws Exception {
+    public void testSynchronousProblemSolving() throws Exception {
         CloudBalancingGenerator generator = new CloudBalancingGenerator(true);
         final CloudBalance planningProblem = generator.createCloudBalance(4, 12);
         assertNull(planningProblem.getScore());
@@ -48,6 +59,10 @@ public class OptaPlannerTest extends CamelTestSupport {
             public void configure() {
                 from("direct:in").
                         to("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml");
+
+                from("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml").
+                        to("log:com.mycompany.order?showAll=true&multiline=true").
+                        to("mock:result");
             }
         };
     }

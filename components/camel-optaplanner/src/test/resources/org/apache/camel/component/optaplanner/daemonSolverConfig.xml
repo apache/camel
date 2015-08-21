@@ -16,6 +16,10 @@
   limitations under the License.
 -->
 <solver>
+
+  <!-- Run in daemon mode -->
+  <daemon>true</daemon>
+
   <!--<environmentMode>FAST_ASSERT</environmentMode>-->
 
   <!-- Domain model configuration -->

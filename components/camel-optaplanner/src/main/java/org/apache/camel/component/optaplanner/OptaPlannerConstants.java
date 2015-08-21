@@ -16,25 +16,13 @@
  */
 package org.apache.camel.component.optaplanner;
 
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-
-/**
- * OptaPlanner component for Camel
- */
-public class OptaPlannerComponent extends UriEndpointComponent {
-
-    public OptaPlannerComponent() {
-        super(OptaPlannerEndpoint.class);
-    }
-
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        OptaPlannerConfiguration configuration = new OptaPlannerConfiguration();
-        configuration.setConfigFile(remaining);
-        setProperties(configuration, parameters);
-        return new OptaPlannerEndpoint(uri, this, configuration);
-    }
-
+public interface OptaPlannerConstants {
+    String DEFAULT_SOLVER_ID = "DEFAULT_SOLVER";
+    String SOLVER_ID = "CamelOptaPlannerSolverId";
+    String IS_ASYNC = "CamelOptaPlannerIsAsync";
+    String BEST_SOLUTION = "CamelOptaPlannerBestSolution";
+    String TIME_SPENT = "CamelOptaPlannerTimeSpent";
+    String IS_SOLVING = "CamelOptaPlannerIsSolving";
+    String IS_TERMINATE_EARLY = "CamelOptaPlannerIsTerminateEarly";
+    String IS_FACT_PROCESSED = "CamelOptaPlannerIsFactProcessed";
 }
