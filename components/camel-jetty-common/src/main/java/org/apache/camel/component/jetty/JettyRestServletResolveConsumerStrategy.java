@@ -77,24 +77,31 @@ public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveC
                 }
             }
 
-            // if there is multiple candidates then pick anyone with the least number of wildcards
-            int best = -1;
+            // if there is multiple candidates with wildcards then pick anyone with the least number of wildcards
+            int bestWildcard = Integer.MAX_VALUE;
+            HttpConsumer best = null;
             if (candidates.size() > 1) {
                 it = candidates.iterator();
                 while (it.hasNext()) {
-                    HttpConsumer consumer = it.next();
-                    String consumerPath = consumer.getPath();
+                    HttpConsumer entry = it.next();
+                    String consumerPath = entry.getPath();
                     int wildcards = countWildcards(consumerPath);
-                    if (best != -1 && wildcards >= best) {
-                        it.remove();
-                    } else {
-                        best = wildcards;
+                    if (wildcards > 0) {
+                        if (best == null || wildcards < bestWildcard) {
+                            best = entry;
+                            bestWildcard = wildcards;
+                        }
                     }
+                }
+
+                if (best != null) {
+                    // pick the best among the wildcards
+                    answer = best;
                 }
             }
 
             // if there is one left then its our answer
-            if (candidates.size() == 1) {
+            if (answer == null && candidates.size() == 1) {
                 answer = candidates.get(0);
             }
         }
