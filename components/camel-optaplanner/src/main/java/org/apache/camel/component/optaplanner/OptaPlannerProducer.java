@@ -103,7 +103,7 @@ public class OptaPlannerProducer extends DefaultProducer {
     private void populateResult(Exchange exchange, Solver solver) {
         exchange.getIn().setBody(solver.getBestSolution());
         exchange.getIn().setHeader(OptaPlannerConstants.TIME_SPENT, solver.getTimeMillisSpent());
-        exchange.getIn().setHeader(OptaPlannerConstants.IS_FACT_PROCESSED, solver.isEveryProblemFactChangeProcessed());
+        exchange.getIn().setHeader(OptaPlannerConstants.IS_EVERY_PROBLEM_FACT_CHANGE_PROCESSED, solver.isEveryProblemFactChangeProcessed());
         exchange.getIn().setHeader(OptaPlannerConstants.IS_TERMINATE_EARLY, solver.isTerminateEarly());
         exchange.getIn().setHeader(OptaPlannerConstants.IS_SOLVING, solver.isSolving());
     }

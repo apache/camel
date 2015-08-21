@@ -24,5 +24,5 @@ public interface OptaPlannerConstants {
     String TIME_SPENT = "CamelOptaPlannerTimeSpent";
     String IS_SOLVING = "CamelOptaPlannerIsSolving";
     String IS_TERMINATE_EARLY = "CamelOptaPlannerIsTerminateEarly";
-    String IS_FACT_PROCESSED = "CamelOptaPlannerIsFactProcessed";
+    String IS_EVERY_PROBLEM_FACT_CHANGE_PROCESSED = "CamelOptaPlannerIsEveryProblemFactChangeProcessed";
 }
