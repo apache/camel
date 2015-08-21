@@ -21,7 +21,6 @@ import java.util.Map;
 import com.github.dockerjava.api.command.InfoCmd;
 
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,7 +33,6 @@ public class InfoCmdHeaderTest extends BaseDockerHeaderTest<InfoCmd> {
     @Mock
     private InfoCmd mockObject;
 
-    @Ignore
     @Test
     public void infoHeaderTest() {
 

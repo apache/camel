@@ -194,6 +194,7 @@ public final class DockerConstants {
     public static final String DOCKER_MEMORY_LIMIT = "CamelDockerMemoryLimit";
     public static final String DOCKER_STD_IN_OPEN = "CamelDockerStdInOpen";
     public static final String DOCKER_VOLUMES_FROM = "CamelDockerVolumesFrom";
+    public static final String DOCKER_DOMAIN_NAME = "CamelDockerDomainName";
 
 
     /**

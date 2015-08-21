@@ -22,7 +22,6 @@ import com.github.dockerjava.api.command.ListImagesCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -37,7 +36,6 @@ public class ListImagesCmdHeaderTest extends BaseDockerHeaderTest<ListImagesCmd>
     @Mock
     private ListImagesCmd mockObject;
 
-    @Ignore
     @Test
     public void listImageHeaderTest() {
 
