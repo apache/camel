@@ -14,21 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty;
+package org.apache.camel.http.common;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.camel.http.common.HttpConsumer;
-import org.apache.camel.http.common.HttpServletResolveConsumerStrategy;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 
 /**
  * A {@link org.apache.camel.http.common.HttpServletResolveConsumerStrategy} that supports the Rest DSL.
  */
-public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveConsumerStrategy {
+public class HttpRestServletResolveConsumerStrategy extends HttpServletResolveConsumerStrategy {
 
     @Override
     @SuppressWarnings("unchecked")
@@ -76,6 +74,5 @@ public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveC
 
         return answer;
     }
-
 
 }
