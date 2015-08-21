@@ -14,51 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.servlet.rest;
+package org.apache.camel.component.netty4.http.rest;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
-import org.apache.camel.component.servlet.ServletRestHttpBinding;
+import org.apache.camel.component.netty4.http.BaseNettyTest;
+import org.apache.camel.component.netty4.http.RestNettyHttpBinding;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
+public class RestNettyHttpGetWildcardsTest extends BaseNettyTest {
     
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myBinding", new ServletRestHttpBinding());
+        jndi.bind("mybinding", new RestNettyHttpBinding());
         return jndi;
     }
 
     @Test
-    public void testServletProducerGet() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/users/123/basic");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
-
-        assertEquals(200, response.getResponseCode());
-
-        assertEquals("123;Donald Duck", response.getText());
+    public void testProducerGet() throws Exception {
+        String out = template.requestBody("netty4-http:http://localhost:{{port}}/users/123/basic", null, String.class);
+        assertEquals("123;Donald Duck", out);
     }
 
     @Test
     public void testServletProducerGetWildcards() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/users/456/name=g*");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
-
-        assertEquals(200, response.getResponseCode());
-
-        assertEquals("456;Goofy", response.getText());
+        String out = template.requestBody("netty4-http:http://localhost:{{port}}/users/456/name=g*", null, String.class);
+        assertEquals("456;Goofy", out);
     }
 
     @Override
@@ -66,14 +50,14 @@ public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // configure to use servlet on localhost
-                restConfiguration().component("servlet").host("localhost").endpointProperty("httpBindingRef", "#myBinding");
-                
+                // configure to use netty4-http on localhost with the given port
+                restConfiguration().component("netty4-http").host("localhost").port(getPort()).endpointProperty("nettyHttpBinding", "#mybinding");
+
                 // use the rest DSL to define the rest services
                 rest("/users/")
                     .get("{id}/{query}")
                         .route()
-                        .to("mock:query")
+                        .to("log:query")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String id = exchange.getIn().getHeader("id", String.class);
@@ -82,7 +66,7 @@ public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
                         }).endRest()
                     .get("{id}/basic")
                         .route()
-                        .to("mock:input")
+                        .to("log:input")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String id = exchange.getIn().getHeader("id", String.class);
