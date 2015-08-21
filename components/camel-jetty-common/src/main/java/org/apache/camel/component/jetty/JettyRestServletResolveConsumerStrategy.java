@@ -27,7 +27,7 @@ import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.http.common.HttpServletResolveConsumerStrategy;
 
 /**
- * A {@link org.apache.camel.component.common.http.HttpServletResolveConsumerStrategy} that supports the Rest DSL.
+ * A {@link org.apache.camel.http.common.HttpServletResolveConsumerStrategy} that supports the Rest DSL.
  */
 public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveConsumerStrategy {
 
@@ -65,18 +65,35 @@ public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveC
             }
         }
 
-        // then match by non wildcard path
+        // then match by wildcard path
         if (answer == null) {
             it = candidates.iterator();
             while (it.hasNext()) {
                 HttpConsumer consumer = it.next();
                 String consumerPath = consumer.getPath();
+                // filter non matching paths
                 if (!matchRestPath(path, consumerPath, true)) {
                     it.remove();
                 }
             }
 
-            // there should only be one
+            // if there is multiple candidates then pick anyone with the least number of wildcards
+            int best = -1;
+            if (candidates.size() > 1) {
+                it = candidates.iterator();
+                while (it.hasNext()) {
+                    HttpConsumer consumer = it.next();
+                    String consumerPath = consumer.getPath();
+                    int wildcards = countWildcards(consumerPath);
+                    if (best != -1 && wildcards >= best) {
+                        it.remove();
+                    } else {
+                        best = wildcards;
+                    }
+                }
+            }
+
+            // if there is one left then its our answer
             if (candidates.size() == 1) {
                 answer = candidates.get(0);
             }
@@ -138,6 +155,33 @@ public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveC
 
         // assume matching
         return true;
+    }
+
+    /**
+     * Counts the number of wildcards in the path
+     *
+     * @param consumerPath  the consumer path which may use { } tokens
+     * @return number of wildcards, or <tt>0</tt> if no wildcards
+     */
+    public int countWildcards(String consumerPath) {
+        int wildcards = 0;
+
+        // remove starting/ending slashes
+        if (consumerPath.startsWith("/")) {
+            consumerPath = consumerPath.substring(1);
+        }
+        if (consumerPath.endsWith("/")) {
+            consumerPath = consumerPath.substring(0, consumerPath.length() - 1);
+        }
+
+        String[] consumerPaths = consumerPath.split("/");
+        for (String p2 : consumerPaths) {
+            if (p2.startsWith("{") && p2.endsWith("}")) {
+                wildcards++;
+            }
+        }
+
+        return wildcards;
     }
 
     /**
