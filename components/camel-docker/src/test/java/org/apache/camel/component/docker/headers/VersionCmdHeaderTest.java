@@ -21,7 +21,6 @@ import java.util.Map;
 import com.github.dockerjava.api.command.VersionCmd;
 
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,7 +33,6 @@ public class VersionCmdHeaderTest extends BaseDockerHeaderTest<VersionCmd> {
     @Mock
     private VersionCmd mockObject;
 
-    @Ignore
     @Test
     public void pingHeaderTest() {
 
