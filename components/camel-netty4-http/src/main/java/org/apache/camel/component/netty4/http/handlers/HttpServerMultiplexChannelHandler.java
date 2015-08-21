@@ -263,7 +263,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
      * @param consumerPath  the consumer path which may use { } tokens
      * @return number of wildcards, or <tt>0</tt> if no wildcards
      */
-    private int countWildcards(String consumerPath) {
+    private static int countWildcards(String consumerPath) {
         int wildcards = 0;
 
         // remove starting/ending slashes
