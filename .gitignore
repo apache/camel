@@ -17,4 +17,4 @@ components/camel-solr/data
 *.epoch
 .factorypath
 .pmd
-
+.metadata
