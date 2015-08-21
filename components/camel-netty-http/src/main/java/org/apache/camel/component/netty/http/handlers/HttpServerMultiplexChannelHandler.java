@@ -203,18 +203,46 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
             }
         }
 
-        // then match by non wildcard path
+        // then match by wildcard path
         if (answer == null) {
             Iterator<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> it = candidates.iterator();
             while (it.hasNext()) {
                 Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
+                // filter non matching paths
                 if (!entry.getKey().matchesRest(path, true)) {
                     it.remove();
                 }
             }
 
-            // there should only be one
-            if (candidates.size() == 1) {
+            // if there is multiple candidates with wildcards then pick anyone with the least number of wildcards
+            int bestWildcard = Integer.MAX_VALUE;
+            Map.Entry<ContextPathMatcher, HttpServerChannelHandler> best = null;
+            if (candidates.size() > 1) {
+                it = candidates.iterator();
+                while (it.hasNext()) {
+                    Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
+                    String consumerPath = entry.getValue().getConsumer().getConfiguration().getPath();
+                    int wildcards = countWildcards(consumerPath);
+                    if (wildcards > 0) {
+                        if (best == null) {
+                            best = entry;
+                        } else {
+                            if (wildcards < bestWildcard) {
+                                bestWildcard = wildcards;
+                                best = entry;
+                            }
+                        }
+                    }
+                }
+
+                if (best != null) {
+                    // pick the best among the wildcards
+                    answer = best.getValue();
+                }
+            }
+
+            // if there is one left then its our answer
+            if (answer == null && candidates.size() == 1) {
                 answer = candidates.get(0).getValue();
             }
         }
@@ -230,6 +258,33 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         }
 
         return answer;
+    }
+
+    /**
+     * Counts the number of wildcards in the path
+     *
+     * @param consumerPath  the consumer path which may use { } tokens
+     * @return number of wildcards, or <tt>0</tt> if no wildcards
+     */
+    private static int countWildcards(String consumerPath) {
+        int wildcards = 0;
+
+        // remove starting/ending slashes
+        if (consumerPath.startsWith("/")) {
+            consumerPath = consumerPath.substring(1);
+        }
+        if (consumerPath.endsWith("/")) {
+            consumerPath = consumerPath.substring(0, consumerPath.length() - 1);
+        }
+
+        String[] consumerPaths = consumerPath.split("/");
+        for (String p2 : consumerPaths) {
+            if (p2.startsWith("{") && p2.endsWith("}")) {
+                wildcards++;
+            }
+        }
+
+        return wildcards;
     }
 
     private static String pathAsKey(String path) {
