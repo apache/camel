@@ -221,13 +221,9 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
                     String consumerPath = entry.getValue().getConsumer().getConfiguration().getPath();
                     int wildcards = countWildcards(consumerPath);
                     if (wildcards > 0) {
-                        if (best == null) {
+                        if (best == null || wildcards < bestWildcard) {
                             best = entry;
-                        } else {
-                            if (wildcards < bestWildcard) {
-                                bestWildcard = wildcards;
-                                best = entry;
-                            }
+                            bestWildcard = wildcards;
                         }
                     }
                 }

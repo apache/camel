@@ -71,15 +71,6 @@ public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
                 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .get("{id}/{query}")
-                        .route()
-                        .to("mock:query")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Goofy");
-                            }
-                        }).endRest()
                     .get("{id}/basic")
                         .route()
                         .to("mock:input")
@@ -87,6 +78,15 @@ public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 String id = exchange.getIn().getHeader("id", String.class);
                                 exchange.getOut().setBody(id + ";Donald Duck");
+                            }
+                        }).endRest()
+                    .get("{id}/{query}")
+                        .route()
+                        .to("mock:query")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("id", String.class);
+                                exchange.getOut().setBody(id + ";Goofy");
                             }
                         }).endRest();
             }
