@@ -21,18 +21,46 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * A context path matcher when using rest-dsl that allows components to reuse the same matching logic.
+ * <p/>
+ * The component should use the {@link #matchBestPath(String, String, java.util.List)} with the request details
+ * and the matcher returns the best matched, or <tt>null</tt> if none could be determined.
+ * <p/>
+ * The {@link ConsumerPath} is used for the components to provide the details to the matcher.
+ */
 public final class RestConsumerContextPathMatcher {
 
+    /**
+     * Consumer path details which must be implemented and provided by the components.
+     */
     public interface ConsumerPath<T> {
 
+        /**
+         * Any HTTP restrict method that would not be allowed
+         */
         String getRestrictMethod();
 
+        /**
+         * The consumer context-path which may include wildcards
+         */
         String getConsumerPath();
 
+        /**
+         * The consumer implementation
+         */
         T getConsumer();
 
     }
 
+    /**
+     * Finds the best matching of the list of consumer paths that should service the incoming request.
+     *
+     * @param requestMethod   the incoming request HTTP method
+     * @param requestPath     the incoming request context path
+     * @param consumerPaths   the list of consumer context path details
+     * @return the best matched consumer, or <tt>null</tt> if none could be determined.
+     */
     public static ConsumerPath matchBestPath(String requestMethod, String requestPath, List<ConsumerPath> consumerPaths) {
         ConsumerPath answer = null;
 
