@@ -64,14 +64,21 @@ public class KafkaProducer<K, V> extends DefaultProducer {
     @Override
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws CamelException {
-        String topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, endpoint.getTopic(), String.class);
-        if (topic == null) {
+    	
+    	// ensures that the factoried KafkaEndpoint topic UriParam is honored
+    	// when routing messages from one topic to another
+    	String topic = null;
+    	if ((topic = endpoint.getTopic()) == null)
+    		topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, null, String.class);
+    	
+    	if (topic == null) {
             throw new CamelExchangeException("No topic key set", exchange);
         }
-        K partitionKey = (K) exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY);
+    	
+        K partitionKey = (K) exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY);        
         boolean hasPartitionKey = partitionKey != null;
 
-        K messageKey = (K) exchange.getIn().getHeader(KafkaConstants.KEY);
+        K messageKey = (K) exchange.getIn().getHeader(KafkaConstants.KEY);        
         boolean hasMessageKey = messageKey != null;
 
         V msg = (V) exchange.getIn().getBody();
