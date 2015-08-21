@@ -31,6 +31,7 @@ import org.apache.camel.support.RestConsumerContextPathMatcher;
 public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveConsumerStrategy {
 
     @Override
+    @SuppressWarnings("unchecked")
     public HttpConsumer resolve(HttpServletRequest request, Map<String, HttpConsumer> consumers) {
         HttpConsumer answer = null;
 
