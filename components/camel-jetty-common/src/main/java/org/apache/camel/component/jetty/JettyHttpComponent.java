@@ -46,6 +46,7 @@ import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.HttpRestServletResolveConsumerStrategy;
 import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ManagementAgent;
@@ -1116,7 +1117,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         context.addServlet(holder, "/*");
 
         // use rest enabled resolver in case we use rest
-        camelServlet.setServletResolveConsumerStrategy(new JettyRestServletResolveConsumerStrategy());
+        camelServlet.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
 
         return camelServlet;
     }
