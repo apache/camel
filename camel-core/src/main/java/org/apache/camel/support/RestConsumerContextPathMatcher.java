@@ -168,12 +168,7 @@ public final class RestConsumerContextPathMatcher {
             return true;
         }
 
-        // always match OPTIONS as some REST clients uses that prior to calling the service
-        if ("OPTIONS".equals(method)) {
-            return true;
-        }
-
-        return restrict.toLowerCase(Locale.US).contains(method.toLowerCase(Locale.US));
+        return restrict.toLowerCase(Locale.ENGLISH).contains(method.toLowerCase(Locale.ENGLISH));
     }
 
     /**
