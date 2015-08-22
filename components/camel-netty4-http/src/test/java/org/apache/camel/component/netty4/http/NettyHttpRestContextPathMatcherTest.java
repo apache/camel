@@ -17,15 +17,11 @@
 package org.apache.camel.component.netty4.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.Exchange.HTTP_METHOD;
 
-@Ignore
 public class NettyHttpRestContextPathMatcherTest extends BaseNettyTest {
-
-    // TODO: implement the logic for this in a better way
 
     @Test
     public void shouldReturnCustomResponseForOptions() throws Exception {
