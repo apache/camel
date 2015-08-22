@@ -52,6 +52,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+
 /**
  * Netty HTTP {@link ServerChannelHandler} that handles the incoming HTTP requests and routes
  * the received message in Camel.
