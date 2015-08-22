@@ -120,6 +120,42 @@
             
             <plugin>
                 <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-xjc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-sources-jaxb</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>xsdtojava-tests</goal>
+                        </goals>
+                        <configuration>
+                            <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
+                            <xsdOptions>
+                                <xsdOption>
+                                    <extension>true</extension>
+                                    <xsd>
+                                        ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/custom-soap-headers.xsd
+                                    </xsd>
+                                    <bindingFile>
+                                        ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/xjc-bindings.xml
+                                    </bindingFile>
+                                </xsdOption>
+                                <xsdOption>
+                                    <extension>true</extension>
+                                    <xsd>
+                                        ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/contact.xsd
+                                    </xsd>
+                                    <bindingFile>
+                                        ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/xjc-bindings.xml
+                                    </bindingFile>
+                                </xsdOption>
+                            </xsdOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
                 <executions>
                     <execution>

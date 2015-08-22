@@ -152,7 +152,8 @@ public class HttpProducer extends DefaultProducer {
                 // if we do not use failed exception then populate response for all response codes
                 populateResponse(exchange, method, in, strategy, responseCode);
             } else {
-                if (responseCode >= 100 && responseCode < 300) {
+                boolean ok = HttpHelper.isStatusCodeOk(responseCode, getEndpoint().getOkStatusCodeRange());
+                if (ok) {
                     // only populate response for OK response
                     populateResponse(exchange, method, in, strategy, responseCode);
                 } else {

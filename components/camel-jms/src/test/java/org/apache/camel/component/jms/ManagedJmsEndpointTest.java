@@ -83,6 +83,9 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
 
         size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(1, size.intValue());
+
+        String body = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[]{0}, new String[]{"java.lang.Integer"});
+        assertEquals("Hi World", body);
     }
 
     @Override

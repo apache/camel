@@ -28,9 +28,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
@@ -126,6 +128,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private Boolean lazyLoadTypeConverters;
     @XmlAttribute(required = false)
     private Boolean typeConverterStatisticsEnabled;
+    @XmlAttribute(required = false)
+    private TypeConverterExists typeConverterExists;
+    @XmlAttribute(required = false)
+    private LoggingLevel typeConverterExistsLoggingLevel;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class, required = false)
@@ -657,6 +663,22 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
+    }
+
+    public TypeConverterExists getTypeConverterExists() {
+        return typeConverterExists;
+    }
+
+    public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
+        this.typeConverterExists = typeConverterExists;
+    }
+
+    public LoggingLevel getTypeConverterExistsLoggingLevel() {
+        return typeConverterExistsLoggingLevel;
+    }
+
+    public void setTypeConverterExistsLoggingLevel(LoggingLevel typeConverterExistsLoggingLevel) {
+        this.typeConverterExistsLoggingLevel = typeConverterExistsLoggingLevel;
     }
 
     public CamelJMXAgentDefinition getCamelJMXAgent() {

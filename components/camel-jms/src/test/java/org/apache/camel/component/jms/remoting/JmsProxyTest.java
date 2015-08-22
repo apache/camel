@@ -19,9 +19,8 @@ package org.apache.camel.component.jms.remoting;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
+import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -40,8 +39,7 @@ public class JmsProxyTest extends CamelTestSupport {
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         // create proxy
-        Endpoint endpoint = camelContext.getEndpoint("direct:calculatorProxy");
-        calculatorProxy = ProxyHelper.createProxy(endpoint, Calculator.class);
+        calculatorProxy = new ProxyBuilder(camelContext).binding(false).endpoint("direct:calculatorProxy").build(Calculator.class);
 
         return camelContext;
     }

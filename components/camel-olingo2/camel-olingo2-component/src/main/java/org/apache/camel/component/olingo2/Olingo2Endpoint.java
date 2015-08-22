@@ -52,6 +52,9 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
     private static final String DATA_PROPERTY = "data";
     private static final String DELETE_METHOD = "delete";
 
+    // unparsed variants
+    private static final String UREAD_METHOD = "uread";
+
     private final Set<String> endpointPropertyNames;
 
     @UriParam
@@ -81,7 +84,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
             throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
         }
         // only read method is supported
-        if (!READ_METHOD.equals(methodName)) {
+        if (!READ_METHOD.equals(methodName) && !UREAD_METHOD.equals(methodName)) {
             throw new IllegalArgumentException("Only read method is supported for consumer endpoints");
         }
         final Olingo2Consumer consumer = new Olingo2Consumer(this, processor);
@@ -110,7 +113,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
     @Override
     protected void afterConfigureProperties() {
         // set default inBody
-        if (!(READ_METHOD.equals(methodName) || DELETE_METHOD.equals(methodName))
+        if (!(READ_METHOD.equals(methodName) || DELETE_METHOD.equals(methodName) || UREAD_METHOD.equals(methodName))
             && inBody == null) {
             inBody = DATA_PROPERTY;
         }

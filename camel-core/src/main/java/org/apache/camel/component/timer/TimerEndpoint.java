@@ -86,6 +86,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         // do nothing, the timer will be set when the first consumer will request it
@@ -201,31 +206,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      */
     public void setTime(Date time) {
         this.time = time;
-    }
-
-    @ManagedAttribute(description = "Singleton")
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @ManagedAttribute(description = "Camel id")
-    public String getCamelId() {
-        return this.getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return this.getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri")
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Endpoint State")
-    public String getState() {
-        return getStatus().name();
     }
 
     public Timer getTimer(TimerConsumer consumer) {

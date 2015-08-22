@@ -165,10 +165,18 @@ public class HttpProducer extends DefaultProducer {
             int responseCode = httpResponse.getStatusLine().getStatusCode();
             LOG.debug("Http responseCode: {}", responseCode);
 
-            if (throwException && (responseCode < 100 || responseCode >= 300)) {
-                throw populateHttpOperationFailedException(exchange, httpRequest, httpResponse, responseCode);
-            } else {
+            if (!throwException) {
+                // if we do not use failed exception then populate response for all response codes
                 populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
+            } else {
+                boolean ok = HttpHelper.isStatusCodeOk(responseCode, getEndpoint().getOkStatusCodeRange());
+                if (ok) {
+                    // only populate response for OK response
+                    populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
+                } else {
+                    // operation failed so populate exception to throw
+                    throw populateHttpOperationFailedException(exchange, httpRequest, httpResponse, responseCode);
+                }
             }
         } finally {
             if (httpResponse != null) {

@@ -150,7 +150,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
         LOG.trace("Got object [{}]", s3Object);
 
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         message.setBody(s3Object.getObjectContent());
         message.setHeader(S3Constants.KEY, s3Object.getKey());

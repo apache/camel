@@ -30,10 +30,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
@@ -699,6 +701,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract Boolean getTypeConverterStatisticsEnabled();
 
+    public abstract LoggingLevel getTypeConverterExistsLoggingLevel();
+
+    public abstract TypeConverterExists getTypeConverterExists();
+
     public abstract CamelJMXAgentDefinition getCamelJMXAgent();
 
     public abstract CamelStreamCachingStrategyDefinition getCamelStreamCachingStrategy();
@@ -785,6 +791,12 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getTypeConverterStatisticsEnabled() != null) {
             ctx.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
+        }
+        if (getTypeConverterExists() != null) {
+            ctx.getTypeConverterRegistry().setTypeConverterExists(getTypeConverterExists());
+        }
+        if (getTypeConverterExistsLoggingLevel() != null) {
+            ctx.getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(getTypeConverterExistsLoggingLevel());
         }
         if (getRestConfiguration() != null) {
             ctx.setRestConfiguration(getRestConfiguration().asRestConfiguration(ctx));

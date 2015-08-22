@@ -14,24 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
+package org.apache.camel.component.bean;
 
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
 
-public class NettyHttpProducerBridgePathWithSpacesAtEndTest extends BaseNettyTest {
+public class MyAuditServiceProxyTest extends ContextTestSupport {
 
-    private int port1;
-    private int port2;
+    public void testMyAuditServiceProxy() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedHeaderReceived("uuid", "1234");
 
-    @Test
-    public void testProxy() throws Exception {
-        String reply = template.requestBody("netty-http:http://0.0.0.0:" + port1 + "/foo ", "World", String.class);
-        assertEquals("Bye World", reply);
+        // must enable binding on proxy
+        MyAuditService service = new ProxyBuilder(context).endpoint("direct:proxy").binding(true).build(MyAuditService.class);
 
-        // and with more spaces
-        String reply2 = template.requestBody("netty-http:http://0.0.0.0:" + port1 + "/foo /bar baz", "Camel", String.class);
-        assertEquals("Bye Camel", reply2);
+        service.auditMessage("1234", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -39,16 +39,9 @@ public class NettyHttpProducerBridgePathWithSpacesAtEndTest extends BaseNettyTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
-
-                from("netty-http:http://0.0.0.0:" + port1 + "/foo ?matchOnUriPrefix=true")
-                        .to("netty-http:http://0.0.0.0:" + port2 + "/proxy foo ?bridgeEndpoint=true&throwExceptionOnFailure=false");
-
-                from("netty-http:http://0.0.0.0:" + port2 + "/proxy foo ?matchOnUriPrefix=true")
-                        .transform().simple("Bye ${body}");
+                from("direct:proxy")
+                    .to("mock:result");
             }
         };
     }
-
 }

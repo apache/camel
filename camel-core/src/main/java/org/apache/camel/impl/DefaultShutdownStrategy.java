@@ -21,9 +21,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -45,6 +47,7 @@ import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -587,24 +590,33 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             long loopCount = 0;
             while (!done && !timeoutOccurred.get()) {
                 int size = 0;
+                // number of inflights per route
+                final Map<String, Integer> routeInflight = new LinkedHashMap<String, Integer>();
+
                 for (RouteStartupOrder order : routes) {
                     int inflight = context.getInflightRepository().size(order.getRoute().getId());
-                    for (Consumer consumer : order.getInputs()) {
-                        // include any additional pending exchanges on some consumers which may have internal
-                        // memory queues such as seda
-                        if (consumer instanceof ShutdownAware) {
-                            inflight += ((ShutdownAware) consumer).getPendingExchangesSize();
-                        }
-                    }
+                    inflight += getPendingInflightExchanges(order);
                     if (inflight > 0) {
+                        String routeId = order.getRoute().getId();
+                        routeInflight.put(routeId, inflight);
                         size += inflight;
-                        LOG.trace("{} inflight and pending exchanges for route: {}", inflight, order.getRoute().getId());
+                        LOG.trace("{} inflight and pending exchanges for route: {}", inflight, routeId);
                     }
                 }
                 if (size > 0) {
                     try {
-                        LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
-                             + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.");
+                        // build a message with inflight per route
+                        CollectionStringBuffer csb = new CollectionStringBuffer();
+                        for (Map.Entry<String, Integer> entry : routeInflight.entrySet()) {
+                            String row = String.format("%s = %s", entry.getKey(), entry.getValue());
+                            csb.append(row);
+                        }
+
+                        String msg = "Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
+                                + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.";
+                        msg += " Inflights per route: [" + csb.toString() + "]";
+
+                        LOG.info(msg);
 
                         // log verbose if DEBUG logging is enabled
                         logInflightExchanges(context, routes, false);
@@ -658,6 +670,30 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             }
         }
 
+    }
+
+    /**
+     * Calculates the total number of inflight exchanges for the given route
+     *
+     * @param order the route
+     * @return number of inflight exchanges
+     */
+    protected static int getPendingInflightExchanges(RouteStartupOrder order) {
+        int inflight = 0;
+
+        // the consumer is the 1st service so we always get the consumer
+        // the child services are EIPs in the routes which may also have pending
+        // inflight exchanges (such as the aggregator)
+        for (Service service : order.getServices()) {
+            Set<Service> children = ServiceHelper.getChildServices(service);
+            for (Service child : children) {
+                if (child instanceof ShutdownAware) {
+                    inflight += ((ShutdownAware) child).getPendingExchangesSize();
+                }
+            }
+        }
+
+        return inflight;
     }
 
     /**

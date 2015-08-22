@@ -159,6 +159,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
         return processor.isCompletionFromBatchConsumer();
     }
 
+    public boolean isCompleteAllOnStop() {
+        return processor.isCompleteAllOnStop();
+    }
+
     public int getInProgressCompleteExchanges() {
         return processor.getInProgressCompleteExchanges();
     }

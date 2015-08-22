@@ -106,21 +106,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return contentCache;
     }
 
-    @ManagedAttribute(description = "Endpoint State")
-    public String getState() {
-        return getStatus().name();
-    }
-
-    @ManagedAttribute(description = "Camel ID")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return getCamelContext().getManagementName();
-    }
-
     public XsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(resourceUri, newResourceUri);
         LOG.trace("Getting endpoint with URI: {}", newUri);
@@ -151,6 +136,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.xslt = xslt;
     }
 
+    @ManagedAttribute(description = "The name of the template to load from classpath or file system")
     public String getResourceUri() {
         return resourceUri;
     }
@@ -195,6 +181,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.transformerFactory = transformerFactory;
     }
 
+    @ManagedAttribute(description = "Whether to use Saxon as the transformerFactoryClass")
     public boolean isSaxon() {
         return saxon;
     }
@@ -219,6 +206,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.resultHandlerFactory = resultHandlerFactory;
     }
 
+    @ManagedAttribute(description = "Whether or not to throw an exception if the input body is null")
     public boolean isFailOnNullBody() {
         return failOnNullBody;
     }
@@ -230,6 +218,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.failOnNullBody = failOnNullBody;
     }
 
+    @ManagedAttribute(description = "What kind of option to use.")
     public XsltOutput getOutput() {
         return output;
     }
@@ -268,6 +257,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.errorListener = errorListener;
     }
 
+    @ManagedAttribute(description = "Cache for the resource content (the stylesheet file) when it is loaded.")
     public boolean isContentCache() {
         return contentCache;
     }
@@ -292,6 +282,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.uriResolver = uriResolver;
     }
 
+    @ManagedAttribute(description = "Whether to allow using StAX as the javax.xml.transform.Source")
     public boolean isAllowStAX() {
         return allowStAX;
     }

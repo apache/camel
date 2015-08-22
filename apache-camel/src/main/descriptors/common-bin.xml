@@ -104,6 +104,7 @@
         <include>org.apache.camel:camel-jasypt</include>
         <include>org.apache.camel:camel-javaspace</include>
         <include>org.apache.camel:camel-jaxb</include>
+        <include>org.apache.camel:camel-jbpm</include>
         <include>org.apache.camel:camel-jcr</include>
         <include>org.apache.camel:camel-jclouds</include>
         <include>org.apache.camel:camel-jdbc</include>

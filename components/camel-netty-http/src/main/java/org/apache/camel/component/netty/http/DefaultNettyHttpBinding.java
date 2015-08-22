@@ -436,8 +436,16 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             return (HttpRequest) message.getBody();
         }
 
+        String uriForRequest = uri;
+        if (configuration.isUseRelativePath()) {
+            int indexOfPath = uri.indexOf((new URI(uri)).getPath());
+            if (indexOfPath > 0) {
+                uriForRequest = uri.substring(indexOfPath);               
+            } 
+        }
+        
         // just assume GET for now, we will later change that to the actual method to use
-        HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri);
+        HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uriForRequest);
 
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
 
@@ -520,9 +528,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // must include HOST header as required by HTTP 1.1
         // use URI as its faster than URL (no DNS lookup)
         URI u = new URI(uri);
-        String host = u.getHost();
-        request.headers().set(HttpHeaders.Names.HOST, host);
-        LOG.trace("Host: {}", host);
+        String hostHeader = u.getHost() 
+                + (configuration.isUseRelativePath() ? ":" + u.getPort() : "");
+        request.headers().set(HttpHeaders.Names.HOST, hostHeader);
+        LOG.trace("Host: {}", hostHeader);
 
         // configure connection to accordingly to keep alive configuration
         // favor using the header from the message

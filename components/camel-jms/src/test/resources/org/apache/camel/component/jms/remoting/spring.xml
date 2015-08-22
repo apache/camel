@@ -28,7 +28,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
       <jmxAgent id="agent" disabled="true"/>
     <!-- create the client proxy -->
-    <proxy id="sayProxy" serviceUrl="activemq:test.serviceQueue"
+    <proxy id="sayProxy" binding="false" serviceUrl="activemq:test.serviceQueue"
            serviceInterface="org.apache.camel.component.jms.remoting.ISay"/>
 
     <!-- export the service -->

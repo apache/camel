@@ -35,11 +35,6 @@ public class MyListenerService implements MyListener {
         LOG.debug("Instantiated service: " + this);
     }
     
-    public String sayHello(String name) {
-        LOG.debug("Invoked sayHello with: " + name);
-        return "Hello " + name;
-    }
-
     @Consume(uri = "direct:end")
     public String greet(Map<String, Object> headers, String name) {
         return headers.get("greeter") + name;

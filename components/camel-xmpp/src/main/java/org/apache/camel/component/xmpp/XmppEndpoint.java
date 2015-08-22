@@ -21,11 +21,9 @@ import java.util.Iterator;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -135,17 +133,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return answer;
     }
 
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        return createExchange(pattern, null);
-    }
-
     public Exchange createExchange(Packet packet) {
-        return createExchange(getExchangePattern(), packet);
-    }
-
-    private Exchange createExchange(ExchangePattern pattern, Packet packet) {
-        Exchange exchange = new DefaultExchange(this, getExchangePattern());
+        Exchange exchange = super.createExchange();
         exchange.setProperty(Exchange.BINDING, getBinding());
         exchange.setIn(new XmppMessage(packet));
         return exchange;

@@ -28,6 +28,7 @@ public final class JcrConstants {
     public static final String JCR_OPERATION = "CamelJcrOperation";
     public static final String JCR_INSERT = "CamelJcrInsert";
     public static final String JCR_GET_BY_ID = "CamelJcrGetById";
+    public static final String JCR_NODE_TYPE = "CamelJcrNodeType";
 
     private JcrConstants() {
         // Utility class

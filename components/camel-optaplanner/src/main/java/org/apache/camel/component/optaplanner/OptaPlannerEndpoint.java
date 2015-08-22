@@ -16,63 +16,83 @@
  */
 package org.apache.camel.component.optaplanner;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Component;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.util.ObjectHelper;
-import org.optaplanner.core.api.domain.solution.Solution;
+import org.apache.camel.spi.UriParam;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 
 /**
  * OptaPlanner endpoint for Camel
  */
-@UriEndpoint(scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:resourceUri", producerOnly = true, label = "engine,planning")
-public class OptaPlannerEndpoint extends ResourceEndpoint {
+@UriEndpoint(scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:resourceUri", label = "engine,planning")
+public class OptaPlannerEndpoint extends DefaultEndpoint {
+    private static final Map<String, Solver> SOLVERS = new HashMap<String, Solver>();
 
+    @UriParam
+    private OptaPlannerConfiguration configuration;
     private SolverFactory solverFactory;
 
     public OptaPlannerEndpoint() {
     }
 
-    public OptaPlannerEndpoint(String uri, Component component, String resourceUri) {
-        super(uri, component, resourceUri);
+    public OptaPlannerEndpoint(String uri, Component component, OptaPlannerConfiguration configuration) {
+        super(uri, component);
+        this.configuration = configuration;
+        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile());
     }
 
-    public SolverFactory getSolverFactory() {
-        return solverFactory;
+    protected Solver getOrCreateSolver(String solverId) throws Exception {
+        synchronized (SOLVERS) {
+            Solver solver = SOLVERS.get(solverId);
+            if (solver == null) {
+                solver = createSolver();
+                SOLVERS.put(solverId, solver);
+            }
+            return solver;
+        }
     }
 
-    public void setSolverFactory(SolverFactory solverFactory) {
-        this.solverFactory = solverFactory;
+    protected Solver createSolver() {
+        return solverFactory.buildSolver();
+    }
+
+    protected Solver getSolver(String solverId) {
+        synchronized (SOLVERS) {
+            return SOLVERS.get(solverId);
+        }
     }
 
     @Override
-    public ExchangePattern getExchangePattern() {
-        return ExchangePattern.InOut;
+    public Producer createProducer() throws Exception {
+        return new OptaPlannerProducer(this, configuration);
     }
 
     @Override
-    protected String createEndpointUri() {
-        return "optaplanner:" + getResourceUri();
+    public Consumer createConsumer(Processor processor) throws Exception {
+        return new OptaPlannerConsumer(this, processor, configuration);
     }
 
     @Override
-    protected void onExchange(Exchange exchange) throws Exception {
-        ObjectHelper.notNull(solverFactory, "solverFactory");
-        Solver solver = solverFactory.buildSolver();
-
-        Solution planningProblem = exchange.getIn().getMandatoryBody(Solution.class);
-
-        solver.solve(planningProblem);
-        Solution bestSolution = solver.getBestSolution();
-
-        exchange.getOut().setBody(bestSolution);
-        // propagate headers and attachments
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-        exchange.getOut().setAttachments(exchange.getIn().getAttachments());
+    public boolean isSingleton() {
+        return true;
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        synchronized (SOLVERS) {
+            for (Solver solver : SOLVERS.values()) {
+                solver.terminateEarly();
+                SOLVERS.remove(solver);
+            }
+        }
+        super.doStop();
+    }
 }

@@ -22,10 +22,8 @@ import javax.mail.search.SearchTerm;
 import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.UriEndpoint;
@@ -122,17 +120,8 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return false;
     }
 
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        return createExchange(pattern, null);
-    }
-
     public Exchange createExchange(Message message) {
-        return createExchange(getExchangePattern(), message);
-    }
-
-    private Exchange createExchange(ExchangePattern pattern, Message message) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange();
         exchange.setProperty(Exchange.BINDING, getBinding());
         exchange.setIn(new MailMessage(message, getConfiguration().isMapMailMessage()));
         return exchange;

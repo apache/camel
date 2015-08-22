@@ -163,8 +163,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      *            
      * @return JAXBElement for the body content
      */
-    protected List<JAXBElement<?>> createContentFromObject(final Object inputObject, String soapAction,
-                                                         List<JAXBElement<?>> headerElements) {
+    protected List<Object> createContentFromObject(final Object inputObject, String soapAction,
+                                                         List<Object> headerElements) {
         List<Object> bodyParts = new ArrayList<Object>();
         List<Object> headerParts = new ArrayList<Object>();
         if (inputObject instanceof BeanInvocation) {
@@ -206,7 +206,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
             bodyParts.add(inputObject);
         }
 
-        List<JAXBElement<?>> bodyElements = new ArrayList<JAXBElement<?>>();
+        List<Object> bodyElements = new ArrayList<Object>();
         for (Object bodyObj : bodyParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, bodyObj.getClass());
             if (name == null) {

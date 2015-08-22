@@ -32,6 +32,12 @@ public enum DockerOperation {
             DockerConstants.DOCKER_INITIAL_RANGE, Long.class),
 
     /**
+     * Stats *
+     */
+    STATS("stats", false, true,
+            DockerConstants.DOCKER_CONTAINER_ID, Long.class),
+
+    /**
      * General *
      */
     AUTH("auth", false, true,
@@ -125,6 +131,7 @@ public enum DockerOperation {
             DockerConstants.DOCKER_CPU_SHARES, Integer.class,
             DockerConstants.DOCKER_DISABLE_NETWORK, Boolean.class,
             DockerConstants.DOCKER_DNS, String.class,
+            DockerConstants.DOCKER_DOMAIN_NAME, String.class,
             DockerConstants.DOCKER_ENTRYPOINT, String.class,
             DockerConstants.DOCKER_ENV, String.class,
             DockerConstants.DOCKER_EXPOSED_PORTS, String.class,
@@ -171,22 +178,7 @@ public enum DockerOperation {
             DockerConstants.DOCKER_FORCE, Boolean.class,
             DockerConstants.DOCKER_REMOVE_VOLUMES, Boolean.class),
     START_CONTAINER("containerstart", false, true,
-            DockerConstants.DOCKER_BINDS, String.class,
-            DockerConstants.DOCKER_CAP_ADD, String.class,
-            DockerConstants.DOCKER_CAP_DROP, String.class,
-            DockerConstants.DOCKER_CONTAINER_ID, String.class,
-            DockerConstants.DOCKER_DEVICES, String.class,
-            DockerConstants.DOCKER_DNS_SEARCH, String.class,
-            DockerConstants.DOCKER_DNS, String.class,
-            DockerConstants.DOCKER_LINKS, String.class,
-            DockerConstants.DOCKER_LXC_CONF, String.class,
-            DockerConstants.DOCKER_NETWORK_MODE, String.class,
-            DockerConstants.DOCKER_PORTS, String.class,
-            DockerConstants.DOCKER_PORT_BINDINGS, String.class,
-            DockerConstants.DOCKER_PRIVILEGED, Boolean.class,
-            DockerConstants.DOCKER_PUBLISH_ALL_PORTS, Boolean.class,
-            DockerConstants.DOCKER_RESTART_POLICY, String.class,
-            DockerConstants.DOCKER_VOLUMES_FROM, String.class),
+            DockerConstants.DOCKER_CONTAINER_ID, String.class),
     STOP_CONTAINER("containerstop", false, true,
             DockerConstants.DOCKER_CONTAINER_ID, String.class,
             DockerConstants.DOCKER_TIMEOUT, Integer.class),

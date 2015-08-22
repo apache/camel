@@ -275,7 +275,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getAcknowledgementModeName());
         assertEquals(-1, endpoint.getCacheLevel());
         assertNull(endpoint.getCacheLevelName());
-        assertNotNull(endpoint.getCamelId());
+        assertNotNull(endpoint.getCamelContext().getName());
         assertNull(endpoint.getClientId());
         assertNotNull(endpoint.getConnectionFactory());
         assertEquals(1, endpoint.getConcurrentConsumers());
@@ -310,7 +310,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(1000L, endpoint.getRequestTimeoutCheckerInterval());
         assertEquals(0, endpoint.getRunningMessageListeners());
         assertNull(endpoint.getSelector());
-        assertEquals(ServiceStatus.Started.toString(), endpoint.getState());
+        assertEquals(ServiceStatus.Started, endpoint.getStatus());
         assertEquals(-1, endpoint.getTimeToLive());
         assertNull(endpoint.getTransactionName());
         assertEquals(-1, endpoint.getTransactionTimeout());

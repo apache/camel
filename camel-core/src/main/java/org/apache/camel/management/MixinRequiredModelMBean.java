@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import javax.management.Descriptor;
+import javax.management.DynamicMBean;
 import javax.management.MBeanException;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
@@ -30,23 +31,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link RequiredModelMBean} which allows us to intercept invoking operations on the MBean.
+ * A {@link javax.management.modelmbean.RequiredModelMBean} which allows us to intercept invoking operations on the MBean.
+ * <p/>
+ * This allows us to intercept calls to custom mbeans where allows us to mix-in the standard set of mbean attributes
+ * and operations that Camel provides out of the box.
  * <p/>
  * For example if mask has been enabled on JMX, then we use this implementation
  * to hide sensitive information from the returned JMX attributes / operations.
  */
-public class MaskRequiredModelMBean extends RequiredModelMBean {
+public class MixinRequiredModelMBean extends RequiredModelMBean {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MaskRequiredModelMBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MixinRequiredModelMBean.class);
     private boolean mask;
+    private ModelMBeanInfo defaultMbi;
+    private DynamicMBean defaultObject;
 
-    public MaskRequiredModelMBean() throws MBeanException, RuntimeOperationsException {
+    public MixinRequiredModelMBean() throws MBeanException, RuntimeOperationsException {
         // must have default no-arg constructor
     }
 
-    public MaskRequiredModelMBean(ModelMBeanInfo mbi, boolean mask) throws MBeanException, RuntimeOperationsException {
+    public MixinRequiredModelMBean(ModelMBeanInfo mbi, boolean mask, ModelMBeanInfo defaultMbi, DynamicMBean defaultObject) throws MBeanException, RuntimeOperationsException {
         super(mbi);
         this.mask = mask;
+        this.defaultMbi = defaultMbi;
+        this.defaultObject = defaultObject;
     }
 
     public boolean isMask() {
@@ -55,12 +63,26 @@ public class MaskRequiredModelMBean extends RequiredModelMBean {
 
     @Override
     public Object invoke(String opName, Object[] opArgs, String[] sig) throws MBeanException, ReflectionException {
-        Object answer = super.invoke(opName, opArgs, sig);
+        Object answer;
+        if (defaultMbi != null && defaultObject != null && isDefaultOperation(opName)) {
+            answer = defaultObject.invoke(opName, opArgs, sig);
+        } else {
+            answer = super.invoke(opName, opArgs, sig);
+        }
         // mask the answer if enabled and it was a String type (we cannot mask other types)
         if (mask && answer instanceof String && ObjectHelper.isNotEmpty(answer) && isMaskOperation(opName)) {
             answer = mask(opName, (String) answer);
         }
         return answer;
+    }
+
+    protected boolean isDefaultOperation(String opName) {
+        for (MBeanOperationInfo info : defaultMbi.getOperations()) {
+            if (info.getName().equals(opName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected boolean isMaskOperation(String opName) {
