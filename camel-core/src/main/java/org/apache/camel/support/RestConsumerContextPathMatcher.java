@@ -54,11 +54,42 @@ public final class RestConsumerContextPathMatcher {
     }
 
     /**
+     * Does the incoming request match the given consumer path (ignore case)
+     *
+     * @param requestPath      the incoming request context path
+     * @param consumerPath     a consumer path
+     * @param matchOnUriPrefix whether to use the matchOnPrefix option
+     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     */
+    public static boolean matchPath(String requestPath, String consumerPath, boolean matchOnUriPrefix) {
+        // deal with null parameters
+        if (requestPath == null && consumerPath == null) {
+            return true;
+        }
+        if (requestPath == null || consumerPath == null) {
+            return false;
+        }
+
+        String p1 = requestPath.toLowerCase(Locale.ENGLISH);
+        String p2 = consumerPath.toLowerCase(Locale.ENGLISH);
+
+        if (p1.equals(p2)) {
+            return true;
+        }
+
+        if (matchOnUriPrefix && p1.startsWith(p2)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Finds the best matching of the list of consumer paths that should service the incoming request.
      *
-     * @param requestMethod   the incoming request HTTP method
-     * @param requestPath     the incoming request context path
-     * @param consumerPaths   the list of consumer context path details
+     * @param requestMethod the incoming request HTTP method
+     * @param requestPath   the incoming request context path
+     * @param consumerPaths the list of consumer context path details
      * @return the best matched consumer, or <tt>null</tt> if none could be determined.
      */
     public static ConsumerPath matchBestPath(String requestMethod, String requestPath, List<ConsumerPath> consumerPaths) {
@@ -128,8 +159,8 @@ public final class RestConsumerContextPathMatcher {
     /**
      * Matches the given request HTTP method with the configured HTTP method of the consumer
      *
-     * @param method    the request HTTP method
-     * @param restrict  the consumer configured HTTP restrict method
+     * @param method   the request HTTP method
+     * @param restrict the consumer configured HTTP restrict method
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
     private static boolean matchRestMethod(String method, String restrict) {
@@ -148,8 +179,8 @@ public final class RestConsumerContextPathMatcher {
     /**
      * Matches the given request path with the configured consumer path
      *
-     * @param requestPath   the request path
-     * @param consumerPath  the consumer path which may use { } tokens
+     * @param requestPath  the request path
+     * @param consumerPath the consumer path which may use { } tokens
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
     private static boolean matchRestPath(String requestPath, String consumerPath, boolean wildcard) {
@@ -186,7 +217,7 @@ public final class RestConsumerContextPathMatcher {
                 continue;
             }
 
-            if (!p1.equals(p2)) {
+            if (!matchPath(p1, p2, false)) {
                 return false;
             }
         }
@@ -198,7 +229,7 @@ public final class RestConsumerContextPathMatcher {
     /**
      * Counts the number of wildcards in the path
      *
-     * @param consumerPath  the consumer path which may use { } tokens
+     * @param consumerPath the consumer path which may use { } tokens
      * @return number of wildcards, or <tt>0</tt> if no wildcards
      */
     private static int countWildcards(String consumerPath) {
