@@ -420,7 +420,7 @@
     <saxon-version>9.5.1-5</saxon-version>
     <scala-version>2.11.7</scala-version>
     <scala-2.10-version>2.10.4</scala-2.10-version>
-    <scala-maven-plugin-version>3.2.1</scala-maven-plugin-version>
+    <scala-maven-plugin-version>3.2.2</scala-maven-plugin-version>
     <scalatest-version>2.2.5</scalatest-version>
     <scalaxml-version>1.0.4</scalaxml-version>
     <scribe-version>1.3.7</scribe-version>
