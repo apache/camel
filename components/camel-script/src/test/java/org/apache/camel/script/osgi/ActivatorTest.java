@@ -24,8 +24,6 @@ import javax.script.ScriptEngineFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.ReturnValues;
-import org.mockito.internal.stubbing.answers.AnswerReturnValuesAdapter;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.osgi.framework.Bundle;
@@ -41,7 +39,7 @@ import static org.mockito.Mockito.when;
 
 public class ActivatorTest {
 
-    public static Logger LOG = LoggerFactory.getLogger(ActivatorTest.class);
+    public static final Logger LOG = LoggerFactory.getLogger(ActivatorTest.class);
 
     private Bundle mockBundle;
 
