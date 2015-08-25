@@ -224,7 +224,18 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
         private ScriptEngineFactory getFactory() {
             try {
                 BufferedReader in = IOHelper.buffered(new InputStreamReader(configFile.openStream()));
-                String className = in.readLine();
+                String className = null;
+                while ((className = in.readLine()) != null) {
+                    if ("".equals(className.trim()) || className.trim().startsWith("#")) {
+                        continue;
+                    } else if (className.contains("#")) {
+                        className = className.substring(0, className.indexOf('#')).trim();
+                        break;
+                    } else {
+                        className = className.trim();
+                        break;
+                    }
+                }
                 in.close();
                 Class<?> cls = bundle.loadClass(className);
                 if (!ScriptEngineFactory.class.isAssignableFrom(cls)) {
