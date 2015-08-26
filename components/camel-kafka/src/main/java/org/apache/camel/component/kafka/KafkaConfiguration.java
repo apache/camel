@@ -60,6 +60,8 @@ public class KafkaConfiguration {
     @UriParam
     private Integer fetchMessageMaxBytes;
     @UriParam
+    private Boolean deferredCommitEnable=false;
+    @UriParam
     private Boolean autoCommitEnable;
     @UriParam
     private Integer autoCommitIntervalMs;
@@ -309,6 +311,15 @@ public class KafkaConfiguration {
 
     public void setFetchMessageMaxBytes(Integer fetchMessageMaxBytes) {
         this.fetchMessageMaxBytes = fetchMessageMaxBytes;
+    }
+    
+    
+    public Boolean isDeferredCommitEnabled() {
+    	return deferredCommitEnable;
+    }
+    
+    public void setDeferredCommitEnabled(Boolean deferred) {
+    	this.deferredCommitEnable = deferred;
     }
 
     public Boolean isAutoCommitEnable() {

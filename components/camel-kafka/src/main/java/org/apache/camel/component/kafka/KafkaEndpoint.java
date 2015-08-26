@@ -27,6 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
@@ -367,6 +368,10 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public int getRebalanceMaxRetries() {
         return configuration.getRebalanceMaxRetries();
+    }
+    
+    public Boolean isDeferredCommitEnabled() {
+    	return configuration.isAutoCommitEnable();
     }
 
     public Boolean isAutoCommitEnable() {
