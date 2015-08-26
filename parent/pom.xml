@@ -339,9 +339,11 @@
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
     <!-- problems by upgrading to maven-bundle-plugin 2.4.0 -->
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
-    <!-- maven-checkstyle-plugin 2.10 has problems to validate the license header in properties files-->
-    <maven-checkstyle-plugin-version>2.9.1</maven-checkstyle-plugin-version>
-    <maven-checkstyle-version>5.6</maven-checkstyle-version>
+    <maven-checkstyle-plugin-version>2.16</maven-checkstyle-plugin-version>
+    <!-- AtomicException.java causes a problem with Checksyle > 6.6 due to 
+        https://github.com/checkstyle/checkstyle/issues/1903
+     -->
+    <maven-checkstyle-version>6.6</maven-checkstyle-version>
     <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.7.Final</maven-jboss-as-maven-plugin-version>
@@ -2781,20 +2783,14 @@
           <version>${maven-checkstyle-plugin-version}</version>
           <dependencies>
             <dependency>
-              <groupId>com.puppycrawl.tools</groupId>
-              <artifactId>checkstyle</artifactId>
-              <version>${maven-checkstyle-version}</version>
-              <exclusions>
-                <exclusion>
-                  <groupId>com.sun</groupId>
-                  <artifactId>tools</artifactId>
-                </exclusion>
-              </exclusions>
-            </dependency>
-            <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-buildtools</artifactId>
               <version>${project.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${maven-checkstyle-version}</version>
             </dependency>
           </dependencies>
           <executions>
@@ -2802,6 +2798,7 @@
               <id>validate</id>
               <phase>validate</phase>
               <configuration>
+                <includeResources>false</includeResources>
                 <configLocation>camel-checkstyle.xml</configLocation>
                 <consoleOutput>true</consoleOutput>
                 <failsOnError>true</failsOnError>

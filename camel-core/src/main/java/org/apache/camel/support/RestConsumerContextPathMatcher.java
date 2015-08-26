@@ -30,6 +30,10 @@ import java.util.Locale;
  * The {@link ConsumerPath} is used for the components to provide the details to the matcher.
  */
 public final class RestConsumerContextPathMatcher {
+    private RestConsumerContextPathMatcher() {
+        
+    }
+    
 
     /**
      * Consumer path details which must be implemented and provided by the components.

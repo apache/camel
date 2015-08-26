@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.dozer;
 
-import static org.dozer.classmap.MappingDirection.ONE_WAY;
-
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -47,6 +45,8 @@ import org.dozer.loader.xml.XMLParserFactory;
 import org.dozer.util.DozerClassLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.dozer.classmap.MappingDirection.ONE_WAY;
 
 /**
  * <code>DozerTypeConverterLoader</code> provides the mechanism for registering

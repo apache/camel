@@ -139,8 +139,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
         for (RabbitConsumer consumer : this.consumers) {
             try {
                 consumer.stop();
-            }
-            catch (TimeoutException e) {
+            } catch (TimeoutException e) {
                 log.error("Timeout occured");
                 throw e;
             }
@@ -261,8 +260,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
             }
             try {
                 channel.close();
-            }
-            catch (TimeoutException e) {
+            } catch (TimeoutException e) {
                 log.error("Timeout occured");
                 throw e;
             }

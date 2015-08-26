@@ -81,8 +81,11 @@ public class EndpointStatisticCommand extends AbstractCamelCommand {
             for (Map<String, String> row : entry.getValue()) {
 
                 if (!header) {
-                    out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, URI_COLUMN_LABEL, ROUTE_COLUMN_LABEL, DIRECTION_COLUMN_LABEL, STATIC_COLUMN_LABEL, DYNAMIC_COLUMN_LABEL, HITS_COLUMN_LABEL));
-                    out.println(String.format(headerFormat, "-------", "---", "--------", "---------", "------", "-------", "-------"));
+                    out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, URI_COLUMN_LABEL,
+                                              ROUTE_COLUMN_LABEL, DIRECTION_COLUMN_LABEL, STATIC_COLUMN_LABEL,
+                                              DYNAMIC_COLUMN_LABEL, HITS_COLUMN_LABEL));
+                    out.println(String.format(headerFormat, "-------", "---", "--------",
+                                              "---------", "------", "-------", "-------"));
                     header = true;
                 }
 

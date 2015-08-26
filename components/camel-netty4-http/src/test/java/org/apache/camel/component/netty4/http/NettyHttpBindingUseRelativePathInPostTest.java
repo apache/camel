@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import io.netty.handler.codec.http.FullHttpRequest;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
 import org.junit.Test;
 
-import io.netty.handler.codec.http.FullHttpRequest;
 
 public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
 
