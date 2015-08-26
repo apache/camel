@@ -40,8 +40,8 @@ public class JBPMComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:rest")
-                        .to("jbpm:http://localhost:8080/business-central?userName=bpmsAdmin&password=pa$word1" +
-                                "&deploymentId=org.kie.example:project1:1.0.0-SNAPSHOT")
+                        .to("jbpm:http://localhost:8080/business-central?userName=bpmsAdmin&password=pa$word1"
+                            + "&deploymentId=org.kie.example:project1:1.0.0-SNAPSHOT")
                         .to("mock:result");
             }
         };

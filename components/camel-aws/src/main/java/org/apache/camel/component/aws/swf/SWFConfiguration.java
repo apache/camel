@@ -327,7 +327,9 @@ public class SWFConfiguration {
         this.activitySchedulingOptions = activitySchedulingOptions;
     }
 
-    public int getActivityThreadPoolSize() { return activityThreadPoolSize; }
+    public int getActivityThreadPoolSize() {
+        return activityThreadPoolSize;
+    }
 
     /**
      * Maximum number of threads in work pool for activity.

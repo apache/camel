@@ -626,9 +626,15 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
         return new SecretKey() {
             private static final long serialVersionUID = 5629454124145851381L;
             
-            public String getFormat()   { return "RAW"; }
-            public byte[] getEncoded()  { return secret; }
-            public String getAlgorithm() { return "SECRET"; }
+            public String getFormat()   {
+                return "RAW";
+            }
+            public byte[] getEncoded()  {
+                return secret;
+            }
+            public String getAlgorithm() {
+                return "SECRET";
+            }
         };
     }
 }
