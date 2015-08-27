@@ -277,12 +277,21 @@ public final class HttpHelper {
                 path = path.substring(1);
             }
             if (path.length() > 0) {
-                // make sure that there is exactly one "/" between HTTP_URI and
-                // HTTP_PATH
-                if (!uri.endsWith("/")) {
-                    uri = uri + "/";
+                // inject the dynamic path before the query params, if there are any
+                int idx = uri.indexOf("?");
+
+                // if there are no query params
+                if (idx == -1) {
+                    // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
+                    uri = uri.endsWith("/") ? uri : uri + "/";
+                    uri = uri.concat(path);
+                } else {
+                    // there are query params, so inject the relative path in the right place
+                    String base = uri.substring(0, idx);
+                    base = base.endsWith("/") ? base : base + "/";
+                    base = base.concat(path);
+                    uri = base.concat(uri.substring(idx));
                 }
-                uri = uri.concat(path);
             }
         }
 

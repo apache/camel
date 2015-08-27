@@ -55,6 +55,41 @@ public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
         assertEquals("Carlsberg", headers.get("beer"));
     }
 
+    @Test
+    public void testQueryParametersWithDynamicPath() throws Exception {
+        // remove "/cheese" from the endpoint URL and place it in the Exchange.HTTP_PATH header
+        Exchange exchange = template.request(url.replace("/cheese", ""), new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_PATH, "/cheese");
+                exchange.getIn().setHeader(Exchange.HTTP_QUERY, "quote=Camel rocks");
+            }
+        });
+        assertNotNull(exchange);
+
+        String body = exchange.getOut().getBody(String.class);
+        Map<?, ?> headers = exchange.getOut().getHeaders();
+
+        assertEquals("Bye World", body);
+        assertEquals("Carlsberg", headers.get("beer"));
+    }
+
+    @Test
+    public void testQueryParametersInUriWithDynamicPath() throws Exception {
+        // remove "/cheese" from the endpoint URL and place it in the Exchange.HTTP_PATH header
+        Exchange exchange = template.request((url + "&quote=Camel%20rocks").replace("/cheese", ""), new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_PATH, "/cheese");
+            }
+        });
+        assertNotNull(exchange);
+
+        String body = exchange.getOut().getBody(String.class);
+        Map<?, ?> headers = exchange.getOut().getHeaders();
+
+        assertEquals("Bye World", body);
+        assertEquals("Carlsberg", headers.get("beer"));
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
