@@ -142,7 +142,7 @@ public class GitProducer extends DefaultProducer {
             break;
                 
         default:
-            throw new IllegalArgumentException("Local path must specified to execute " + operation);
+            throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
