@@ -77,7 +77,7 @@
     <bouncycastle-version>1.52</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <build-helper-maven-plugin-version>1.8</build-helper-maven-plugin-version>
-    <c3p0-version>0.9.1.2</c3p0-version>
+    <c3p0-version>0.9.5.1</c3p0-version>
     <californium-version>1.0.0-M3</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <cassandra-driver-version>2.1.7.1</cassandra-driver-version>
