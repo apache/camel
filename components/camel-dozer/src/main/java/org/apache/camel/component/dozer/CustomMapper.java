@@ -56,7 +56,8 @@ public class CustomMapper extends BaseConverter {
         Class<?>[] prmTypes = method.getParameterTypes();
         Object[] methodPrms = new Object[prmTypes.length];
         methodPrms[0] = source;
-        for (int parameterNdx = 0, methodPrmNdx = 1; parameterNdx < parameters.length; parameterNdx++, methodPrmNdx++) {
+        int methodPrmNdx = 1;
+        for (int parameterNdx = 0; parameterNdx < parameters.length; parameterNdx++, methodPrmNdx++) {
             if (method.isVarArgs() && methodPrmNdx == prmTypes.length - 1) {
                 Object array = Array.newInstance(prmTypes[methodPrmNdx].getComponentType(), parameters.length - parameterNdx);
                 for (int arrayNdx = 0; parameterNdx < parameters.length; parameterNdx++, arrayNdx++) {
@@ -188,7 +189,7 @@ public class CustomMapper extends BaseConverter {
                                 Object source,
                                 String[][] parameters) {
         // Create list of potential methods
-        List<Method> methods = new ArrayList<>();
+        List<Method> methods = new ArrayList<Method>();
         for (Method method : customClass.getDeclaredMethods()) {
             methods.add(method);
         }
