@@ -48,15 +48,15 @@ public class CustomMapperParametersTest {
 class MapperWithMultiParmMethod {
 
     public Object add(String source, Integer... operands) {
-    	long sum = 0L;
-    	for (Integer operand : operands) {
-    		sum += operand;
-    	}
-    	return sum;
+        long sum = 0L;
+        for (Integer operand : operands) {
+            sum += operand;
+        }
+        return sum;
     }
 
     public Object test(String source, Integer beginindex, Integer endindex) {
-    	return source.substring(beginindex.intValue(), endindex.intValue());
+        return source.substring(beginindex.intValue(), endindex.intValue());
     }
 }
 
