@@ -69,6 +69,16 @@ public class KafkaConsumer extends DefaultConsumer {
         return props;
     }
 
+    
+    
+    /**
+     * Will build a series of threads based upon the number of configured consumerStreams.
+     * If the KafkaEndpoint has been configured with deferredCommitEnabled the ConsumerConnector
+     * will be passed with the Exchange to allow a subsequent Processor to invoke commitOffset
+     * explicit based upon a workflow condition (e.g. message make it to its target)
+     * 
+     * @throws Exception
+     */
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -92,14 +102,19 @@ public class KafkaConsumer extends DefaultConsumer {
                 for (final KafkaStream<byte[], byte[]> stream : streams) {
                     executor.submit(new BatchingConsumerTask(stream, barrier));
                 }
-                consumerBarriers.put(consumer, barrier);
+                consumerBarriers.put(consumer, barrier);            
+            } else if (endpoint.isDeferredCommitEnabled()){
+            	for (final KafkaStream<byte[], byte[]> stream : streams) {
+            		executor.submit(new DeferredCommitConsumerTask(consumer, stream));
+            	}
+            	consumerBarriers.put(consumer, null);
             } else {
                 // auto commit
                 for (final KafkaStream<byte[], byte[]> stream : streams) {
                     executor.submit(new AutoCommitConsumerTask(consumer, stream));
                 }
                 consumerBarriers.put(consumer, null);
-            }
+            } 
         }
 
     }
@@ -193,6 +208,39 @@ public class KafkaConsumer extends DefaultConsumer {
         public void run() {
             LOG.debug("Commit offsets on consumer: {}", ObjectHelper.getIdentityHashCode(consumer));
             consumer.commitOffsets();
+        }
+    }
+    
+    
+    /**
+     * A Runnable implementation that iteratively consumes messages off of Kafka,
+     * passes to the Processor, and allows a subsequent Processor to invoked commitOffset.
+     *
+     */
+    class DeferredCommitConsumerTask implements Runnable {
+        private final ConsumerConnector consumer;
+        private KafkaStream<byte[], byte[]> stream;
+        
+        public DeferredCommitConsumerTask(ConsumerConnector consumer, KafkaStream<byte[], byte[]> stream) {
+        	this.consumer = consumer;
+        	this.stream = stream;
+        }
+        
+        public void run() {
+        	ConsumerIterator<byte[], byte[]> it = stream.iterator();
+            // only poll the next message if we are allowed to run and are not suspending
+            while (isRunAllowed() && !isSuspendingOrSuspended() && it.hasNext()) {
+                MessageAndMetadata<byte[], byte[]> mm = it.next();
+                Exchange exchange = endpoint.createKafkaExchange(mm);
+                exchange.setProperty(KafkaConstants.CONSUMER, consumer);
+                try {
+                    processor.process(exchange);
+                } catch (Exception e) {
+                    getExceptionHandler().handleException("Error during processing", exchange, e);
+                }
+            }
+            // no more data so commit offset
+            LOG.debug("Commit offsets on consumer: {}", ObjectHelper.getIdentityHashCode(consumer));
         }
     }
 
