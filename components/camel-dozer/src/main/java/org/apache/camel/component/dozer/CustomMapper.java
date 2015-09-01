@@ -39,9 +39,9 @@ public class CustomMapper extends BaseConverter {
 
     @Override
     public Object convert(Object existingDestinationFieldValue,
-    					  Object sourceFieldValue,
-    					  Class<?> destinationClass,
-    					  Class<?> sourceClass) {
+                          Object sourceFieldValue,
+                          Class<?> destinationClass,
+                          Class<?> sourceClass) {
         try {
             return mapCustom(sourceFieldValue);
         } finally {
@@ -50,26 +50,26 @@ public class CustomMapper extends BaseConverter {
     }
 
     private Object invokeFunction(Method method,
-    							  Object customObj,
-    							  Object source,
-    							  String[][] parameters) throws Exception {
-		Class<?>[] prmTypes = method.getParameterTypes();
-		Object[] methodPrms = new Object[prmTypes.length];
-		methodPrms[0] = source;
-		for (int parameterNdx = 0, methodPrmNdx = 1; parameterNdx < parameters.length; parameterNdx++, methodPrmNdx++) {
-			if (method.isVarArgs() && methodPrmNdx == prmTypes.length - 1) {
-				Object array = Array.newInstance(prmTypes[methodPrmNdx].getComponentType(), parameters.length - parameterNdx);
-				for (int arrayNdx = 0; parameterNdx < parameters.length; parameterNdx++, arrayNdx++) {
-					String[] parts = parameters[parameterNdx];
-					Array.set(array, arrayNdx, resolver.resolveClass(parts[0]).getConstructor(String.class).newInstance(parts[1]));
-				}
-				methodPrms[methodPrmNdx] = array;
-			} else {
-				String[] parts = parameters[parameterNdx];
-				methodPrms[methodPrmNdx] = resolver.resolveClass(parts[0]).getConstructor(String.class).newInstance(parts[1]);;
-			}
-		}
-		return method.invoke(customObj, methodPrms);
+                                  Object customObj,
+                                  Object source,
+                                  String[][] parameters) throws Exception {
+        Class<?>[] prmTypes = method.getParameterTypes();
+        Object[] methodPrms = new Object[prmTypes.length];
+        methodPrms[0] = source;
+        for (int parameterNdx = 0, methodPrmNdx = 1; parameterNdx < parameters.length; parameterNdx++, methodPrmNdx++) {
+            if (method.isVarArgs() && methodPrmNdx == prmTypes.length - 1) {
+                Object array = Array.newInstance(prmTypes[methodPrmNdx].getComponentType(), parameters.length - parameterNdx);
+                for (int arrayNdx = 0; parameterNdx < parameters.length; parameterNdx++, arrayNdx++) {
+                    String[] parts = parameters[parameterNdx];
+                    Array.set(array, arrayNdx, resolver.resolveClass(parts[0]).getConstructor(String.class).newInstance(parts[1]));
+                }
+                methodPrms[methodPrmNdx] = array;
+            } else {
+                String[] parts = parameters[parameterNdx];
+                methodPrms[methodPrmNdx] = resolver.resolveClass(parts[0]).getConstructor(String.class).newInstance(parts[1]);
+            }
+        }
+        return method.invoke(customObj, methodPrms);
     }
 
     Object mapCustom(Object source) {
@@ -89,16 +89,20 @@ public class CustomMapper extends BaseConverter {
         // parameters = ["java.lang.Integer=3","java.lang.Integer=10"]
         String[][] prmTypesAndValues;
         if (prms.length > 2) {
-	    	// Break parameters down into types and values
-	    	prmTypesAndValues = new String[prms.length - 2][2];
-	    	for (int ndx = 0; ndx < prmTypesAndValues.length; ndx++) {
-	    		String prm = prms[ndx + 2];
-	    		String[] parts = prm.split("=");
-	    		if (parts.length != 2) throw new RuntimeException("Value missing for parameter " + prm);
-	    		prmTypesAndValues[ndx][0] = parts[0];
-	    		prmTypesAndValues[ndx][1] = parts[1];
-	    	}
-        } else prmTypesAndValues = null;
+            // Break parameters down into types and values
+            prmTypesAndValues = new String[prms.length - 2][2];
+            for (int ndx = 0; ndx < prmTypesAndValues.length; ndx++) {
+                String prm = prms[ndx + 2];
+                String[] parts = prm.split("=");
+                if (parts.length != 2) {
+                    throw new RuntimeException("Value missing for parameter " + prm);
+                }
+                prmTypesAndValues[ndx][0] = parts[0];
+                prmTypesAndValues[ndx][1] = parts[1];
+            }
+        } else {
+            prmTypesAndValues = null;
+        }
 
         Object customObj;
         Method method = null;
@@ -108,7 +112,7 @@ public class CustomMapper extends BaseConverter {
 
             // If a specific mapping operation has been supplied use that
             if (operation != null && prmTypesAndValues != null) {
-            	method = selectMethod(customClass, operation, source, prmTypesAndValues);
+                method = selectMethod(customClass, operation, source, prmTypesAndValues);
             } else if (operation != null) {
                 method = customClass.getMethod(operation, source.getClass());
             } else {
@@ -125,40 +129,46 @@ public class CustomMapper extends BaseConverter {
 
         // Invoke the custom mapping method
         try {
-        	if (prmTypesAndValues != null) {
-        		return invokeFunction(method, customObj, source, prmTypesAndValues);
-        	} else {
-        		return method.invoke(customObj, source);
-        	}
+            if (prmTypesAndValues != null) {
+                return invokeFunction(method, customObj, source, prmTypesAndValues);
+            } else {
+                return method.invoke(customObj, source);
+            }
         } catch (Exception e) {
             throw new RuntimeException("Error while invoking custom function", e);
         }
     }
 
     private boolean parametersMatchParameterList(Class<?>[] prmTypes,
-    											 String[][] parameters) {
-    	int ndx = 0;
-    	while (ndx < prmTypes.length) {
-    		Class<?> prmType = prmTypes[ndx];
-    		if (ndx >= parameters.length) return ndx == prmTypes.length - 1 && prmType.isArray();
-    		if (ndx == prmTypes.length - 1 && prmType.isArray()) { // Assume this only occurs for functions with var args
-    			Class<?> varArgClass = prmType.getComponentType();
-    			while (ndx < parameters.length) {
-    	    		Class<?> prmClass = resolver.resolveClass(parameters[ndx][0]);
-    	    		if (!varArgClass.isAssignableFrom(prmClass)) return false;
-    	    		ndx++;
-    			}
-    		} else {
-        		Class<?> prmClass = resolver.resolveClass(parameters[ndx][0]);
-        		if (!prmTypes[ndx].isAssignableFrom(prmClass)) return false;
-    		}
-    		ndx++;
-    	}
-    	return true;
+                                                 String[][] parameters) {
+        int ndx = 0;
+        while (ndx < prmTypes.length) {
+            Class<?> prmType = prmTypes[ndx];
+            if (ndx >= parameters.length) {
+                return ndx == prmTypes.length - 1 && prmType.isArray();
+            }
+            if (ndx == prmTypes.length - 1 && prmType.isArray()) { // Assume this only occurs for functions with var args
+                Class<?> varArgClass = prmType.getComponentType();
+                while (ndx < parameters.length) {
+                    Class<?> prmClass = resolver.resolveClass(parameters[ndx][0]);
+                    if (!varArgClass.isAssignableFrom(prmClass)) {
+                        return false;
+                    }
+                    ndx++;
+                }
+            } else {
+                Class<?> prmClass = resolver.resolveClass(parameters[ndx][0]);
+                if (!prmTypes[ndx].isAssignableFrom(prmClass)) {
+                    return false;
+                }
+            }
+            ndx++;
+        }
+        return true;
     }
 
     Method selectMethod(Class<?> customClass,
-    					Object source) {
+                        Object source) {
         Method method = null;
         for (Method m : customClass.getDeclaredMethods()) {
             if (m.getReturnType() != null
@@ -174,42 +184,44 @@ public class CustomMapper extends BaseConverter {
     // Assumes source is a separate parameter in method even if it has var args and that there are no
     // ambiguous calls based upon number and types of parameters
     private Method selectMethod(Class<?> customClass,
-    							String operation,
-    							Object source,
-    							String[][] parameters) {
-    	// Create list of potential methods
-    	List<Method> methods = new ArrayList<>();
+                                String operation,
+                                Object source,
+                                String[][] parameters) {
+        // Create list of potential methods
+        List<Method> methods = new ArrayList<>();
         for (Method method : customClass.getDeclaredMethods()) {
-        	methods.add(method);
+            methods.add(method);
         }
 
         // Remove methods that are not applicable
         for (Iterator<Method> iter = methods.iterator(); iter.hasNext();) {
-        	Method method = iter.next();
-    		Class<?>[] prmTypes = method.getParameterTypes();
+            Method method = iter.next();
+            Class<?>[] prmTypes = method.getParameterTypes();
             if (!method.getName().equals(operation)
-            		|| method.getReturnType() == null
-            		|| !prmTypes[0].isAssignableFrom(source.getClass())) {
-            	iter.remove();
-            	continue;
+                    || method.getReturnType() == null
+                    || !prmTypes[0].isAssignableFrom(source.getClass())) {
+                iter.remove();
+                continue;
             }
             prmTypes = Arrays.copyOfRange(prmTypes, 1, prmTypes.length); // Remove source from type list
-    		if (!method.isVarArgs() && prmTypes.length != parameters.length) {
-            	iter.remove();
-    			continue;
-    		}
-    		if (!parametersMatchParameterList(prmTypes, parameters)) {
-            	iter.remove();
-    			continue;
-    		}
+            if (!method.isVarArgs() && prmTypes.length != parameters.length) {
+                iter.remove();
+                continue;
+            }
+            if (!parametersMatchParameterList(prmTypes, parameters)) {
+                iter.remove();
+                continue;
+            }
         }
 
         // If more than one method is applicable, return the method whose prm list exactly matches the parameters
         // if possible
         if (methods.size() > 1) {
-	        for (Method method : methods) {
-	        	if (!method.isVarArgs()) return method;
-	        }
+            for (Method method : methods) {
+                if (!method.isVarArgs()) {
+                    return method;
+                }
+            }
         }
 
         return methods.size() > 0 ? methods.get(0) : null;
