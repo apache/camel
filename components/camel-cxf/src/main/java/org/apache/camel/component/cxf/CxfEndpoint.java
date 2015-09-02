@@ -968,9 +968,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * To limit the total size of number of bytes the logger will output when logging feature has been enabled and -1 for no limit.
      */
     public void setLoggingSizeLimit(int loggingSizeLimit) {
-    	if(loggingSizeLimit < -1) {
-    		throw new IllegalArgumentException("LoggingSizeLimit must be greater or equal to -1.");
-    	}
+        if(loggingSizeLimit < -1) {
+            throw new IllegalArgumentException("LoggingSizeLimit must be greater or equal to -1.");
+        }
         this.loggingSizeLimit = loggingSizeLimit;
     }
 
