@@ -66,7 +66,7 @@ public class KafkaProducer<K, V> extends DefaultProducer {
     public void process(Exchange exchange) throws CamelException {
         String topic = endpoint.getTopic();
         if (!endpoint.isBridgeEndpoint()) {
-            topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, endpoint.getTopic(), String.class);
+            topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, topic, String.class);
         }
         if (topic == null) {
             throw new CamelExchangeException("No topic key set", exchange);
