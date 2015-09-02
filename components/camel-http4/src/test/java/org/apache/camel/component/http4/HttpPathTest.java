@@ -84,8 +84,7 @@ public class HttpPathTest extends BaseHttpTest {
 
     @Test
     public void httpPathHeaderWithStaticQueryParams() throws Exception {
-        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() +
-                "?abc=123", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?abc=123", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_PATH, "testWithQueryParams");
             }
@@ -97,8 +96,7 @@ public class HttpPathTest extends BaseHttpTest {
 
     @Test
     public void httpPathHeaderWithBaseSlashesAndWithStaticQueryParams() throws Exception {
-        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/" +
-                "?abc=123", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/" + "?abc=123", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_PATH, "/testWithQueryParams");
             }
