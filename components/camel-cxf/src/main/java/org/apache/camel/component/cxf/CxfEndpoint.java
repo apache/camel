@@ -319,7 +319,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() > 0) {
+            if (getLoggingSizeLimit() != 0) {
                 sfb.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
             } else {
                 sfb.getFeatures().add(new LoggingFeature());
@@ -510,7 +510,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() > 0) {
+            if (getLoggingSizeLimit() != 0) {
                 factoryBean.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
             } else {
                 factoryBean.getFeatures().add(new LoggingFeature());
