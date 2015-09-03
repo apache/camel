@@ -109,3 +109,10 @@ software:
    * camel-nagios can be configured for secure communications
    * camel-netty-http can be configured to use https
    * camel-xmlsecurity can be configured for secure communications
+
+
+Books
+Camel in Action by Claus Ibsen and Jonathan Anstey, Manning Publications.
+    https://manning.com/books/camel-in-action
+    Chapter 1:
+    https://manning-content.s3.amazonaws.com/download/f/737b721-0f60-4ba9-bb1f-7a27c4a4532b/chapter1sample.pdf
