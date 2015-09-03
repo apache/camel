@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * This class is used by the toknizer to extract data while reading from the stream.
- * REVIST it is used package internally but may be moved to some common package.
+ * This class is used by the tokenizer to extract data while reading from the stream.
+ * TODO it is used package internally but may be moved to some common package.
  */
 class RecordableReader extends FilterReader {
     private TrimmableCharArrayWriter buf;
