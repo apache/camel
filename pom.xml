@@ -79,6 +79,19 @@
     </mailingList>
   </mailingLists>
 
+  <developers>
+    <developer>
+      <name>The Apache Camel Team</name>
+      <email>dev@camel.apache.org</email>
+      <url>http://camel.apache.org</url>
+      <organization>Apache Software Foundation</organization>
+      <organizationUrl>http://apache.org/</organizationUrl>
+      <properties>
+        <picUrl>http://camel.apache.org/banner.data/apache-camel-7.png</picUrl>
+      </properties>
+    </developer>
+  </developers>
+
   <issueManagement>
     <system>jira</system>
     <url>https://issues.apache.org/jira/browse/CAMEL</url>
