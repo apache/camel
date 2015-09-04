@@ -41,7 +41,6 @@ import javax.xml.ws.handler.Handler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
@@ -319,7 +318,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() > 0) {
+            if (getLoggingSizeLimit() != 0) {
                 sfb.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
             } else {
                 sfb.getFeatures().add(new LoggingFeature());
@@ -510,7 +509,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() > 0) {
+            if (getLoggingSizeLimit() != 0) {
                 factoryBean.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
             } else {
                 factoryBean.getFeatures().add(new LoggingFeature());
@@ -966,9 +965,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     /**
-     * To limit the total size of number of bytes the logger will output when logging feature has been enabled.
+     * To limit the total size of number of bytes the logger will output when logging feature has been enabled and -1 for no limit.
      */
     public void setLoggingSizeLimit(int loggingSizeLimit) {
+        if(loggingSizeLimit < -1) {
+            throw new IllegalArgumentException("LoggingSizeLimit must be greater or equal to -1.");
+        }
         this.loggingSizeLimit = loggingSizeLimit;
     }
 
