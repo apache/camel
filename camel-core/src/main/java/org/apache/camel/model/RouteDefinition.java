@@ -129,6 +129,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         prepared.set(true);
     }
 
+    /**
+     * Marks the route definition as un-prepared.
+     * <p/>
+     * This is needed if routes have been created by components such as
+     * <tt>camel-scala</tt>. To unset the prepare so the routes can be prepared
+     * at a later stage when scala has build the routes completely.
+     */
+    public void markUnprepared() {
+        prepared.set(false);
+    }
+
     @Override
     public String toString() {
         if (getId() != null) {
