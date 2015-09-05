@@ -23,6 +23,7 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.Uniform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,12 +71,34 @@ public class RestletConsumer extends DefaultConsumer {
                     }
                     binding.populateRestletResponseFromExchange(exchange, response);
 
+                    // resetlet will call the callback when its done sending where it would be safe
+                    // to call doneUoW
+                    Uniform callback = newResponseUniform(exchange);
+                    response.setOnError(callback);
+                    response.setOnSent(callback);
+
                 } catch (Throwable e) {
                     getExceptionHandler().handleException("Error processing request", exchange, e);
-                } finally {
                     if (exchange != null) {
                         doneUoW(exchange);
                     }
+                }
+            }
+        };
+    }
+
+    /**
+     * Creates a new {@link org.restlet.Uniform} callback that restlet calls when its done sending the reply message.
+     * <p/>
+     * We use this to defer done on the exchange {@link org.apache.camel.spi.UnitOfWork} where resources is safe to be
+     * cleaned up as part of the done process.
+     */
+    private Uniform newResponseUniform(final Exchange exchange) {
+        return new Uniform() {
+            @Override
+            public void handle(Request request, Response response) {
+                if (exchange != null) {
+                    doneUoW(exchange);
                 }
             }
         };
