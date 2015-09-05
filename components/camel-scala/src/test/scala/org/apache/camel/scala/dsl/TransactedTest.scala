@@ -22,11 +22,10 @@ import org.junit.Test
 import org.springframework.transaction.support.{DefaultTransactionStatus, AbstractPlatformTransactionManager}
 import org.springframework.transaction.{TransactionDefinition, TransactionStatus, PlatformTransactionManager}
 
-
 class TransactedTest extends ScalaTestSupport {
 
   @throws(classOf[Exception])
-  override def createRegistry: JndiRegistry  = {
+  override def createRegistry: JndiRegistry = {
     val registry = super.createRegistry
     // Just setup a dummy platform transaction manager for testing
     registry.bind("transactionManager", new AbstractPlatformTransactionManager() {
@@ -36,7 +35,9 @@ class TransactedTest extends ScalaTestSupport {
 
       override def doRollback(status: DefaultTransactionStatus): Unit = {}
 
-      override def doGetTransaction(): AnyRef = {new Object()}
+      override def doGetTransaction(): AnyRef = {
+        new Object()
+      }
     })
     registry
   }
@@ -54,8 +55,15 @@ class TransactedTest extends ScalaTestSupport {
   override lazy val builder = {
 
     new ScalaRouteBuilder(context()) {
-      from("direct:start").transacted.to("mock:result")
+
+      "direct:start" ==> {
+        routeId("myRoute")
+        transacted
+        to("mock:foo")
+        to("mock:result")
+      }
     }
   }
+
 }
 
