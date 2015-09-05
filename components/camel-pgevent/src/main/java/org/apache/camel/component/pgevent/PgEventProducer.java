@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pgevent;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
@@ -48,7 +49,11 @@ public class PgEventProducer extends DefaultAsyncProducer {
         }
 
         try {
-            dbConnection.createStatement().execute("NOTIFY " + endpoint.getChannel() + ", '" + exchange.getIn().getBody(String.class) + "'");
+            String payload = exchange.getIn().getBody(String.class);
+            String sql = String.format("NOTIFY %s, '%s'", endpoint.getChannel(), payload);
+            try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+                statement.execute();
+            }
         } catch (SQLException e) {
             exchange.setException(e);
         }

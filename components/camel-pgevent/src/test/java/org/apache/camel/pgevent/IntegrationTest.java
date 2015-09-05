@@ -17,6 +17,7 @@
 package org.apache.camel.pgevent;
 
 import com.impossibl.postgres.jdbc.PGDataSource;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.junit.Before;
@@ -24,17 +25,32 @@ import org.junit.Test;
 
 public class IntegrationTest {
 
+    private String host;
+    private String port;
+    private String database;
+    private String user;
+    private String password;
+
     private Main main;
 
     private PGDataSource ds;
 
     @Before
     public void setUp() throws Exception {
+        this.host = System.getProperty("pgjdbc.test.server", "localhost");
+        this.port = System.getProperty("pgjdbc.test.port", "5432");
+        this.database = System.getProperty("pgjdbc.test.db", "event_tests");
+        this.user = System.getProperty("pgjdbc.test.user", "dphillips");
+        this.password = System.getProperty("pgjdbc.test.password");
+
         ds = new PGDataSource();
-        ds.setHost(System.getProperty("pgjdbc.test.server", "localhost"));
-        ds.setPort(Integer.parseInt(System.getProperty("pgjdbc.test.port", "5432")));
-        ds.setDatabase(System.getProperty("pgjdbc.test.db", "event_tests"));
-        ds.setUser(System.getProperty("pgjdbc.test.user", "dphillips"));
+        ds.setHost(this.host);
+        ds.setPort(Integer.parseInt(this.port));
+        ds.setDatabase(this.database);
+        ds.setUser(this.user);
+        if (this.password != null) {
+            ds.setPassword(this.password);
+        }
 
         main = new Main();
         main.enableHangupSupport();
@@ -48,8 +64,8 @@ public class IntegrationTest {
 
             @Override
             public void configure() throws Exception {
-                from("pgevent://127.0.0.1:5432/event_tests/testchannel?user=dphillips")
-                        .to("log:org.apache.camel.pgevent.PgEventConsumer?level=DEBUG");
+                fromF("pgevent://%s:%s/%s/testchannel?user=%s&pass=%s", host, port, database, user, password)
+                    .to("log:org.apache.camel.pgevent.PgEventConsumer?level=DEBUG");
             }
         };
 
@@ -62,7 +78,8 @@ public class IntegrationTest {
             @Override
             public void configure() throws Exception {
                 from("timer://test?fixedRate=true&period=5000")
-                        .to("pgevent://127.0.0.1:5432/event_tests/testchannel?user=dphillips");
+                    .setBody(header(Exchange.TIMER_FIRED_TIME))
+                    .toF("pgevent://%s:%s/%s/testchannel?user=%s&pass=%s", host, port, database, user, password);
             }
         };
 
