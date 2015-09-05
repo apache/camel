@@ -20,6 +20,7 @@ package dsl.builder
 
 import org.apache.camel.model.DataFormatDefinition
 import org.apache.camel.{Exchange, RoutesBuilder}
+import org.apache.camel.model._
 import org.apache.camel.builder.{LoggingErrorHandlerBuilder, DeadLetterChannelBuilder, ErrorHandlerBuilder}
 
 import org.apache.camel.spi.Policy
@@ -30,7 +31,6 @@ import reflect.{ClassTag, classTag}
 import org.apache.camel.scala.dsl._
 
 import org.apache.camel.scala.dsl.languages.Languages
-import java.lang.String
 import java.util.Comparator
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -45,6 +45,18 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   val builder = new org.apache.camel.builder.RouteBuilder {
     override def configure() {
       onJavaBuilder(this)
+    }
+
+    override def checkInitialized(): Unit = {
+      super.checkInitialized()
+
+      // must un-prepare the routes as they may have been eager pre-pared before scala has properly build the entire routes
+      // Camel will prepare the routes before the routes is started so it happens eventually at the right time
+      val it = getRouteCollection.getRoutes.iterator()
+      while (it.hasNext) {
+        var route = it.next()
+        route.markUnprepared()
+      }
     }
   }
 
@@ -65,7 +77,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
    */
   def onJavaBuilder(builder: org.apache.camel.builder.RouteBuilder) {}
 
-  implicit def stringToRoute(target: String) : SRouteDefinition = new SRouteDefinition(builder.from(target), this)  
+  implicit def stringToRoute(target: String) : SRouteDefinition = new SRouteDefinition(builder.from(target), this)
   implicit def unwrap[W](wrapper: Wrapper[W]) = wrapper.unwrap
   implicit def constantToExpression(value: Any) : (Exchange => Any) = (exchange: Exchange) => value 
 
@@ -196,7 +208,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def throttle(frequency: Frequency) = stack.top.throttle(frequency)
   def throwException(exception: Exception) = stack.top.throwException(exception)
   def transacted = stack.top.transacted
-  def transacted(uri: String) = stack.top.transacted
+  def transacted(uri: String) = stack.top.transacted(uri)
   def transform(expression: Exchange => Any) = stack.top.transform(expression)
 
   def unmarshal(format: DataFormatDefinition) = stack.top.unmarshal(format)
