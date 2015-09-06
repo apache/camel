@@ -222,14 +222,7 @@
               </sources>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-
-      <!-- add the olingo odata2 sample service source. See profile get-olingo2-sample below --> 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
+          <!-- add the olingo odata2 sample service source. See profile get-olingo2-sample below -->
           <execution>
             <id>add-test-source</id>
             <phase>generate-test-sources</phase>
