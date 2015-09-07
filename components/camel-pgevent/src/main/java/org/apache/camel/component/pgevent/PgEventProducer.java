@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.pgevent;
 
+import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
@@ -50,9 +52,17 @@ public class PgEventProducer extends DefaultAsyncProducer {
 
         try {
             String payload = exchange.getIn().getBody(String.class);
-            String sql = String.format("NOTIFY %s, '%s'", endpoint.getChannel(), payload);
-            try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
-                statement.execute();
+            if (dbConnection.isServerMinimumVersion(9, 0)) {
+                try (CallableStatement statement = dbConnection.prepareCall("{call pg_notify(?, ?)}")) {
+                    statement.setString(1, endpoint.getChannel());
+                    statement.setString(2, payload);
+                    statement.execute();
+                }
+            } else {
+                String sql = String.format("NOTIFY %s, '%s'", endpoint.getChannel(), payload);
+                try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+                    statement.execute();
+                }
             }
         } catch (SQLException e) {
             exchange.setException(e);
