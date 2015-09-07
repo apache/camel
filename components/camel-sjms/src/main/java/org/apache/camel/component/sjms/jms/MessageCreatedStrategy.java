@@ -16,24 +16,24 @@
  */
 package org.apache.camel.component.sjms.jms;
 
+import javax.jms.Message;
+import javax.jms.Session;
+
+import org.apache.camel.Exchange;
+
 /**
- * Default strategy that handles dots and hyphens.
+ * A strategy that allows custom components to plugin and perform custom logic when Camel creates {@link javax.jms.Message} instance.
  * <p/>
- * This can be used for sending keys contain package names that is common by
- * Java frameworks.
+ * For example to populate the message with custom information that are component specific and not part of the JMS specification.
  */
-public class DefaultJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
+public interface MessageCreatedStrategy {
 
-    public String encodeKey(String key) {
-        String answer = key.replace(".", "_DOT_");
-        answer = answer.replaceAll("-", "_HYPHEN_");
-        return answer;
-    }
-
-    public String decodeKey(String key) {
-        String answer = key.replaceAll("_HYPHEN_", "-");
-        answer = answer.replace("_DOT_", ".");
-        return answer;
-    }
-
+    /**
+     * Callback when the JMS message has <i>just</i> been created, which allows custom modifications afterwards.
+     *
+     * @param exchange the current exchange
+     * @param session the JMS session used to create the message
+     * @param cause optional exception occurred that should be sent as reply instead of a regular body
+     */
+    void onMessageCreated(Message message, Session session, Exchange exchange, Throwable cause);
 }

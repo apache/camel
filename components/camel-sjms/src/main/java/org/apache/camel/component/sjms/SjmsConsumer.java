@@ -206,7 +206,7 @@ public class SjmsConsumer extends DefaultConsumer {
      */
     protected MessageListener createMessageHandler(Session session) {
 
-        TransactionCommitStrategy commitStrategy = null;
+        TransactionCommitStrategy commitStrategy;
         if (getTransactionCommitStrategy() != null) {
             commitStrategy = getTransactionCommitStrategy();
         } else if (getTransactionBatchCount() > 0) {

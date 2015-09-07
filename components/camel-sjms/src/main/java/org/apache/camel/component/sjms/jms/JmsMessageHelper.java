@@ -16,408 +16,272 @@
  */
 package org.apache.camel.component.sjms.jms;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
-import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.MapMessage;
 import javax.jms.Message;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
-import javax.jms.StreamMessage;
-import javax.jms.TextMessage;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.component.sjms.SjmsConstants;
-import org.apache.camel.component.sjms.SjmsEndpoint;
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
 /**
  * Utility class for {@link javax.jms.Message}.
  */
-public final class JmsMessageHelper implements JmsConstants {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JmsMessageHelper.class);
+public final class JmsMessageHelper {
 
     private JmsMessageHelper() {
     }
 
-    public static Exchange createExchange(Message message, Endpoint endpoint) {
-        return createExchange(message, endpoint, null);
-    }
-
     /**
-     * Creates an Exchange from a JMS Message.
-     * @param message The JMS message.
-     * @param endpoint The Endpoint to use to create the Exchange object.
-     * @param keyFormatStrategy the a {@link KeyFormatStrategy} to used to
-     *                          format keys in a JMS 1.1 compliant manner. If null the
-     *                          {@link DefaultJmsKeyFormatStrategy} will be used.
-     * @return Populated Exchange.
+     * Removes the property from the JMS message.
+     *
+     * @param jmsMessage the JMS message
+     * @param name       name of the property to remove
+     * @return the old value of the property or <tt>null</tt> if not exists
+     * @throws javax.jms.JMSException can be thrown
      */
-    public static Exchange createExchange(Message message, Endpoint endpoint, KeyFormatStrategy keyFormatStrategy) {
-        Exchange exchange = endpoint.createExchange();
-        KeyFormatStrategy initialisedKeyFormatStrategy = (keyFormatStrategy == null)
-                ? new DefaultJmsKeyFormatStrategy() : keyFormatStrategy;
-        return populateExchange(message, exchange, false, initialisedKeyFormatStrategy);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Exchange populateExchange(Message message, Exchange exchange, boolean out, KeyFormatStrategy keyFormatStrategy) {
-        try {
-            setJmsMessageHeaders(message, exchange, out, keyFormatStrategy);
-            if (message != null) {
-                // convert to JMS Message of the given type
-
-                DefaultMessage bodyMessage;
-                if (out) {
-                    bodyMessage = (DefaultMessage) exchange.getOut();
-                } else {
-                    bodyMessage = (DefaultMessage) exchange.getIn();
-                }
-                switch (JmsMessageHelper.discoverJmsMessageType(message)) {
-                case Bytes:
-                    BytesMessage bytesMessage = (BytesMessage) message;
-                    if (bytesMessage.getBodyLength() > Integer.MAX_VALUE) {
-                        LOG.warn("Length of BytesMessage is too long: {}", bytesMessage.getBodyLength());
-                        return null;
-                    }
-                    byte[] result = new byte[(int) bytesMessage.getBodyLength()];
-                    bytesMessage.readBytes(result);
-                    bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Bytes);
-                    bodyMessage.setBody(result);
-                    break;
-                case Map:
-                    Map<String, Object> body = new HashMap<String, Object>();
-                    MapMessage mapMessage = (MapMessage) message;
-                    Enumeration<String> names = mapMessage.getMapNames();
-                    while (names.hasMoreElements()) {
-                        String key = names.nextElement();
-                        Object value = mapMessage.getObject(key);
-                        body.put(key, value);
-                    }
-                    bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Map);
-                    bodyMessage.setBody(body);
-                    break;
-                case Object:
-                    ObjectMessage objMsg = (ObjectMessage) message;
-                    bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Object);
-                    bodyMessage.setBody(objMsg.getObject());
-                    break;
-                case Text:
-                    TextMessage textMsg = (TextMessage) message;
-                    bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Text);
-                    bodyMessage.setBody(textMsg.getText());
-                    break;
-                case Stream:
-                    StreamMessage streamMessage = (StreamMessage) message;
-                    List<Object> list = new ArrayList<Object>();
-                    Object obj;
-                    while ((obj = streamMessage.readObject()) != null) {
-                        list.add(obj);
-                    }
-                    bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Stream);
-                    bodyMessage.setBody(list);
-                    break;
-                case Message:
-                default:
-                    // Do nothing. Only set the headers for an empty message
-                    bodyMessage.setBody(message);
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-        return exchange;
-    }
-
-    public static Message createMessage(Exchange exchange, Session session, SjmsEndpoint endpoint) throws Exception {
-        Message answer;
-        Object body;
-        Map<String, Object> bodyHeaders;
-
-        if (exchange.getOut().getBody() != null) {
-            body = exchange.getOut().getBody();
-            bodyHeaders = new HashMap<String, Object>(exchange.getOut().getHeaders());
-        } else {
-            body = exchange.getIn().getBody();
-            bodyHeaders = new HashMap<String, Object>(exchange.getIn().getHeaders());
+    public static Object removeJmsProperty(Message jmsMessage, String name) throws JMSException {
+        // check if the property exists
+        if (!jmsMessage.propertyExists(name)) {
+            return null;
         }
 
-        answer = createMessage(exchange, session, body, bodyHeaders, endpoint);
-        return answer;
-    }
+        Object answer = null;
 
-    public static Message createMessage(Exchange exchange, Session session, Object payload, Map<String, Object> messageHeaders, SjmsEndpoint endpoint) throws Exception {
-        return createMessage(exchange, session, payload, messageHeaders, endpoint.isAllowNullBody(),
-                endpoint.getSjmsHeaderFilterStrategy(), endpoint.getJmsKeyFormatStrategy(), endpoint.getCamelContext().getTypeConverter());
-    }
-
-    private static Message createMessage(Exchange exchange, Session session, Object payload, Map<String, Object> messageHeaders, boolean allowNullBody,
-                                         HeaderFilterStrategy headerFilterStrategy, KeyFormatStrategy keyFormatStrategy, TypeConverter typeConverter) throws Exception {
-        Message answer = null;
-        JmsMessageType messageType = JmsMessageHelper.discoverMessageTypeFromPayload(payload);
-
-        switch (messageType) {
-        case Bytes:
-            BytesMessage bytesMessage = session.createBytesMessage();
-            byte[] bytesToWrite = typeConverter.convertTo(byte[].class, payload);
-            bytesMessage.writeBytes(bytesToWrite);
-            answer = bytesMessage;
-            break;
-        case Map:
-            MapMessage mapMessage = session.createMapMessage();
-            Map objMap = (Map) payload;
-            for (final Map.Entry entry : (Set<Map.Entry>)objMap.entrySet()) {
-                mapMessage.setObject(entry.getKey().toString(), entry.getValue());
-            }
-            answer = mapMessage;
-            break;
-        case Object:
-            ObjectMessage objectMessage = session.createObjectMessage();
-            objectMessage.setObject((Serializable) payload);
-            answer = objectMessage;
-            break;
-        case Text:
-            TextMessage textMessage = session.createTextMessage();
-            String convertedText = typeConverter.convertTo(String.class, payload);
-            textMessage.setText(convertedText);
-            answer = textMessage;
-            break;
-        case Stream:
-            StreamMessage streamMessage = session.createStreamMessage();
-            Collection collection = (Collection)payload;
-            for (final Object obj : collection) {
-                streamMessage.writeObject(obj);
-            }
-            answer = streamMessage;
-            break;
-        case Message:
-            if (allowNullBody && payload == null) {
-                answer = session.createMessage();
-            } else if (payload != null) {
-                throw new JMSException("Unsupported message body type " + ObjectHelper.classCanonicalName(payload));
+        // store the properties we want to keep in a temporary map
+        // as the JMS API is a bit strict as we are not allowed to
+        // clear a single property, but must clear them all and redo
+        // the properties
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Enumeration<?> en = jmsMessage.getPropertyNames();
+        while (en.hasMoreElements()) {
+            String key = (String) en.nextElement();
+            if (name.equals(key)) {
+                answer = key;
             } else {
-                throw new JMSException("Null body is not allowed");
+                map.put(key, getProperty(jmsMessage, key));
             }
-            break;
-        default:
-            break;
         }
 
-        appendJmsProperties(answer, exchange, exchange.getIn(), headerFilterStrategy, keyFormatStrategy);
+        // redo the properties to keep
+        jmsMessage.clearProperties();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            jmsMessage.setObjectProperty(entry.getKey(), entry.getValue());
+        }
+
         return answer;
     }
 
     /**
-     * Appends the JMS headers from the Camel {@link Message}
+     * Tests whether a given property with the name exists
+     *
+     * @param jmsMessage the JMS message
+     * @param name       name of the property to test if exists
+     * @return <tt>true</tt> if the property exists, <tt>false</tt> if not.
+     * @throws JMSException can be thrown
      */
-    private static void appendJmsProperties(Message jmsMessage, Exchange exchange, org.apache.camel.Message in,
-                                            HeaderFilterStrategy headerFilterStrategy, KeyFormatStrategy keyFormatStrategy) throws JMSException {
-        Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
-        for (Map.Entry<String, Object> entry : entries) {
-            String headerName = entry.getKey();
-            Object headerValue = entry.getValue();
-            appendJmsProperty(jmsMessage, exchange, in, headerName, headerValue, headerFilterStrategy, keyFormatStrategy);
-        }
-    }
-
-    private static void appendJmsProperty(Message jmsMessage, Exchange exchange, org.apache.camel.Message in,
-                                  String headerName, Object headerValue,
-                                  HeaderFilterStrategy headerFilterStrategy, KeyFormatStrategy keyFormatStrategy) throws JMSException {
-        if (isStandardJMSHeader(headerName)) {
-            if (headerName.equals("JMSCorrelationID")) {
-                jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
-                if (headerValue instanceof String) {
-                    // if the value is a String we must normalize it first, and must include the prefix
-                    // as ActiveMQ requires that when converting the String to a javax.jms.Destination type
-                    headerValue = normalizeDestinationName((String) headerValue, true);
-                }
-                Destination replyTo = ExchangeHelper.convertToType(exchange, Destination.class, headerValue);
-                JmsMessageHelper.setJMSReplyTo(jmsMessage, replyTo);
-            } else if (headerName.equals("JMSType")) {
-                jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equals("JMSPriority")) {
-                jmsMessage.setJMSPriority(ExchangeHelper.convertToType(exchange, Integer.class, headerValue));
-            } else if (headerName.equals("JMSDeliveryMode")) {
-                JmsMessageHelper.setJMSDeliveryMode(exchange, jmsMessage, headerValue);
-            } else if (headerName.equals("JMSExpiration")) {
-                jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
-            } else {
-                // The following properties are set by the MessageProducer:
-                // JMSDestination
-                // The following are set on the underlying JMS provider:
-                // JMSMessageID, JMSTimestamp, JMSRedelivered
-                // log at trace level to not spam log
-                LOG.trace("Ignoring JMS header: {} with value: {}", headerName, headerValue);
-            }
-        } else if (shouldOutputHeader(in, headerName, headerValue, exchange, headerFilterStrategy)) {
-            // only primitive headers and strings is allowed as properties
-            // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
-            Object value = getValidJMSHeaderValue(headerName, headerValue);
-            if (value != null) {
-                // must encode to safe JMS header name before setting property on jmsMessage
-                String key = keyFormatStrategy.encodeKey(headerName);
-                // set the property
-                JmsMessageHelper.setProperty(jmsMessage, key, value);
-            } else if (LOG.isDebugEnabled()) {
-                // okay the value is not a primitive or string so we cannot sent it over the wire
-                LOG.debug("Ignoring non primitive header: {} of class: {} with value: {}",
-                        new Object[]{headerName, headerValue.getClass().getName(), headerValue});
-            }
-        }
-    }
-
-    /**
-     * Is the given header a standard JMS header
-     * @param headerName the header name
-     * @return <tt>true</tt> if its a standard JMS header
-     */
-    protected static boolean isStandardJMSHeader(String headerName) {
-        if (!headerName.startsWith("JMS")) {
-            return false;
-        }
-        if (headerName.startsWith("JMSX")) {
-            return false;
-        }
-        // vendors will use JMS_XXX as their special headers (where XXX is vendor name, such as JMS_IBM)
-        if (headerName.startsWith("JMS_")) {
-            return false;
-        }
-
-        // the 4th char must be a letter to be a standard JMS header
-        if (headerName.length() > 3) {
-            Character fourth = headerName.charAt(3);
-            if (Character.isLetter(fourth)) {
+    public static boolean hasProperty(Message jmsMessage, String name) throws JMSException {
+        Enumeration<?> en = jmsMessage.getPropertyNames();
+        while (en.hasMoreElements()) {
+            String key = (String) en.nextElement();
+            if (name.equals(key)) {
                 return true;
             }
         }
-
         return false;
     }
 
     /**
-     * Strategy to test if the given header is valid according to the JMS spec to be set as a property
-     * on the JMS message.
-     * <p/>
-     * This default implementation will allow:
-     * <ul>
-     *   <li>any primitives and their counter Objects (Integer, Double etc.)</li>
-     *   <li>String and any other literals, Character, CharSequence</li>
-     *   <li>Boolean</li>
-     *   <li>Number</li>
-     *   <li>java.util.Date</li>
-     * </ul>
+     * Gets a JMS property
      *
-     * @param headerName   the header name
-     * @param headerValue  the header value
-     * @return  the value to use, <tt>null</tt> to ignore this header
+     * @param jmsMessage the JMS message
+     * @param name       name of the property to get
+     * @return the property value, or <tt>null</tt> if does not exists
+     * @throws JMSException can be thrown
      */
-    protected static Object getValidJMSHeaderValue(String headerName, Object headerValue) {
-        if (headerValue instanceof String) {
-            return headerValue;
-        } else if (headerValue instanceof BigInteger) {
-            return headerValue.toString();
-        } else if (headerValue instanceof BigDecimal) {
-            return headerValue.toString();
-        } else if (headerValue instanceof Number) {
-            return headerValue;
-        } else if (headerValue instanceof Character) {
-            return headerValue;
-        } else if (headerValue instanceof CharSequence) {
-            return headerValue.toString();
-        } else if (headerValue instanceof Boolean) {
-            return headerValue;
-        } else if (headerValue instanceof Date) {
-            return headerValue.toString();
+    public static Object getProperty(Message jmsMessage, String name) throws JMSException {
+        Object value = jmsMessage.getObjectProperty(name);
+        if (value == null) {
+            value = jmsMessage.getStringProperty(name);
         }
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Exchange setJmsMessageHeaders(final Message jmsMessage, final Exchange exchange, boolean out, KeyFormatStrategy keyFormatStrategy) throws JMSException {
-        Map<String, Object> headers = new HashMap<String, Object>();
-        if (jmsMessage != null) {
-            // lets populate the standard JMS message headers
-            try {
-                headers.put(JMS_CORRELATION_ID, jmsMessage.getJMSCorrelationID());
-                headers.put(JMS_DELIVERY_MODE, jmsMessage.getJMSDeliveryMode());
-                headers.put(JMS_DESTINATION, jmsMessage.getJMSDestination());
-                headers.put(JMS_EXPIRATION, jmsMessage.getJMSExpiration());
-                headers.put(JMS_MESSAGE_ID, jmsMessage.getJMSMessageID());
-                headers.put(JMS_PRIORITY, jmsMessage.getJMSPriority());
-                headers.put(JMS_REDELIVERED, jmsMessage.getJMSRedelivered());
-                headers.put(JMS_TIMESTAMP, jmsMessage.getJMSTimestamp());
-                headers.put(JMS_REPLY_TO, getJMSReplyTo(jmsMessage));
-                headers.put(JMS_TYPE, getJMSType(jmsMessage));
-
-                // this works around a bug in the ActiveMQ property handling
-                headers.put(JMSX_GROUP_ID, jmsMessage.getStringProperty(JMSX_GROUP_ID));
-            } catch (JMSException e) {
-                throw new RuntimeCamelException(e);
-            }
-
-            for (final Enumeration<String> enumeration = jmsMessage.getPropertyNames(); enumeration.hasMoreElements();) {
-                String key = enumeration.nextElement();
-                if (hasIllegalHeaderKey(key)) {
-                    throw new IllegalHeaderException("Header " + key + " is not a legal JMS header name value");
-                }
-                Object value = jmsMessage.getObjectProperty(key);
-                String decodedName = keyFormatStrategy.decodeKey(key);
-                headers.put(decodedName, value);
-            }
-        }
-        if (out) {
-            exchange.getOut().setHeaders(headers);
-        } else {
-            exchange.getIn().setHeaders(headers);
-        }
-        return exchange;
+        return value;
     }
 
     /**
-     * Strategy to allow filtering of headers which are put on the JMS message
-     * <p/>
-     * <b>Note</b>: Currently only supports sending java identifiers as keys
+     * Sets the property on the given JMS message.
+     *
+     * @param jmsMessage  the JMS message
+     * @param name        name of the property to set
+     * @param value       the value
+     * @throws JMSException can be thrown
      */
-    protected static boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName,
-                                               Object headerValue, Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
-        return headerFilterStrategy == null
-                || !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange);
+    public static void setProperty(Message jmsMessage, String name, Object value) throws JMSException {
+        if (value == null) {
+            return;
+        }
+        if (value instanceof Byte) {
+            jmsMessage.setByteProperty(name, (Byte) value);
+        } else if (value instanceof Boolean) {
+            jmsMessage.setBooleanProperty(name, (Boolean) value);
+        } else if (value instanceof Double) {
+            jmsMessage.setDoubleProperty(name, (Double) value);
+        } else if (value instanceof Float) {
+            jmsMessage.setFloatProperty(name, (Float) value);
+        } else if (value instanceof Integer) {
+            jmsMessage.setIntProperty(name, (Integer) value);
+        } else if (value instanceof Long) {
+            jmsMessage.setLongProperty(name, (Long) value);
+        } else if (value instanceof Short) {
+            jmsMessage.setShortProperty(name, (Short) value);
+        } else if (value instanceof String) {
+            jmsMessage.setStringProperty(name, (String) value);
+        } else {
+            // fallback to Object
+            jmsMessage.setObjectProperty(name, value);
+        }
+    }
+
+    /**
+     * Sets the correlation id on the JMS message.
+     * <p/>
+     * Will ignore exception thrown
+     *
+     * @param message  the JMS message
+     * @param correlationId the correlation id
+     */
+    public static void setCorrelationId(Message message, String correlationId) {
+        try {
+            message.setJMSCorrelationID(correlationId);
+        } catch (JMSException e) {
+            // ignore
+        }
+    }
+
+    /**
+     * Whether the destination name has either queue or temp queue prefix.
+     *
+     * @param destination the destination
+     * @return <tt>true</tt> if queue or temp-queue prefix, <tt>false</tt> otherwise
+     */
+    public static boolean isQueuePrefix(String destination) {
+        if (ObjectHelper.isEmpty(destination)) {
+            return false;
+        }
+
+        return destination.startsWith(JmsConstants.QUEUE_PREFIX) || destination.startsWith(JmsConstants.TEMP_QUEUE_PREFIX);
+    }
+
+    /**
+     * Whether the destination name has either topic or temp topic prefix.
+     *
+     * @param destination the destination
+     * @return <tt>true</tt> if topic or temp-topic prefix, <tt>false</tt> otherwise
+     */
+    public static boolean isTopicPrefix(String destination) {
+        if (ObjectHelper.isEmpty(destination)) {
+            return false;
+        }
+
+        return destination.startsWith(JmsConstants.TOPIC_PREFIX) || destination.startsWith(JmsConstants.TEMP_TOPIC_PREFIX);
+    }
+
+    /**
+     * Normalizes the destination name.
+     * <p/>
+     * This ensures the destination name is correct, and we do not create queues as <tt>queue://queue:foo</tt>, which
+     * was intended as <tt>queue://foo</tt>.
+     *
+     * @param destination the destination
+     * @return the normalized destination
+     */
+    public static String normalizeDestinationName(String destination) {
+        // do not include prefix which is the current behavior when using this method.
+        return normalizeDestinationName(destination, false);
+    }
+
+    /**
+     * Normalizes the destination name.
+     * <p/>
+     * This ensures the destination name is correct, and we do not create queues as <tt>queue://queue:foo</tt>, which
+     * was intended as <tt>queue://foo</tt>.
+     *
+     * @param destination the destination
+     * @param includePrefix whether to include <tt>queue://</tt>, or <tt>topic://</tt> prefix in the normalized destination name
+     * @return the normalized destination
+     */
+    public static String normalizeDestinationName(String destination, boolean includePrefix) {
+        if (ObjectHelper.isEmpty(destination)) {
+            return destination;
+        }
+        if (destination.startsWith(JmsConstants.QUEUE_PREFIX)) {
+            String s = removeStartingCharacters(destination.substring(JmsConstants.QUEUE_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = JmsConstants.QUEUE_PREFIX + "//" + s;
+            }
+            return s;
+        } else if (destination.startsWith(JmsConstants.TEMP_QUEUE_PREFIX)) {
+            String s = removeStartingCharacters(destination.substring(JmsConstants.TEMP_QUEUE_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = JmsConstants.TEMP_QUEUE_PREFIX + "//" + s;
+            }
+            return s;
+        } else if (destination.startsWith(JmsConstants.TOPIC_PREFIX)) {
+            String s = removeStartingCharacters(destination.substring(JmsConstants.TOPIC_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = JmsConstants.TOPIC_PREFIX + "//" + s;
+            }
+            return s;
+        } else if (destination.startsWith(JmsConstants.TEMP_TOPIC_PREFIX)) {
+            String s = removeStartingCharacters(destination.substring(JmsConstants.TEMP_TOPIC_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = JmsConstants.TEMP_TOPIC_PREFIX + "//" + s;
+            }
+            return s;
+        } else {
+            return destination;
+        }
+    }
+
+    /**
+     * Sets the JMSReplyTo on the message.
+     *
+     * @param message  the message
+     * @param replyTo  the reply to destination
+     */
+    public static void setJMSReplyTo(Message message, Destination replyTo) {
+        try {
+            message.setJMSReplyTo(replyTo);
+        } catch (Exception e) {
+            // ignore due OracleAQ does not support accessing JMSReplyTo
+        }
+    }
+
+    /**
+     * Gets the JMSReplyTo from the message.
+     *
+     * @param message  the message
+     * @return the reply to, can be <tt>null</tt>
+     */
+    public static Destination getJMSReplyTo(Message message) {
+        try {
+            return message.getJMSReplyTo();
+        } catch (Exception e) {
+            // ignore due OracleAQ does not support accessing JMSReplyTo
+        }
+
+        return null;
     }
 
     /**
      * Gets the JMSType from the message.
      *
-     * @param message the message
+     * @param message  the message
      * @return the type, can be <tt>null</tt>
      */
     public static String getJMSType(Message message) {
@@ -425,6 +289,54 @@ public final class JmsMessageHelper implements JmsConstants {
             return message.getJMSType();
         } catch (Exception e) {
             // ignore due OracleAQ does not support accessing JMSType
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the String Properties from the message.
+     *
+     * @param message  the message
+     * @return the type, can be <tt>null</tt>
+     */
+    public static String getStringProperty(Message message, String propertyName) {
+        try {
+            return message.getStringProperty(propertyName);
+        } catch (Exception e) {
+            // ignore due some broker client does not support accessing StringProperty
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the JMSRedelivered from the message.
+     *
+     * @param message  the message
+     * @return <tt>true</tt> if redelivered, <tt>false</tt> if not, <tt>null</tt> if not able to determine
+     */
+    public static Boolean getJMSRedelivered(Message message) {
+        try {
+            return message.getJMSRedelivered();
+        } catch (Exception e) {
+            // ignore if JMS broker do not support this
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the JMSMessageID from the message.
+     *
+     * @param message  the message
+     * @return the JMSMessageID, or <tt>null</tt> if not able to get
+     */
+    public static String getJMSMessageID(Message message) {
+        try {
+            return message.getJMSMessageID();
+        } catch (Exception e) {
+            // ignore if JMS broker do not support this
         }
 
         return null;
@@ -471,219 +383,19 @@ public final class JmsMessageHelper implements JmsConstants {
     }
 
     /**
-     * Sets the correlation id on the JMS message.
-     * <p/>
-     * Will ignore exception thrown
-     *
-     * @param message the JMS message
-     * @param type    the correlation id
-     */
-    public static void setMessageType(Message message, String type) {
-        try {
-            message.setJMSType(type);
-        } catch (JMSException e) {
-            LOG.debug("Error setting the message type: {}", type, e);
-        }
-    }
-
-    /**
-     * Sets the correlation id on the JMS message.
-     * <p/>
-     * Will ignore exception thrown
-     *
-     * @param message       the JMS message
-     * @param correlationId the correlation id
-     */
-    public static void setCorrelationId(Message message, String correlationId) {
-        try {
-            message.setJMSCorrelationID(correlationId);
-        } catch (JMSException e) {
-            LOG.debug("Error setting the correlationId: {}", correlationId, e);
-        }
-    }
-
-    /**
-     * Sets the JMSReplyTo on the message.
+     * Gets the JMSCorrelationIDAsBytes from the message.
      *
      * @param message the message
-     * @param replyTo the reply to destination
+     * @return the JMSCorrelationIDAsBytes, or <tt>null</tt> if not able to get
      */
-    public static void setJMSReplyTo(Message message, Destination replyTo) {
+    public static String getJMSCorrelationIDAsBytes(Message message) {
         try {
-            message.setJMSReplyTo(replyTo);
+            return new String(message.getJMSCorrelationIDAsBytes());
         } catch (Exception e) {
-            LOG.debug("Error setting the correlationId: {}", replyTo.toString());
+            // ignore if JMS broker do not support this
         }
-    }
 
-    /**
-     * Gets the JMSReplyTo from the message.
-     *
-     * @param message the message
-     * @return the reply to, can be <tt>null</tt>
-     */
-    public static Destination getJMSReplyTo(Message message) {
-        try {
-            return message.getJMSReplyTo();
-        } catch (Exception e) {
-            // ignore due OracleAQ does not support accessing JMSReplyTo
-        }
         return null;
-    }
-
-    /**
-     * Sets the property on the given JMS message.
-     *
-     * @param jmsMessage the JMS message
-     * @param name       name of the property to set
-     * @param value      the value
-     * @throws JMSException can be thrown
-     */
-    public static void setProperty(Message jmsMessage, String name, Object value) throws JMSException {
-        if (value == null) {
-            jmsMessage.setObjectProperty(name, null);
-        } else if (value instanceof Byte) {
-            jmsMessage.setByteProperty(name, (Byte) value);
-        } else if (value instanceof Boolean) {
-            jmsMessage.setBooleanProperty(name, (Boolean) value);
-        } else if (value instanceof Double) {
-            jmsMessage.setDoubleProperty(name, (Double) value);
-        } else if (value instanceof Float) {
-            jmsMessage.setFloatProperty(name, (Float) value);
-        } else if (value instanceof Integer) {
-            jmsMessage.setIntProperty(name, (Integer) value);
-        } else if (value instanceof Long) {
-            jmsMessage.setLongProperty(name, (Long) value);
-        } else if (value instanceof Short) {
-            jmsMessage.setShortProperty(name, (Short) value);
-        } else if (value instanceof String) {
-            jmsMessage.setStringProperty(name, (String) value);
-        } else {
-            // fallback to Object
-            jmsMessage.setObjectProperty(name, value);
-        }
-    }
-
-    public static JmsMessageType discoverMessageTypeFromPayload(final Object payload) {
-        JmsMessageType answer;
-        // Default is a JMS Message since a body is not required
-        if (payload == null) {
-            answer = JmsMessageType.Message;
-        } else {
-            // Something was found in the body so determine
-            // what type of message we need to create
-            if (byte[].class.isInstance(payload)) {
-                answer = JmsMessageType.Bytes;
-            } else if (Map.class.isInstance(payload)) {
-                answer = JmsMessageType.Map;
-            } else if (Collection.class.isInstance(payload)) {
-                answer = JmsMessageType.Stream;
-            } else if (InputStream.class.isInstance(payload)) {
-                answer = JmsMessageType.Bytes;
-            } else if (ByteBuffer.class.isInstance(payload)) {
-                answer = JmsMessageType.Bytes;
-            } else if (File.class.isInstance(payload)) {
-                answer = JmsMessageType.Bytes;
-            } else if (Reader.class.isInstance(payload)) {
-                answer = JmsMessageType.Text;
-            } else if (String.class.isInstance(payload)) {
-                answer = JmsMessageType.Text;
-            } else if (CharBuffer.class.isInstance(payload)) {
-                answer = JmsMessageType.Text;
-            } else if (char[].class.isInstance(payload)) {
-                answer = JmsMessageType.Text;
-            } else if (Character.class.isInstance(payload)) {
-                answer = JmsMessageType.Text;
-            } else if (Serializable.class.isInstance(payload)) {
-                answer = JmsMessageType.Object;
-            } else {
-                answer = JmsMessageType.Message;
-            }
-        }
-        return answer;
-    }
-
-    public static JmsMessageType discoverJmsMessageType(Message message) {
-        JmsMessageType answer;
-        if (message != null) {
-            if (BytesMessage.class.isInstance(message)) {
-                answer = JmsMessageType.Bytes;
-            } else if (MapMessage.class.isInstance(message)) {
-                answer = JmsMessageType.Map;
-            } else if (TextMessage.class.isInstance(message)) {
-                answer = JmsMessageType.Text;
-            } else if (StreamMessage.class.isInstance(message)) {
-                answer = JmsMessageType.Stream;
-            } else if (ObjectMessage.class.isInstance(message)) {
-                answer = JmsMessageType.Object;
-            } else {
-                answer = JmsMessageType.Message;
-            }
-        } else {
-            answer = JmsMessageType.Message;
-        }
-        return answer;
-    }
-
-    private static boolean hasIllegalHeaderKey(String key) {
-        return key == null || key.isEmpty() || key.contains(".") || key.contains("-");
-    }
-
-    /**
-     * Normalizes the destination name.
-     * <p/>
-     * This ensures the destination name is correct, and we do not create queues as <tt>queue://queue:foo</tt>, which
-     * was intended as <tt>queue://foo</tt>.
-     *
-     * @param destination the destination
-     * @return the normalized destination
-     */
-    public static String normalizeDestinationName(String destination) {
-        // do not include prefix which is the current behavior when using this method.
-        return normalizeDestinationName(destination, false);
-    }
-
-    /**
-     * Normalizes the destination name.
-     * <p/>
-     * This ensures the destination name is correct, and we do not create queues as <tt>queue://queue:foo</tt>, which
-     * was intended as <tt>queue://foo</tt>.
-     *
-     * @param destination the destination
-     * @param includePrefix whether to include <tt>queue://</tt>, or <tt>topic://</tt> prefix in the normalized destination name
-     * @return the normalized destination
-     */
-    public static String normalizeDestinationName(String destination, boolean includePrefix) {
-        if (ObjectHelper.isEmpty(destination)) {
-            return destination;
-        }
-        if (destination.startsWith(QUEUE_PREFIX)) {
-            String s = removeStartingCharacters(destination.substring(QUEUE_PREFIX.length()), '/');
-            if (includePrefix) {
-                s = QUEUE_PREFIX + "//" + s;
-            }
-            return s;
-        } else if (destination.startsWith(TEMP_QUEUE_PREFIX)) {
-            String s = removeStartingCharacters(destination.substring(TEMP_QUEUE_PREFIX.length()), '/');
-            if (includePrefix) {
-                s = TEMP_QUEUE_PREFIX + "//" + s;
-            }
-            return s;
-        } else if (destination.startsWith(TOPIC_PREFIX)) {
-            String s = removeStartingCharacters(destination.substring(TOPIC_PREFIX.length()), '/');
-            if (includePrefix) {
-                s = TOPIC_PREFIX + "//" + s;
-            }
-            return s;
-        } else if (destination.startsWith(TEMP_TOPIC_PREFIX)) {
-            String s = removeStartingCharacters(destination.substring(TEMP_TOPIC_PREFIX.length()), '/');
-            if (includePrefix) {
-                s = TEMP_TOPIC_PREFIX + "//" + s;
-            }
-            return s;
-        } else {
-            return destination;
-        }
     }
 
 }

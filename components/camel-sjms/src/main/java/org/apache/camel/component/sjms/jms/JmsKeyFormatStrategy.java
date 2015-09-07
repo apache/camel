@@ -20,7 +20,7 @@ package org.apache.camel.component.sjms.jms;
  * Strategy for applying encoding and decoding of JMS headers so they apply to
  * the JMS spec.
  */
-public interface KeyFormatStrategy {
+public interface JmsKeyFormatStrategy {
 
     /**
      * Encodes the key before its sent as a {@link javax.jms.Message} message.

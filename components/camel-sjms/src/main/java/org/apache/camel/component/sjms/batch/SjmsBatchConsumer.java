@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.batch;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +42,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,7 +228,8 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                             LOG.debug("Message received: {}", messageCount);
                             if ((message instanceof ObjectMessage)
                                     || (message instanceof TextMessage)) {
-                                Exchange exchange = JmsMessageHelper.createExchange(message, getEndpoint());
+
+                                final Exchange exchange = getEndpoint().createExchange(message, session);
                                 aggregatedExchange = aggregationStrategy.aggregate(aggregatedExchange, exchange);
                                 aggregatedExchange.setProperty(SjmsBatchEndpoint.PROPERTY_BATCH_SIZE, messageCount);
                             } else {
