@@ -33,6 +33,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
@@ -162,6 +163,21 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
             String methodName = method.getSimpleName().toString();
             if ((getter1.equals(methodName) || getter2.equals(methodName)) && method.getParameters().size() == 0) {
                 return method;
+            }
+        }
+
+        return null;
+    }
+
+    protected VariableElement findFieldElement(TypeElement classElement, String fieldName) {
+        if (isNullOrEmpty(fieldName)) {
+            return null;
+        }
+
+        List<VariableElement> fields = ElementFilter.fieldsIn(classElement.getEnclosedElements());
+        for (VariableElement field : fields) {
+            if (fieldName.equals(field.getSimpleName().toString())) {
+                return field;
             }
         }
 
