@@ -24,9 +24,13 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +58,19 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultHttpBinding implements HttpBinding {
 
+    /**
+     * Whether Date/Locale should be converted to String types (enabled by default)
+     */
+    public static final String DATE_LOCALE_CONVERSION = "CamelHttpBindingDateLocaleConversion";
+
+    /**
+     * The data format used for storing java.util.Date instances as a String value.
+     */
+    public static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
+    private static final TimeZone TIME_ZONE_GMT = TimeZone.getTimeZone("GMT");
+
     private boolean useReaderForPayload;
     private boolean eagerCheckContentAvailable;
     private boolean transferException;
@@ -282,7 +298,7 @@ public class DefaultHttpBinding implements HttpBinding {
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null);
             while (it.hasNext()) {
-                String headerValue = exchange.getContext().getTypeConverter().convertTo(String.class, it.next());
+                String headerValue = convertHeaderValueToString(exchange, it.next());
                 if (headerValue != null && headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
                     response.addHeader(key, headerValue);
@@ -300,10 +316,28 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
     
+    protected String convertHeaderValueToString(Exchange exchange, Object headerValue) {
+        if ((headerValue instanceof Date || headerValue instanceof Locale)
+            && convertDateAndLocaleLocally(exchange)) {
+            if (headerValue instanceof Date) {
+                return toHttpDate((Date)headerValue);
+            } else {
+                return toHttpLanguage((Locale)headerValue);
+            }
+        } else {
+            return exchange.getContext().getTypeConverter().convertTo(String.class, headerValue);
+        }
+    }
+
+    protected boolean convertDateAndLocaleLocally(Exchange exchange) {
+        // This check is done only if a given header value is Date or Locale
+        return exchange.getProperty(DATE_LOCALE_CONVERSION, Boolean.TRUE, Boolean.class);
+    }
+
     protected boolean isText(String contentType) {
         if (contentType != null) {
             String temp = contentType.toLowerCase();
-            if (temp.indexOf("text") >= 0 || temp.indexOf("html") >= 0) {
+            if (temp.contains("text") || temp.contains("html")) {
                 return true;
             }
         }
@@ -491,4 +525,26 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    protected static SimpleDateFormat getHttpDateFormat() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        dateFormat.setTimeZone(TIME_ZONE_GMT);
+        return dateFormat;
+    }
+    
+    protected static String toHttpDate(Date date) {
+        SimpleDateFormat format = getHttpDateFormat();
+        return format.format(date);
+    }
+    
+    protected static String toHttpLanguage(Locale locale) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(locale.getLanguage());
+        if (locale.getCountry() != null) {
+            // Locale.toString() will use a "_" separator instead, 
+            // while '-' is expected in headers such as Content-Language, etc:
+            // http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.10
+            sb.append('-').append(locale.getCountry());
+        }
+        return sb.toString();
+    }
 }
