@@ -93,19 +93,19 @@ public class InOnlyProducer extends SjmsProducer {
                         Message message;
                         if (BatchMessage.class.isInstance(object)) {
                             BatchMessage<?> batchMessage = (BatchMessage<?>) object;
-                            message = JmsMessageHelper.createMessage(producer.getSession(), batchMessage.getPayload(), batchMessage.getHeaders(), getEndpoint());
+                            message = JmsMessageHelper.createMessage(exchange, producer.getSession(), batchMessage.getPayload(), batchMessage.getHeaders(), getEndpoint());
                         } else {
-                            message = JmsMessageHelper.createMessage(producer.getSession(), object, exchange.getIn().getHeaders(), getEndpoint());
+                            message = JmsMessageHelper.createMessage(exchange, producer.getSession(), object, exchange.getIn().getHeaders(), getEndpoint());
                         }
                         messages.add(message);
                     }
                 } else {
                     Object payload = exchange.getIn().getBody();
-                    Message message = JmsMessageHelper.createMessage(producer.getSession(), payload, exchange.getIn().getHeaders(), getEndpoint());
+                    Message message = JmsMessageHelper.createMessage(exchange, producer.getSession(), payload, exchange.getIn().getHeaders(), getEndpoint());
                     messages.add(message);
                 }
             } else {
-                Message message = JmsMessageHelper.createMessage(producer.getSession(), null, exchange.getIn().getHeaders(), getEndpoint());
+                Message message = JmsMessageHelper.createMessage(exchange, producer.getSession(), null, exchange.getIn().getHeaders(), getEndpoint());
                 messages.add(message);
             }
 
