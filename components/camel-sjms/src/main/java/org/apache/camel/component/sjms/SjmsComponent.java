@@ -71,6 +71,12 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         if (destinationCreationStrategy != null) {
             endpoint.setDestinationCreationStrategy(destinationCreationStrategy);
         }
+        if (headerFilterStrategy != null) {
+            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
+        }
+        if (messageCreatedStrategy != null) {
+            endpoint.setMessageCreatedStrategy(messageCreatedStrategy);
+        }
         return endpoint;
     }
 
