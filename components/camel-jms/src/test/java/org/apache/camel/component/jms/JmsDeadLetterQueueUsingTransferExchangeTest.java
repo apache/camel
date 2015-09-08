@@ -58,8 +58,9 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSuppor
         assertMockEndpointsSatisfied();
 
         Exchange dead = mock.getReceivedExchanges().get(0);
-        // caused exception is stored as a property
-        assertEquals("Kabom", dead.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
+        // caused exception details is stored as headers
+        assertEquals("Kabom", dead.getIn().getHeader("CausedExceptionMessage", String.class));
+        assertEquals("java.lang.IllegalArgumentException", dead.getIn().getHeader("CausedExceptionType", String.class));
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -76,7 +77,15 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel(getUri()).disableRedelivery());
+                errorHandler(deadLetterChannel(getUri()).onPrepareFailure(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        // store exception as a string
+                        Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                        exchange.getIn().setHeader("CausedExceptionMessage", cause.getMessage());
+                        exchange.getIn().setHeader("CausedExceptionType", cause.getClass().getName());
+                    }
+                }).disableRedelivery());
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
