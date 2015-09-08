@@ -171,6 +171,8 @@ public class JmsConfiguration implements Cloneable {
     private String replyToDestinationSelectorName;
     @UriParam
     private String replyToOverride;
+    @UriParam(label = "consumer")
+    private boolean replyToSameDestinationAllowed;
     @UriParam(enums = "Bytes,Map,Object,Stream,Text")
     private JmsMessageType jmsMessageType;
     @UriParam
@@ -1438,11 +1440,23 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     *  Provides an explicit ReplyTo destination in the JMS message, which overrides the setting of replyTo.
-     *  It is useful if you want to forward the message to a remote Queue and receive the reply message from the ReplyTo destination.
+     * Provides an explicit ReplyTo destination in the JMS message, which overrides the setting of replyTo.
+     * It is useful if you want to forward the message to a remote Queue and receive the reply message from the ReplyTo destination.
      */
     public void setReplyToOverride(String replyToDestination) {
         this.replyToOverride = normalizeDestinationName(replyToDestination);
+    }
+
+    public boolean isReplyToSameDestinationAllowed() {
+        return replyToSameDestinationAllowed;
+    }
+
+    /**
+     * Whether a JMS consumer is allowed to send a reply message to the same destination that the consumer is using to
+     * consume from. This prevents an endless loop by consuming and sending back the same message to itself.
+     */
+    public void setReplyToSameDestinationAllowed(boolean replyToSameDestinationAllowed) {
+        this.replyToSameDestinationAllowed = replyToSameDestinationAllowed;
     }
 
     public JmsMessageType getJmsMessageType() {
