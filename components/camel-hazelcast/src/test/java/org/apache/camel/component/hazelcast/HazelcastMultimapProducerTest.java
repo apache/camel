@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.Mock;
+
 import static org.mockito.Mockito.*;
 
 public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
@@ -92,6 +93,46 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
         template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711);
         verify(map).remove(4711);
     }
+    
+    @Test
+    public void testClear() {
+        template.sendBody("direct:clear", "test");
+        verify(map).clear();
+    }
+    
+    @Test
+    public void testValueCount() {
+        template.sendBodyAndHeader("direct:valueCount", "test", HazelcastConstants.OBJECT_ID, "4711");
+        verify(map).valueCount("4711");
+    }
+    
+    @Test
+    public void testContainsKey() {
+        when(map.containsKey("testOk")).thenReturn(true);
+        when(map.containsKey("testKo")).thenReturn(false);
+        template.sendBodyAndHeader("direct:containsKey", null, HazelcastConstants.OBJECT_ID, "testOk");
+        Boolean body = consumer.receiveBody("seda:out", 5000, Boolean.class);
+        verify(map).containsKey("testOk");
+        assertEquals(true, body);
+        template.sendBodyAndHeader("direct:containsKey", null, HazelcastConstants.OBJECT_ID, "testKo");
+        body = consumer.receiveBody("seda:out", 5000, Boolean.class);
+        verify(map).containsKey("testKo");
+        assertEquals(false, body);
+    }
+    
+    @Test
+    public void testContainsValue() {
+        when(map.containsValue("testOk")).thenReturn(true);
+        when(map.containsValue("testKo")).thenReturn(false);
+        template.sendBody("direct:containsValue", "testOk");
+        Boolean body = consumer.receiveBody("seda:out", 5000, Boolean.class);
+        verify(map).containsValue("testOk");
+        assertEquals(true, body);
+        template.sendBody("direct:containsValue", "testKo");
+        body = consumer.receiveBody("seda:out", 5000, Boolean.class);
+        verify(map).containsValue("testKo");
+        assertEquals(false, body);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -111,6 +152,19 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
 
                 from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DELETE_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
+                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                
+                from("direct:valueCount").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.VALUE_COUNT_OPERATION))
+                        .to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                
+                from("direct:containsKey").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CONTAINS_KEY_OPERATION))
+                        .to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX))
+                        .to("seda:out");
+                
+                from("direct:containsValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CONTAINS_VALUE_OPERATION))
+                        .to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX))
+                        .to("seda:out");
+                
                 from("direct:putWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.MULTIMAP_PREFIX, HazelcastConstants.PUT_OPERATION);
                 from("direct:putWithOperationName").toF("hazelcast:%sbar?operation=put", HazelcastConstants.MULTIMAP_PREFIX);
             }

@@ -28,6 +28,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
@@ -35,6 +36,7 @@ import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 
 import org.apache.camel.AsyncCallback;
@@ -91,7 +93,12 @@ public class NettyProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
+        if (configuration.getWorkerGroup() == null) {
+            // create new pool which we should shutdown when stopping as its not shared
+            workerGroup = new NettyWorkerPoolBuilder().withWorkerCount(configuration.getWorkerCount())
+                .withName("NettyClientTCPWorker").build();
+        }
+        
         if (configuration.isProducerPoolEnabled()) {
             // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
             GenericObjectPool.Config config = new GenericObjectPool.Config();
@@ -211,6 +218,17 @@ public class NettyProducer extends DefaultAsyncProducer {
             return true;
         }
 
+        if (exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT) != null) {
+            long timeoutInMs = exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT, Long.class);
+            ChannelHandler oldHandler = existing.pipeline().get("timeout");
+            ReadTimeoutHandler newHandler = new ReadTimeoutHandler(timeoutInMs, TimeUnit.MILLISECONDS);
+            if (oldHandler == null) {
+                existing.pipeline().addBefore("handler", "timeout", newHandler);
+            } else {
+                existing.pipeline().replace(oldHandler, "timeout", newHandler);
+            }
+        }
+        
         // need to declare as final
         final Channel channel = existing;
         final AsyncCallback producerCallback = new NettyProducerCallback(channel, callback);
@@ -228,9 +246,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
-                    // no success the set the caused exception and signal callback and break
-                    exchange.setException(channelFuture.cause());
-                    producerCallback.done(false);
+                    // no success then exit, (any exception has been handled by ClientChannelHandler#exceptionCaught)
                     return;
                 }
 
@@ -312,19 +328,12 @@ public class NettyProducer extends DefaultAsyncProducer {
     }
 
     protected EventLoopGroup getWorkerGroup() {
-
         // prefer using explicit configured thread pools
         EventLoopGroup wg = configuration.getWorkerGroup();
-        
         if (wg == null) {
-            // create new pool which we should shutdown when stopping as its not
-            // shared
-            workerGroup = new NettyWorkerPoolBuilder().withWorkerCount(configuration.getWorkerCount())
-                .withName("NettyClientTCPWorker").build();
             wg = workerGroup;
         }
         return wg;
-
     }
 
     protected ChannelFuture openConnection() throws Exception {

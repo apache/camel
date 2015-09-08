@@ -29,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -79,30 +80,66 @@ public final class DefaultExchange implements Exchange {
 
     @Override
     public String toString() {
-        return "Exchange[" + (out == null ? in : out) + "]";
+        return String.format("Exchange[%s][%s]", exchangeId, out == null ? in : out);
     }
 
     public Exchange copy() {
+        // to be backwards compatible as today
+        return copy(false);
+    }
+
+    public Exchange copy(boolean safeCopy) {
         DefaultExchange exchange = new DefaultExchange(this);
 
         if (hasProperties()) {
-            exchange.setProperties(safeCopy(getProperties()));
+            exchange.setProperties(safeCopyProperties(getProperties()));
         }
-        
-        exchange.setIn(getIn().copy());
-        if (hasOut()) {
-            exchange.setOut(getOut().copy());
+
+        if (safeCopy) {
+            exchange.getIn().setBody(getIn().getBody());
+            if (getIn().hasHeaders()) {
+                exchange.getIn().setHeaders(safeCopyHeaders(getIn().getHeaders()));
+                // just copy the attachments here
+                exchange.getIn().copyAttachments(getIn());
+            }
+            if (hasOut()) {
+                exchange.getOut().setBody(getOut().getBody());
+                if (getOut().hasHeaders()) {
+                    exchange.getOut().setHeaders(safeCopyHeaders(getOut().getHeaders()));
+                }
+                // Just copy the attachments here
+                exchange.getOut().copyAttachments(getOut());
+            }
+        } else {
+            // old way of doing copy which is @deprecated
+            // TODO: remove this in Camel 3.0, and always do a safe copy
+            exchange.setIn(getIn().copy());
+            if (hasOut()) {
+                exchange.setOut(getOut().copy());
+            }
         }
         exchange.setException(getException());
         return exchange;
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> safeCopy(Map<String, Object> properties) {
+    private static Map<String, Object> safeCopyHeaders(Map<String, Object> headers) {
+        if (headers == null) {
+            return null;
+        }
+
+        Map<String, Object> answer = new CaseInsensitiveMap();
+        answer.putAll(headers);
+        return answer;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
         if (properties == null) {
             return null;
         }
 
+        // TODO: properties should use same map kind as headers
         Map<String, Object> answer = new ConcurrentHashMap<String, Object>(properties);
 
         // safe copy message history using a defensive copy

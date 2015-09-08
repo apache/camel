@@ -94,6 +94,14 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:end", 1);
     }
 
+    public void testParseScriptXml() throws Exception {
+        RouteDefinition route = assertOneRoute("script.xml");
+        assertFrom(route, "direct:start");
+        ScriptDefinition node = assertNthProcessorInstanceOf(ScriptDefinition.class, route, 0);
+        assertExpression(node.getExpression(), "groovy", "System.out.println(\"groovy was here\")");
+        assertChildTo(route, "mock:end", 1);
+    }
+
     public void testParseSetBodyXml() throws Exception {
         RouteDefinition route = assertOneRoute("setBody.xml");
         assertFrom(route, "direct:start");

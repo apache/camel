@@ -65,6 +65,9 @@ public class MvelEndpoint extends ResourceEndpoint {
         return encoding;
     }
 
+    /**
+     * Character encoding of the resource content.
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }

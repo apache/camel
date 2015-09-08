@@ -31,6 +31,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.processor.UnitOfWorkProducer;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -54,7 +55,11 @@ public class ProducerCache extends ServiceSupport {
     private final ServicePool<Endpoint, Producer> pool;
     private final Map<String, Producer> producers;
     private final Object source;
+
+    private EndpointUtilizationStatistics statistics;
     private boolean eventNotifierEnabled = true;
+    private boolean extendedStatistics;
+    private int maxCacheSize;
 
     public ProducerCache(Object source, CamelContext camelContext) {
         this(source, camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
@@ -73,14 +78,38 @@ public class ProducerCache extends ServiceSupport {
         this.camelContext = camelContext;
         this.pool = producerServicePool;
         this.producers = cache;
+        if (producers instanceof LRUCache) {
+            maxCacheSize = ((LRUCache) producers).getMaxCacheSize();
+        }
+
+        // only if JMX is enabled
+        if (camelContext.getManagementStrategy().getManagementAgent() != null) {
+            this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+        } else {
+            this.extendedStatistics = false;
+        }
     }
 
     public boolean isEventNotifierEnabled() {
         return eventNotifierEnabled;
     }
 
+    /**
+     * Whether {@link org.apache.camel.spi.EventNotifier} is enabled
+     */
     public void setEventNotifierEnabled(boolean eventNotifierEnabled) {
         this.eventNotifierEnabled = eventNotifierEnabled;
+    }
+
+    public boolean isExtendedStatistics() {
+        return extendedStatistics;
+    }
+
+    /**
+     * Whether extended JMX statistics is enabled for {@link org.apache.camel.spi.EndpointUtilizationStatistics}
+     */
+    public void setExtendedStatistics(boolean extendedStatistics) {
+        this.extendedStatistics = extendedStatistics;
     }
 
     /**
@@ -417,17 +446,29 @@ public class ProducerCache extends ServiceSupport {
             }
         }
 
+        if (answer != null) {
+            // record statistics
+            if (extendedStatistics) {
+                statistics.onHit(key);
+            }
+        }
+
         return answer;
     }
 
     protected void doStart() throws Exception {
+        if (extendedStatistics) {
+            int max = maxCacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : maxCacheSize;
+            statistics = new DefaultEndpointUtilizationStatistics(max);
+        }
+
         ServiceHelper.startServices(producers.values());
-        ServiceHelper.startServices(pool);
+        ServiceHelper.startServices(statistics, pool);
     }
 
     protected void doStop() throws Exception {
         // when stopping we intend to shutdown
-        ServiceHelper.stopAndShutdownService(pool);
+        ServiceHelper.stopAndShutdownServices(statistics, pool);
         try {
             ServiceHelper.stopAndShutdownServices(producers.values());
         } finally {
@@ -437,6 +478,9 @@ public class ProducerCache extends ServiceSupport {
             }
         }
         producers.clear();
+        if (statistics != null) {
+            statistics.clear();
+        }
     }
 
     /**
@@ -524,6 +568,9 @@ public class ProducerCache extends ServiceSupport {
             LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
             cache.resetStatistics();
         }
+        if (statistics != null) {
+            statistics.clear();
+        }
     }
 
     /**
@@ -532,6 +579,13 @@ public class ProducerCache extends ServiceSupport {
     public synchronized void purge() {
         producers.clear();
         pool.purge();
+        if (statistics != null) {
+            statistics.clear();
+        }
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return statistics;
     }
 
     @Override

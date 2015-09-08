@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
@@ -36,6 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
 
+    @XmlTransient
+    private LoadBalancer loadBalancer;
     @XmlAttribute(required = true)
     private String ref;
 
@@ -53,15 +56,34 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
         this.ref = ref;
     }
 
+    public LoadBalancer getLoadBalancer() {
+        return loadBalancer;
+    }
+
+    /**
+     * The custom load balancer to use.
+     */
+    public void setLoadBalancer(LoadBalancer loadBalancer) {
+        this.loadBalancer = loadBalancer;
+    }
+
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
+        if (loadBalancer != null) {
+            return loadBalancer;
+        }
+
         ObjectHelper.notEmpty(ref, "ref", this);
         return CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), ref, LoadBalancer.class);
     }
 
     @Override
     public String toString() {
-        return "CustomLoadBalancer[" + ref + "]";
+        if (loadBalancer != null) {
+            return "CustomLoadBalancer[" + loadBalancer + "]";
+        } else {
+            return "CustomLoadBalancer[" + ref + "]";
+        }
     }
 
 }

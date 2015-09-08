@@ -159,6 +159,10 @@ public class SplunkEvent implements Serializable {
      */
     public static final String COMMON_VENDOR = "vendor";
 
+    /**
+     * Event break delimiter
+     */
+    public static final String LINEBREAK = "\n";
     // ----------------------------------
     // Update
     // ----------------------------------
@@ -201,8 +205,6 @@ public class SplunkEvent implements Serializable {
     private static final String THROWABLE_CLASS = "throwable_class";
     private static final String THROWABLE_MESSAGE = "throwable_message";
     private static final String THROWABLE_STACKTRACE_ELEMENTS = "stacktrace_elements";
-
-    private static final String LINEBREAK = "\n";
 
     private static final long serialVersionUID = 1L;
 

@@ -28,9 +28,11 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
@@ -117,6 +119,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private Boolean lazyLoadTypeConverters;
     @XmlAttribute(required = false)
     private Boolean typeConverterStatisticsEnabled;
+    @XmlAttribute(required = false)
+    private TypeConverterExists typeConverterExists;
+    @XmlAttribute(required = false)
+    private LoggingLevel typeConverterExistsLoggingLevel;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class, required = false)
@@ -136,8 +142,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "proxy", type = CamelProxyFactoryBean.class, required = false),
         @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
-        @XmlElement(name = "errorHandler", type = CamelErrorHandlerFactoryBean.class, required = false)
-    })
+        @XmlElement(name = "errorHandler", type = CamelErrorHandlerFactoryBean.class, required = false)})
     private List<?> beans;
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
@@ -179,6 +184,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private BundleContext bundleContext;
     @XmlTransient
     private boolean implicitId;
+    @XmlTransient
+    private OsgiCamelContextPublisher osgiCamelContextPublisher;
 
     public Class<BlueprintCamelContext> getObjectType() {
         return BlueprintCamelContext.class;
@@ -289,8 +296,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     }
 
     @Override
-    protected void findRouteBuildersByContextScan(PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
-        ContextScanRouteBuilderFinder finder = new ContextScanRouteBuilderFinder(getContext(), filter);
+    protected void findRouteBuildersByContextScan(PackageScanFilter filter, boolean includeNonSingletons, List<RoutesBuilder> builders) throws Exception {
+        ContextScanRouteBuilderFinder finder = new ContextScanRouteBuilderFinder(getContext(), filter, includeNonSingletons);
         finder.appendBuilders(builders);
     }
 
@@ -301,7 +308,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         ClassLoader cl = new BundleDelegatingClassLoader(bundleContext.getBundle());
         LOG.debug("Set the application context classloader to: {}", cl);
         getContext().setApplicationContextClassLoader(cl);
-        getContext().getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
+        osgiCamelContextPublisher = new OsgiCamelContextPublisher(bundleContext);
+        osgiCamelContextPublisher.start();
+        getContext().getManagementStrategy().addEventNotifier(osgiCamelContextPublisher);
         try {
             getClass().getClassLoader().loadClass("org.osgi.service.event.EventAdmin");
             getContext().getManagementStrategy().addEventNotifier(new OsgiEventAdminNotifier(bundleContext));
@@ -311,6 +320,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         }
         // ensure routes is setup
         setupRoutes();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        super.destroy();
+        if (osgiCamelContextPublisher != null) {
+            osgiCamelContextPublisher.shutdown();
+        }
     }
 
     public String getDependsOn() {
@@ -394,6 +411,22 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
+    }
+
+    public TypeConverterExists getTypeConverterExists() {
+        return typeConverterExists;
+    }
+
+    public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
+        this.typeConverterExists = typeConverterExists;
+    }
+
+    public LoggingLevel getTypeConverterExistsLoggingLevel() {
+        return typeConverterExistsLoggingLevel;
+    }
+
+    public void setTypeConverterExistsLoggingLevel(LoggingLevel typeConverterExistsLoggingLevel) {
+        this.typeConverterExistsLoggingLevel = typeConverterExistsLoggingLevel;
     }
 
     public ShutdownRoute getShutdownRoute() {

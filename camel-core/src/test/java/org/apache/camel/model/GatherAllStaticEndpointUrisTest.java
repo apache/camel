@@ -27,7 +27,7 @@ public class GatherAllStaticEndpointUrisTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinition("foo");
         Set<String> uris = RouteDefinitionHelper.gatherAllStaticEndpointUris(context, route, true, true);
         assertNotNull(uris);
-        assertEquals(5, uris.size());
+        assertEquals(3, uris.size());
 
         RouteDefinition route2 = context.getRouteDefinition("bar");
         Set<String> uris2 = RouteDefinitionHelper.gatherAllStaticEndpointUris(context, route2, true, true);

@@ -16,32 +16,58 @@
  */
 package org.apache.camel.jsonpath;
 
+import com.jayway.jsonpath.Option;
+import org.apache.camel.AfterPropertiesConfigured;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.support.ExpressionAdapter;
 
-public class JsonPathExpression extends ExpressionAdapter {
+public class JsonPathExpression extends ExpressionAdapter implements AfterPropertiesConfigured {
 
     private final String expression;
+    private JsonPathEngine engine;
+
     private Class<?> resultType;
-    private final JsonPathEngine engine;
+    private boolean suppressExceptions;
+    private Option[] options;
 
     public JsonPathExpression(String expression) {
         this.expression = expression;
-        try {
-            engine = new JsonPathEngine(expression);
-        } catch (Exception e) {
-            throw new ExpressionIllegalSyntaxException(expression, e);
-        }
     }
 
     public Class<?> getResultType() {
         return resultType;
     }
 
+    /**
+     * To configure the result type to use
+     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
+    }
+
+    public boolean isSuppressExceptions() {
+        return suppressExceptions;
+    }
+
+    /**
+     * Whether to suppress exceptions such as PathNotFoundException
+     */
+    public void setSuppressExceptions(boolean suppressExceptions) {
+        this.suppressExceptions = suppressExceptions;
+    }
+
+    public Option[] getOptions() {
+        return options;
+    }
+
+    /**
+     * To configure the json path options to use
+     */
+    public void setOptions(Option[] options) {
+        this.options = options;
     }
 
     @Override
@@ -59,6 +85,19 @@ public class JsonPathExpression extends ExpressionAdapter {
     }
 
     @Override
+    public void afterPropertiesConfigured(CamelContext camelContext) {
+        init();
+    }
+
+    public void init() {
+        try {
+            engine = new JsonPathEngine(expression, suppressExceptions, options);
+        } catch (Exception e) {
+            throw new ExpressionIllegalSyntaxException(expression, e);
+        }
+    }
+
+    @Override
     public String toString() {
         return "jsonpath[" + expression + "]";
     }
@@ -66,5 +105,4 @@ public class JsonPathExpression extends ExpressionAdapter {
     private Object evaluateJsonPath(Exchange exchange, JsonPathEngine engine) throws Exception {
         return engine.read(exchange);
     }
-
 }

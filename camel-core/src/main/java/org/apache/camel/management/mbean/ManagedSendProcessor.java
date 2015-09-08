@@ -16,12 +16,20 @@
  */
 package org.apache.camel.management.mbean;
 
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -47,6 +55,17 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
         }
     }
 
+    @Override
+    public Boolean getSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
+    public synchronized void reset() {
+        super.reset();
+        processor.reset();
+    }
+
     public SendProcessor getProcessor() {
         return processor;
     }
@@ -67,4 +86,22 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
         }
     }
 
+    @Override
+    public TabularData extendedInformation() {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
+
+            // we only have 1 endpoint
+
+            CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();
+            String url = getDestination();
+            Long hits = processor.getCounter();
+
+            CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
+            answer.put(data);
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
 }

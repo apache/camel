@@ -19,7 +19,6 @@ package org.apache.camel.component.atom;
 import java.util.List;
 
 import org.apache.abdera.model.Feed;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;

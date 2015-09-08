@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
@@ -57,61 +56,61 @@ public class IrcEndpoint extends DefaultEndpoint {
     }
 
     public Exchange createExchange(ExchangePattern pattern) {
-        DefaultExchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange(pattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
         return exchange;
     }
 
     public Exchange createOnPrivmsgExchange(String target, IRCUser user, String msg) {
-        DefaultExchange exchange = getExchange();
+        Exchange exchange = createExchange();
         exchange.setIn(new IrcMessage("PRIVMSG", target, user, msg));
         return exchange;
     }
 
     public Exchange createOnNickExchange(IRCUser user, String newNick) {
-        DefaultExchange exchange = getExchange();
+        Exchange exchange = createExchange();
         exchange.setIn(new IrcMessage("NICK", user, newNick));
         return exchange;
     }
 
     public Exchange createOnQuitExchange(IRCUser user, String msg) {
-        DefaultExchange exchange = getExchange();
+        Exchange exchange = createExchange();
         exchange.setIn(new IrcMessage("QUIT", user, msg));
         return exchange;
     }
 
     public Exchange createOnJoinExchange(String channel, IRCUser user) {
-        DefaultExchange exchange = getExchange();
+        Exchange exchange = createExchange();
         exchange.setIn(new IrcMessage("JOIN", channel, user));
         return exchange;
     }
 
     public Exchange createOnKickExchange(String channel, IRCUser user, String whoWasKickedNick, String msg) {
-        DefaultExchange exchange = getExchange();
+        Exchange exchange = createExchange();
         exchange.setIn(new IrcMessage("KICK", channel, user, whoWasKickedNick, msg));
         return exchange;
     }
 
     public Exchange createOnModeExchange(String channel, IRCUser user, IRCModeParser modeParser) {
-        DefaultExchange exchange = getExchange();
+        Exchange exchange = createExchange();
         exchange.setIn(new IrcMessage("MODE", channel, user, modeParser.getLine()));
         return exchange;
     }
 
     public Exchange createOnPartExchange(String channel, IRCUser user, String msg) {
-        DefaultExchange exchange = getExchange();
+        Exchange exchange = createExchange();
         exchange.setIn(new IrcMessage("PART", channel, user, msg));
         return exchange;
     }
 
     public Exchange createOnReplyExchange(int num, String value, String msg) {
-        DefaultExchange exchange = getExchange();
+        Exchange exchange = createExchange();
         exchange.setIn(new IrcMessage("REPLY", num, value, msg));
         return exchange;
     }
 
     public Exchange createOnTopicExchange(String channel, IRCUser user, String topic) {
-        DefaultExchange exchange = getExchange();
+        Exchange exchange = createExchange();
         exchange.setIn(new IrcMessage("TOPIC", channel, user, topic));
         return exchange;
     }
@@ -153,7 +152,6 @@ public class IrcEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-
     public void handleIrcError(int num, String msg) {
         if (IRCConstants.ERR_NICKNAMEINUSE == num) {
             handleNickInUse();
@@ -175,13 +173,6 @@ public class IrcEndpoint extends DefaultEndpoint {
             joinChannels();
         }
     }
-
-    private DefaultExchange getExchange() {
-        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, getBinding());
-        return exchange;
-    }
-
 
     public void joinChannels() {
         for (IrcChannel channel : configuration.getChannels()) {

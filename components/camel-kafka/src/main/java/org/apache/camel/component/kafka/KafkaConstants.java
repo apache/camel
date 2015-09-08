@@ -27,6 +27,10 @@ public final class KafkaConstants {
     public static final String PARTITION = "kafka.EXCHANGE_NAME";
     public static final String KEY = "kafka.CONTENT_TYPE";
     public static final String TOPIC = "kafka.TOPIC";
+    public static final String OFFSET = "kafka.OFFSET";
+
+    public static final String KAFKA_DEFAULT_ENCODER = "kafka.serializer.DefaultEncoder";
+    public static final String KAFKA_STRING_ENCODER = "kafka.serializer.StringEncoder";
 
     private KafkaConstants() {
         // Utility class

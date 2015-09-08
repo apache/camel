@@ -23,14 +23,10 @@ import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.http4.helper.HttpHelper;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.spi.Metadata;
+import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
@@ -49,42 +45,25 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @UriEndpoint(scheme = "http4,http4s", title = "HTTP4,HTTP4S", syntax = "http4:httpUri", producerOnly = true, label = "http")
-public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class HttpEndpoint extends HttpCommonEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    private HttpBinding binding;
+
+    // Note: all options must be documented with description in annotations so extended components can access the documentation
+
     private HttpContext httpContext;
-    private HttpComponent component;
-    @UriPath @Metadata(required = "true")
-    private URI httpUri;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpClientConnectionManager clientConnectionManager;
     private HttpClientBuilder clientBuilder;
-    private HttpClient httpClient;
-    @UriParam(defaultValue = "true")
-    private boolean throwExceptionOnFailure = true;
-    @UriParam
-    private boolean bridgeEndpoint;
-    @UriParam
-    private boolean matchOnUriPrefix;
-    @UriParam(defaultValue = "true")
-    private boolean chunked = true;
-    @UriParam
-    private boolean disableStreamCache;
-    @UriParam
-    private boolean transferException;
-    @UriParam
-    private boolean traceEnabled;
-    @UriParam
-    private boolean authenticationPreemptive;
-    @UriParam
-    private String httpMethodRestrict;
-    private UrlRewrite urlRewrite;
-    @UriParam(defaultValue = "true")
-    private boolean clearExpiredCookies = true;
+    private  HttpClient httpClient;
+
+    @UriParam(label = "producer")
     private CookieStore cookieStore = new BasicCookieStore();
-    
+    @UriParam(label = "producer")
+    private boolean authenticationPreemptive;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean clearExpiredCookies = true;
+
     public HttpEndpoint() {
     }
 
@@ -103,9 +82,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientBuilder clientBuilder,
                         HttpClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(endPointURI, component);
-        this.component = component;
-        this.httpUri = httpURI;
+        super(endPointURI, component, httpURI);
         this.clientBuilder = clientBuilder;
         this.httpClientConfigurer = clientConfigurer;
         this.clientConnectionManager = clientConnectionManager;
@@ -187,31 +164,18 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return clientBuilder.build();
     }
 
-    public void connect(HttpConsumer consumer) throws Exception {
-        component.connect(consumer);
+    @Override
+    public HttpComponent getComponent() {
+        return (HttpComponent) super.getComponent();
     }
 
-    public void disconnect(HttpConsumer consumer) throws Exception {
-        component.disconnect(consumer);
-    }
-
-    public boolean isLenientProperties() {
-        // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
-        return true;
-    }
-
-    public boolean isSingleton() {
-        return true;
-    }
-    
     @Override
     protected void doStop() throws Exception {
-        if (component != null && component.getClientConnectionManager() != clientConnectionManager) {
+        if (getComponent() != null && getComponent().getClientConnectionManager() != clientConnectionManager) {
             // need to shutdown the ConnectionManager
             clientConnectionManager.shutdown();
         }
     }
-
 
     // Properties
     //-------------------------------------------------------------------------
@@ -243,156 +207,34 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     /**
      * Register a custom configuration strategy for new {@link HttpClient} instances
      * created by producers or consumers such as to configure authentication mechanisms etc
-     *
-     * @param httpClientConfigurer the strategy for configuring new {@link HttpClient} instances
      */
     public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
         this.httpClientConfigurer = httpClientConfigurer;
-    }
-
-    public HttpBinding getBinding() {
-        if (binding == null) {
-            binding = new DefaultHttpBinding(this);
-        }
-        return binding;
-    }
-
-    public void setBinding(HttpBinding binding) {
-        this.binding = binding;
-    }
-    
-    public void setHttpBinding(HttpBinding binding) {
-        this.binding = binding;
-    }
-
-    public void setHttpBindingRef(HttpBinding binding) {
-        this.binding = binding;
     }
 
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
     }
 
-    public String getPath() {
-        //if the path is empty, we just return the default path here
-        return httpUri.getPath().length() == 0 ? "/" : httpUri.getPath();
-    }
-
-    public int getPort() {
-        if (httpUri.getPort() == -1) {
-            if ("https".equals(getProtocol()) || "https4".equals(getProtocol())) {
-                return 443;
-            } else {
-                return 80;
-            }
-        }
-        return httpUri.getPort();
-    }
-
-    public String getProtocol() {
-        return httpUri.getScheme();
-    }
-
-    public URI getHttpUri() {
-        return httpUri;
-    }
-
-    public void setHttpUri(URI httpUri) {
-        this.httpUri = httpUri;
-    }
-
     public HttpClientConnectionManager getClientConnectionManager() {
         return clientConnectionManager;
     }
 
+    /**
+     * To use a custom HttpClientConnectionManager to manage connections
+     */
     public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
-    }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
-        this.headerFilterStrategy = headerFilterStrategy;
-    }
-
-    public boolean isThrowExceptionOnFailure() {
-        return throwExceptionOnFailure;
-    }
-
-    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
-        this.throwExceptionOnFailure = throwExceptionOnFailure;
-    }
-
-    public boolean isBridgeEndpoint() {
-        return bridgeEndpoint;
-    }
-
-    public void setBridgeEndpoint(boolean bridge) {
-        this.bridgeEndpoint = bridge;
-    }
-
-    public boolean isMatchOnUriPrefix() {
-        return matchOnUriPrefix;
-    }
-
-    public void setMatchOnUriPrefix(boolean match) {
-        this.matchOnUriPrefix = match;
-    }
-    
-    public boolean isDisableStreamCache() {
-        return this.disableStreamCache;
-    }
-       
-    public void setDisableStreamCache(boolean disable) {
-        this.disableStreamCache = disable;
-    }
-
-    public boolean isChunked() {
-        return this.chunked;
-    }
-
-    public void setChunked(boolean chunked) {
-        this.chunked = chunked;
-    }
-
-    public boolean isTransferException() {
-        return transferException;
-    }
-
-    public void setTransferException(boolean transferException) {
-        this.transferException = transferException;
-    }
-    
-    public boolean isTraceEnabled() {
-        return this.traceEnabled;
-    }
-
-    public void setTraceEnabled(boolean traceEnabled) {
-        this.traceEnabled = traceEnabled;
-    }
-
-    public String getHttpMethodRestrict() {
-        return httpMethodRestrict;
-    }
-
-    public void setHttpMethodRestrict(String httpMethodRestrict) {
-        this.httpMethodRestrict = httpMethodRestrict;
-    }
-
-    public UrlRewrite getUrlRewrite() {
-        return urlRewrite;
-    }
-
-    public void setUrlRewrite(UrlRewrite urlRewrite) {
-        this.urlRewrite = urlRewrite;
     }
 
     public boolean isClearExpiredCookies() {
         return clearExpiredCookies;
     }
 
+    /**
+     * Whether to clear expired cookies before sending the HTTP request.
+     * This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.
+     */
     public void setClearExpiredCookies(boolean clearExpiredCookies) {
         this.clearExpiredCookies = clearExpiredCookies;
     }
@@ -401,6 +243,12 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return cookieStore;
     }
 
+    /**
+     * To use a custom org.apache.http.client.CookieStore.
+     * By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store.
+     * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie
+     * shouldn't be stored as we are just bridging (eg acting as a proxy).
+     */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
     }
@@ -409,7 +257,11 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return authenticationPreemptive;
     }
 
+    /**
+     * If this option is true, camel-http4 sends preemptive basic authentication to the server.
+     */
     public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
         this.authenticationPreemptive = authenticationPreemptive;
     }
+
 }

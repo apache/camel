@@ -25,36 +25,39 @@ import org.apache.abdera.parser.ParseException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Consumer to poll atom feeds and return each entry from the feed step by step.
- *
- * @version 
  */
 public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     private Document<Feed> document;
 
     public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
         super(endpoint, processor, filter, lastUpdate, throttleEntries);
-    }   
-    
+    }
+
     private Document<Feed> getDocument() throws IOException, ParseException {
         if (document == null) {
-            document = AtomUtils.parseDocument(endpoint.getFeedUri());
+            if (ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
+                document = AtomUtils.parseDocument(endpoint.getFeedUri());
+            } else {
+                document = AtomUtils.parseDocument(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword());
+            }
             Feed root = document.getRoot();
             if (endpoint.isSortEntries()) {
                 sortEntries(root);
-            }             
-            list = root.getEntries();            
+            }
+            list = root.getEntries();
             entryIndex = list.size() - 1;
         }
         return document;
     }
-    
+
     protected void sortEntries(Feed feed) {
         feed.sortEntriesByUpdated(true);
     }
-    
+
     @Override
     protected void populateList(Object feed) throws ParseException, IOException {
         // list is populated already in the createFeed method
@@ -69,7 +72,7 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     protected void resetList() {
         document = null;
     }
-    
+
     @Override
     protected EntryFilter createEntryFilter(Date lastUpdate) {
         return new UpdatedDateFilter(lastUpdate);

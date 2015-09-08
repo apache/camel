@@ -44,6 +44,9 @@ public interface ManagedErrorHandlerMBean {
     @ManagedAttribute(description = "Endpoint Uri for the dead letter channel where dead message is move to", mask = true)
     String getDeadLetterChannelEndpointUri();
 
+    @ManagedAttribute(description = "Number of Exchanges scheduled for redelivery (waiting to be redelivered in the future)")
+    Integer getPendingRedeliveryCount();
+
     @ManagedAttribute(description = "RedeliveryPolicy for maximum redeliveries")
     Integer getMaximumRedeliveries();
 

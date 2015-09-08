@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.jayway.jsonpath.Option;
 import org.apache.camel.language.LanguageAnnotation;
 
 /**
@@ -34,7 +35,18 @@ import org.apache.camel.language.LanguageAnnotation;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
-@LanguageAnnotation(language = "jsonpath")
+@LanguageAnnotation(language = "jsonpath", factory = JsonPathAnnotationExpressionFactory.class)
 public @interface JsonPath {
+
     String value();
+
+    /**
+     * Whether to suppress exceptions such as PathNotFoundException
+     */
+    boolean suppressExceptions() default false;
+
+    /**
+     * To configure the json path options to use
+     */
+    Option[] options() default {};
 }

@@ -93,6 +93,15 @@ public class DefaultEventFactory implements EventFactory {
         return new ExchangeFailedEvent(exchange);
     }
 
+    public EventObject createExchangeFailureHandlingEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
+        // unwrap delegate processor
+        Processor handler = failureHandler;
+        if (handler instanceof DelegateProcessor) {
+            handler = ((DelegateProcessor) handler).getProcessor();
+        }
+        return new ExchangeFailureHandlingEvent(exchange, handler, deadLetterChannel, deadLetterUri);
+    }
+
     public EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler,
                                                          boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor

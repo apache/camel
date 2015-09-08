@@ -74,6 +74,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean usePersist;
     @UriParam(label = "producer")
     private boolean usePassedInEntityManager;
+    @UriParam(label = "producer")
+    private boolean remove;
 
     public JpaEndpoint() {
     }
@@ -288,6 +290,17 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setUsePersist(boolean usePersist) {
         this.usePersist = usePersist;
+    }
+
+    public boolean isRemove() {
+        return remove;
+    }
+
+    /**
+     * Indicates to use entityManager.remove(entity).
+     */
+    public void setRemove(boolean isRemove) {
+        this.remove = isRemove;
     }
 
     public boolean isJoinTransaction() {

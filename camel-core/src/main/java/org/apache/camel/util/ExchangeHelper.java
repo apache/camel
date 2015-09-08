@@ -231,7 +231,8 @@ public final class ExchangeHelper {
     public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId) {
         String id = exchange.getExchangeId();
 
-        Exchange copy = exchange.copy();
+        // make sure to do a safe copy as the correlated copy can be routed independently of the source.
+        Exchange copy = exchange.copy(true);
         // do not reuse message id on copy
         if (!useSameMessageId) {
             if (copy.hasOut()) {

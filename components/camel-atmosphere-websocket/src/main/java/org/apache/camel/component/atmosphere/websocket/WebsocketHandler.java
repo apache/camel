@@ -35,7 +35,7 @@ public class WebsocketHandler implements WebSocketProtocol {
 
     @Override
     public void configure(AtmosphereConfig config) {
-        // TODO Auto-generated method stub
+        // noop
     }
     
     @Override

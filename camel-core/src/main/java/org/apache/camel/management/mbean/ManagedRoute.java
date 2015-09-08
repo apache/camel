@@ -28,7 +28,6 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 import javax.management.Query;
 import javax.management.QueryExp;
@@ -64,8 +63,16 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         this.route = route;
         this.context = context;
         this.description = route.getDescription();
-        boolean enabled = context.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
+
+        exchangesInFlightKeys.clear();
+        exchangesInFlightStartTimestamps.clear();
     }
 
     public Route getRoute() {
@@ -416,16 +423,14 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
-    public void init(ManagementStrategy strategy) {
-        exchangesInFlightStartTimestamps.clear();
-        super.init(strategy);
-    }
-
-    @Override
     public synchronized void processExchange(Exchange exchange) {
         InFlightKey key = new InFlightKey(System.currentTimeMillis(), exchange.getExchangeId());
-        exchangesInFlightKeys.put(exchange.getExchangeId(), key);
-        exchangesInFlightStartTimestamps.put(key, key.timeStamp);
+        InFlightKey oldKey = exchangesInFlightKeys.putIfAbsent(exchange.getExchangeId(), key);
+        // we may already have the exchange being processed so only add to timestamp if its a new exchange
+        // for example when people call the same routes recursive
+        if (oldKey == null) {
+            exchangesInFlightStartTimestamps.put(key, key.timeStamp);
+        }
         super.processExchange(exchange);
     }
 

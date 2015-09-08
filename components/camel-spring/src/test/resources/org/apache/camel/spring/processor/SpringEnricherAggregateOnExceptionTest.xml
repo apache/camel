@@ -25,12 +25,16 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <enrich uri="direct:foo" strategyRef="myAggregator" aggregateOnException="true"/>
+      <enrich strategyRef="myAggregator" aggregateOnException="true">
+        <constant>direct:foo</constant>
+      </enrich>
       <to uri="mock:result"/>
     </route>
     <route>
       <from uri="direct:start2"/>
-      <enrich uri="direct:foo" strategyRef="myAggregator" aggregateOnException="false"/>
+      <enrich strategyRef="myAggregator" aggregateOnException="false">
+        <constant>direct:foo</constant>
+      </enrich>
       <to uri="mock:result"/>
     </route>
     <route>

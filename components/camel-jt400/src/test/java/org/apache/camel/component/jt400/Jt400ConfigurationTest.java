@@ -30,6 +30,11 @@ public class Jt400ConfigurationTest extends Jt400TestSupport {
     }
 
     @Test
+    public void testDefaultSecured() {
+        assertFalse(jt400Configuration.isSecured());
+    }
+
+    @Test
     public void testSystemName() {
         assertEquals("host", jt400Configuration.getSystemName());
     }

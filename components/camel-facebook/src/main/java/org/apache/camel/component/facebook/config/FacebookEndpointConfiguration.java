@@ -49,6 +49,7 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     @UriParam
     private GeoLocation center;
     @UriParam
+    @Deprecated
     private CheckinUpdate checkinUpdate;
     @UriParam
     private String checkinId;
@@ -163,6 +164,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return achievementURL;
     }
 
+    /**
+     * The unique URL of the achievement
+     */
     public void setAchievementURL(URL achievementURL) {
         this.achievementURL = achievementURL;
     }
@@ -171,6 +175,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return albumUpdate;
     }
 
+    /**
+     * The facebook Album to be created or updated
+     */
     public void setAlbumUpdate(AlbumUpdate albumUpdate) {
         this.albumUpdate = albumUpdate;
     }
@@ -179,6 +186,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return albumId;
     }
 
+    /**
+     * The album ID
+     */
     public void setAlbumId(String albumId) {
         this.albumId = albumId;
     }
@@ -187,6 +197,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return appId;
     }
 
+    /**
+     * The ID of the Facebook Application
+     */
     public void setAppId(String appId) {
         this.appId = appId;
     }
@@ -195,6 +208,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return center;
     }
 
+    /**
+     * Location latitude and longitude
+     */
     public void setCenter(GeoLocation center) {
         this.center = center;
     }
@@ -203,6 +219,11 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return checkinUpdate;
     }
 
+    /**
+     * The checkin to be created. Deprecated, instead create a Post with an attached location
+     * @deprecated instead create a Post with an attached location
+     */
+    @Deprecated
     public void setCheckinUpdate(CheckinUpdate checkinUpdate) {
         this.checkinUpdate = checkinUpdate;
     }
@@ -211,6 +232,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return checkinId;
     }
 
+    /**
+     * The checkin ID
+     */
     public void setCheckinId(String checkinId) {
         this.checkinId = checkinId;
     }
@@ -219,6 +243,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return commentId;
     }
 
+    /**
+     * The comment ID
+     */
     public void setCommentId(String commentId) {
         this.commentId = commentId;
     }
@@ -227,6 +254,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return description;
     }
 
+    /**
+     * The description text
+     */
     public void setDescription(String description) {
         this.description = description;
     }
@@ -235,6 +265,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return distance;
     }
 
+    /**
+     * Distance in meters
+     */
     public void setDistance(Integer distance) {
         this.distance = distance;
     }
@@ -243,6 +276,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return domainId;
     }
 
+    /**
+     * The domain ID
+     */
     public void setDomainId(String domainId) {
         this.domainId = domainId;
     }
@@ -251,6 +287,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return domainName;
     }
 
+    /**
+     * The domain name
+     */
     public void setDomainName(String domainName) {
         this.domainName = domainName;
     }
@@ -259,6 +298,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return domainNames;
     }
 
+    /**
+     * The domain names
+     */
     public void setDomainNames(List<String> domainNames) {
         this.domainNames = domainNames;
     }
@@ -267,6 +309,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return eventId;
     }
 
+    /**
+     * The event ID
+     */
     public void setEventId(String eventId) {
         this.eventId = eventId;
     }
@@ -275,6 +320,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return eventUpdate;
     }
 
+    /**
+     * The event to be created or updated
+     */
     public void setEventUpdate(EventUpdate eventUpdate) {
         this.eventUpdate = eventUpdate;
     }
@@ -283,6 +331,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return friendId;
     }
 
+    /**
+     * The friend ID
+     */
     public void setFriendId(String friendId) {
         this.friendId = friendId;
     }
@@ -291,6 +342,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return friendUserId;
     }
 
+    /**
+     * The friend user ID
+     */
     public void setFriendUserId(String friendUserId) {
         this.friendUserId = friendUserId;
     }
@@ -299,6 +353,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return friendlistId;
     }
 
+    /**
+     * The friend list ID
+     */
     public void setFriendlistId(String friendlistId) {
         this.friendlistId = friendlistId;
     }
@@ -307,6 +364,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return friendlistName;
     }
 
+    /**
+     * The friend list Name
+     */
     public void setFriendlistName(String friendlistName) {
         this.friendlistName = friendlistName;
     }
@@ -315,6 +375,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return groupId;
     }
 
+    /**
+     * The group ID
+     */
     public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
@@ -323,6 +386,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return ids;
     }
 
+    /**
+     * The ids of users
+     */
     public void setIds(List<String> ids) {
         this.ids = ids;
     }
@@ -331,6 +397,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return includeRead;
     }
 
+    /**
+     * Enables notifications that the user has already read in addition to unread ones
+     */
     public void setIncludeRead(Boolean includeRead) {
         this.includeRead = includeRead;
     }
@@ -339,6 +408,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return link;
     }
 
+    /**
+     * Link URL
+     */
     public void setLink(URL link) {
         this.link = link;
     }
@@ -347,6 +419,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return linkId;
     }
 
+    /**
+     * Link ID
+     */
     public void setLinkId(String linkId) {
         this.linkId = linkId;
     }
@@ -355,6 +430,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return locale;
     }
 
+    /**
+     * Desired FQL locale
+     */
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
@@ -363,6 +441,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return message;
     }
 
+    /**
+     * The message text
+     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -371,6 +452,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return messageId;
     }
 
+    /**
+     * The message ID
+     */
     public void setMessageId(String messageId) {
         this.messageId = messageId;
     }
@@ -379,6 +463,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return metric;
     }
 
+    /**
+     * The metric name
+     */
     public void setMetric(String metric) {
         this.metric = metric;
     }
@@ -387,6 +474,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return name;
     }
 
+    /**
+     * Test user name, must be of the form 'first last'
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -395,6 +485,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return noteId;
     }
 
+    /**
+     * The note ID
+     */
     public void setNoteId(String noteId) {
         this.noteId = noteId;
     }
@@ -403,6 +496,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return notificationId;
     }
 
+    /**
+     * The notification ID
+     */
     public void setNotificationId(String notificationId) {
         this.notificationId = notificationId;
     }
@@ -411,6 +507,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return objectId;
     }
 
+    /**
+     * The insight object ID
+     */
     public void setObjectId(String objectId) {
         this.objectId = objectId;
     }
@@ -419,6 +518,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return optionDescription;
     }
 
+    /**
+     * The question's answer option description
+     */
     public void setOptionDescription(String optionDescription) {
         this.optionDescription = optionDescription;
     }
@@ -427,6 +529,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return permissionName;
     }
 
+    /**
+     * The permission name
+     */
     public void setPermissionName(String permissionName) {
         this.permissionName = permissionName;
     }
@@ -435,6 +540,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return permissions;
     }
 
+    /**
+     * Test user permissions in the format perm1,perm2,...
+     */
     public void setPermissions(String permissions) {
         this.permissions = permissions;
     }
@@ -443,6 +551,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return photoId;
     }
 
+    /**
+     * The photo ID
+     */
     public void setPhotoId(String photoId) {
         this.photoId = photoId;
     }
@@ -451,6 +562,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return placeId;
     }
 
+    /**
+     * The place ID
+     */
     public void setPlaceId(String placeId) {
         this.placeId = placeId;
     }
@@ -459,6 +573,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return postId;
     }
 
+    /**
+     * The post ID
+     */
     public void setPostId(String postId) {
         this.postId = postId;
     }
@@ -467,6 +584,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return postUpdate;
     }
 
+    /**
+     * The post to create or update
+     */
     public void setPostUpdate(PostUpdate postUpdate) {
         this.postUpdate = postUpdate;
     }
@@ -475,6 +595,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return queries;
     }
 
+    /**
+     * FQL queries
+     */
     public void setQueries(Map<String, String> queries) {
         this.queries = queries;
     }
@@ -483,6 +606,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return query;
     }
 
+    /**
+     * FQL query or search terms for search* endpoints
+     */
     public void setQuery(String query) {
         this.query = query;
     }
@@ -491,6 +617,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return questionId;
     }
 
+    /**
+     * The question id
+     */
     public void setQuestionId(String questionId) {
         this.questionId = questionId;
     }
@@ -499,6 +628,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return reading;
     }
 
+    /**
+     * Optional reading parameters. See Reading Options(#reading)
+     */
     public void setReading(Reading reading) {
         this.reading = reading;
     }
@@ -507,6 +639,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return scoreValue;
     }
 
+    /**
+     * The numeric score with value
+     */
     public void setScoreValue(Integer scoreValue) {
         this.scoreValue = scoreValue;
     }
@@ -515,6 +650,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return size;
     }
 
+    /**
+     * The picture size, one of large, normal, small or square
+     */
     public void setSize(PictureSize size) {
         this.size = size;
     }
@@ -523,6 +661,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return source;
     }
 
+    /**
+     * The media content from either a java.io.File or java.io.Inputstream
+     */
     public void setSource(Media source) {
         this.source = source;
     }
@@ -531,6 +672,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return subject;
     }
 
+    /**
+     * The note of the subject
+     */
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -539,6 +683,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return tagUpdate;
     }
 
+    /**
+     * Photo tag information
+     */
     public void setTagUpdate(TagUpdate tagUpdate) {
         this.tagUpdate = tagUpdate;
     }
@@ -547,6 +694,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return testUser1;
     }
 
+    /**
+     * Test user 1
+     */
     public void setTestUser1(TestUser testUser1) {
         this.testUser1 = testUser1;
     }
@@ -555,6 +705,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return testUser2;
     }
 
+    /**
+     * Test user 2
+     */
     public void setTestUser2(TestUser testUser2) {
         this.testUser2 = testUser2;
     }
@@ -563,6 +716,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return testUserId;
     }
 
+    /**
+     * The ID of the test user
+     */
     public void setTestUserId(String testUserId) {
         this.testUserId = testUserId;
     }
@@ -571,6 +727,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return title;
     }
 
+    /**
+     * The title text
+     */
     public void setTitle(String title) {
         this.title = title;
     }
@@ -579,6 +738,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return toUserId;
     }
 
+    /**
+     * The ID of the user to tag
+     */
     public void setToUserId(String toUserId) {
         this.toUserId = toUserId;
     }
@@ -587,6 +749,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return toUserIds;
     }
 
+    /**
+     * The IDs of the users to tag
+     */
     public void setToUserIds(List<String> toUserIds) {
         this.toUserIds = toUserIds;
     }
@@ -595,6 +760,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return userId1;
     }
 
+    /**
+     * The ID of a user 1
+     */
     public void setUserId1(String userId1) {
         this.userId1 = userId1;
     }
@@ -603,6 +771,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return userId2;
     }
 
+    /**
+     * The ID of a user 2
+     */
     public void setUserId2(String userId2) {
         this.userId2 = userId2;
     }
@@ -611,6 +782,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return userId;
     }
 
+    /**
+     * The Facebook user ID
+     */
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -619,6 +793,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return userIds;
     }
 
+    /**
+     * The IDs of users to invite to event
+     */
     public void setUserIds(List<String> userIds) {
         this.userIds = userIds;
     }
@@ -627,6 +804,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return userLocale;
     }
 
+    /**
+     * The test user locale
+     */
     public void setUserLocale(String userLocale) {
         this.userLocale = userLocale;
     }
@@ -635,6 +815,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return videoId;
     }
 
+    /**
+     * The video ID
+     */
     public void setVideoId(String videoId) {
         this.videoId = videoId;
     }

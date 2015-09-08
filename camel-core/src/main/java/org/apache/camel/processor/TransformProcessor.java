@@ -30,7 +30,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A processor which sets the body on the OUT message with an {@link Expression}
+ * A processor which sets the body on the OUT message with an {@link Expression}.
  */
 public class TransformProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
     private String id;
@@ -48,6 +48,12 @@ public class TransformProcessor extends ServiceSupport implements AsyncProcessor
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Object newBody = expression.evaluate(exchange, Object.class);
+
+            if (exchange.getException() != null) {
+                // the expression threw an exception so we should break-out
+                callback.done(true);
+                return true;
+            }
 
             boolean out = exchange.hasOut();
             Message old = out ? exchange.getOut() : exchange.getIn();
@@ -73,7 +79,7 @@ public class TransformProcessor extends ServiceSupport implements AsyncProcessor
                 }
             }
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
         }
 

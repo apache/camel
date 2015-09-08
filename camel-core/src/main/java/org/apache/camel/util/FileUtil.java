@@ -191,6 +191,10 @@ public final class FileUtil {
     }
 
     public static String stripExt(String name) {
+        return stripExt(name, false);
+    }
+
+    public static String stripExt(String name, boolean singleMode) {
         if (name == null) {
             return null;
         }
@@ -202,12 +206,13 @@ public final class FileUtil {
 
         if (pos > 0) {
             String onlyName = name.substring(pos + 1);
-            int pos2 = onlyName.indexOf('.');
+            int pos2 = singleMode ? onlyName.lastIndexOf('.') : onlyName.indexOf('.');
             if (pos2 > 0) {
                 return name.substring(0, pos + pos2 + 1);
             }
         } else {
-            int pos2 = name.indexOf('.');
+            // if single ext mode, then only return last extension
+            int pos2 = singleMode ? name.lastIndexOf('.') : name.indexOf('.');
             if (pos2 > 0) {
                 return name.substring(0, pos2);
             }
@@ -217,13 +222,18 @@ public final class FileUtil {
     }
 
     public static String onlyExt(String name) {
+        return onlyExt(name, false);
+    }
+
+    public static String onlyExt(String name, boolean singleMode) {
         if (name == null) {
             return null;
         }
         name = stripPath(name);
 
         // extension is the first dot, as a file may have double extension such as .tar.gz
-        int pos = name.indexOf('.');
+        // if single ext mode, then only return last extension
+        int pos = singleMode ? name.lastIndexOf('.') : name.indexOf('.');
         if (pos != -1) {
             return name.substring(pos + 1);
         }
@@ -583,9 +593,15 @@ public final class FileUtil {
      * @throws IOException is thrown if error creating the new file
      */
     public static boolean createNewFile(File file) throws IOException {
+        // need to check first
+        if (file.exists()) {
+            return false;
+        }
         try {
             return file.createNewFile();
         } catch (IOException e) {
+            // and check again if the file was created as createNewFile may create the file
+            // but throw a permission error afterwards when using some NAS
             if (file.exists()) {
                 return true;
             } else {

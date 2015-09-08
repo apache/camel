@@ -44,6 +44,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.AggregationRepository;
@@ -51,6 +52,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultTimeoutMap;
@@ -81,7 +83,7 @@ import org.slf4j.LoggerFactory;
  * and older prices are discarded). Another idea is to combine line item messages
  * together into a single invoice message.
  */
-public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared, IdAware {
+public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
 
@@ -204,6 +206,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private AtomicInteger batchConsumerCounter = new AtomicInteger();
     private boolean discardOnCompletionTimeout;
     private boolean forceCompletionOnStop;
+    private boolean completeAllOnStop;
 
     private ProducerTemplate deadLetterProducerTemplate;
 
@@ -783,6 +786,26 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         timeoutMap.put(key, exchange.getExchangeId(), timeout);
     }
 
+    /**
+     * Current number of closed correlation keys in the memory cache
+     */
+    public int getClosedCorrelationKeysCacheSize() {
+        if (closedCorrelationKeys != null) {
+            return closedCorrelationKeys.size();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Clear all the closed correlation keys stored in the cache
+     */
+    public void clearClosedCorrelationKeysCache() {
+        if (closedCorrelationKeys != null) {
+            closedCorrelationKeys.clear();
+        }
+    }
+
     public AggregateProcessorStatistics getStatistics() {
         return statistics;
     }
@@ -871,6 +894,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         this.completionFromBatchConsumer = completionFromBatchConsumer;
     }
 
+    public boolean isCompleteAllOnStop() {
+        return completeAllOnStop;
+    }
+
     public ExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
@@ -913,6 +940,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     public void setForceCompletionOnStop(boolean forceCompletionOnStop) {
         this.forceCompletionOnStop = forceCompletionOnStop;
+    }
+
+    public void setCompleteAllOnStop(boolean completeAllOnStop) {
+        this.completeAllOnStop = completeAllOnStop;
     }
 
     public void setTimeoutCheckerExecutorService(ScheduledExecutorService timeoutCheckerExecutorService) {
@@ -1015,11 +1046,15 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         @Override
         public void purge() {
             // must acquire the shared aggregation lock to be able to purge
-            if (!optimisticLocking) { lock.lock(); }
+            if (!optimisticLocking) {
+                lock.lock();
+            }
             try {
                 super.purge();
             } finally {
-                if (!optimisticLocking) { lock.unlock(); }
+                if (!optimisticLocking) {
+                    lock.unlock();
+                }
             }
         }
 
@@ -1078,7 +1113,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
             if (keys != null && !keys.isEmpty()) {
                 // must acquire the shared aggregation lock to be able to trigger interval completion
-                if (!optimisticLocking) { lock.lock(); }
+                if (!optimisticLocking) {
+                    lock.lock();
+                }
                 try {
                     for (String key : keys) {
                         boolean stolenInterval = false;
@@ -1103,7 +1140,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                         }
                     }
                 } finally {
-                    if (!optimisticLocking) { lock.unlock(); }
+                    if (!optimisticLocking) {
+                        lock.unlock();
+                    }
                 }
             }
 
@@ -1352,6 +1391,23 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         }
     }
 
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // not in use
+        return true;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        if (completeAllOnStop) {
+            // we want to regard all pending exchanges in the repo as inflight
+            Set<String> keys = getAggregationRepository().getKeys();
+            return keys != null ? keys.size() : 0;
+        } else {
+            return 0;
+        }
+    }
+
     private void doForceCompletionOnStop() {
         int expected = forceCompletionOfAllGroups();
 
@@ -1395,7 +1451,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         // must acquire the shared aggregation lock to be able to trigger force completion
         int total = 0;
 
-        if (!optimisticLocking) { lock.lock(); }
+        if (!optimisticLocking) {
+            lock.lock();
+        }
         try {
             Exchange exchange = aggregationRepository.get(camelContext, key);
             if (exchange != null) {
@@ -1409,7 +1467,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 }
             }
         } finally {
-            if (!optimisticLocking) { lock.unlock(); }
+            if (!optimisticLocking) {
+                lock.unlock(); 
+            }
         }
         LOG.trace("Completed force completion of group {}", key);
 
@@ -1436,7 +1496,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         int total = 0;
         if (keys != null && !keys.isEmpty()) {
             // must acquire the shared aggregation lock to be able to trigger force completion
-            if (!optimisticLocking) { lock.lock(); }
+            if (!optimisticLocking) {
+                lock.lock(); 
+            }
             total = keys.size();
             try {
                 for (String key : keys) {
@@ -1452,7 +1514,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                     }
                 }
             } finally {
-                if (!optimisticLocking) { lock.unlock(); }
+                if (!optimisticLocking) {
+                    lock.unlock();
+                }
             }
         }
         LOG.trace("Completed force completion of all groups task");

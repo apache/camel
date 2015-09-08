@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -148,13 +147,34 @@ public final class URISupport {
      * @see #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri, boolean useRaw) throws URISyntaxException {
+        return parseQuery(uri, useRaw, false);
+    }
+
+    /**
+     * Parses the query part of the uri (eg the parameters).
+     * <p/>
+     * The URI parameters will by default be URI encoded. However you can define a parameter
+     * values with the syntax: <tt>key=RAW(value)</tt> which tells Camel to not encode the value,
+     * and use the value as is (eg key=value) and the value has <b>not</b> been encoded.
+     *
+     * @param uri the uri
+     * @param useRaw whether to force using raw values
+     * @param lenient whether to parse lenient and ignore trailing & markers which has no key or value which can happen when using HTTP components
+     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @throws URISyntaxException is thrown if uri has invalid syntax.
+     * @see #RAW_TOKEN_START
+     * @see #RAW_TOKEN_END
+     */
+    public static Map<String, Object> parseQuery(String uri, boolean useRaw, boolean lenient) throws URISyntaxException {
         // must check for trailing & as the uri.split("&") will ignore those
-        if (uri != null && uri.endsWith("&")) {
-            throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
-                    + "Check the uri and remove the trailing & marker.");
+        if (!lenient) {
+            if (uri != null && uri.endsWith("&")) {
+                throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
+                        + "Check the uri and remove the trailing & marker.");
+            }
         }
 
-        if (ObjectHelper.isEmpty(uri)) {
+        if (uri == null || ObjectHelper.isEmpty(uri)) {
             // return an empty map
             return new LinkedHashMap<String, Object>(0);
         }
@@ -452,8 +472,10 @@ public final class URISupport {
         if (value != null) {
             rc.append("=");
             if (value.startsWith(RAW_TOKEN_START) && value.endsWith(RAW_TOKEN_END)) {
-                // do not encode RAW parameters
-                rc.append(value);
+                // do not encode RAW parameters unless it has %
+                // need to replace % with %25 to avoid losing "%" when decoding
+                String s = StringHelper.replaceAll(value, "%", "%25");
+                rc.append(s);
             } else {
                 rc.append(URLEncoder.encode(value, CHARSET));
             }
@@ -509,7 +531,7 @@ public final class URISupport {
      */
     public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
 
-        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
+        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
         String path = u.getSchemeSpecificPart();
         String scheme = u.getScheme();
 

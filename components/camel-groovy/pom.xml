@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -30,15 +31,15 @@
   <description>Camel Groovy support</description>
 
   <properties>
-      <camel.osgi.import.pkg>
-          !org.apache.camel.component.groovy.*,
-          org.codehaus.groovy.runtime.callsite,
-          org.apache.camel.*;${camel.osgi.import.camel.version},
-          ${camel.osgi.import.defaults},
-          *
-      </camel.osgi.import.pkg>
-	  <camel.osgi.export.pkg>org.apache.camel.language.groovy.*,org.apache.camel.groovy.*</camel.osgi.export.pkg>
-	  <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=groovy</camel.osgi.export.service>
+    <camel.osgi.import.pkg>
+      !org.apache.camel.component.groovy.*,
+      org.codehaus.groovy.runtime.callsite,
+      org.apache.camel.*;${camel.osgi.import.camel.version},
+      ${camel.osgi.import.defaults},
+      *
+    </camel.osgi.import.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.language.groovy.*,org.apache.camel.groovy.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=groovy</camel.osgi.export.service>
   </properties>
 
   <dependencies>
@@ -57,7 +58,7 @@
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>      
+      <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -76,82 +77,82 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <pluginManagement>
-        <plugins>
-          <!-- Eclipse m2e Lifecycle Management -->
-          <plugin>
-            <groupId>org.eclipse.m2e</groupId>
-            <artifactId>lifecycle-mapping</artifactId>
-            <version>${lifecycle-mapping-version}</version>
-            <configuration>
-              <lifecycleMappingMetadata>
-                <pluginExecutions>
-                  <pluginExecution>
-                    <pluginExecutionFilter>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-compiler-plugin</artifactId>
-                      <versionRange>${maven-compiler-plugin-version}</versionRange>
-                      <goals>
-                        <goal>compile</goal>
-                        <goal>testCompile</goal>
-                      </goals>
-                    </pluginExecutionFilter>
-                    <action>
-                      <ignore />
-                    </action>
-                  </pluginExecution>
-                </pluginExecutions>
-              </lifecycleMappingMetadata>
-            </configuration>
-          </plugin>
-        </plugins>
+      <plugins>
+        <!-- Eclipse m2e Lifecycle Management -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>${lifecycle-mapping-version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <versionRange>${maven-compiler-plugin-version}</versionRange>
+                    <goals>
+                      <goal>compile</goal>
+                      <goal>testCompile</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
     </pluginManagement>
-	<plugins>
-	  <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-compiler-plugin</artifactId>
-	    <configuration>
-	      <compilerId>groovy-eclipse-compiler</compilerId>
-	      <!-- set verbose to be true if you want lots of uninteresting messages -->
-	      <!-- <verbose>true</verbose> -->
-	    </configuration>
-            <dependencies>
-              <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-eclipse-compiler</artifactId>
-                <version>2.7.0-01</version>
-                <exclusions>
-                  <exclusion>
-                    <groupId>org.codehaus.groovy</groupId>
-                    <artifactId>groovy-eclipse-batch</artifactId>
-                  </exclusion>
-                </exclusions>
-              </dependency>
-              <dependency>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerId>groovy-eclipse-compiler</compilerId>
+          <!-- set verbose to be true if you want lots of uninteresting messages -->
+          <!-- <verbose>true</verbose> -->
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-eclipse-compiler</artifactId>
+            <version>2.9.2-01</version>
+            <exclusions>
+              <exclusion>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-eclipse-batch</artifactId>
-                <version>2.1.8-01</version>
-              </dependency>
-            </dependencies>
-	  </plugin>
+              </exclusion>
+            </exclusions>
+          </dependency>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-eclipse-batch</artifactId>
+            <version>2.4.3-01</version>
+          </dependency>
+        </dependencies>
+      </plugin>
       <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <configuration>
-              <additionalProjectnatures>
-                  <projectnature>org.eclipse.jdt.groovy.core.groovyNature</projectnature>
-              </additionalProjectnatures>
-              <classpathContainers>
-                 <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
-                 <classpathContainer>GROOVY_DSL_SUPPORT</classpathContainer>
-              </classpathContainers>              
-          </configuration>
-      </plugin>	  
-	</plugins>
-	<!-- Need to explicitly specify test resources, otherwise maven eclipse plugin
-	     does not include src/test/groovy as source folder -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <additionalProjectnatures>
+            <projectnature>org.eclipse.jdt.groovy.core.groovyNature</projectnature>
+          </additionalProjectnatures>
+          <classpathContainers>
+            <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+            <classpathContainer>GROOVY_DSL_SUPPORT</classpathContainer>
+          </classpathContainers>
+        </configuration>
+      </plugin>
+    </plugins>
+    <!-- Need to explicitly specify test resources, otherwise maven eclipse plugin
+         does not include src/test/groovy as source folder -->
     <testResources>
       <testResource>
         <directory>src/test/groovy</directory>

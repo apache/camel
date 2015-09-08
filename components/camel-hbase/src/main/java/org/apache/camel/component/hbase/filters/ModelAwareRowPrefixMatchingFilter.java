@@ -24,7 +24,7 @@ import org.apache.hadoop.hbase.filter.PrefixFilter;
 /**
  * A {@link FilterList} that contains multiple {@link PrefixFilter}s one per column that is part of the model.
  */
-public class ModelAwareRowPrefixMatchingFilter extends FilterList implements ModelAwareFilter<FilterList> {
+public class ModelAwareRowPrefixMatchingFilter extends ModelAwareFilterList {
 
     /**
      * Writable constructor, do not use.

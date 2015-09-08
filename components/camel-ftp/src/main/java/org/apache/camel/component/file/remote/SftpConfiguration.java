@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 import java.security.KeyPair;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -43,7 +44,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     @UriParam
     private String privateKeyPassphrase;
     private KeyPair keyPair;
-    @UriParam(defaultValue = "no")
+    @UriParam(defaultValue = "no", enums = "no,yes")
     private String strictHostKeyChecking = "no";
     @UriParam
     private int serverAliveInterval;
@@ -59,6 +60,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private int compression;
     @UriParam
     private String preferredAuthentications;
+    @UriParam(defaultValue = "WARN")
+    private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -77,6 +80,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return knownHostsFile;
     }
 
+    /**
+     * Sets the known_hosts file, so that the SFTP endpoint can do host key verification.
+     */
     public void setKnownHostsFile(String knownHostsFile) {
         this.knownHostsFile = knownHostsFile;
     }
@@ -85,6 +91,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return knownHostsUri;
     }
 
+    /**
+     * Sets the known_hosts file (loaded from classpath by default), so that the SFTP endpoint can do host key verification.
+     */
     public void setKnownHostsUri(String knownHostsUri) {
         this.knownHostsUri = knownHostsUri;
     }
@@ -101,6 +110,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return privateKeyFile;
     }
 
+    /**
+     * Set the private key file to that the SFTP endpoint can do private key verification.
+     */
     public void setPrivateKeyFile(String privateKeyFile) {
         this.privateKeyFile = privateKeyFile;
     }
@@ -109,6 +121,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return privateKeyUri;
     }
 
+    /**
+     * Set the private key file (loaded from classpath by default) to that the SFTP endpoint can do private key verification.
+     */
     public void setPrivateKeyUri(String privateKeyUri) {
         this.privateKeyUri = privateKeyUri;
     }
@@ -117,6 +132,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return privateKey;
     }
 
+    /**
+     * Set the private key as byte[] to that the SFTP endpoint can do private key verification.
+     */
     public void setPrivateKey(byte[] privateKey) {
         this.privateKey = privateKey;
     }
@@ -125,6 +143,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return privateKeyPassphrase;
     }
 
+    /**
+     * Set the private key file passphrase to that the SFTP endpoint can do private key verification.
+     */
     public void setPrivateKeyPassphrase(String privateKeyFilePassphrase) {
         this.privateKeyPassphrase = privateKeyFilePassphrase;
     }
@@ -151,10 +172,16 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return strictHostKeyChecking;
     }
 
+    /**
+     * Sets whether to use strict host key checking.
+     */
     public void setStrictHostKeyChecking(String strictHostKeyChecking) {
         this.strictHostKeyChecking = strictHostKeyChecking;
     }
 
+    /**
+     * Allows you to set the serverAliveInterval of the sftp session
+     */
     public void setServerAliveInterval(int serverAliveInterval) {
         this.serverAliveInterval = serverAliveInterval;
     }
@@ -163,6 +190,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return serverAliveInterval;
     }
 
+    /**
+     * Allows you to set the serverAliveCountMax of the sftp session
+     */
     public void setServerAliveCountMax(int serverAliveCountMax) {
         this.serverAliveCountMax = serverAliveCountMax;
     }
@@ -171,6 +201,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return serverAliveCountMax;
     }
 
+    /**
+     * Allows you to set chmod on the stored file. For example chmod=640.
+     */
     public void setChmod(String chmod) {
         this.chmod = chmod;
     }
@@ -179,6 +212,11 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return chmod;
     }
 
+    /**
+     * Set a comma separated list of ciphers that will be used in order of preference.
+     * Possible cipher names are defined by JCraft JSCH. Some examples include: aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc.
+     * If not specified the default list from JSCH will be used.
+     */
     public void setCiphers(String ciphers) {
         this.ciphers = ciphers;
     }
@@ -191,15 +229,35 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return compression;
     }
 
+    /**
+     * To use compression. Specify a level from 1 to 10.
+     * Important: You must manually add the needed JSCH zlib JAR to the classpath for compression support.
+     */
     public void setCompression(int compression) {
         this.compression = compression;
     }
-    
+
+    /**
+     * Set the preferred authentications which SFTP endpoint will used. Some example include:password,publickey.
+     * If not specified the default list from JSCH will be used.
+     */
     public void setPreferredAuthentications(String pAuthentications) {
         this.preferredAuthentications = pAuthentications;
     }
     
     public String getPreferredAuthentications() {
         return preferredAuthentications;
+    }
+
+    public LoggingLevel getJschLoggingLevel() {
+        return jschLoggingLevel;
+    }
+
+    /**
+     * The logging level to use for JSCH activity logging.
+     * As JSCH is verbose at by default at INFO level the threshold is WARN by default.
+     */
+    public void setJschLoggingLevel(LoggingLevel jschLoggingLevel) {
+        this.jschLoggingLevel = jschLoggingLevel;
     }
 }

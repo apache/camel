@@ -21,11 +21,17 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
 
+    @ManagedAttribute(description = "The language for the expression")
+    String getCorrelationExpressionLanguage();
+
     @ManagedAttribute(description = "Correlation Expression")
     String getCorrelationExpression();
 
     @ManagedAttribute(description = "Completion timeout in millis")
     long getCompletionTimeout();
+
+    @ManagedAttribute(description = "The language for the expression")
+    String getCompletionTimeoutLanguage();
 
     @ManagedAttribute(description = "Completion timeout expression")
     String getCompletionTimeoutExpression();
@@ -36,6 +42,9 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Completion size")
     int getCompletionSize();
 
+    @ManagedAttribute(description = "The language for the expression")
+    String getCompletionSizeExpressionLanguage();
+
     @ManagedAttribute(description = "Completion size expression")
     String getCompletionSizeExpression();
 
@@ -45,7 +54,7 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Ignore invalid correlation keys")
     boolean isIgnoreInvalidCorrelationKeys();
 
-    @ManagedAttribute(description = "Whether to close the correlation group on completion")
+    @ManagedAttribute(description = "Whether to close the correlation group on completion if this value is > 0.")
     Integer getCloseCorrelationKeyOnCompletion();
 
     @ManagedAttribute(description = "Parallel mode")
@@ -57,6 +66,9 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Whether or not to eager check for completion when a new incoming Exchange has been received")
     boolean isEagerCheckCompletion();
 
+    @ManagedAttribute(description = "The language for the predicate")
+    String getCompletionPredicateLanguage();
+
     @ManagedAttribute(description = "A Predicate to indicate when an aggregated exchange is complete")
     String getCompletionPredicate();
 
@@ -65,6 +77,9 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Indicates to complete all current aggregated exchanges when the context is stopped")
     boolean isForceCompletionOnStop();
+
+    @ManagedAttribute(description = "Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped")
+    boolean isCompleteAllOnStop();
 
     @ManagedAttribute(description = "Number of completed exchanges which are currently in-flight")
     int getInProgressCompleteExchanges();
@@ -77,6 +92,12 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedOperation(description = "To force complete of all groups")
     int forceCompletionOfAllGroups();
+
+    @ManagedAttribute(description = "Current number of closed correlation keys in the memory cache")
+    int getClosedCorrelationKeysCacheSize();
+
+    @ManagedOperation(description = "Clear all the closed correlation keys stored in the cache")
+    void clearClosedCorrelationKeysCache();
 
     @ManagedAttribute(description = "Total number of exchanges arrived into the aggregator")
     long getTotalIn();
@@ -113,6 +134,5 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Sets whether statistics is enabled")
     void setStatisticsEnabled(boolean statisticsEnabled);
-
 
 }

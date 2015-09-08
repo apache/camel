@@ -49,6 +49,7 @@ public class AbstractCamelRunnerTest {
     @Test
     public void testDeepConfigure() throws Exception {
         ConcreteCamelRunner integration = new ConcreteCamelRunner();
+
         integration.activate(null, integration.getDefaultProperties());
         assertEquals("Overriding camelContextId failed (deep configure)", integration.getDefaultProperties().get("camelContextId"), integration.getContext().getName());
     }

@@ -25,7 +25,10 @@ public final class TwitterConstants {
 
     public static final String TWITTER_SEARCH_LANGUAGE = "CamelTwitterSearchLanguage";
     public static final String TWITTER_COUNT = "CamelTwitterCount";
-    public static final String TWITTER_NUMBER_OF_PAGES = "CamelTwitterNumberOfPages";
+    public static final String TWITTER_NUMBER_OF_PAGES = "CamelTwitterNumberOfPages";    
+    public static final String TWITTER_SINCEID = "CamelTwitterSinceId";
+    public static final String TWITTER_MAXID = "CamelTwitterMaxId";
+    public static final String TWITTER_USER = "CamelTwitterUser";
 
     private TwitterConstants() {
         // utility

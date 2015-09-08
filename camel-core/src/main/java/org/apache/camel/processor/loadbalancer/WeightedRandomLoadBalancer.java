@@ -26,7 +26,7 @@ public class WeightedRandomLoadBalancer extends WeightedLoadBalancer {
     private final Random rnd = new Random();
     private final int distributionRatioSum;
     private int runtimeRatioSum;
-    
+
     public WeightedRandomLoadBalancer(List<Integer> distributionRatioList) {
         super(distributionRatioList);
         int sum = 0;
@@ -39,8 +39,9 @@ public class WeightedRandomLoadBalancer extends WeightedLoadBalancer {
     
     @Override
     protected Processor chooseProcessor(List<Processor> processors, Exchange exchange) {        
-        int selectedProcessorIndex = selectProcessIndex();
-        return processors.get(selectedProcessorIndex);
+        int index = selectProcessIndex();
+        lastIndex = index;
+        return processors.get(index);
     }
     
     public int selectProcessIndex() {

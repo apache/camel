@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpMethods;
+import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
@@ -71,7 +72,6 @@ public class HttpHelperTest {
         String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", null),
                 createHttpEndpoint(false, "http://camel.apache.org"));
-
         assertEquals("http://apache.org", url);
     }
 
@@ -80,7 +80,6 @@ public class HttpHelperTest {
         String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", null),
                 createHttpEndpoint(true, "http://camel.apache.org"));
-
         assertEquals("http://camel.apache.org", url);
     }
 
@@ -89,7 +88,6 @@ public class HttpHelperTest {
         String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader(null, null),
                 createHttpEndpoint(false, "http://camel.apache.org"));
-
         assertEquals("http://camel.apache.org", url);
     }
 
@@ -98,7 +96,6 @@ public class HttpHelperTest {
         String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader(null, "search"),
                 createHttpEndpoint(true, "http://www.google.com"));
-
         assertEquals("http://www.google.com/search", url);
     }
 
@@ -107,58 +104,39 @@ public class HttpHelperTest {
         String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader(null, "/search"),
                 createHttpEndpoint(true, "http://www.google.com/"));
-
         assertEquals("http://www.google.com/search", url);
     }
 
     @Test
-    public void createMethodAlwaysUseUserChoosenMethod() throws URISyntaxException {
-        HttpMethods method = HttpHelper.createMethod(
-                createExchangeWithOptionalHttpQueryAndHttpMethodHeader("q=camel", HttpMethods.POST),
-                createHttpEndpoint(true, "http://www.google.com/search"),
-                false);
-
-        assertEquals(HttpMethods.POST, method);
+    public void createURIShouldKeepQueryParametersGivenInUrlParameter() throws URISyntaxException {
+        URI uri = HttpHelper.createURI(
+                createExchangeWithOptionalCamelHttpUriHeader(null, null),
+                "http://apache.org/?q=%E2%82%AC", createHttpEndpoint(false, "http://apache.org"));
+        assertEquals("http://apache.org/?q=%E2%82%AC", uri.toString());
     }
 
     @Test
-    public void createMethodUseGETIfQueryIsProvidedInHeader() throws URISyntaxException {
-        HttpMethods method = HttpHelper.createMethod(
-                createExchangeWithOptionalHttpQueryAndHttpMethodHeader("q=camel", null),
-                createHttpEndpoint(true, "http://www.google.com/search"),
-                false);
-
-        assertEquals(HttpMethods.GET, method);
+    public void createURIShouldEncodeExchangeHttpQuery() throws URISyntaxException {
+        URI uri = HttpHelper.createURI(
+                createExchangeWithOptionalHttpQueryAndHttpMethodHeader("q= ", null),
+                "http://apache.org/?q=%E2%82%AC", createHttpEndpoint(false, "http://apache.org"));
+        assertEquals("http://apache.org/?q=%20", uri.toString());
     }
 
     @Test
-    public void createMethodUseGETIfQueryIsProvidedInEndpointURI() throws URISyntaxException {
-        HttpMethods method = HttpHelper.createMethod(
+    public void createURIShouldNotDoubleEncodeExchangeHttpQuery() throws URISyntaxException {
+        URI uri = HttpHelper.createURI(
+                createExchangeWithOptionalHttpQueryAndHttpMethodHeader("q=%E2%82%AC", null),
+                "http://apache.org/?q=%E2%82%AC", createHttpEndpoint(false, "http://apache.org"));
+        assertEquals("http://apache.org/?q=%E2%82%AC", uri.toString());
+    }
+
+    @Test
+    public void createURIShouldKeepQueryParametersGivenInEndPointUri() throws URISyntaxException {
+        URI uri = HttpHelper.createURI(
                 createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null, null),
-                createHttpEndpoint(true, "http://www.google.com/search?q=test"),
-                false);
-
-        assertEquals(HttpMethods.GET, method);
-    }
-
-    @Test
-    public void createMethodUseGETIfNoneQueryOrPayloadIsProvided() throws URISyntaxException {
-        HttpMethods method = HttpHelper.createMethod(
-                createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null, null),
-                createHttpEndpoint(true, "http://www.google.com/search"),
-                false);
-
-        assertEquals(HttpMethods.GET, method);
-    }
-
-    @Test
-    public void createMethodUsePOSTIfNoneQueryButPayloadIsProvided() throws URISyntaxException {
-        HttpMethods method = HttpHelper.createMethod(
-                createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null, null),
-                createHttpEndpoint(true, "http://www.google.com/search"),
-                true);
-
-        assertEquals(HttpMethods.POST, method);
+                "http://apache.org/", createHttpEndpoint(false, "http://apache.org/?q=%E2%82%AC"));
+        assertEquals("http://apache.org/?q=%E2%82%AC", uri.toString());
     }
 
     private Exchange createExchangeWithOptionalHttpQueryAndHttpMethodHeader(String httpQuery, HttpMethods httpMethod) {

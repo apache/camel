@@ -44,7 +44,8 @@ public class HttpGetWithHeadersTest extends HttpGetTest {
         expectedText = "Szukaj";
         super.setUp();
     }
-    
+
+    @Override
     protected void checkHeaders(Map<String, Object> headers) {
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
         assertEquals("Should get the TestHeader", "test", headers.get("TestHeader"));

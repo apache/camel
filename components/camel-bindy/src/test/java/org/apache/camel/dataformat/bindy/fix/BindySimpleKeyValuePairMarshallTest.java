@@ -88,7 +88,7 @@ public class BindySimpleKeyValuePairMarshallTest extends AbstractJUnit4SpringCon
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyKeyValuePairDataFormat camelDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.simple");
+        BindyKeyValuePairDataFormat camelDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.simple.Order.class);
 
         public void configure() {
             from("direct:start").marshal(camelDataFormat).to("mock:result");

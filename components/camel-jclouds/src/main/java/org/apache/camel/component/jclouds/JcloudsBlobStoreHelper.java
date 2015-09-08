@@ -18,15 +18,18 @@ package org.apache.camel.component.jclouds;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
+
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
+
 import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
 
 public final class JcloudsBlobStoreHelper {
@@ -95,5 +98,52 @@ public final class JcloudsBlobStoreHelper {
             }
         }
         return is;
+    }
+    
+    /**
+     * Return the count of all the blobs in the container
+     */
+    public static long countBlob(BlobStore blobStore, String container) {
+        long blobsCount = blobStore.countBlobs(container);
+        return blobsCount;
+    }
+    
+
+    /**
+     * Remove a specific blob from a {@link BlobStore}
+     */
+    public static void removeBlob(BlobStore blobStore, String container, String blobName) throws IOException {
+        if (!Strings.isNullOrEmpty(blobName)) {
+            blobStore.removeBlob(container, blobName);            
+        }
+    }
+    
+    /**
+     * Clear a {@link BlobStore} specific container
+     */
+    public static void clearContainer(BlobStore blobStore, String container) throws IOException {
+        blobStore.clearContainer(container);           
+    }
+    
+    /**
+     * Delete a {@link BlobStore} specific container
+     */
+    public static void deleteContainer(BlobStore blobStore, String container) throws IOException {
+        blobStore.deleteContainer(container);
+    }
+    
+    /**
+     * Check if a {@link BlobStore} specific container exists or not
+     */
+    public static boolean containerExists(BlobStore blobStore, String container) throws IOException {
+        boolean result = blobStore.containerExists(container);
+        return result;
+    }
+    
+    /**
+     * Delete a list of {@link BlobStore} blob
+     */
+    public static void removeBlobs(BlobStore blobStore, String container, List blobNames) throws IOException {
+        blobStore.removeBlobs(container, blobNames);
     }
 }

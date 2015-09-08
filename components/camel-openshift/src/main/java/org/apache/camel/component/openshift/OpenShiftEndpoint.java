@@ -22,7 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -43,11 +42,13 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
     private String domain;
     @UriParam
     private String server;
-    @UriParam(enums = "list,start,stop,restart,state")
+    @UriParam(label = "producer", enums = "list,start,stop,restart,state,getStandaloneCartridge,getEmbeddedCartridges,addEmbeddedCartridge,removeEmbeddedCartridge,"
+            + "scaleUp,scaleDown,getGitUrl,getDeploymentType,setDeploymentType,getAllEnvironmentVariables,addEnvironmentVariable,addMultipleEnvironmentVariables,"
+            + "updateEnvironmentVariable,getEnvironmentVariableValue,removeEnvironmentVariable,getGearProfile,addAlias,removeAlias,getAliases")
     private String operation;
-    @UriParam
+    @UriParam(label = "producer")
     private String application;
-    @UriParam
+    @UriParam(label = "producer", enums = "pojo,json")
     private String mode;
 
     public OpenShiftEndpoint(String endpointUri, Component component) {
@@ -75,7 +76,7 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
     }
 
     public Exchange createExchange(IApplication application) {
-        Exchange exchange = new DefaultExchange(this);
+        Exchange exchange = super.createExchange();
         exchange.getIn().setBody(application);
         return exchange;
     }
@@ -89,6 +90,9 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
         return username;
     }
 
+    /**
+     * The username to login to openshift server.
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -97,6 +101,9 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
         return password;
     }
 
+    /**
+     * The password for login to openshift server.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -105,6 +112,9 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
         return clientId;
     }
 
+    /**
+     * The client id
+     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
@@ -113,6 +123,9 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
         return domain;
     }
 
+    /**
+     * Domain name. If not specified then the default domain is used.
+     */
     public void setDomain(String domain) {
         this.domain = domain;
     }
@@ -121,6 +134,11 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
         return server;
     }
 
+    /**
+     * Url to the openshift server.
+     * If not specified then the default value from the local openshift configuration file ~/.openshift/express.conf is used.
+     * And if that fails as well then "openshift.redhat.com" is used.
+     */
     public void setServer(String server) {
         this.server = server;
     }
@@ -129,6 +147,12 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
         return operation;
     }
 
+    /**
+     * The operation to perform which can be: list, start, stop, restart, and state.
+     * The list operation returns information about all the applications in json format.
+     * The state operation returns the state such as: started, stopped etc.
+     * The other operations does not return any value.
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -141,6 +165,9 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
         return application;
     }
 
+    /**
+     * The application name to start, stop, restart, or get the state.
+     */
     public void setApplication(String application) {
         this.application = application;
     }
@@ -149,6 +176,9 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
         return mode;
     }
 
+    /**
+     * Whether to output the message body as a pojo or json. For pojo the message is a List<com.openshift.client.IApplication> type.
+     */
     public void setMode(String mode) {
         this.mode = mode;
     }

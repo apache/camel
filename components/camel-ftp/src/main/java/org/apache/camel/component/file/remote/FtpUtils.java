@@ -20,12 +20,17 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Stack;
 
+import org.apache.camel.Component;
 import org.apache.camel.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Various FTP utils.
  */
 public final class FtpUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FtpUtils.class);
 
     private FtpUtils() {
     }
@@ -103,6 +108,26 @@ public final class FtpUtils {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Checks whether directory used in ftp/ftps/sftp endpoint URI is relative.
+     * Absolute path will be converted to relative path and a WARN will be printed.
+     * @see <a href="http://camel.apache.org/ftp2.html">FTP/SFTP/FTPS Component</a>
+     * @param ftpComponent
+     * @param configuration
+     */
+    public static void ensureRelativeFtpDirectory(Component ftpComponent, RemoteFileConfiguration configuration) {
+        if (FileUtil.hasLeadingSeparator(configuration.getDirectoryName())) {
+            String relativePath = FileUtil.stripLeadingSeparator(configuration.getDirectoryName());
+            LOG.warn(String.format("%s doesn't support absolute paths, \"%s\" will be converted to \"%s\". "
+                    + "After Camel 2.16, absolute paths will be invalid.",
+                    ftpComponent.getClass().getSimpleName(),
+                    configuration.getDirectoryName(),
+                    relativePath));
+            configuration.setDirectory(relativePath);
+            configuration.setDirectoryName(relativePath);
+        }
     }
 
 }

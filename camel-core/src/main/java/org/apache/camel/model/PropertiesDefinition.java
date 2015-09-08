@@ -50,9 +50,6 @@ public class PropertiesDefinition {
         return properties;
     }
     
-    /***
-     * @return A Map of the contained DataFormatType's indexed by id.
-     */
     public Map<String, String> asMap() {
         Map<String, String> propertiesAsMap = new HashMap<String, String>();
         for (PropertyDefinition propertyType : getProperties()) {

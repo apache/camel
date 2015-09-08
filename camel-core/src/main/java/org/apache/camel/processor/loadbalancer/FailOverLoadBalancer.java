@@ -43,10 +43,13 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     private final List<Class<?>> exceptions;
     private CamelContext camelContext;
     private boolean roundRobin;
+    private boolean sticky;
     private int maximumFailoverAttempts = -1;
 
-    // stateful counter
+    // stateful statistics
     private final AtomicInteger counter = new AtomicInteger(-1);
+    private final AtomicInteger lastGoodIndex = new AtomicInteger(-1);
+    private final ExceptionFailureStatistics statistics = new ExceptionFailureStatistics();
 
     public FailOverLoadBalancer() {
         this.exceptions = null;
@@ -61,6 +64,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
             }
         }
+
+        statistics.init(exceptions);
     }
 
     @Override
@@ -73,6 +78,10 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         this.camelContext = camelContext;
     }
 
+    public int getLastGoodIndex() {
+        return lastGoodIndex.get();
+    }
+
     public List<Class<?>> getExceptions() {
         return exceptions;
     }
@@ -83,6 +92,14 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
     public void setRoundRobin(boolean roundRobin) {
         this.roundRobin = roundRobin;
+    }
+
+    public boolean isSticky() {
+        return sticky;
+    }
+
+    public void setSticky(boolean sticky) {
+        this.sticky = sticky;
     }
 
     public int getMaximumFailoverAttempts() {
@@ -119,6 +136,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                     }
                 }
             }
+
+            if (answer) {
+                // record the failure in the statistics
+                statistics.onHandledFailure(exchange.getException());
+            }
         }
 
         log.trace("Should failover: {} for exchangeId: {}", answer, exchange.getExchangeId());
@@ -147,7 +169,13 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         Exchange copy = null;
 
         // get the next processor
-        if (isRoundRobin()) {
+        if (isSticky()) {
+            int idx = lastGoodIndex.get();
+            if (idx == -1) {
+                idx = 0;
+            }
+            index.set(idx);
+        } else if (isRoundRobin()) {
             if (counter.incrementAndGet() >= processors.size()) {
                 counter.set(0);
             }
@@ -213,6 +241,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
             log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
         }
+
+        // remember last good index
+        lastGoodIndex.set(index.get());
 
         // and copy the current result to original so it will contain this result of this eip
         if (copy != null) {
@@ -323,6 +354,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 }
             }
 
+            // remember last good index
+            lastGoodIndex.set(index.get());
+
             // and copy the current result to original so it will contain this result of this eip
             if (copy != null) {
                 ExchangeHelper.copyResults(exchange, copy);
@@ -330,7 +364,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             log.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
             // signal callback we are done
             callback.done(false);
-        };
+        }
     }
 
     public String toString() {
@@ -340,4 +374,30 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     public String getTraceLabel() {
         return "failover";
     }
+
+    public ExceptionFailureStatistics getExceptionFailureStatistics() {
+        return statistics;
+    }
+
+    public void reset() {
+        // reset state
+        lastGoodIndex.set(-1);
+        counter.set(-1);
+        statistics.reset();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // reset state
+        reset();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // noop
+    }
+
 }

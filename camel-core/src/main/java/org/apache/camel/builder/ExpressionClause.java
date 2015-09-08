@@ -304,11 +304,38 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * expression</a>
      *
      * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, boolean suppressExceptions) {
+        return delegate.jsonpath(text, suppressExceptions);
+    }
+
+    /**
+     * Evaluates a <a
+     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
      * @return the builder to continue processing the DSL
      */
     public T jsonpath(String text, Class<?> resultType) {
         return delegate.jsonpath(text, resultType);
+    }
+
+    /**
+     * Evaluates a <a
+     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param resultType the return type expected by the expression
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, boolean suppressExceptions, Class<?> resultType) {
+        return delegate.jsonpath(text, suppressExceptions, resultType);
     }
 
     /**

@@ -41,26 +41,25 @@ public class FacebookConfiguration implements Cloneable {
     private String oAuthAppSecret;
     @UriParam
     private String oAuthAccessToken;
-    @UriParam
+    @UriParam(defaultValue = "https://www.facebook.com/dialog/oauth")
     private String oAuthAuthorizationURL;
     @UriParam
     private String oAuthPermissions;
-
-    @UriParam
+    @UriParam(defaultValue = "https://graph.facebook.com/oauth/access_token")
     private String oAuthAccessTokenURL;
     @UriParam
     private String clientURL;
     @UriParam
     private String clientVersion;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean debugEnabled;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private Boolean gzipEnabled;
-    @UriParam
+    @UriParam(defaultValue = "20000")
     private Integer httpConnectionTimeout;
-    @UriParam
+    @UriParam(defaultValue = "2")
     private Integer httpDefaultMaxPerRoute;
-    @UriParam
+    @UriParam(defaultValue = "20")
     private Integer httpMaxTotalConnections;
     @UriParam
     private String httpProxyHost;
@@ -70,25 +69,25 @@ public class FacebookConfiguration implements Cloneable {
     private Integer httpProxyPort;
     @UriParam
     private String httpProxyUser;
-    @UriParam
+    @UriParam(defaultValue = "120000")
     private Integer httpReadTimeout;
-    @UriParam
+    @UriParam(defaultValue = "0")
     private Integer httpRetryCount;
-    @UriParam
+    @UriParam(defaultValue = "5")
     private Integer httpRetryIntervalSeconds;
-    @UriParam
+    @UriParam(defaultValue = "40000")
     private Integer httpStreamingReadTimeout;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean jsonStoreEnabled;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean mbeanEnabled;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean prettyDebugEnabled;
-    @UriParam
+    @UriParam(defaultValue = "https://graph.facebook.com/")
     private String restBaseURL;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private Boolean useSSL;
-    @UriParam
+    @UriParam(defaultValue = "https://graph-video.facebook.com/")
     private String videoBaseURL;
 
     // cached FaceBook instance, is created in getFacebook by endpoint producers and consumers
@@ -220,6 +219,9 @@ public class FacebookConfiguration implements Cloneable {
         return oAuthAccessToken;
     }
 
+    /**
+     * The user access token
+     */
     public void setOAuthAccessToken(String oAuthAccessToken) {
         this.oAuthAccessToken = oAuthAccessToken;
     }
@@ -228,6 +230,9 @@ public class FacebookConfiguration implements Cloneable {
         return oAuthAccessTokenURL;
     }
 
+    /**
+     * OAuth access token URL
+     */
     public void setOAuthAccessTokenURL(String oAuthAccessTokenURL) {
         this.oAuthAccessTokenURL = oAuthAccessTokenURL;
     }
@@ -236,6 +241,9 @@ public class FacebookConfiguration implements Cloneable {
         return oAuthAppId;
     }
 
+    /**
+     * The application Id
+     */
     public void setOAuthAppId(String oAuthAppId) {
         this.oAuthAppId = oAuthAppId;
     }
@@ -244,6 +252,9 @@ public class FacebookConfiguration implements Cloneable {
         return oAuthAppSecret;
     }
 
+    /**
+     * The application Secret
+     */
     public void setOAuthAppSecret(String oAuthAppSecret) {
         this.oAuthAppSecret = oAuthAppSecret;
     }
@@ -252,6 +263,9 @@ public class FacebookConfiguration implements Cloneable {
         return oAuthAuthorizationURL;
     }
 
+    /**
+     * OAuth authorization URL
+     */
     public void setOAuthAuthorizationURL(String oAuthAuthorizationURL) {
         this.oAuthAuthorizationURL = oAuthAuthorizationURL;
     }
@@ -260,6 +274,9 @@ public class FacebookConfiguration implements Cloneable {
         return clientURL;
     }
 
+    /**
+     * Facebook4J API client URL
+     */
     public void setClientURL(String clientURL) {
         this.clientURL = clientURL;
     }
@@ -268,6 +285,9 @@ public class FacebookConfiguration implements Cloneable {
         return clientVersion;
     }
 
+    /**
+     * Facebook4J client API version
+     */
     public void setClientVersion(String clientVersion) {
         this.clientVersion = clientVersion;
     }
@@ -276,6 +296,9 @@ public class FacebookConfiguration implements Cloneable {
         return debugEnabled;
     }
 
+    /**
+     * Enables deubg output. Effective only with the embedded logger
+     */
     public void setDebugEnabled(Boolean debugEnabled) {
         this.debugEnabled = debugEnabled;
     }
@@ -284,6 +307,9 @@ public class FacebookConfiguration implements Cloneable {
         return gzipEnabled;
     }
 
+    /**
+     * Use Facebook GZIP encoding
+     */
     public void setGzipEnabled(Boolean gzipEnabled) {
         this.gzipEnabled = gzipEnabled;
     }
@@ -292,6 +318,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpConnectionTimeout;
     }
 
+    /**
+     * Http connection timeout in milliseconds
+     */
     public void setHttpConnectionTimeout(Integer httpConnectionTimeout) {
         this.httpConnectionTimeout = httpConnectionTimeout;
     }
@@ -300,6 +329,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpDefaultMaxPerRoute;
     }
 
+    /**
+     * HTTP maximum connections per route
+     */
     public void setHttpDefaultMaxPerRoute(Integer httpDefaultMaxPerRoute) {
         this.httpDefaultMaxPerRoute = httpDefaultMaxPerRoute;
     }
@@ -308,6 +340,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpMaxTotalConnections;
     }
 
+    /**
+     * HTTP maximum total connections
+     */
     public void setHttpMaxTotalConnections(Integer httpMaxTotalConnections) {
         this.httpMaxTotalConnections = httpMaxTotalConnections;
     }
@@ -316,6 +351,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpProxyHost;
     }
 
+    /**
+     * HTTP proxy server host name
+     */
     public void setHttpProxyHost(String httpProxyHost) {
         this.httpProxyHost = httpProxyHost;
     }
@@ -324,6 +362,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpProxyPassword;
     }
 
+    /**
+     * HTTP proxy server password
+     */
     public void setHttpProxyPassword(String httpProxyPassword) {
         this.httpProxyPassword = httpProxyPassword;
     }
@@ -332,6 +373,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpProxyPort;
     }
 
+    /**
+     * HTTP proxy server port
+     */
     public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
@@ -340,6 +384,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpProxyUser;
     }
 
+    /**
+     * HTTP proxy server user name
+     */
     public void setHttpProxyUser(String httpProxyUser) {
         this.httpProxyUser = httpProxyUser;
     }
@@ -348,6 +395,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpReadTimeout;
     }
 
+    /**
+     * Http read timeout in milliseconds
+     */
     public void setHttpReadTimeout(Integer httpReadTimeout) {
         this.httpReadTimeout = httpReadTimeout;
     }
@@ -356,6 +406,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpRetryCount;
     }
 
+    /**
+     * Number of HTTP retries
+     */
     public void setHttpRetryCount(Integer httpRetryCount) {
         this.httpRetryCount = httpRetryCount;
     }
@@ -364,6 +417,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpRetryIntervalSeconds;
     }
 
+    /**
+     * HTTP retry interval in seconds
+     */
     public void setHttpRetryIntervalSeconds(Integer httpRetryIntervalSeconds) {
         this.httpRetryIntervalSeconds = httpRetryIntervalSeconds;
     }
@@ -372,6 +428,9 @@ public class FacebookConfiguration implements Cloneable {
         return httpStreamingReadTimeout;
     }
 
+    /**
+     * HTTP streaming read timeout in milliseconds
+     */
     public void setHttpStreamingReadTimeout(Integer httpStreamingReadTimeout) {
         this.httpStreamingReadTimeout = httpStreamingReadTimeout;
     }
@@ -380,6 +439,9 @@ public class FacebookConfiguration implements Cloneable {
         return jsonStoreEnabled;
     }
 
+    /**
+     * If set to true, raw JSON forms will be stored in DataObjectFactory
+     */
     public void setJsonStoreEnabled(Boolean jsonStoreEnabled) {
         this.jsonStoreEnabled = jsonStoreEnabled;
     }
@@ -388,6 +450,9 @@ public class FacebookConfiguration implements Cloneable {
         return mbeanEnabled;
     }
 
+    /**
+     * If set to true, Facebook4J mbean will be registerd
+     */
     public void setMbeanEnabled(Boolean mbeanEnabled) {
         this.mbeanEnabled = mbeanEnabled;
     }
@@ -396,6 +461,10 @@ public class FacebookConfiguration implements Cloneable {
         return oAuthPermissions;
     }
 
+    /**
+     * Default OAuth permissions. Comma separated permission names.
+     * See https://developers.facebook.com/docs/reference/login/#permissions for the detail
+     */
     public void setOAuthPermissions(String oAuthPermissions) {
         this.oAuthPermissions = oAuthPermissions;
     }
@@ -404,6 +473,9 @@ public class FacebookConfiguration implements Cloneable {
         return prettyDebugEnabled;
     }
 
+    /**
+     * Prettify JSON debug output if set to true
+     */
     public void setPrettyDebugEnabled(Boolean prettyDebugEnabled) {
         this.prettyDebugEnabled = prettyDebugEnabled;
     }
@@ -412,6 +484,9 @@ public class FacebookConfiguration implements Cloneable {
         return restBaseURL;
     }
 
+    /**
+     * API base URL
+     */
     public void setRestBaseURL(String restBaseURL) {
         this.restBaseURL = restBaseURL;
     }
@@ -420,6 +495,9 @@ public class FacebookConfiguration implements Cloneable {
         return useSSL;
     }
 
+    /**
+     * Use SSL
+     */
     public void setUseSSL(Boolean useSSL) {
         this.useSSL = useSSL;
     }
@@ -428,6 +506,9 @@ public class FacebookConfiguration implements Cloneable {
         return videoBaseURL;
     }
 
+    /**
+     * Video API base URL
+     */
     public void setVideoBaseURL(String videoBaseURL) {
         this.videoBaseURL = videoBaseURL;
     }

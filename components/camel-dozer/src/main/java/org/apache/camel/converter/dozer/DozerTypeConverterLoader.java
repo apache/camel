@@ -38,7 +38,6 @@ import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.classmap.ClassMap;
 import org.dozer.classmap.MappingFileData;
-import org.dozer.config.BeanContainer;
 import org.dozer.config.GlobalSettings;
 import org.dozer.loader.api.BeanMappingBuilder;
 import org.dozer.loader.xml.MappingFileReader;
@@ -104,28 +103,31 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
     public DozerTypeConverterLoader(CamelContext camelContext, DozerBeanMapperConfiguration configuration) {
         GlobalSettings settings = GlobalSettings.getInstance();
         try {
-            log.info("Configuring GlobalSettings to use Camel classloader: {}", CamelToDozerClassResolverAdapter.class.getName());
+            log.info("Configuring GlobalSettings to use Camel classloader: {}", DozerThreadContextClassLoader.class.getName());
             Field field = settings.getClass().getDeclaredField("classLoaderBeanName");
-            ReflectionHelper.setField(field, settings, CamelToDozerClassResolverAdapter.class.getName());
+            ReflectionHelper.setField(field, settings, DozerThreadContextClassLoader.class.getName());
         } catch (Exception e) {
             throw new IllegalStateException("Cannot configure Dozer GlobalSettings to use CamelToDozerClassResolverAdapter as classloader due " + e.getMessage(), e);
         }
 
-        // must set class loader before we create bean mapper
-        CamelToDozerClassResolverAdapter adapter = new CamelToDozerClassResolverAdapter(camelContext);
-        BeanContainer.getInstance().setClassLoader(adapter);
-
-        log.info("Using DozerBeanMapperConfiguration: {}", configuration);
-        DozerBeanMapper mapper = createDozerBeanMapper(configuration);
-
-        this.camelContext = camelContext;
-        this.mapper = mapper;
-        this.configuration = configuration;
-
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
+            ClassLoader appcl = camelContext.getApplicationContextClassLoader();
+            if (appcl != null) {
+                Thread.currentThread().setContextClassLoader(appcl);
+            }
+            log.info("Using DozerBeanMapperConfiguration: {}", configuration);
+            DozerBeanMapper mapper = createDozerBeanMapper(configuration);
+
+            this.camelContext = camelContext;
+            this.mapper = mapper;
+            this.configuration = configuration;
+
             camelContext.addService(this);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
         }
     }
 
@@ -164,61 +166,69 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
             this.mapper = mapper;
         }
 
-        CamelToDozerClassResolverAdapter adapter = new CamelToDozerClassResolverAdapter(camelContext);
-        BeanContainer.getInstance().setClassLoader(adapter);
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            ClassLoader appcl = camelContext.getApplicationContextClassLoader();
+            if (appcl != null) {
+                Thread.currentThread().setContextClassLoader(appcl);
+            }
 
-        Map<String, DozerBeanMapper> mappers = lookupDozerBeanMappers();
-        // only add if we do not already have it
-        if (mapper != null && !mappers.containsValue(mapper)) {
-            mappers.put("parameter", mapper);
-        }
+            Map<String, DozerBeanMapper> mappers = lookupDozerBeanMappers();
+            // only add if we do not already have it
+            if (mapper != null && !mappers.containsValue(mapper)) {
+                mappers.put("parameter", mapper);
+            }
 
-        // add any dozer bean mapper configurations
-        Map<String, DozerBeanMapperConfiguration> configurations = lookupDozerBeanMapperConfigurations();
-        if (configurations != null && configuration != null) {
-            // filter out existing configuration, as we do not want to use it twice
-            String key = null;
-            for (Map.Entry<String, DozerBeanMapperConfiguration> entry : configurations.entrySet()) {
-                if (entry.getValue() == configuration) {
-                    key = entry.getKey();
-                    break;
+            // add any dozer bean mapper configurations
+            Map<String, DozerBeanMapperConfiguration> configurations = lookupDozerBeanMapperConfigurations();
+            if (configurations != null && configuration != null) {
+                // filter out existing configuration, as we do not want to use it twice
+                String key = null;
+                for (Map.Entry<String, DozerBeanMapperConfiguration> entry : configurations.entrySet()) {
+                    if (entry.getValue() == configuration) {
+                        key = entry.getKey();
+                        break;
+                    }
+                }
+                if (key != null) {
+                    configurations.remove(key);
                 }
             }
-            if (key != null) {
-                configurations.remove(key);
-            }
-        }
 
-        if (configurations != null) {
-            if (configurations.size() > 1) {
-                log.warn("Loaded " + configurations.size() + " Dozer configurations from Camel registry."
+            if (configurations != null) {
+                if (configurations.size() > 1) {
+                    log.warn("Loaded " + configurations.size() + " Dozer configurations from Camel registry."
+                            + " Dozer is most efficient when there is a single mapper instance. Consider amalgamating instances.");
+                }
+                for (Map.Entry<String, DozerBeanMapperConfiguration> entry : configurations.entrySet()) {
+                    String id = entry.getKey();
+                    DozerBeanMapper beanMapper = createDozerBeanMapper(entry.getValue());
+                    // only add if we do not already have it
+                    if (!mappers.containsValue(beanMapper)) {
+                        mappers.put(id, beanMapper);
+                    }
+                }
+            }
+
+            if (mappers.size() > 1) {
+                log.warn("Loaded " + mappers.size() + " Dozer mappers from Camel registry."
                         + " Dozer is most efficient when there is a single mapper instance. Consider amalgamating instances.");
+            } else if (mappers.size() == 0) {
+                log.warn("No Dozer mappers found in Camel registry. You should add Dozer mappers as beans to the registry of the type: "
+                        + DozerBeanMapper.class.getName());
             }
-            for (Map.Entry<String, DozerBeanMapperConfiguration> entry : configurations.entrySet()) {
-                String id = entry.getKey();
-                DozerBeanMapper beanMapper = createDozerBeanMapper(entry.getValue());
-                // only add if we do not already have it
-                if (!mappers.containsValue(beanMapper)) {
-                    mappers.put(id, beanMapper);
-                }
+
+
+            TypeConverterRegistry registry = camelContext.getTypeConverterRegistry();
+            for (Map.Entry<String, DozerBeanMapper> entry : mappers.entrySet()) {
+                String mapperId = entry.getKey();
+                DozerBeanMapper dozer = entry.getValue();
+                List<ClassMap> all = loadMappings(camelContext, mapperId, dozer);
+                registerClassMaps(registry, mapperId, dozer, all);
             }
-        }
 
-        if (mappers.size() > 1) {
-            log.warn("Loaded " + mappers.size() + " Dozer mappers from Camel registry."
-                    + " Dozer is most efficient when there is a single mapper instance. Consider amalgamating instances.");
-        } else if (mappers.size() == 0) {
-            log.warn("No Dozer mappers found in Camel registry. You should add Dozer mappers as beans to the registry of the type: "
-                    + DozerBeanMapper.class.getName());
-        }
-
-
-        TypeConverterRegistry registry = camelContext.getTypeConverterRegistry();
-        for (Map.Entry<String, DozerBeanMapper> entry : mappers.entrySet()) {
-            String mapperId = entry.getKey();
-            DozerBeanMapper dozer = entry.getValue();
-            List<ClassMap> all = loadMappings(camelContext, mapperId, dozer);
-            registerClassMaps(registry, mapperId, dozer, all);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
         }
     }
 

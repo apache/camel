@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  * </ul>
  */
 @XmlType
-@XmlEnum(String.class)
+@XmlEnum
 public enum ShutdownRoute {
 
     Default, Defer

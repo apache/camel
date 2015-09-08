@@ -209,6 +209,18 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
+     * If enabled then processing each splitted messages occurs concurrently.
+     * Note the caller thread will still wait until all messages has been fully processed, before it continues.
+     * Its only processing the sub messages from the splitter which happens concurrently.
+     *
+     * @return the builder
+     */
+    public SplitDefinition parallelProcessing(boolean parallelProcessing) {
+        setParallelProcessing(parallelProcessing);
+        return this;
+    }
+
+    /**
      * If enabled then the aggregate method on AggregationStrategy can be called concurrently.
      * Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe.
      * By default this is false meaning that Camel synchronizes the call to the aggregate method.

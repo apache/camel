@@ -31,7 +31,7 @@ public class CMISEndpoint extends DefaultEndpoint {
 
     @UriParam
     private CMISSessionFacade sessionFacade;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean queryMode;
 
     public CMISEndpoint() {
@@ -67,6 +67,9 @@ public class CMISEndpoint extends DefaultEndpoint {
         return queryMode;
     }
 
+    /**
+     * If true, will execute the cmis query from the message body and return result, otherwise will create a node in the cmis repository
+     */
     public void setQueryMode(boolean queryMode) {
         this.queryMode = queryMode;
     }

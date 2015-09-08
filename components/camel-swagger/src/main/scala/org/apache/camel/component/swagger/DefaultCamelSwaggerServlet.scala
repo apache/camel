@@ -21,6 +21,7 @@ import javax.management.{MBeanServer, ObjectName}
 
 import org.apache.camel.model.ModelHelper
 import org.apache.camel.model.rest.{RestDefinition, RestsDefinition}
+import org.apache.camel.util.CamelVersionHelper
 
 import scala.collection.mutable
 
@@ -39,9 +40,16 @@ class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet {
     val names = server.queryNames(new ObjectName("*:type=context,*"), null)
     for (name <- names.asScala) {
       val on = name.asInstanceOf[ObjectName]
-      val id: String = on.getKeyProperty("name")
+      var id: String = on.getKeyProperty("name")
+      if (id.startsWith("\"") && id.endsWith("\"")) {
+         id = id.substring(1, id.length() - 1)
+      }
       if (camelId == null || camelId.equals(id)) {
-        found = on
+        // filter out older Camel versions as this requires Camel 2.15 or better
+        val version = server.getAttribute(on, "CamelVersion").asInstanceOf[String]
+        if (CamelVersionHelper.isGE("2.15.0", version)) {
+          found = on
+        }
       }
     }
 
@@ -59,6 +67,29 @@ class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet {
     }
 
     null
+  }
+
+  override def findCamelContexts(): List[String] = {
+    var answer = mutable.MutableList[String]()
+
+    val server: MBeanServer = ManagementFactory.getPlatformMBeanServer
+    val names = server.queryNames(new ObjectName("*:type=context,*"), null)
+    for (name <- names.asScala) {
+      val on = name.asInstanceOf[ObjectName]
+      var id: String = on.getKeyProperty("name")
+      if (id.startsWith("\"") && id.endsWith("\"")) {
+        id = id.substring(1, id.length() - 1)
+      }
+
+      if (id != null) {
+        // filter out older Camel versions as this requires Camel 2.15 or better
+        val version = server.getAttribute(on, "CamelVersion").asInstanceOf[String]
+        if (CamelVersionHelper.isGE("2.15.0", version)) {
+          answer += id
+        }
+      }
+    }
+    return answer.toList
   }
 
 }

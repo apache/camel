@@ -39,7 +39,6 @@ public class XsltComponent extends UriEndpointComponent {
     private URIResolver uriResolver;
     @Metadata(defaultValue = "true")
     private boolean contentCache = true;
-    @Metadata(defaultValue = "false")
     private boolean saxon;
 
     public XsltComponent() {

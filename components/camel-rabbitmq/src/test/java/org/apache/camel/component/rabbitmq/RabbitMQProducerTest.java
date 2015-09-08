@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Connection;
@@ -47,10 +48,11 @@ public class RabbitMQProducerTest {
     private Connection conn = Mockito.mock(Connection.class);
 
     @Before
-    public void before() throws IOException {
+    public void before() throws IOException, TimeoutException {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(null);
+        Mockito.when(endpoint.getMessageConverter()).thenReturn(new RabbitMQMessageConverter());
     }
 
     @Test

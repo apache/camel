@@ -35,19 +35,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarInputStream;
 
-import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;
-import de.kalpatec.pojosr.framework.launch.BundleDescriptor;
-import de.kalpatec.pojosr.framework.launch.ClasspathScanner;
-import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
-import de.kalpatec.pojosr.framework.launch.PojoServiceRegistryFactory;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.felix.connect.PojoServiceRegistryFactoryImpl;
+import org.apache.felix.connect.launch.BundleDescriptor;
+import org.apache.felix.connect.launch.ClasspathScanner;
+import org.apache.felix.connect.launch.PojoServiceRegistry;
+import org.apache.felix.connect.launch.PojoServiceRegistryFactory;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundles;
 import org.osgi.framework.Bundle;
@@ -58,6 +61,9 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.blueprint.container.BlueprintEvent;
+import org.osgi.service.blueprint.container.BlueprintListener;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.util.tracker.ServiceTracker;
@@ -103,7 +109,7 @@ public final class CamelBlueprintHelper {
     }
 
     public static BundleContext createBundleContext(String name, String bundleFilter, TinyBundle bundle) throws Exception {
-        // ensure pojosr stores bundles in an unique target directory
+        // ensure felix-connect stores bundles in an unique target directory
         String uid = "" + System.currentTimeMillis();
         String tempDir = "target/bundles/" + uid;
         System.setProperty("org.osgi.framework.storage", tempDir);
@@ -129,8 +135,8 @@ public final class CamelBlueprintHelper {
             }
         }
 
-        // setup pojosr to use our bundles
-        Map<String, List<BundleDescriptor>> config = new HashMap<String, List<BundleDescriptor>>();
+        // setup felix-connect to use our bundles
+        Map<String, Object> config = new HashMap<String, Object>();
         config.put(PojoServiceRegistryFactory.BUNDLE_DESCRIPTORS, bundles);
 
         // create pojorsr osgi service registry
@@ -169,7 +175,9 @@ public final class CamelBlueprintHelper {
     // pick up persistent file configuration
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void setPersistentFileForConfigAdmin(BundleContext bundleContext, String pid,
-                                                       String fileName, Dictionary props) throws IOException {
+                                                       String fileName, final Dictionary props,
+                                                       String symbolicName, Set<Long> bpEvents,
+                                                       boolean expectReload) throws IOException, InterruptedException {
         if (pid != null) {
             if (fileName == null) {
                 throw new IllegalArgumentException("The persistent file should not be null");
@@ -185,9 +193,25 @@ public final class CamelBlueprintHelper {
                     .getOsgiService(bundleContext, ConfigurationAdmin.class);
                 if (configAdmin != null) {
                     // ensure we update
-                    Configuration config = configAdmin.getConfiguration(pid);
+                    // we *have to* use "null" as 2nd arg to have correct bundle location for Configuration object
+                    final Configuration config = configAdmin.getConfiguration(pid, null);
                     LOG.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
-                    config.update(props);
+                    // we may have update and in consequence, BP container reload, let's wait for it to
+                    // be CREATED again
+                    if (expectReload) {
+                        CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, bundleContext, symbolicName, BlueprintEvent.CREATED, new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    config.update(props);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e.getMessage(), e);
+                                }
+                            }
+                        });
+                    } else {
+                        config.update(props);
+                    }
                 }
 
             }
@@ -225,6 +249,7 @@ public final class CamelBlueprintHelper {
             // Note that the tracker is not closed to keep the reference
             // This is buggy, as the service reference may change i think
             Object svc = tracker.waitForService(timeout);
+
             if (svc == null) {
                 Dictionary<?, ?> dic = bundleContext.getBundle().getHeaders();
                 LOG.warn("Test bundle headers: " + explode(dic));
@@ -245,6 +270,32 @@ public final class CamelBlueprintHelper {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Synchronization method to wait for particular state of BlueprintContainer under test.
+     */
+    public static void waitForBlueprintContainer(final Set<Long> eventHistory, BundleContext context,
+                                                 final String symbolicName, final int bpEvent, final Runnable runAndWait)
+        throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+        ServiceRegistration<BlueprintListener> registration = context.registerService(BlueprintListener.class, new BlueprintListener() {
+            @Override
+            public void blueprintEvent(BlueprintEvent event) {
+                if (event.getType() == bpEvent && event.getBundle().getSymbolicName().equals(symbolicName)) {
+                    // we skip events that we've already seen
+                    // it works with BP container reloads if next CREATE state is at least 1ms after previous one
+                    if (eventHistory == null || eventHistory.add(event.getTimestamp())) {
+                        latch.countDown();
+                    }
+                }
+            }
+        }, null);
+        if (runAndWait != null) {
+            runAndWait.run();
+        }
+        latch.await(CamelBlueprintHelper.DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+        registration.unregister();
     }
 
     protected static TinyBundle createTestBundle(String name, String version, String descriptors) throws FileNotFoundException, MalformedURLException {
@@ -384,7 +435,7 @@ public final class CamelBlueprintHelper {
 
             answer = new BundleDescriptor(
                     bundle.getClass().getClassLoader(),
-                    new URL("jar:" + file.toURI().toString() + "!/"),
+                    "jar:" + file.toURI().toString() + "!/",
                     headers);
         } finally {
             IOHelper.close(jis, fis);

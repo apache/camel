@@ -129,6 +129,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         prepared.set(true);
     }
 
+    /**
+     * Marks the route definition as un-prepared.
+     * <p/>
+     * This is needed if routes have been created by components such as
+     * <tt>camel-scala</tt>. To unset the prepare so the routes can be prepared
+     * at a later stage when scala has build the routes completely.
+     */
+    public void markUnprepared() {
+        prepared.set(false);
+    }
+
     @Override
     public String toString() {
         if (getId() != null) {
@@ -397,6 +408,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
+     * Enable stream caching for this route.
+     *
+     * @param streamCache whether to use stream caching (true or false), the value can be a property placeholder
+     * @return the builder
+     */
+    public RouteDefinition streamCaching(String streamCache) {
+        setStreamCache(streamCache);
+        return this;
+    }
+
+    /**
      * Disable tracing for this route.
      *
      * @return the builder
@@ -417,12 +439,34 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
+     * Enable tracing for this route.
+     *
+     * @param tracing whether to use tracing (true or false), the value can be a property placeholder
+     * @return the builder
+     */
+    public RouteDefinition tracing(String tracing) {
+        setTrace(tracing);
+        return this;
+    }
+
+    /**
      * Enable message history for this route.
      *
      * @return the builder
      */
     public RouteDefinition messageHistory() {
         setMessageHistory("true");
+        return this;
+    }
+
+    /**
+     * Enable message history for this route.
+     *
+     * @param messageHistory whether to use message history (true or false), the value can be a property placeholder
+     * @return the builder
+     */
+    public RouteDefinition messageHistory(String messageHistory) {
+        setMessageHistory(messageHistory);
         return this;
     }
 
@@ -503,7 +547,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Sets the auto startup property on this route.
      *
-     * @param autoStartup - String indicator ("true" or "false")
+     * @param autoStartup whether to auto startup (true or false), the value can be a property placeholder
      * @return the builder
      */
     public RouteDefinition autoStartup(String autoStartup) {

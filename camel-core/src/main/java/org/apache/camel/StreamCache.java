@@ -29,7 +29,7 @@ import java.io.OutputStream;
  * The Camel routing engine uses the {@link org.apache.camel.processor.CamelInternalProcessor.StreamCachingAdvice}
  * to apply the stream cache during routing.
  * <p/>
- * It is recommended in the {@link #copy()} method to let the copied stream start from the start. If the implementation
+ * It is recommended in the {@link #copy(Exchange)} method to let the copied stream start from the start. If the implementation
  * does not support copy, then return <tt>null</tt>.
  *
  * @version 
@@ -60,10 +60,12 @@ public interface StreamCache {
      * Implementations note: A copy of the stream is recommended to read from the start
      * of the stream.
      *
+     * @param exchange exchange in which the stream cache object is used; 
+     *                 can be used to delete resources of the stream cache when the exchange is completed
      * @return a copy, or <tt>null</tt> if copy is not possible
      * @throws java.io.IOException is thrown if the copy fails
      */
-    StreamCache copy() throws IOException;
+    StreamCache copy(Exchange exchange) throws IOException;
 
     /**
      * Whether this {@link StreamCache} is in memory only or

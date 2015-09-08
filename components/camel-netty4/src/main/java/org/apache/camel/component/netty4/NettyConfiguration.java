@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class NettyConfiguration extends NettyServerBootstrapConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
-    @UriParam
+    @UriParam(label = "producer")
     private long requestTimeout;
     @UriParam(defaultValue = "true")
     private boolean sync = true;
@@ -60,41 +60,41 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
     @UriParam
     private boolean disconnect;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean lazyChannelCreation = true;
     @UriParam
     private boolean transferExchange;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
-    @UriParam(defaultValue = "WARN")
+    @UriParam(label = "consumer", defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
-    @UriParam(defaultValue = "WARN")
+    @UriParam(label = "consumer", defaultValue = "WARN")
     private LoggingLevel serverExceptionCaughtLogLevel = LoggingLevel.WARN;
-    @UriParam(defaultValue = "DEBUG")
+    @UriParam(label = "consumer", defaultValue = "DEBUG")
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
     @UriParam(defaultValue = "true")
     private boolean allowDefaultCodec = true;
-    @UriParam
+    @UriParam(label = "producer")
     private ClientInitializerFactory clientInitializerFactory;
     @UriParam(defaultValue = "16")
     private int maximumPoolSize = 16;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean usingExecutorService = true;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "producer", defaultValue = "-1")
     private int producerPoolMaxActive = -1;
-    @UriParam
+    @UriParam(label = "producer")
     private int producerPoolMinIdle;
-    @UriParam(defaultValue = "100")
+    @UriParam(label = "producer", defaultValue = "100")
     private int producerPoolMaxIdle = 100;
-    @UriParam(defaultValue = "" + 5 * 60 * 1000L)
+    @UriParam(label = "producer", defaultValue = "" + 5 * 60 * 1000L)
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean producerPoolEnabled = true;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean udpConnectionlessSending;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean clientMode;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean useByteBuf;
     @UriParam
     private boolean udpByteArrayCodec;
@@ -252,6 +252,11 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return requestTimeout;
     }
 
+    /**
+     * Allows to use a timeout for the Netty producer when calling a remote server.
+     * By default no timeout is in use. The value is in milli seconds, so eg 30000 is 30 seconds.
+     * The requestTimeout is using Netty's ReadTimeoutHandler to trigger the timeout.
+     */
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
     }
@@ -260,6 +265,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return sync;
     }
 
+    /**
+     * Setting to set endpoint as one-way or request-response
+     */
     public void setSync(boolean sync) {
         this.sync = sync;
     }
@@ -268,6 +276,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return textline;
     }
 
+    /**
+     * Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec;
+     * if not specified or the value is false, then Object Serialization is assumed over TCP.
+     */
     public void setTextline(boolean textline) {
         this.textline = textline;
     }
@@ -276,6 +288,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return decoderMaxLineLength;
     }
 
+    /**
+     * The max line length to use for the textline codec.
+     */
     public void setDecoderMaxLineLength(int decoderMaxLineLength) {
         this.decoderMaxLineLength = decoderMaxLineLength;
     }
@@ -284,6 +299,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return delimiter;
     }
 
+    /**
+     * The delimiter to use for the textline codec. Possible values are LINE and NULL.
+     */
     public void setDelimiter(TextLineDelimiter delimiter) {
         this.delimiter = delimiter;
     }
@@ -292,6 +310,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return autoAppendDelimiter;
     }
 
+    /**
+     * Whether or not to auto append missing end delimiter when sending using the textline codec.
+     */
     public void setAutoAppendDelimiter(boolean autoAppendDelimiter) {
         this.autoAppendDelimiter = autoAppendDelimiter;
     }
@@ -300,6 +321,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return encoding;
     }
 
+    /**
+     * The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset.
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -308,6 +332,11 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return decoders;
     }
 
+    /**
+     * A list of decoders to be used.
+     * You can use a String which have values separated by comma, and have the values be looked up in the Registry.
+     * Just remember to prefix the value with # so Camel knows it should lookup.
+     */
     public void setDecoders(List<ChannelHandler> decoders) {
         this.decoders = decoders;
     }
@@ -316,6 +345,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return encoders;
     }
 
+    /**
+     * A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry.
+     * Just remember to prefix the value with # so Camel knows it should lookup.
+     */
     public void setEncoders(List<ChannelHandler> encoders) {
         this.encoders = encoders;
     }
@@ -324,6 +357,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return encoders.isEmpty() ? null : encoders.get(0);
     }
 
+    /**
+     * A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads.
+     */
     public void setEncoder(ChannelHandler encoder) {
         if (!encoders.contains(encoder)) {
             encoders.add(encoder);
@@ -334,6 +370,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return decoders.isEmpty() ? null : decoders.get(0);
     }
 
+    /**
+     * A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads.
+     */
     public void setDecoder(ChannelHandler decoder) {
         if (!decoders.contains(decoder)) {
             decoders.add(decoder);
@@ -344,6 +383,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return disconnect;
     }
 
+    /**
+     * Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer.
+     */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
     }
@@ -352,6 +394,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return lazyChannelCreation;
     }
 
+    /**
+     * Channels can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started.
+     */
     public void setLazyChannelCreation(boolean lazyChannelCreation) {
         this.lazyChannelCreation = lazyChannelCreation;
     }
@@ -360,6 +405,12 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return transferExchange;
     }
 
+    /**
+     * Only used for TCP. You can transfer the exchange over the wire instead of just the body.
+     * The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers,
+     * exchange properties, exchange exception.
+     * This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.
+     */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
     }
@@ -368,6 +419,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return disconnectOnNoReply;
     }
 
+    /**
+     * If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back.
+     */
     public void setDisconnectOnNoReply(boolean disconnectOnNoReply) {
         this.disconnectOnNoReply = disconnectOnNoReply;
     }
@@ -376,6 +430,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return noReplyLogLevel;
     }
 
+    /**
+     * If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back.
+     */
     public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
         this.noReplyLogLevel = noReplyLogLevel;
     }
@@ -384,6 +441,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return serverExceptionCaughtLogLevel;
     }
 
+    /**
+     * If the server (NettyConsumer) catches an exception then its logged using this logging level.
+     */
     public void setServerExceptionCaughtLogLevel(LoggingLevel serverExceptionCaughtLogLevel) {
         this.serverExceptionCaughtLogLevel = serverExceptionCaughtLogLevel;
     }
@@ -392,6 +452,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return serverClosedChannelExceptionCaughtLogLevel;
     }
 
+    /**
+     * If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level.
+     * This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server.
+     */
     public void setServerClosedChannelExceptionCaughtLogLevel(LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
         this.serverClosedChannelExceptionCaughtLogLevel = serverClosedChannelExceptionCaughtLogLevel;
     }
@@ -400,6 +464,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return allowDefaultCodec;
     }
 
+    /**
+     * The netty component installs a default codec if both, encoder/deocder is null and textline is false.
+     * Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain.
+     */
     public void setAllowDefaultCodec(boolean allowDefaultCodec) {
         this.allowDefaultCodec = allowDefaultCodec;
     }
@@ -424,6 +492,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return clientInitializerFactory;
     }
 
+    /**
+     * To use a custom ClientInitializerFactory
+     */
     public void setClientInitializerFactory(ClientInitializerFactory clientInitializerFactory) {
         this.clientInitializerFactory = clientInitializerFactory;
     }
@@ -432,6 +503,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return maximumPoolSize;
     }
 
+    /**
+     * The core pool size for the ordered thread pool, if its in use.
+     */
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
     }
@@ -440,6 +514,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return usingExecutorService;
     }
 
+    /**
+     * Whether to use ordered thread pool, to ensure events are processed orderly on the same channel.
+     */
     public void setUsingExecutorService(boolean usingExecutorService) {
         this.usingExecutorService = usingExecutorService;
     }
@@ -448,6 +525,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return producerPoolMaxActive;
     }
 
+    /**
+     * Sets the cap on the number of objects that can be allocated by the pool
+     * (checked out to clients, or idle awaiting checkout) at a given time. Use a negative value for no limit.
+     */
     public void setProducerPoolMaxActive(int producerPoolMaxActive) {
         this.producerPoolMaxActive = producerPoolMaxActive;
     }
@@ -456,6 +537,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return producerPoolMinIdle;
     }
 
+    /**
+     * Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects.
+     */
     public void setProducerPoolMinIdle(int producerPoolMinIdle) {
         this.producerPoolMinIdle = producerPoolMinIdle;
     }
@@ -464,6 +548,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return producerPoolMaxIdle;
     }
 
+    /**
+     * Sets the cap on the number of "idle" instances in the pool.
+     */
     public void setProducerPoolMaxIdle(int producerPoolMaxIdle) {
         this.producerPoolMaxIdle = producerPoolMaxIdle;
     }
@@ -472,6 +559,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return producerPoolMinEvictableIdle;
     }
 
+    /**
+     * Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor.
+     */
     public void setProducerPoolMinEvictableIdle(long producerPoolMinEvictableIdle) {
         this.producerPoolMinEvictableIdle = producerPoolMinEvictableIdle;
     }
@@ -480,6 +570,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return producerPoolEnabled;
     }
 
+    /**
+     * Whether producer pool is enabled or not.
+     * Important: Do not turn this off, as the pooling is needed for handling concurrency and reliable request/reply.
+     */
     public void setProducerPoolEnabled(boolean producerPoolEnabled) {
         this.producerPoolEnabled = producerPoolEnabled;
     }
@@ -488,6 +582,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return udpConnectionlessSending;
     }
 
+    /**
+     * This option supports connection less udp sending which is a real fire and forget.
+     * A connected udp send receive the PortUnreachableException if no one is listen on the receiving port.
+     */
     public void setUdpConnectionlessSending(boolean udpConnectionlessSending) {
         this.udpConnectionlessSending = udpConnectionlessSending;
     }
@@ -495,7 +593,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     public boolean isClientMode() {
         return clientMode;
     }
-    
+
+    /**
+     * If the clientMode is true, netty consumer will connect the address as a TCP client.
+     */
     public void setClientMode(boolean clientMode) {
         this.clientMode = clientMode;
     }
@@ -504,6 +605,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return useByteBuf;
     }
 
+    /**
+     * If the useByteBuf is true, netty producer will turn the message body into {@link ByteBuf} before sending it out.
+     */
     public void setUseByteBuf(boolean useByteBuf) {
         this.useByteBuf = useByteBuf;
     }
@@ -512,6 +616,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return udpByteArrayCodec;
     }
 
+    /**
+     * For UDP only. If enabled the using byte array codec instead of Java serialization protocol.
+     */
     public void setUdpByteArrayCodec(boolean udpByteArrayCodec) {
         this.udpByteArrayCodec = udpByteArrayCodec;
     }

@@ -50,6 +50,10 @@ public class ExchangePatternProcessor extends ServiceSupport implements AsyncPro
         this.id = id;
     }
 
+    public ExchangePattern getExchangePattern() {
+        return exchangePattern;
+    }
+
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }

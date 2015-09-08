@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
@@ -169,6 +171,22 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
 
     public int size() {
         return getDelegate().size();
+    }
+
+    public LoggingLevel getTypeConverterExistsLoggingLevel() {
+        return getDelegate().getTypeConverterExistsLoggingLevel();
+    }
+
+    public void setTypeConverterExistsLoggingLevel(LoggingLevel loggingLevel) {
+        getDelegate().setTypeConverterExistsLoggingLevel(loggingLevel);
+    }
+
+    public TypeConverterExists getTypeConverterExists() {
+        return getDelegate().getTypeConverterExists();
+    }
+
+    public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
+        getDelegate().setTypeConverterExists(typeConverterExists);
     }
 
     public synchronized DefaultTypeConverter getDelegate() {

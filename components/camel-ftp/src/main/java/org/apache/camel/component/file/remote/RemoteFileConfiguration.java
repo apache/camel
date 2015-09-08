@@ -58,8 +58,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int connectTimeout = 10000;
     @UriParam(defaultValue = "30000")
     private int timeout = 30000;
-    @UriParam
-    private int soTimeout;
+    @UriParam(defaultValue = "300000")
+    private int soTimeout = 300000;
     @UriParam(defaultValue = "32768")
     private int receiveBufferSize = 32 * 1024;
     @UriParam
@@ -76,6 +76,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private boolean useList = true;
     @UriParam
     private boolean ignoreFileNotFoundOrPermissionError;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean sendNoop = true;
 
     public RemoteFileConfiguration() {
     }
@@ -199,6 +201,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return binary;
     }
 
+    /**
+     * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII (false).
+     */
     public void setBinary(boolean binary) {
         this.binary = binary;
     }
@@ -370,6 +375,20 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public void setIgnoreFileNotFoundOrPermissionError(boolean ignoreFileNotFoundOrPermissionError) {
         this.ignoreFileNotFoundOrPermissionError = ignoreFileNotFoundOrPermissionError;
+    }
+
+    public boolean isSendNoop() {
+        return sendNoop;
+    }
+
+    /**
+     * Whether to send a noop command as a pre-write check before uploading files to the FTP server.
+     * <p/>
+     * This is enabled by default as a validation of the connection is still valid, which allows to silently
+     * re-connect to be able to upload the file. However if this causes problems, you can turn this option off.
+     */
+    public void setSendNoop(boolean sendNoop) {
+        this.sendNoop = sendNoop;
     }
 
     /**

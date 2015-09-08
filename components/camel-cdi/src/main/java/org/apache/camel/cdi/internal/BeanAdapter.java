@@ -74,14 +74,12 @@ public class BeanAdapter {
     /**
      * Perform injections
      */
-    public void inject(CamelExtension camelExtension, Object reference,
-                                String beanName) {
+    public void inject(CamelExtension camelExtension, Object reference, String beanName) {
         for (Method method : consumeMethods) {
             Consume annotation = method.getAnnotation(Consume.class);
             if (annotation != null) {
                 String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
-                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                        contextName);
+                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(contextName, null);
                 if (postProcessor != null) {
                     postProcessor.getPostProcessorHelper().consumerInjection(method, reference, beanName);
                 }
@@ -91,8 +89,7 @@ public class BeanAdapter {
             Produce annotation = method.getAnnotation(Produce.class);
             if (annotation != null) {
                 String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
-                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                        contextName);
+                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(contextName, null);
                 if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
                     postProcessor.setterInjection(method, reference, beanName, annotation.uri(), annotation.ref(),
                             annotation.property());
@@ -103,8 +100,7 @@ public class BeanAdapter {
             EndpointInject annotation = method.getAnnotation(EndpointInject.class);
             if (annotation != null) {
                 String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
-                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                        contextName);
+                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(contextName, null);
                 if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
                     postProcessor.setterInjection(method, reference, beanName, annotation.uri(), annotation.ref(),
                             annotation.property());
@@ -116,8 +112,7 @@ public class BeanAdapter {
             Produce annotation = field.getAnnotation(Produce.class);
             if (annotation != null) {
                 String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
-                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                        contextName);
+                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(contextName, null);
                 if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
                     postProcessor.injectField(field, annotation.uri(), annotation.ref(),
                             annotation.property(), reference, beanName);
@@ -127,8 +122,7 @@ public class BeanAdapter {
         for (Field field : endpointFields) {
             EndpointInject annotation = field.getAnnotation(EndpointInject.class);
             String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
-            DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                    contextName);
+            DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(contextName, null);
             if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
                 postProcessor.injectField(field, annotation.uri(), annotation.ref(),
                         annotation.property(), reference, beanName);

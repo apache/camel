@@ -187,7 +187,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(12, smppMessage.getHeaders().size());
+        assertEquals(13, smppMessage.getHeaders().size());
         assertEquals(1, smppMessage.getHeader(SmppConstants.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppConstants.COMMAND_ID));
         assertEquals("1818", smppMessage.getHeader(SmppConstants.SOURCE_ADDR));
@@ -220,7 +220,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(12, smppMessage.getHeaders().size());
+        assertEquals(13, smppMessage.getHeaders().size());
         assertEquals(1, smppMessage.getHeader(SmppConstants.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppConstants.COMMAND_ID));
         assertEquals("1818", smppMessage.getHeader(SmppConstants.SOURCE_ADDR));

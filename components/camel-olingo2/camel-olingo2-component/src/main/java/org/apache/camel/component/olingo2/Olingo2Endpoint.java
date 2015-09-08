@@ -30,6 +30,7 @@ import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.component.olingo2.internal.Olingo2Constants;
 import org.apache.camel.component.olingo2.internal.Olingo2PropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
@@ -37,7 +38,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a Olingo2 endpoint.
  */
-@UriEndpoint(scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName", consumerClass = Olingo2Consumer.class, consumerPrefix = "consumer")
+@UriEndpoint(scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName", consumerClass = Olingo2Consumer.class, label = "cloud")
 public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration> {
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";
@@ -51,13 +52,21 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
     private static final String DATA_PROPERTY = "data";
     private static final String DELETE_METHOD = "delete";
 
+    // unparsed variants
+    private static final String UREAD_METHOD = "uread";
+
     private final Set<String> endpointPropertyNames;
+
+    @UriParam
+    private Olingo2Configuration configuration;
 
     private Olingo2AppWrapper apiProxy;
 
     public Olingo2Endpoint(String uri, Olingo2Component component,
                            Olingo2ApiName apiName, String methodName, Olingo2Configuration endpointConfiguration) {
         super(uri, component, apiName, methodName, Olingo2ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+
+        this.configuration = endpointConfiguration;
 
         // get all endpoint property names
         endpointPropertyNames = new HashSet<String>(getPropertiesHelper().getValidEndpointProperties(configuration));
@@ -75,7 +84,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
             throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
         }
         // only read method is supported
-        if (!READ_METHOD.equals(methodName)) {
+        if (!READ_METHOD.equals(methodName) && !UREAD_METHOD.equals(methodName)) {
             throw new IllegalArgumentException("Only read method is supported for consumer endpoints");
         }
         final Olingo2Consumer consumer = new Olingo2Consumer(this, processor);
@@ -104,7 +113,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
     @Override
     protected void afterConfigureProperties() {
         // set default inBody
-        if (!(READ_METHOD.equals(methodName) || DELETE_METHOD.equals(methodName))
+        if (!(READ_METHOD.equals(methodName) || DELETE_METHOD.equals(methodName) || UREAD_METHOD.equals(methodName))
             && inBody == null) {
             inBody = DATA_PROPERTY;
         }

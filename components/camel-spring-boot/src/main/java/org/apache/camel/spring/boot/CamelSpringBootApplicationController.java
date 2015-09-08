@@ -19,6 +19,8 @@ package org.apache.camel.spring.boot;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
@@ -49,6 +51,11 @@ public class CamelSpringBootApplicationController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PreDestroy
+    private void destroy() {
+        mainSupport.completed();
     }
 
 }

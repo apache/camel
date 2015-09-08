@@ -321,6 +321,27 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             return ExpressionBuilder.outHeaderExpression(remainder);
         }
+        
+        // random
+        remainder = ifStartsWithReturnRemainder("random", function);
+        if (remainder != null) {
+            String values = ObjectHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = values.split(",", -1);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+                }
+                int min = Integer.parseInt(tokens[0]);
+                int max = Integer.parseInt(tokens[1]);
+                return ExpressionBuilder.randomExpression(min, max);
+            } else {
+                int max = Integer.parseInt(values);
+                return ExpressionBuilder.randomExpression(max);
+            }
+        }
 
         return null;
     }
@@ -360,14 +381,18 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.fileNameExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext")) {
             return ExpressionBuilder.fileNameNoExtensionExpression();
-        } else if (ObjectHelper.equal(remainder, "name.ext")) {
+        } else if (ObjectHelper.equal(remainder, "name.noext.single")) {
+            return ExpressionBuilder.fileNameNoExtensionSingleExpression();
+        } else if (ObjectHelper.equal(remainder, "name.ext") || ObjectHelper.equal(remainder, "ext")) {
             return ExpressionBuilder.fileExtensionExpression();
+        } else if (ObjectHelper.equal(remainder, "name.ext.single")) {
+            return ExpressionBuilder.fileExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname")) {
             return ExpressionBuilder.fileOnlyNameExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
             return ExpressionBuilder.fileOnlyNameNoExtensionExpression();
-        } else if (ObjectHelper.equal(remainder, "ext")) {
-            return ExpressionBuilder.fileExtensionExpression();
+        } else if (ObjectHelper.equal(remainder, "onlyname.noext.single")) {
+            return ExpressionBuilder.fileOnlyNameNoExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "parent")) {
             return ExpressionBuilder.fileParentExpression();
         } else if (ObjectHelper.equal(remainder, "path")) {

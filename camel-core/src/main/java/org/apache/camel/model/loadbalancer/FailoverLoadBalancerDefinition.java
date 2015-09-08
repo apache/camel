@@ -23,12 +23,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Failover load balancer
@@ -42,10 +44,14 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "failover")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
+    @XmlTransient
+    private List<Class<?>> exceptionTypes = new ArrayList<Class<?>>();
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlAttribute
     private Boolean roundRobin;
+    @XmlAttribute
+    private Boolean sticky;
     @XmlAttribute @Metadata(defaultValue = "-1")
     private Integer maximumFailoverAttempts;
 
@@ -56,18 +62,25 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         FailOverLoadBalancer answer;
 
-        if (!exceptions.isEmpty()) {
-            List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        if (!exceptionTypes.isEmpty()) {
+            classes.addAll(exceptionTypes);
+        } else if (!exceptions.isEmpty()) {
             for (String name : exceptions) {
                 Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(name);
                 if (type == null) {
                     throw new IllegalArgumentException("Cannot find class: " + name + " in the classpath");
                 }
+                if (!ObjectHelper.isAssignableFrom(Throwable.class, type)) {
+                    throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
+                }
                 classes.add(type);
             }
-            answer = new FailOverLoadBalancer(classes);
-        } else {
+        }
+        if (classes.isEmpty()) {
             answer = new FailOverLoadBalancer();
+        } else {
+            answer = new FailOverLoadBalancer(classes);
         }
 
         if (getMaximumFailoverAttempts() != null) {
@@ -75,6 +88,9 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         }
         if (roundRobin != null) {
             answer.setRoundRobin(roundRobin);
+        }
+        if (sticky != null) {
+            answer.setSticky(sticky);
         }
 
         return answer;
@@ -92,6 +108,18 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         this.exceptions = exceptions;
     }
 
+    public List<Class<?>> getExceptionTypes() {
+        return exceptionTypes;
+    }
+
+    /**
+     * A list of specific exceptions to monitor.
+     * If no exceptions is configured then all exceptions is monitored
+     */
+    public void setExceptionTypes(List<Class<?>> exceptionTypes) {
+        this.exceptionTypes = exceptionTypes;
+    }
+
     public Boolean getRoundRobin() {
         return roundRobin;
     }
@@ -101,10 +129,29 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
      * If not, then it will always start from the first endpoint when a new message is to be processed.
      * In other words it restart from the top for every message.
      * If round robin is enabled, then it keeps state and will continue with the next endpoint in a round robin fashion.
-     * When using round robin it will not stick to last known good endpoint, it will always pick the next endpoint to use.
+     * <p/>
+     * You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint
+     * to use when starting the load balancing (instead of using the next when starting).
      */
     public void setRoundRobin(Boolean roundRobin) {
         this.roundRobin = roundRobin;
+    }
+
+    public Boolean getSticky() {
+        return sticky;
+    }
+
+    /**
+     * Whether or not the failover load balancer should operate in sticky mode or not.
+     * If not, then it will always start from the first endpoint when a new message is to be processed.
+     * In other words it restart from the top for every message.
+     * If sticky is enabled, then it keeps state and will continue with the last known good endpoint.
+     * <p/>
+     * You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint
+     * to use when starting the load balancing (instead of using the next when starting).
+     */
+    public void setSticky(Boolean sticky) {
+        this.sticky = sticky;
     }
 
     public Integer getMaximumFailoverAttempts() {

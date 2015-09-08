@@ -32,9 +32,12 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -44,19 +47,42 @@ public class HttpConcurrentTest extends BaseHttpTest {
 
     private final AtomicInteger counter = new AtomicInteger();
 
+
+    private HttpServer localServer;
+    
+    @Before
     @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/", new HttpRequestHandler() {
-            public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-                response.setStatusCode(HttpStatus.SC_OK);
-                response.setEntity(new StringEntity("" + counter.incrementAndGet()));
-            }
-        });
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/", new HttpRequestHandler() {
+                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            // ignore
+                        }
+                        response.setStatusCode(HttpStatus.SC_OK);
+                        response.setEntity(new StringEntity("" + counter.incrementAndGet()));
+                    }
+                }).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
     }
 
     @Test
@@ -78,7 +104,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() throws Exception {
-                    return template.requestBody("http4://" + getHostName() + ":" + getPort(), null, String.class);
+                    return template.requestBody("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort(), null, String.class);
                 }
             });
             responses.put(index, out);

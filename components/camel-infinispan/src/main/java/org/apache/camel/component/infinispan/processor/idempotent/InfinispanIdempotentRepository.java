@@ -77,6 +77,12 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
     public boolean remove(Object key) {
         return getCache().remove(key) != null;
     }
+    
+    @Override
+    @ManagedOperation(description = "Clear the store")
+    public void clear() {
+        getCache().clear();      
+    }
 
     @ManagedAttribute(description = "The processor name")
     public String getCacheName() {

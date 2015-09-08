@@ -26,7 +26,7 @@ import org.apache.camel.support.ExpressionSupport;
  */
 class ClosureExpression extends ExpressionSupport {
 
-    private Closure<?> closure;
+    private final Closure<?> closure;
 
     ClosureExpression(Closure<?> closure) {
         this.closure = closure;

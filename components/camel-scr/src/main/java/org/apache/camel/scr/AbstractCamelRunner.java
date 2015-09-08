@@ -36,12 +36,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.SimpleRegistry;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.ReflectionHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -54,18 +54,14 @@ public abstract class AbstractCamelRunner implements Runnable {
     public static final String PROPERTY_PREFIX = "camel.scr.properties.prefix";
     
     protected Logger log = LoggerFactory.getLogger(getClass());
-    protected ModelCamelContext context;
+    protected CamelContext context;
     protected SimpleRegistry registry = new SimpleRegistry();
-
-    // Configured fields
-    private String camelContextId = "camel-runner-default";
-    private boolean active;   
+    protected boolean active;
 
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture starter;
     private volatile boolean activated;
     private volatile boolean started;
-
 
     public synchronized void activate(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
         if (activated) {
@@ -86,11 +82,11 @@ public abstract class AbstractCamelRunner implements Runnable {
         // Configure fields from properties
         configure(context, this, log, true);
 
-        setupCamelContext(bundleContext, camelContextId);
+        setupCamelContext(bundleContext);
     }
 
     protected void createCamelContext(final BundleContext bundleContext, final Map<String, String> props) {
-        if (null != bundleContext) {
+        if (bundleContext != null) {
             context = new OsgiDefaultCamelContext(bundleContext, registry);
             // Setup the application context classloader with the bundle classloader
             context.setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
@@ -100,11 +96,18 @@ public abstract class AbstractCamelRunner implements Runnable {
             context = new DefaultCamelContext(registry);
         }
         setupPropertiesComponent(context, props, log);
+
+        String name = props.remove("camelContextId");
+        if (name != null) {
+            context.setNameStrategy(new ExplicitCamelContextNameStrategy(name));
+        }
+
+        // ensure we publish this CamelContext to the OSGi service registry
+        context.getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
     }
     
-    protected void setupCamelContext(final BundleContext bundleContext, final String camelContextId) throws Exception {
+    protected void setupCamelContext(final BundleContext bundleContext) throws Exception {
         // Set up CamelContext
-        context.setNameStrategy(new ExplicitCamelContextNameStrategy(camelContextId));
         context.setUseMDCLogging(true);
         context.setUseBreadcrumb(true);
 
@@ -188,7 +191,6 @@ public abstract class AbstractCamelRunner implements Runnable {
         try {
             if (!active) {
                 context.setAutoStartup(false);
-                log.info(camelContextId + " autoStartup disabled (active property is false)");
             }
             context.start();
             started = true;
@@ -211,7 +213,7 @@ public abstract class AbstractCamelRunner implements Runnable {
         }
     }
     
-    public ModelCamelContext getContext() {
+    public CamelContext getContext() {
         return context;
     }
 

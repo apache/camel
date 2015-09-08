@@ -36,6 +36,7 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
     private static final Logger LOG = LoggerFactory.getLogger(FilterProcessor.class);
     private String id;
     private final Predicate predicate;
+    private transient long filtered;
 
     public FilterProcessor(Predicate predicate, Processor processor) {
         super(processor);
@@ -45,16 +46,12 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         boolean matches = false;
+
         try {
-            matches = predicate.matches(exchange);
-        } catch (Throwable e) {
+            matches = matches(exchange);
+        } catch (Exception e) {
             exchange.setException(e);
         }
-
-        LOG.debug("Filter matches: {} for exchange: {}", matches, exchange);
-
-        // set property whether the filter matches or not
-        exchange.setProperty(Exchange.FILTER_MATCHED, matches);
 
         if (matches) {
             return processor.process(exchange, callback);
@@ -62,6 +59,21 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
             callback.done(true);
             return true;
         }
+    }
+
+    public boolean matches(Exchange exchange) {
+        boolean matches = predicate.matches(exchange);
+
+        LOG.debug("Filter matches: {} for exchange: {}", matches, exchange);
+
+        // set property whether the filter matches or not
+        exchange.setProperty(Exchange.FILTER_MATCHED, matches);
+
+        if (matches) {
+            filtered++;
+        }
+
+        return matches;
     }
 
     @Override
@@ -85,9 +97,25 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         return predicate;
     }
 
+    /**
+     * Gets the number of Exchanges that matched the filter predicate and therefore as filtered.
+     */
+    public long getFilteredCount() {
+        return filtered;
+    }
+
+    /**
+     * Reset counters.
+     */
+    public void reset() {
+        filtered = 0;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        // restart counter
+        reset();
         ServiceHelper.startService(predicate);
     }
 

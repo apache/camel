@@ -26,6 +26,7 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServicePoolAware;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
@@ -41,10 +42,15 @@ import org.slf4j.LoggerFactory;
  */
 public class ConsumerCache extends ServiceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ConsumerCache.class);
+
     private final CamelContext camelContext;
     private final ServicePool<Endpoint, PollingConsumer> pool;
     private final Map<String, PollingConsumer> consumers;
     private final Object source;
+
+    private EndpointUtilizationStatistics statistics;
+    private boolean extendedStatistics;
+    private int maxCacheSize;
 
     public ConsumerCache(Object source, CamelContext camelContext) {
         this(source, camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
@@ -58,12 +64,32 @@ public class ConsumerCache extends ServiceSupport {
         this(source, camelContext, cache, camelContext.getPollingConsumerServicePool());
     }
 
-
     public ConsumerCache(Object source, CamelContext camelContext, Map<String, PollingConsumer> cache, ServicePool<Endpoint, PollingConsumer> pool) {
         this.camelContext = camelContext;
         this.consumers = cache;
         this.source = source;
         this.pool = pool;
+        if (consumers instanceof LRUCache) {
+            maxCacheSize = ((LRUCache) consumers).getMaxCacheSize();
+        }
+
+        // only if JMX is enabled
+        if (camelContext.getManagementStrategy().getManagementAgent() != null) {
+            this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+        } else {
+            this.extendedStatistics = false;
+        }
+    }
+
+    public boolean isExtendedStatistics() {
+        return extendedStatistics;
+    }
+
+    /**
+     * Whether extended JMX statistics is enabled for {@link org.apache.camel.spi.EndpointUtilizationStatistics}
+     */
+    public void setExtendedStatistics(boolean extendedStatistics) {
+        this.extendedStatistics = extendedStatistics;
     }
 
     /**
@@ -157,8 +183,15 @@ public class ConsumerCache extends ServiceSupport {
                 }
             }
         }
+
+        if (answer != null) {
+            // record statistics
+            if (extendedStatistics) {
+                statistics.onHit(key);
+            }
+        }
+
         return answer;
-        
     }
  
     public Exchange receive(Endpoint endpoint) {
@@ -296,6 +329,9 @@ public class ConsumerCache extends ServiceSupport {
             LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
             cache.resetStatistics();
         }
+        if (statistics != null) {
+            statistics.clear();
+        }
     }
 
     /**
@@ -303,6 +339,13 @@ public class ConsumerCache extends ServiceSupport {
      */
     public synchronized void purge() {
         consumers.clear();
+        if (statistics != null) {
+            statistics.clear();
+        }
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return statistics;
     }
 
     @Override
@@ -311,15 +354,29 @@ public class ConsumerCache extends ServiceSupport {
     }
 
     protected void doStart() throws Exception {
+        if (extendedStatistics) {
+            int max = maxCacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : maxCacheSize;
+            statistics = new DefaultEndpointUtilizationStatistics(max);
+        }
+
         ServiceHelper.startServices(consumers.values());
     }
 
     protected void doStop() throws Exception {
         // when stopping we intend to shutdown
-        ServiceHelper.stopAndShutdownServices(consumers.values());
+        ServiceHelper.stopAndShutdownServices(statistics, pool);
+        try {
+            ServiceHelper.stopAndShutdownServices(consumers.values());
+        } finally {
+            // ensure consumers are removed, and also from JMX
+            for (PollingConsumer consumer : consumers.values()) {
+                getCamelContext().removeService(consumer);
+            }
+        }
         consumers.clear();
-        // we need to stop the pool service here
-        ServiceHelper.stopService(pool);
+        if (statistics != null) {
+            statistics.clear();
+        }
     }
 
 }

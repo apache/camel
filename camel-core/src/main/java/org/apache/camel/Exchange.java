@@ -77,6 +77,7 @@ public interface Exchange {
     String AGGREGATED_TIMEOUT               = "CamelAggregatedTimeout";
     String AGGREGATED_COMPLETED_BY          = "CamelAggregatedCompletedBy";
     String AGGREGATED_CORRELATION_KEY       = "CamelAggregatedCorrelationKey";
+    String AGGREGATED_COLLECTION_GUARD      = "CamelAggregatedCollectionGuard";
     String AGGREGATION_STRATEGY             = "CamelAggregationStrategy";
     String AGGREGATION_COMPLETE_CURRENT_GROUP = "CamelAggregationCompleteCurrentGroup";
     String AGGREGATION_COMPLETE_ALL_GROUPS  = "CamelAggregationCompleteAllGroups";
@@ -93,12 +94,13 @@ public interface Exchange {
     // used across other Apache products such as AMQ, SMX etc.
     String BREADCRUMB_ID              = "breadcrumbId";
 
-    String CHARSET_NAME      = "CamelCharsetName";
-    String CREATED_TIMESTAMP = "CamelCreatedTimestamp";
-    String CONTENT_ENCODING  = "Content-Encoding";
-    String CONTENT_LENGTH    = "Content-Length";
-    String CONTENT_TYPE      = "Content-Type";
-    String CORRELATION_ID    = "CamelCorrelationId";
+    String CHARSET_NAME          = "CamelCharsetName";
+    String CIRCUIT_BREAKER_STATE = "CamelCircuitBreakerState";
+    String CREATED_TIMESTAMP     = "CamelCreatedTimestamp";
+    String CONTENT_ENCODING      = "Content-Encoding";
+    String CONTENT_LENGTH        = "Content-Length";
+    String CONTENT_TYPE          = "Content-Type";
+    String CORRELATION_ID        = "CamelCorrelationId";
 
     String DATASET_INDEX             = "CamelDataSetIndex";
     String DEFAULT_CHARSET_PROPERTY  = "org.apache.camel.default.charset";
@@ -117,7 +119,6 @@ public interface Exchange {
     String FAILURE_HANDLED      = "CamelFailureHandled";
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
     String FAILURE_ROUTE_ID     = "CamelFailureRouteId";
-    String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
     String FILE_CONTENT_TYPE    = "CamelFileContentType";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";
@@ -128,11 +129,12 @@ public interface Exchange {
     String FILE_PARENT          = "CamelFileParent";
     String FILE_LAST_MODIFIED   = "CamelFileLastModified";
     String FILE_LENGTH          = "CamelFileLength";
-    String FILTER_MATCHED       = "CamelFilterMatched";
     String FILE_LOCK_FILE_ACQUIRED = "CamelFileLockFileAcquired";
     String FILE_LOCK_FILE_NAME  = "CamelFileLockFileName";
     String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
     String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
+    String FILTER_MATCHED       = "CamelFilterMatched";
+    String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
     
@@ -144,6 +146,7 @@ public interface Exchange {
     String HTTP_QUERY              = "CamelHttpQuery";
     String HTTP_RAW_QUERY          = "CamelHttpRawQuery";
     String HTTP_RESPONSE_CODE      = "CamelHttpResponseCode";
+    String HTTP_RESPONSE_TEXT      = "CamelHttpResponseText";
     String HTTP_URI                = "CamelHttpUri";
     String HTTP_URL                = "CamelHttpUrl";
     String HTTP_CHUNKED            = "CamelHttpChunked";
@@ -476,8 +479,19 @@ public interface Exchange {
     /**
      * Creates a copy of the current message exchange so that it can be
      * forwarded to another destination
+     * <p/>
+     * Notice this operation invokes <tt>copy(false)</tt>
      */
     Exchange copy();
+
+    /**
+     * Creates a copy of the current message exchange so that it can be
+     * forwarded to another destination
+     *
+     * @param safeCopy whether to copy exchange properties and message headers safely to a new map instance,
+     *                 or allow sharing the same map instances in the returned copy.
+     */
+    Exchange copy(boolean safeCopy);
 
     /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint
@@ -559,6 +573,5 @@ public interface Exchange {
      * @return the on completions
      */
     List<Synchronization> handoverCompletions();
-    
 
 }

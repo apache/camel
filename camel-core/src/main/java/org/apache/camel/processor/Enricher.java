@@ -18,14 +18,19 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.EmptyProducerCache;
+import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -36,6 +41,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 
 /**
@@ -50,35 +56,29 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  *
  * @see PollEnricher
  */
-public class Enricher extends ServiceSupport implements AsyncProcessor, EndpointAware, IdAware {
+public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Enricher.class);
+    private CamelContext camelContext;
     private String id;
+    private ProducerCache producerCache;
+    private final Expression expression;
     private AggregationStrategy aggregationStrategy;
-    private Producer producer;
     private boolean aggregateOnException;
+    private boolean shareUnitOfWork;
+    private int cacheSize;
+    private boolean ignoreInvalidEndpoint;
 
-    /**
-     * Creates a new {@link Enricher}. The default aggregation strategy is to
-     * copy the additional data obtained from the enricher's resource over the
-     * input data. When using the copy aggregation strategy the enricher
-     * degenerates to a normal transformer.
-     * 
-     * @param producer producer to resource endpoint.
-     */
-    public Enricher(Producer producer) {
-        this(defaultAggregationStrategy(), producer);
+    public Enricher(Expression expression) {
+        this.expression = expression;
     }
 
-    /**
-     * Creates a new {@link Enricher}.
-     * 
-     * @param aggregationStrategy  aggregation strategy to aggregate input data and additional data.
-     * @param producer producer to resource endpoint.
-     */
-    public Enricher(AggregationStrategy aggregationStrategy, Producer producer) {
-        this.aggregationStrategy = aggregationStrategy;
-        this.producer = producer;
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public String getId() {
@@ -89,11 +89,14 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
         this.id = id;
     }
 
-    /**
-     * Sets the aggregation strategy for this enricher.
-     *
-     * @param aggregationStrategy the aggregationStrategy to set
-     */
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return producerCache.getEndpointUtilizationStatistics();
+    }
+
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
@@ -106,23 +109,32 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
         return aggregateOnException;
     }
 
-    /**
-     * Whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
-     * an exception was thrown.
-     */
     public void setAggregateOnException(boolean aggregateOnException) {
         this.aggregateOnException = aggregateOnException;
     }
 
-    /**
-     * Sets the default aggregation strategy for this enricher.
-     */
-    public void setDefaultAggregationStrategy() {
-        this.aggregationStrategy = defaultAggregationStrategy();
+    public boolean isShareUnitOfWork() {
+        return shareUnitOfWork;
     }
 
-    public Endpoint getEndpoint() {
-        return producer.getEndpoint();
+    public void setShareUnitOfWork(boolean shareUnitOfWork) {
+        this.shareUnitOfWork = shareUnitOfWork;
+    }
+
+    public int getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
+    public boolean isIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -142,9 +154,32 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
      * @param exchange input data.
      */
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        // which producer to use
+        final Producer producer;
+        final Endpoint endpoint;
+
+        // use dynamic endpoint so calculate the endpoint to use
+        Object recipient = null;
+        try {
+            recipient = expression.evaluate(exchange, Object.class);
+            endpoint = resolveEndpoint(exchange, recipient);
+            // acquire the consumer from the cache
+            producer = producerCache.acquireProducer(endpoint);
+        } catch (Throwable e) {
+            if (isIgnoreInvalidEndpoint()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                }
+            } else {
+                exchange.setException(e);
+            }
+            callback.done(true);
+            return true;
+        }
+
         final Exchange resourceExchange = createResourceExchange(exchange, ExchangePattern.InOut);
         final Endpoint destination = producer.getEndpoint();
-        
+
         EventHelper.notifyExchangeSending(exchange.getContext(), resourceExchange, destination);
         // record timing for sending the exchange using the producer
         final StopWatch watch = new StopWatch();
@@ -185,6 +220,13 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
 
                 // set property with the uri of the endpoint enriched so we can use that for tracing etc
                 exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
+
+                // return the producer back to the cache
+                try {
+                    producerCache.releaseProducer(endpoint, producer);
+                } catch (Exception e) {
+                    // ignore
+                }
 
                 callback.done(false);
             }
@@ -230,8 +272,23 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
         // set property with the uri of the endpoint enriched so we can use that for tracing etc
         exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
 
+        // return the producer back to the cache
+        try {
+            producerCache.releaseProducer(endpoint, producer);
+        } catch (Exception e) {
+            // ignore
+        }
+
         callback.done(true);
         return true;
+    }
+
+    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
+        // trim strings as end users might have added spaces between separators
+        if (recipient instanceof String) {
+            recipient = ((String)recipient).trim();
+        }
+        return ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 
     /**
@@ -247,6 +304,13 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
         // copy exchange, and do not share the unit of work
         Exchange target = ExchangeHelper.createCorrelatedCopy(source, false);
         target.setPattern(pattern);
+
+        // if we share unit of work, we need to prepare the resource exchange
+        if (isShareUnitOfWork()) {
+            target.setProperty(Exchange.PARENT_UNIT_OF_WORK, source.getUnitOfWork());
+            // and then share the unit of work
+            target.setUnitOfWork(source.getUnitOfWork());
+        }
         return target;
     }
 
@@ -262,15 +326,32 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
 
     @Override
     public String toString() {
-        return "Enrich[" + producer.getEndpoint() + "]";
+        return "Enrich[" + expression + "]";
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(aggregationStrategy, producer);
+        if (aggregationStrategy == null) {
+            aggregationStrategy = defaultAggregationStrategy();
+        }
+
+        if (producerCache == null) {
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                LOG.debug("Enricher {} is not using ProducerCache", this);
+            } else if (cacheSize == 0) {
+                producerCache = new ProducerCache(this, camelContext);
+                LOG.debug("Enricher {} using ProducerCache with default cache size", this);
+            } else {
+                producerCache = new ProducerCache(this, camelContext, cacheSize);
+                LOG.debug("Enricher {} using ProducerCache with cacheSize={}", this, cacheSize);
+            }
+        }
+
+        ServiceHelper.startServices(producerCache, aggregationStrategy);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(producer, aggregationStrategy);
+        ServiceHelper.stopServices(aggregationStrategy, producerCache);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {

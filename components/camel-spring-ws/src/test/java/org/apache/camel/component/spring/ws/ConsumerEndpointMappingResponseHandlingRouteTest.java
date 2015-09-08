@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.spring.ws;
 
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.URI;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.camel.component.spring.ws.utils.TestUtil;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
@@ -26,13 +33,6 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.version.Addressing10;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.URI;
 
 public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSpringTestSupport {
 

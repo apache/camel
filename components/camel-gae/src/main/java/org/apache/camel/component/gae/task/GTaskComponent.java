@@ -18,22 +18,17 @@ package org.apache.camel.component.gae.task;
 
 import java.net.URI;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.InboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBinding;
-import org.apache.camel.component.http.HttpClientConfigurer;
-import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.camel.http.common.HttpConsumer;
 
 /**
  * The <a href="http://camel.apache.org/gtask.html">Google App Engine Task
@@ -44,6 +39,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  * for installing a web hook.
  */
 public class GTaskComponent extends ServletComponent {
+
     public GTaskComponent() {
         super(GTaskEndpoint.class);
     }
@@ -51,33 +47,35 @@ public class GTaskComponent extends ServletComponent {
     @Override
     @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String workerRoot = getAndRemoveParameter(
-                parameters, "workerRoot", String.class, "worker");
+        String workerRoot = getAndRemoveParameter(parameters, "workerRoot", String.class, "worker");
+        String inboundBindingRef = (String) parameters.get("inboundBindingRef");
+        String outboundBindingRef = (String) parameters.get("outboundBindingRef");
+
         OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "outboundBindingRef", OutboundBinding.class, new GTaskBinding());
         InboundBinding<GTaskEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "inboundBindingRef", InboundBinding.class, new GTaskBinding());
+
         GTaskEndpointInfo info = new GTaskEndpointInfo(uri, remaining);
         GTaskEndpoint endpoint = (GTaskEndpoint)super.createEndpoint(
             info.getCanonicalUri(),
             info.getCanonicalUriPath(),
             parameters);
+
         endpoint.setServletName(getServletName());
         endpoint.setWorkerRoot(workerRoot);
         endpoint.setOutboundBinding(outboundBinding);
         endpoint.setInboundBinding(inboundBinding);
         endpoint.setQueueName(remaining);
         endpoint.setQueue(QueueFactory.getQueue(remaining));
+        endpoint.setInboundBindingRef(inboundBindingRef);
+        endpoint.setOutboundBindingRef(outboundBindingRef);
         return endpoint;
     }
 
     @Override
-    protected ServletEndpoint createServletEndpoint(String endpointUri,
-            ServletComponent component, URI httpUri, HttpClientParams params,
-            HttpConnectionManager httpConnectionManager,
-            HttpClientConfigurer clientConfigurer) throws Exception {
-        return new GTaskEndpoint(endpointUri, component, httpUri, params,
-                httpConnectionManager, clientConfigurer);
+    protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component, URI httpUri) throws Exception {
+        return new GTaskEndpoint(endpointUri, component, httpUri);
     }
 
     @Override

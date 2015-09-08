@@ -67,26 +67,39 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         super(camelContext, QuartzEndpoint.class);
     }
 
-    public int getStartDelayedSeconds() {
-        return startDelayedSeconds;
-    }
-
     public boolean isAutoStartScheduler() {
         return autoStartScheduler;
     }
 
-    public void setStartDelayedSeconds(int startDelayedSeconds) {
-        this.startDelayedSeconds = startDelayedSeconds;
-    }
-
+    /**
+     * Whether or not the scheduler should be auto started.
+     * <p/>
+     * This options is default true
+     */
     public void setAutoStartScheduler(boolean autoStartScheduler) {
         this.autoStartScheduler = autoStartScheduler;
+    }
+
+    public int getStartDelayedSeconds() {
+        return startDelayedSeconds;
+    }
+
+    /**
+     * Seconds to wait before starting the quartz scheduler.
+     */
+    public void setStartDelayedSeconds(int startDelayedSeconds) {
+        this.startDelayedSeconds = startDelayedSeconds;
     }
 
     public boolean isPrefixJobNameWithEndpointId() {
         return prefixJobNameWithEndpointId;
     }
 
+    /**
+     * Whether to prefix the quartz job with the endpoint id.
+     * <p/>
+     * This option is default false.
+     */
     public void setPrefixJobNameWithEndpointId(boolean prefixJobNameWithEndpointId) {
         this.prefixJobNameWithEndpointId = prefixJobNameWithEndpointId;
     }
@@ -95,6 +108,11 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return enableJmx;
     }
 
+    /**
+     * Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX.
+     * <p/>
+     * This options is default true
+     */
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
@@ -103,14 +121,20 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return properties;
     }
 
-    public String getPropertiesFile() {
-        return propertiesFile;
-    }
-
+    /**
+     * Properties to configure the Quartz scheduler.
+     */
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
 
+    public String getPropertiesFile() {
+        return propertiesFile;
+    }
+
+    /**
+     * File name of the properties to load from the classpath
+     */
     public void setPropertiesFile(String propertiesFile) {
         this.propertiesFile = propertiesFile;
     }
@@ -226,6 +250,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return answer;
     }
 
+    /**
+     * To use the custom SchedulerFactory which is used to create the Scheduler.
+     */
     public void setSchedulerFactory(SchedulerFactory schedulerFactory) {
         this.schedulerFactory = schedulerFactory;
     }
@@ -234,6 +261,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return scheduler;
     }
 
+    /**
+     * To use the custom configured Quartz scheduler, instead of creating a new Scheduler.
+     */
     public void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
     }
@@ -320,11 +350,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         LOG.info("Create and initializing scheduler.");
         scheduler = createScheduler();
 
-        // Store CamelContext into QuartzContext space
-        SchedulerContext quartzContext = scheduler.getContext();
-        String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
-        LOG.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
-        quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName, getCamelContext());
+        SchedulerContext quartzContext = storeCamelContextInQuartzContext();
 
         // Set camel job counts to zero. We needed this to prevent shutdown in case there are multiple Camel contexts
         // that has not completed yet, and the last one with job counts to zero will eventually shutdown.
@@ -333,6 +359,15 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             number = new AtomicInteger(0);
             quartzContext.put(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT, number);
         }
+    }
+
+    private SchedulerContext storeCamelContextInQuartzContext() throws SchedulerException {
+        // Store CamelContext into QuartzContext space
+        SchedulerContext quartzContext = scheduler.getContext();
+        String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
+        LOG.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
+        quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName, getCamelContext());
+        return quartzContext;
     }
 
     private Scheduler createScheduler() throws SchedulerException {
@@ -361,8 +396,12 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         // to create and init the scheduler first.
         if (scheduler == null) {
             createAndInitScheduler();
+        } else {
+            // in case custom scheduler was injected (i.e. created elsewhere), we may need to add 
+            // current camel context to quartz context so jobs have access
+            storeCamelContextInQuartzContext();
         }
-
+        
         // Now scheduler is ready, let see how we should start it.
         if (!autoStartScheduler) {
             LOG.info("Not starting scheduler because autoStartScheduler is set to false.");

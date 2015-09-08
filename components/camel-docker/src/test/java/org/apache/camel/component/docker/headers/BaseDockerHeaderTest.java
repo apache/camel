@@ -101,8 +101,20 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         return "https://index.docker.io/v1/";
     }
 
+    public boolean isSecure() {
+        return false;
+    }
+
     public T getMockObject() {
         return mockObject;
+    }
+    
+    public boolean getLoggingFilter() {
+        return false;
+    }
+    
+    public boolean getFollowRedirectFilter() {
+        return false;
     }
 
     protected Map<String, Object> getDefaultParameters() {
@@ -113,6 +125,8 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         parameters.put(DockerConstants.DOCKER_SERVER_ADDRESS, getServerAddress());
         parameters.put(DockerConstants.DOCKER_MAX_PER_ROUTE_CONNECTIONS, getMaxPerRouteConnections());
         parameters.put(DockerConstants.DOCKER_MAX_TOTAL_CONNECTIONS, getMaxTotalConnections());
+        parameters.put(DockerConstants.DOCKER_LOGGING_FILTER, getLoggingFilter());
+        parameters.put(DockerConstants.DOCKER_FOLLOW_REDIRECT_FILTER, getFollowRedirectFilter());
 
         return parameters;
     }
@@ -125,7 +139,9 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         clientProfile.setServerAddress(getServerAddress());
         clientProfile.setMaxPerRouteConnections(getMaxPerRouteConnections());
         clientProfile.setMaxTotalConnections(getMaxTotalConnections());
-
+        clientProfile.setLoggingFilter(getLoggingFilter());
+        clientProfile.setFollowRedirectFilter(getFollowRedirectFilter());
+        clientProfile.setSecure(isSecure());
         return clientProfile;
 
     }

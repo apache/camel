@@ -259,6 +259,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
         factory2.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
         factory2.addDependsOn(propertiesComponentResolver.getId());
+        // We need to add other components which the camel context dependsOn
+        if (ObjectHelper.isNotEmpty(ccfb.getDependsOn())) {
+            factory2.addDependsOn(ccfb.getDependsOn());
+        }
         context.getComponentDefinitionRegistry().registerComponentDefinition(factory2);
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);

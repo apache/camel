@@ -60,11 +60,18 @@ public class CamelContextBean implements Bean<CdiCamelContext> {
 
     @Override
     public CdiCamelContext create(CreationalContext<CdiCamelContext> context) {
+        // create CdiCamelContext and set its name
         CdiCamelContext camelContext = target.produce(context);
         if (ObjectHelper.isNotEmpty(camelContextName)) {
             camelContext.setName(camelContextName);
         }
+
+        // then do dependency injection
+        target.inject(camelContext, context);
+
+        // and post construct which will start Camel
         target.postConstruct(camelContext);
+
         context.push(camelContext);
         return camelContext;
     }

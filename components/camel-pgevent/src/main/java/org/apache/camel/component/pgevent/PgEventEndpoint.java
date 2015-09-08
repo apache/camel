@@ -56,7 +56,6 @@ public class PgEventEndpoint extends DefaultEndpoint {
     private String database;
     @UriPath @Metadata(required = "true")
     private String channel;
-
     @UriParam(defaultValue = "postgres")
     private String user = "postgres";
     @UriParam
@@ -162,6 +161,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         validateInputs();
         PgEventConsumer consumer = new PgEventConsumer(this, processor);
+        configureConsumer(consumer);
         return consumer;
     }
 
@@ -170,99 +170,78 @@ public class PgEventEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    /**
-     * @return the host
-     */
     public String getHost() {
         return host;
     }
 
     /**
-     * @param host the host to set
+     * To connect using hostname and port to the database.
      */
     public void setHost(String host) {
         this.host = host;
     }
 
-    /**
-     * @return the port
-     */
     public Integer getPort() {
         return port;
     }
 
     /**
-     * @param port the port to set
+     * To connect using hostname and port to the database.
      */
     public void setPort(Integer port) {
         this.port = port;
     }
 
-    /**
-     * @return the database
-     */
     public String getDatabase() {
         return database;
     }
 
     /**
-     * @param database the database to set
+     * The database name
      */
     public void setDatabase(String database) {
         this.database = database;
     }
 
-    /**
-     * @return the channel
-     */
     public String getChannel() {
         return channel;
     }
 
     /**
-     * @param channel the channel to set
+     * The channel name
      */
     public void setChannel(String channel) {
         this.channel = channel;
     }
 
-    /**
-     * @return the user
-     */
     public String getUser() {
         return user;
     }
 
     /**
-     * @param user the user to set
+     * Username for login
      */
     public void setUser(String user) {
         this.user = user;
     }
 
-    /**
-     * @return the pass
-     */
     public String getPass() {
         return pass;
     }
 
     /**
-     * @param pass the pass to set
+     * Password for login
      */
     public void setPass(String pass) {
         this.pass = pass;
     }
 
-    /**
-     * @return the datasource
-     */
     public DataSource getDatasource() {
         return datasource;
     }
 
     /**
-     * @param datasource the datasource to set
+     * To connect using the given {@link javax.sql.DataSource} instead of using hostname and port.
      */
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;

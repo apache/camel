@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.sqs;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQS;
@@ -31,6 +32,7 @@ import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -48,10 +50,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
- *
  */
 @UriEndpoint(scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueName", consumerClass = SqsConsumer.class, label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
@@ -63,7 +63,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
 
     @UriParam
     private SqsConfiguration configuration;
-    @UriParam
+    @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
@@ -77,6 +77,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to map headers to/from Camel.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
@@ -213,7 +216,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     }
 
     private Exchange createExchange(ExchangePattern pattern, com.amazonaws.services.sqs.model.Message msg) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         message.setBody(msg.getBody());
         message.setHeaders(new HashMap<String, Object>(msg.getAttributes()));
@@ -261,8 +264,16 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
      * @return AmazonSQSClient
      */
     AmazonSQS createClient() {
+        AmazonSQS client = null;
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonSQS client = new AmazonSQSClient(credentials);
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            client = new AmazonSQSClient(credentials, clientConfiguration);
+        } else {
+            client = new AmazonSQSClient(credentials);
+        }
         return client;
     }
 
@@ -274,6 +285,11 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         return maxMessagesPerPoll;
     }
 
+    /**
+     * Gets the maximum number of messages as a limit to poll at each polling.
+     * <p/>
+     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }

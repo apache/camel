@@ -50,6 +50,12 @@
       <version>${grizzly-websockets-version}</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>org.glassfish.grizzly</groupId>
+      <artifactId>connection-pool</artifactId>
+      <version>${grizzly-websockets-version}</version>
+      <optional>true</optional>
+    </dependency>
 
     <!-- testing -->
     <dependency>

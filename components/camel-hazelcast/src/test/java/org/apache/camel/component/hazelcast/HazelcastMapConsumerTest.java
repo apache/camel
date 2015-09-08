@@ -96,6 +96,20 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
 
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.UPDATED);
     }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testEvict() throws InterruptedException {
+        MockEndpoint out = getMockEndpoint("mock:evicted");
+        out.expectedMessageCount(1);
+
+        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
+        argument.getValue().entryEvicted(event);
+
+        assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
+
+        this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.EVICTED);
+    }
 
     @Test
     @SuppressWarnings("unchecked")

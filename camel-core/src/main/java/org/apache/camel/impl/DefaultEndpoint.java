@@ -70,6 +70,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private Map<String, Object> consumerProperties;
     private int pollingConsumerQueueSize = 1000;
     private boolean pollingConsumerBlockWhenFull = true;
+    private long pollingConsumerBlockTimeout;
 
     /**
      * Constructs a fully-initialized DefaultEndpoint instance. This is the
@@ -222,9 +223,13 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     public PollingConsumer createPollingConsumer() throws Exception {
         // should not call configurePollingConsumer when its EventDrivenPollingConsumer
-        LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} and blockWhenFull: {}", getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                    new Object[]{getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout()});
+        }
         EventDrivenPollingConsumer consumer = new EventDrivenPollingConsumer(this, getPollingConsumerQueueSize());
         consumer.setBlockWhenFull(isPollingConsumerBlockWhenFull());
+        consumer.setBlockTimeout(getPollingConsumerBlockTimeout());
         return consumer;
     }
 
@@ -319,6 +324,26 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      */
     public void setPollingConsumerBlockWhenFull(boolean pollingConsumerBlockWhenFull) {
         this.pollingConsumerBlockWhenFull = pollingConsumerBlockWhenFull;
+    }
+
+    /**
+     * Sets the timeout in millis to use when adding to the internal queue off when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used.
+     *
+     * @see #setPollingConsumerBlockWhenFull(boolean)
+     */
+    public long getPollingConsumerBlockTimeout() {
+        return pollingConsumerBlockTimeout;
+    }
+
+    /**
+     * Sets the timeout in millis to use when adding to the internal queue off when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used.
+     *
+     * @see #setPollingConsumerBlockWhenFull(boolean)
+     */
+    public void setPollingConsumerBlockTimeout(long pollingConsumerBlockTimeout) {
+        this.pollingConsumerBlockTimeout = pollingConsumerBlockTimeout;
     }
 
     public void configureProperties(Map<String, Object> options) {

@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.splunk.SSLSecurityProtocol;
 import com.splunk.Service;
 import com.splunk.ServiceArgs;
 
@@ -41,6 +42,7 @@ public class SplunkConnectionFactory {
     private String password;
     private int connectionTimeout;
     private boolean useSunHttpsHandler;
+    private SSLSecurityProtocol sslProtocol;
 
     public SplunkConnectionFactory(final String host, final int port, final String username, final String password) {
         this.host = host;
@@ -85,6 +87,14 @@ public class SplunkConnectionFactory {
         this.useSunHttpsHandler = useSunHttpsHandler;
     }
 
+    public SSLSecurityProtocol getSslProtocol() {
+        return sslProtocol;
+    }
+
+    public void setSslProtocol(SSLSecurityProtocol sslProtocol) {
+        this.sslProtocol = sslProtocol;
+    }
+
     public synchronized Service createService(CamelContext camelContext) {
         final ServiceArgs args = new ServiceArgs();
         if (host != null) {
@@ -123,6 +133,10 @@ public class SplunkConnectionFactory {
 
         Future<Service> future = executor.submit(new Callable<Service>() {
             public Service call() throws Exception {
+                if (Service.DEFAULT_SCHEME.equals(getScheme())) {
+                    LOG.debug("Https in use. Setting SSL protocol to {}", getSslProtocol());
+                    Service.setSslSecurityProtocol(getSslProtocol());
+                }
                 return Service.connect(args);
             }
         });

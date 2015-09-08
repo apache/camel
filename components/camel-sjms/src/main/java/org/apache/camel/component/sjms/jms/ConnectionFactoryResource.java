@@ -52,7 +52,7 @@ public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connect
     }
 
     public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password, String connectionId) {
-        this(poolSize, connectionFactory, username, password, null, DEFAULT_WAIT_TIMEOUT);
+        this(poolSize, connectionFactory, username, password, connectionId, DEFAULT_WAIT_TIMEOUT);
     }
 
     public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password, String connectionId, long maxWait) {

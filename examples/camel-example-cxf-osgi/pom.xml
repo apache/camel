@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>org.apache.camel</groupId>
 		<artifactId>examples</artifactId>
-    <version>2.16-SNAPSHOT</version>
+		<version>2.16-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>camel-example-cxf-osgi</artifactId>
@@ -142,14 +142,9 @@
 							org.apache.cxf.transport.http.policy,
 							org.apache.cxf.transport.http_jetty,
 							org.apache.cxf.transport.jms,
-							org.apache.cxf.transports.http,
 							org.apache.cxf.workqueue,
 							org.apache.cxf.wsdl,
 							org.apache.cxf.wsdl11,
-							org.apache.ws.security.action,
-							org.apache.ws.security.processor,
-							org.springframework.beans.factory.config,
-							org.springframework.mail.javamail,
 							*
 					    </Import-Package>
 					</instructions>

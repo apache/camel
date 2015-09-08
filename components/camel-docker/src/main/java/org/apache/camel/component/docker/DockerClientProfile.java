@@ -48,6 +48,10 @@ public class DockerClientProfile {
     private Integer maxTotalConnections;
 
     private Integer maxPerRouteConnections;
+    
+    private Boolean loggingFilterEnabled;
+    
+    private Boolean followRedirectFilterEnabled;
 
     public String getHost() {
         return host;
@@ -153,13 +157,31 @@ public class DockerClientProfile {
 
     }
 
+    public Boolean isLoggingFilterEnabled() {
+        return loggingFilterEnabled;
+    }
+
+    public void setLoggingFilter(Boolean loggingFilterEnabled) {
+        this.loggingFilterEnabled = loggingFilterEnabled;
+    }
+
+    public Boolean isFollowRedirectFilterEnabled() {
+        return followRedirectFilterEnabled;
+    }
+
+    public void setFollowRedirectFilter(Boolean followRedirectFilterEnabled) {
+        this.followRedirectFilterEnabled = followRedirectFilterEnabled;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((certPath == null) ? 0 : certPath.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + ((followRedirectFilterEnabled == null) ? 0 : followRedirectFilterEnabled.hashCode());
         result = prime * result + ((host == null) ? 0 : host.hashCode());
+        result = prime * result + ((loggingFilterEnabled == null) ? 0 : loggingFilterEnabled.hashCode());
         result = prime * result + ((maxPerRouteConnections == null) ? 0 : maxPerRouteConnections.hashCode());
         result = prime * result + ((maxTotalConnections == null) ? 0 : maxTotalConnections.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
@@ -197,11 +219,25 @@ public class DockerClientProfile {
         } else if (!email.equals(other.email)) {
             return false;
         }
+        if (followRedirectFilterEnabled == null) {
+            if (other.followRedirectFilterEnabled != null) {
+                return false;
+            }
+        } else if (!followRedirectFilterEnabled.equals(other.followRedirectFilterEnabled)) {
+            return false;
+        }
         if (host == null) {
             if (other.host != null) {
                 return false;
             }
         } else if (!host.equals(other.host)) {
+            return false;
+        }
+        if (loggingFilterEnabled == null) {
+            if (other.loggingFilterEnabled != null) {
+                return false;
+            }
+        } else if (!loggingFilterEnabled.equals(other.loggingFilterEnabled)) {
             return false;
         }
         if (maxPerRouteConnections == null) {
@@ -261,6 +297,6 @@ public class DockerClientProfile {
             return false;
         }
         return true;
-    }
+    }    
 
 }

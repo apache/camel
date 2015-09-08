@@ -94,7 +94,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         // assert
         assertTrue(result instanceof CometdEndpoint);
         CometdEndpoint cometdEndpoint = (CometdEndpoint)result;
-        assertTrue(cometdEndpoint.areSessionHeadersEnabled());
+        assertTrue(cometdEndpoint.isSessionHeadersEnabled());
     }
     
     @Test

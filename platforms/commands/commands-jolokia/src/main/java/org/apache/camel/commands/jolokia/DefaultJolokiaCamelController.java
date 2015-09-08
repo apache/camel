@@ -192,7 +192,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
 
         List<J4pReadRequest> list = new ArrayList<J4pReadRequest>();
         for (ObjectName on : sr.getObjectNames()) {
-            list.add(new J4pReadRequest(on, "CamelId", "State", "Uptime"));
+            list.add(new J4pReadRequest(on, "CamelId", "State", "Uptime", "ExchangesTotal", "ExchangesInflight", "ExchangesFailed"));
         }
 
         List<J4pReadResponse> lrr = jolokia.execute(list);
@@ -201,6 +201,9 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             row.put("name", rr.getValue("CamelId").toString());
             row.put("state", rr.getValue("State").toString());
             row.put("uptime", rr.getValue("Uptime").toString());
+            row.put("exchangesTotal", rr.getValue("ExchangesTotal").toString());
+            row.put("exchangesInflight", rr.getValue("ExchangesInflight").toString());
+            row.put("exchangesFailed", rr.getValue("ExchangesFailed").toString());
             answer.add(row);
         }
 
@@ -532,6 +535,61 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
                 row.put("state", rr.getValue("State").toString());
                 answer.add(row);
             }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public List<Map<String, String>> getEndpointRuntimeStatistics(String camelContextName) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=services,name=DefaultRuntimeEndpointRegistry", found.getDomain(), found.getKeyProperty("context"));
+            ObjectName on = ObjectName.getInstance(pattern);
+
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "endpointStatistics()"));
+            if (response != null) {
+                JSONObject data = response.getValue();
+                for (Object obj : data.values()) {
+                    JSONObject data2 = (JSONObject) obj;
+                    JSONObject service = (JSONObject) data2.values().iterator().next();
+
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("index", asString(service.get("index")));
+                    row.put("url", asString(service.get("url")));
+                    row.put("routeId", asString(service.get("routeId")));
+                    row.put("direction", asString(service.get("direction")));
+                    row.put("static", asString(service.get("static")));
+                    row.put("dynamic", asString(service.get("dynamic")));
+                    row.put("hits", asString(service.get("hits")));
+                    answer.add(row);
+                }
+            }
+
+            // sort the list
+            Collections.sort(answer, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> endpoint1, Map<String, String> endpoint2) {
+                    // sort by route id
+                    String route1 = endpoint1.get("routeId");
+                    String route2 = endpoint2.get("routeId");
+                    int num = route1.compareTo(route2);
+                    if (num == 0) {
+                        // we want in before out
+                        String dir1 = endpoint1.get("direction");
+                        String dir2 = endpoint2.get("direction");
+                        num = dir1.compareTo(dir2);
+                    }
+                    return num;
+                }
+
+            });
         }
 
         return answer;

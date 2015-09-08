@@ -28,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -66,9 +65,15 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         return expression;
     }
 
-    @Required
     public void setExpression(ExpressionDefinition expression) {
-        this.expression = expression;
+        // favour using the helper to set the expression as it can unwrap some unwanted builders when using Java DSL
+        if (expression instanceof Expression) {
+            this.expression = ExpressionNodeHelper.toExpressionDefinition((Expression) expression);
+        } else if (expression instanceof Predicate) {
+            this.expression = ExpressionNodeHelper.toExpressionDefinition((Predicate) expression);
+        } else {
+            this.expression = expression;
+        }
     }
 
     @Override

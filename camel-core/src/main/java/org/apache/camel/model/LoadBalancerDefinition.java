@@ -16,15 +16,11 @@
  */
 package org.apache.camel.model;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -37,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "eip,routing")
 @XmlType(name = "loadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoadBalancerDefinition extends IdentifiedType implements LoadBalancer {
+public class LoadBalancerDefinition extends IdentifiedType {
     @XmlTransient
     private LoadBalancer loadBalancer;
     @XmlTransient
@@ -54,20 +50,6 @@ public class LoadBalancerDefinition extends IdentifiedType implements LoadBalanc
         this.loadBalancerTypeName = loadBalancerTypeName;
     }
 
-    public static LoadBalancer getLoadBalancer(RouteContext routeContext, LoadBalancerDefinition type, String ref) {
-        if (type == null) {
-            ObjectHelper.notNull(ref, "ref or loadBalancer");
-            LoadBalancer loadBalancer = routeContext.mandatoryLookup(ref, LoadBalancer.class);
-            if (loadBalancer instanceof LoadBalancerDefinition) {
-                type = (LoadBalancerDefinition) loadBalancer;
-            } else {
-                return loadBalancer;
-            }
-        }
-        return type.getLoadBalancer(routeContext);
-    }
-
-
     /**
      * Sets a named property on the data format instance using introspection
      */
@@ -80,67 +62,43 @@ public class LoadBalancerDefinition extends IdentifiedType implements LoadBalanc
     }
 
     /**
+     * Maximum number of outputs, as some load balancers only support 1 processor
+     */
+    protected int getMaximumNumberOfOutputs() {
+        return Integer.MAX_VALUE;
+    }
+
+    /**
      * Allows derived classes to customize the load balancer
      */
     protected void configureLoadBalancer(LoadBalancer loadBalancer) {
     }
 
     public LoadBalancer getLoadBalancer(RouteContext routeContext) {
-        if (loadBalancer == null) {
-            loadBalancer = createLoadBalancer(routeContext);
-            ObjectHelper.notNull(loadBalancer, "loadBalancer");
-            configureLoadBalancer(loadBalancer);
-        }
         return loadBalancer;
     }
 
+    public void setLoadBalancer(LoadBalancer loadBalancer) {
+        this.loadBalancer = loadBalancer;
+    }
+
     /**
-     * Factory method to create the load balancer instance
+     * Factory method to create the load balancer from the loadBalancerTypeName
      */
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
+        ObjectHelper.notEmpty(loadBalancerTypeName, "loadBalancerTypeName", this);
+
+        LoadBalancer answer = null;
         if (loadBalancerTypeName != null) {
-            Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(loadBalancerTypeName);
+            Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(loadBalancerTypeName, LoadBalancer.class);
             if (type == null) {
                 throw new IllegalArgumentException("Cannot find class: " + loadBalancerTypeName + " in the classpath");
             }
-            return (LoadBalancer) ObjectHelper.newInstance(type);
+            answer = (LoadBalancer) routeContext.getCamelContext().getInjector().newInstance(type);
+            configureLoadBalancer(answer);
         }
-        return null;
-    }
 
-
-    public void addProcessor(Processor processor) {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
-        loadBalancer.addProcessor(processor);
-    }
-
-    public List<Processor> getProcessors() {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
-        return loadBalancer.getProcessors();
-    }
-
-    public void removeProcessor(Processor processor) {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
-        loadBalancer.removeProcessor(processor);
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
-        loadBalancer.process(exchange);
-    }
-
-    public boolean process(Exchange exchange, final AsyncCallback callback) {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer");
-        return loadBalancer.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                // only handle the async case
-                if (doneSync) {
-                    return;
-                } else {
-                    callback.done(false);
-                }
-            }
-        });
+        return answer;
     }
 
     @Override

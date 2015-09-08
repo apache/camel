@@ -18,141 +18,53 @@ package org.apache.camel.component.elasticsearch;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.elasticsearch.action.WriteConsistencyLevel;
+import org.elasticsearch.action.support.replication.ReplicationType;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
-
 @UriParams
 public class ElasticsearchConfiguration {
 
-    public static final String PARAM_OPERATION = "operation";
-    public static final String OPERATION_INDEX = "INDEX";
-    public static final String OPERATION_BULK = "BULK";
-    public static final String OPERATION_BULK_INDEX = "BULK_INDEX";
-    public static final String OPERATION_GET_BY_ID = "GET_BY_ID";
-    public static final String OPERATION_DELETE = "DELETE";
-    public static final String OPERATION_SEARCH = "SEARCH";
-    public static final String PARAM_INDEX_ID = "indexId";
-    public static final String PARAM_DATA = "data";
-    public static final String PARAM_INDEX_NAME = "indexName";
-    public static final String PARAM_INDEX_TYPE = "indexType";
-    public static final String PROTOCOL = "elasticsearch";
-    private static final String LOCAL_NAME = "local";
-    private static final String IP = "ip";
-    private static final String PORT = "port";
-    private static final Integer DEFAULT_PORT = 9300;
+    private boolean local;
+    private List<InetSocketTransportAddress> transportAddressesList;
 
-    private URI uri;
-    @UriPath(description = "Name of cluster or use local for local mode") @Metadata(required = "true")
+    @UriPath @Metadata(required = "true")
     private String clusterName;
-    @UriParam
-    private String protocolType;
-    @UriParam
-    private String authority;
+    @UriParam(enums = "INDEX,BULK,BULK_INDEX,GET_BY_ID,DELETE") @Metadata(required = "true")
+    private String operation;
     @UriParam
     private String indexName;
     @UriParam
     private String indexType;
-    @UriParam
-    private boolean local;
+    @UriParam(defaultValue = "DEFAULT")
+    private WriteConsistencyLevel consistencyLevel = ElasticsearchConstants.DEFAULT_CONSISTENCY_LEVEL;
+    @UriParam(defaultValue = "DEFAULT")
+    private ReplicationType replicationType = ElasticsearchConstants.DEFAULT_REPLICATION_TYPE;
     @UriParam
     private Boolean data;
-    @UriParam(enums = "INDEX,BULK,BULK_INDEX,GET_BY_ID,DELETE")
-    private String operation;
     @UriParam
     private String ip;
     @UriParam
-    private Integer port;
+    private String transportAddresses;
+    @UriParam(defaultValue = "9300")
+    private int port = ElasticsearchConstants.DEFAULT_PORT;
 
-    public ElasticsearchConfiguration(URI uri, Map<String, Object> parameters) throws Exception {
-        String protocol = uri.getScheme();
-
-        if (!protocol.equalsIgnoreCase(PROTOCOL)) {
-            throw new IllegalArgumentException("unrecognized elasticsearch protocol: " + protocol + " for uri: " + uri);
-        }
-        setUri(uri);
-        setAuthority(uri.getAuthority());
-        if (!isValidAuthority()) {
-            throw new URISyntaxException(uri.toASCIIString(), "incorrect URI syntax specified for the elasticsearch endpoint."
-                                                              + "please specify the syntax as \"elasticsearch:[Cluster Name | 'local']?[Query]\"");
-        }
-
-        if (LOCAL_NAME.equals(getAuthority())) {
-            setLocal(true);
-            setClusterName(null);
-        } else {
-            setLocal(false);
-            setClusterName(getAuthority());
-        }
-
-        data = toBoolean(parameters.remove(PARAM_DATA));
-
-        if (data == null) {
-            data = local;
-        }
-
-        if (local && !data) {
-            throw new IllegalArgumentException("invalid to use local node without data");
-        }
-
-        indexName = (String)parameters.remove(PARAM_INDEX_NAME);
-        indexType = (String)parameters.remove(PARAM_INDEX_TYPE);
-        operation = (String)parameters.remove(PARAM_OPERATION);
-        ip = (String)parameters.remove(IP);
-        String portParam = (String) parameters.remove(PORT);
-        port = portParam == null ? DEFAULT_PORT : Integer.valueOf(portParam);
-    }
-
-    protected Boolean toBoolean(Object string) {
-        if ("true".equals(string)) {
-            return true;
-        } else if ("false".equals(string)) {
-            return false;
-        } else {
-            return null;
-        }
-    }
-
-    public Node buildNode() {
-        NodeBuilder builder = nodeBuilder().local(isLocal()).data(isData());
-        if (!isLocal() && getClusterName() != null) {
-            builder.clusterName(getClusterName());
-        }
-        return builder.node();
-    }
-
-    private boolean isValidAuthority() throws URISyntaxException {
-        if (authority.contains(":")) {
-            return false;
-        }
-        return true;
-
-    }
-
-    public URI getUri() {
-        return uri;
-    }
-
-    public void setUri(URI uri) {
-        this.uri = uri;
-    }
-
-    public String getProtocolType() {
-        return protocolType;
-    }
-
-    public void setProtocolType(String protocolType) {
-        this.protocolType = protocolType;
-    }
-
+    /**
+     * Name of cluster or use local for local mode
+     */
     public String getClusterName() {
         return clusterName;
     }
@@ -161,14 +73,20 @@ public class ElasticsearchConfiguration {
         this.clusterName = clusterName;
     }
 
-    public String getAuthority() {
-        return authority;
+    /**
+     * What operation to perform
+     */
+    public String getOperation() {
+        return operation;
     }
 
-    public void setAuthority(String authority) {
-        this.authority = authority;
+    public void setOperation(String operation) {
+        this.operation = operation;
     }
 
+    /**
+     * The name of the index to act against
+     */
     public String getIndexName() {
         return indexName;
     }
@@ -177,6 +95,9 @@ public class ElasticsearchConfiguration {
         this.indexName = indexName;
     }
 
+    /**
+     * The type of the index to act against
+     */
     public String getIndexType() {
         return indexType;
     }
@@ -185,30 +106,42 @@ public class ElasticsearchConfiguration {
         this.indexType = indexType;
     }
 
-    public boolean isLocal() {
-        return local;
+    /**
+     * The write consistency level to use with INDEX and BULK operations (can be any of ONE, QUORUM, ALL or DEFAULT)
+     */
+    public WriteConsistencyLevel getConsistencyLevel() {
+        return consistencyLevel;
     }
 
-    public void setLocal(boolean local) {
-        this.local = local;
+    public void setConsistencyLevel(WriteConsistencyLevel consistencyLevel) {
+        this.consistencyLevel = consistencyLevel;
     }
 
-    public boolean isData() {
+    /**
+     * The replication type to use with INDEX and BULK operations (can be any of SYNC, ASYNC or DEFAULT)
+     */
+    public ReplicationType getReplicationType() {
+        return replicationType;
+    }
+
+    public void setReplicationType(ReplicationType replicationType) {
+        this.replicationType = replicationType;
+    }
+    
+    /**
+     * Is the node going to be allowed to allocate data (shards) to it or not. This setting map to the <tt>node.data</tt> setting.
+     */
+    public Boolean getData() {
         return data;
     }
 
-    public void setData(boolean data) {
+    public void setData(Boolean data) {
         this.data = data;
     }
 
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    public String getOperation() {
-        return this.operation;
-    }
-
+    /**
+     * The TransportClient remote host ip to use
+     */
     public String getIp() {
         return ip;
     }
@@ -217,12 +150,42 @@ public class ElasticsearchConfiguration {
         this.ip = ip;
     }
 
-    public Integer getPort() {
+    /**
+     * Comma separated list with ip:port formatted remote transport addresses to use.
+     * The ip and port options must be left blank for transportAddresses to be considered instead.
+     */
+    public String getTransportAddresses() {
+        return transportAddresses;
+    }
+
+    public void setTransportAddresses(String transportAddresses) {
+        this.transportAddresses = transportAddresses;
+    }
+
+    /**
+     * The TransportClient remote port to use (defaults to 9300)
+     */
+    public int getPort() {
         return port;
     }
 
-    public void setPort(Integer port) {
+    public void setPort(int port) {
         this.port = port;
     }
+       
+    public boolean isLocal() {
+        return local;
+    }
 
+    public void setLocal(boolean local) {
+        this.local = local;
+    }
+
+    public List<InetSocketTransportAddress> getTransportAddressesList() {
+        return transportAddressesList;
+    }
+
+    public void setTransportAddressesList(List<InetSocketTransportAddress> transportAddressesList) {
+        this.transportAddressesList = transportAddressesList;
+    }
 }

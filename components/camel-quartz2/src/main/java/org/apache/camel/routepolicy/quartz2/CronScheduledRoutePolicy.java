@@ -16,13 +16,13 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
@@ -31,6 +31,8 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
     private String routeStopTime;
     private String routeSuspendTime;
     private String routeResumeTime;
+    private String timeZoneString;
+    private TimeZone timeZone;
     
     public void onInit(Route route) {
         try {
@@ -78,28 +80,27 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
 
     @Override
     protected Trigger createTrigger(Action action, Route route) throws Exception {
-        CronTrigger trigger = null;
-
+        Trigger  trigger = null;
+        
+        CronScheduleBuilder scheduleBuilder = null;
         if (action == Action.START) {
-            trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(TRIGGER_START + route.getId(), TRIGGER_GROUP + route.getId())
-                    .withSchedule(CronScheduleBuilder.cronSchedule(getRouteStartTime()))
-                    .build();
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteStartTime());
         } else if (action == Action.STOP) {
-            trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(TRIGGER_STOP + route.getId(), TRIGGER_GROUP + route.getId())
-                    .withSchedule(CronScheduleBuilder.cronSchedule(getRouteStopTime()))
-                    .build();
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteStopTime());
         } else if (action == Action.SUSPEND) {
-            trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(TRIGGER_SUSPEND + route.getId(), TRIGGER_GROUP + route.getId())
-                    .withSchedule(CronScheduleBuilder.cronSchedule(getRouteSuspendTime()))
-                    .build();
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteSuspendTime());
         } else if (action == Action.RESUME) {
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteResumeTime());
+        }
+        
+        if (scheduleBuilder != null) {
+            if (timeZone != null) {
+                scheduleBuilder.inTimeZone(timeZone);
+            }
             trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(TRIGGER_RESUME + route.getId(), TRIGGER_GROUP + route.getId())
-                    .withSchedule(CronScheduleBuilder.cronSchedule(getRouteResumeTime()))
-                    .build();
+                .withIdentity(TRIGGER_START + route.getId(), TRIGGER_GROUP + route.getId())
+                .withSchedule(scheduleBuilder)
+                .build();
         }
         
         return trigger;
@@ -135,6 +136,15 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
 
     public String getRouteResumeTime() {
         return routeResumeTime;
+    }
+    
+    public String getTimeZone() {
+        return timeZoneString;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZoneString = timeZone;
+        this.timeZone = TimeZone.getTimeZone(timeZone);
     }    
 
 }

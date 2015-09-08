@@ -23,14 +23,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
@@ -39,6 +42,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 
 @Converter
@@ -194,6 +198,17 @@ public final class CxfPayloadConverter {
                 }
                 TypeConverter tc = registry.lookup(type, Source.class);
                 if (tc != null) {
+                    XMLStreamReader r = null;
+                    if (payload.getNsMap() != null) {
+                        if (s instanceof StaxSource) {
+                            r = ((StaxSource) s).getXMLStreamReader();
+                        } else if (s instanceof StAXSource) {
+                            r = ((StAXSource) s).getXMLStreamReader();
+                        }
+                        if (r != null) { 
+                            s = new StAXSource(new DelegatingXMLStreamReader(r, payload.getNsMap()));
+                        }
+                    }
                     T t = tc.convertTo(type, s);
                     return t;
                 }                
@@ -237,4 +252,5 @@ public final class CxfPayloadConverter {
         }
         return null;
     }
+
 }

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.net.URISyntaxException;
 import java.util.concurrent.ExecutorService;
 
 import kafka.message.MessageAndMetadata;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -27,29 +27,23 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 
 @UriEndpoint(scheme = "kafka", title = "Kafka", syntax = "kafka:brokers", consumerClass = KafkaConsumer.class, label = "messaging")
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
-    @UriPath @Metadata(required = "true")
-    private String brokers;
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
+
+    @UriParam(description = "If the option is true, then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message.", defaultValue = "false")
+    private boolean bridgeEndpoint;
 
     public KafkaEndpoint() {
     }
 
-    public KafkaEndpoint(String endpointUri,
-                         String remaining,
-                         KafkaComponent component) throws URISyntaxException {
+    public KafkaEndpoint(String endpointUri, KafkaComponent component) {
         super(endpointUri, component);
-        this.brokers = remaining.split("\\?")[0];
     }
 
     public KafkaConfiguration getConfiguration() {
@@ -76,7 +70,30 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @Override
     public Producer createProducer() throws Exception {
-        return new KafkaProducer(this);
+        String msgClassName = getConfiguration().getSerializerClass();
+        String keyClassName = getConfiguration().getKeySerializerClass();
+        if (msgClassName == null) {
+            msgClassName = KafkaConstants.KAFKA_DEFAULT_ENCODER;
+        }
+        if (keyClassName == null) {
+            keyClassName = msgClassName;
+        }
+
+        ClassLoader cl = getClass().getClassLoader();
+
+        Class<?> k;
+        try {
+            k = cl.loadClass(keyClassName);
+        } catch (ClassNotFoundException x) {
+            k = getCamelContext().getClassResolver().resolveMandatoryClass(keyClassName);
+        }
+        Class<?> v;
+        try {
+            v = cl.loadClass(msgClassName);
+        } catch (ClassNotFoundException x) {
+            v = getCamelContext().getClassResolver().resolveMandatoryClass(msgClassName);
+        }
+        return createProducer(k, v, this);
     }
 
     @Override
@@ -89,20 +106,23 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public Exchange createKafkaExchange(MessageAndMetadata<byte[], byte[]> mm) {
-        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
+        Exchange exchange = super.createExchange();
 
-        Message message = new DefaultMessage();
+        Message message = exchange.getIn();
         message.setHeader(KafkaConstants.PARTITION, mm.partition());
         message.setHeader(KafkaConstants.TOPIC, mm.topic());
+        message.setHeader(KafkaConstants.OFFSET, mm.offset());
         if (mm.key() != null) {
             message.setHeader(KafkaConstants.KEY, new String(mm.key()));
         }
         message.setBody(mm.message());
-        exchange.setIn(message);
 
         return exchange;
     }
 
+    protected <K, V> KafkaProducer<K, V> createProducer(Class<K> keyClass, Class<V> valueClass, KafkaEndpoint endpoint) {
+        return new KafkaProducer<K, V>(endpoint);
+    }
 
     // Delegated properties from the configuration
     //-------------------------------------------------------------------------
@@ -156,7 +176,11 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public String getBrokers() {
-        return brokers;
+        return configuration.getBrokers();
+    }
+
+    public void setBrokers(String brokers) {
+        configuration.setBrokers(brokers);
     }
 
     public int getConsumerStreams() {
@@ -240,7 +264,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public int getQueuedMaxMessages() {
-        return configuration.getQueuedMaxMessages();
+        return configuration.getQueuedMaxMessageChunks();
     }
 
     public int getAutoCommitIntervalMs() {
@@ -416,7 +440,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public void setQueuedMaxMessages(int queuedMaxMessages) {
-        configuration.setQueuedMaxMessages(queuedMaxMessages);
+        configuration.setQueuedMaxMessageChunks(queuedMaxMessages);
     }
 
     public void setRetryBackoffMs(int retryBackoffMs) {
@@ -458,5 +482,13 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;
+    }
+
+    public boolean isBridgeEndpoint() {
+        return bridgeEndpoint;
+    }
+
+    public void setBridgeEndpoint(boolean bridgeEndpoint) {
+        this.bridgeEndpoint = bridgeEndpoint;
     }
 }

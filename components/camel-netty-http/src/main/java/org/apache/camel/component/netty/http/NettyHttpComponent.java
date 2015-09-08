@@ -172,6 +172,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         return nettyHttpBinding;
     }
 
+    /**
+     * To use a custom org.apache.camel.component.netty.http.NettyHttpBinding for binding to/from Netty and Camel Message API.
+     */
     public void setNettyHttpBinding(NettyHttpBinding nettyHttpBinding) {
         this.nettyHttpBinding = nettyHttpBinding;
     }
@@ -180,6 +183,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -188,6 +194,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         return securityConfiguration;
     }
 
+    /**
+     * Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web resources.
+     */
     public void setSecurityConfiguration(NettyHttpSecurityConfiguration securityConfiguration) {
         this.securityConfiguration = securityConfiguration;
     }
@@ -234,18 +243,16 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         int port = 0;
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config.getComponent() == null || config.getComponent().equals("netty-http")) {
-            if (config.getScheme() != null) {
-                scheme = config.getScheme();
-            }
-            if (config.getHost() != null) {
-                host = config.getHost();
-            }
-            int num = config.getPort();
-            if (num > 0) {
-                port = num;
-            }
+        RestConfiguration config = getCamelContext().getRestConfiguration("netty-http", true);
+        if (config.getScheme() != null) {
+            scheme = config.getScheme();
+        }
+        if (config.getHost() != null) {
+            host = config.getHost();
+        }
+        int num = config.getPort();
+        if (num > 0) {
+            port = num;
         }
 
         // if no explicit hostname set then resolve the hostname

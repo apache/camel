@@ -18,9 +18,11 @@ package org.apache.camel.component.rabbitmq;
 
 import java.net.URI;
 import java.util.Map;
+
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.ConnectionFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
@@ -45,10 +47,10 @@ public class RabbitMQComponent extends UriEndpointComponent {
         URI host = new URI("http://" + remaining);
         String hostname = host.getHost();
         int portNumber = host.getPort();
-        if (host.getPath().trim().length() <= 1) {
-            throw new IllegalArgumentException("No URI path as the exchangeName for the RabbitMQEndpoint, the URI is " + uri);
+        String exchangeName = ""; // We need to support the exchange to be "" the path is empty
+        if (host.getPath().trim().length() > 1) {
+            exchangeName = host.getPath().substring(1);
         }
-        String exchangeName = host.getPath().substring(1);
 
         // ConnectionFactory reference
         ConnectionFactory connectionFactory = resolveAndRemoveReferenceParameter(params, "connectionFactory", ConnectionFactory.class);

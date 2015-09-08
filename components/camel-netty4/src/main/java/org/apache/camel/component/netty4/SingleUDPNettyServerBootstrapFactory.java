@@ -161,7 +161,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         SubnetUtils multicastSubnet = new SubnetUtils(MULTICAST_SUBNET);
 
         if (multicastSubnet.getInfo().isInRange(configuration.getHost())) {
-            ChannelFuture channelFuture = bootstrap.bind(hostAddress);
+            ChannelFuture channelFuture = bootstrap.bind(configuration.getPort());
             channelFuture.awaitUninterruptibly();
             channel = channelFuture.channel();
             DatagramChannel datagramChannel = (DatagramChannel) channel;

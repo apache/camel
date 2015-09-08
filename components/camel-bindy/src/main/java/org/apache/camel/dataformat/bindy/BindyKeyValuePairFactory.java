@@ -32,7 +32,6 @@ import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,15 +54,9 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     private String pairSeparator;
     private boolean messageOrdered;
 
-    public BindyKeyValuePairFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
-        super(resolver, packageNames);
-
-        // Initialize what is specific to Key Value Pair model
-        initKeyValuePairModel();
-    }
-
-    public BindyKeyValuePairFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
-        super(resolver, type);
+    
+    public BindyKeyValuePairFactory(Class<?> type) throws Exception {
+        super(type);
 
         // Initialize what is specific to Key Value Pair model
         initKeyValuePairModel();

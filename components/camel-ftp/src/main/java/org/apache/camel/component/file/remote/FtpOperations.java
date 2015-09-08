@@ -175,6 +175,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
             log.trace("User {} logged in: {}", username != null ? username : "anonymous", login);
             if (!login) {
+                // disconnect to prevent connection leaks
+                client.disconnect();
                 throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString());
             }
             client.setFileType(configuration.isBinary() ? FTP.BINARY_FILE_TYPE : FTP.ASCII_FILE_TYPE);

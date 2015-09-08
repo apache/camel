@@ -24,6 +24,7 @@ import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -98,13 +99,11 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
         Object proxy = getProxyForService();
 
         consumer = endpoint.createConsumer(new BeanProcessor(proxy, camelContext));
-        consumer.start();
+        ServiceHelper.startService(consumer);
     }
 
     public void destroy() throws Exception {
-        if (consumer != null) {
-            consumer.stop();
-        }
+        ServiceHelper.startService(consumer);
     }
 
 }

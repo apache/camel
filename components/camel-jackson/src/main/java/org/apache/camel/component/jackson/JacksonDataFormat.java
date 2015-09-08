@@ -66,6 +66,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
     private boolean enableJaxbAnnotationModule;
     private String enableFeatures;
     private String disableFeatures;
+    private boolean enableJacksonTypeConverter;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -301,6 +302,20 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
      */
     public void setAllowJmsType(boolean allowJmsType) {
         this.allowJmsType = allowJmsType;
+    }
+
+    public boolean isEnableJacksonTypeConverter() {
+        return enableJacksonTypeConverter;
+    }
+
+    /**
+     * If enabled then Jackson is allowed to attempt to be used during Camels <a href="https://camel.apache.org/type-converter.html">type converter</a>
+     * as a {@link org.apache.camel.FallbackConverter} that attempts to convert POJOs to/from {@link Map}/{@link List} types.
+     * <p/>
+     * This should only be enabled when desired to be used.
+     */
+    public void setEnableJacksonTypeConverter(boolean enableJacksonTypeConverter) {
+        this.enableJacksonTypeConverter = enableJacksonTypeConverter;
     }
 
     public String getEnableFeatures() {

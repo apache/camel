@@ -22,10 +22,8 @@ import javax.mail.search.SearchTerm;
 import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.UriEndpoint;
@@ -36,6 +34,8 @@ import org.apache.camel.spi.UriParam;
  */
 @UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS", syntax = "imap:host:port", consumerClass = MailConsumer.class, label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {
+    @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer", description = "Milliseconds before the next poll.")
+    private long delay = MailConsumer.DEFAULT_CONSUMER_DELAY;
     @UriParam
     private MailConfiguration configuration;
     @UriParam
@@ -54,21 +54,27 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private MailBoxPostProcessAction postProcessAction;
 
     public MailEndpoint() {
+        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
+        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
+        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
     public MailEndpoint(String uri, MailComponent component, MailConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
     @Deprecated
     public MailEndpoint(String endpointUri, MailConfiguration configuration) {
         super(endpointUri);
         this.configuration = configuration;
+        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
     public MailEndpoint(String endpointUri) {
         this(endpointUri, new MailConfiguration());
+        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
     public Producer createProducer() throws Exception {
@@ -103,17 +109,10 @@ public class MailEndpoint extends ScheduledPollEndpoint {
      */
     public Consumer createConsumer(Processor processor, JavaMailSender sender) throws Exception {
         MailConsumer answer = new MailConsumer(this, processor, sender);
-
         answer.setHandleFailedMessage(configuration.isHandleFailedMessage());
         answer.setSkipFailedMessage(configuration.isSkipFailedMessage());
-
-        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
-        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
-        answer.setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
-
         answer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         configureConsumer(answer);
-
         return answer;
     }
 
@@ -121,17 +120,8 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return false;
     }
 
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        return createExchange(pattern, null);
-    }
-
     public Exchange createExchange(Message message) {
-        return createExchange(getExchangePattern(), message);
-    }
-
-    private Exchange createExchange(ExchangePattern pattern, Message message) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange();
         exchange.setProperty(Exchange.BINDING, getBinding());
         exchange.setIn(new MailMessage(message, getConfiguration().isMapMailMessage()));
         return exchange;

@@ -47,6 +47,10 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     private boolean sortEntries;
     @UriParam(defaultValue = "true")
     private boolean throttleEntries = true;
+    @UriParam
+    private String username;
+    @UriParam
+    private String password;
 
     public FeedEndpoint() {
     }
@@ -128,6 +132,9 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         return feedUri;
     }
 
+    /**
+     * The URI to the feed to poll.
+     */
     public void setFeedUri(String feedUri) {
         this.feedUri = feedUri;
     }
@@ -204,6 +211,28 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
     public boolean isThrottleEntries() {
         return this.throttleEntries;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Sets the username to be used for basic authentication when polling from a HTTP feed
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Sets the password to be used for basic authentication when polling from a HTTP feed
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     // Implementation methods

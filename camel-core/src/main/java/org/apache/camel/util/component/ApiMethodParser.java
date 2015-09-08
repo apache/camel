@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +98,11 @@ public abstract class ApiMethodParser<T> {
         // parse sorted signatures and generate descriptions
         List<ApiMethodModel> result = new ArrayList<ApiMethodModel>();
         for (String signature : signatures) {
+
+            // skip comment or empty lines
+            if (signature.startsWith("##") || ObjectHelper.isEmpty(signature)) {
+                continue;
+            }
 
             // remove all modifiers and type parameters for method
             signature = signature.replaceAll(METHOD_PREFIX, "$4 $5(");

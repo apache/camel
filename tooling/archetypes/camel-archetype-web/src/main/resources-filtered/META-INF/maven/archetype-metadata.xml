@@ -27,6 +27,9 @@
     <requiredProperty key="jetty-version">
       <defaultValue>${jetty-version}</defaultValue>
     </requiredProperty>
+    <requiredProperty key="jetty-plugin-version">
+      <defaultValue>${jetty-plugin-version}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="log4j-version">
       <defaultValue>${log4j-version}</defaultValue>
     </requiredProperty>
@@ -71,7 +74,7 @@
         <include>**/*.java</include>
       </includes>
     </fileSet>
-    <fileSet encoding="UTF-8">
+    <fileSet filtered="true" encoding="UTF-8">
       <directory></directory>
       <includes>
         <include>ReadMe.txt</include>

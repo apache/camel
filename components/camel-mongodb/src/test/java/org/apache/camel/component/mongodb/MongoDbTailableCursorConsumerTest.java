@@ -156,7 +156,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         // create a capped collection with max = 1000
         cappedTestCollection = db.createCollection(cappedTestCollectionName, 
                 BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
-        cappedTestCollection.ensureIndex("increasing");
+        cappedTestCollection.createIndex("increasing");
         
         addTestRoutes();
         context.startRoute("tailableCursorConsumer2");

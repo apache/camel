@@ -20,7 +20,7 @@ import java.util.Locale;
 
 
 /**
- * A {@link org.apache.camel.component.netty.http.ContextPathMatcher} that supports the Rest DSL.
+ * A {@link org.apache.camel.component.netty4.http.ContextPathMatcher} that supports the Rest DSL.
  */
 public class RestContextPathMatcher extends DefaultContextPathMatcher {
 
@@ -73,6 +73,10 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
         }
         if (consumerPath.endsWith("/")) {
             consumerPath = consumerPath.substring(0, consumerPath.length() - 1);
+        }
+
+        if (matchOnUriPrefix && (requestPath.startsWith(consumerPath) || consumerPath.isEmpty())) {
+            return true;
         }
 
         // split using single char / is optimized in the jdk

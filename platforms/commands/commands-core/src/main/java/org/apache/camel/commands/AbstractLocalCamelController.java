@@ -41,8 +41,10 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.util.JsonSchemaHelper;
 
 /**
@@ -71,6 +73,10 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("status", context.getStatus().name());
             answer.put("uptime", context.getUptime());
             answer.put("suspended", context.getStatus().isSuspended());
+            if (context.getManagementStrategy().getManagementAgent() != null) {
+                String level = context.getManagementStrategy().getManagementAgent().getStatisticsLevel().name();
+                answer.put("managementStatisticsLevel", level);
+            }
             answer.put("allowUseOriginalMessage", context.isAllowUseOriginalMessage());
             answer.put("messageHistory", context.isMessageHistory());
             answer.put("tracing", context.isTracing());
@@ -178,11 +184,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
         if (agent != null) {
             MBeanServer mBeanServer = agent.getMBeanServer();
-            ObjectName on = null;
-            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=services,name=DefaultInflightRepository,*"), null);
-            if (set.size() == 1) {
-                on = set.iterator().next();
-            }
+            ObjectName on = new ObjectName(agent.getMBeanObjectDomainName() + ":type=services,name=DefaultInflightRepository,context=" + context.getManagementName());
             if (mBeanServer.isRegistered(on)) {
                 TabularData list = (TabularData) mBeanServer.invoke(on, "browse", new Object[]{limit, sortByLongestDuration}, new String[]{"int", "boolean"});
                 Collection<CompositeData> values = (Collection<CompositeData>) list.values();
@@ -428,6 +430,56 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return answer;
     }
 
+    public List<Map<String, String>> getEndpointRuntimeStatistics(String camelContextName) throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        if (camelContextName != null) {
+            CamelContext context = this.getLocalCamelContext(camelContextName);
+            if (context != null) {
+                EndpointRegistry staticRegistry = context.getEndpointRegistry();
+                for (RuntimeEndpointRegistry.Statistic stat : context.getRuntimeEndpointRegistry().getEndpointStatistics()) {
+
+                    String url = stat.getUri();
+                    String routeId = stat.getRouteId();
+                    String direction = stat.getDirection();
+                    Boolean isStatic = staticRegistry.isStatic(url);
+                    Boolean isDynamic = staticRegistry.isDynamic(url);
+                    long hits = stat.getHits();
+
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("camelContextName", context.getName());
+                    row.put("uri", url);
+                    row.put("routeId", routeId);
+                    row.put("direction", direction);
+                    row.put("static", isStatic.toString());
+                    row.put("dynamic", isDynamic.toString());
+                    row.put("hits", "" + hits);
+                    answer.add(row);
+                }
+            }
+
+            // sort the list
+            Collections.sort(answer, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> endpoint1, Map<String, String> endpoint2) {
+                    // sort by route id
+                    String route1 = endpoint1.get("routeId");
+                    String route2 = endpoint2.get("routeId");
+                    int num = route1.compareTo(route2);
+                    if (num == 0) {
+                        // we want in before out
+                        String dir1 = endpoint1.get("direction");
+                        String dir2 = endpoint2.get("direction");
+                        num = dir1.compareTo(dir2);
+                    }
+                    return num;
+                }
+
+            });
+        }
+        return answer;
+    }
+
     public List<Map<String, String>> getRestServices(String camelContextName) throws Exception {
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
@@ -564,8 +616,9 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
 
     private static String getRouteState(Route route) {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        if (route instanceof StatefulService) {
-            ServiceStatus status = ((StatefulService) route).getStatus();
+
+        ServiceStatus status = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
+        if (status != null) {
             return status.name();
         }
 

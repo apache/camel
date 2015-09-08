@@ -35,8 +35,8 @@ public class ExchangePropertyExpression extends ExpressionDefinition {
     public ExchangePropertyExpression() {
     }
 
-    public ExchangePropertyExpression(String expression) {
-        super(expression);
+    public ExchangePropertyExpression(String name) {
+        super(name);
     }
 
     public String getLanguage() {

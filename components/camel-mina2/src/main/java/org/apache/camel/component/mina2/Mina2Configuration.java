@@ -61,8 +61,8 @@ public class Mina2Configuration implements Cloneable {
     private boolean minaLogger;
     @UriParam(defaultValue = "-1")
     private int encoderMaxLineLength = -1;
-    @UriParam(defaultValue = "-1")
-    private int decoderMaxLineLength = -1;
+    @UriParam(defaultValue = "1024")
+    private int decoderMaxLineLength = 1024;
     @UriParam
     private List<IoFilter> filters;
     @UriParam(defaultValue = "true")
@@ -81,9 +81,9 @@ public class Mina2Configuration implements Cloneable {
     private int maximumPoolSize = 16; // 16 is the default mina setting
     @UriParam(defaultValue = "true")
     private boolean orderedThreadPoolExecutor = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean cachedAddress = true;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean clientMode;
 
     /**
@@ -112,6 +112,9 @@ public class Mina2Configuration implements Cloneable {
         return protocol;
     }
 
+    /**
+     * Protocol to use
+     */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
@@ -120,6 +123,9 @@ public class Mina2Configuration implements Cloneable {
         return host;
     }
 
+    /**
+     * Hostname to use. Use localhost or 0.0.0.0 for local server as consumer. For producer use the hostname or ip address of the remote server.
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -128,6 +134,9 @@ public class Mina2Configuration implements Cloneable {
         return port;
     }
 
+    /**
+     * Port number
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -136,6 +145,9 @@ public class Mina2Configuration implements Cloneable {
         return sync;
     }
 
+    /**
+     * Setting to set endpoint as one-way or request-response.
+     */
     public void setSync(boolean sync) {
         this.sync = sync;
     }
@@ -144,6 +156,10 @@ public class Mina2Configuration implements Cloneable {
         return textline;
     }
 
+    /**
+     * Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec;
+     * if not specified or the value is false, then Object Serialization is assumed over TCP.
+     */
     public void setTextline(boolean textline) {
         this.textline = textline;
     }
@@ -152,6 +168,11 @@ public class Mina2Configuration implements Cloneable {
         return textlineDelimiter;
     }
 
+    /**
+     * Only used for TCP and if textline=true. Sets the text line delimiter to use.
+     * If none provided, Camel will use DEFAULT.
+     * This delimiter is used to mark the end of text.
+     */
     public void setTextlineDelimiter(Mina2TextLineDelimiter textlineDelimiter) {
         this.textlineDelimiter = textlineDelimiter;
     }
@@ -160,6 +181,9 @@ public class Mina2Configuration implements Cloneable {
         return codec;
     }
 
+    /**
+     * To use a custom minda codec implementation.
+     */
     public void setCodec(ProtocolCodecFactory codec) {
         this.codec = codec;
     }
@@ -168,6 +192,10 @@ public class Mina2Configuration implements Cloneable {
         return encoding;
     }
 
+    /**
+     * You can configure the encoding (a charset name) to use for the TCP textline codec and the UDP protocol.
+     * If not provided, Camel will use the JVM default Charset
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -176,6 +204,10 @@ public class Mina2Configuration implements Cloneable {
         return timeout;
     }
 
+    /**
+     * You can configure the timeout that specifies how long to wait for a response from a remote server.
+     * The timeout unit is in milliseconds, so 60000 is 60 seconds.
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
@@ -184,6 +216,9 @@ public class Mina2Configuration implements Cloneable {
         return lazySessionCreation;
     }
 
+    /**
+     * Sessions can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started.
+     */
     public void setLazySessionCreation(boolean lazySessionCreation) {
         this.lazySessionCreation = lazySessionCreation;
     }
@@ -192,10 +227,18 @@ public class Mina2Configuration implements Cloneable {
         return transferExchange;
     }
 
+    /**
+     * Only used for TCP. You can transfer the exchange over the wire instead of just the body.
+     * The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception.
+     * This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.
+     */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
     }
 
+    /**
+     * To set the textline protocol encoder max line length. By default the default value of Mina itself is used which are Integer.MAX_VALUE.
+     */
     public void setEncoderMaxLineLength(int encoderMaxLineLength) {
         this.encoderMaxLineLength = encoderMaxLineLength;
     }
@@ -204,6 +247,9 @@ public class Mina2Configuration implements Cloneable {
         return encoderMaxLineLength;
     }
 
+    /**
+     * To set the textline protocol decoder max line length. By default the default value of Mina itself is used which are 1024.
+     */
     public void setDecoderMaxLineLength(int decoderMaxLineLength) {
         this.decoderMaxLineLength = decoderMaxLineLength;
     }
@@ -216,6 +262,9 @@ public class Mina2Configuration implements Cloneable {
         return minaLogger;
     }
 
+    /**
+     * You can enable the Apache MINA logging filter. Apache MINA uses slf4j logging at INFO level to log all input and output.
+     */
     public void setMinaLogger(boolean minaLogger) {
         this.minaLogger = minaLogger;
     }
@@ -224,6 +273,9 @@ public class Mina2Configuration implements Cloneable {
         return filters;
     }
 
+    /**
+     * You can set a list of Mina IoFilters to use.
+     */
     public void setFilters(List<IoFilter> filters) {
         this.filters = filters;
     }
@@ -232,6 +284,11 @@ public class Mina2Configuration implements Cloneable {
         return protocol.equals("udp");
     }
 
+    /**
+     * The mina component installs a default codec if both, codec is null and textline is false.
+     * Setting allowDefaultCodec to false prevents the mina component from installing a default codec as the first element in the filter chain.
+     * This is useful in scenarios where another filter must be the first in the filter chain, like the SSL filter.
+     */
     public void setAllowDefaultCodec(boolean allowDefaultCodec) {
         this.allowDefaultCodec = allowDefaultCodec;
     }
@@ -244,6 +301,9 @@ public class Mina2Configuration implements Cloneable {
         return disconnect;
     }
 
+    /**
+     * Whether or not to disconnect(close) from Mina session right after use. Can be used for both consumer and producer.
+     */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
     }
@@ -252,6 +312,9 @@ public class Mina2Configuration implements Cloneable {
         return disconnectOnNoReply;
     }
 
+    /**
+     * If sync is enabled then this option dictates MinaConsumer if it should disconnect where there is no reply to send back.
+     */
     public void setDisconnectOnNoReply(boolean disconnectOnNoReply) {
         this.disconnectOnNoReply = disconnectOnNoReply;
     }
@@ -260,6 +323,9 @@ public class Mina2Configuration implements Cloneable {
         return noReplyLogLevel;
     }
 
+    /**
+     * If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back.
+     */
     public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
         this.noReplyLogLevel = noReplyLogLevel;
     }
@@ -268,6 +334,9 @@ public class Mina2Configuration implements Cloneable {
         return sslContextParameters;
     }
 
+    /**
+     * To configure SSL security.
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -276,6 +345,9 @@ public class Mina2Configuration implements Cloneable {
         return autoStartTls;
     }
 
+    /**
+     * Whether to auto start SSL handshake.
+     */
     public void setAutoStartTls(boolean autoStartTls) {
         this.autoStartTls = autoStartTls;
     }
@@ -284,6 +356,9 @@ public class Mina2Configuration implements Cloneable {
         return maximumPoolSize;
     }
 
+    /**
+     * Number of worker threads in the worker pool for TCP and UDP
+     */
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
     }
@@ -292,10 +367,16 @@ public class Mina2Configuration implements Cloneable {
         return orderedThreadPoolExecutor;
     }
 
+    /**
+     * Whether to use ordered thread pool, to ensure events are processed orderly on the same channel.
+     */
     public void setOrderedThreadPoolExecutor(boolean orderedThreadPoolExecutor) {
         this.orderedThreadPoolExecutor = orderedThreadPoolExecutor;
     }
 
+    /**
+     * Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network.
+     */
     public void setCachedAddress(boolean shouldCacheAddress) {
         this.cachedAddress = shouldCacheAddress;
     }
@@ -303,7 +384,10 @@ public class Mina2Configuration implements Cloneable {
     public boolean isCachedAddress() {
         return cachedAddress;
     }
-    
+
+    /**
+     * If the clientMode is true, mina consumer will connect the address as a TCP client.
+     */
     public void setClientMode(boolean clientMode) {
         this.clientMode = clientMode;
     }

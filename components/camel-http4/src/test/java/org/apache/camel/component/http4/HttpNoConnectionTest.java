@@ -17,11 +17,15 @@
 package org.apache.camel.component.http4;
 
 import java.net.ConnectException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -29,9 +33,36 @@ import org.junit.Test;
  */
 public class HttpNoConnectionTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/search", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void httpConnectionOk() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/search", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
@@ -41,21 +72,16 @@ public class HttpNoConnectionTest extends BaseHttpTest {
 
     @Test
     public void httpConnectionNotOk() throws Exception {
-        String url = "http4://" + getHostName() + ":" + getPort() + "/search";
+        String url = "http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search";
         // stop server so there are no connection
         localServer.stop();
-        localServer.awaitTermination(1000);
+        localServer.awaitTermination(1000, TimeUnit.MILLISECONDS);
 
         Exchange reply = template.request(url, null);
         Exception e = reply.getException();
         assertNotNull("Should have thrown an exception", e);
         ConnectException cause = assertIsInstanceOf(ConnectException.class, e);
         assertTrue(cause.getMessage().contains("refused"));
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/search", new BasicValidationHandler("GET", null, null, getExpectedContent()));
     }
 
 }

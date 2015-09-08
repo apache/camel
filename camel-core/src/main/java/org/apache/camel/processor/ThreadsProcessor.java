@@ -172,6 +172,10 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         this.rejectedPolicy = rejectedPolicy;
     }
 
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
     public String toString() {
         return "Threads";
     }

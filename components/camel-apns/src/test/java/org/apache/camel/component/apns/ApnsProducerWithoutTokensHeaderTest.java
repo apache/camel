@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.apns.factory.ApnsServiceFactory;
 import org.apache.camel.component.apns.util.ApnsUtils;
+import org.apache.camel.component.apns.util.TestConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +43,7 @@ public class ApnsProducerWithoutTokensHeaderTest extends CamelTestSupport {
 
     @Before
     public void startup() {
-        server = ApnsUtils.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);
+        server = ApnsUtils.prepareAndStartServer(TestConstants.TEST_GATEWAY_PORT, TestConstants.TEST_FEEDBACK_PORT);
     }
 
     @After
@@ -60,8 +61,8 @@ public class ApnsProducerWithoutTokensHeaderTest extends CamelTestSupport {
 
         template.sendBody("direct:test", message);
 
-        server.messages.acquire();
-        assertArrayEquals(apnsNotification.marshall(), server.received.toByteArray());
+        server.getMessages().acquire();
+        assertArrayEquals(apnsNotification.marshall(), server.getReceived().toByteArray());
     }
 
     protected CamelContext createCamelContext() throws Exception {

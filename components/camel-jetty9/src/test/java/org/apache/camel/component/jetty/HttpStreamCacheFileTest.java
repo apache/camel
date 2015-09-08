@@ -21,10 +21,10 @@ import java.io.File;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class HttpStreamCacheFileTest extends BaseJettyTest {
 
-    private String body = "12345678901234567890123456789012345678901234567890";
+    private final String responseBody = "12345678901234567890123456789012345678901234567890";
 
     @Override
     @Before
@@ -62,7 +62,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
         } catch (CamelExecutionException e) {
             HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             String s = context.getTypeConverter().convertTo(String.class, hofe.getResponseBody());
-            assertEquals("Response body", body, s);
+            assertEquals("Response body", responseBody, s);
         }
 
         // the temporary files should have been deleted
@@ -87,8 +87,9 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
                 from("jetty://http://localhost:{{port}}/myserver")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                if (exchange.getIn().getBody() == null) {
-                                    exchange.getOut().setBody(body);
+                                String body = exchange.getIn().getBody(String.class);
+                                if (ObjectHelper.isEmpty(body)) {
+                                    exchange.getOut().setBody(responseBody);
                                     exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
                                 } else {
                                     exchange.getOut().setBody("Bye World");

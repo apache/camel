@@ -31,15 +31,15 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
     }
 
     @Override
-    public void start() throws Exception {
-        super.start();
+    public void doStart() throws Exception {
+        super.doStart();
         endpoint.connect(this);
     }
 
     @Override
-    public void stop() throws Exception {
+    public void doStop() throws Exception {
         endpoint.disconnect(this);
-        super.stop();
+        super.doStop();
     }
 
     public WebsocketEndpoint getEndpoint() {

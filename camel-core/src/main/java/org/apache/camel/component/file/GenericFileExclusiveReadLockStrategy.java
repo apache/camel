@@ -31,6 +31,7 @@ import org.apache.camel.LoggingLevel;
  * <li>FileLockExclusiveReadLockStrategy acquiring a RW file lock for the duration of the processing.</li>
  * <li>MarkerFileExclusiveReadLockStrategy using a marker file for acquiring read lock.</li>
  * <li>FileChangedExclusiveReadLockStrategy using a file changed detection for acquiring read lock.</li>
+ * <li>FileIdempotentRepositoryReadLockStrategy using a {@link org.apache.camel.spi.IdempotentRepository} to hold the read locks which allows to support clustering.</li>
  * </ul>
  */
 public interface GenericFileExclusiveReadLockStrategy<T> {
@@ -57,14 +58,34 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
     boolean acquireExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception;
 
     /**
-     * Releases the exclusive read lock granted by the <tt>acquireExclusiveReadLock</tt> method.
+     * Releases the exclusive read lock granted by the <tt>acquireExclusiveReadLock</tt> method due an abort operation (acquireExclusiveReadLock returned false).
      *
      * @param operations generic file operations
      * @param file       the file
      * @param exchange   the exchange
      * @throws Exception can be thrown in case of errors
      */
-    void releaseExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception;
+    void releaseExclusiveReadLockOnAbort(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception;
+
+    /**
+     * Releases the exclusive read lock granted by the <tt>acquireExclusiveReadLock</tt> method due a rollback operation (Exchange processing failed)
+     *
+     * @param operations generic file operations
+     * @param file       the file
+     * @param exchange   the exchange
+     * @throws Exception can be thrown in case of errors
+     */
+    void releaseExclusiveReadLockOnRollback(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception;
+
+    /**
+     * Releases the exclusive read lock granted by the <tt>acquireExclusiveReadLock</tt> method due a commit operation (Exchange processing succeeded)
+     *
+     * @param operations generic file operations
+     * @param file       the file
+     * @param exchange   the exchange
+     * @throws Exception can be thrown in case of errors
+     */
+    void releaseExclusiveReadLockOnCommit(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception;
 
     /**
      * Sets an optional timeout period.
@@ -105,5 +126,12 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
      * @param markerFile <tt>true</tt> to use marker files.
      */
     void setMarkerFiler(boolean markerFile);
+
+    /**
+     * Sets whether orphan marker files should be deleted upon startup
+     *
+     * @param deleteOrphanLockFiles <tt>true</tt> to delete files, <tt>false</tt> to skip this check
+     */
+    void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles);
 
 }

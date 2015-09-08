@@ -56,22 +56,22 @@ public class XmlRestProcessor extends AbstractRestProcessor {
     // not very efficient when both JSON and XML are used together with a single Thread pool
     // but this will do for now
     private static ThreadLocal<XStream> xStream =
-            new ThreadLocal<XStream>() {
-                @Override
-                protected XStream initialValue() {
-                    // use NoNameCoder to avoid escaping __ in custom field names
-                    // and CompactWriter to avoid pretty printing
-                    XStream result = new XStream(new XppDriver(new NoNameCoder()) {
-                        @Override
-                        public HierarchicalStreamWriter createWriter(Writer out) {
-                            return new CompactWriter(out, getNameCoder());
-                        }
+        new ThreadLocal<XStream>() {
+            @Override
+            protected XStream initialValue() {
+                // use NoNameCoder to avoid escaping __ in custom field names
+                // and CompactWriter to avoid pretty printing
+                XStream result = new XStream(new XppDriver(new NoNameCoder()) {
+                    @Override
+                    public HierarchicalStreamWriter createWriter(Writer out) {
+                        return new CompactWriter(out, getNameCoder());
+                    }
 
-                    });
-                    result.registerConverter(new JodaTimeConverter());
-                    return result;
-                }
-            };
+                });
+                result.registerConverter(new JodaTimeConverter());
+                return result;
+            }
+        };
 
     private static final String RESPONSE_ALIAS = XmlRestProcessor.class.getName() + ".responseAlias";
 

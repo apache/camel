@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jcr;
 
+import java.util.Arrays;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,7 @@ import javax.jcr.observation.EventListener;
 import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +83,11 @@ public class JcrConsumer extends DefaultConsumer implements SuspendableService {
     private synchronized void createSessionAndRegisterListener() throws RepositoryException {
         LOG.trace("createSessionAndRegisterListener START");
 
-        session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
+        if (ObjectHelper.isEmpty(getJcrEndpoint().getWorkspaceName())) { 
+            session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
+        } else {
+            session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials(), getJcrEndpoint().getWorkspaceName());
+        }
 
         int eventTypes = getJcrEndpoint().getEventTypes();
         String absPath = getJcrEndpoint().getBase();
@@ -121,7 +127,7 @@ public class JcrConsumer extends DefaultConsumer implements SuspendableService {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding JCR Event Listener, {}, on {}. eventTypes=" + eventTypes + ", isDeep=" + isDeep
-                    + ", uuid=" + uuid + ", nodeTypeName=" + nodeTypeName + ", noLocal=" + noLocal, eventListener,
+                    + ", uuid=" + Arrays.toString(uuid) + ", nodeTypeName=" + Arrays.toString(nodeTypeName) + ", noLocal=" + noLocal, eventListener,
                     absPath);
         }
 

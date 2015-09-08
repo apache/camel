@@ -62,7 +62,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         
         String fileName = getConfiguration().getFileName();
         String bucketName = getConfiguration().getBucketName();
-        Queue<Exchange> exchanges = null;
+        Queue<Exchange> exchanges;
 
         if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);

@@ -16,17 +16,23 @@
  */
 package org.apache.camel.model.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -40,6 +46,12 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private String method;
 
+    @XmlElementRef
+    private List<RestOperationParamDefinition> params = new ArrayList<RestOperationParamDefinition>();
+
+    @XmlElementRef
+    private List<RestOperationResponseMsgDefinition> responseMsgs = new ArrayList<RestOperationResponseMsgDefinition>();
+
     @XmlAttribute
     private String uri;
 
@@ -49,7 +61,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private String produces;
 
-    @XmlAttribute @Metadata(defaultValue = "auto")
+    @XmlAttribute
+    @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
 
     @XmlAttribute
@@ -64,17 +77,21 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private String outType;
 
-    // used by XML DSL to either select a <to> or <route>
+    // used by XML DSL to either select a <to>, <toD>, or <route>
     // so we need to use the common type OptionalIdentifiedDefinition
+    // must select one of them, and hence why they are all set to required = true, but the XSD is set to only allow one of the element
     @XmlElements({
-            @XmlElement(required = false, name = "to", type = ToDefinition.class),
-            @XmlElement(required = false, name = "route", type = RouteDefinition.class)}
-    )
+            @XmlElement(required = true, name = "to", type = ToDefinition.class),
+            @XmlElement(required = true, name = "toD", type = ToDynamicDefinition.class),
+            @XmlElement(required = true, name = "route", type = RouteDefinition.class)}
+        )
     private OptionalIdentifiedDefinition<?> toOrRoute;
 
     // the Java DSL uses the to or route definition directory
     @XmlTransient
     private ToDefinition to;
+    @XmlTransient
+    private ToDynamicDefinition toD;
     @XmlTransient
     private RouteDefinition route;
     @XmlTransient
@@ -87,6 +104,28 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         } else {
             return "verb";
         }
+    }
+
+    public List<RestOperationParamDefinition> getParams() {
+        return params;
+    }
+
+    /**
+     * To specify the REST operation parameters using Swagger.
+     */
+    public void setParams(List<RestOperationParamDefinition> params) {
+        this.params = params;
+    }
+
+    public List<RestOperationResponseMsgDefinition> getResponseMsgs() {
+        return responseMsgs;
+    }
+
+    /**
+     * Sets swagger operation response messages
+     */
+    public void setResponseMsgs(List<RestOperationResponseMsgDefinition> params) {
+        this.responseMsgs = responseMsgs;
     }
 
     public String getMethod() {
@@ -233,8 +272,25 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         }
     }
 
+    public ToDynamicDefinition getToD() {
+        if (toD != null) {
+            return toD;
+        } else if (toOrRoute instanceof ToDynamicDefinition) {
+            return (ToDynamicDefinition) toOrRoute;
+        } else {
+            return null;
+        }
+    }
+
     public void setTo(ToDefinition to) {
         this.to = to;
+        this.toD = null;
+        this.toOrRoute = to;
+    }
+
+    public void setToD(ToDynamicDefinition to) {
+        this.to = null;
+        this.toD = to;
         this.toOrRoute = to;
     }
 
@@ -317,5 +373,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
             return method;
         }
     }
+
+
 
 }

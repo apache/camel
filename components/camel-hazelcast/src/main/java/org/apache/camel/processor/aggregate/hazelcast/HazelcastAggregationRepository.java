@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * {@link HazelcastAggregationRepository} passing a reference to the instance.
  *
  */
-public final class HazelcastAggregationRepository extends ServiceSupport
+public class HazelcastAggregationRepository extends ServiceSupport
                                                   implements RecoverableAggregationRepository,
                                                              OptimisticLockingAggregationRepository {
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastAggregationRepository.class.getName());
@@ -327,7 +327,6 @@ public final class HazelcastAggregationRepository extends ServiceSupport
                 TransactionContext tCtx = hzInstance.newTransactionContext(tOpts);
 
                 try {
-
                     tCtx.beginTransaction();
 
                     TransactionalMap<String, DefaultExchangeHolder> tCache = tCtx.getMap(cache.getName());
@@ -359,7 +358,9 @@ public final class HazelcastAggregationRepository extends ServiceSupport
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
         LOG.trace("Confirming an exchange with ID {}.", exchangeId);
-        persistedCache.remove(exchangeId);
+        if (useRecovery) {
+            persistedCache.remove(exchangeId);
+        }
     }
 
     @Override
@@ -407,7 +408,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         }
     }
 
-    private Exchange unmarshallExchange(CamelContext camelContext, DefaultExchangeHolder holder) {
+    protected Exchange unmarshallExchange(CamelContext camelContext, DefaultExchangeHolder holder) {
         Exchange exchange = null;
         if (holder != null) {
             exchange = new DefaultExchange(camelContext);

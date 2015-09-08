@@ -58,7 +58,6 @@
       org.apache.aries.blueprint.reflect;version="[1.0,2.0)";resolution:=optional,
       org.apache.aries.blueprint.mutable;version="[1.0,2.0)";resolution:=optional,
       org.apache.camel.blueprint;resolution:=optional,
-      org.osgi.framework;resolution:=optional,
       *
     </camel.osgi.import>
 
@@ -146,7 +145,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
-      <artifactId>org.apache.aries.blueprint</artifactId>
+      <artifactId>org.apache.aries.blueprint.core</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -169,7 +168,14 @@
       <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
+    <!-- http client tests -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-http</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <!-- test for the cxf jms transport -->
     <dependency>
        <groupId>org.apache.activemq</groupId>
@@ -182,6 +188,7 @@
 		<groupId>org.apache.cxf</groupId>
 		<artifactId>cxf-rt-features-clustering</artifactId>
 		<version>${cxf-version}</version>
+                <scope>test</scope>
 	</dependency>
     
     <dependency>
@@ -211,7 +218,7 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty8</artifactId>
+      <artifactId>camel-jetty9</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -307,7 +314,7 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <forkCount>1</forkCount>
-	  <reuseForks>true</reuseForks>
+	        <reuseForks>true</reuseForks>
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <reportFormat>brief</reportFormat>
           <useFile>false</useFile>

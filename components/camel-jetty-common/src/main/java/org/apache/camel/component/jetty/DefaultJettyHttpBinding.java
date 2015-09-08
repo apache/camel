@@ -25,10 +25,11 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http.HttpConstants;
-import org.apache.camel.component.http.HttpHeaderFilterStrategy;
-import org.apache.camel.component.http.HttpOperationFailedException;
-import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.http.common.HttpConstants;
+import org.apache.camel.http.common.HttpHeaderFilterStrategy;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
@@ -42,8 +43,10 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJettyHttpBinding.class);
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;
+    private String okStatusCodeRange;
 
     public DefaultJettyHttpBinding() {
     }
@@ -58,7 +61,8 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
             // if we do not use failed exception then populate response for all response codes
             populateResponse(exchange, httpExchange, in, getHeaderFilterStrategy(), responseCode);
         } else {
-            if (responseCode >= 100 && responseCode < 300) {
+            boolean ok = HttpHelper.isStatusCodeOk(responseCode, okStatusCodeRange);
+            if (ok) {
                 // only populate response for OK response
                 populateResponse(exchange, httpExchange, in, getHeaderFilterStrategy(), responseCode);
             } else {
@@ -97,6 +101,14 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         this.transferException = transferException;
     }
 
+    public String getOkStatusCodeRange() {
+        return okStatusCodeRange;
+    }
+
+    public void setOkStatusCodeRange(String okStatusCodeRange) {
+        this.okStatusCodeRange = okStatusCodeRange;
+    }
+
     protected void populateResponse(Exchange exchange, JettyContentExchange httpExchange,
                                     Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
         Message answer = exchange.getOut();
@@ -119,10 +131,11 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
                 }
             }
         }
-
+        
         // preserve headers from in by copying any non existing headers
         // to avoid overriding existing headers with old values
-        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
+        // We also need to apply the httpProtocolHeaderFilterStrategy to filter the http protocol header
+        MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
 
         // extract body after headers has been set as we want to ensure content-type from Jetty HttpExchange
         // has been populated first
@@ -172,7 +185,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
             try {
                 InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, httpExchange.getResponseContentBytes());
-                return HttpHelper.deserializeJavaObjectFromStream(is);
+                return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
             }

@@ -72,7 +72,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     }
 
     @Override
-    protected void handleReplyMessage(String correlationID, Message message) {
+    protected void handleReplyMessage(String correlationID, Message message, Session session) {
         ReplyHandler handler = correlation.get(correlationID);
         if (handler == null && endpoint.isUseMessageIDAsCorrelationID()) {
             handler = waitForProvisionCorrelationToBeUpdated(correlationID, message);
@@ -80,7 +80,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         if (handler != null) {
             correlation.remove(correlationID);
-            handler.onReply(correlationID, message);
+            handler.onReply(correlationID, message, session);
         } else {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message

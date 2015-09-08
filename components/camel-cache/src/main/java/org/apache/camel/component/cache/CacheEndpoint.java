@@ -88,19 +88,21 @@ public class CacheEndpoint extends DefaultEndpoint {
         return cacheManagerFactory;
     }
 
+    /**
+     * To use a custom CacheManagerFactory for creating the CacheManager to be used by this endpoint.
+     * <p/>
+     * By default the CacheManagerFactory configured on the component is used.
+     */
     public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
         this.cacheManagerFactory = cacheManagerFactory;
     }
 
-    public Exchange createCacheExchange(String operation, String key,
-            Object value) {
-        Exchange exchange = new DefaultExchange(this.getCamelContext(),
-                getExchangePattern());
-        Message message = new DefaultMessage();
+    public Exchange createCacheExchange(String operation, String key, Object value) {
+        Exchange exchange = super.createExchange();
+        Message message = exchange.getIn();
         message.setHeader(CacheConstants.CACHE_OPERATION, operation);
         message.setHeader(CacheConstants.CACHE_KEY, key);
         message.setBody(value);
-        exchange.setIn(message);
         return exchange;
     }
 
@@ -162,6 +164,11 @@ public class CacheEndpoint extends DefaultEndpoint {
         return operation;
     }
 
+
+    /**
+     * The default cache operation to use.
+     * If an operation in the message header, then the operation from the header takes precedence.
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -170,6 +177,10 @@ public class CacheEndpoint extends DefaultEndpoint {
         return key;
     }
 
+    /**
+     * The default key to use.
+     * If a key is provided in the message header, then the key from the header takes precedence.
+     */
     public void setKey(String key) {
         this.key = key;
     }

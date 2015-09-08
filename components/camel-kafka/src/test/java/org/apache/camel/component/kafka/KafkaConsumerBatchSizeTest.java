@@ -44,7 +44,7 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
             // If set the consumerTiemout too small the test will fail in JDK7
             + "&consumerTimeoutMs=300"
             + "&barrierAwaitTimeoutMs=1000"
-    )
+        )
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")

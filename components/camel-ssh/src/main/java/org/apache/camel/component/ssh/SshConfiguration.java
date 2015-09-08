@@ -38,7 +38,7 @@ public class SshConfiguration implements Cloneable {
     private String username;
     @UriParam
     private String password;
-    @UriParam
+    @UriParam(label = "consumer")
     private String pollCommand;
     private KeyPairProvider keyPairProvider;
     @UriParam(defaultValue = KeyPairProvider.SSH_RSA)
@@ -148,6 +148,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * Sets the command string to send to the remote SSH server during every poll cycle.
      * Only works with camel-ssh component being used as a consumer, i.e. from("ssh://...")
+     * You may need to end your command with a newline, and that must be URL encoded %0A
      *
      * @param pollCommand String representing the command to send.
      */
@@ -204,6 +205,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
      */
+    @Deprecated
     public String getCertFilename() {
         return ((certResource != null) && certResource.startsWith("file:")) ? certResource.substring(5) : null;
     }
@@ -211,6 +213,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
      */
+    @Deprecated
     public void setCertFilename(String certFilename) {
         this.certResource = "file:" + certFilename;
     }

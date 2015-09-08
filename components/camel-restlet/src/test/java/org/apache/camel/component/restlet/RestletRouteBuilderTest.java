@@ -19,7 +19,6 @@ package org.apache.camel.component.restlet;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -82,36 +81,34 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
 
     @Test
     public void testProducer() throws IOException {
-        String response = (String)template.requestBody("direct:start", "<order foo='1'/>");
+        String response = template.requestBody("direct:start", "<order foo='1'/>", String.class);
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
         
-        response = (String)template.sendBodyAndHeader(
+        response = template.requestBodyAndHeader(
             "restlet:http://localhost:" + portNum + "/orders?restletMethod=post&foo=bar", 
-            ExchangePattern.InOut,
-            "<order foo='1'/>", "id", "89531");
+            "<order foo='1'/>", "id", "89531", String.class);
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
     }
 
     @Test
     public void testProducerJSON() throws IOException {
-        String response = (String)template.sendBodyAndHeader(
+        String response = template.requestBodyAndHeader(
             "restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post&foo=bar", 
-            ExchangePattern.InOut,
             JSON,
             Exchange.CONTENT_TYPE,
-            MediaType.APPLICATION_JSON);
+            MediaType.APPLICATION_JSON,
+            String.class);
            
         assertEquals(JSON, response);
     }
 
     @Test
     public void testProducerJSONFailure() throws IOException {
-        String response = (String)template.sendBodyAndHeader(
+        String response = template.requestBodyAndHeader(
             "restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post&foo=bar", 
-            ExchangePattern.InOut,
             "{'JSON'}",
             Exchange.CONTENT_TYPE,
-            MediaType.APPLICATION_JSON);
+            MediaType.APPLICATION_JSON, String.class);
            
         assertEquals("{'JSON'}", response);
     }

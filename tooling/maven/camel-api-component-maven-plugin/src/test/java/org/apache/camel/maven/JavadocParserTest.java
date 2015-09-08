@@ -40,16 +40,16 @@ public class JavadocParserTest extends Assert {
 
         htmlParser.parse(new InputStreamReader(new URL(JAVA6_STRING).openStream(), "UTF-8"));
         assertNull("Java6 getErrorMessage", htmlParser.getErrorMessage());
-        assertFalse("Java6 getMethods", htmlParser.getMethods().isEmpty());
+        assertEquals("Java6 getMethods", 65, htmlParser.getMethods().size());
         htmlParser.reset();
 
         htmlParser.parse(new InputStreamReader(new URL(JAVA7_STRING).openStream(), "UTF-8"));
         assertNull("Java7 getErrorMessage", htmlParser.getErrorMessage());
-        assertFalse("Java7 getMethods", htmlParser.getMethods().isEmpty());
+        assertEquals("Java7 getMethods", 65, htmlParser.getMethods().size());
         htmlParser.reset();
 
         htmlParser.parse(new InputStreamReader(new URL(JAVA8_STRING).openStream(), "UTF-8"));
         assertNull("Java8 getErrorMessage", htmlParser.getErrorMessage());
-        assertFalse("Java8 getMethods", htmlParser.getMethods().isEmpty());
+        assertEquals("Java8 getMethods", 67, htmlParser.getMethods().size());
     }
 }

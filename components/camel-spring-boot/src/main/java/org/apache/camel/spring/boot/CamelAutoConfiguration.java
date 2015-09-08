@@ -43,6 +43,7 @@ public class CamelAutoConfiguration {
      * context.
      */
     @Bean
+    @ConditionalOnMissingBean(CamelContext.class)
     CamelContext camelContext(ApplicationContext applicationContext,
                               CamelConfigurationProperties configurationProperties) {
         CamelContext camelContext = new SpringCamelContext(applicationContext);
@@ -75,6 +76,7 @@ public class CamelAutoConfiguration {
      * Default producer template for the bootstrapped Camel context.
      */
     @Bean
+    @ConditionalOnMissingBean(ProducerTemplate.class)
     ProducerTemplate producerTemplate(CamelContext camelContext,
                                       CamelConfigurationProperties configurationProperties) {
         return camelContext.createProducerTemplate(configurationProperties.getProducerTemplateCacheSize());
@@ -84,6 +86,7 @@ public class CamelAutoConfiguration {
      * Default consumer template for the bootstrapped Camel context.
      */
     @Bean
+    @ConditionalOnMissingBean(ConsumerTemplate.class)
     ConsumerTemplate consumerTemplate(CamelContext camelContext,
                                       CamelConfigurationProperties configurationProperties) {
         return camelContext.createConsumerTemplate(configurationProperties.getConsumerTemplateCacheSize());

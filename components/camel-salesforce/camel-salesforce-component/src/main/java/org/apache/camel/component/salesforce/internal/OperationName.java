@@ -49,7 +49,15 @@ public enum OperationName {
     GET_RESULTS("getResults"),
     CREATE_BATCH_QUERY("createBatchQuery"),
     GET_QUERY_RESULT_IDS("getQueryResultIds"),
-    GET_QUERY_RESULT("getQueryResult");
+    GET_QUERY_RESULT("getQueryResult"),
+    
+    // analytics API
+    GET_RECENT_REPORTS("getRecentReports"),
+    GET_REPORT_DESCRIPTION("getReportDescription"),
+    EXECUTE_SYNCREPORT("executeSyncReport"),
+    EXECUTE_ASYNCREPORT("executeAsyncReport"),
+    GET_REPORT_INSTANCES("getReportInstances"),
+    GET_REPORT_RESULTS("getReportResults");
 
     private final String value;
 

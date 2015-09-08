@@ -41,7 +41,8 @@ import org.apache.commons.net.ftp.FTPSClient;
  * 
  * @version 
  */
-@UriEndpoint(scheme = "ftps", title = "FTPS", syntax = "ftps:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
+@UriEndpoint(scheme = "ftps", extendsScheme = "file", title = "FTPS",
+        syntax = "ftps:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     @UriParam
     protected FtpsConfiguration configuration;

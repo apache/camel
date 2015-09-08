@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sns;
 
 import com.amazonaws.services.sns.AmazonSNS;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -24,6 +25,8 @@ import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class SnsConfiguration implements Cloneable {
+
+    private String topicArn;
 
     // Common properties
     @UriPath @Metadata(required = "true")
@@ -36,17 +39,22 @@ public class SnsConfiguration implements Cloneable {
     private String secretKey;
     @UriParam
     private String amazonSNSEndpoint;
+    @UriParam
+    private String proxyHost;
+    @UriParam
+    private Integer proxyPort;
 
     // Producer only properties
     @UriParam
     private String subject;
     @UriParam
-    private String topicArn;
-    @UriParam
     private String policy;
     @UriParam
     private String messageStructure;
 
+    /**
+     * The region with which the AWS-SNS client wants to work with.
+     */
     public void setAmazonSNSEndpoint(String awsSNSEndpoint) {
         this.amazonSNSEndpoint = awsSNSEndpoint;
     }
@@ -59,6 +67,9 @@ public class SnsConfiguration implements Cloneable {
         return subject;
     }
 
+    /**
+     * The subject which is used if the message header 'CamelAwsSnsSubject' is not present.
+     */
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -67,6 +78,9 @@ public class SnsConfiguration implements Cloneable {
         return topicArn;
     }
 
+    /**
+     * The Amazon Resource Name (ARN) assigned to the created topic.
+     */
     public void setTopicArn(String topicArn) {
         this.topicArn = topicArn;
     }
@@ -75,6 +89,9 @@ public class SnsConfiguration implements Cloneable {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -83,6 +100,9 @@ public class SnsConfiguration implements Cloneable {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -91,6 +111,9 @@ public class SnsConfiguration implements Cloneable {
         return amazonSNSClient;
     }
 
+    /**
+     * To use the AmazonSNS as the client
+     */
     public void setAmazonSNSClient(AmazonSNS amazonSNSClient) {
         this.amazonSNSClient = amazonSNSClient;
     }
@@ -99,6 +122,9 @@ public class SnsConfiguration implements Cloneable {
         return topicName;
     }
 
+    /**
+     * The name of the topic
+     */
     public void setTopicName(String topicName) {
         this.topicName = topicName;
     }
@@ -107,6 +133,9 @@ public class SnsConfiguration implements Cloneable {
         return policy;
     }
 
+    /**
+     * The policy for this queue
+     */
     public void setPolicy(String policy) {
         this.policy = policy;
     }
@@ -115,8 +144,33 @@ public class SnsConfiguration implements Cloneable {
         return messageStructure;
     }
 
+    /**
+     * The message structure to use such as json
+     */
     public void setMessageStructure(String messageStructure) {
         this.messageStructure = messageStructure;
+    }
+    
+    /**
+     * To define a proxy host when instantiating the SQS client
+     */
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    /**
+     * To define a proxy port when instantiating the SQS client
+     */
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
     }
 
     @Override
@@ -129,6 +183,8 @@ public class SnsConfiguration implements Cloneable {
             + ", topicArn=" + topicArn
             + ", policy=" + policy
             + ", messageStructure=" + messageStructure
+            + ", proxyHost=" + proxyHost
+            + ", proxyPort=" + proxyPort
             + "]";
     }
 }

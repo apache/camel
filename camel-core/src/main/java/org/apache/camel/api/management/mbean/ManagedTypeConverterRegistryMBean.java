@@ -50,6 +50,12 @@ public interface ManagedTypeConverterRegistryMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Number of type converters in the registry")
     int getNumberOfTypeConverters();
 
+    @ManagedAttribute(description = "Logging level to use if attempting to add a duplicate type converter")
+    String getTypeConverterExistsLoggingLevel();
+
+    @ManagedAttribute(description = "What to do if attempting to add a duplicate type converter (Override, Ignore or Fail)")
+    String getTypeConverterExists();
+
     @ManagedOperation(description = "Checks whether a type converter exists for converting (from -> to)")
     boolean hasTypeConverter(String fromType, String toType);
 

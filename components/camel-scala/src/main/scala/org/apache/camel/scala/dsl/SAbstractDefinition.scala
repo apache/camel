@@ -18,14 +18,12 @@ package org.apache.camel
 package scala
 package dsl
 
-import org.apache.camel.Exchange
 import org.apache.camel.model._
 import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 import spi.Policy
 
 import reflect.{ClassTag, classTag}
-import java.lang.String
 import java.util.Comparator
 
 abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with Wrapper[P] with Block {
@@ -46,10 +44,11 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   /**
    * Helper method to return this Scala type instead of creating another wrapper type for the processor
    */
-  def wrap(block: => Unit): SAbstractDefinition[_] = {
+  def wrap(block: => Unit): this.type = {
     block
     this
   }
+
 
   // EIPs
   //-----------------------------------------------------------------
@@ -109,7 +108,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def otherwise: SChoiceDefinition = throw new Exception("otherwise is only supported in a choice block or after a when statement")
 
   def pipeline = SPipelineDefinition(target.pipeline)
-  def policy(policy: Policy) = wrap(target.policy(policy))
+  def policy(policy: Policy) = SPolicyDefinition(target.policy(policy))
   def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = -1) =
     wrap(target.pollEnrich(uri, timeout, strategy))
   def pollEnrich(uri: String, strategy: AggregationStrategy, timeout: Long, aggregateOnException: Boolean) =
@@ -135,6 +134,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def routingSlip(expression: Exchange => Any, separator: String) = wrap(target.routingSlip(expression, separator))
   def routingSlip(expression: Exchange => Any) = wrap(target.routingSlip(expression))
 
+  def script(expression: Exchange => Any) = wrap(target.script(expression))
   def setBody(expression: Exchange => Any) = wrap(target.setBody(expression))
   def setFaultBody(expression: Exchange => Any) = wrap(target.setFaultBody(expression))
   def setHeader(name: String, expression: Exchange => Any) = wrap(target.setHeader(name, expression))
@@ -148,18 +148,19 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def threads = SThreadsDefinition(target.threads)
   def throttle(frequency: Frequency) = SThrottleDefinition(target.throttle(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   def throwException(exception: Exception) = wrap(target.throwException(exception))
-  def transacted = wrap(target.transacted)
-  def transacted(ref: String) = wrap(target.transacted(ref))
+  def throwException(exceptionType: Class[_ <: Exception], message: String) = wrap(target.throwException(exceptionType, message))
+  def transacted = STransactedDefinition(target.transacted)
+  def transacted(ref: String) = STransactedDefinition(target.transacted(ref))
   def transform(expression: Exchange => Any) = wrap(target.transform(expression))
 
   def unmarshal(format: DataFormatDefinition) = wrap(target.unmarshal(format))
   def unmarshal(dataFormatRef: String) = wrap(target.unmarshal(dataFormatRef))
 
-  def validate(expression: Exchange => Any) = wrap(target.validate(predicateBuilder(expression)))
+  def validate(expression: Exchange => Any) = SValidateDefinition(target.validate(predicateBuilder(expression)))
 
   def when(filter: Exchange => Any): DSL with Block = SChoiceDefinition(target.choice).when(filter)
-  def wireTap(uri: String) = wrap(target.wireTap(uri))
-  def wireTap(uri: String, expression: Exchange => Any) = wrap(target.wireTap(uri).newExchangeBody(expression))
+  def wireTap(uri: String) = SWireTapDefinition(target.wireTap(uri))
+  def wireTap(uri: String, expression: Exchange => Any) = SWireTapDefinition(target.wireTap(uri).newExchangeBody(expression))
 
   def -->(pattern: ExchangePattern, uri: String) = wrap(target.to(pattern, uri))
   def -->(uris: String*) = to(uris:_*)
@@ -173,5 +174,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
     }
     this
   }
+  def toD(uri: String) = wrap(target.toD(uri))
+  def toD(uri: String, ignoreInvalidEndpoint: Boolean) = wrap(target.toD(uri, ignoreInvalidEndpoint))
 
 }

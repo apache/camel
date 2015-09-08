@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.vertx;
 
+import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.EventBus;
 import org.apache.camel.Consumer;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -24,14 +27,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.eventbus.EventBus;
 
 /**
  * A Camel Endpoint for working with <a href="http://vertx.io/">vert.x</a> event bus endpoints
  */
 @UriEndpoint(scheme = "vertx", title = "Vert.x", syntax = "vertx:address", consumerClass = VertxConsumer.class, label = "eventbus")
-public class VertxEndpoint extends DefaultEndpoint {
+public class VertxEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriPath @Metadata(required = "true")
     private String address;
@@ -59,6 +60,11 @@ public class VertxEndpoint extends DefaultEndpoint {
     }
 
     public boolean isSingleton() {
+        return true;
+    }
+
+    @Override
+    public boolean isMultipleConsumersSupported() {
         return true;
     }
 

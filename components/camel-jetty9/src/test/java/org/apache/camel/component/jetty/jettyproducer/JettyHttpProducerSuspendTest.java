@@ -17,9 +17,9 @@
 package org.apache.camel.component.jetty.jettyproducer;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpConsumer;
-import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
 
 /**

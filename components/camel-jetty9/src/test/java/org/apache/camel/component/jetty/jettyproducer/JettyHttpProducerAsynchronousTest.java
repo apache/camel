@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,14 +31,10 @@ public class JettyHttpProducerAsynchronousTest extends BaseJettyTest {
     private static String thread1;
     private static String thread2;
 
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/foo";
+    private String url = "jetty://http://127.0.0.1:" + getPort() + "/foo";
 
     @Test
     public void testAsynchronous() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
 
         // give Jetty time to startup properly
         Thread.sleep(1000);
@@ -77,18 +71,8 @@ public class JettyHttpProducerAsynchronousTest extends BaseJettyTest {
 
                 from(url).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        HttpServletResponse res = exchange.getIn().getBody(HttpServletResponse.class);
-                        res.setStatus(200);
-                        res.setHeader("customer", "gold");
-
-                        // write empty string to force flushing
-                        res.getWriter().write("");
-                        res.flushBuffer();
-
-                        Thread.sleep(2000);
-
-                        res.getWriter().write("Bye World");
-                        res.flushBuffer();
+                        exchange.getIn().setHeader("customer", "gold");
+                        exchange.getIn().setBody("Bye World");
                     }
                 });
             }

@@ -49,13 +49,12 @@
     <jdk.version>1.7</jdk.version>
     <compiler.fork>false</compiler.fork>
 
-    <!-- use maven compiler 2.5.1 as 3.0/3.1 recompiles everything even if nothingh has changed, or only 1 file,
-         so 2.5.1 is much faster to use for development -->
-    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
+    <maven-compiler-plugin-version>3.3</maven-compiler-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
     <jaxb-version>2.2.11</jaxb-version>
+    <errorprone-version>2.5</errorprone-version>
   </properties>
 
   <mailingLists>
@@ -78,6 +77,19 @@
       <post>commits@camel.apache.org</post>
     </mailingList>
   </mailingLists>
+
+  <developers>
+    <developer>
+      <name>The Apache Camel Team</name>
+      <email>dev@camel.apache.org</email>
+      <url>http://camel.apache.org</url>
+      <organization>Apache Software Foundation</organization>
+      <organizationUrl>http://apache.org/</organizationUrl>
+      <properties>
+        <picUrl>http://camel.apache.org/banner.data/apache-camel-7.png</picUrl>
+      </properties>
+    </developer>
+  </developers>
 
   <issueManagement>
     <system>jira</system>
@@ -235,7 +247,14 @@
                 <exclude>**/avro/**/*.avpr</exclude>
                 <exclude>**/OSGI-INF/bundle.info</exclude>
                 <exclude>**/test_rsa*</exclude>
-                <exclude>**/examples/*/src/**/data/**/*.xml</exclude>
+                <exclude>**/data*/**/*.xml</exclude>
+                <exlucde>**/*.log</exlucde>
+                <exclude>**/id_file</exclude>
+                <exclude>**/dependency-reduced-pom.xml</exclude>
+                <exclude>**/grape.json</exclude>
+                <exclude>**/Dropbox_API_Terms_and_Conditions.txt</exclude>
+                <exclude>**/MerchandiseRestResource.apxc</exclude>
+                <exclude>**/file-sig-api.txt</exclude>
               </excludes>
             </configuration>
           </plugin>

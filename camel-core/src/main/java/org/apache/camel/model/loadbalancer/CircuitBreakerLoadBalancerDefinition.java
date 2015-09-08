@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.CircuitBreakerLoadBalancer;
@@ -44,6 +45,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition {
+    @XmlTransient
+    private List<Class<?>> exceptionTypes = new ArrayList<Class<?>>();
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlAttribute
@@ -55,11 +58,19 @@ public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition
     }
 
     @Override
+    protected int getMaximumNumberOfOutputs() {
+        // we can only support 1 output
+        return 1;
+    }
+
+    @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         CircuitBreakerLoadBalancer answer;
 
-        if (!exceptions.isEmpty()) {
-            List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        if (!exceptionTypes.isEmpty()) {
+            classes.addAll(exceptionTypes);
+        } else if (!exceptions.isEmpty()) {
             for (String name : exceptions) {
                 Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(name);
                 if (type == null) {
@@ -70,9 +81,11 @@ public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition
                 }
                 classes.add(type);
             }
-            answer = new CircuitBreakerLoadBalancer(classes);
-        } else {
+        }
+        if (classes.isEmpty()) {
             answer = new CircuitBreakerLoadBalancer();
+        } else {
+            answer = new CircuitBreakerLoadBalancer(classes);
         }
 
         if (getHalfOpenAfter() != null) {
@@ -116,6 +129,18 @@ public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition
      */
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
+    }
+
+    public List<Class<?>> getExceptionTypes() {
+        return exceptionTypes;
+    }
+
+    /**
+     * A list of specific exceptions to monitor.
+     * If no exceptions is configured then all exceptions is monitored
+     */
+    public void setExceptionTypes(List<Class<?>> exceptionTypes) {
+        this.exceptionTypes = exceptionTypes;
     }
 
     @Override

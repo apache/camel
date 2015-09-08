@@ -18,13 +18,12 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +38,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.maven.packaging.PackageHelper.after;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
@@ -81,6 +81,15 @@ public class PackageDataFormatMojo extends AbstractMojo {
      * @readonly
      */
     private MavenProjectHelper projectHelper;
+    
+    /**
+     * build context to check changed files and mark them for refresh (used for
+     * m2e compatibility)
+     * 
+     * @component
+     * @readonly
+     */
+    private BuildContext buildContext;
 
     /**
      * Execute goal.
@@ -90,11 +99,23 @@ public class PackageDataFormatMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir);
+        prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
     }
 
-    public static void prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir, File schemaOutDir) throws MojoExecutionException {
+    public static void prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir,
+                                         File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
+
         File camelMetaDir = new File(dataFormatOutDir, "META-INF/services/org/apache/camel/");
+
+        // first we need to setup the output directory because the next check
+        // can stop the build before the end and eclipse always needs to know about that directory 
+        if (projectHelper != null) {
+            projectHelper.addResource(project, dataFormatOutDir.getPath(), Collections.singletonList("**/dataformat.properties"), Collections.emptyList());
+        }
+
+        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/dataformat")) {
+            return;
+        }
 
         Map<String, String> javaTypes = new HashMap<String, String>();
 
@@ -111,29 +132,12 @@ public class PackageDataFormatMojo extends AbstractMojo {
                 File[] files = f.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory
-                        if (file.isDirectory()) {
-                            continue;
-                        }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
+                        String javaType = readClassFromCamelResource(file, buffer, buildContext);
+                        if (!file.isDirectory() && file.getName().charAt(0) != '.') {
                             count++;
-                            if (buffer.length() > 0) {
-                                buffer.append(" ");
-                            }
-                            buffer.append(name);
                         }
-
-                        // find out the javaType for each data format
-                        try {
-                            String text = loadText(new FileInputStream(file));
-                            Map<String, String> map = parseAsMap(text);
-                            String javaType = map.get("class");
-                            if (javaType != null) {
-                                javaTypes.put(name, javaType);
-                            }
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Failed to read file " + file + ". Reason: " + e, e);
+                        if (javaType != null) {
+                            javaTypes.put(file.getName(), javaType);
                         }
                     }
                 }
@@ -204,7 +208,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 dir.mkdirs();
 
                                 File out = new File(dir, name + ".json");
-                                FileOutputStream fos = new FileOutputStream(out, false);
+                                OutputStream fos = buildContext.newFileOutputStream(out);
                                 fos.write(schema.getBytes());
                                 fos.close();
 
@@ -232,14 +236,35 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
             camelMetaDir.mkdirs();
             File outFile = new File(camelMetaDir, "dataformat.properties");
+
+            // check if the existing file has the same content, and if so then leave it as is so we do not write any changes
+            // which can cause a re-compile of all the source code
+            if (outFile.exists()) {
+                try {
+                    Properties existing = new Properties();
+
+                    InputStream is = new FileInputStream(outFile);
+                    existing.load(is);
+                    is.close();
+
+                    // are the content the same?
+                    if (existing.equals(properties)) {
+                        log.debug("No dataformat changes detected");
+                        return;
+                    }
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+
             try {
-                properties.store(new FileWriter(outFile), "Generated by camel-package-maven-plugin");
+                OutputStream os = buildContext.newFileOutputStream(outFile);
+                properties.store(os, "Generated by camel-package-maven-plugin");
+                os.close();
+
                 log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "dataformats: " : "dataformat: ") + names);
 
                 if (projectHelper != null) {
-                    List<String> includes = new ArrayList<String>();
-                    includes.add("**/dataformat.properties");
-                    projectHelper.addResource(project, dataFormatOutDir.getPath(), includes, new ArrayList<String>());
                     projectHelper.attachArtifact(project, "properties", "camelDataFormat", outFile);
                 }
             } catch (IOException e) {
@@ -247,6 +272,37 @@ public class PackageDataFormatMojo extends AbstractMojo {
             }
         } else {
             log.debug("No META-INF/services/org/apache/camel/dataformat directory found. Are you sure you have created a Camel data format?");
+        }
+    }
+
+    private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {
+        // skip directories as there may be a sub .resolver directory
+        if (file.isDirectory()) {
+            return null;
+        }
+        String name = file.getName();
+        if (name.charAt(0) != '.') {
+            if (buffer.length() > 0) {
+                buffer.append(" ");
+            }
+            buffer.append(name);
+        }
+
+        if (!buildContext.hasDelta(file)) {
+            // if this file has not changed,
+            // then no need to store the javatype
+            // for the json file to be generated again
+            // (but we do need the name above!)
+            return null;
+        }
+
+        // find out the javaType for each data format
+        try {
+            String text = loadText(new FileInputStream(file));
+            Map<String, String> map = parseAsMap(text);
+            return map.get("class");
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to read file " + file + ". Reason: " + e, e);
         }
     }
 

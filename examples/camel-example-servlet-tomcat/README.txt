@@ -10,11 +10,11 @@ To run the example deploy it in Apache Tomcat by copying the .war to the
 deploy folder of Apache Tomcat.
 
 And then hit this url from a webbrowser which has further
-instructions (use correct version number)
-  http://localhost:8080/camel-example-servlet-tomcat-{version}
+instructions
+  http://localhost:8080/camel-example-servlet-tomcat
 
-The servlet is located at (use correct version number)
-  http://localhost:8080/camel-example-servlet-tomcat-{version}/camel/hello
+The servlet is located at
+  http://localhost:8080/camel-example-servlet-tomcat/camel/hello
 
 This example is documented at
   http://camel.apache.org/servlet-tomcat-example.html

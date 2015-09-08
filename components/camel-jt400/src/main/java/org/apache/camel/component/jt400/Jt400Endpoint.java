@@ -246,4 +246,13 @@ public class Jt400Endpoint extends DefaultPollingEndpoint {
     public void setSystemName(String systemName) {
         configuration.setSystemName(systemName);
     }
+
+    public void setSecured(boolean secured) {
+        configuration.setSecured(secured);
+    }
+
+    public boolean isSecured() {
+        return configuration.isSecured();
+    }
+
 }

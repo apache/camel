@@ -22,11 +22,10 @@ import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Feed;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedPollingConsumer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Consumer to poll atom feeds and return the full feed.
- *
- * @version 
  */
 public class AtomPollingConsumer extends FeedPollingConsumer {
 
@@ -36,7 +35,12 @@ public class AtomPollingConsumer extends FeedPollingConsumer {
 
     @Override
     protected Object createFeed() throws IOException {
-        Document<Feed> document = AtomUtils.parseDocument(endpoint.getFeedUri());
+        Document<Feed> document;
+        if (ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
+            document = AtomUtils.parseDocument(endpoint.getFeedUri());
+        } else {
+            document = AtomUtils.parseDocument(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword());
+        }
         return document.getRoot();
     }
 }

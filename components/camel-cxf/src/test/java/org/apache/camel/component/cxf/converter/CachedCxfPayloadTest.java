@@ -84,7 +84,7 @@ public class CachedCxfPayloadTest extends ExchangeTestSupport {
 
         cache.reset();
 
-        CachedCxfPayload clone = (CachedCxfPayload) cache.copy();
+        CachedCxfPayload clone = (CachedCxfPayload) cache.copy(exchange);
         bos = new ByteArrayOutputStream();
         clone.writeTo(bos);
 

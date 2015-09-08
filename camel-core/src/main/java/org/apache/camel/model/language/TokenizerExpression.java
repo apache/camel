@@ -113,7 +113,7 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * To inherit namepaces from a root/parent tag name
+     * To inherit namepaces from a root/parent tag name when using XML
      */
     public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
         this.inheritNamespaceTagName = inheritNamespaceTagName;
@@ -136,7 +136,7 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether to include the tokens in the parts
+     * Whether to include the tokens in the parts when using pairs
      * <p/>
      * The default value is false
      */

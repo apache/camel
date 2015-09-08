@@ -51,7 +51,7 @@ public class CassandraProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (isPrepareStatements()) {
+        if (isPrepareStatements() && getEndpoint().getCql() != null) {
             this.preparedStatement = getEndpoint().prepareStatement();
         }
     }

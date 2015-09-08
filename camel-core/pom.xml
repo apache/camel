@@ -77,6 +77,7 @@
       org.apache.camel.spi.ComponentResolver;component=validator,
       org.apache.camel.spi.ComponentResolver;component=vm,
       org.apache.camel.spi.ComponentResolver;component=xslt,
+      org.apache.camel.spi.DataFormatResolver;dataformat=gzip,
       org.apache.camel.spi.DataFormatResolver;dataformat=serialization,
       org.apache.camel.spi.DataFormatResolver;dataformat=string,
       org.apache.camel.spi.DataFormatResolver;dataformat=zip,
@@ -98,6 +99,9 @@
       org.apache.camel.pollconsumer.quartz2;${camel.osgi.import.strict.version},
       net.sf.saxon
     </camel.osgi.dynamic>
+    <camel.osgi.provide.capability>
+      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.impl.osgi"; version:Version="$(version;==;${camel.osgi.version.clean})"
+    </camel.osgi.provide.capability>
     <camel.osgi.activator>
       org.apache.camel.impl.osgi.Activator
     </camel.osgi.activator>
@@ -193,9 +197,7 @@
                                     <artifactId>camel-package-maven-plugin</artifactId>
                                     <versionRange>${project.version}</versionRange>
                                     <goals>
-                                        <goal>generate-components-list</goal>
-                                        <goal>generate-dataformats-list</goal>
-                                        <goal>generate-languages-list</goal>
+                                        <goal>generate-eips-list</goal>
                                     </goals>
                                 </pluginExecutionFilter>
                                 <action>
@@ -310,6 +312,14 @@
             </goals>
             <phase>process-classes</phase>
           </execution>
+          <!-- camel-core needs to validate before packaging -->
+          <execution>
+            <id>validate</id>
+            <goals>
+              <goal>validate-components</goal>
+            </goals>
+            <phase>prepare-package</phase>
+         </execution>
         </executions>
       </plugin>
     </plugins>

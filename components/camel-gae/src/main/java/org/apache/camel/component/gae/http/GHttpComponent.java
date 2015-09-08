@@ -18,21 +18,16 @@ package org.apache.camel.component.gae.http;
 
 import java.net.URI;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.InboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBinding;
-import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
  * The <a href="http://camel.apache.org/ghttp.html">Google App Engine HTTP
@@ -65,11 +60,7 @@ public class GHttpComponent extends ServletComponent {
     }
 
     @Override
-    protected ServletEndpoint createServletEndpoint(String endpointUri,
-            ServletComponent component, URI httpUri, HttpClientParams params,
-            HttpConnectionManager httpConnectionManager,
-            HttpClientConfigurer clientConfigurer) throws Exception {
-        return new GHttpEndpoint(endpointUri, component, httpUri, params,
-                httpConnectionManager, clientConfigurer);
+    protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component, URI httpUri) throws Exception {
+        return new GHttpEndpoint(endpointUri, component, httpUri);
     }
 }

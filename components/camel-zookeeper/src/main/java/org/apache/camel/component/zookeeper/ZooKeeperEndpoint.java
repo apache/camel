@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -71,33 +70,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return connectionManager;
     }
 
-    @ManagedAttribute(description = "Camel ID")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri", mask = true)
-    @Override
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Service State")
-    public String getState() {
-        ServiceStatus status = this.getStatus();
-        // if no status exists then its stopped
-        if (status == null) {
-            status = ServiceStatus.Stopped;
-        }
-        return status.name();
-    }
-
-    @ManagedAttribute
     public void setPath(String path) {
         getConfiguration().setPath(path);
     }
@@ -112,7 +84,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return getConfiguration().getTimeout();
     }
 
-    @ManagedAttribute
     public void setTimeout(int timeout) {
         getConfiguration().setTimeout(timeout);
     }
@@ -122,7 +93,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return getConfiguration().isRepeat();
     }
 
-    @ManagedAttribute
     public void setRepeat(boolean shouldRepeat) {
         getConfiguration().setRepeat(shouldRepeat);
     }
@@ -132,7 +102,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return getConfiguration().getServers();
     }
 
-    @ManagedAttribute
     public void setServers(List<String> servers) {
         getConfiguration().setServers(servers);
     }
@@ -142,7 +111,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return getConfiguration().isListChildren();
     }
 
-    @ManagedAttribute
     public void setListChildren(boolean listChildren) {
         getConfiguration().setListChildren(listChildren);
     }
@@ -152,7 +120,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return getConfiguration().isCreate();
     }
 
-    @ManagedAttribute
     public void setCreate(boolean shouldCreate) {
         getConfiguration().setCreate(shouldCreate);
     }
@@ -162,7 +129,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return getConfiguration().getBackoff();
     }
 
-    @ManagedAttribute
     public void setBackoff(long backoff) {
         getConfiguration().setBackoff(backoff);
     }
@@ -171,7 +137,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
      * @deprecated The usage of this property has no effect at all.
      */
     @Deprecated
-    @ManagedAttribute
     public boolean getAwaitExistence() {
         return getConfiguration().shouldAwaitExistence();
     }
@@ -180,7 +145,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
      * @deprecated The usage of this property has no effect at all.
      */
     @Deprecated
-    @ManagedAttribute
     public void setAwaitExistence(boolean awaitExistence) {
         getConfiguration().setAwaitExistence(awaitExistence);
     }
@@ -195,16 +159,11 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         getConfiguration().getServers().clear();
     }
 
-    public Object getManagedObject(ZooKeeperEndpoint arg0) {
-        return this;
-    }
-
     @ManagedAttribute
     public boolean isSendEmptyMessageOnDelete() {
         return getConfiguration().isSendEmptyMessageOnDelete();
     }
 
-    @ManagedAttribute
     public void setSendEmptyMessageOnDelete(boolean sendEmptyMessageOnDelete) {
         getConfiguration().setSendEmptyMessageOnDelete(sendEmptyMessageOnDelete);
     }

@@ -38,20 +38,24 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     private static final Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategy.class);
 
     private boolean markerFile = true;
+    private boolean deleteOrphanLockFiles = true;
 
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
-        String dir = endpoint.getConfiguration().getDirectory();
-        File file = new File(dir);
+        if (deleteOrphanLockFiles) {
 
-        LOG.debug("Prepare on startup by deleting orphaned lock files from: {}", dir);
+            String dir = endpoint.getConfiguration().getDirectory();
+            File file = new File(dir);
 
-        StopWatch watch = new StopWatch();
-        deleteLockFiles(file, endpoint.isRecursive());
+            LOG.debug("Prepare on startup by deleting orphaned lock files from: {}", dir);
 
-        // log anything that takes more than a second
-        if (watch.taken() > 1000) {
-            LOG.info("Prepared on startup by deleting orphaned lock files from: {} took {} millis to complete.", dir, watch.taken());
+            StopWatch watch = new StopWatch();
+            deleteLockFiles(file, endpoint.isRecursive());
+
+            // log anything that takes more than a second
+            if (watch.taken() > 1000) {
+                LOG.info("Prepared on startup by deleting orphaned lock files from: {} took {} millis to complete.", dir, watch.taken());
+            }
         }
     }
 
@@ -69,23 +73,41 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
         // create a plain file as marker filer for locking (do not use FileLock)
         boolean acquired = FileUtil.createNewFile(new File(lockFileName));
-        exchange.setProperty(Exchange.FILE_LOCK_FILE_ACQUIRED, acquired);
-        exchange.setProperty(Exchange.FILE_LOCK_FILE_NAME, lockFileName);
+
+        // store read-lock state
+        exchange.setProperty(asReadLockKey(file, Exchange.FILE_LOCK_FILE_ACQUIRED), acquired);
+        exchange.setProperty(asReadLockKey(file, Exchange.FILE_LOCK_FILE_NAME), lockFileName);
 
         return acquired;
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
-                                         GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        doReleaseExclusiveReadLock(operations, file, exchange);
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        doReleaseExclusiveReadLock(operations, file, exchange);
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        doReleaseExclusiveReadLock(operations, file, exchange);
+    }
+
+    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations,
+                                              GenericFile<File> file, Exchange exchange) throws Exception {
         if (!markerFile) {
             // if not using marker file then nothing to release
             return;
         }
 
+        boolean acquired = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_FILE_ACQUIRED), false, Boolean.class);
+
         // only release the file if camel get the lock before
-        if (exchange.getProperty(Exchange.FILE_LOCK_FILE_ACQUIRED, false, Boolean.class)) {
-            String lockFileName = exchange.getProperty(Exchange.FILE_LOCK_FILE_NAME, getLockFileName(file), String.class);
+        if (acquired) {
+            String lockFileName = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_FILE_NAME), String.class);
             File lock = new File(lockFileName);
 
             if (lock.exists()) {
@@ -116,6 +138,11 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         this.markerFile = markerFile;
     }
 
+    @Override
+    public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
+        this.deleteOrphanLockFiles = deleteOrphanLockFiles;
+    }
+
     private static void deleteLockFiles(File dir, boolean recursive) {
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
@@ -137,6 +164,14 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
     private static String getLockFileName(GenericFile<File> file) {
         return file.getAbsoluteFilePath() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+    }
+
+    private static String asReadLockKey(GenericFile file, String key) {
+        // use the copy from absolute path as that was the original path of the file when the lock was acquired
+        // for example if the file consumer uses preMove then the file is moved and therefore has another name
+        // that would no longer match
+        String path = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
+        return path + "-" + key;
     }
 
 }

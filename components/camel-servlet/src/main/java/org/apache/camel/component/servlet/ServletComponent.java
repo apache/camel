@@ -18,32 +18,24 @@ package org.apache.camel.component.servlet;
 
 import java.net.URI;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.component.http.AuthMethod;
-import org.apache.camel.component.http.HttpBinding;
-import org.apache.camel.component.http.HttpClientConfigurer;
-import org.apache.camel.component.http.HttpComponent;
-import org.apache.camel.component.http.HttpConsumer;
-import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpCommonComponent;
+import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
 
-public class ServletComponent extends HttpComponent implements RestConsumerFactory {
+public class ServletComponent extends HttpCommonComponent implements RestConsumerFactory {
 
     private String servletName = "CamelServlet";
     private HttpRegistry httpRegistry;
@@ -52,20 +44,12 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         super(ServletEndpoint.class);
     }
 
-    public ServletComponent(Class<? extends HttpEndpoint> endpointClass) {
+    public ServletComponent(Class<? extends ServletEndpoint> endpointClass) {
         super(endpointClass);
     }
 
-
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        HttpClientParams params = new HttpClientParams();
-        IntrospectionSupport.setProperties(params, parameters, "httpClient.");
-
-        // create the configurer to use for this endpoint
-        final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
-        HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
-
         // must extract well known parameters before we create the endpoint
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
@@ -84,7 +68,7 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encodeHttpURI(uri)), parameters);
 
-        ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), configurer);
+        ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri);
         endpoint.setServletName(servletName);
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
@@ -125,9 +109,8 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
     /**
      * Strategy to create the servlet endpoint.
      */
-    protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component, URI httpUri, HttpClientParams params,
-                                                    HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws Exception {
-        return new ServletEndpoint(endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
+    protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component, URI httpUri) throws Exception {
+        return new ServletEndpoint(endpointUri, component, httpUri);
     }
 
     @Override
@@ -156,6 +139,9 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         return servletName;
     }
 
+    /**
+     * Default name of servlet to use. The default name is <tt>CamelServlet</tt>.
+     */
     public void setServletName(String servletName) {
         this.servletName = servletName;
     }
@@ -164,6 +150,9 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         return httpRegistry;
     }
 
+    /**
+     * To use a custom {@link org.apache.camel.component.servlet.HttpRegistry}.
+     */
     public void setHttpRegistry(HttpRegistry httpRegistry) {
         this.httpRegistry = httpRegistry;
     }
@@ -183,15 +172,12 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         path = FileUtil.stripLeadingSeparator(path);
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
+        RestConfiguration config = getCamelContext().getRestConfiguration("servlet", true);
 
         Map<String, Object> map = new HashMap<String, Object>();
-        // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals("servlet")) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
+        // setup endpoint options
+        if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+            map.putAll(config.getEndpointProperties());
         }
 
         String query = URISupport.createQueryString(map);
@@ -210,7 +196,11 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         setProperties(endpoint, parameters);
 
         // use the rest binding
-        endpoint.setBinding(new ServletRestHttpBinding());
+        HttpBinding binding = new ServletRestHttpBinding();
+        binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());
+        binding.setTransferException(endpoint.isTransferException());
+        binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
+        endpoint.setBinding(binding);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);

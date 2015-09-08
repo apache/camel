@@ -70,8 +70,6 @@ public class S3Producer extends DefaultProducer {
         } else {
             processSingleOp(exchange);
         }
-
-
     }
 
     public void processMultiPart(final Exchange exchange) throws Exception {
@@ -272,6 +270,11 @@ public class S3Producer extends DefaultProducer {
             for (Map.Entry<String, String> entry : s3Headers.entrySet()) {
                 objectMetadata.setHeader(entry.getKey(), entry.getValue());
             }
+        }
+
+        String encryption = exchange.getIn().getHeader(S3Constants.SERVER_SIDE_ENCRYPTION, getConfiguration().getServerSideEncryption(), String.class);
+        if (encryption != null) {
+            objectMetadata.setSSEAlgorithm(encryption);
         }
 
         return objectMetadata;

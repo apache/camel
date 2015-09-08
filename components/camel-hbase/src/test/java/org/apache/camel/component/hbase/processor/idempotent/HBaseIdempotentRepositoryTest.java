@@ -102,6 +102,23 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
             assertFalse(repository.remove(key02));
         }
     }
+    
+    @Test
+    public void testClear() throws Exception {
+        if (systemReady) {
+            // add key to remove
+            assertTrue(repository.add(key01));
+            assertTrue(repository.add(key02));
+            assertTrue(repository.contains(key01));
+            assertTrue(repository.contains(key02));
+
+            // remove key
+            repository.clear();
+
+            assertFalse(repository.contains(key01));
+            assertFalse(repository.contains(key02));
+        }
+    }
 
     @Test
     public void testConfirm() throws Exception {

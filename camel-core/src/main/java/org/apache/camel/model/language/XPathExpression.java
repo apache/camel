@@ -234,7 +234,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         }
         // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
         super.configureExpression(camelContext, expression);
-
     }
 
     @Override

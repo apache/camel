@@ -29,8 +29,8 @@ public interface JettyHttpBinding {
     /**
      * Parses the response from the Jetty client.
      *
-     * @param exchange  the Exchange which to populate with the response
-     * @param httpExchange  the response from the Jetty client
+     * @param exchange     the Exchange which to populate with the response
+     * @param httpExchange the response from the Jetty client
      * @throws Exception is thrown if error parsing response
      */
     void populateResponse(Exchange exchange, JettyContentExchange httpExchange) throws Exception;
@@ -45,14 +45,14 @@ public interface JettyHttpBinding {
     /**
      * Sets the header filter strategy to use.
      * <p/>
-     * Will default use {@link org.apache.camel.component.http.HttpHeaderFilterStrategy}
+     * Will default use {@link org.apache.camel.http.common.HttpHeaderFilterStrategy}
      *
      * @param headerFilterStrategy the custom strategy
      */
     void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
 
     /**
-     * Whether to throw {@link org.apache.camel.component.http.HttpOperationFailedException}
+     * Whether to throw {@link org.apache.camel.http.common.HttpOperationFailedException}
      * in case of response code != 200.
      *
      * @param throwExceptionOnFailure <tt>true</tt> to throw exception
@@ -60,7 +60,7 @@ public interface JettyHttpBinding {
     void setThrowExceptionOnFailure(boolean throwExceptionOnFailure);
 
     /**
-     * Whether to throw {@link org.apache.camel.component.http.HttpOperationFailedException}
+     * Whether to throw {@link org.apache.camel.http.common.HttpOperationFailedException}
      * in case of response code != 200.
      *
      * @return <tt>true</tt> to throw exception
@@ -82,5 +82,19 @@ public interface JettyHttpBinding {
      * @return <tt>true</tt> to transfer exception
      */
     boolean isTransferException();
+
+    /**
+     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * <p/>
+     * The default range is <tt>200-299</tt>
+     */
+    String getOkStatusCodeRange();
+
+    /**
+     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * <p/>
+     * The default range is <tt>200-299</tt>
+     */
+    void setOkStatusCodeRange(String okStatusCodeRange);
 
 }

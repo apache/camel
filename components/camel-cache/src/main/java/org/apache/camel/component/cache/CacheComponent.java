@@ -49,9 +49,9 @@ public class CacheComponent extends UriEndpointComponent {
         ObjectHelper.notNull(configuration, "configuration");
 
         CacheConfiguration config = configuration.copy();
-        config.parseURI(new URI(uri));
         setProperties(this, parameters);
         setProperties(config, parameters);
+        config.setCacheName(remaining);
 
         CacheEndpoint cacheEndpoint = new CacheEndpoint(uri, this, config, cacheManagerFactory);
         setProperties(cacheEndpoint, parameters);
@@ -62,6 +62,11 @@ public class CacheComponent extends UriEndpointComponent {
         return cacheManagerFactory;
     }
 
+    /**
+     * To use the given CacheManagerFactory for creating the CacheManager.
+     * <p/>
+     * By default the DefaultCacheManagerFactory is used.
+     */
     public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
         this.cacheManagerFactory = cacheManagerFactory;
     }

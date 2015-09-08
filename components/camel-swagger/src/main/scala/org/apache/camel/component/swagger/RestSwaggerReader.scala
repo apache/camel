@@ -23,7 +23,7 @@ import com.wordnik.swagger.model._
 import com.wordnik.swagger.core.util.ModelUtil
 import com.wordnik.swagger.core.SwaggerSpec
 
-import org.apache.camel.model.rest.{VerbDefinition, RestDefinition}
+import org.apache.camel.model.rest.{RestOperationResponseMsgDefinition, RestOperationParamDefinition, VerbDefinition, RestDefinition}
 import org.apache.camel.util.FileUtil
 import org.slf4j.LoggerFactory
 
@@ -120,8 +120,8 @@ class RestSwaggerReader {
         consumes,
         List(),
         List(),
-        createParameters(verb, buildUrl(resourcePath, path)),
-        List(),
+        createParameters(verb),
+        createResponseMessages(verb),
         None)
     }
 
@@ -173,46 +173,40 @@ class RestSwaggerReader {
     else None
   }
 
-  def createParameters(verb: VerbDefinition, absPath : String): List[Parameter] = {
-    val parameters = new ListBuffer[Parameter]
+  def createResponseMessages(verb: VerbDefinition): List[ResponseMessage] = {
+    val responseMsgs = new ListBuffer[ResponseMessage]
 
-    // each {} is a parameter
-    val arr = absPath.split("\\/")
-    for (a <- arr) {
-      if (a.startsWith("{") && a.endsWith("}")) {
-        var key = a.substring(1, a.length - 1)
-
-        parameters += Parameter(
-          key,
-          None,
-          None,
-          true,
-          false,
-          "string",
-          AnyAllowableValues,
-          "path",
-          None
-        )
-      }
+    for (param:RestOperationResponseMsgDefinition <- verb.getResponseMsgs.asScala) {
+      responseMsgs += ResponseMessage(
+        param.getCode,
+        param.getMessage,
+        Option( param.getResponseModel )
+      )
     }
 
-    // if we have input type then its a body parameter
-    if (verb.getType != null) {
-      var bodyType = verb.getType
-      if (bodyType.endsWith("[]")) {
-        bodyType = "List[" + bodyType.substring(0, bodyType.length - 2) + "]"
+    responseMsgs.toList
+  }
+
+  def createParameters(verb: VerbDefinition): List[Parameter] = {
+    val parameters = new ListBuffer[Parameter]
+
+    for (param:RestOperationParamDefinition <- verb.getParams.asScala) {
+      var allowValues=AnyAllowableValues
+
+      if(!param.getAllowableValues.isEmpty){
+        AllowableListValues(param.getAllowableValues.asScala.toList)
       }
 
       parameters += Parameter(
-        "body",
-        None,
-        None,
-        true,
-        false,
-        bodyType,
-        AnyAllowableValues,
-        "body",
-        None
+        param.getName,
+        Some( param.getDescription ),
+        Some( param.getDefaultValue),
+        if (param.getRequired != null) param.getRequired.booleanValue() else false,
+        if (param.getAllowMultiple != null) param.getAllowMultiple.booleanValue() else false,
+        param.getDataType,
+        allowValues,
+        param.getType.toString,
+        Some(param.getAccess)
       )
     }
 

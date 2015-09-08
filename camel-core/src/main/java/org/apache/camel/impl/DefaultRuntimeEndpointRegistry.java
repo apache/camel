@@ -25,24 +25,43 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.RouteAddedEvent;
 import org.apache.camel.management.event.RouteRemovedEvent;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 
-public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements RuntimeEndpointRegistry {
+public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements CamelContextAware, RuntimeEndpointRegistry {
+
+    private CamelContext camelContext;
 
     // route id -> endpoint urls
     private Map<String, Set<String>> inputs;
     private Map<String, Map<String, String>> outputs;
     private int limit = 1000;
     private boolean enabled = true;
+    private volatile boolean extended;
+    private EndpointUtilizationStatistics inputUtilization;
+    private EndpointUtilizationStatistics outputUtilization;
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -83,6 +102,49 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
+    public List<Statistic> getEndpointStatistics() {
+        List<Statistic> answer = new ArrayList<Statistic>();
+
+        // inputs
+        for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
+            String routeId = entry.getKey();
+            for (String uri : entry.getValue()) {
+                Long hits = 0L;
+                if (extended) {
+                    String key = asUtilizationKey(routeId, uri);
+                    if (key != null) {
+                        hits = inputUtilization.getStatistics().get(key);
+                        if (hits == null) {
+                            hits = 0L;
+                        }
+                    }
+                }
+                answer.add(new EndpointRuntimeStatistics(uri, routeId, "in", hits));
+            }
+        }
+
+        // outputs
+        for (Map.Entry<String, Map<String, String>> entry : outputs.entrySet()) {
+            String routeId = entry.getKey();
+            for (String uri : entry.getValue().keySet()) {
+                Long hits = 0L;
+                if (extended) {
+                    String key = asUtilizationKey(routeId, uri);
+                    if (key != null) {
+                        hits = outputUtilization.getStatistics().get(key);
+                        if (hits == null) {
+                            hits = 0L;
+                        }
+                    }
+                }
+                answer.add(new EndpointRuntimeStatistics(uri, routeId, "out", hits));
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
     public int getLimit() {
         return limit;
     }
@@ -93,9 +155,21 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
-    public void reset() {
+    public void clear() {
         inputs.clear();
         outputs.clear();
+        reset();
+    }
+
+    @Override
+    public void reset() {
+        // its safe to call clear as reset
+        if (inputUtilization != null) {
+            inputUtilization.clear();
+        }
+        if (outputUtilization != null) {
+            outputUtilization.clear();
+        }
     }
 
     @Override
@@ -107,17 +181,34 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "camelContext", this);
+
         if (inputs == null) {
             inputs = new HashMap<String, Set<String>>();
         }
         if (outputs == null) {
             outputs = new HashMap<String, Map<String, String>>();
         }
+        if (getCamelContext().getManagementStrategy().getManagementAgent() != null) {
+            Boolean isEnabled = getCamelContext().getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
+            boolean isExtended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+            // extended mode is either if we use Extended statistics level or the option is explicit enabled
+            extended = isExtended || isEnabled != null && isEnabled;
+        }
+        if (extended) {
+            inputUtilization = new DefaultEndpointUtilizationStatistics(limit);
+            outputUtilization = new DefaultEndpointUtilizationStatistics(limit);
+        }
+        if (extended) {
+            log.info("Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})", limit);
+        }
+        ServiceHelper.startServices(inputUtilization, outputUtilization);
     }
 
     @Override
     protected void doStop() throws Exception {
-        reset();
+        clear();
+        ServiceHelper.stopServices(inputUtilization, outputUtilization);
     }
 
     @Override
@@ -139,7 +230,24 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             String routeId = rse.getRoute().getId();
             inputs.remove(routeId);
             outputs.remove(routeId);
-        } else {
+            if (extended) {
+                String uri = rse.getRoute().getEndpoint().getEndpointUri();
+                String key = asUtilizationKey(routeId, uri);
+                if (key != null) {
+                    inputUtilization.remove(key);
+                }
+            }
+        } else if (extended && event instanceof ExchangeCreatedEvent) {
+            // we only capture details in extended mode
+            ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
+            Endpoint endpoint = ece.getExchange().getFromEndpoint();
+            String routeId = ece.getExchange().getFromRouteId();
+            String uri = endpoint.getEndpointUri();
+            String key = asUtilizationKey(routeId, uri);
+            if (key != null) {
+                inputUtilization.onHit(key);
+            }
+        } else if (event instanceof ExchangeSendingEvent) {
             ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
             Endpoint endpoint = ese.getEndpoint();
             String routeId = getRouteId(ese.getExchange());
@@ -148,6 +256,12 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             Map<String, String> uris = outputs.get(routeId);
             if (uris != null && !uris.containsKey(uri)) {
                 uris.put(uri, uri);
+            }
+            if (extended) {
+                String key = asUtilizationKey(routeId, uri);
+                if (key != null) {
+                    outputUtilization.onHit(key);
+                }
             }
         }
     }
@@ -168,8 +282,48 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     public boolean isEnabled(EventObject event) {
-        return enabled && event instanceof ExchangeSendingEvent
+        return enabled && event instanceof ExchangeCreatedEvent
+                || event instanceof ExchangeSendingEvent
                 || event instanceof RouteAddedEvent
                 || event instanceof RouteRemovedEvent;
+    }
+
+    private static String asUtilizationKey(String routeId, String uri) {
+        if (routeId == null || uri == null) {
+            return null;
+        } else {
+            return routeId + "|" + uri;
+        }
+    }
+
+    private static final class EndpointRuntimeStatistics implements Statistic {
+
+        private final String uri;
+        private final String routeId;
+        private final String direction;
+        private final long hits;
+
+        private EndpointRuntimeStatistics(String uri, String routeId, String direction, long hits) {
+            this.uri = uri;
+            this.routeId = routeId;
+            this.direction = direction;
+            this.hits = hits;
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public String getRouteId() {
+            return routeId;
+        }
+
+        public String getDirection() {
+            return direction;
+        }
+
+        public long getHits() {
+            return hits;
+        }
     }
 }

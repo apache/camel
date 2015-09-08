@@ -41,8 +41,8 @@ public class KafkaProducerTest {
 
     @SuppressWarnings({"unchecked"})
     public KafkaProducerTest() throws Exception {
-        endpoint = new KafkaEndpoint("kafka:broker1:1234,broker2:4567?topic=sometopic",
-                "broker1:1234," + "broker2:4567?topic=sometopic", null);
+        endpoint = new KafkaEndpoint("kafka:broker1:1234,broker2:4567?topic=sometopic", null);
+        endpoint.setBrokers("broker1:1234,broker2:4567");
         producer = new KafkaProducer(endpoint);
         producer.producer = Mockito.mock(Producer.class);
     }
@@ -126,6 +126,19 @@ public class KafkaProducerTest {
 
         producer.process(exchange);
 
+        verifySendMessage("someKey", "someTopic", "someKey");
+    }
+    
+    @Test
+    public void processSendMessageWithBridgeEndpoint() throws Exception {
+        endpoint.setTopic("someTopic");
+        endpoint.setBridgeEndpoint(true);
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
+        in.setHeader(KafkaConstants.KEY, "someKey");
+        
+        producer.process(exchange);
+        
         verifySendMessage("someKey", "someTopic", "someKey");
     }
 

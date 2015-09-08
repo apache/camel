@@ -262,18 +262,21 @@ public final class ProcessorDefinitionHelper {
                     found.add((T) choice);
                 }
 
-                for (WhenDefinition when : choice.getWhenClauses()) {
-                    if (type.isInstance(when)) {
-                        found.add((T) when);
+                // only look at when/otherwise if current < maxDeep (or max deep is disabled)
+                if (maxDeep < 0 || current < maxDeep) {
+                    for (WhenDefinition when : choice.getWhenClauses()) {
+                        if (type.isInstance(when)) {
+                            found.add((T) when);
+                        }
+                        List<ProcessorDefinition<?>> children = when.getOutputs();
+                        doFindType(children, type, found, ++current, maxDeep);
                     }
-                    List<ProcessorDefinition<?>> children = when.getOutputs();
-                    doFindType(children, type, found, ++current, maxDeep);
-                }
 
-                // otherwise is optional
-                if (choice.getOtherwise() != null) {
-                    List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
-                    doFindType(children, type, found, ++current, maxDeep);
+                    // otherwise is optional
+                    if (choice.getOtherwise() != null) {
+                        List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
+                        doFindType(children, type, found, ++current, maxDeep);
+                    }
                 }
 
                 // do not check children as we already did that
@@ -289,16 +292,19 @@ public final class ProcessorDefinitionHelper {
                     found.add((T) doTry);
                 }
 
-                List<ProcessorDefinition<?>> doTryOut = doTry.getOutputsWithoutCatches();
-                doFindType(doTryOut, type, found, ++current, maxDeep);
+                // only look at children if current < maxDeep (or max deep is disabled)
+                if (maxDeep < 0 || current < maxDeep) {
+                    List<ProcessorDefinition<?>> doTryOut = doTry.getOutputsWithoutCatches();
+                    doFindType(doTryOut, type, found, ++current, maxDeep);
 
-                List<CatchDefinition> doTryCatch = doTry.getCatchClauses();
-                for (CatchDefinition doCatch : doTryCatch) {
-                    doFindType(doCatch.getOutputs(), type, found, ++current, maxDeep);
-                }
+                    List<CatchDefinition> doTryCatch = doTry.getCatchClauses();
+                    for (CatchDefinition doCatch : doTryCatch) {
+                        doFindType(doCatch.getOutputs(), type, found, ++current, maxDeep);
+                    }
 
-                if (doTry.getFinallyClause() != null) {
-                    doFindType(doTry.getFinallyClause().getOutputs(), type, found, ++current, maxDeep);
+                    if (doTry.getFinallyClause() != null) {
+                        doFindType(doTry.getFinallyClause().getOutputs(), type, found, ++current, maxDeep);
+                    }
                 }
 
                 // do not check children as we already did that
@@ -659,10 +665,10 @@ public final class ProcessorDefinitionHelper {
      * Inspects the given definition and resolves any property placeholders from its properties.
      * <p/>
      * This implementation will check all the getter/setter pairs on this instance and for all the values
-     * (which is a String type) will be property placeholder resolved.
+     * (which is a String type) will be property placeholder resolved. The definition should implement {@link OtherAttributesAware}
      *
      * @param camelContext the Camel context
-     * @param definition   the definition
+     * @param definition   the definition which should implement {@link OtherAttributesAware}
      * @throws Exception is thrown if property placeholders was used and there was an error resolving them
      * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
      * @see org.apache.camel.component.properties.PropertiesComponent
@@ -674,17 +680,17 @@ public final class ProcessorDefinitionHelper {
         Map<String, Object> properties = new HashMap<String, Object>();
         IntrospectionSupport.getProperties(definition, properties, null);
 
-        ProcessorDefinition<?> processorDefinition = null;
-        if (definition instanceof ProcessorDefinition) {
-            processorDefinition = (ProcessorDefinition<?>) definition;
+        OtherAttributesAware other = null;
+        if (definition instanceof OtherAttributesAware) {
+            other = (OtherAttributesAware) definition;
         }
         // include additional properties which have the Camel placeholder QName
         // and when the definition parameter is this (otherAttributes belong to this)
-        if (processorDefinition != null && processorDefinition.getOtherAttributes() != null) {
-            for (QName key : processorDefinition.getOtherAttributes().keySet()) {
+        if (other != null && other.getOtherAttributes() != null) {
+            for (QName key : other.getOtherAttributes().keySet()) {
                 if (Constants.PLACEHOLDER_QNAME.equals(key.getNamespaceURI())) {
                     String local = key.getLocalPart();
-                    Object value = processorDefinition.getOtherAttributes().get(key);
+                    Object value = other.getOtherAttributes().get(key);
                     if (value != null && value instanceof String) {
                         // enforce a properties component to be created if none existed
                         CamelContextHelper.lookupPropertiesComponent(camelContext, true);

@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,http,rest")
+@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,rest")
 public class RestEndpoint extends DefaultEndpoint {
 
     @UriPath(enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
@@ -202,7 +202,7 @@ public class RestEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         RestConsumerFactory factory = null;
-
+        String cname = null;
         if (getComponentName() != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(getComponentName());
             if (comp != null && comp instanceof RestConsumerFactory) {
@@ -221,6 +221,7 @@ public class RestEndpoint extends DefaultEndpoint {
                     throw new NoSuchBeanException(getComponentName(), RestConsumerFactory.class.getName());
                 }
             }
+            cname = getComponentName();
         }
 
         // try all components
@@ -229,6 +230,7 @@ public class RestEndpoint extends DefaultEndpoint {
                 Component comp = getCamelContext().getComponent(name);
                 if (comp != null && comp instanceof RestConsumerFactory) {
                     factory = (RestConsumerFactory) comp;
+                    cname = name;
                     break;
                 }
             }
@@ -251,7 +253,7 @@ public class RestEndpoint extends DefaultEndpoint {
             String host = "";
             int port = 80;
 
-            RestConfiguration config = getCamelContext().getRestConfiguration();
+            RestConfiguration config = getCamelContext().getRestConfiguration(cname, true);
             if (config.getScheme() != null) {
                 scheme = config.getScheme();
             }

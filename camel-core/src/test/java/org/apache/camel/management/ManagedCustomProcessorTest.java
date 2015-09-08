@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * @version 
@@ -57,6 +58,9 @@ public class ManagedCustomProcessorTest extends ManagementTestSupport {
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "changed");
         template.sendBody("direct:start", "Bye World");
         assertMockEndpointsSatisfied();
+
+        String state = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals("Started", state);
     }
 
     @Override
@@ -73,7 +77,7 @@ public class ManagedCustomProcessorTest extends ManagementTestSupport {
 
     // START SNIPPET: e1
     @ManagedResource(description = "My Managed Component")
-    public static class MyCustomProcessor implements Processor {
+    public static class MyCustomProcessor extends ServiceSupport implements Processor {
         private String foo = "hey";
 
         @ManagedAttribute
@@ -88,6 +92,16 @@ public class ManagedCustomProcessorTest extends ManagementTestSupport {
 
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setHeader("foo", getFoo());
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            // noop
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            // noop
         }
     }
     // END SNIPPET: e1

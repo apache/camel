@@ -38,6 +38,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
@@ -153,7 +154,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Comparator<GenericFile<T>> sorter;
     @UriParam(label = "consumer")
     protected Comparator<Exchange> sortBy;
-    @UriParam(label = "consumer", enums = "none,markerFile,fileLock,rename,changed")
+    @UriParam(label = "consumer")
+    protected boolean shuffle;
+    @UriParam(label = "consumer", enums = "none,markerFile,fileLock,rename,changed,idempotent")
     protected String readLock = "none";
     @UriParam(label = "consumer", defaultValue = "1000")
     protected long readLockCheckInterval = 1000;
@@ -161,14 +164,22 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected long readLockTimeout = 10000;
     @UriParam(label = "consumer", defaultValue = "true")
     protected boolean readLockMarkerFile = true;
+    @UriParam(label = "consumer", defaultValue = "true")
+    protected boolean readLockDeleteOrphanLockFiles = true;
     @UriParam(label = "consumer", defaultValue = "WARN")
     protected LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
     @UriParam(label = "consumer", defaultValue = "1")
     protected long readLockMinLength = 1;
     @UriParam(label = "consumer", defaultValue = "0")
     protected long readLockMinAge;
+    @UriParam(label = "consumer", defaultValue = "true")
+    protected boolean readLockRemoveOnRollback = true;
+    @UriParam(label = "consumer")
+    protected boolean readLockRemoveOnCommit;
     @UriParam(label = "consumer")
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
+    @UriParam(label = "consumer")
+    protected ExceptionHandler onCompletionExceptionHandler;
 
     public GenericFileEndpoint() {
     }
@@ -406,6 +417,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * Is used to include files, if filename matches the regex pattern.
+     * <p/>
+     * Notice if you use symbols such as plus sign and others you would need to configure
+     * this using the RAW() syntax if configuring this as an endpoint uri.
+     * See more details at <a href="http://camel.apache.org/how-do-i-configure-endpoints.html">configuring endpoint uris</a>
      */
     public void setInclude(String include) {
         this.include = include;
@@ -417,6 +432,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * Is used to exclude files, if filename matches the regex pattern.
+     * <p/>
+     * Notice if you use symbols such as plus sign and others you would need to configure
+     * this using the RAW() syntax if configuring this as an endpoint uri.
+     * See more details at <a href="http://camel.apache.org/how-do-i-configure-endpoints.html">configuring endpoint uris</a>
      */
     public void setExclude(String exclude) {
         this.exclude = exclude;
@@ -715,6 +734,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         setSortBy(GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), expression, reverse));
     }
 
+    public boolean isShuffle() {
+        return shuffle;
+    }
+
+    /**
+     * To shuffle the list of files (sort in random order)
+     */
+    public void setShuffle(boolean shuffle) {
+        this.shuffle = shuffle;
+    }
+
     public String getTempPrefix() {
         return tempPrefix;
     }
@@ -804,7 +834,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      *     <li>fileLock - is for using java.nio.channels.FileLock. This option is not avail for the FTP component. This approach should be avoided when accessing
      *     a remote file system via a mount/share unless that file system supports distributed file locks.</li>
      *     <li>rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock.</li>
+     *     <li>idempotent - (only for file component) idempotent is for using a idempotentRepository as the read-lock.
+     *     This allows to use read locks that supports clustering if the idempotent repository implementation supports that.</li>
      * </ul>
+     * Notice: The various read locks is not all suited to work in clustered mode, where concurrent consumers on different nodes is competing
+     * for the same files on a shared file system. The markerFile using a close to atomic operation to create the empty marker file,
+     * but its not guaranteed to work in a cluster. The fileLock may work better but then the file system need to support distributed file locks, and so on.
+     * Using the idempotent read lock can support clustering if the idempotent repository supports clustering, such as Hazelcast Component or Infinispan.
      */
     public void setReadLock(String readLock) {
         this.readLock = readLock;
@@ -864,13 +900,29 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.readLockMarkerFile = readLockMarkerFile;
     }
 
+    public boolean isReadLockDeleteOrphanLockFiles() {
+        return readLockDeleteOrphanLockFiles;
+    }
+
+    /**
+     * Whether or not read lock with marker files should upon startup delete any orphan read lock files, which may
+     * have been left on the file system, if Camel was not properly shutdown (such as a JVM crash).
+     * <p/>
+     * If turning this option to <tt>false</tt> then any orphaned lock file will cause Camel to not attempt to pickup
+     * that file, this could also be due another node is concurrently reading files from the same shared directory.
+     */
+    public void setReadLockDeleteOrphanLockFiles(boolean readLockDeleteOrphanLockFiles) {
+        this.readLockDeleteOrphanLockFiles = readLockDeleteOrphanLockFiles;
+    }
+
     public LoggingLevel getReadLockLoggingLevel() {
         return readLockLoggingLevel;
     }
 
     /**
      * Logging level used when a read lock could not be acquired.
-     * By default a WARN is logged. You can change this level, for example to OFF to not have any logging.
+     * By default a WARN is logged.
+     * You can change this level, for example to OFF to not have any logging.
      * This option is only applicable for readLock of types: changed, fileLock, rename.
      */
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
@@ -896,12 +948,43 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * This option applied only for readLock=change.
-     * This options allows to specify a minimum age the file must be before attempting to acquire the read lock.
+     * This option allows to specify a minimum age the file must be before attempting to acquire the read lock.
      * For example use readLockMinAge=300s to require the file is at last 5 minutes old.
      * This can speedup the changed read lock as it will only attempt to acquire files which are at least that given age.
      */
     public void setReadLockMinAge(long readLockMinAge) {
         this.readLockMinAge = readLockMinAge;
+    }
+
+    public boolean isReadLockRemoveOnRollback() {
+        return readLockRemoveOnRollback;
+    }
+
+    /**
+     * This option applied only for readLock=idempotent.
+     * This option allows to specify whether to remove the file name entry from the idempotent repository
+     * when processing the file failed and a rollback happens.
+     * If this option is false, then the file name entry is confirmed (as if the file did a commit).
+     */
+    public void setReadLockRemoveOnRollback(boolean readLockRemoveOnRollback) {
+        this.readLockRemoveOnRollback = readLockRemoveOnRollback;
+    }
+
+    public boolean isReadLockRemoveOnCommit() {
+        return readLockRemoveOnCommit;
+    }
+
+    /**
+     * This option applied only for readLock=idempotent.
+     * This option allows to specify whether to remove the file name entry from the idempotent repository
+     * when processing the file is succeeded and a commit happens.
+     * <p/>
+     * By default the file is not removed which ensures that any race-condition do not occur so another active
+     * node may attempt to grab the file. Instead the idempotent repository may support eviction strategies
+     * that you can configure to evict the file name entry after X minutes - this ensures no problems with race conditions.
+     */
+    public void setReadLockRemoveOnCommit(boolean readLockRemoveOnCommit) {
+        this.readLockRemoveOnCommit = readLockRemoveOnCommit;
     }
 
     public int getBufferSize() {
@@ -1008,7 +1091,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Tlo define a maximum messages to gather per poll.
+     * To define a maximum messages to gather per poll.
      * By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
      * Set a value of 0 or negative to disabled it.
      * Notice: If this option is in use then the File and FTP components will limit before any sorting.
@@ -1095,6 +1178,19 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
+    }
+
+    public ExceptionHandler getOnCompletionExceptionHandler() {
+        return onCompletionExceptionHandler;
+    }
+
+    /**
+     * To use a custom {@link org.apache.camel.spi.ExceptionHandler} to handle any thrown exceptions that happens
+     * during the file on completion process where the consumer does either a commit or rollback. The default
+     * implementation will log any exception at WARN level and ignore.
+     */
+    public void setOnCompletionExceptionHandler(ExceptionHandler onCompletionExceptionHandler) {
+        this.onCompletionExceptionHandler = onCompletionExceptionHandler;
     }
 
     /**
@@ -1191,6 +1287,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (readLock != null) {
             params.put("readLock", readLock);
         }
+        if ("idempotent".equals(readLock)) {
+            params.put("readLockIdempotentRepository", idempotentRepository);
+        }
         if (readLockCheckInterval > 0) {
             params.put("readLockCheckInterval", readLockCheckInterval);
         }
@@ -1198,10 +1297,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             params.put("readLockTimeout", readLockTimeout);
         }
         params.put("readLockMarkerFile", readLockMarkerFile);
+        params.put("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
         params.put("readLockMinLength", readLockMinLength);
         params.put("readLockLoggingLevel", readLockLoggingLevel);
         params.put("readLockMinAge", readLockMinAge);
-
+        params.put("readLockRemoveOnRollback", readLockRemoveOnRollback);
+        params.put("readLockRemoveOnCommit", readLockRemoveOnCommit);
         return params;
     }
 
@@ -1312,14 +1413,21 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                         + " to ensure that the read lock procedure has enough time to acquire the lock.");
             }
         }
+        if ("idempotent".equals(readLock) && idempotentRepository == null) {
+            throw new IllegalArgumentException("IdempotentRepository must be configured when using readLock=idempotent");
+        }
 
-        ServiceHelper.startServices(inProgressRepository, idempotentRepository);
+        // idempotent repository may be used by others, so add it as a service so its stopped when CamelContext stops
+        if (idempotentRepository != null) {
+            getCamelContext().addService(idempotentRepository, true);
+        }
+        ServiceHelper.startServices(inProgressRepository);
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopServices(inProgressRepository, idempotentRepository);
+        ServiceHelper.stopServices(inProgressRepository);
     }
 }

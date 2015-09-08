@@ -43,6 +43,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Uptime")
     String getUptime();
 
+    @ManagedAttribute(description = "Camel Management StatisticsLevel")
+    String getManagementStatisticsLevel();
+
     @ManagedAttribute(description = "Camel Properties")
     Map<String, String> getProperties();
 
@@ -85,6 +88,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @deprecated use {@link #getExchangesInflight()}
      */
     @ManagedAttribute(description = "Current number of inflight Exchanges")
+    @Deprecated
     Integer getInflightExchanges();
 
     @ManagedAttribute(description = "Total number of routes")
@@ -185,6 +189,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
 
     @ManagedOperation(description = "Dumps the CamelContext and routes stats as XML")
     String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes coverage as XML")
+    String dumpRoutesCoverageAsXml() throws Exception;
 
     /**
      * Creates the endpoint by the given uri

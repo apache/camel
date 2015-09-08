@@ -76,6 +76,7 @@
         <include>org.apache.camel:camel-gae</include>
         <include>org.apache.camel:camel-ganglia</include>
         <include>org.apache.camel:camel-geocoder</include>
+        <include>org.apache.camel:camel-git</include>
         <include>org.apache.camel:camel-github</include>
         <include>org.apache.camel:camel-google-calendar</include>
         <include>org.apache.camel:camel-google-drive</include>
@@ -93,6 +94,7 @@
         <include>org.apache.camel:camel-hdfs2</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-http</include>
+        <include>org.apache.camel:camel-http-common</include>
         <include>org.apache.camel:camel-http4</include>
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-ical</include>
@@ -102,6 +104,7 @@
         <include>org.apache.camel:camel-jasypt</include>
         <include>org.apache.camel:camel-javaspace</include>
         <include>org.apache.camel:camel-jaxb</include>
+        <include>org.apache.camel:camel-jbpm</include>
         <include>org.apache.camel:camel-jcr</include>
         <include>org.apache.camel:camel-jclouds</include>
         <include>org.apache.camel:camel-jdbc</include>
@@ -127,8 +130,8 @@
         <include>org.apache.camel:camel-kura</include>
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-leveldb</include>
-        <include>org.apache.camel.camel-linkedin-api</include>
-        <include>org.apache.camel.camel-linkedin</include>
+        <include>org.apache.camel:camel-linkedin-api</include>
+        <include>org.apache.camel:camel-linkedin</include>
         <include>org.apache.camel:camel-lucene</include>
         <include>org.apache.camel:camel-metrics</include>
         <include>org.apache.camel:camel-mail</include>
@@ -146,12 +149,13 @@
         <include>org.apache.camel:camel-netty-http</include>
         <include>org.apache.camel:camel-netty4-http</include>
         <include>org.apache.camel:camel-ognl</include>
-        <include>org.apache.camel.camel-olingo2-api</include>
-        <include>org.apache.camel.camel-olingo2</include>
+        <include>org.apache.camel:camel-olingo2-api</include>
+        <include>org.apache.camel:camel-olingo2</include>
         <include>org.apache.camel:camel-openshift</include>
         <include>org.apache.camel:camel-optaplanner</include>
         <include>org.apache.camel:camel-paho</include>
         <include>org.apache.camel:camel-paxlogging</include>
+        <include>org.apache.camel:camel-pdf</include>
         <include>org.apache.camel:camel-pgevent</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
@@ -177,6 +181,7 @@
         <include>org.apache.camel:camel-shiro</include>
         <include>org.apache.camel:camel-sip</include>
         <include>org.apache.camel:camel-sjms</include>
+        <include>org.apache.camel:camel-slack</include>
         <include>org.apache.camel:camel-smpp</include>
         <include>org.apache.camel:camel-snmp</include>
         <include>org.apache.camel:camel-soap</include>
@@ -207,6 +212,7 @@
         <include>org.apache.camel:camel-test-spring40</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-twitter</include>
+        <include>org.apache.camel:camel-undertow</include>
         <include>org.apache.camel:camel-univocity-parsers</include>
         <include>org.apache.camel:camel-urlrewrite</include>
         <include>org.apache.camel:camel-velocity</include>

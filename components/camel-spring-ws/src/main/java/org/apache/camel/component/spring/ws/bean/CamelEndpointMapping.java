@@ -48,6 +48,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+
 /**
  * Spring {@link EndpointMapping} for mapping messages to corresponding Camel
  * endpoints. This class needs to be registered in the Spring

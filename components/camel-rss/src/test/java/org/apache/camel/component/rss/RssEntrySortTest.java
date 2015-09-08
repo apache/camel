@@ -17,12 +17,10 @@
 package org.apache.camel.component.rss;
 
 import java.util.Date;
-
 import javax.naming.Context;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-
 import org.apache.camel.Body;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,7 +32,7 @@ import org.junit.Test;
 public class RssEntrySortTest extends CamelTestSupport {
 
     @Test
-    public void testSortedEntries() throws Exception { 
+    public void testSortedEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:sorted");
         mock.expectsAscending(ExpressionBuilder.beanExpression("myBean", "getPubDate"));
         mock.expectedMessageCount(10);
@@ -43,21 +41,21 @@ public class RssEntrySortTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnSortedEntries() throws Exception { 
+    public void testUnSortedEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unsorted");
         mock.expectsAscending(ExpressionBuilder.beanExpression("myBean", "getPubDate"));
         mock.expectedMessageCount(10);
         mock.setResultWaitTime(2000L);
         mock.assertIsNotSatisfied(2000L);
-    }    
-    
+    }
+
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext jndi = new JndiContext();
         jndi.bind("myBean", new MyBean());
         return jndi;
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -66,7 +64,7 @@ public class RssEntrySortTest extends CamelTestSupport {
             }
         };
     }
-    
+
     public static class MyBean {
         public Date getPubDate(@Body Object body) {
             SyndFeed feed = (SyndFeed) body;
@@ -74,8 +72,8 @@ public class RssEntrySortTest extends CamelTestSupport {
             Date date = syndEntry.getUpdatedDate();
             if (date == null) {
                 date = syndEntry.getPublishedDate();
-            }                    
-            return date;            
+            }
+            return date;
         }
     }
 }

@@ -41,7 +41,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
-import org.apache.camel.processor.aggregate.PreCompletionAwareAggregationStrategy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -115,6 +114,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Boolean discardOnCompletionTimeout;
     @XmlAttribute
     private Boolean forceCompletionOnStop;
+    @XmlAttribute
+    private Boolean completeAllOnStop;
     @XmlTransient
     private AggregateController aggregateController;
     @XmlAttribute
@@ -126,19 +127,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     public AggregateDefinition(Predicate predicate) {
-        if (predicate != null) {
-            setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
-        }
-    }    
+        this(ExpressionNodeHelper.toExpressionDefinition(predicate));
+    }
     
-    public AggregateDefinition(Expression correlationExpression) {
-        if (correlationExpression != null) {
-            setExpression(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
-        }
+    public AggregateDefinition(Expression expression) {
+        this(ExpressionNodeHelper.toExpressionDefinition(expression));
     }
 
     public AggregateDefinition(ExpressionDefinition correlationExpression) {
-        this.expression = correlationExpression;
+        setExpression(correlationExpression);
+
+        ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
+        cor.setExpressionType(correlationExpression);
+        setCorrelationExpression(cor);
     }
 
     public AggregateDefinition(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
@@ -168,12 +169,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     protected AggregateProcessor createAggregator(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
-        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
-
         // wrap the aggregate route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
-        internal.addAdvice(new CamelInternalProcessor.RouteContextAdvice(routeContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
 
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
@@ -266,6 +264,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
         if (getForceCompletionOnStop() != null) {
             answer.setForceCompletionOnStop(getForceCompletionOnStop());
+        }
+        if (getCompleteAllOnStop() != null) {
+            answer.setCompleteAllOnStop(getCompleteAllOnStop());
         }
         if (optimisticLockRetryPolicy == null) {
             if (getOptimisticLockRetryPolicyDefinition() != null) {
@@ -626,6 +627,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.forceCompletionOnStop = forceCompletionOnStop;
     }
 
+    public Boolean getCompleteAllOnStop() {
+        return completeAllOnStop;
+    }
+
+    public void setCompleteAllOnStop(Boolean completeAllOnStop) {
+        this.completeAllOnStop = completeAllOnStop;
+    }
+
     public AggregateController getAggregateController() {
         return aggregateController;
     }
@@ -870,12 +879,37 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
+     * Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped.
+     * <p/>
+     * This also means that we will wait for all pending exchanges which are stored in the aggregation repository
+     * to complete so the repository is empty before we can stop.
+     * <p/>
+     * You may want to enable this when using the memory based aggregation repository that is memory based only,
+     * and do not store data on disk. When this option is enabled, then the aggregator is waiting to complete
+     * all those exchanges before its stopped, when stopping CamelContext or the route using it.
+     */
+    public AggregateDefinition completeAllOnStop() {
+        setCompleteAllOnStop(true);
+        return this;
+    }
+
+    /**
      * When aggregated are completed they are being send out of the aggregator.
      * This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency.
      * If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads.
      */
     public AggregateDefinition parallelProcessing() {
         setParallelProcessing(true);
+        return this;
+    }
+
+    /**
+     * When aggregated are completed they are being send out of the aggregator.
+     * This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency.
+     * If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads.
+     */
+    public AggregateDefinition parallelProcessing(boolean parallelProcessing) {
+        setParallelProcessing(parallelProcessing);
         return this;
     }
 

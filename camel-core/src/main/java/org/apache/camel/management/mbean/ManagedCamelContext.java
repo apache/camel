@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -29,13 +30,14 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
+
+import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -57,6 +59,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -71,7 +74,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public ManagedCamelContext(ModelCamelContext context) {
         this.context = context;
-        boolean enabled = context.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        boolean enabled = context.getManagementStrategy().getManagementAgent() != null && context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
     }
 
@@ -97,6 +105,14 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public String getUptime() {
         return context.getUptime();
+    }
+
+    public String getManagementStatisticsLevel() {
+        if (context.getManagementStrategy().getManagementAgent() != null) {
+            return context.getManagementStrategy().getManagementAgent().getStatisticsLevel().name();
+        } else {
+            return null;
+        }
     }
 
     public String getClassResolver() {
@@ -428,6 +444,25 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
 
         sb.append("</camelContextStat>");
+        return sb.toString();
+    }
+
+    public String dumpRoutesCoverageAsXml() throws Exception {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<camelContextRouteCoverage")
+                .append(String.format(" id=\"%s\" exchangesTotal=\"%s\" totalProcessingTime=\"%s\"", getCamelId(), getExchangesTotal(), getTotalProcessingTime()))
+                .append(">\n");
+
+        String xml = dumpRoutesAsXml();
+        if (xml != null) {
+            // use the coverage xml parser to dump the routes and enrich with coverage stats
+            Document dom = RouteCoverageXmlParser.parseXml(context, new ByteArrayInputStream(xml.getBytes()));
+            // convert dom back to xml
+            String converted = context.getTypeConverter().convertTo(String.class, dom);
+            sb.append(converted);
+        }
+
+        sb.append("\n</camelContextRouteCoverage>");
         return sb.toString();
     }
 

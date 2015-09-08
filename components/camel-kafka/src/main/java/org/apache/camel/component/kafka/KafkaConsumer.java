@@ -20,11 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.ConsumerIterator;
@@ -35,6 +33,7 @@ import kafka.message.MessageAndMetadata;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +73,7 @@ public class KafkaConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         log.info("Starting Kafka consumer");
+
         executor = endpoint.createExecutor();
         for (int i = 0; i < endpoint.getConsumersCount(); i++) {
             ConsumerConnector consumer = kafka.consumer.Consumer.createJavaConsumerConnector(new ConsumerConfig(getProps()));
@@ -81,8 +81,10 @@ public class KafkaConsumer extends DefaultConsumer {
             topicCountMap.put(endpoint.getTopic(), endpoint.getConsumerStreams());
             Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumer.createMessageStreams(topicCountMap);
             List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(endpoint.getTopic());
+
+            // commit periodically
             if (endpoint.isAutoCommitEnable() != null && !endpoint.isAutoCommitEnable()) {
-                if ((endpoint.getConsumerTimeoutMs() == null || endpoint.getConsumerTimeoutMs().intValue() < 0)
+                if ((endpoint.getConsumerTimeoutMs() == null || endpoint.getConsumerTimeoutMs() < 0)
                         && endpoint.getConsumerStreams() > 1) {
                     LOG.warn("consumerTimeoutMs is set to -1 (infinite) while requested multiple consumer streams.");
                 }
@@ -92,8 +94,9 @@ public class KafkaConsumer extends DefaultConsumer {
                 }
                 consumerBarriers.put(consumer, barrier);
             } else {
+                // auto commit
                 for (final KafkaStream<byte[], byte[]> stream : streams) {
-                    executor.submit(new AutoCommitConsumerTask(stream));
+                    executor.submit(new AutoCommitConsumerTask(consumer, stream));
                 }
                 consumerBarriers.put(consumer, null);
             }
@@ -105,11 +108,14 @@ public class KafkaConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
         log.info("Stopping Kafka consumer");
+
         for (ConsumerConnector consumer : consumerBarriers.keySet()) {
             if (consumer != null) {
                 consumer.shutdown();
             }
         }
+        consumerBarriers.clear();
+
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
@@ -123,25 +129,25 @@ public class KafkaConsumer extends DefaultConsumer {
     class BatchingConsumerTask implements Runnable {
 
         private KafkaStream<byte[], byte[]> stream;
-        private CyclicBarrier berrier;
+        private CyclicBarrier barrier;
 
-        public BatchingConsumerTask(KafkaStream<byte[], byte[]> stream, CyclicBarrier berrier) {
+        public BatchingConsumerTask(KafkaStream<byte[], byte[]> stream, CyclicBarrier barrier) {
             this.stream = stream;
-            this.berrier = berrier;
+            this.barrier = barrier;
         }
 
         public void run() {
 
             int processed = 0;
             boolean consumerTimeout;
-            MessageAndMetadata<byte[], byte[]> mm = null;
+            MessageAndMetadata<byte[], byte[]> mm;
             ConsumerIterator<byte[], byte[]> it = stream.iterator();
             boolean hasNext = true;
             while (hasNext) {
-
                 try {
                     consumerTimeout = false;
-                    if (it.hasNext()) {
+                    // only poll the next message if we are allowed to run and are not suspending
+                    if (isRunAllowed() && !isSuspendingOrSuspended() && it.hasNext()) {
                         mm = it.next();
                         Exchange exchange = endpoint.createKafkaExchange(mm);
                         try {
@@ -155,25 +161,20 @@ public class KafkaConsumer extends DefaultConsumer {
                         hasNext = false;
                     }
                 } catch (ConsumerTimeoutException e) {
-                    LOG.debug(e.getMessage(), e);
+                    LOG.debug("Consumer timeout occurred due " + e.getMessage(), e);
                     consumerTimeout = true;
                 }
 
                 if (processed >= endpoint.getBatchSize() || consumerTimeout 
                     || (processed > 0 && !hasNext)) { // Need to commit the offset for the last round
                     try {
-                        berrier.await(endpoint.getBarrierAwaitTimeoutMs(), TimeUnit.MILLISECONDS);
+                        barrier.await(endpoint.getBarrierAwaitTimeoutMs(), TimeUnit.MILLISECONDS);
                         if (!consumerTimeout) {
                             processed = 0;
                         }
-                    } catch (InterruptedException e) {
-                        LOG.error(e.getMessage(), e);
+                    } catch (Exception e) {
+                        getExceptionHandler().handleException("Error waiting for batch to complete", e);
                         break;
-                    } catch (BrokenBarrierException e) {
-                        LOG.error(e.getMessage(), e);
-                        break;
-                    } catch (TimeoutException e) {
-                        LOG.error(e.getMessage(), e);
                     }
                 }
             }
@@ -182,7 +183,7 @@ public class KafkaConsumer extends DefaultConsumer {
 
     class CommitOffsetTask implements Runnable {
 
-        private ConsumerConnector consumer;
+        private final ConsumerConnector consumer;
 
         public CommitOffsetTask(ConsumerConnector consumer) {
             this.consumer = consumer;
@@ -190,27 +191,36 @@ public class KafkaConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
+            LOG.debug("Commit offsets on consumer: {}", ObjectHelper.getIdentityHashCode(consumer));
             consumer.commitOffsets();
         }
     }
 
     class AutoCommitConsumerTask implements Runnable {
 
+        private final ConsumerConnector consumer;
         private KafkaStream<byte[], byte[]> stream;
 
-        public AutoCommitConsumerTask(KafkaStream<byte[], byte[]> stream) {
+        public AutoCommitConsumerTask(ConsumerConnector consumer, KafkaStream<byte[], byte[]> stream) {
+            this.consumer = consumer;
             this.stream = stream;
         }
 
         public void run() {
-            for (MessageAndMetadata<byte[], byte[]> mm : stream) {
+            ConsumerIterator<byte[], byte[]> it = stream.iterator();
+            // only poll the next message if we are allowed to run and are not suspending
+            while (isRunAllowed() && !isSuspendingOrSuspended() && it.hasNext()) {
+                MessageAndMetadata<byte[], byte[]> mm = it.next();
                 Exchange exchange = endpoint.createKafkaExchange(mm);
                 try {
                     processor.process(exchange);
                 } catch (Exception e) {
-                    LOG.error(e.getMessage(), e);
+                    getExceptionHandler().handleException("Error during processing", exchange, e);
                 }
             }
+            // no more data so commit offset
+            LOG.debug("Commit offsets on consumer: {}", ObjectHelper.getIdentityHashCode(consumer));
+            consumer.commitOffsets();
         }
     }
 }

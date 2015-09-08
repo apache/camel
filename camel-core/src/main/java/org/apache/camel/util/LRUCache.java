@@ -56,7 +56,7 @@ public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serial
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public LRUCache(int maximumCacheSize) {
-        this(maximumCacheSize, maximumCacheSize);
+        this(16, maximumCacheSize); // 16 is the default initial capacity in ConcurrentLinkedHashMap
     }
 
     /**

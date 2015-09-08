@@ -65,7 +65,23 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
         case HazelcastConstants.REMOVEVALUE_OPERATION:
             this.removevalue(oid, exchange);
             break;
+            
+        case HazelcastConstants.CONTAINS_KEY_OPERATION:
+            this.containsKey(oid, exchange);
+            break;
+            
+        case HazelcastConstants.CONTAINS_VALUE_OPERATION:
+            this.containsValue(exchange);
+            break;
 
+        case HazelcastConstants.CLEAR_OPERATION:
+            this.clear(exchange);
+            break;
+            
+        case HazelcastConstants.VALUE_COUNT_OPERATION:
+            this.valuecount(oid, exchange);
+            break;
+            
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation, HazelcastConstants.OPERATION));
         }
@@ -90,5 +106,21 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
     private void removevalue(Object oid, Exchange exchange) {
         this.cache.remove(oid, exchange.getIn().getBody());
     }
+    
+    private void valuecount(Object oid, Exchange exchange) {
+        exchange.getOut().setBody(this.cache.valueCount(oid));
+    }
 
+    private void clear(Exchange exchange) {
+        this.cache.clear();
+    }
+
+    private void containsKey(Object oid, Exchange exchange) {
+        exchange.getOut().setBody(this.cache.containsKey(oid));
+    }
+
+    private void containsValue(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        exchange.getOut().setBody(this.cache.containsValue(body));
+    }
 }

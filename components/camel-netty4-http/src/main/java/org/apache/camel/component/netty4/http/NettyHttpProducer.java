@@ -49,7 +49,7 @@ public class NettyHttpProducer extends NettyProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        return super.process(exchange, new NettyHttpProducerCallback(exchange, callback));
+        return super.process(exchange, new NettyHttpProducerCallback(exchange, callback, getConfiguration()));
     }
 
     @Override
@@ -81,10 +81,12 @@ public class NettyHttpProducer extends NettyProducer {
 
         private final Exchange exchange;
         private final AsyncCallback callback;
+        private final NettyHttpConfiguration configuration;
 
-        private NettyHttpProducerCallback(Exchange exchange, AsyncCallback callback) {
+        private NettyHttpProducerCallback(Exchange exchange, AsyncCallback callback, NettyHttpConfiguration configuration) {
             this.exchange = exchange;
             this.callback = callback;
+            this.configuration = configuration;
         }
 
         @Override
@@ -95,15 +97,16 @@ public class NettyHttpProducer extends NettyProducer {
                     FullHttpResponse response = nettyMessage.getHttpResponse();
                     // Need to retain the ByteBuffer for producer to consumer
                     // TODO Remove this part of ByteBuffer right away
-                    response.content().retain();
                     if (response != null) {
+                        response.content().retain();
                         // the actual url is stored on the IN message in the getRequestBody method as its accessed on-demand
                         String actualUrl = exchange.getIn().getHeader(Exchange.HTTP_URL, String.class);
                         int code = response.getStatus() != null ? response.getStatus().code() : -1;
                         log.debug("Http responseCode: {}", code);
 
-                        // if there was a http error code (300 or higher) then check if we should throw an exception
-                        if (code >= 300 && getConfiguration().isThrowExceptionOnFailure()) {
+                        // if there was a http error code then check if we should throw an exception
+                        boolean ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());
+                        if (!ok && getConfiguration().isThrowExceptionOnFailure()) {
                             // operation failed so populate exception to throw
                             Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl, response, code, getConfiguration().isTransferException());
                             exchange.setException(cause);
@@ -116,5 +119,4 @@ public class NettyHttpProducer extends NettyProducer {
             }
         }
     }
-
 }

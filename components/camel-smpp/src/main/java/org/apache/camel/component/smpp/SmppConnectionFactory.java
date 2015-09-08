@@ -55,6 +55,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.RuntimeCamelException;
@@ -84,15 +85,25 @@ public final class SmppConnectionFactory implements ConnectionFactory {
         try {
             Socket socket;
             SocketFactory socketFactory;
-            socketFactory = config.getUsingSSL() ? SSLSocketFactory.getDefault() : SocketFactory.getDefault();
+            socketFactory = config.getUsingSSL() && config.getHttpProxyHost() == null ? SSLSocketFactory
+                .getDefault() : SocketFactory.getDefault();
             if (config.getHttpProxyHost() != null) {
+                // setup the proxy tunnel
                 socket = socketFactory.createSocket(config.getHttpProxyHost(), config.getHttpProxyPort());
                 connectProxy(host, port, socket);
             } else {
                 socket = socketFactory.createSocket(host, port);
             }
-            return new SocketConnection(socket);
 
+            if (config.getUsingSSL() && config.getHttpProxyHost() != null) {
+                // Init the SSL socket which is based on the proxy socket
+                SSLSocketFactory sslSocketFactory = (SSLSocketFactory)SSLSocketFactory.getDefault();
+                SSLSocket sslSocket = (SSLSocket)sslSocketFactory.createSocket(socket, host, port, true);
+                sslSocket.startHandshake();
+                socket = sslSocket;
+            }
+
+            return new SocketConnection(socket);
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
