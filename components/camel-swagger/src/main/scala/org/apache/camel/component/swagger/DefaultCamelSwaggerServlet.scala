@@ -37,7 +37,7 @@ class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet {
     var found: ObjectName = null
 
     val server: MBeanServer = ManagementFactory.getPlatformMBeanServer
-    val names = server.queryNames(new ObjectName("*:type=context,*"), null)
+    val names = server.queryNames(new ObjectName("org.apache.camel:type=context,*"), null)
     for (name <- names.asScala) {
       val on = name.asInstanceOf[ObjectName]
       var id: String = on.getKeyProperty("name")
