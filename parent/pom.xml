@@ -484,7 +484,7 @@
     <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.8_1</stringtemplate-bundle-version>
     <stringtemplate-version>4.0.8</stringtemplate-version>
-    <taglist-maven-plugin-version>2.4</taglist-maven-plugin-version>
+    <taglist-maven-plugin-version>2.10</taglist-maven-plugin-version>
     <tagsoup-bundle-version>1.2.1_1</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <testng-version>6.8.21</testng-version>
