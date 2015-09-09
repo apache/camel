@@ -370,6 +370,9 @@
                   <wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>
                 </wsdlOption>
                 <wsdlOption>
+                  <wsdl>${basedir}/src/test/resources/order.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
                   <wsdl>${basedir}/src/test/resources/person-non-wrapper.wsdl</wsdl>
                   <extraargs>
                     <extraarg>-b</extraarg>

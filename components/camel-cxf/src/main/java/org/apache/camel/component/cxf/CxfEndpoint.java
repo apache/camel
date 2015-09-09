@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -101,6 +103,7 @@ import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.apache.cxf.wsdl.WSDLManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -494,6 +497,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (getServiceName() != null) {
             factoryBean.setServiceName(getServiceName());
         }
+        
+        
 
         // port name qname
         if (getPortName() != null) {
@@ -765,6 +770,24 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public QName getServiceName() {
         if (serviceName == null && serviceNameString != null) {
             serviceName = QName.valueOf(resolvePropertyPlaceholders(serviceNameString));
+        }
+        //if not specify the service name and if the wsdlUrl is available,
+        //parse the wsdl to see if only one service in it, if so set the only service
+        //from wsdl to avoid ambiguity
+        if (serviceName == null && getWsdlURL() != null) {
+            // use wsdl manager to parse wsdl or get cached
+            // definition
+            try {
+                Definition definition = getBus().getExtension(WSDLManager.class)
+                        .getDefinition(getWsdlURL());
+                if (definition.getServices().size() == 1) {
+                    serviceName = (QName) definition.getServices().keySet()
+                        .iterator().next();
+                    
+                }
+            } catch (WSDLException e) {
+                throw new RuntimeException(e);
+            }
         }
         return serviceName;
     }
