@@ -21,12 +21,12 @@ package ${package};
 
 import java.util.List;
 
-import org.apache.camel.scr.internal.ScrHelper;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.scr.internal.ScrHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -46,7 +46,7 @@ public class ${className}Test {
     public TestName testName = new TestName();
 
     ${className} integration;
-    ModelCamelContext context;
+    CamelContext context;
 
     @Before
     public void setUp() throws Exception {

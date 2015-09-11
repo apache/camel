@@ -30,7 +30,7 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.scr.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.scr.*,org.apache.camel.scr.internal.*</camel.osgi.export.pkg>
     <camel.osgi.import.camel.version>version="[2.12,$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
   </properties>
 
