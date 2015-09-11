@@ -5,12 +5,12 @@ To build this project run
 
     mvn install
 
-To deploy this project in Apache Karaf (2.4.0)
+To deploy this project in Apache Karaf (2.4.x)
 
     On Karaf command line:
 
     # Add Camel feature repository
-    features:chooseurl camel ${version}
+    features:chooseurl camel ${camel-version}
 
     # Install camel-scr feature
     features:install camel-scr
