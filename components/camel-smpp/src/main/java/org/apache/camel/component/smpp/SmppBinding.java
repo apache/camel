@@ -35,6 +35,9 @@ import org.jsmpp.bean.OptionalParameter.COctetString;
 import org.jsmpp.bean.OptionalParameter.Null;
 import org.jsmpp.bean.OptionalParameter.OctetString;
 import org.jsmpp.session.SMPPSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and
@@ -43,6 +46,8 @@ import org.jsmpp.session.SMPPSession;
  * @version 
  */
 public class SmppBinding {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SmppBinding.class);
 
     private SmppConfiguration configuration;
 
@@ -158,18 +163,22 @@ public class SmppBinding {
 
         Map<String, Object> optParams = new HashMap<String, Object>();
         for (OptionalParameter optPara : oplist) {
-            if (COctetString.class.isInstance(optPara)) {
-                optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), ((COctetString) optPara).getValueAsString());
-            } else if (org.jsmpp.bean.OptionalParameter.OctetString.class.isInstance(optPara)) {
-                optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), ((OctetString) optPara).getValueAsString());
-            } else if (org.jsmpp.bean.OptionalParameter.Byte.class.isInstance(optPara)) {
-                optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
-            } else if (org.jsmpp.bean.OptionalParameter.Short.class.isInstance(optPara)) {
-                optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
-            } else if (org.jsmpp.bean.OptionalParameter.Int.class.isInstance(optPara)) {
-                optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
-            } else if (Null.class.isInstance(optPara)) {
-                optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), null);
+            try {
+                if (COctetString.class.isInstance(optPara)) {
+                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), ((COctetString) optPara).getValueAsString());
+                } else if (org.jsmpp.bean.OptionalParameter.OctetString.class.isInstance(optPara)) {
+                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), ((OctetString) optPara).getValueAsString());
+                } else if (org.jsmpp.bean.OptionalParameter.Byte.class.isInstance(optPara)) {
+                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
+                } else if (org.jsmpp.bean.OptionalParameter.Short.class.isInstance(optPara)) {
+                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
+                } else if (org.jsmpp.bean.OptionalParameter.Int.class.isInstance(optPara)) {
+                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
+                } else if (Null.class.isInstance(optPara)) {
+                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), null);
+                }
+            } catch (IllegalArgumentException e) {
+                LOG.debug("Skipping optional parameter with tag {} due " + e.getMessage(), optPara.tag);
             }
         }
 
