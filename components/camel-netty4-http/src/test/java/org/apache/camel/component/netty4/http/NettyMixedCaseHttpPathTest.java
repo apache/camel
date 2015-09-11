@@ -20,15 +20,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class NettyProxyMixedCasePathTest extends BaseNettyTest {
+public class NettyMixedCaseHttpPathTest extends BaseNettyTest {
 
     @Test
     public void testMixedCase() throws Exception {
-        String out = template.requestBody("netty4-http:http://0.0.0.0:{{port}}/Shopping", "Camel", String.class);
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "/HelloWorld");
+
+        String out = template.requestBody("netty4-http:http://0.0.0.0:{{port}}/SHoppING/HelloWorld", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        out = template.requestBody("netty4-http:http://0.0.0.0:{{port}}/shopping", "World", String.class);
-        assertEquals("Bye World", out);
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -36,9 +37,9 @@ public class NettyProxyMixedCasePathTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4-http:http://0.0.0.0:{{port}}/Shopping").to("netty4-http:http://0.0.0.0:{{port}}/ws/svc/Shopping");
-
-                from("netty4-http:http://0.0.0.0:{{port}}/ws/svc/Shopping").transform(body().prepend("Bye "));
+                from("netty4-http:http://0.0.0.0:{{port}}/Shopping?matchOnUriPrefix=true")
+                    .to("mock:input")
+                    .transform(body().prepend("Bye "));
             }
         };
     }
