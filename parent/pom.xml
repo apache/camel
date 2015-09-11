@@ -51,7 +51,7 @@
     <aries-blueprint-proxy-impl-version>1.0.4</aries-blueprint-proxy-impl-version>
     <aries-util-version>1.1.0</aries-util-version>
     <arquillian-junit-container-version>1.1.9.Final</arquillian-junit-container-version>
-    <arquillian-weld-se-embedded-version>1.0.0.CR8</arquillian-weld-se-embedded-version>
+    <arquillian-weld-se-embedded-version>1.0.0.CR9</arquillian-weld-se-embedded-version>
     <asm-bundle-version>3.3.1_1</asm-bundle-version>
     <asm-version>3.3.1</asm-version>
     <aspectj-version>1.8.6</aspectj-version>
