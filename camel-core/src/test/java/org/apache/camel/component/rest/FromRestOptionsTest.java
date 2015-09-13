@@ -21,14 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.OptionsVerbDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.spi.RestConfiguration;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class FromRestOptionsTest extends ContextTestSupport {
     
