@@ -26,7 +26,7 @@ import org.apache.camel.model.rest.RestDefinition;
 
 public class FromRestOptionsTest extends ContextTestSupport {
     
-    final static String ALLOWS = "HEAD,GET,PUT,POST,DELETE,OPTIONS";
+    static final String ALLOWS = "HEAD,GET,PUT,POST,DELETE,OPTIONS";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -44,11 +44,11 @@ public class FromRestOptionsTest extends ContextTestSupport {
         assertIsInstanceOf(OptionsVerbDefinition.class, rest.getVerbs().get(0));
 
         Exchange out = template.request("seda:options-say-hello", new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("Me");
-                    }
-                });
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    exchange.getIn().setBody("Me");
+                }
+            });
         assertMockEndpointsSatisfied();
         assertNotNull(out);
         assertEquals(out.getOut().getHeader("Allow"), ALLOWS);
