@@ -169,6 +169,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- for xslt tests -->
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>Saxon-HE</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <!-- validator -->
     <dependency>
       <groupId>xml-resolver</groupId>

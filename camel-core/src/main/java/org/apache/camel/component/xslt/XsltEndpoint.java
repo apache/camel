@@ -47,8 +47,9 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true, label = "core,transformation")
 public class XsltEndpoint extends ProcessorEndpoint {
 
+    public static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
+
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
-    private static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
 
     private volatile boolean cacheCleared;
     private volatile XsltBuilder xslt;
