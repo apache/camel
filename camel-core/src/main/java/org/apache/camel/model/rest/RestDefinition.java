@@ -208,6 +208,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return addVerb("head", uri);
     }
 
+    public RestDefinition options() {
+        return addVerb("options", null);
+    }
+
+    public RestDefinition options(String uri) {
+        return addVerb("options", uri);
+    }
+
     public RestDefinition verb(String verb) {
         return addVerb(verb, null);
     }
@@ -412,6 +420,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             answer = new HeadVerbDefinition();
         } else if ("put".equals(verb)) {
             answer = new PutVerbDefinition();
+        } else if ("options".equals(verb)) {
+            answer = new OptionsVerbDefinition();
         } else {
             answer = new VerbDefinition();
             answer.setMethod(verb);
