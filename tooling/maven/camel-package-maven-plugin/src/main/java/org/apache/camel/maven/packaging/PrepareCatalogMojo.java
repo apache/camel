@@ -381,7 +381,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         for (String part : parts) {
                             usedOptionLabels.add(part);
                         }
-                        break;
                     }
                 }
 
@@ -395,7 +394,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         for (String part : parts) {
                             usedOptionLabels.add(part);
                         }
-                        break;
                     }
                 }
 
