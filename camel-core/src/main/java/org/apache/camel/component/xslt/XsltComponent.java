@@ -35,7 +35,9 @@ public class XsltComponent extends UriEndpointComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
 
+    @Metadata(label = "advanced")
     private XmlConverter xmlConverter;
+    @Metadata(label = "advanced")
     private URIResolver uriResolver;
     @Metadata(defaultValue = "true")
     private boolean contentCache = true;

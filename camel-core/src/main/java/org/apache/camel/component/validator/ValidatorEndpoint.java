@@ -48,17 +48,19 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     @UriPath(description = "URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.")
     @Metadata(required = "true")
     private String resourceUri;
-    @UriParam(defaultValue = XMLConstants.W3C_XML_SCHEMA_NS_URI, description = "Configures the W3C XML Schema Namespace URI.")
+    @UriParam(defaultValue = XMLConstants.W3C_XML_SCHEMA_NS_URI, label = "advanced",
+            description = "Configures the W3C XML Schema Namespace URI.")
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
-    @UriParam(description = "To use a custom javax.xml.validation.SchemaFactory")
+    @UriParam(label = "advanced", description = "To use a custom javax.xml.validation.SchemaFactory")
     private SchemaFactory schemaFactory;
-    @UriParam(description = "To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.")
+    @UriParam(label = "advanced", description = "To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.")
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
-    @UriParam(description = "Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.")
+    @UriParam(label = "advanced", description = "Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.")
     private boolean useDom;
-    @UriParam(defaultValue = "true", description = "Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.")
+    @UriParam(defaultValue = "true", label = "advanced",
+            description = "Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.")
     private boolean useSharedSchema = true;
-    @UriParam(description = "To use a custom LSResourceResolver")
+    @UriParam(label = "advanced", description = "To use a custom LSResourceResolver")
     private LSResourceResolver resourceResolver;
     @UriParam(defaultValue = "true", description = "Whether to fail if no body exists.")
     private boolean failOnNullBody = true;

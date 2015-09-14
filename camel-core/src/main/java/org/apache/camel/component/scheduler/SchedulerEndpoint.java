@@ -32,7 +32,7 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String name;
-    @UriParam(defaultValue = "1")
+    @UriParam(defaultValue = "1", label = "scheduler")
     private int concurrentTasks = 1;
 
     public SchedulerEndpoint(String uri, SchedulerComponent component, String remaining) {

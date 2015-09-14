@@ -59,15 +59,15 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private String resourceUri;
     @UriParam(defaultValue = "true")
     private boolean contentCache = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private XmlConverter converter;
-    @UriParam
+    @UriParam(label = "advanced")
     private String transformerFactoryClass;
-    @UriParam
+    @UriParam(label = "advanced")
     private TransformerFactory transformerFactory;
     @UriParam
     private boolean saxon;
-    @UriParam
+    @UriParam(label = "advanced")
     private ResultHandlerFactory resultHandlerFactory;
     @UriParam(defaultValue = "true")
     private boolean failOnNullBody = true;
@@ -75,9 +75,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private XsltOutput output = XsltOutput.string;
     @UriParam(defaultValue = "0")
     private int transformerCacheSize;
-    @UriParam
+    @UriParam(label = "advanced")
     private ErrorListener errorListener;
-    @UriParam
+    @UriParam(label = "advanced")
     private URIResolver uriResolver;
     @UriParam(defaultValue = "true")
     private boolean allowStAX = true;
