@@ -67,7 +67,7 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
         readingExcludes.addAll(Arrays.asList("pictureURL", "permissions", "taggableFriends", "sSLPictureURL"));
 
         for (FacebookMethodsType types : FacebookMethodsType.values()) {
-            if(types.getArgNames().contains("pageId")) {
+            if (types.getArgNames().contains("pageId")) {
                 idExcludes.add(getShortName(types.getName()));
                 readingExcludes.add(getShortName(types.getName()));
             }
