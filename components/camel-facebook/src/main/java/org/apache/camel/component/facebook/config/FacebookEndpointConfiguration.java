@@ -159,6 +159,22 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     private String userLocale;
     @UriParam
     private String videoId;
+    @UriParam
+    private Integer pictureId;
+    @UriParam
+    private Integer pictureId2;
+    @UriParam
+    private PictureSize pictureSize;
+    @UriParam
+    private String pageId;
+    @UriParam
+    private String tabId;
+    @UriParam
+    private Boolean isHidden;
+    @UriParam
+    private String offerId;
+    @UriParam
+    private String milestoneId;
 
     public URL getAchievementURL() {
         return achievementURL;
@@ -822,4 +838,71 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.videoId = videoId;
     }
 
+    public Boolean getIncludeRead() {
+        return includeRead;
+    }
+
+    public Integer getPictureId() {
+        return pictureId;
+    }
+
+    public void setPictureId(Integer pictureId) {
+        this.pictureId = pictureId;
+    }
+
+    public Integer getPictureId2() {
+        return pictureId2;
+    }
+
+    public void setPictureId2(Integer pictureId2) {
+        this.pictureId2 = pictureId2;
+    }
+
+    public PictureSize getPictureSize() {
+        return pictureSize;
+    }
+
+    public void setPictureSize(PictureSize pictureSize) {
+        this.pictureSize = pictureSize;
+    }
+
+    public String getPageId() {
+        return pageId;
+    }
+
+    public void setPageId(String pageId) {
+        this.pageId = pageId;
+    }
+
+    public String getTabId() {
+        return tabId;
+    }
+
+    public void setTabId(String tabId) {
+        this.tabId = tabId;
+    }
+
+    public Boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setIsHidden(Boolean isHidden) {
+        this.isHidden = isHidden;
+    }
+
+    public String getOfferId() {
+        return offerId;
+    }
+
+    public void setOfferId(String offerId) {
+        this.offerId = offerId;
+    }
+
+    public String getMilestoneId() {
+        return milestoneId;
+    }
+
+    public void setMilestoneId(String milestoneId) {
+        this.milestoneId = milestoneId;
+    }
 }
