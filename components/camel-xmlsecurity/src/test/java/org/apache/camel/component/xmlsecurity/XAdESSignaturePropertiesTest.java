@@ -74,7 +74,18 @@ import static org.apache.camel.component.xmlsecurity.XmlSignatureTest.checkThrow
 public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
     private static final String NOT_EMPTY = "NOT_EMPTY";
-    private static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    private static String payload;
+    
+    static {
+        boolean includeNewLine = true;
+        if (System.getProperty("java.version") != null
+            && System.getProperty("java.version").startsWith("1.9")) {
+            includeNewLine = false;
+        }
+        payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + (includeNewLine ? "\n" : "")
+            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    }
 
     @Before
     public void setUp() throws Exception {
