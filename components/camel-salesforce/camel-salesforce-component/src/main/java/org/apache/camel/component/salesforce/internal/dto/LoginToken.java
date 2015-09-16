@@ -35,6 +35,8 @@ public class LoginToken {
 
     private String tokenType;
 
+    private String isReadOnly;
+
     @JsonProperty("access_token")
     public String getAccessToken() {
         return accessToken;
@@ -89,6 +91,16 @@ public class LoginToken {
     @JsonProperty("token_type")
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
+    }
+
+    @JsonProperty("is_readonly")
+    public String getIsReadOnly() {
+        return isReadOnly;
+    }
+
+    @JsonProperty("is_readonly")
+    public void setIsReadOnly(String isReadOnly) {
+        this.isReadOnly = isReadOnly;
     }
 
 }
