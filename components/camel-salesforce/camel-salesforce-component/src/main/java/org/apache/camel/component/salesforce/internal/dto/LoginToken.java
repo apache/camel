@@ -34,7 +34,7 @@ public class LoginToken {
     private String issuedAt;
 
     private String tokenType;
-
+    
     private String isReadOnly;
 
     @JsonProperty("access_token")
