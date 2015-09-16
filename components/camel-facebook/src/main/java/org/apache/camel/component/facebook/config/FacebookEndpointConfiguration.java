@@ -838,14 +838,13 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.videoId = videoId;
     }
 
-    public Boolean getIncludeRead() {
-        return includeRead;
-    }
-
     public Integer getPictureId() {
         return pictureId;
     }
 
+    /**
+     * The picture id
+     */
     public void setPictureId(Integer pictureId) {
         this.pictureId = pictureId;
     }
@@ -854,6 +853,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return pictureId2;
     }
 
+    /**
+     * The picture2 id
+     */
     public void setPictureId2(Integer pictureId2) {
         this.pictureId2 = pictureId2;
     }
@@ -862,6 +864,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return pictureSize;
     }
 
+    /**
+     * The picture size
+     */
     public void setPictureSize(PictureSize pictureSize) {
         this.pictureSize = pictureSize;
     }
@@ -870,6 +875,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return pageId;
     }
 
+    /**
+     * The page id
+     */
     public void setPageId(String pageId) {
         this.pageId = pageId;
     }
@@ -878,6 +886,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return tabId;
     }
 
+    /**
+     * The tab id
+     */
     public void setTabId(String tabId) {
         this.tabId = tabId;
     }
@@ -886,6 +897,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return isHidden;
     }
 
+    /**
+     * Whether hidden
+     */
     public void setIsHidden(Boolean isHidden) {
         this.isHidden = isHidden;
     }
@@ -894,6 +908,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return offerId;
     }
 
+    /**
+     * The offer id
+     */
     public void setOfferId(String offerId) {
         this.offerId = offerId;
     }
@@ -902,6 +919,9 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         return milestoneId;
     }
 
+    /**
+     * The milestone id
+     */
     public void setMilestoneId(String milestoneId) {
         this.milestoneId = milestoneId;
     }
