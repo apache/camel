@@ -352,7 +352,7 @@ public final class CamelBlueprintHelper {
      * @return the bundle descriptors.
      * @throws FileNotFoundException is thrown if a bundle descriptor cannot be found
      */
-    private static Collection<URL> getBlueprintDescriptors(String descriptors) throws FileNotFoundException, MalformedURLException {
+    protected static Collection<URL> getBlueprintDescriptors(String descriptors) throws FileNotFoundException, MalformedURLException {
         List<URL> answer = new ArrayList<URL>();
         String descriptor = descriptors;
         if (descriptor != null) {
