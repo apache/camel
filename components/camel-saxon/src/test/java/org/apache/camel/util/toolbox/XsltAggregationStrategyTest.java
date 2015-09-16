@@ -16,9 +16,9 @@
  */
 package org.apache.camel.util.toolbox;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -27,7 +27,7 @@ import org.junit.Test;
  * Need to use Saxon to get a predictable result: we cannot rely on the JDK's XSLT processor as it can vary across
  * platforms and JDK versions. Also, Xalan does not handle node-set properties well.
  */
-public class XsltAggregationStrategyTest extends ContextTestSupport {
+public class XsltAggregationStrategyTest extends CamelTestSupport {
 
     @Test
     public void testXsltAggregationDefaultProperty() throws Exception {
@@ -57,8 +57,8 @@ public class XsltAggregationStrategyTest extends ContextTestSupport {
                                 .withSaxon())
                         .constant(true)
                         .completionFromBatchConsumer()
-                    .log("after aggregate body: ${body}")
-                    .to("mock:transformed");
+                        .log("after aggregate body: ${body}")
+                        .to("mock:transformed");
 
                 from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&antInclude=*.xml")
                         .routeId("route2").noAutoStartup()
