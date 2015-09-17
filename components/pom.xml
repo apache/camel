@@ -224,6 +224,7 @@
     <module>camel-stringtemplate</module>
     <module>camel-syslog</module>
     <module>camel-swagger</module>
+    <module>camel-swagger-java</module>
     <module>camel-tagsoup</module>
     <module>camel-tarfile</module>
     <module>camel-twitter</module>
