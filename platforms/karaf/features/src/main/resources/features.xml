@@ -184,6 +184,7 @@
   <feature name='camel-barcode' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.zxing/${zxing-bundle-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.beust/jcommander/${jcommander-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-barcode/${project.version}</bundle>
   </feature>
   <feature name='camel-bindy' version='${project.version}' resolver='(obr)' start-level='50'>
