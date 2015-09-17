@@ -25,13 +25,7 @@
   <!-- location of Camel Spring xml files -->
   <context-param>
     <param-name>contextConfigLocation</param-name>
-
-    <!-- to use Java DSL -->
-    <param-value>classpath:camel-config.xml</param-value>
-
-    <!-- to use XML DSL, then enable me, and disable Java DSL above
     <param-value>classpath:camel-config-xml.xml</param-value>
-    -->
   </context-param>
 
   <!-- the listener that kick-starts Spring -->
@@ -51,7 +45,7 @@
   <!-- to setup Camel Swagger api servlet -->
   <servlet>
     <servlet-name>ApiDeclarationServlet</servlet-name>
-    <servlet-class>org.apache.camel.component.swagger.DefaultCamelSwaggerServlet</servlet-class>
+    <servlet-class>org.apache.camel.swagger.DefaultCamelSwaggerServlet</servlet-class>
     <init-param>
       <!-- we specify the base.path using relative notation, that means the actual path will be calculated at runtime as
            http://server:port/contextpath/rest -->
@@ -66,7 +60,7 @@
     </init-param>
     <init-param>
       <param-name>api.version</param-name>
-      <param-value>1.2.3</param-value>
+      <param-value>2.0</param-value>
     </init-param>
     <init-param>
       <param-name>api.title</param-name>
@@ -92,11 +86,10 @@
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
 
-  <!-- START SNIPPET: e2 -->
-  <!-- enable CORS filter so people can use swagger ui to browse and test the apis -->
+  <!-- enable CORS filter so people can use swagger ui to browse and test the apis
   <filter>
     <filter-name>RestSwaggerCorsFilter</filter-name>
-    <filter-class>org.apache.camel.component.swagger.RestSwaggerCorsFilter</filter-class>
+    <filter-class>org.apache.camel.swagger.RestSwaggerCorsFilter</filter-class>
   </filter>
 
   <filter-mapping>
@@ -104,7 +97,7 @@
     <url-pattern>/api-docs/*</url-pattern>
     <url-pattern>/rest/*</url-pattern>
   </filter-mapping>
-  <!-- END SNIPPET: e2 -->
+  -->
 
   <welcome-file-list>
       <welcome-file>home.html</welcome-file>

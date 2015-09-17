@@ -16,8 +16,9 @@
  */
 package org.apache.camel.example.rest;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "Represents an user of the system")
 public class User {

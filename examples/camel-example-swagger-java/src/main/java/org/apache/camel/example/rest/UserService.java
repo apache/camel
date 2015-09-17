@@ -22,7 +22,7 @@ import java.util.Random;
 import java.util.TreeMap;
 
 /**
- * A {@link org.apache.camel.example.rest.User} service which we rest enable from the {@link org.apache.camel.example.rest.UserRouteBuilder}.
+ * A {@link org.apache.camel.example.rest.User} service which we rest enable the routes defined in the XML file.
  */
 public class UserService {
 
