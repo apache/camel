@@ -35,6 +35,8 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.swagger.SwaggerHelper.buildUrl;
+
 public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
 
     private Logger LOG = LoggerFactory.getLogger(RestSwaggerApiDeclarationServlet.class);
@@ -168,7 +170,7 @@ public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
             } else {
                 swaggerConfig.setHost(url.getHost());
             }
-            swaggerConfig.setBasePath(path + "/" + base);
+            swaggerConfig.setBasePath(buildUrl(path, base));
         }
         initDone = true;
     }

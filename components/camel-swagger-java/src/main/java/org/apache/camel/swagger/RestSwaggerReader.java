@@ -33,12 +33,12 @@ import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.parameters.SerializableParameter;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.VerbDefinition;
-import org.apache.camel.util.FileUtil;
 
 public class RestSwaggerReader {
 
@@ -60,7 +60,7 @@ public class RestSwaggerReader {
             // the method must be in lower case
             String method = verb.asVerb().toLowerCase(Locale.US);
             // operation path is a key
-            String opPath = buildUrl(basePath, verb.getUri());
+            String opPath = SwaggerHelper.buildUrl(basePath, verb.getUri());
 
             Operation op = new Operation();
 
@@ -70,6 +70,8 @@ public class RestSwaggerReader {
                 paths.add(path);
             }
             path = path.set(method, op);
+
+            // TODO: add the type / outType stuff with array and model detection
 
             if (verb.getConsumes() != null) {
                 op.consumes(verb.getConsumes());
@@ -103,6 +105,12 @@ public class RestSwaggerReader {
                     parameter.setAccess(param.getAccess());
                     parameter.setDescription(param.getDescription());
                     parameter.setRequired(param.getRequired());
+
+                    if (parameter instanceof SerializableParameter) {
+                        SerializableParameter sp = (SerializableParameter) parameter;
+                        sp.setType(param.getDataType());
+                    }
+
                     op.addParameter(parameter);
                 }
             }
@@ -119,18 +127,6 @@ public class RestSwaggerReader {
         }
 
         return swagger;
-    }
-
-    private String buildUrl(String path1, String path2) {
-        String s1 = FileUtil.stripTrailingSeparator(path1);
-        String s2 = FileUtil.stripLeadingSeparator(path2);
-        if (s1 != null && s2 != null) {
-            return s1 + "/" + s2;
-        } else if (path1 != null) {
-            return path1;
-        } else {
-            return path2;
-        }
     }
 
     /**
@@ -160,6 +156,5 @@ public class RestSwaggerReader {
             return num;
         }
     }
-
 
 }
