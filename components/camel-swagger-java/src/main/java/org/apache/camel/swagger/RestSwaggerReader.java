@@ -22,17 +22,26 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import io.swagger.config.SwaggerConfig;
+import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.FormParameter;
+import io.swagger.models.parameters.HeaderParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.PathParameter;
+import io.swagger.models.parameters.QueryParameter;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestOperationParamDefinition;
+import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.VerbDefinition;
 
 public class RestSwaggerReader {
 
-    public Swagger read(RestDefinition rest) {
+    public Swagger read(RestDefinition rest, BeanConfig config) {
         Swagger swagger = new Swagger();
+        config.configure(swagger);
 
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
@@ -45,12 +54,9 @@ public class RestSwaggerReader {
 
         for (VerbDefinition verb : verbs) {
 
-            // TODO: should be base path and a lot more
-
-
             // the method must be in lower case
             String method = verb.asVerb().toLowerCase(Locale.US);
-
+            // operation path is a key
             String opPath = getPath(basePath, verb.getUri());
 
             Operation op = new Operation();
@@ -70,6 +76,28 @@ public class RestSwaggerReader {
             }
             if (verb.getDescriptionText() != null) {
                 op.summary(verb.getDescriptionText());
+            }
+            for (RestOperationParamDefinition param : verb.getParams()) {
+                Parameter parameter = null;
+                if (param.getType().equals(RestParamType.body)) {
+                    parameter = new BodyParameter();
+                } else if (param.getType().equals(RestParamType.form)) {
+                    parameter = new FormParameter();
+                } else if (param.getType().equals(RestParamType.header)) {
+                    parameter = new HeaderParameter();
+                } else if (param.getType().equals(RestParamType.path)) {
+                    parameter = new PathParameter();
+                } else if (param.getType().equals(RestParamType.query)) {
+                    parameter = new QueryParameter();
+                }
+
+                if (parameter != null) {
+                    parameter.setName(param.getName());
+                    parameter.setAccess(param.getAccess());
+                    parameter.setDescription(param.getDescription());
+                    parameter.setRequired(param.getRequired());
+                    op.addParameter(parameter);
+                }
             }
 
             // add path

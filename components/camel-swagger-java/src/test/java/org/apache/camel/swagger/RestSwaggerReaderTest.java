@@ -24,6 +24,7 @@ import io.swagger.models.Swagger;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -42,9 +43,15 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 rest("/hello")
-                        .get("/hi").to("log:hi")
-                        .get("/bye").to("log:bye")
-                        .post("/bye").to("log:bye");
+                        .get("/hi/{name}").description("Saying hi")
+                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
+                            .to("log:hi")
+                        .get("/bye/{name}").description("Saying bye")
+                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
+                            .to("log:bye")
+                        .post("/bye").description("To update the greeting message")
+                            .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").endParam()
+                            .to("log:bye");
             }
         };
     }
@@ -55,10 +62,12 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         assertNotNull(rest);
 
         BeanConfig config = new BeanConfig();
-        config.setBasePath("http://localhost:8080/api");
+        config.setHost("localhost:8080");
+        config.setSchemes(new String[]{"http"});
+        config.setBasePath("/api");
         RestSwaggerReader reader = new RestSwaggerReader();
 
-        Swagger swagger = reader.read(rest);
+        Swagger swagger = reader.read(rest, config);
         assertNotNull(swagger);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -68,10 +77,12 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
 
         log.info(json);
 
-        assertTrue(json.contains("\"basePath\":\"http://localhost:8080/api\""));
-        assertTrue(json.contains("\"resourcePath\":\"/hello\""));
-        assertTrue(json.contains("\"method\":\"GET\""));
-        assertTrue(json.contains("\"nickname\":\"getHelloHi\""));
+        assertTrue(json.contains("\"host\" : \"localhost:8080\""));
+        assertTrue(json.contains("\"basePath\" : \"/api\""));
+        assertTrue(json.contains("\"/hello//bye\""));
+        assertTrue(json.contains("\"summary\" : \"To update the greeting message\""));
+        assertTrue(json.contains("\"/hello//bye/{name}\""));
+        assertTrue(json.contains("\"/hello//hi/{name}\""));
 
         context.stop();
     }
