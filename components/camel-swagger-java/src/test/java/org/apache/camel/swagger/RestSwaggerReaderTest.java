@@ -80,10 +80,10 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"basePath\" : \"/api\""));
-        assertTrue(json.contains("\"/hello//bye\""));
+        assertTrue(json.contains("\"/hello/bye\""));
         assertTrue(json.contains("\"summary\" : \"To update the greeting message\""));
-        assertTrue(json.contains("\"/hello//bye/{name}\""));
-        assertTrue(json.contains("\"/hello//hi/{name}\""));
+        assertTrue(json.contains("\"/hello/bye/{name}\""));
+        assertTrue(json.contains("\"/hello/hi/{name}\""));
 
         context.stop();
     }

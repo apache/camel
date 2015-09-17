@@ -38,6 +38,7 @@ import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.VerbDefinition;
+import org.apache.camel.util.FileUtil;
 
 public class RestSwaggerReader {
 
@@ -59,7 +60,7 @@ public class RestSwaggerReader {
             // the method must be in lower case
             String method = verb.asVerb().toLowerCase(Locale.US);
             // operation path is a key
-            String opPath = getPath(basePath, verb.getUri());
+            String opPath = buildUrl(basePath, verb.getUri());
 
             Operation op = new Operation();
 
@@ -113,14 +114,23 @@ public class RestSwaggerReader {
 
             // add path
             swagger.path(opPath, path);
+
+            // TODO: add model parser for swagger annotations in the model/schema
         }
 
         return swagger;
     }
 
-    private String getPath(String basePath, String uri) {
-        // TODO: slash check and avoid double slash and all that
-        return basePath + "/" + uri;
+    private String buildUrl(String path1, String path2) {
+        String s1 = FileUtil.stripTrailingSeparator(path1);
+        String s2 = FileUtil.stripLeadingSeparator(path2);
+        if (s1 != null && s2 != null) {
+            return s1 + "/" + s2;
+        } else if (path1 != null) {
+            return path1;
+        } else {
+            return path2;
+        }
     }
 
     /**
