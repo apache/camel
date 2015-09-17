@@ -82,6 +82,7 @@
     <module>camel-example-ssh-security</module>
     <module>camel-example-sql</module>
     <module>camel-example-sql-blueprint</module>
+    <module>camel-example-swagger-java</module>
     <module>camel-example-tracer</module>
     <module>camel-example-twitter-websocket</module>
     <module>camel-example-twitter-websocket-blueprint</module>    
