@@ -26,7 +26,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.models.Swagger;
 import org.apache.camel.model.rest.RestDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +39,7 @@ public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
 
     private Logger LOG = LoggerFactory.getLogger(RestSwaggerApiDeclarationServlet.class);
 
-    // TODO: implement me
-    //private RestSwaggerReader reader = new RestSwaggerReader();
+    private RestSwaggerReader reader = new RestSwaggerReader();
     private BeanConfig swaggerConfig = new BeanConfig();
     private boolean cors;
     private volatile boolean initDone;
@@ -53,6 +56,10 @@ public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
         s = config.getInitParameter("base.path");
         if (s != null) {
             swaggerConfig.setBasePath(s);
+        }
+        s = config.getInitParameter("host");
+        if (s != null) {
+            swaggerConfig.setHost(s);
         }
         s = config.getInitParameter("cors");
         if (s != null) {
@@ -110,11 +117,38 @@ public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
                     // render overview if the route is empty or is the root path
                     // renderApiDeclaration(request, response, contextId, route);
                 } else {
-                    // renderResourceListing(request, response, contextId);
+                    renderResourceListing(request, response, contextId);
                 }
             }
         } catch (Exception e) {
             LOG.warn("Error rendering swagger due " + e.getMessage());
+        }
+    }
+
+    private void renderResourceListing(HttpServletRequest request, HttpServletResponse response, String contextId) throws Exception {
+        LOG.trace("renderResourceListing");
+
+        if (cors) {
+            response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+            response.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
+            response.addHeader("Access-Control-Allow-Origin", "*");
+        }
+
+        List<RestDefinition> rests = getRestDefinitions(contextId);
+        if (rests != null) {
+
+            // TODO: combine the rests
+
+            for (RestDefinition rest : rests) {
+                Swagger swagger = reader.read(rest, swaggerConfig);
+
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.enable(SerializationFeature.INDENT_OUTPUT);
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                mapper.writeValue(response.getOutputStream(), swagger);
+            }
+        } else {
+            response.setStatus(204);
         }
     }
 
@@ -127,31 +161,15 @@ public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
                 base = "";
             }
             String path = translateContextPath(request);
-            if (url.getPort() != 80 && url.getPort() != -1) {
-                base = url.getProtocol() + "://" + url.getHost() + ":" + url.getPort() + path + "/" + base;
-            } else {
-                base = url.getProtocol() + "://" + url.getHost() + request.getContextPath() + "/" + base;
-            }
-            swaggerConfig.setBasePath(base);
-        }
+            swaggerConfig.setHost(url.getHost());
 
-        // TODO: api path?
-        /*
-        base = swaggerConfig.getApiPath
-        if (base == null || !base.startsWith("http")) {
-            // api path is configured using relative, so lets calculate the absolute url now we have the http request
-            val url = new URL(request.getRequestURL.toString)
-            if (base == null) {
-                base = ""
-            }
-            val path = translateContextPath(request)
-            if (url.getPort != 80 && url.getPort != -1) {
-                base = url.getProtocol + "://" + url.getHost + ":" + url.getPort + path + "/" + base
+            if (url.getPort() != 80 && url.getPort() != -1) {
+                swaggerConfig.setHost(url.getHost() + ":" + url.getPort());
             } else {
-                base = url.getProtocol + "://" + url.getHost + request.getContextPath + "/" + base
+                swaggerConfig.setHost(url.getHost());
             }
-            swaggerConfig.setApiPath(base)
-        } */
+            swaggerConfig.setBasePath(path + "/" + base);
+        }
         initDone = true;
     }
 

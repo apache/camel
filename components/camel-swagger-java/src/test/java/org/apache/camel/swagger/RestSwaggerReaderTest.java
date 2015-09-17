@@ -42,14 +42,15 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/hello")
+                rest("/hello").consumes("application/json").produces("application/json")
                         .get("/hi/{name}").description("Saying hi")
                             .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
                             .to("log:hi")
                         .get("/bye/{name}").description("Saying bye")
                             .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
+                            .responseMessage().code(200).message("A reply message").endResponseMessage()
                             .to("log:bye")
-                        .post("/bye").description("To update the greeting message")
+                        .post("/bye").description("To update the greeting message").consumes("application/xml").produces("application/xml")
                             .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").endParam()
                             .to("log:bye");
             }

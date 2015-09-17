@@ -30,7 +30,7 @@
   <description>Camel Swagger Java support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.swagger.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.swagger.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

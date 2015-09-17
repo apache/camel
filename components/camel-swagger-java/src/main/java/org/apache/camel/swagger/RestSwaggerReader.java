@@ -25,6 +25,7 @@ import java.util.Locale;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
+import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.FormParameter;
@@ -34,6 +35,7 @@ import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
+import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.VerbDefinition;
 
@@ -70,9 +72,13 @@ public class RestSwaggerReader {
 
             if (verb.getConsumes() != null) {
                 op.consumes(verb.getConsumes());
+            } else if (rest.getConsumes() != null) {
+                op.consumes(rest.getConsumes());
             }
             if (verb.getProduces() != null) {
                 op.produces(verb.getProduces());
+            } else if (rest.getProduces() != null) {
+                op.produces(rest.getProduces());
             }
             if (verb.getDescriptionText() != null) {
                 op.summary(verb.getDescriptionText());
@@ -98,6 +104,11 @@ public class RestSwaggerReader {
                     parameter.setRequired(param.getRequired());
                     op.addParameter(parameter);
                 }
+            }
+            for (RestOperationResponseMsgDefinition msg : verb.getResponseMsgs()) {
+                Response response = new Response();
+                response.setDescription(msg.getMessage());
+                op.addResponse("" + msg.getCode(), response);
             }
 
             // add path
