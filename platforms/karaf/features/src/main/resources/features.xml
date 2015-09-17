@@ -271,6 +271,11 @@
     <bundle dependency='true'>mvn:org.apache.chemistry.opencmis/chemistry-opencmis-osgi-client/${cmis-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cmis/${project.version}</bundle>
   </feature>
+  <feature name='camel-coap' version='${project.version}' resolver='(obr)' start-level='50'>
+      <feature version='${project.version}'>camel-core</feature>
+      <bundle>mvn:org.eclipse.californium/californium-osgi/${californium-version}</bundle>
+      <bundle>mvn:org.apache.camel/camel-coap/${project.version}</bundle>
+  </feature>
   <feature name='camel-cometd' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
