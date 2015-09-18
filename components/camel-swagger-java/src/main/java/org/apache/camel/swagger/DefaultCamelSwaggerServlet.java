@@ -42,7 +42,7 @@ public class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet
                 id = id.substring(1, id.length() - 1);
             }
             if (camelId == null || camelId.equals(id)) {
-                // filter out older Camel versions as this requires Camel 2.15 or better
+                // filter out older Camel versions as this requires Camel 2.15 or better (rest-dsl)
                 String version = (String) server.getAttribute(on, "CamelVersion");
                 if (CamelVersionHelper.isGE("2.15.0", version)) {
                     found = on;
@@ -75,7 +75,7 @@ public class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet
                 id = id.substring(1, id.length() - 1);
             }
 
-            // filter out older Camel versions as this requires Camel 2.15 or better
+            // filter out older Camel versions as this requires Camel 2.15 or better (rest-dsl)
             String version = (String) server.getAttribute(on, "CamelVersion");
             if (CamelVersionHelper.isGE("2.15.0", version)) {
                 answer.add(id);

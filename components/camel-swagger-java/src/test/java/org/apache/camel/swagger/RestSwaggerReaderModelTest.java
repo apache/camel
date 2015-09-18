@@ -29,7 +29,7 @@ import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class RestSwaggerReaderTest extends CamelTestSupport {
+public class RestSwaggerReaderModelTest extends CamelTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -43,17 +43,20 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/hello").consumes("application/json").produces("application/json")
-                        .get("/hi/{name}").description("Saying hi")
-                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
-                            .to("log:hi")
-                        .get("/bye/{name}").description("Saying bye")
-                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
-                            .responseMessage().code(200).message("A reply message").endResponseMessage()
-                            .to("log:bye")
-                        .post("/bye").description("To update the greeting message").consumes("application/xml").produces("application/xml")
-                            .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").endParam()
-                            .to("log:bye");
+                // this user REST service is json only
+                rest("/user").description("User rest service")
+                    .consumes("application/json").produces("application/json")
+
+                    .get("/{id}").description("Find user by id").outType(User.class)
+                        .param().name("id").type(RestParamType.path).description("The id of the user to get").dataType("integer").endParam()
+                        .to("bean:userService?method=getUser(${header.id})")
+
+                    .put().description("Updates or create a user").type(User.class)
+                        .param().name("body").type(RestParamType.body).description("The user to update or create").endParam()
+                        .to("bean:userService?method=updateUser")
+
+                    .get("/findAll").description("Find all users").outTypeList(User.class)
+                        .to("bean:userService?method=listUsers");
             }
         };
     }
@@ -80,11 +83,10 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         log.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
-        assertTrue(json.contains("\"basePath\" : \"/api\""));
-        assertTrue(json.contains("\"/hello/bye\""));
-        assertTrue(json.contains("\"summary\" : \"To update the greeting message\""));
-        assertTrue(json.contains("\"/hello/bye/{name}\""));
-        assertTrue(json.contains("\"/hello/hi/{name}\""));
+        assertTrue(json.contains("\"description\" : \"Output type\""));
+        assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
+        assertTrue(json.contains("\"x-className\""));
+        assertTrue(json.contains("\"format\" : \"org.apache.camel.swagger.User\""));
 
         context.stop();
     }

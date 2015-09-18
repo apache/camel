@@ -15,195 +15,197 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>examples</artifactId>
-        <version>2.16-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>examples</artifactId>
+    <version>2.16-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>camel-example-swagger-java</artifactId>
-    <name>Camel :: Example :: Swagger Java</name>
-    <description>An example using REST DSL and Swagger Java with Apache Tomcat</description>
-    <packaging>war</packaging>
+  <artifactId>camel-example-swagger-java</artifactId>
+  <name>Camel :: Example :: Swagger Java</name>
+  <description>An example using REST DSL and Swagger Java with Apache Tomcat</description>
+  <packaging>war</packaging>
 
-    <properties>
-        <swagger-ui.version>2.1.2</swagger-ui.version>
-        <logback-version>1.1.3</logback-version>
-        <swagger.url>https://github.com/swagger-api/swagger-ui/archive</swagger.url>
-        <destDir>target/swagger-ui</destDir>
-    </properties>
+  <properties>
+    <swagger-ui.version>2.1.2</swagger-ui.version>
+    <logback-version>1.1.3</logback-version>
+    <swagger.url>https://github.com/swagger-api/swagger-ui/archive</swagger.url>
+    <destDir>target/swagger-ui</destDir>
+  </properties>
 
-    <dependencies>
+  <dependencies>
 
-        <!-- camel -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-metrics</artifactId>
-        </dependency>
+    <!-- camel -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-metrics</artifactId>
+    </dependency>
 
-        <!-- swagger api -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-swagger-java</artifactId>
-        </dependency>
+    <!-- swagger api -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-swagger-java</artifactId>
+    </dependency>
 
-        <!-- use for json binding -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson</artifactId>
-        </dependency>
+    <!-- use for json binding -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jackson</artifactId>
+    </dependency>
 
-        <!-- we need spring web -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
+    <!-- we need spring web -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
 
-        <!-- logging -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>${logback-version}</version>
-        </dependency>
-    </dependencies>
+    <!-- logging -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>${logback-version}</version>
+    </dependency>
+  </dependencies>
 
-    <build>
-        <!-- we do not want version in the WAR name -->
-        <finalName>${project.artifactId}</finalName>
+  <build>
+    <!-- we do not want version in the WAR name -->
+    <finalName>${project.artifactId}</finalName>
 
-        <plugins>
-            <!-- Step 1. - Download Swagger UI project from GitHub -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>wagon-maven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>download-single</goal>
-                        </goals>
-                        <configuration>
-                            <url>${swagger.url}</url>
-                            <fromFile>v${swagger-ui.version}.tar.gz</fromFile>
-                            <toFile>${project.build.directory}/swagger-ui-${swagger-ui.version}.tar.gz</toFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+    <plugins>
+      <!-- Step 1. - Download Swagger UI project from GitHub -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>wagon-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>download-single</goal>
+            </goals>
+            <configuration>
+              <url>${swagger.url}</url>
+              <fromFile>v${swagger-ui.version}.tar.gz</fromFile>
+              <toFile>${project.build.directory}/swagger-ui-${swagger-ui.version}.tar.gz</toFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- Step 2. -  Decompress content and move it to target/swagger-ui folder -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <echo message="Decompress archive" />
-                                <gunzip src="${project.build.directory}/swagger-ui-${swagger-ui.version}.tar.gz" />
-                                <untar src="${project.build.directory}/swagger-ui-${swagger-ui.version}.tar" dest="${project.build.directory}" />
-                                <echo message="moving resources" />
-                                <move todir="${destDir}" overwrite="yes">
-                                    <fileset dir="${project.build.directory}/swagger-ui-${swagger-ui.version}/dist" />
-                                </move>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+      <!-- Step 2. -  Decompress content and move it to target/swagger-ui folder -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <echo message="Decompress archive"/>
+                <gunzip src="${project.build.directory}/swagger-ui-${swagger-ui.version}.tar.gz"/>
+                <untar src="${project.build.directory}/swagger-ui-${swagger-ui.version}.tar"
+                       dest="${project.build.directory}"/>
+                <echo message="moving resources"/>
+                <move todir="${destDir}" overwrite="yes">
+                  <fileset dir="${project.build.directory}/swagger-ui-${swagger-ui.version}/dist"/>
+                </move>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- Step 3. Copy Web Resources to target/classes but also to target/swagger-ui -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/classes/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/webapp</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                                <!-- Copy swagger-ui resources to classes directory to be able to use it with mvn jetty:run -->
-                                <resource>
-                                    <directory>${destDir}</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+      <!-- Step 3. Copy Web Resources to target/classes but also to target/swagger-ui -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/classes/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/webapp</directory>
+                  <filtering>false</filtering>
+                </resource>
+                <!-- Copy swagger-ui resources to classes directory to be able to use it with mvn jetty:run -->
+                <resource>
+                  <directory>${destDir}</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- Step 4. Add Swagger-ui Resources to the WAR -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <webResources>
-                        <resource>
-                            <directory>target/swagger-ui/</directory>
-                            <includes>
-                                <include>**/*.*</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
+      <!-- Step 4. Add Swagger-ui Resources to the WAR -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>target/swagger-ui/</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
 
-            <!-- allows running this example with mvn:jetty-run -->
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty9-version}</version>
-                <configuration>
-                    <webAppSourceDirectory>target/classes</webAppSourceDirectory>
-                	<webApp>
-                		<contextPath>/${project.artifactId}</contextPath>
-                	</webApp>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+      <!-- allows running this example with mvn:jetty-run -->
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty9-version}</version>
+        <configuration>
+          <webAppSourceDirectory>target/classes</webAppSourceDirectory>
+          <webApp>
+            <contextPath>/${project.artifactId}</contextPath>
+          </webApp>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

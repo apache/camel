@@ -19,10 +19,15 @@ package org.apache.camel.swagger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Response;
@@ -34,21 +39,61 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.parameters.SerializableParameter;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.VerbDefinition;
+import org.apache.camel.spi.ClassResolver;
 
+/**
+ * A Camel REST-DSL swagger reader that parse the rest-dsl into a swagger model representation.
+ */
 public class RestSwaggerReader {
 
-    public Swagger read(RestDefinition rest, BeanConfig config) {
+    /**
+     * Read the REST-DSL definition and parse that as a Swagger model representation
+     *
+     * @param rest              the rest-dsl
+     * @param config            the swagger configuration
+     * @param classResolver     class resolver to use
+     * @return the swagger model
+     */
+    public Swagger read(RestDefinition rest, BeanConfig config, ClassResolver classResolver) {
         Swagger swagger = new Swagger();
         config.configure(swagger);
 
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         Collections.sort(verbs, new VerbOrdering());
+
+        // gather all types in use
+        Set<String> types = new LinkedHashSet<>();
+        for (VerbDefinition verb : verbs) {
+            String type = verb.getType();
+            if (type != null) {
+                if (type.endsWith("[]")) {
+                    type = type.substring(0, type.length() - 2);
+                }
+                types.add(type);
+            }
+            type = verb.getOutType();
+            if (type != null) {
+                if (type.endsWith("[]")) {
+                    type = type.substring(0, type.length() - 2);
+                }
+                types.add(type);
+            }
+        }
+
+        // use annotation scanner to find models (annotated classes)
+        for (String type : types) {
+            Class<?> clazz = classResolver.resolveClass(type);
+            appendModels(clazz, swagger);
+        }
 
         // used during gathering of apis
         List<Path> paths = new ArrayList<>();
@@ -71,21 +116,26 @@ public class RestSwaggerReader {
             }
             path = path.set(method, op);
 
-            // TODO: add the type / outType stuff with array and model detection
+            String consumes = verb.getConsumes() != null ? verb.getConsumes() : rest.getConsumes();
+            if (consumes != null) {
+                String[] parts = consumes.split(",");
+                for (String part : parts) {
+                    op.addConsumes(part);
+                }
+            }
 
-            if (verb.getConsumes() != null) {
-                op.consumes(verb.getConsumes());
-            } else if (rest.getConsumes() != null) {
-                op.consumes(rest.getConsumes());
+            String produces = verb.getProduces() != null ? verb.getProduces() : rest.getProduces();
+            if (produces != null) {
+                String[] parts = produces.split(",");
+                for (String part : parts) {
+                    op.addProduces(part);
+                }
             }
-            if (verb.getProduces() != null) {
-                op.produces(verb.getProduces());
-            } else if (rest.getProduces() != null) {
-                op.produces(rest.getProduces());
-            }
+
             if (verb.getDescriptionText() != null) {
                 op.summary(verb.getDescriptionText());
             }
+
             for (RestOperationParamDefinition param : verb.getParams()) {
                 Parameter parameter = null;
                 if (param.getType().equals(RestParamType.body)) {
@@ -108,12 +158,47 @@ public class RestSwaggerReader {
 
                     if (parameter instanceof SerializableParameter) {
                         SerializableParameter sp = (SerializableParameter) parameter;
-                        sp.setType(param.getDataType());
+
+                        // TODO: like response object with type refer to model
+                        if (param.getDataType() != null) {
+                            sp.setType(param.getDataType());
+                        } else if (verb.getType() != null) {
+                            boolean array = verb.getType().endsWith("[]");
+                            if (array) {
+                                sp.setType("array");
+                            } else {
+                                sp.setType(verb.getType());
+                            }
+                        }
                     }
 
                     op.addParameter(parameter);
                 }
             }
+
+            if (verb.getOutType() != null) {
+                Response response = new Response();
+                boolean array = verb.getOutType().endsWith("[]");
+                String type = array ? verb.getOutType().substring(0, verb.getOutType().length() - 2) : verb.getOutType();
+                // lookup in models to use key instead of FQN
+
+                for (Model model : swagger.getDefinitions().values()) {
+                    StringProperty modelType = (StringProperty) model.getVendorExtensions().get("x-className");
+                    if (modelType != null && type.equals(modelType.getFormat())) {
+                        type = ((ModelImpl) model).getName();
+                        break;
+                    }
+                }
+
+                if (array) {
+                    response.setSchema(new ArrayProperty(new RefProperty(type)));
+                } else {
+                    response.setSchema(new RefProperty(type));
+                }
+                response.setDescription("Output type");
+                op.addResponse("200", response);
+            }
+
             for (RestOperationResponseMsgDefinition msg : verb.getResponseMsgs()) {
                 Response response = new Response();
                 response.setDescription(msg.getMessage());
@@ -123,10 +208,24 @@ public class RestSwaggerReader {
             // add path
             swagger.path(opPath, path);
 
-            // TODO: add model parser for swagger annotations in the model/schema
         }
 
         return swagger;
+    }
+
+    /**
+     * If the class is annotated with swagger annotations its parsed into a Swagger model representation
+     * which is added to swagger
+     *
+     * @param clazz   the class such as pojo with swagger annotation
+     * @param swagger the swagger model
+     */
+    private void appendModels(Class clazz, Swagger swagger) {
+        RestModelConverters converters = new RestModelConverters();
+        final Map<String, Model> models = converters.readClass(clazz);
+        for (Map.Entry<String, Model> entry : models.entrySet()) {
+            swagger.model(entry.getKey(), entry.getValue());
+        }
     }
 
     /**

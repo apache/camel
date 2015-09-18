@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
+import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.model.rest.RestDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,7 +124,7 @@ public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error rendering swagger due " + e.getMessage());
+            LOG.warn("Error rendering swagger due " + e.getMessage(), e);
         }
     }
 
@@ -142,7 +143,7 @@ public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
             // TODO: combine the rests
 
             for (RestDefinition rest : rests) {
-                Swagger swagger = reader.read(rest, swaggerConfig);
+                Swagger swagger = reader.read(rest, swaggerConfig, new DefaultClassResolver());
 
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);

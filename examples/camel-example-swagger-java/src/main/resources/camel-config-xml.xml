@@ -49,7 +49,7 @@
       <!-- this is a rest GET to view an user by the given id -->
       <get uri="/{id}" outType="org.apache.camel.example.rest.User">
         <description>Find user by id</description>
-        <param name="id" type="path" description="The id of the user to get" dataType="int"/>
+        <param name="id" type="path" description="The id of the user to get" dataType="integer"/>
         <to uri="bean:userService?method=getUser(${header.id})"/>
       </get>
 

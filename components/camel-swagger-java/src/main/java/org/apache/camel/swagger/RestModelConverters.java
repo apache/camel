@@ -14,40 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.rest;
+package org.apache.camel.swagger;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import java.util.Map;
 
-@ApiModel(description = "Represents an user of the system")
-public class User {
+import io.swagger.converter.ModelConverters;
+import io.swagger.models.Model;
+import io.swagger.models.properties.StringProperty;
 
-    private int id;
-    private String name;
+/**
+ * A Camel extended {@link ModelConverters} where we appending vendor extensions
+ * to include the java class name of the model classes.
+ */
+public class RestModelConverters extends ModelConverters {
 
-    public User() {
-    }
-
-    public User(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    @ApiModelProperty(value = "The id of the user", required = true)
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @ApiModelProperty(value = "The name of the user", required = true)
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public Map<String, Model> readClass(Class clazz) {
+        String name = clazz.getName();
+        Map<String, Model> resolved = super.read(clazz);
+        if (resolved != null) {
+            for (Model model : resolved.values()) {
+                model.getVendorExtensions().put("x-className", new StringProperty(name));
+            }
+        }
+        return resolved;
     }
 }
