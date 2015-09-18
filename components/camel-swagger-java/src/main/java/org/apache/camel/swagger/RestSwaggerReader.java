@@ -30,6 +30,7 @@ import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
+import io.swagger.models.RefModel;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
@@ -40,6 +41,7 @@ import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.parameters.SerializableParameter;
 import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import org.apache.camel.model.rest.RestDefinition;
@@ -159,15 +161,18 @@ public class RestSwaggerReader {
                     if (parameter instanceof SerializableParameter) {
                         SerializableParameter sp = (SerializableParameter) parameter;
 
-                        // TODO: like response object with type refer to model
                         if (param.getDataType() != null) {
                             sp.setType(param.getDataType());
-                        } else if (verb.getType() != null) {
-                            boolean array = verb.getType().endsWith("[]");
-                            if (array) {
-                                sp.setType("array");
-                            } else {
-                                sp.setType(verb.getType());
+                        }
+                    }
+
+                    if (parameter instanceof BodyParameter) {
+                        BodyParameter bp = (BodyParameter) parameter;
+
+                        if (verb.getType() != null) {
+                            String ref = modelTypeAsRef(verb.getType(), swagger);
+                            if (ref != null) {
+                                bp.setSchema(new RefModel(ref));
                             }
                         }
                     }
@@ -178,23 +183,8 @@ public class RestSwaggerReader {
 
             if (verb.getOutType() != null) {
                 Response response = new Response();
-                boolean array = verb.getOutType().endsWith("[]");
-                String type = array ? verb.getOutType().substring(0, verb.getOutType().length() - 2) : verb.getOutType();
-                // lookup in models to use key instead of FQN
-
-                for (Model model : swagger.getDefinitions().values()) {
-                    StringProperty modelType = (StringProperty) model.getVendorExtensions().get("x-className");
-                    if (modelType != null && type.equals(modelType.getFormat())) {
-                        type = ((ModelImpl) model).getName();
-                        break;
-                    }
-                }
-
-                if (array) {
-                    response.setSchema(new ArrayProperty(new RefProperty(type)));
-                } else {
-                    response.setSchema(new RefProperty(type));
-                }
+                Property prop = modelTypeAsProperty(verb.getOutType(), swagger);
+                response.setSchema(prop);
                 response.setDescription("Output type");
                 op.addResponse("200", response);
             }
@@ -207,10 +197,55 @@ public class RestSwaggerReader {
 
             // add path
             swagger.path(opPath, path);
-
         }
 
         return swagger;
+    }
+
+    private Model asModel(String typeName, Swagger swagger) {
+        boolean array = typeName.endsWith("[]");
+        if (array) {
+            typeName = typeName.substring(0, typeName.length() - 2);
+        }
+
+        for (Model model : swagger.getDefinitions().values()) {
+            StringProperty modelType = (StringProperty) model.getVendorExtensions().get("x-className");
+            if (modelType != null && typeName.equals(modelType.getFormat())) {
+                return model;
+            }
+        }
+        return null;
+    }
+
+    private String modelTypeAsRef(String typeName, Swagger swagger) {
+        boolean array = typeName.endsWith("[]");
+        if (array) {
+            typeName = typeName.substring(0, typeName.length() - 2);
+        }
+
+        Model model = asModel(typeName, swagger);
+        if (model != null) {
+            typeName = ((ModelImpl) model).getName();
+            return typeName;
+        }
+
+        return null;
+    }
+
+    private Property modelTypeAsProperty(String typeName, Swagger swagger) {
+        boolean array = typeName.endsWith("[]");
+        if (array) {
+            typeName = typeName.substring(0, typeName.length() - 2);
+        }
+
+        String ref = modelTypeAsRef(typeName, swagger);
+
+        Property prop = ref != null ? new RefProperty(ref) : new StringProperty(typeName);
+        if (array) {
+            return new ArrayProperty(prop);
+        } else {
+            return prop;
+        }
     }
 
     /**
