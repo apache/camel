@@ -66,7 +66,6 @@ public class RestSwaggerReader {
      */
     public Swagger read(RestDefinition rest, BeanConfig config, ClassResolver classResolver) {
         Swagger swagger = new Swagger();
-        config.configure(swagger);
 
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
@@ -209,6 +208,8 @@ public class RestSwaggerReader {
             swagger.path(opPath, path);
         }
 
+        // configure before returning
+        swagger = config.configure(swagger);
         return swagger;
     }
 

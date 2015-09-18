@@ -30,6 +30,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.models.Contact;
+import io.swagger.models.Info;
+import io.swagger.models.License;
 import io.swagger.models.Swagger;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.model.rest.RestDefinition;
@@ -68,20 +71,47 @@ public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
         if (s != null) {
             cors = "true".equalsIgnoreCase(s);
         }
+        s = config.getInitParameter("schemas");
+        if (s != null) {
+            String[] schemas = s.split(",");
+            swaggerConfig.setSchemes(schemas);
+        } else {
+            // assume http by default
+            swaggerConfig.setSchemes(new String[]{"http"});
+        }
 
+        String version = config.getInitParameter("api.version");
         String title = config.getInitParameter("api.title");
         String description = config.getInitParameter("api.description");
-        String termsOfServiceUrl = config.getInitParameter("api.termsOfServiceUrl");
-        String contact = config.getInitParameter("api.contact");
-        String license = config.getInitParameter("api.license");
-        String licenseUrl = config.getInitParameter("api.licenseUrl");
+        String termsOfService = config.getInitParameter("api.termsOfService");
+        String licenseName = config.getInitParameter("api.license.name");
+        String licenseUrl = config.getInitParameter("api.license.url");
+        String contactName = config.getInitParameter("api.contact.name");
+        String contactUrl = config.getInitParameter("api.contact.url");
+        String contactEmail = config.getInitParameter("api.contact.email");
 
-        swaggerConfig.setTitle(title);
-        swaggerConfig.setDescription(description);
-        swaggerConfig.setTermsOfServiceUrl(termsOfServiceUrl);
-        swaggerConfig.setContact(contact);
-        swaggerConfig.setLicense(license);
-        swaggerConfig.setLicenseUrl(licenseUrl);
+        Info info = new Info();
+        info.setVersion(version);
+        info.setTitle(title);
+        info.setDescription(description);
+        info.setTermsOfService(termsOfService);
+
+        if (licenseName != null || licenseUrl != null) {
+            License license = new License();
+            license.setName(licenseName);
+            license.setUrl(licenseUrl);
+            info.setLicense(license);
+        }
+
+        if (contactName != null || contactUrl != null || contactEmail != null) {
+            Contact contact = new Contact();
+            contact.setName(contactName);
+            contact.setUrl(contactUrl);
+            contact.setEmail(contactEmail);
+            info.setContact(contact);
+        }
+
+        swaggerConfig.setInfo(info);
     }
 
     public abstract List<RestDefinition> getRestDefinitions(String camelId) throws Exception;
