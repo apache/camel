@@ -35,7 +35,7 @@
          knows the url to the REST services.
          Notice: This is optional, but needed if the RestRegistry should enlist accurate information.
          You can access the RestRegistry from JMX at runtime -->
-    <restConfiguration component="servlet" bindingMode="json" contextPath="camel-example-servlet-rest-tomcat/rest" port="8080">
+    <restConfiguration component="servlet" bindingMode="json" contextPath="camel-example-swagger-java/rest" port="8080">
       <dataFormatProperty key="prettyPrint" value="true"/>
     </restConfiguration>
 

@@ -195,6 +195,9 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty9-version}</version>
         <configuration>
+          <httpConnector>
+            <port>8080</port>
+          </httpConnector>
           <webAppSourceDirectory>target/classes</webAppSourceDirectory>
           <webApp>
             <contextPath>/${project.artifactId}</contextPath>
