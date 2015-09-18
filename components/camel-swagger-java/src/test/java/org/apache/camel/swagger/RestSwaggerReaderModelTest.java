@@ -48,6 +48,7 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
                     .consumes("application/json").produces("application/json")
 
                     .get("/{id}").description("Find user by id").outType(User.class)
+                        .responseMessage().message("The user returned").endResponseMessage()
                         .param().name("id").type(RestParamType.path).description("The id of the user to get").dataType("integer").endParam()
                         .to("bean:userService?method=getUser(${header.id})")
 
@@ -56,6 +57,7 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
                         .to("bean:userService?method=updateUser")
 
                     .get("/findAll").description("Find all users").outTypeList(User.class)
+                        .responseMessage().message("All the found users").endResponseMessage()
                         .to("bean:userService?method=listUsers");
             }
         };
@@ -70,6 +72,9 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
         config.setHost("localhost:8080");
         config.setSchemes(new String[]{"http"});
         config.setBasePath("/api");
+        config.setTitle("Camel User store");
+        config.setLicense("Apache 2.0");
+        config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestSwaggerReader reader = new RestSwaggerReader();
 
         Swagger swagger = reader.read(rest, config, new DefaultClassResolver());
@@ -83,7 +88,7 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
         log.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
-        assertTrue(json.contains("\"description\" : \"Output type\""));
+        assertTrue(json.contains("\"description\" : \"The user returned\""));
         assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
         assertTrue(json.contains("\"x-className\""));
         assertTrue(json.contains("\"format\" : \"org.apache.camel.swagger.User\""));

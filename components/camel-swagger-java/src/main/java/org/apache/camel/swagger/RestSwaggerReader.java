@@ -190,7 +190,10 @@ public class RestSwaggerReader {
             }
 
             for (RestOperationResponseMsgDefinition msg : verb.getResponseMsgs()) {
-                Response response = new Response();
+                Response response = op.getResponses().get("" + msg.getCode());
+                if (response == null) {
+                    response = new Response();
+                }
                 response.setDescription(msg.getMessage());
                 op.addResponse("" + msg.getCode(), response);
             }
