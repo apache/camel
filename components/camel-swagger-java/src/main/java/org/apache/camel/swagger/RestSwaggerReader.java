@@ -93,7 +93,8 @@ public class RestSwaggerReader {
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         Collections.sort(verbs, new VerbOrdering());
 
-        String pathAsTag = FileUtil.stripLeadingSeparator(rest.getPath());
+        // we need to group the operations within the same tag, so use the path as default if not configured
+        String pathAsTag = rest.getTag() != null ? rest.getTag() : FileUtil.stripLeadingSeparator(rest.getPath());
         String summary = rest.getDescriptionText();
 
         // add rest as tag

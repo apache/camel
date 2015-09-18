@@ -44,7 +44,7 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // this user REST service is json only
-                rest("/user").description("User rest service")
+                rest("/user").tag("dude").description("User rest service")
                     .consumes("application/json").produces("application/json")
 
                     .get("/{id}").description("Find user by id").outType(User.class)

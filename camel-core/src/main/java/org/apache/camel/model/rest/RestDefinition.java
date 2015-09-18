@@ -52,6 +52,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private String path;
 
     @XmlAttribute
+    private String tag;
+
+    @XmlAttribute
     private String consumes;
 
     @XmlAttribute
@@ -83,6 +86,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    /**
+     * To configure a special tag for the operations within this rest definition.
+     */
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getConsumes() {
@@ -170,6 +184,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public RestDefinition path(String path) {
         setPath(path);
+        return this;
+    }
+
+    /**
+     * To set the tag to use of this REST service
+     */
+    public RestDefinition tag(String tag) {
+        setTag(tag);
         return this;
     }
 
