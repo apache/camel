@@ -28,7 +28,12 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.util.CamelVersionHelper;
 
-public class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet {
+/**
+ * The default Camel swagger servlet to use when exposing the APIs of the rest-dsl using swagger.
+ * <p/>
+ * This requires Camel version 2.15 or better at runtime (and JMX to be enabled).
+ */
+public class DefaultCamelSwaggerServlet extends RestSwaggerAbstractServlet {
 
     @Override
     public List<RestDefinition> getRestDefinitions(String camelId) throws Exception {

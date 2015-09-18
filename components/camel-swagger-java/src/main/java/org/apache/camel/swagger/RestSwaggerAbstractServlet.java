@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import io.swagger.core.filter.SpecFilter;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
@@ -42,9 +41,12 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.swagger.SwaggerHelper.buildUrl;
 
-public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
+/**
+ * Base class for rest-dsl swagger integration to use a servlet to service the swagger api.
+ */
+public abstract class RestSwaggerAbstractServlet extends HttpServlet {
 
-    private Logger LOG = LoggerFactory.getLogger(RestSwaggerApiDeclarationServlet.class);
+    private Logger LOG = LoggerFactory.getLogger(RestSwaggerAbstractServlet.class);
 
     private RestSwaggerReader reader = new RestSwaggerReader();
     private BeanConfig swaggerConfig = new BeanConfig();
