@@ -33,6 +33,7 @@ import io.swagger.models.Path;
 import io.swagger.models.RefModel;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
+import io.swagger.models.Tag;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.HeaderParameter;
@@ -50,6 +51,7 @@ import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -91,6 +93,15 @@ public class RestSwaggerReader {
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         Collections.sort(verbs, new VerbOrdering());
 
+        String pathAsTag = FileUtil.stripLeadingSeparator(rest.getPath());
+        String summary = rest.getDescriptionText();
+
+        // add rest as tag
+        Tag tag = new Tag();
+        tag.description(summary);
+        tag.name(pathAsTag);
+        swagger.addTag(tag);
+
         // gather all types in use
         Set<String> types = new LinkedHashSet<>();
         for (VerbDefinition verb : verbs) {
@@ -129,6 +140,8 @@ public class RestSwaggerReader {
             String opPath = SwaggerHelper.buildUrl(basePath, verb.getUri());
 
             Operation op = new Operation();
+            // group in the same tag
+            op.addTag(pathAsTag);
 
             Path path = swagger.getPath(opPath);
             if (path == null) {
