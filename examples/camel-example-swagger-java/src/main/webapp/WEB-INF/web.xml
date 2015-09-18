@@ -41,11 +41,10 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
-  <!-- START SNIPPET: e1 -->
-  <!-- to setup Camel Swagger api servlet -->
+  <!-- to setup Camel Swagger servlet -->
   <servlet>
     <servlet-name>ApiDeclarationServlet</servlet-name>
-    <servlet-class>org.apache.camel.swagger.DefaultCamelSwaggerServlet</servlet-class>
+    <servlet-class>org.apache.camel.swagger.RestSwaggerServlet</servlet-class>
     <init-param>
       <!-- we specify the base.path using relative notation, that means the actual path will be calculated at runtime as
            http://server:port/contextpath/rest -->
@@ -82,7 +81,6 @@
     <servlet-name>ApiDeclarationServlet</servlet-name>
     <url-pattern>/api-docs/*</url-pattern>
   </servlet-mapping>
-  <!-- END SNIPPET: e1 -->
 
   <!-- define that url path for the Camel Servlet to use -->
   <servlet-mapping>
@@ -90,7 +88,7 @@
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
 
-  <!-- enable CORS filter so people can use swagger ui to browse and test the apis
+  <!-- enable CORS filter so people can use swagger ui to browse and test the apis -->
   <filter>
     <filter-name>RestSwaggerCorsFilter</filter-name>
     <filter-class>org.apache.camel.swagger.RestSwaggerCorsFilter</filter-class>
@@ -101,7 +99,6 @@
     <url-pattern>/api-docs/*</url-pattern>
     <url-pattern>/rest/*</url-pattern>
   </filter-mapping>
-  -->
 
   <welcome-file-list>
       <welcome-file>home.html</welcome-file>

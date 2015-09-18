@@ -33,7 +33,7 @@ import org.apache.camel.util.CamelVersionHelper;
  * <p/>
  * This requires Camel version 2.15 or better at runtime (and JMX to be enabled).
  */
-public class DefaultCamelSwaggerServlet extends RestSwaggerAbstractServlet {
+public class RestSwaggerServlet extends RestSwaggerAbstractServlet {
 
     @Override
     public List<RestDefinition> getRestDefinitions(String camelId) throws Exception {
