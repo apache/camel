@@ -50,6 +50,7 @@ import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A Camel REST-DSL swagger reader that parse the rest-dsl into a swagger model representation.
@@ -57,16 +58,35 @@ import org.apache.camel.spi.ClassResolver;
 public class RestSwaggerReader {
 
     /**
-     * Read the REST-DSL definition and parse that as a Swagger model representation
+     * Read the REST-DSL definition's and parse that as a Swagger model representation
      *
-     * @param rest              the rest-dsl
+     * @param rests             the rest-dsl
+     * @param route             optional route path to filter the rest-dsl to only include from the chose route
      * @param config            the swagger configuration
      * @param classResolver     class resolver to use
      * @return the swagger model
      */
-    public Swagger read(RestDefinition rest, BeanConfig config, ClassResolver classResolver) {
+    public Swagger read(List<RestDefinition> rests, String route, BeanConfig config, ClassResolver classResolver) {
         Swagger swagger = new Swagger();
 
+        for (RestDefinition rest : rests) {
+
+            if (ObjectHelper.isNotEmpty(route) && !route.equals("/")) {
+                // filter by route
+                if (!rest.getPath().equals(route)) {
+                    continue;
+                }
+            }
+
+            parse(swagger, rest, classResolver);
+        }
+
+        // configure before returning
+        swagger = config.configure(swagger);
+        return swagger;
+    }
+
+    private void parse(Swagger swagger, RestDefinition rest, ClassResolver classResolver) {
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         Collections.sort(verbs, new VerbOrdering());
@@ -207,10 +227,6 @@ public class RestSwaggerReader {
             // add path
             swagger.path(opPath, path);
         }
-
-        // configure before returning
-        swagger = config.configure(swagger);
-        return swagger;
     }
 
     private Model asModel(String typeName, Swagger swagger) {

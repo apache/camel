@@ -65,9 +65,6 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
 
     @Test
     public void testReaderRead() throws Exception {
-        RestDefinition rest = context.getRestDefinitions().get(0);
-        assertNotNull(rest);
-
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[]{"http"});
@@ -77,7 +74,7 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestSwaggerReader reader = new RestSwaggerReader();
 
-        Swagger swagger = reader.read(rest, config, new DefaultClassResolver());
+        Swagger swagger = reader.read(context.getRestDefinitions(), null, config, new DefaultClassResolver());
         assertNotNull(swagger);
 
         ObjectMapper mapper = new ObjectMapper();

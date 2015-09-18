@@ -24,7 +24,6 @@ import io.swagger.models.Swagger;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -60,16 +59,13 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
 
     @Test
     public void testReaderRead() throws Exception {
-        RestDefinition rest = context.getRestDefinitions().get(0);
-        assertNotNull(rest);
-
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[]{"http"});
         config.setBasePath("/api");
         RestSwaggerReader reader = new RestSwaggerReader();
 
-        Swagger swagger = reader.read(rest, config, new DefaultClassResolver());
+        Swagger swagger = reader.read(context.getRestDefinitions(), null, config, new DefaultClassResolver());
         assertNotNull(swagger);
 
         ObjectMapper mapper = new ObjectMapper();

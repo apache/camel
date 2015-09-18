@@ -75,6 +75,21 @@
       </get>
     </rest>
 
+    <!-- defines the rest services using the context-path /echo -->
+    <rest path="/echo" consumes="application/text" produces="application/text">
+      <description>Echo rest service</description>
+
+      <get uri="/ping">
+        <description>A ping service</description>
+        <route>
+          <transform>
+            <constant>pong</constant>
+          </transform>
+        </route>
+      </get>
+
+    </rest>
+
   </camelContext>
 
 </beans>

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.swagger.core.filter.SpecFilter;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
@@ -144,21 +145,14 @@ public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
                     route = route.substring(contextId.length());
                 }
 
-
-                // TODO: implement these
-                if (!route.equals("") && !route.equals("/")) {
-                    // render overview if the route is empty or is the root path
-                    // renderApiDeclaration(request, response, contextId, route);
-                } else {
-                    renderResourceListing(request, response, contextId);
-                }
+                renderResourceListing(request, response, contextId, route);
             }
         } catch (Exception e) {
             LOG.warn("Error rendering swagger due " + e.getMessage(), e);
         }
     }
 
-    private void renderResourceListing(HttpServletRequest request, HttpServletResponse response, String contextId) throws Exception {
+    private void renderResourceListing(HttpServletRequest request, HttpServletResponse response, String contextId, String route) throws Exception {
         LOG.trace("renderResourceListing");
 
         if (cors) {
@@ -169,17 +163,13 @@ public abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
 
         List<RestDefinition> rests = getRestDefinitions(contextId);
         if (rests != null) {
+            // read the rest-dsl into swagger model
+            Swagger swagger = reader.read(rests, route, swaggerConfig, new DefaultClassResolver());
 
-            // TODO: combine the rests
-
-            for (RestDefinition rest : rests) {
-                Swagger swagger = reader.read(rest, swaggerConfig, new DefaultClassResolver());
-
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-                mapper.writeValue(response.getOutputStream(), swagger);
-            }
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            mapper.writeValue(response.getOutputStream(), swagger);
         } else {
             response.setStatus(204);
         }
