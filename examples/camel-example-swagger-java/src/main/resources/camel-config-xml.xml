@@ -23,9 +23,6 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <!-- use camel-metrics route policy to gather metrics for all routes -->
-  <bean id="metricsRoutePolicyFactory" class="org.apache.camel.component.metrics.routepolicy.MetricsRoutePolicyFactory"/>
-
   <!-- a bean for user services -->
   <bean id="userService" class="org.apache.camel.example.rest.UserService"/>
 
@@ -50,7 +47,17 @@
       <get uri="/{id}" outType="org.apache.camel.example.rest.User">
         <description>Find user by id</description>
         <param name="id" type="path" description="The id of the user to get" dataType="integer"/>
-        <to uri="bean:userService?method=getUser(${header.id})"/>
+        <responseMessage message="The user that was found"/>
+        <responseMessage code="404" message="User not found"/>
+        <route>
+          <to uri="bean:userService?method=getUser(${header.id})"/>
+          <filter>
+            <simple>${body} == null</simple>
+            <setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+              <constant>404</constant>
+            </setHeader>
+          </filter>
+        </route>
       </get>
 
       <!-- this is a rest PUT to create/update an user -->
@@ -63,6 +70,7 @@
       <!-- this is a rest GET to find all users -->
       <get uri="/findAll" outType="org.apache.camel.example.rest.User[]">
         <description>Find all users</description>
+        <responseMessage message="All the users"/>
         <to uri="bean:userService?method=listUsers"/>
       </get>
     </rest>

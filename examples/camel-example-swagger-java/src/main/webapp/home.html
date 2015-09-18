@@ -18,7 +18,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Apache Camel Servlet REST and Apache Tomcat example</title>
+    <title>Apache Camel Swagger Java Example</title>
     <link rel="stylesheet" href="css/foundation.min.css"/>
     <script src="js/vendor/modernizr.js"></script>
 </head>
@@ -26,23 +26,21 @@
 <body>
 <div class="row">
     <div class="large-12 columns">
-        <h2>Apache Camel Example using Servlet REST & Web Container</h2>
+        <h2>Apache Camel Example using Swagger Java</h2>
     </div>
 </div>
 
 <div class="row">
     <div class="large-12 columns">
-        This example shows how to use Servlet REST to define REST endpoints in Camel routes using the Rest DSL
+        This example shows how to use Servlet REST to define REST endpoints in Camel routes using the Rest DSL,
+        and using camel-swagger-java to expose the REST service APIs.
 
         <br/>
 
-        This example is implemented in both the Java and XML DSLs. By default the Java DSL is in use.
-        You can change this in the src/main/webapps/WEB-INF/web.xml file
+        This example is implemented in XML DSL.
 
         <br/>
-        For Java DSL the routes are defined in Java code, in the <tt>org.apache.camel.example.rest.UserRouteBuilder</tt>
-        class.
-        And for XML DSL the routes are define in XML code, in the <tt>src/main/resources/camel-config-xml.xml</tt> file.
+        The XML DSL the routes are define in XML code, in the <tt>src/main/resources/camel-config-xml.xml</tt> file.
 
         <p/>
         There is a <i>user</i> REST service that supports the following operations

@@ -79,7 +79,8 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("acc1", rest.getVerbs().get(0).getParams().get(0).getAccess());
         assertEquals("acc2", rest.getVerbs().get(0).getParams().get(1).getAccess());
 
-        assertEquals(300, rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
+        assertEquals("300", rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
+        assertEquals("error", rest.getVerbs().get(0).getResponseMsgs().get(1).getCode());
         assertEquals("test msg", rest.getVerbs().get(0).getResponseMsgs().get(0).getMessage());
         assertEquals(Integer.class.getCanonicalName(), rest.getVerbs().get(0).getResponseMsgs().get(0).getResponseModel());
 
@@ -115,6 +116,7 @@ public class FromRestGetTest extends ContextTestSupport {
                         .defaultValue("b").allowMultiple(true).name("header_letter").required(false).access("acc2")
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
+                        .responseMessage().code("error").message("does not work").endResponseMessage()
                         .to("direct:bye")
                         .post().to("mock:update");
 

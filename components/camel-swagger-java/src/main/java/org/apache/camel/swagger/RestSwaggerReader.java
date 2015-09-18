@@ -158,6 +158,7 @@ public class RestSwaggerReader {
                     parameter.setDescription(param.getDescription());
                     parameter.setRequired(param.getRequired());
 
+                    // set type on parameter
                     if (parameter instanceof SerializableParameter) {
                         SerializableParameter sp = (SerializableParameter) parameter;
 
@@ -166,6 +167,7 @@ public class RestSwaggerReader {
                         }
                     }
 
+                    // set schema on body parameter
                     if (parameter instanceof BodyParameter) {
                         BodyParameter bp = (BodyParameter) parameter;
 
@@ -181,6 +183,7 @@ public class RestSwaggerReader {
                 }
             }
 
+            // if we have an out type then set that as response message
             if (verb.getOutType() != null) {
                 Response response = new Response();
                 Property prop = modelTypeAsProperty(verb.getOutType(), swagger);
@@ -189,13 +192,17 @@ public class RestSwaggerReader {
                 op.addResponse("200", response);
             }
 
+            // enrich with configured response messages from the rest-dsl
             for (RestOperationResponseMsgDefinition msg : verb.getResponseMsgs()) {
-                Response response = op.getResponses().get("" + msg.getCode());
+                Response response = null;
+                if (op.getResponses() != null) {
+                    response = op.getResponses().get(msg.getCode());
+                }
                 if (response == null) {
                     response = new Response();
                 }
                 response.setDescription(msg.getMessage());
-                op.addResponse("" + msg.getCode(), response);
+                op.addResponse(msg.getCode(), response);
             }
 
             // add path

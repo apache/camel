@@ -53,10 +53,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-servlet</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-metrics</artifactId>
-    </dependency>
 
     <!-- swagger api -->
     <dependency>
