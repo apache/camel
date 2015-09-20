@@ -506,7 +506,7 @@
     <velocity-version>1.7</velocity-version>
     <vertx-version>3.0.0</vertx-version>
     <vysper-version>0.7</vysper-version>
-    <weld2-version>2.2.16.Final</weld2-version>
+    <weld2-version>2.3.0.Final</weld2-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <woodstox-version>4.4.1</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
