@@ -52,7 +52,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
 
-    private static final int UNUSED_LABELS_WARN = 20;
+    private static final int UNUSED_LABELS_WARN = 15;
 
     /**
      * The maven project.

@@ -64,53 +64,53 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private String destinationName;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean synchronous = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean includeAllJMSXProperties;
-    @UriParam
+    @UriParam(label = "consumer,transaction")
     private boolean transacted;
     @UriParam(label = "producer")
     private String namedReplyTo;
     @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE")
     private SessionAcknowledgementType acknowledgementMode = SessionAcknowledgementType.AUTO_ACKNOWLEDGE;
-    @UriParam(defaultValue = "1")
+    @Deprecated
     private int sessionCount = 1;
     @UriParam(label = "producer", defaultValue = "1")
     private int producerCount = 1;
-    @UriParam(defaultValue = "1")
+    @UriParam(label = "consumer", defaultValue = "1")
     private int consumerCount = 1;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "producer", defaultValue = "-1")
     private long ttl = -1;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean persistent = true;
     @UriParam(label = "consumer")
     private String durableSubscriptionId;
-    @UriParam(label = "producer", defaultValue = "5000")
+    @UriParam(label = "producer,advanced", defaultValue = "5000")
     private long responseTimeOut = 5000;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private String messageSelector;
-    @UriParam(label = "consumer", defaultValue = "-1")
+    @UriParam(label = "consumer,transaction", defaultValue = "-1")
     private int transactionBatchCount = -1;
-    @UriParam(label = "consumer", defaultValue = "5000")
+    @UriParam(label = "consumer,transaction", defaultValue = "5000")
     private long transactionBatchTimeout = 5000;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean asyncStartListener;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean asyncStopListener;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean prefillPool = true;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean allowNullBody = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean mapJmsMessage = true;
-    @UriParam
+    @UriParam(label = "transaction")
     private TransactionCommitStrategy transactionCommitStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
-    @UriParam
+    @UriParam(label = "advanced")
     private MessageCreatedStrategy messageCreatedStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
 
     public SjmsEndpoint() {
