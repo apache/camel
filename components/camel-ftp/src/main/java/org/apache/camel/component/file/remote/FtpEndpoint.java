@@ -43,12 +43,10 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     protected FTPClientConfig ftpClientConfig;
     protected Map<String, Object> ftpClientParameters;
     protected Map<String, Object> ftpClientConfigParameters;
+    protected int soTimeout;
+    protected int dataTimeout;
     @UriParam
     protected FtpConfiguration configuration;
-    @UriParam
-    protected int soTimeout;
-    @UriParam
-    protected int dataTimeout;
 
     public FtpEndpoint() {
     }

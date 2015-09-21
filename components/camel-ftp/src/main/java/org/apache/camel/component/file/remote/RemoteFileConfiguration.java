@@ -46,9 +46,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int port;
     @UriPath(name = "directoryName")
     private String directoryName;
-    @UriParam
+    @UriParam(label = "security")
     private String username;
-    @UriParam
+    @UriParam(label = "security")
     private String password;
     @UriParam
     private boolean binary;
@@ -60,7 +60,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int timeout = 30000;
     @UriParam(defaultValue = "300000")
     private int soTimeout = 300000;
-    @UriParam(defaultValue = "32768")
+    @UriParam(defaultValue = "32768", label = "consumer")
     private int receiveBufferSize = 32 * 1024;
     @UriParam
     private boolean throwExceptionOnConnectFailed;
@@ -70,11 +70,11 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private boolean stepwise = true;
     @UriParam(defaultValue = "UNIX")
     private PathSeparator separator = PathSeparator.UNIX;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean streamDownload;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "consumer")
     private boolean useList = true;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean ignoreFileNotFoundOrPermissionError;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean sendNoop = true;
