@@ -38,19 +38,19 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private long delay = MailConsumer.DEFAULT_CONSUMER_DELAY;
     @UriParam
     private MailConfiguration configuration;
-    @UriParam
+    @UriParam(label = "advanced")
     private MailBinding binding;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new MailHeaderFilterStrategy();
-    @UriParam
+    @UriParam(label = "advanced")
     private ContentTypeResolver contentTypeResolver;
-    @UriParam
+    @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
-    @UriParam
+    @UriParam(label = "consumer,filter")
     private SearchTerm searchTerm;
-    @UriParam
+    @UriParam(label = "consumer,sort")
     private SortTerm[] sortTerm;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private MailBoxPostProcessAction postProcessAction;
 
     public MailEndpoint() {
