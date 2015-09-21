@@ -52,6 +52,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
 
+    private static final int UNUSED_LABELS_WARN = 20;
+
     /**
      * The maven project.
      *
@@ -287,6 +289,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> missingComponents = new TreeSet<File>();
         Map<String, Set<String>> usedComponentLabels = new TreeMap<String, Set<String>>();
         Set<String> usedOptionLabels = new TreeSet<String>();
+        Set<String> unlabeledOptions = new TreeSet<String>();
 
         // find all json files in components and camel-core
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -385,6 +388,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 }
 
                 // check all the endpoint options and grab the label(s) they use
+                int unused = 0;
                 rows = JSonSchemaHelper.parseJsonSchema("properties", text, true);
                 for (Map<String, String> row : rows) {
                     String label = row.get("label");
@@ -394,7 +398,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         for (String part : parts) {
                             usedOptionLabels.add(part);
                         }
+                    } else {
+                        unused++;
                     }
+                }
+
+                if (unused >= UNUSED_LABELS_WARN) {
+                    unlabeledOptions.add(name);
                 }
 
             } catch (IOException e) {
@@ -429,7 +439,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels);
+        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels, unlabeledOptions);
     }
 
     protected void executeDataFormats() throws MojoExecutionException, MojoFailureException {
@@ -716,7 +726,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     }
 
     private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Map<String,
-            Set<String>> usedComponentLabels, Set<String> usedOptionsLabels) {
+            Set<String>> usedComponentLabels, Set<String> usedOptionsLabels, Set<String> unusedLabels) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -746,6 +756,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
             getLog().info("");
             getLog().info("\tUsed component/endpoint options labels: " + usedOptionsLabels.size());
             for (String name : usedOptionsLabels) {
+                getLog().info("\t\t\t" + name);
+            }
+        }
+        if (!unusedLabels.isEmpty()) {
+            getLog().info("");
+            getLog().info("\tComponent with more than " + UNUSED_LABELS_WARN + " unlabelled options: " + unusedLabels.size());
+            for (String name : unusedLabels) {
                 getLog().info("\t\t\t" + name);
             }
         }
