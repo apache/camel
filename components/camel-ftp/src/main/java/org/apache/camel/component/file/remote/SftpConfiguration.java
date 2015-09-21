@@ -50,7 +50,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private int serverAliveInterval;
     @UriParam(defaultValue = "1", label = "advanced")
     private int serverAliveCountMax = 1;
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private String chmod;
     // comma separated list of ciphers. 
     // null means default jsch list will be used
