@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.salesforce.internal.dto;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * DTO for Salesforce login
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class LoginToken {
 
     private String accessToken;
