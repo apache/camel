@@ -79,9 +79,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @UriPath @Metadata(required = "true")
     private String destinationName;
     private Destination destination;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "consumer")
     private String selector;
     @UriParam
     private JmsConfiguration configuration;
