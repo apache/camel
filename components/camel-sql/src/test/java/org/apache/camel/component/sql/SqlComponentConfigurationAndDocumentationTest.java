@@ -43,12 +43,12 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
 
     @Test
     public void testExplainEndpoint() throws Exception {
-        String json = context.explainEndpointJson("sql:select?dataSourceRef=jdbc/myDataSource&allowNamedParameters=true&consumer.onConsume=foo", true);
+        String json = context.explainEndpointJson("sql:select?dataSourceRef=jdbc/myDataSource&allowNamedParameters=true&onConsume=foo", true);
         assertNotNull(json);
 
-        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"kind\": \"parameter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"parametersCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"onConsume\": { \"kind\": \"parameter\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"value\": \"foo\""));
+        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"parametersCount\": { \"kind\": \"parameter\", \"label\": \"producer,advanced\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"onConsume\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"value\": \"foo\""));
     }
 
 }
