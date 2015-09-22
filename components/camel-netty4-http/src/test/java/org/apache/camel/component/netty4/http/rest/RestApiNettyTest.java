@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.swagger;
+package org.apache.camel.component.netty4.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.netty4.http.BaseNettyTest;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.swagger.SwaggerRestApiProcessorFactory;
 import org.junit.Test;
 
-public class RestApiNettyTest extends CamelTestSupport {
+public class RestApiNettyTest extends BaseNettyTest {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -38,7 +39,20 @@ public class RestApiNettyTest extends CamelTestSupport {
 
     @Test
     public void testApi() throws Exception {
-        Thread.sleep(999999);
+        String out = template.requestBody("netty4-http:http://localhost:{{port}}/api-doc/", null, String.class);
+        assertNotNull(out);
+        log.info(out);
+
+        String id = context.getName();
+        assertTrue(out.contains("{\"name\": \"" + id + "\"}"));
+
+        out = template.requestBody("netty4-http:http://localhost:{{port}}/api-doc/" + id, null, String.class);
+        assertNotNull(out);
+        log.info(out);
+
+        assertTrue(out.contains("\"/hello/bye/{name}\""));
+        assertTrue(out.contains("\"/hello/hi/{name}\""));
+        assertTrue(out.contains("\"summary\" : \"To update the greeting message\""));
     }
 
     @Override
@@ -46,7 +60,7 @@ public class RestApiNettyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("netty4-http").host("localhost").port(8080).apiContextPath("/api-doc");
+                restConfiguration().component("netty4-http").host("localhost").port(getPort()).apiContextPath("/api-doc");
 
                 rest("/hello").consumes("application/json").produces("application/json")
                     .get("/hi/{name}").description("Saying hi")
@@ -62,4 +76,5 @@ public class RestApiNettyTest extends CamelTestSupport {
             }
         };
     }
+
 }
