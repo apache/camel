@@ -18,19 +18,10 @@ package org.apache.camel.component.netty4.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty4.http.BaseNettyTest;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.swagger.SwaggerRestApiProcessorFactory;
 import org.junit.Test;
 
 public class RestApiNettyTest extends BaseNettyTest {
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("SwaggerRestApiProcessorFactory", new SwaggerRestApiProcessorFactory());
-        return jndi;
-    }
 
     @Override
     protected boolean useJmx() {

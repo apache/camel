@@ -24,6 +24,8 @@ import org.apache.camel.Processor;
 
 public interface RestApiConsumerFactory {
 
+    // TODO: merge this method to RestConsumerFactory
+
     /**
      * Creates a new REST API <a
      * href="http://camel.apache.org/event-driven-consumer.html">Event

@@ -42,6 +42,9 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private String component;
 
+    @XmlAttribute @Metadata(defaultValue = "swagger")
+    private String apiComponent;
+
     @XmlAttribute
     private String scheme;
 
@@ -105,6 +108,17 @@ public class RestConfigurationDefinition {
      */
     public void setComponent(String component) {
         this.component = component;
+    }
+
+    public String getApiComponent() {
+        return apiComponent;
+    }
+
+    /**
+     * The name of the Camel component to use as the REST API (such as swagger)
+     */
+    public void setApiComponent(String apiComponent) {
+        this.apiComponent = apiComponent;
     }
 
     public String getScheme() {
@@ -341,6 +355,14 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * To use a specific Camel rest API component
+     */
+    public RestConfigurationDefinition apiComponent(String componentId) {
+        setApiComponent(componentId);
+        return this;
+    }
+
+    /**
      * To use a specific scheme such as http/https
      */
     public RestConfigurationDefinition scheme(String scheme) {
@@ -530,6 +552,9 @@ public class RestConfigurationDefinition {
         RestConfiguration answer = new RestConfiguration();
         if (component != null) {
             answer.setComponent(CamelContextHelper.parseText(context, component));
+        }
+        if (apiComponent != null) {
+            answer.setApiComponent(CamelContextHelper.parseText(context, apiComponent));
         }
         if (scheme != null) {
             answer.setScheme(CamelContextHelper.parseText(context, scheme));

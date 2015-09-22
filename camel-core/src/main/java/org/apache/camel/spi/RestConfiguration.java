@@ -38,6 +38,7 @@ public class RestConfiguration {
     }
 
     private String component;
+    private String apiComponent;
     private String scheme;
     private String host;
     private int port;
@@ -72,6 +73,24 @@ public class RestConfiguration {
      */
     public void setComponent(String componentName) {
         this.component = componentName;
+    }
+
+    /**
+     * Gets the name of the Camel component to use as the REST API (such as swagger)
+     *
+     * @return the component name, or <tt>null</tt> to let Camel use the default name <tt>swagger</tt>
+     */
+    public String getApiComponent() {
+        return apiComponent;
+    }
+
+    /**
+     * Sets the name of the Camel component to use as the REST API (such as swagger)
+     *
+     * @param apiComponent the name of the component (such as swagger)
+     */
+    public void setApiComponent(String apiComponent) {
+        this.apiComponent = apiComponent;
     }
 
     /**

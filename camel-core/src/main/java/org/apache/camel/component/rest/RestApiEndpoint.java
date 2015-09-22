@@ -16,15 +16,18 @@
  */
 package org.apache.camel.component.rest;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestApiProcessorFactory;
@@ -36,10 +39,15 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(scheme = "rest-api", title = "REST API", syntax = "rest-api:path", consumerOnly = true, label = "core,rest")
 public class RestApiEndpoint extends DefaultEndpoint {
 
+    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
+    private FactoryFinder factoryFinder;
+
     @UriPath @Metadata(required = "true")
     private String path;
     @UriParam
     private String componentName;
+    @UriParam
+    private String apiComponentName;
 
     private Map<String, Object> parameters;
 
@@ -77,6 +85,17 @@ public class RestApiEndpoint extends DefaultEndpoint {
         this.componentName = componentName;
     }
 
+    public String getApiComponentName() {
+        return apiComponentName;
+    }
+
+    /**
+     * The Camel Rest API component to use for generating the API of the REST services, such as swagger.
+     */
+    public void setApiComponentName(String apiComponentName) {
+        this.apiComponentName = apiComponentName;
+    }
+
     public Map<String, Object> getParameters() {
         return parameters;
     }
@@ -88,9 +107,18 @@ public class RestApiEndpoint extends DefaultEndpoint {
         this.parameters = parameters;
     }
 
+    private Class<?> findApiProcessorFactory(String name, CamelContext context) throws ClassNotFoundException, IOException {
+        if (factoryFinder == null) {
+            factoryFinder = context.getFactoryFinder(RESOURCE_PATH);
+        }
+        return factoryFinder.findClass(name);
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         RestApiProcessorFactory factory = null;
+
+        RestConfiguration config = getCamelContext().getRestConfiguration(componentName, true);
 
         // lookup in registry
         Set<RestApiProcessorFactory> factories = getCamelContext().getRegistry().findByType(RestApiProcessorFactory.class);
@@ -98,9 +126,14 @@ public class RestApiEndpoint extends DefaultEndpoint {
             factory = factories.iterator().next();
         }
 
-        if (factory != null) {
+        // lookup on classpath using factory finder
+        String name = apiComponentName != null ? apiComponentName : config.getApiComponent();
+        Object instance = getCamelContext().getFactoryFinder(RESOURCE_PATH).newInstance(name);
+        if (instance instanceof RestApiProcessorFactory) {
+            factory = (RestApiProcessorFactory) instance;
+        }
 
-            RestConfiguration config = getCamelContext().getRestConfiguration(componentName, true);
+        if (factory != null) {
 
             // calculate the url to the rest API service
             String path = getPath();
@@ -111,7 +144,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
             Processor processor = factory.createApiProcessor(getCamelContext(), path, config, getParameters());
             return new RestApiProducer(this, processor);
         } else {
-            throw new IllegalStateException("Cannot find RestApiProcessorFactory in Registry");
+            throw new IllegalStateException("Cannot find RestApiProcessorFactory in Registry or classpath");
         }
     }
 
