@@ -41,6 +41,7 @@ public class FromRestExplicitComponentTest extends FromRestGetTest {
                         .defaultValue("b").allowMultiple(true).name("header_letter").required(false).access("acc2")
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
+                        .responseMessage().code("error").message("does not work").endResponseMessage()
                         .to("direct:bye")
                         .post().to("mock:update");
 
