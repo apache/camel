@@ -16,6 +16,7 @@
  */
 package org.apache.camel.swagger;
 
+import java.util.Collections;
 import java.util.Map;
 
 import io.swagger.jaxrs.config.BeanConfig;
@@ -30,9 +31,13 @@ public class RestSwaggerProcessor implements Processor {
     private final BeanConfig swaggerConfig;
     private final RestSwaggerSupport support;
 
+    @SuppressWarnings("unchecked")
     public RestSwaggerProcessor(Map<String, Object> parameters) {
         support = new RestSwaggerSupport();
         swaggerConfig = new BeanConfig();
+        if (parameters == null) {
+            parameters = Collections.EMPTY_MAP;
+        }
         support.initSwagger(swaggerConfig, parameters);
     }
 
