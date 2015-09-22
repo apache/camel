@@ -40,8 +40,14 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
         // now suspend and dont expect a message to be routed
         resetMocks();
         mock.expectedMessageCount(0);
+
         context.suspend();
+
+        // need to give seda consumer thread time to idle
+        Thread.sleep(500);
+
         template.sendBody("seda:foo", "B");
+
         mock.assertIsSatisfied(1000);
 
         assertTrue(context.isSuspended());

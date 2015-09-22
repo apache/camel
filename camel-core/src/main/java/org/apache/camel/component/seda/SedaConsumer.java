@@ -109,7 +109,14 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     }
 
     @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        // if we are suspending then we want to keep the thread running but just not route the exchange
+        // this logic is only when we stop or shutdown the consumer
+        if (suspendOnly) {
+            LOG.debug("Skip preparing to shutdown as consumer is being suspended");
+            return;
+        }
+
         // signal we want to shutdown
         shutdownPending = true;
         forceShutdown = forced;

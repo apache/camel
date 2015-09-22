@@ -82,7 +82,7 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
         return 0;
     }
 
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // noop
     }
 }
