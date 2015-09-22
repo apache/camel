@@ -22,17 +22,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RestApiProcessorFactory;
+import org.apache.camel.spi.RestConfiguration;
 
 public class DummyRestProcessorFactory implements RestApiProcessorFactory {
 
     @Override
-    public Processor createApiProcessor(CamelContext camelContext, String contextPath, Map<String, Object> parameters) throws Exception {
+    public Processor createApiProcessor(CamelContext camelContext, String contextPath, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
         return new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                // noop;
+                // noop
             }
         };
     }
-
 }

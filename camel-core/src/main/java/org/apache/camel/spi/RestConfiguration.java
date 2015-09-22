@@ -53,6 +53,7 @@ public class RestConfiguration {
     private Map<String, Object> endpointProperties;
     private Map<String, Object> consumerProperties;
     private Map<String, Object> dataFormatProperties;
+    private Map<String, Object> apiProperties;
     private Map<String, String> corsHeaders;
 
     /**
@@ -376,6 +377,19 @@ public class RestConfiguration {
      */
     public void setDataFormatProperties(Map<String, Object> dataFormatProperties) {
         this.dataFormatProperties = dataFormatProperties;
+    }
+
+    public Map<String, Object> getApiProperties() {
+        return apiProperties;
+    }
+
+    /**
+     * Sets additional options on api level
+     *
+     * @param apiProperties the options
+     */
+    public void setApiProperties(Map<String, Object> apiProperties) {
+        this.apiProperties = apiProperties;
     }
 
     /**

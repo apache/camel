@@ -84,7 +84,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
         String path = basePath;
         if (uriTemplate != null) {
             // make sure to avoid double slashes
@@ -98,7 +98,11 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         String scheme = "http";
         String host = "";
         int port = 0;
-        RestConfiguration config = getCamelContext().getRestConfiguration("undertow", true);
+
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("undertow", true);
+        }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
         }
@@ -112,7 +116,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("undertow"))) {
+        if (config.getComponent() == null || config.getComponent().equals("undertow")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());

@@ -81,8 +81,14 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
                                    String uriTemplate,
                                    String consumes, 
                                    String produces,
+                                   RestConfiguration configuration,
                                    Map<String, Object> parameters) throws Exception {
-        RestConfiguration config = getCamelContext().getRestConfiguration("coap", true);
+
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("coap", true);
+        }
+
         Map<String, Object> map = new HashMap<String, Object>();
         // setup endpoint options
         if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
@@ -90,8 +96,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         }
 
         String query = URISupport.createQueryString(map);
-        
-        
+
         String url = (config.getScheme() == null ? "coap" : config.getScheme())
             + "://" + config.getHost();
         if (config.getPort() != -1) {
@@ -110,8 +115,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         setProperties(endpoint, parameters);
         return endpoint.createConsumer(processor);
     }
-    
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();

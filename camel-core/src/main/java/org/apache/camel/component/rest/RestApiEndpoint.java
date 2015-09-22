@@ -100,14 +100,15 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
         if (factory != null) {
 
+            RestConfiguration config = getCamelContext().getRestConfiguration(componentName, true);
+
             // calculate the url to the rest API service
             String path = getPath();
             if (path != null && !path.startsWith("/")) {
                 path = "/" + path;
             }
 
-
-            Processor processor = factory.createApiProcessor(getCamelContext(), path, getParameters());
+            Processor processor = factory.createApiProcessor(getCamelContext(), path, config, getParameters());
             return new RestApiProducer(this, processor);
         } else {
             throw new IllegalStateException("Cannot find RestApiProcessorFactory in Registry");
@@ -182,8 +183,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
                 }
             }
 */
-
-            Consumer consumer = factory.createApiConsumer(getCamelContext(), processor, path, getParameters());
+            Consumer consumer = factory.createApiConsumer(getCamelContext(), processor, path, config, getParameters());
             configureConsumer(consumer);
 
             return consumer;

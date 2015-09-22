@@ -37,7 +37,7 @@ public interface RestApiConsumerFactory {
      * @return a newly created REST API consumer
      * @throws Exception can be thrown
      */
-    Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath, Map<String, Object> parameters) throws Exception;
-
+    Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                               RestConfiguration configuration, Map<String, Object> parameters) throws Exception;
 
 }

@@ -225,7 +225,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -243,7 +243,10 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         int port = 0;
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration("netty-http", true);
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("netty-http", true);
+        }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
         }
@@ -266,7 +269,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("netty-http"))) {
+        if (config.getComponent() == null || config.getComponent().equals("netty-http")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
@@ -286,13 +289,12 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             url = url + "&" + query;
         }
 
-        
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
         setProperties(endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(consumer, config.getConsumerProperties());
         }
 

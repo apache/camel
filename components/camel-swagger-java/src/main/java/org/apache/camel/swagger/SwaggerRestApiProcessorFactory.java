@@ -21,11 +21,13 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RestApiProcessorFactory;
+import org.apache.camel.spi.RestConfiguration;
 
 public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
 
     @Override
-    public Processor createApiProcessor(CamelContext camelContext, String contextPath, Map<String, Object> parameters) throws Exception {
-        return new RestSwaggerProcessor(parameters);
+    public Processor createApiProcessor(CamelContext camelContext, String contextPath,
+                                        RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        return new RestSwaggerProcessor(configuration.getApiProperties());
     }
 }

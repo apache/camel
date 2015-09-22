@@ -500,6 +500,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets the REST configuration for the given component
+     *
      * @param component the component name to get the configuration
      * @param defaultIfNotFound determine if the default configuration is returned if there isn't a 
      *        specific configuration for the given component  
@@ -508,8 +509,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound);
     
     /**
-     * Gets all the RestConfigurations 
-     * @return
+     * Gets all the RestConfiguration's
      */
     Collection<RestConfiguration> getRestConfigurations();
 

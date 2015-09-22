@@ -87,6 +87,9 @@ public class RestConfigurationDefinition {
     @XmlElement(name = "dataFormatProperty")
     private List<RestPropertyDefinition> dataFormatProperties = new ArrayList<RestPropertyDefinition>();
 
+    @XmlElement(name = "apiProperty")
+    private List<RestPropertyDefinition> apiProperties = new ArrayList<RestPropertyDefinition>();
+
     @XmlElement(name = "corsHeaders")
     private List<RestPropertyDefinition> corsHeaders = new ArrayList<RestPropertyDefinition>();
 
@@ -303,6 +306,18 @@ public class RestConfigurationDefinition {
         this.dataFormatProperties = dataFormatProperties;
     }
 
+    public List<RestPropertyDefinition> getApiProperties() {
+        return apiProperties;
+    }
+
+    /**
+     * Allows to configure as many additional properties for the api documentation (swagger).
+     * For example set property api.title to my cool stuff
+     */
+    public void setApiProperties(List<RestPropertyDefinition> apiProperties) {
+        this.apiProperties = apiProperties;
+    }
+
     public List<RestPropertyDefinition> getCorsHeaders() {
         return corsHeaders;
     }
@@ -480,6 +495,17 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * For additional configuration options on data format level
+     */
+    public RestConfigurationDefinition apiProperty(String key, String value) {
+        RestPropertyDefinition prop = new RestPropertyDefinition();
+        prop.setKey(key);
+        prop.setValue(value);
+        getApiProperties().add(prop);
+        return this;
+    }
+
+    /**
      * For configuring CORS headers
      */
     public RestConfigurationDefinition corsHeaderProperty(String key, String value) {
@@ -573,6 +599,15 @@ public class RestConfigurationDefinition {
                 props.put(key, value);
             }
             answer.setDataFormatProperties(props);
+        }
+        if (!apiProperties.isEmpty()) {
+            Map<String, Object> props = new HashMap<String, Object>();
+            for (RestPropertyDefinition prop : apiProperties) {
+                String key = prop.getKey();
+                String value = CamelContextHelper.parseText(context, prop.getValue());
+                props.put(key, value);
+            }
+            answer.setApiProperties(props);
         }
         if (!corsHeaders.isEmpty()) {
             Map<String, String> props = new HashMap<String, String>();

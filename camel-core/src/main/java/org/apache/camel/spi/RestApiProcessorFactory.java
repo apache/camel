@@ -35,6 +35,7 @@ public interface RestApiProcessorFactory {
      * @return a newly created REST API provider
      * @throws Exception can be thrown
      */
-    Processor createApiProcessor(CamelContext camelContext, String contextPath, Map<String, Object> parameters) throws Exception;
+    Processor createApiProcessor(CamelContext camelContext, String contextPath,
+                                 RestConfiguration configuration, Map<String, Object> parameters) throws Exception;
 
 }

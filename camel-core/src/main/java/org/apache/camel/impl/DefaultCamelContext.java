@@ -2308,10 +2308,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public void setRestConfiguration(RestConfiguration restConfiguration) {
         restConfigurations.put("", restConfiguration);
     }
+
     public Collection<RestConfiguration> getRestConfigurations() {
         return restConfigurations.values();
     }
-
 
     public void addRestConfiguration(RestConfiguration restConfiguration) {
         restConfigurations.put(restConfiguration.getComponent(), restConfiguration);        
