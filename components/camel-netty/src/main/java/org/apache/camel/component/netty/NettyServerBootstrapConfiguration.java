@@ -93,7 +93,9 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String enabledProtocols = DEFAULT_ENABLED_PROTOCOLS;
     @UriParam(label = "security")
     protected String passphrase;
+    @UriParam(label = "consumer,advanced")
     protected BossPool bossPool;
+    @UriParam(label = "consumer,advanced")
     protected WorkerPool workerPool;
     @UriParam(label = "consumer,advanced")
     protected String networkInterface;

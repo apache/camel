@@ -64,7 +64,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean lazyChannelCreation = true;
     @UriParam(label = "advanced")
     private boolean transferExchange;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
     @UriParam(label = "consumer,advanced", defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
