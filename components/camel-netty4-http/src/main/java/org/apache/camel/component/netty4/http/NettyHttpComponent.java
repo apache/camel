@@ -226,6 +226,17 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, parameters, false);
+    }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath, Map<String, Object> parameters) throws Exception {
+        // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
+        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, parameters, true);
+    }
+
+    Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                              String consumes, String produces, Map<String, Object> parameters, boolean api) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -275,7 +286,12 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
         String query = URISupport.createQueryString(map);
 
-        String url = "netty4-http:%s://%s:%s/%s?httpMethodRestrict=%s";
+        String url;
+        if (api) {
+            url = "netty4-http:%s://%s:%s/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
+        } else {
+            url = "netty4-http:%s://%s:%s/%s?httpMethodRestrict=%s";
+        }
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
         // get the endpoint
@@ -285,69 +301,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             url = url + "&" + query;
         }
         
-        NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
-        setProperties(endpoint, parameters);
-
-        // configure consumer properties
-        Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
-        }
-
-        return consumer;
-    }
-
-    @Override
-    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath, Map<String, Object> parameters) throws Exception {
-        String path = FileUtil.stripLeadingSeparator(contextPath);
-
-        String scheme = "http";
-        String host = "";
-        int port = 0;
-
-        // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration("netty4-http", true);
-        if (config.getScheme() != null) {
-            scheme = config.getScheme();
-        }
-        if (config.getHost() != null) {
-            host = config.getHost();
-        }
-        int num = config.getPort();
-        if (num > 0) {
-            port = num;
-        }
-
-        // if no explicit hostname set then resolve the hostname
-        if (ObjectHelper.isEmpty(host)) {
-            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
-                host = HostUtils.getLocalHostName();
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
-                host = HostUtils.getLocalIp();
-            }
-        }
-
-        Map<String, Object> map = new HashMap<String, Object>();
-        // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("netty4-http"))) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
-        }
-
-        String query = URISupport.createQueryString(map);
-
-        String url = "netty4-http:%s://%s:%s/%s?httpMethodRestrict=%s&matchOnUriPrefix=true";
-        // must use upper case for restrict
-        String restrict = "GET";
-        // get the endpoint
-        url = String.format(url, scheme, host, port, path, restrict);
-
-        if (!query.isEmpty()) {
-            url = url + "&" + query;
-        }
-
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
         setProperties(endpoint, parameters);
 
