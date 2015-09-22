@@ -14,13 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.swagger;
 
 import java.io.IOException;
 
-/**
- * An adapter to allow Camel rest-api to use Camel components to render the api response.
- */
 public interface RestApiResponseAdapter {
 
     void addHeader(String name, String value);
@@ -28,5 +25,4 @@ public interface RestApiResponseAdapter {
     void writeBytes(byte[] bytes) throws IOException;
 
     void noContent();
-
 }

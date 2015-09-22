@@ -14,35 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty4.http;
+package org.apache.camel.swagger;
 
 import java.io.IOException;
 
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import org.apache.camel.spi.RestApiResponseAdapter;
+import org.apache.camel.Exchange;
 
-public class NettyRestApiResponseAdapter implements RestApiResponseAdapter {
+public class ExchangeRestApiResponseAdapter implements RestApiResponseAdapter {
 
-    private final FullHttpResponse httpResponse;
+    private final Exchange exchange;
 
-    public NettyRestApiResponseAdapter(FullHttpResponse httpResponse) {
-        this.httpResponse = httpResponse;
+    public ExchangeRestApiResponseAdapter(Exchange exchange) {
+        this.exchange = exchange;
     }
 
     @Override
     public void addHeader(String name, String value) {
-        httpResponse.headers().set(name, value);
+        exchange.getIn().setHeader(name, value);
     }
 
     @Override
     public void writeBytes(byte[] bytes) throws IOException {
-        httpResponse.content().writeBytes(bytes);
+        exchange.getIn().setBody(bytes);
     }
 
     @Override
     public void noContent() {
-        httpResponse.setStatus(HttpResponseStatus.NO_CONTENT);
-
+        exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
     }
 }

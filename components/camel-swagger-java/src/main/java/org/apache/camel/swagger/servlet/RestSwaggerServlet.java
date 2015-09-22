@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.swagger.jaxrs.config.BeanConfig;
-import org.apache.camel.spi.RestApiResponseAdapter;
+import org.apache.camel.swagger.RestApiResponseAdapter;
 import org.apache.camel.swagger.RestSwaggerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,10 +68,10 @@ public class RestSwaggerServlet extends HttpServlet {
             initBaseAndApiPaths(request);
         }
 
-        RestApiResponseAdapter adapter = new ServletRestApiResponseAdapter(response);
-
         String contextId;
         String route = request.getPathInfo();
+
+        RestApiResponseAdapter adapter = new ServletRestApiResponseAdapter(response);
 
         try {
 

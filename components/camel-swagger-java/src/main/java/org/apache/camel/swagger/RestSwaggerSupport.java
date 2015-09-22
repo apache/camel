@@ -32,11 +32,11 @@ import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
 import io.swagger.models.Swagger;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.spi.RestApiResponseAdapter;
 import org.apache.camel.util.CamelVersionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,6 +183,10 @@ public class RestSwaggerSupport {
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             byte[] bytes = mapper.writeValueAsBytes(swagger);
+
+            int len = bytes.length;
+            response.addHeader(Exchange.CONTENT_LENGTH, "" + len);
+
             response.writeBytes(bytes);
         } else {
             response.noContent();
@@ -201,16 +205,25 @@ public class RestSwaggerSupport {
             response.addHeader("Access-Control-Allow-Origin", "*");
         }
 
+        response.addHeader(Exchange.CONTENT_TYPE, "application/json");
+
+        StringBuffer sb = new StringBuffer();
+
         List<String> contexts = findCamelContexts();
-        response.writeBytes("[\n".getBytes());
+        sb.append("[\n");
         for (int i = 0; i < contexts.size(); i++) {
             String name = contexts.get(i);
-            response.writeBytes(("{\"name\": \"" + name + "\"}").getBytes());
+            sb.append("{\"name\": \"").append(name).append("\"}");
             if (i < contexts.size() - 1) {
-                response.writeBytes(",\n".getBytes());
+                sb.append(",\n");
             }
         }
-        response.writeBytes("\n]".getBytes());
+        sb.append("\n]");
+
+        int len = sb.length();
+        response.addHeader(Exchange.CONTENT_LENGTH, "" + len);
+
+        response.writeBytes(sb.toString().getBytes());
     }
 
 }

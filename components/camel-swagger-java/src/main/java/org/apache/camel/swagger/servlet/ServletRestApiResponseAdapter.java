@@ -19,7 +19,7 @@ package org.apache.camel.swagger.servlet;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.camel.spi.RestApiResponseAdapter;
+import org.apache.camel.swagger.RestApiResponseAdapter;
 
 public class ServletRestApiResponseAdapter implements RestApiResponseAdapter {
 
