@@ -17,7 +17,6 @@
 package org.apache.camel.swagger.servlet;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.spi.RestApiResponseAdapter;
@@ -36,8 +35,8 @@ public class ServletRestApiResponseAdapter implements RestApiResponseAdapter {
     }
 
     @Override
-    public OutputStream getOutputStream() throws IOException {
-        return response.getOutputStream();
+    public void writeBytes(byte[] bytes) throws IOException {
+        response.getOutputStream().write(bytes);
     }
 
     @Override

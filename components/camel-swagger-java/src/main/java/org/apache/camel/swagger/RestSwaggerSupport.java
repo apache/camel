@@ -182,7 +182,8 @@ public class RestSwaggerSupport {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            mapper.writeValue(response.getOutputStream(), swagger);
+            byte[] bytes = mapper.writeValueAsBytes(swagger);
+            response.writeBytes(bytes);
         } else {
             response.noContent();
         }
@@ -201,15 +202,15 @@ public class RestSwaggerSupport {
         }
 
         List<String> contexts = findCamelContexts();
-        response.getOutputStream().write("[\n".getBytes());
+        response.writeBytes("[\n".getBytes());
         for (int i = 0; i < contexts.size(); i++) {
             String name = contexts.get(i);
-            response.getOutputStream().write(("{\"name\": \"" + name + "\"}").getBytes());
+            response.writeBytes(("{\"name\": \"" + name + "\"}").getBytes());
             if (i < contexts.size() - 1) {
-                response.getOutputStream().write(",\n".getBytes());
+                response.writeBytes(",\n".getBytes());
             }
         }
-        response.getOutputStream().write("\n]".getBytes());
+        response.writeBytes("\n]".getBytes());
     }
 
 }

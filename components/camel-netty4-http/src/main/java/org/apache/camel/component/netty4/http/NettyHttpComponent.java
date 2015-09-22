@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.netty4.NettyComponent;
 import org.apache.camel.component.netty4.NettyConfiguration;
@@ -31,6 +32,8 @@ import org.apache.camel.component.netty4.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty4.http.handlers.HttpServerMultiplexChannelHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.RestApiResponseAdapter;
+import org.apache.camel.spi.RestApiResponseAdapterFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
@@ -46,7 +49,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Netty HTTP based component.
  */
-public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory {
+public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory, RestApiResponseAdapterFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
@@ -294,6 +297,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
 
         return consumer;
+    }
+
+    @Override
+    public RestApiResponseAdapter newAdapter(Exchange exchange) {
+        NettyHttpMessage http = exchange.getIn(NettyHttpMessage.class);
+        if (http != null) {
+            return new NettyRestApiResponseAdapter(http.getHttpResponse());
+        }
+        return null;
     }
 
     @Override

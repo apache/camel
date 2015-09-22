@@ -16,17 +16,19 @@
  */
 package org.apache.camel.spi;
 
-import java.io.IOException;
+import org.apache.camel.Exchange;
 
 /**
- * An adapter to allow Camel rest-api to use Camel components to render the api response.
+ * Factory to create {@link RestApiResponseAdapter} which allows Camel components
+ * to provide a response adapter to be used by the rest-dsl api support.
  */
-public interface RestApiResponseAdapter {
+public interface RestApiResponseAdapterFactory {
 
-    void addHeader(String name, String value);
-
-    void writeBytes(byte[] bytes) throws IOException;
-
-    void noContent();
-
+    /**
+     * Creates a new {@link RestApiResponseAdapter}
+     *
+     * @param exchange  the exchange
+     * @return the adapter
+     */
+    RestApiResponseAdapter newAdapter(Exchange exchange);
 }

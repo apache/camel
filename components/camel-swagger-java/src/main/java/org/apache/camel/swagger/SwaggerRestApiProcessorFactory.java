@@ -26,7 +26,6 @@ public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
 
     @Override
     public Processor createApiProcessor(CamelContext camelContext, String contextPath, Map<String, Object> parameters) throws Exception {
-        RestSwaggerProcessor processor = new RestSwaggerProcessor(parameters);
-        return null;
+        return new RestSwaggerProcessor(parameters);
     }
 }

@@ -14,19 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.component.netty4.http;
 
 import java.io.IOException;
 
-/**
- * An adapter to allow Camel rest-api to use Camel components to render the api response.
- */
-public interface RestApiResponseAdapter {
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import org.apache.camel.spi.RestApiResponseAdapter;
 
-    void addHeader(String name, String value);
+public class NettyRestApiResponseAdapter implements RestApiResponseAdapter {
 
-    void writeBytes(byte[] bytes) throws IOException;
+    private final FullHttpResponse httpResponse;
 
-    void noContent();
+    public NettyRestApiResponseAdapter(FullHttpResponse httpResponse) {
+        this.httpResponse = httpResponse;
+    }
 
+    @Override
+    public void addHeader(String name, String value) {
+        httpResponse.headers().set(name, value);
+    }
+
+    @Override
+    public void writeBytes(byte[] bytes) throws IOException {
+        httpResponse.content().writeBytes(bytes);
+    }
+
+    @Override
+    public void noContent() {
+        httpResponse.setStatus(HttpResponseStatus.NO_CONTENT);
+
+    }
 }
