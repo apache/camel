@@ -167,8 +167,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                 continue;
             }
 
-            // do not poll if we are suspended
-            if (isSuspending() || isSuspended()) {
+            // do not poll if we are suspended or starting again after resuming
+            if (isSuspending() || isSuspended() || isStarting()) {
                 if (shutdownPending && queue.isEmpty()) {
                     LOG.trace("Consumer is suspended and shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
                     // we want to shutdown so break out if there queue is empty
@@ -312,7 +312,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
     @Override
     protected void doResume() throws Exception {
-        doStart();
+        endpoint.onStarted(this);
     }
 
     protected void doStop() throws Exception {
