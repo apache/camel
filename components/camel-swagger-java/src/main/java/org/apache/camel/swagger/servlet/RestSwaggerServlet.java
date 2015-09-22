@@ -19,6 +19,9 @@ package org.apache.camel.swagger.servlet;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,8 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.swagger.jaxrs.config.BeanConfig;
+import org.apache.camel.spi.RestApiResponseAdapter;
 import org.apache.camel.swagger.RestSwaggerSupport;
-import org.apache.camel.swagger.spi.SwaggerApiProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +51,14 @@ public class RestSwaggerServlet extends HttpServlet {
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
-
-        swagger.initSwagger(swaggerConfig, new ServletSwaggerApiProvider(config, null));
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        Enumeration en = config.getInitParameterNames();
+        while (en.hasMoreElements()) {
+            String name = (String) en.nextElement();
+            Object value = config.getInitParameter(name);
+            parameters.put(name, value);
+        }
+        swagger.initSwagger(swaggerConfig, parameters);
     }
 
     @Override
@@ -59,7 +68,7 @@ public class RestSwaggerServlet extends HttpServlet {
             initBaseAndApiPaths(request);
         }
 
-        SwaggerApiProvider resp = new ServletSwaggerApiProvider(null, response);
+        RestApiResponseAdapter adapter = new ServletRestApiResponseAdapter(response);
 
         String contextId;
         String route = request.getPathInfo();
@@ -68,7 +77,7 @@ public class RestSwaggerServlet extends HttpServlet {
 
             // render list of camel contexts as root
             if (route == null || route.equals("") || route.equals("/")) {
-                swagger.renderCamelContexts(resp);
+                swagger.renderCamelContexts(adapter);
             } else {
                 // first part is the camel context
                 if (route.startsWith("/")) {
@@ -80,7 +89,7 @@ public class RestSwaggerServlet extends HttpServlet {
                     route = route.substring(contextId.length());
                 }
 
-                swagger.renderResourceListing(resp, swaggerConfig, contextId, route);
+                swagger.renderResourceListing(adapter, swaggerConfig, contextId, route);
             }
         } catch (Exception e) {
             LOG.warn("Error rendering swagger due " + e.getMessage(), e);

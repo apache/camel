@@ -23,9 +23,10 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.impl.ActiveMQUuidGenerator;
+import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConsumerFactory;
 
-public class DummyRestConsumerFactory implements RestConsumerFactory {
+public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiConsumerFactory {
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
@@ -45,4 +46,15 @@ public class DummyRestConsumerFactory implements RestConsumerFactory {
         return seda.createConsumer(processor);
     }
 
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath, Map<String, Object> parameters) throws Exception {
+        // just use a seda endpoint for testing purpose
+        String id = ActiveMQUuidGenerator.generateSanitizedId(contextPath);
+        // remove leading dash as we add that ourselves
+        if (id.startsWith("-")) {
+            id = id.substring(1);
+        }
+        SedaEndpoint seda = camelContext.getEndpoint("seda:api:" + "-" + id, SedaEndpoint.class);
+        return seda.createConsumer(processor);
+    }
 }

@@ -42,6 +42,7 @@ public class RestConfiguration {
     private String host;
     private int port;
     private String contextPath;
+    private String apiContextPath;
     private RestHostNameResolver restHostNameResolver = RestHostNameResolver.localHostName;
     private RestBindingMode bindingMode = RestBindingMode.off;
     private boolean skipBindingOnErrorCode = true;
@@ -145,6 +146,22 @@ public class RestConfiguration {
      */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    public String getApiContextPath() {
+        return apiContextPath;
+    }
+
+    /**
+     * Sets a leading API context-path the REST API services will be using.
+     * <p/>
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
+     * is deployed using a context-path.
+     *
+     * @param contextPath the API context path
+     */
+    public void setApiContextPath(String contextPath) {
+        this.apiContextPath = contextPath;
     }
 
     /**

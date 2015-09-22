@@ -18,24 +18,16 @@ package org.apache.camel.swagger.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.camel.swagger.spi.SwaggerApiProvider;
+import org.apache.camel.spi.RestApiResponseAdapter;
 
-public class ServletSwaggerApiProvider implements SwaggerApiProvider {
+public class ServletRestApiResponseAdapter implements RestApiResponseAdapter {
 
-    private final ServletConfig config;
     private final HttpServletResponse response;
 
-    public ServletSwaggerApiProvider(ServletConfig config, HttpServletResponse response) {
-        this.config = config;
+    public ServletRestApiResponseAdapter(HttpServletResponse response) {
         this.response = response;
-    }
-
-    @Override
-    public String getInitParameter(String key) {
-        return config.getInitParameter(key);
     }
 
     @Override
@@ -52,4 +44,5 @@ public class ServletSwaggerApiProvider implements SwaggerApiProvider {
     public void noContent() {
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
+
 }

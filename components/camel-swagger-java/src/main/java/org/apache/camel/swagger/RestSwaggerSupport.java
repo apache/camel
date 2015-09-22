@@ -19,6 +19,7 @@ package org.apache.camel.swagger;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -35,36 +36,41 @@ import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.swagger.spi.SwaggerApiProvider;
+import org.apache.camel.spi.RestApiResponseAdapter;
 import org.apache.camel.util.CamelVersionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A support class for that allows SPI to plugin
+ * and offer Swagger API service listings as part of the Camel component. This allows rest-dsl components
+ * such as servlet/jetty/netty4-http to offer Swagger API listings with minimal effort.
+ */
 public class RestSwaggerSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerSupport.class);
     private RestSwaggerReader reader = new RestSwaggerReader();
     private boolean cors;
 
-    public void initSwagger(BeanConfig swaggerConfig, SwaggerApiProvider config) {
+    public void initSwagger(BeanConfig swaggerConfig, Map<String, Object> config) {
         // configure swagger options
-        String s = config.getInitParameter("swagger.version");
+        String s = (String) config.get("swagger.version");
         if (s != null) {
             swaggerConfig.setVersion(s);
         }
-        s = config.getInitParameter("base.path");
+        s = (String) config.get("base.path");
         if (s != null) {
             swaggerConfig.setBasePath(s);
         }
-        s = config.getInitParameter("host");
+        s = (String) config.get("host");
         if (s != null) {
             swaggerConfig.setHost(s);
         }
-        s = config.getInitParameter("cors");
+        s = (String) config.get("cors");
         if (s != null) {
             cors = "true".equalsIgnoreCase(s);
         }
-        s = config.getInitParameter("schemas");
+        s = (String) config.get("schemas");
         if (s != null) {
             String[] schemas = s.split(",");
             swaggerConfig.setSchemes(schemas);
@@ -73,15 +79,15 @@ public class RestSwaggerSupport {
             swaggerConfig.setSchemes(new String[]{"http"});
         }
 
-        String version = config.getInitParameter("api.version");
-        String title = config.getInitParameter("api.title");
-        String description = config.getInitParameter("api.description");
-        String termsOfService = config.getInitParameter("api.termsOfService");
-        String licenseName = config.getInitParameter("api.license.name");
-        String licenseUrl = config.getInitParameter("api.license.url");
-        String contactName = config.getInitParameter("api.contact.name");
-        String contactUrl = config.getInitParameter("api.contact.url");
-        String contactEmail = config.getInitParameter("api.contact.email");
+        String version = (String) config.get("api.version");
+        String title = (String) config.get("api.title");
+        String description = (String) config.get("api.description");
+        String termsOfService = (String) config.get("api.termsOfService");
+        String licenseName = (String) config.get("api.license.name");
+        String licenseUrl = (String) config.get("api.license.url");
+        String contactName = (String) config.get("api.contact.name");
+        String contactUrl = (String) config.get("api.contact.url");
+        String contactEmail = (String) config.get("api.contact.email");
 
         Info info = new Info();
         info.setVersion(version);
@@ -159,13 +165,13 @@ public class RestSwaggerSupport {
         return answer;
     }
 
-    public void renderResourceListing(SwaggerApiProvider provider, BeanConfig swaggerConfig, String contextId, String route) throws Exception {
+    public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route) throws Exception {
         LOG.trace("renderResourceListing");
 
         if (cors) {
-            provider.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-            provider.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
-            provider.addHeader("Access-Control-Allow-Origin", "*");
+            response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+            response.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
+            response.addHeader("Access-Control-Allow-Origin", "*");
         }
 
         List<RestDefinition> rests = getRestDefinitions(contextId);
@@ -176,34 +182,34 @@ public class RestSwaggerSupport {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            mapper.writeValue(provider.getOutputStream(), swagger);
+            mapper.writeValue(response.getOutputStream(), swagger);
         } else {
-            provider.noContent();
+            response.noContent();
         }
     }
 
     /**
      * Renders a list of available CamelContexts in the JVM
      */
-    public void renderCamelContexts(SwaggerApiProvider provider) throws Exception {
+    public void renderCamelContexts(RestApiResponseAdapter response) throws Exception {
         LOG.trace("renderCamelContexts");
 
         if (cors) {
-            provider.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-            provider.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
-            provider.addHeader("Access-Control-Allow-Origin", "*");
+            response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+            response.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
+            response.addHeader("Access-Control-Allow-Origin", "*");
         }
 
         List<String> contexts = findCamelContexts();
-        provider.getOutputStream().write("[\n".getBytes());
+        response.getOutputStream().write("[\n".getBytes());
         for (int i = 0; i < contexts.size(); i++) {
             String name = contexts.get(i);
-            provider.getOutputStream().write(("{\"name\": \"" + name + "\"}").getBytes());
+            response.getOutputStream().write(("{\"name\": \"" + name + "\"}").getBytes());
             if (i < contexts.size() - 1) {
-                provider.getOutputStream().write(",\n".getBytes());
+                response.getOutputStream().write(",\n".getBytes());
             }
         }
-        provider.getOutputStream().write("\n]".getBytes());
+        response.getOutputStream().write("\n]".getBytes());
     }
 
 }

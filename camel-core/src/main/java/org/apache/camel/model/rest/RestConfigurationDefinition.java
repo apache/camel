@@ -55,6 +55,9 @@ public class RestConfigurationDefinition {
     private String contextPath;
 
     @XmlAttribute
+    private String apiContextPath;
+
+    @XmlAttribute
     private RestHostNameResolver hostNameResolver;
 
     @XmlAttribute @Metadata(defaultValue = "auto")
@@ -152,6 +155,22 @@ public class RestConfigurationDefinition {
      */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    public String getApiContextPath() {
+        return apiContextPath;
+    }
+
+    /**
+     * Sets a leading API context-path the REST API services will be using.
+     * <p/>
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
+     * is deployed using a context-path.
+     *
+     * @param contextPath the API context path
+     */
+    public void setApiContextPath(String contextPath) {
+        this.apiContextPath = contextPath;
     }
 
     public RestHostNameResolver getHostNameResolver() {
@@ -339,6 +358,17 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * Sets a leading API context-path the REST API services will be using.
+     * <p/>
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
+     * is deployed using a context-path.
+     */
+    public RestConfigurationDefinition apiContextPath(String contextPath) {
+        setApiContextPath(contextPath);
+        return this;
+    }
+
+    /**
      * Sets a leading context-path the REST services will be using.
      * <p/>
      * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
@@ -483,6 +513,9 @@ public class RestConfigurationDefinition {
         }
         if (port != null) {
             answer.setPort(CamelContextHelper.parseInteger(context, port));
+        }
+        if (apiContextPath != null) {
+            answer.setApiContextPath(CamelContextHelper.parseText(context, apiContextPath));
         }
         if (contextPath != null) {
             answer.setContextPath(CamelContextHelper.parseText(context, contextPath));
