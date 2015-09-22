@@ -22,7 +22,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 /**
  * DTO for Salesforce login
  */
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginToken {
 
     private String accessToken;
@@ -36,7 +36,7 @@ public class LoginToken {
     private String issuedAt;
 
     private String tokenType;
-    
+
     private String isReadOnly;
 
     @JsonProperty("access_token")
