@@ -18,6 +18,7 @@ package org.apache.camel.swagger;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,7 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.util.CamelVersionHelper;
+import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,7 +198,7 @@ public class RestSwaggerSupport {
     /**
      * Renders a list of available CamelContexts in the JVM
      */
-    public void renderCamelContexts(RestApiResponseAdapter response) throws Exception {
+    public void renderCamelContexts(RestApiResponseAdapter response, String contextIdPattern) throws Exception {
         LOG.trace("renderCamelContexts");
 
         if (cors) {
@@ -210,6 +212,17 @@ public class RestSwaggerSupport {
         StringBuffer sb = new StringBuffer();
 
         List<String> contexts = findCamelContexts();
+
+        // filter non matched CamelContext's
+        Iterator<String> it = contexts.iterator();
+        while (it.hasNext()) {
+            String name = it.next();
+            boolean match = EndpointHelper.matchPattern(name, contextIdPattern);
+            if (!match) {
+                it.remove();
+            }
+        }
+
         sb.append("[\n");
         for (int i = 0; i < contexts.size(); i++) {
             String name = contexts.get(i);

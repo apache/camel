@@ -26,7 +26,7 @@ import static org.apache.camel.model.rest.RestParamType.path;
 /**
  * Define REST services using the Camel REST DSL
  */
-@ContextName
+@ContextName("myCamel")
 public class UserRouteBuilder extends RouteBuilder {
 
     @Override
@@ -39,8 +39,8 @@ public class UserRouteBuilder extends RouteBuilder {
             .dataFormatProperty("prettyPrint", "true")
             // setup context path and port number that netty will use
             .contextPath("/rest").port(8080)
-            // add swagger api-doc out of the box
-            .apiContextPath("/api-doc")
+            // add swagger api-doc out of the box, and only allow to docs for this CamelContext
+            .apiContextPath("/api-doc").apiContextIdPattern("#name#")
                 .apiProperty("api.title", "User API").apiProperty("api.version", "1.2.3")
                 // and enable CORS
                 .apiProperty("cors", "true");

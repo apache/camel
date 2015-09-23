@@ -22,6 +22,7 @@ import java.util.Map;
 import io.swagger.jaxrs.config.BeanConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,11 +31,14 @@ public class RestSwaggerProcessor implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerProcessor.class);
     private final BeanConfig swaggerConfig;
     private final RestSwaggerSupport support;
+    private final String contextIdPattern;
 
     @SuppressWarnings("unchecked")
-    public RestSwaggerProcessor(Map<String, Object> parameters) {
-        support = new RestSwaggerSupport();
-        swaggerConfig = new BeanConfig();
+    public RestSwaggerProcessor(String contextIdPattern, Map<String, Object> parameters) {
+        this.contextIdPattern = contextIdPattern;
+        this.support = new RestSwaggerSupport();
+        this.swaggerConfig = new BeanConfig();
+
         if (parameters == null) {
             parameters = Collections.EMPTY_MAP;
         }
@@ -52,7 +56,7 @@ public class RestSwaggerProcessor implements Processor {
         try {
             // render list of camel contexts as root
             if (route == null || route.equals("") || route.equals("/")) {
-                support.renderCamelContexts(adapter);
+                support.renderCamelContexts(adapter, contextIdPattern);
             } else {
                 // first part is the camel context
                 if (route.startsWith("/")) {
@@ -64,7 +68,19 @@ public class RestSwaggerProcessor implements Processor {
                     route = route.substring(contextId.length());
                 }
 
-                support.renderResourceListing(adapter, swaggerConfig, contextId, route);
+                boolean match = true;
+                if (contextIdPattern != null) {
+                    match = EndpointHelper.matchPattern(contextId, contextIdPattern);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{contextId, contextIdPattern, match});
+                    }
+                }
+
+                if (!match) {
+                    adapter.noContent();
+                } else {
+                    support.renderResourceListing(adapter, swaggerConfig, contextId, route);
+                }
             }
         } catch (Exception e) {
             LOG.warn("Error rendering Swagger API due " + e.getMessage(), e);

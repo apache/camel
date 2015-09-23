@@ -28,14 +28,14 @@ public interface RestApiProcessorFactory {
      * href="http://camel.apache.org/processor.html">Processor
      * </a>, which provides API listing of the REST services
      *
-     * @param camelContext the camel context
-     * @param contextPath  the context-path
-     * @param parameters   additional parameters
-     *
+     * @param camelContext      the camel context
+     * @param contextPath       the context-path
+     * @param contextIdPattern  id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
+     * @param parameters        additional parameters
      * @return a newly created REST API provider
      * @throws Exception can be thrown
      */
-    Processor createApiProcessor(CamelContext camelContext, String contextPath,
+    Processor createApiProcessor(CamelContext camelContext, String contextPath, String contextIdPattern,
                                  RestConfiguration configuration, Map<String, Object> parameters) throws Exception;
 
 }

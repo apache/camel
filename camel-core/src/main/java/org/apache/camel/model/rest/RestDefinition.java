@@ -554,6 +554,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
             options.put("componentName", configuration.getComponent());
         }
+        if (configuration.getApiContextIdPattern() != null) {
+            options.put("contextIdPattern", configuration.getApiContextIdPattern());
+        }
 
         if (!options.isEmpty()) {
             String query;

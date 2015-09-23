@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "rest-api", title = "REST API", syntax = "rest-api:path", consumerOnly = true, label = "core,rest")
+@UriEndpoint(scheme = "rest-api", title = "REST API", syntax = "rest-api:path/contextId", consumerOnly = true, label = "core,rest")
 public class RestApiEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_API_COMPONENT_NAME = "swagger";
@@ -41,6 +41,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String path;
+    @UriPath
+    private String contextIdPattern;
     @UriParam
     private String componentName;
     @UriParam
@@ -66,6 +68,17 @@ public class RestApiEndpoint extends DefaultEndpoint {
      */
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getContextIdPattern() {
+        return contextIdPattern;
+    }
+
+    /**
+     * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
+     */
+    public void setContextIdPattern(String contextIdPattern) {
+        this.contextIdPattern = contextIdPattern;
     }
 
     public String getComponentName() {
@@ -134,7 +147,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
                 path = "/" + path;
             }
 
-            Processor processor = factory.createApiProcessor(getCamelContext(), path, config, getParameters());
+            Processor processor = factory.createApiProcessor(getCamelContext(), path, getContextIdPattern(), config, getParameters());
             return new RestApiProducer(this, processor);
         } else {
             throw new IllegalStateException("Cannot find RestApiProcessorFactory in Registry or classpath");

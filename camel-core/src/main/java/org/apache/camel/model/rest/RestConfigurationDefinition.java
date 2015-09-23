@@ -61,6 +61,9 @@ public class RestConfigurationDefinition {
     private String apiContextPath;
 
     @XmlAttribute
+    private String apiContextIdPattern;
+
+    @XmlAttribute
     private RestHostNameResolver hostNameResolver;
 
     @XmlAttribute @Metadata(defaultValue = "auto")
@@ -188,6 +191,22 @@ public class RestConfigurationDefinition {
      */
     public void setApiContextPath(String contextPath) {
         this.apiContextPath = contextPath;
+    }
+
+    public String getApiContextIdPattern() {
+        return apiContextIdPattern;
+    }
+
+    /**
+     * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
+     * <p/>
+     * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only.
+     * For any other value, the pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
+     *
+     * @param apiContextIdPattern  the pattern
+     */
+    public void setApiContextIdPattern(String apiContextIdPattern) {
+        this.apiContextIdPattern = apiContextIdPattern;
     }
 
     public RestHostNameResolver getHostNameResolver() {
@@ -406,6 +425,16 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
+     * <p/>
+     * The pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
+     */
+    public RestConfigurationDefinition apiContextIdPattern(String pattern) {
+        setApiContextIdPattern(pattern);
+        return this;
+    }
+
+    /**
      * Sets a leading context-path the REST services will be using.
      * <p/>
      * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
@@ -567,6 +596,14 @@ public class RestConfigurationDefinition {
         }
         if (apiContextPath != null) {
             answer.setApiContextPath(CamelContextHelper.parseText(context, apiContextPath));
+        }
+        if (apiContextIdPattern != null) {
+            // special to allow #name# to refer to itself
+            if ("#name#".equals(apiComponent)) {
+                answer.setApiContextIdPattern(context.getName());
+            } else {
+                answer.setApiContextIdPattern(CamelContextHelper.parseText(context, apiContextIdPattern));
+            }
         }
         if (contextPath != null) {
             answer.setContextPath(CamelContextHelper.parseText(context, contextPath));
