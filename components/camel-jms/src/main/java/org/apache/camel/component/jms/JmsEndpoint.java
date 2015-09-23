@@ -79,9 +79,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @UriPath @Metadata(required = "true")
     private String destinationName;
     private Destination destination;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "consumer")
     private String selector;
     @UriParam
     private JmsConfiguration configuration;
@@ -649,6 +649,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public String getReplyToOverride() {
+        return getConfiguration().getReplyToOverride();
+    }
+
+    @ManagedAttribute
+    public boolean isReplyToSameDestinationAllowed() {
+        return getConfiguration().isReplyToSameDestinationAllowed();
+    }
+
+    @ManagedAttribute
     public String getReplyToDestinationSelectorName() {
         return getConfiguration().getReplyToDestinationSelectorName();
     }
@@ -976,6 +986,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setReplyTo(String replyToDestination) {
         getConfiguration().setReplyTo(replyToDestination);
+    }
+
+    @ManagedAttribute
+    public void setReplyToOverride(String replyToDestination) {
+        getConfiguration().setReplyToOverride(replyToDestination);
+    }
+
+    @ManagedAttribute
+    public void setReplyToSameDestinationAllowed(boolean replyToSameDestinationAllowed) {
+        getConfiguration().setReplyToSameDestinationAllowed(replyToSameDestinationAllowed);
     }
 
     @ManagedAttribute

@@ -45,18 +45,18 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     @UriParam
-    private NettyHttpBinding nettyHttpBinding;
-    @UriParam
-    private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
     private NettyHttpConfiguration configuration;
-    @UriParam
+    @UriParam(label = "advanced")
+    private NettyHttpBinding nettyHttpBinding;
+    @UriParam(label = "advanced")
+    private HeaderFilterStrategy headerFilterStrategy;
+    @UriParam(label = "consumer,advanced")
     private boolean traceEnabled;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private String httpMethodRestrict;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private NettySharedHttpServer nettySharedHttpServer;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,security")
     private NettyHttpSecurityConfiguration securityConfiguration;
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {

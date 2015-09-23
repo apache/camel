@@ -55,6 +55,7 @@
               </allowableValues>
           </param>
           <responseMessage code="300" message="test msg" responseModel="java.lang.Integer"/>
+          <responseMessage code="error" message="does not work"/>
         <to uri="direct:bye"/>
       </get>
       <post>

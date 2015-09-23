@@ -48,7 +48,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
         assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
                         + " \"deprecated\": \"false\", \"description\": \"Name of data format\" }"));
         assertTrue(json.contains("\"operation\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\""));
-        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"label\": \"advanced\", \"type\": \"boolean\""));
     }
 
     @Test

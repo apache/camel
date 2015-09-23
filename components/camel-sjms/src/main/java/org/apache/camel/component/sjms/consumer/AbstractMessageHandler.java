@@ -25,8 +25,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.SjmsEndpoint;
-import org.apache.camel.component.sjms.jms.JmsMessageHelper;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,8 +68,7 @@ public abstract class AbstractMessageHandler implements MessageListener {
     public void onMessage(Message message) {
         RuntimeCamelException rce = null;
         try {
-            SjmsEndpoint endpoint = (SjmsEndpoint) getEndpoint();
-            final DefaultExchange exchange = (DefaultExchange) JmsMessageHelper.createExchange(message, endpoint, endpoint.getJmsKeyFormatStrategy());
+            final Exchange exchange = getEndpoint().createExchange(message, getSession());
 
             log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
 
@@ -80,10 +77,10 @@ public abstract class AbstractMessageHandler implements MessageListener {
             }
             try {
                 if (isTransacted() || isSynchronous()) {
-                    log.debug("  Handling synchronous message: {}", exchange.getIn().getBody());
+                    log.debug("Handling synchronous message: {}", exchange.getIn().getBody());
                     handleMessage(exchange);
                 } else {
-                    log.debug("  Handling asynchronous message: {}", exchange.getIn().getBody());
+                    log.debug("Handling asynchronous message: {}", exchange.getIn().getBody());
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -96,12 +93,10 @@ public abstract class AbstractMessageHandler implements MessageListener {
                     });
                 }
             } catch (Exception e) {
-                if (exchange != null) {
-                    if (exchange.getException() == null) {
-                        exchange.setException(e);
-                    } else {
-                        throw e;
-                    }
+                if (exchange.getException() == null) {
+                    exchange.setException(e);
+                } else {
+                    throw e;
                 }
             }
         } catch (Exception e) {
@@ -113,9 +108,6 @@ public abstract class AbstractMessageHandler implements MessageListener {
         }
     }
 
-    /**
-     * @param exchange
-     */
     public abstract void handleMessage(final Exchange exchange);
 
     /**

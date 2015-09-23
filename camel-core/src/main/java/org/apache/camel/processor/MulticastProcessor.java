@@ -518,12 +518,18 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         @Override
         public void run() {
-            if (parallelAggregate) {
-                doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
-            } else {
-                doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+            try {
+                if (parallelAggregate) {
+                    doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
+                } else {
+                    doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                }
+            } catch (Throwable e) {
+                // wrap in exception to explain where it failed
+                subExchange.setException(new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e));
+            } finally {
+                aggregated.incrementAndGet();
             }
-            aggregated.incrementAndGet();
         }
     }
 

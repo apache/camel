@@ -31,7 +31,6 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import spark.Spark;
 import spark.SparkBase;
 
 public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory {
@@ -147,7 +146,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -174,7 +173,10 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         }
 
         // build query string, and append any endpoint configuration properties
-        RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("spark-rest", true);
+        }
         // setup endpoint options
         if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
             map.putAll(config.getEndpointProperties());
@@ -193,7 +195,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(consumer, config.getConsumerProperties());
         }
 

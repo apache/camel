@@ -43,7 +43,7 @@ import org.apache.camel.spi.UriPath;
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = "true")
     private String timerName;
-    @UriParam
+    @UriParam(label = "advanced")
     private Date time;
     @UriParam(defaultValue = "1000")
     private long period = 1000;
@@ -51,11 +51,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private long delay = 1000;
     @UriParam
     private boolean fixedRate;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "advanced")
     private boolean daemon = true;
     @UriParam(defaultValue = "0")
     private long repeatCount;
-    @UriParam
+    @UriParam(label = "advanced")
     private Timer timer;
 
     public TimerEndpoint() {

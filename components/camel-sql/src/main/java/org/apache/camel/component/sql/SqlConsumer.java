@@ -28,7 +28,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.dao.DataAccessException;
@@ -44,19 +43,12 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     private final SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
     private final SqlProcessingStrategy sqlProcessingStrategy;
 
-    @UriParam
     private String onConsume;
-    @UriParam
     private String onConsumeFailed;
-    @UriParam
     private String onConsumeBatchComplete;
-    @UriParam
     private boolean useIterator = true;
-    @UriParam
     private boolean routeEmptyResultSet;
-    @UriParam
     private int expectedUpdateCount = -1;
-    @UriParam
     private boolean breakBatchOnConsumeFail;
 
     private static final class DataHolder {
@@ -258,9 +250,6 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         this.onConsumeBatchComplete = onConsumeBatchComplete;
     }
 
-    /**
-     * Indicates how resultset should be delivered to the route
-     */
     public boolean isUseIterator() {
         return useIterator;
     }
@@ -274,9 +263,6 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         this.useIterator = useIterator;
     }
 
-    /**
-     * Indicates whether empty resultset should be allowed to be sent to the next hop or not
-     */
     public boolean isRouteEmptyResultSet() {
         return routeEmptyResultSet;
     }
@@ -295,8 +281,6 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Sets an expected update count to validate when using onConsume.
-     *
-     * @param expectedUpdateCount typically set this value to <tt>1</tt> to expect 1 row updated.
      */
     public void setExpectedUpdateCount(int expectedUpdateCount) {
         this.expectedUpdateCount = expectedUpdateCount;

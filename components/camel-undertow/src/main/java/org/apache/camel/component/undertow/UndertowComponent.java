@@ -24,7 +24,6 @@ import java.util.Map;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -32,6 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.undertow.handlers.HttpCamelHandler;
 import org.apache.camel.component.undertow.handlers.NotFoundHandler;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
  */
-public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory {
+public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private UndertowHttpBinding undertowHttpBinding = new DefaultUndertowHttpBinding();
@@ -84,7 +84,19 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration, parameters, false);
+    }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
+        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
+    }
+
+    Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                              String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api) throws Exception {
         String path = basePath;
         if (uriTemplate != null) {
             // make sure to avoid double slashes
@@ -98,7 +110,11 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         String scheme = "http";
         String host = "";
         int port = 0;
-        RestConfiguration config = getCamelContext().getRestConfiguration("undertow", true);
+
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("undertow", true);
+        }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
         }
@@ -112,7 +128,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("undertow"))) {
+        if (config.getComponent() == null || config.getComponent().equals("undertow")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
@@ -121,8 +137,15 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
         String query = URISupport.createQueryString(map);
 
-        String url = "undertow:%s://%s:%s/%s";
+        String url;
+        if (api) {
+            url = "undertow:%s://%s:%s/%s?matchOnUriPrefix=true";
+        } else {
+            url = "undertow:%s://%s:%s/%s";
+        }
+
         url = String.format(url, scheme, host, port, path);
+
         if (!query.isEmpty()) {
             url = url + "&" + query;
         }

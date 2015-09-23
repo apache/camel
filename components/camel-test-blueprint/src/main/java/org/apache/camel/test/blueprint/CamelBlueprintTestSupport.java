@@ -18,6 +18,8 @@ package org.apache.camel.test.blueprint;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.HashSet;
@@ -62,13 +64,12 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     private static ThreadLocal<BundleContext> threadLocalBundleContext = new ThreadLocal<BundleContext>();
     private volatile BundleContext bundleContext;
     private final Set<ServiceRegistration<?>> services = new LinkedHashSet<ServiceRegistration<?>>();
-    
+
     /**
      * Override this method if you don't want CamelBlueprintTestSupport create the test bundle
      * @return includeTestBundle
      * If the return value is true CamelBlueprintTestSupport creates the test bundle which includes blueprint configuration files
      * If the return value is false CamelBlueprintTestSupport won't create the test bundle
-     * 
      */
     protected boolean includeTestBundle() {
         return true;
@@ -236,7 +237,6 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      */
     protected boolean expectBlueprintContainerReloadOnConfigAdminUpdate() {
         boolean expectedReload = false;
-        String descriptor = getBlueprintDescriptor();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         try {
@@ -246,18 +246,22 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
                     CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_2,
                     CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_3
             ));
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(getClass().getClassLoader().getResourceAsStream(descriptor));
-            NodeList nl = doc.getDocumentElement().getChildNodes();
-            for (int i = 0; i < nl.getLength(); i++) {
-                Node node = nl.item(i);
-                if (node instanceof Element) {
-                    Element pp = (Element) node;
-                    if (cmNamesaces.contains(pp.getNamespaceURI())) {
-                        String us = pp.getAttribute("update-strategy");
-                        if (us != null && us.equals("reload")) {
-                            expectedReload = true;
-                            break;
+            for (URL descriptor : CamelBlueprintHelper.getBlueprintDescriptors(getBlueprintDescriptor())) {
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                try (InputStream is = descriptor.openStream()) {
+                    Document doc = db.parse(is);
+                    NodeList nl = doc.getDocumentElement().getChildNodes();
+                    for (int i = 0; i < nl.getLength(); i++) {
+                        Node node = nl.item(i);
+                        if (node instanceof Element) {
+                            Element pp = (Element) node;
+                            if (cmNamesaces.contains(pp.getNamespaceURI())) {
+                                String us = pp.getAttribute("update-strategy");
+                                if (us != null && us.equals("reload")) {
+                                    expectedReload = true;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

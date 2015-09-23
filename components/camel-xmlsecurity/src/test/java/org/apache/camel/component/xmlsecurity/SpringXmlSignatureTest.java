@@ -97,7 +97,7 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
     }
     
     @Override
-    String getVerifierEncpointURIEnveloping() {
+    String getVerifierEndpointURIEnveloping() {
         return "xmlsecurity:verify://enveloping?keySelector=#selectorRsa";
     }
 

@@ -36,31 +36,31 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     @UriPath @Metadata(required = "true")
     private String path;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean urlDecodeHeaders;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean mapHeaders = true;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean compression;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferException;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
     @UriParam
     private boolean bridgeEndpoint;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean disableStreamCache;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean send503whenSuspended = true;
-    @UriParam(defaultValue = "" + 1024 * 1024)
+    @UriParam(label = "consumer,advanced", defaultValue = "" + 1024 * 1024)
     private int chunkedMaxContentLength = 1024 * 1024;
-    @UriParam(label = "consumer", defaultValue = "8192")
+    @UriParam(label = "consumer,advanced", defaultValue = "8192")
     private int maxHeaderSize = 8192;
-    @UriParam(label = "producer", defaultValue = "200-299")
+    @UriParam(label = "producer,advanced", defaultValue = "200-299")
     private String okStatusCodeRange = "200-299";
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer,advanced")
     private boolean useRelativePath;
 
     public NettyHttpConfiguration() {
@@ -264,6 +264,9 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     /**
      * Sets whether to use a relative path in HTTP requests.
+     * <p/>
+     * Some third party backend systems such as IBM Datapower do not support absolute URIs in HTTP POSTs, and setting
+     * this option to <tt>true</tt> can work around this problem.
      */
     public void setUseRelativePath(boolean useRelativePath) {
         this.useRelativePath = useRelativePath;

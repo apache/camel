@@ -60,45 +60,45 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
     @UriParam
     private boolean disconnect;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean lazyChannelCreation = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferExchange;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
-    @UriParam(label = "consumer", defaultValue = "WARN")
+    @UriParam(label = "consumer,advanced", defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
-    @UriParam(label = "consumer", defaultValue = "WARN")
+    @UriParam(label = "consumer,advanced", defaultValue = "WARN")
     private LoggingLevel serverExceptionCaughtLogLevel = LoggingLevel.WARN;
-    @UriParam(label = "consumer", defaultValue = "DEBUG")
+    @UriParam(label = "consumer,advanced", defaultValue = "DEBUG")
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
     @UriParam(defaultValue = "true")
     private boolean allowDefaultCodec = true;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private ClientPipelineFactory clientPipelineFactory;
     //CAMEL-8031 Moved this option to NettyComponent
     private int maximumPoolSize = 16;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean orderedThreadPoolExecutor = true;
-    @UriParam(label = "producer", defaultValue = "-1")
+    @UriParam(label = "producer,advanced", defaultValue = "-1")
     private int producerPoolMaxActive = -1;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private int producerPoolMinIdle;
-    @UriParam(label = "producer", defaultValue = "100")
+    @UriParam(label = "producer,advanced", defaultValue = "100")
     private int producerPoolMaxIdle = 100;
-    @UriParam(label = "producer", defaultValue = "" + 5 * 60 * 1000L)
+    @UriParam(label = "producer,advanced", defaultValue = "" + 5 * 60 * 1000L)
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean producerPoolEnabled = true;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private boolean udpConnectionlessSending;
     @UriParam(label = "consumer")
     private boolean clientMode;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private boolean useChannelBuffer;
-    @UriParam(label = "consumer", defaultValue = "" + 10 * 1024 * 1024L)
+    @UriParam(label = "consumer,advanced", defaultValue = "" + 10 * 1024 * 1024L)
     private long maxChannelMemorySize = 10 * 1024 * 1024L; 
-    @UriParam(label = "consumer", defaultValue = "" + 200 * 1024 * 1024L)
+    @UriParam(label = "consumer,advanced", defaultValue = "" + 200 * 1024 * 1024L)
     private long maxTotalMemorySize = 200 * 1024 * 1024L;
 
     /**

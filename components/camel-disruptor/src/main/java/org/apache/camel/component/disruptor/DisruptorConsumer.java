@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor;
 
 import java.util.HashSet;
@@ -114,7 +113,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
     }
 
     @Override
-    public void prepareShutdown(final boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // nothing
     }
 

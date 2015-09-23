@@ -16,22 +16,30 @@
  */
 package org.apache.camel.component.sjms;
 
+import javax.jms.Message;
+import javax.jms.Session;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationNameParser;
-import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
+import org.apache.camel.component.sjms.jms.JmsBinding;
+import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
+import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
 import org.apache.camel.component.sjms.producer.InOnlyProducer;
 import org.apache.camel.component.sjms.producer.InOutProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,10 +51,12 @@ import org.slf4j.LoggerFactory;
  * A JMS Endpoint
  */
 @UriEndpoint(scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName", consumerClass = SjmsConsumer.class, label = "messaging")
-public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
+public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, HeaderFilterStrategyAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private boolean topic;
+
+    private JmsBinding binding;
 
     @UriPath(enums = "queue,topic", defaultValue = "queue", description = "The kind of destination to use")
     private String destinationType;
@@ -54,44 +64,54 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private String destinationName;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean synchronous = true;
-    @UriParam
+    @UriParam(label = "advanced")
+    private HeaderFilterStrategy headerFilterStrategy;
+    @UriParam(label = "advanced")
+    private boolean includeAllJMSXProperties;
+    @UriParam(label = "consumer,transaction")
     private boolean transacted;
     @UriParam(label = "producer")
     private String namedReplyTo;
     @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE")
     private SessionAcknowledgementType acknowledgementMode = SessionAcknowledgementType.AUTO_ACKNOWLEDGE;
-    @UriParam(defaultValue = "1")
+    @Deprecated
     private int sessionCount = 1;
     @UriParam(label = "producer", defaultValue = "1")
     private int producerCount = 1;
-    @UriParam(defaultValue = "1")
+    @UriParam(label = "consumer", defaultValue = "1")
     private int consumerCount = 1;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "producer", defaultValue = "-1")
     private long ttl = -1;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean persistent = true;
     @UriParam(label = "consumer")
     private String durableSubscriptionId;
-    @UriParam(label = "producer", defaultValue = "5000")
+    @UriParam(label = "producer,advanced", defaultValue = "5000")
     private long responseTimeOut = 5000;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private String messageSelector;
-    @UriParam(label = "consumer", defaultValue = "-1")
+    @UriParam(label = "consumer,transaction", defaultValue = "-1")
     private int transactionBatchCount = -1;
-    @UriParam(label = "consumer", defaultValue = "5000")
+    @UriParam(label = "consumer,transaction", defaultValue = "5000")
     private long transactionBatchTimeout = 5000;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean asyncStartListener;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean asyncStopListener;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean prefillPool = true;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean allowNullBody = true;
-    @UriParam
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean mapJmsMessage = true;
+    @UriParam(label = "transaction")
     private TransactionCommitStrategy transactionCommitStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
+    @UriParam(label = "advanced")
+    private MessageCreatedStrategy messageCreatedStrategy;
+    @UriParam(label = "advanced")
+    private JmsKeyFormatStrategy jmsKeyFormatStrategy;
 
     public SjmsEndpoint() {
     }
@@ -146,6 +166,34 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         return true;
     }
 
+    public Exchange createExchange(Message message, Session session) {
+        Exchange exchange = createExchange(getExchangePattern());
+        exchange.setIn(new SjmsMessage(message, session, getBinding()));
+        return exchange;
+    }
+
+    public JmsBinding getBinding() {
+        if (binding == null) {
+            binding = createBinding();
+        }
+        return binding;
+    }
+
+    /**
+     * Creates the {@link org.apache.camel.component.sjms.jms.JmsBinding} to use.
+     */
+    protected JmsBinding createBinding() {
+        return new JmsBinding(isMapJmsMessage(), isAllowNullBody(), getHeaderFilterStrategy(), getJmsKeyFormatStrategy(), getMessageCreatedStrategy());
+    }
+
+    /**
+     * Sets the binding used to convert from a Camel message to and from a JMS
+     * message
+     */
+    public void setBinding(JmsBinding binding) {
+        this.binding = binding;
+    }
+
     /**
      * DestinationName is a JMS queue or topic name. By default, the destinationName is interpreted as a queue name.
      */
@@ -157,16 +205,35 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         return destinationName;
     }
 
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new SjmsHeaderFilterStrategy(isIncludeAllJMSXProperties());
+        }
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        this.headerFilterStrategy = strategy;
+    }
+
+    public boolean isIncludeAllJMSXProperties() {
+        return includeAllJMSXProperties;
+    }
+
+    /**
+     * Whether to include all JMSXxxx properties when mapping from JMS to Camel Message.
+     * Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc.
+     * Note: If you are using a custom headerFilterStrategy then this option does not apply.
+     */
+    public void setIncludeAllJMSXProperties(boolean includeAllJMSXProperties) {
+        this.includeAllJMSXProperties = includeAllJMSXProperties;
+    }
+
     public ConnectionResource getConnectionResource() {
         return getComponent().getConnectionResource();
-    }
-
-    public HeaderFilterStrategy getSjmsHeaderFilterStrategy() {
-        return getComponent().getHeaderFilterStrategy();
-    }
-
-    public KeyFormatStrategy getJmsKeyFormatStrategy() {
-        return getComponent().getKeyFormatStrategy();
     }
 
     public boolean isSynchronous() {
@@ -417,4 +484,48 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
     }
+
+    public boolean isMapJmsMessage() {
+        return mapJmsMessage;
+    }
+
+    /**
+     * Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc.
+     * See section about how mapping works below for more details.
+     */
+    public void setMapJmsMessage(boolean mapJmsMessage) {
+        this.mapJmsMessage = mapJmsMessage;
+    }
+
+    public MessageCreatedStrategy getMessageCreatedStrategy() {
+        return messageCreatedStrategy;
+    }
+
+    /**
+     * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt>
+     * objects when Camel is sending a JMS message.
+     */
+    public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
+        this.messageCreatedStrategy = messageCreatedStrategy;
+    }
+
+    public JmsKeyFormatStrategy getJmsKeyFormatStrategy() {
+        if (jmsKeyFormatStrategy == null) {
+            jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+        }
+        return jmsKeyFormatStrategy;
+    }
+
+    /**
+     * Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification.
+     * Camel provides two implementations out of the box: default and passthrough.
+     * The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is.
+     * Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters.
+     * You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy
+     * and refer to it using the # notation.
+     */
+    public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
+        this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
+    }
+
 }

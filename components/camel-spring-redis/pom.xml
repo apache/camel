@@ -45,7 +45,11 @@
             <artifactId>spring-data-redis</artifactId>
             <version>${spring-data-redis-version}</version>
         </dependency>
-        <!-- need to add the dependency of jedis as redis client lib -->
+        <dependency>
+        	<groupId>redis.clients</groupId>
+        	<artifactId>jedis</artifactId>
+        	<version>${jedis-client-version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>

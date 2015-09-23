@@ -56,23 +56,31 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private String dataSourceRef;
     @UriParam
     private DataSource dataSource;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean batch;
-    @UriParam
+    @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private SqlProcessingStrategy processingStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
     private SqlPrepareStatementStrategy prepareStatementStrategy;
-    @UriParam
+    @UriParam(label = "consumer")
     private String onConsume;
-    @UriParam
+    @UriParam(label = "consumer")
     private String onConsumeFailed;
-    @UriParam
+    @UriParam(label = "consumer")
     private String onConsumeBatchComplete;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean useIterator = true;
+    @UriParam(label = "consumer")
+    private boolean routeEmptyResultSet;
+    @UriParam(label = "consumer", defaultValue = "-1")
+    private int expectedUpdateCount = -1;
+    @UriParam(label = "consumer")
+    private boolean breakBatchOnConsumeFail;
     @UriParam(defaultValue = "true")
     private boolean allowNamedParameters = true;
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private boolean alwaysPopulateStatement;
     @UriParam(defaultValue = ",")
     private char separator = ',';
@@ -80,9 +88,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private SqlOutputType outputType = SqlOutputType.SelectList;
     @UriParam
     private String outputClass;
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private int parametersCount;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean noop;
     @UriParam
     private String outputHeader;
@@ -106,6 +114,10 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         consumer.setOnConsume(getOnConsume());
         consumer.setOnConsumeFailed(getOnConsumeFailed());
         consumer.setOnConsumeBatchComplete(getOnConsumeBatchComplete());
+        consumer.setBreakBatchOnConsumeFail(isBreakBatchOnConsumeFail());
+        consumer.setExpectedUpdateCount(getExpectedUpdateCount());
+        consumer.setUseIterator(isUseIterator());
+        consumer.setRouteEmptyResultSet(isRouteEmptyResultSet());
         configureConsumer(consumer);
         return consumer;
     }
@@ -353,6 +365,53 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
      */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public boolean isUseIterator() {
+        return useIterator;
+    }
+
+    /**
+     * Sets how resultset should be delivered to route.
+     * Indicates delivery as either a list or individual object.
+     * defaults to true.
+     */
+    public void setUseIterator(boolean useIterator) {
+        this.useIterator = useIterator;
+    }
+
+    public boolean isRouteEmptyResultSet() {
+        return routeEmptyResultSet;
+    }
+
+    /**
+     * Sets whether empty resultset should be allowed to be sent to the next hop.
+     * defaults to false. So the empty resultset will be filtered out.
+     */
+    public void setRouteEmptyResultSet(boolean routeEmptyResultSet) {
+        this.routeEmptyResultSet = routeEmptyResultSet;
+    }
+
+    public int getExpectedUpdateCount() {
+        return expectedUpdateCount;
+    }
+
+    /**
+     * Sets an expected update count to validate when using onConsume.
+     */
+    public void setExpectedUpdateCount(int expectedUpdateCount) {
+        this.expectedUpdateCount = expectedUpdateCount;
+    }
+
+    public boolean isBreakBatchOnConsumeFail() {
+        return breakBatchOnConsumeFail;
+    }
+
+    /**
+     * Sets whether to break batch if onConsume failed.
+     */
+    public void setBreakBatchOnConsumeFail(boolean breakBatchOnConsumeFail) {
+        this.breakBatchOnConsumeFail = breakBatchOnConsumeFail;
     }
 
     @Override

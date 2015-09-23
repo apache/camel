@@ -25,8 +25,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.PlatformHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
@@ -37,17 +39,14 @@ import org.apache.commons.net.ftp.FTPFile;
 @UriEndpoint(scheme = "ftp", extendsScheme = "file", title = "FTP",
         syntax = "ftp:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
-
     protected FTPClient ftpClient;
     protected FTPClientConfig ftpClientConfig;
     protected Map<String, Object> ftpClientParameters;
     protected Map<String, Object> ftpClientConfigParameters;
+    protected int soTimeout;
+    protected int dataTimeout;
     @UriParam
     protected FtpConfiguration configuration;
-    @UriParam
-    protected int soTimeout;
-    @UriParam
-    protected int dataTimeout;
 
     public FtpEndpoint() {
     }
@@ -143,7 +142,20 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     protected FTPClient createFtpClient() throws Exception {
-        return new FTPClient();
+        FTPClient client = new FTPClient();
+        // If we're in an OSGI environment, set the parser factory to
+        // OsgiParserFactory, because commons-net uses Class.forName in their
+        // default ParserFactory
+        if (isOsgi()) {
+            ClassResolver cr = getCamelContext().getClassResolver();
+            OsgiParserFactory opf = new OsgiParserFactory(cr);
+            client.setParserFactory(opf);
+        }
+        return client;
+    }
+
+    private boolean isOsgi() {
+        return PlatformHelper.isOsgiContext(getCamelContext());
     }
 
     @Override

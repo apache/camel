@@ -31,6 +31,7 @@ public final class HazelcastConstants {
     public static final String SEDA_PREFIX = "seda:";
     public static final String LIST_PREFIX = "list:";
     public static final String SET_PREFIX = "set:";
+    public static final String RINGBUFFER_PREFIX = "ringbuffer:";
 
     /*
      * incoming header properties
@@ -95,6 +96,11 @@ public final class HazelcastConstants {
 
     // topic
     public static final int PUBLISH_OPERATION = 37;
+    
+    // ring_buffer
+    public static final int READ_ONCE_HEAD_OPERATION = 38;
+    public static final int READ_ONCE_TAIL_OPERATION = 39;
+    public static final int GET_CAPACITY_OPERATION = 40;
 
     /*
      * header values

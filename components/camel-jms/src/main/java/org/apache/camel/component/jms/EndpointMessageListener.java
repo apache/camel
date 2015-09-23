@@ -77,6 +77,13 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             // and disableReplyTo hasn't been explicit enabled
             sendReply = replyDestination != null && !disableReplyTo;
 
+            // we should also not send back reply to ourself if this destination and replyDestination is the same
+            Destination destination = message.getJMSDestination();
+            if (sendReply && !endpoint.isReplyToSameDestinationAllowed() && destination.equals(replyDestination)) {
+                LOG.debug("JMSDestination and JMSReplyTo is the same, will skip sending a reply message to itself: {}", destination);
+                sendReply = false;
+            }
+
             final Exchange exchange = createExchange(message, session, replyDestination);
             if (eagerLoadingOfProperties) {
                 exchange.getIn().getHeaders();

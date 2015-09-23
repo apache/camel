@@ -184,6 +184,7 @@
   <feature name='camel-barcode' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.zxing/${zxing-bundle-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.beust/jcommander/${jcommander-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-barcode/${project.version}</bundle>
   </feature>
   <feature name='camel-bindy' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -269,6 +270,11 @@
     <feature version='${cxf-version-range}'>cxf-specs</feature>
     <bundle dependency='true'>mvn:org.apache.chemistry.opencmis/chemistry-opencmis-osgi-client/${cmis-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cmis/${project.version}</bundle>
+  </feature>
+  <feature name='camel-coap' version='${project.version}' resolver='(obr)' start-level='50'>
+      <feature version='${project.version}'>camel-core</feature>
+      <bundle>mvn:org.eclipse.californium/californium-osgi/${californium-version}</bundle>
+      <bundle>mvn:org.apache.camel/camel-coap/${project.version}</bundle>
   </feature>
   <feature name='camel-cometd' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>jetty</feature>
@@ -1569,6 +1575,12 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.twitter4j/${twitter4j-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-twitter/${project.version}</bundle>
+  </feature>
+  <feature name='camel-undertow' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:io.undertow/undertow-core/${undertow-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.jboss.xnio/xnio-api/${jboss-xnio-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-undertow/${project.version}</bundle>
   </feature>
   <feature name='camel-univocity-parsers' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:com.univocity/univocity-parsers/${univocity-parsers-version}</bundle>

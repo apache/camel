@@ -33,7 +33,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
     @UriParam
     protected SftpConfiguration configuration;
-    @UriParam
+    @UriParam(label = "advanced")
     protected Proxy proxy;
     
     public SftpEndpoint() {

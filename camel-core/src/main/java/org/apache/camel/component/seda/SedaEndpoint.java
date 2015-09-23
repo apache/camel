@@ -70,13 +70,13 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean limitConcurrentConsumers = true;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private boolean multipleConsumers;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private boolean purgeWhenStopping;
-    @UriParam(label = "consumer", defaultValue = "1000")
+    @UriParam(label = "consumer,advanced", defaultValue = "1000")
     private int pollTimeout = 1000;
 
     @UriParam(label = "producer", defaultValue = "IfReplyExpected")

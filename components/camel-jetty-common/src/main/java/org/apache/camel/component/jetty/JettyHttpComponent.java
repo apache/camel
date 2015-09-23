@@ -1003,7 +1003,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -1021,7 +1021,10 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         int port = 0;
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration("jetty", true);
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("jetty", true);
+        }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
         }
@@ -1044,7 +1047,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("jetty"))) {
+        if (config.getComponent() == null || config.getComponent().equals("jetty")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
@@ -1073,7 +1076,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(consumer, config.getConsumerProperties());
         }
 

@@ -178,7 +178,7 @@ class RestSwaggerReader {
 
     for (param:RestOperationResponseMsgDefinition <- verb.getResponseMsgs.asScala) {
       responseMsgs += ResponseMessage(
-        param.getCode,
+        param.getCode.asInstanceOf[Integer],
         param.getMessage,
         Option( param.getResponseModel )
       )

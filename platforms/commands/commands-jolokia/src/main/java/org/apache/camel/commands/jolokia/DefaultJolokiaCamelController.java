@@ -452,7 +452,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
-    public String getRouteModelAsXml(String camelContextName, String routeId) throws Exception {
+    public String getRouteModelAsXml(String routeId, String camelContextName) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
@@ -472,7 +472,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
-    public String getRouteStatsAsXml(String camelContextName, String routeId, boolean fullStats, boolean includeProcessors) throws Exception {
+    public String getRouteStatsAsXml(String routeId, String camelContextName, boolean fullStats, boolean includeProcessors) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
@@ -611,24 +611,26 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "listRestServices()"));
             if (response != null) {
                 JSONObject data = response.getValue();
-                for (Object obj : data.values()) {
-                    JSONObject data2 = (JSONObject) obj;
-                    JSONObject service = (JSONObject) data2.values().iterator().next();
+                if (data != null) {
+                    for (Object obj : data.values()) {
+                        JSONObject data2 = (JSONObject) obj;
+                        JSONObject service = (JSONObject) data2.values().iterator().next();
 
-                    Map<String, String> row = new LinkedHashMap<String, String>();
-                    row.put("basePath", asString(service.get("basePath")));
-                    row.put("baseUrl", asString(service.get("baseUrl")));
-                    row.put("consumes", asString(service.get("consumes")));
-                    row.put("description", asString(service.get("description")));
-                    row.put("inType", asString(service.get("inType")));
-                    row.put("method", asString(service.get("method")));
-                    row.put("outType", asString(service.get("outType")));
-                    row.put("produces", asString(service.get("produces")));
-                    row.put("routeId", asString(service.get("routeId")));
-                    row.put("state", asString(service.get("state")));
-                    row.put("uriTemplate", asString(service.get("uriTemplate")));
-                    row.put("url", asString(service.get("url")));
-                    answer.add(row);
+                        Map<String, String> row = new LinkedHashMap<String, String>();
+                        row.put("basePath", asString(service.get("basePath")));
+                        row.put("baseUrl", asString(service.get("baseUrl")));
+                        row.put("consumes", asString(service.get("consumes")));
+                        row.put("description", asString(service.get("description")));
+                        row.put("inType", asString(service.get("inType")));
+                        row.put("method", asString(service.get("method")));
+                        row.put("outType", asString(service.get("outType")));
+                        row.put("produces", asString(service.get("produces")));
+                        row.put("routeId", asString(service.get("routeId")));
+                        row.put("state", asString(service.get("state")));
+                        row.put("uriTemplate", asString(service.get("uriTemplate")));
+                        row.put("url", asString(service.get("url")));
+                        answer.add(row);
+                    }
                 }
             }
 

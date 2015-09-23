@@ -66,4 +66,5 @@ public interface JettyContentExchange {
 
     Map<String, Collection<String>> getResponseHeaders();
 
+    Map<String, Collection<String>> getRequestHeaders();
 }

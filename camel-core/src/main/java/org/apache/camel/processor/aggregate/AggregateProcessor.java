@@ -1381,7 +1381,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // we are shutting down, so force completion if this option was enabled
         // but only do this when forced=false, as that is when we have chance to
         // send out new messages to be routed by Camel. When forced=true, then

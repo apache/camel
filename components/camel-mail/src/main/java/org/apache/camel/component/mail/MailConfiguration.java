@@ -40,6 +40,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 @UriParams
 public class MailConfiguration implements Cloneable {
 
+    private ClassLoader applicationClassLoader;
     private Session session;
     private Properties javaMailProperties;
     private Properties additionalJavaMailProperties;
@@ -50,19 +51,19 @@ public class MailConfiguration implements Cloneable {
     private String host;
     @UriPath
     private int port = -1;
-    @UriParam
+    @UriParam(label = "security")
     private String username;
-    @UriParam
+    @UriParam(label = "security")
     private String password;
     @UriParam @Metadata(label = "producer")
     private String subject;
-    @UriParam @Metadata(label = "producer")
+    @UriParam @Metadata(label = "producer,advanced")
     private JavaMailSender javaMailSender;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "consumer,advanced")
     private boolean mapMailMessage = true;
     @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FROM) @Metadata(label = "producer")
     private String from = MailConstants.MAIL_DEFAULT_FROM;
-    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FOLDER) @Metadata(label = "consumer")
+    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FOLDER) @Metadata(label = "consumer,advanced")
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
     @UriParam @Metadata(label = "consumer")
     private boolean delete;
@@ -70,26 +71,26 @@ public class MailConfiguration implements Cloneable {
     private String copyTo;
     @UriParam(defaultValue = "true") @Metadata(label = "consumer")
     private boolean unseen = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean ignoreUriScheme;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     @UriParam @Metadata(label = "producer")
     private String replyTo;
-    @UriParam(defaultValue = "-1") @Metadata(label = "consumer")
+    @UriParam(defaultValue = "-1") @Metadata(label = "consumer,advanced")
     private int fetchSize = -1;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean debugMode;
-    @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT)
+    @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT, label = "advanced")
     private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
-    @UriParam
+    @UriParam(label = "security")
     private boolean dummyTrustManager;
-    @UriParam(defaultValue = "text/plain")
+    @UriParam(defaultValue = "text/plain", label = "advanced")
     private String contentType = "text/plain";
-    @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY)
+    @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY, label = "advanced")
     private String alternativeBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean useInlineAttachments;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean ignoreUnsupportedCharset;
     @UriParam @Metadata(label = "consumer")
     private boolean disconnect;
@@ -101,9 +102,8 @@ public class MailConfiguration implements Cloneable {
     private boolean skipFailedMessage;
     @UriParam @Metadata(label = "consumer")
     private boolean handleFailedMessage;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    private ClassLoader applicationClassLoader;
 
     public MailConfiguration() {
     }

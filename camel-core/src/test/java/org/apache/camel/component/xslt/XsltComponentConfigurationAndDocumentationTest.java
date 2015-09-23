@@ -42,7 +42,7 @@ public class XsltComponentConfigurationAndDocumentationTest extends ContextTestS
         assertNotNull(json);
 
         assertTrue(json.contains("\"contentCache\": { \"kind\": \"parameter\", \"type\": \"boolean\", \"javaType\": \"boolean\", \"deprecated\": \"false\", \"defaultValue\": \"true\""));
-        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"label\": \"advanced\", \"type\": \"boolean\""));
     }
 
     @Test

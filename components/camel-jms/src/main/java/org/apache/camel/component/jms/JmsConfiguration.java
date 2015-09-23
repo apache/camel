@@ -68,22 +68,22 @@ public class JmsConfiguration implements Cloneable {
     private ConnectionFactory templateConnectionFactory;
     private ConnectionFactory listenerConnectionFactory;
     private int acknowledgementMode = -1;
-    @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE")
+    @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE", label = "consumer")
     private String acknowledgementModeName;
     // Used to configure the spring Container
-    @UriParam
+    @UriParam(label = "advanced")
     private ExceptionListener exceptionListener;
-    @UriParam(label = "consumer", defaultValue = "Default")
+    @UriParam(label = "consumer,advanced", defaultValue = "Default")
     private ConsumerType consumerType = ConsumerType.Default;
-    @UriParam
+    @UriParam(label = "advanced")
     private ErrorHandler errorHandler;
-    @UriParam(defaultValue = "WARN")
+    @UriParam(defaultValue = "WARN", label = "advanced")
     private LoggingLevel errorHandlerLoggingLevel = LoggingLevel.WARN;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "advanced")
     private boolean errorHandlerLogStackTrace = true;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean autoStartup = true;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private boolean acceptMessagesWhileStopping;
     @UriParam
     private String clientId;
@@ -91,124 +91,126 @@ public class JmsConfiguration implements Cloneable {
     private String durableSubscriptionName;
     @Deprecated
     private boolean subscriptionDurable;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean exposeListenerSession = true;
     private TaskExecutor taskExecutor;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean pubSubNoLocal;
-    @UriParam(defaultValue = "1")
+    @UriParam(defaultValue = "1", label = "consumer")
     private int concurrentConsumers = 1;
-    @UriParam(defaultValue = "1")
+    @UriParam(defaultValue = "1", label = "producer")
     private int replyToConcurrentConsumers = 1;
-    @UriParam(defaultValue = "-1")
+    @UriParam(defaultValue = "-1", label = "advanced")
     private int maxMessagesPerTask = -1;
     private int cacheLevel = -1;
-    @UriParam(defaultValue = "CACHE_AUTO", enums = "CACHE_AUTO,CACHE_CONNECTION,CACHE_CONSUMER,CACHE_NONE,CACHE_SESSION")
+    @UriParam(defaultValue = "CACHE_AUTO", enums = "CACHE_AUTO,CACHE_CONNECTION,CACHE_CONSUMER,CACHE_NONE,CACHE_SESSION", label = "consumer")
     private String cacheLevelName;
-    @UriParam(defaultValue = "5000")
+    @UriParam(defaultValue = "5000", label = "advanced")
     private long recoveryInterval = 5000;
-    @UriParam(defaultValue = "1000")
+    @UriParam(defaultValue = "1000", label = "advanced")
     private long receiveTimeout = 1000;
-    @UriParam(label = "producer", defaultValue = "20000")
+    @UriParam(defaultValue = "20000", label = "producer")
     private long requestTimeout = 20000L;
-    @UriParam(defaultValue = "1000")
+    @UriParam(defaultValue = "1000", label = "advanced")
     private long requestTimeoutCheckerInterval = 1000L;
-    @UriParam(defaultValue = "1")
+    @UriParam(defaultValue = "1", label = "advanced")
     private int idleTaskExecutionLimit = 1;
-    @UriParam(defaultValue = "1")
+    @UriParam(defaultValue = "1", label = "advanced")
     private int idleConsumerLimit = 1;
-    @UriParam
+    @UriParam(label = "consumer")
     private int maxConcurrentConsumers;
-    @UriParam
+    @UriParam(label = "producer")
     private int replyToMaxConcurrentConsumers;
     // JmsTemplate only
-    @UriParam
+    @UriParam(label = "producer")
     private Boolean explicitQosEnabled;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "producer")
     private boolean deliveryPersistent = true;
-    @UriParam(enums = "1,2")
+    @UriParam(enums = "1,2", label = "producer")
     private Integer deliveryMode;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "consumer")
     private boolean replyToDeliveryPersistent = true;
-    @UriParam(defaultValue = "-1")
+    @UriParam(defaultValue = "-1", label = "producer")
     private long timeToLive = -1;
     private MessageConverter messageConverter;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "advanced")
     private boolean mapJmsMessage = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "advanced")
     private boolean messageIdEnabled = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "advanced")
     private boolean messageTimestampEnabled = true;
-    @UriParam(defaultValue = "" + Message.DEFAULT_PRIORITY, enums = "1,2,3,4,5,6,7,8,9")
+    @UriParam(defaultValue = "" + Message.DEFAULT_PRIORITY, enums = "1,2,3,4,5,6,7,8,9", label = "producer")
     private int priority = Message.DEFAULT_PRIORITY;
     // Transaction related configuration
-    @UriParam
+    @UriParam(label = "transaction")
     private boolean transacted;
     private boolean transactedInOut;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "transaction,advanced")
     private boolean lazyCreateTransactionManager = true;
     private PlatformTransactionManager transactionManager;
-    @UriParam
+    @UriParam(label = "transaction,advanced")
     private String transactionName;
-    @UriParam(defaultValue = "-1")
+    @UriParam(defaultValue = "-1", label = "transaction,advanced")
     private int transactionTimeout = -1;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean preserveMessageQos;
     @UriParam
     private boolean disableReplyTo;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean eagerLoadingOfProperties;
     // Always make a JMS message copy when it's passed to Producer
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private boolean alwaysCopyMessage;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean useMessageIDAsCorrelationID;
     private JmsProviderMetadata providerMetadata = new JmsProviderMetadata();
     private JmsOperations metadataJmsOperations;
-    @UriParam
+    @UriParam(label = "consumer")
     private String replyTo;
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private String replyToDestinationSelectorName;
-    @UriParam
+    @UriParam(label = "producer")
     private String replyToOverride;
+    @UriParam(label = "consumer,advanced")
+    private boolean replyToSameDestinationAllowed;
     @UriParam(enums = "Bytes,Map,Object,Stream,Text")
     private JmsMessageType jmsMessageType;
-    @UriParam
+    @UriParam(label = "advanced")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferExchange;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferException;
     @UriParam
     private boolean testConnectionOnStartup;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean asyncStartListener;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean asyncStopListener;
     // if the message is a JmsMessage and mapJmsMessage=false, force the
     // producer to send the javax.jms.Message body to the next JMS destination
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private boolean forceSendOriginalMessage;
     // to force disabling time to live (works in both in-only or in-out mode)
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private boolean disableTimeToLive;
-    @UriParam
+    @UriParam(label = "producer")
     private ReplyToType replyToType;
     @UriParam(label = "consumer")
     private boolean asyncConsumer;
     // the cacheLevelName of reply manager
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private String replyToCacheLevelName;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "producer,advanced")
     private boolean allowNullBody = true;
     private MessageListenerContainerFactory messageListenerContainerFactory;
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private boolean includeSentJMSMessageID;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private DefaultTaskExecutorType defaultTaskExecutorType;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean includeAllJMSXProperties;
-    @UriParam
+    @UriParam(label = "advanced")
     private MessageCreatedStrategy messageCreatedStrategy;
 
     public JmsConfiguration() {
@@ -1438,11 +1440,23 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     *  Provides an explicit ReplyTo destination in the JMS message, which overrides the setting of replyTo.
-     *  It is useful if you want to forward the message to a remote Queue and receive the reply message from the ReplyTo destination.
+     * Provides an explicit ReplyTo destination in the JMS message, which overrides the setting of replyTo.
+     * It is useful if you want to forward the message to a remote Queue and receive the reply message from the ReplyTo destination.
      */
     public void setReplyToOverride(String replyToDestination) {
         this.replyToOverride = normalizeDestinationName(replyToDestination);
+    }
+
+    public boolean isReplyToSameDestinationAllowed() {
+        return replyToSameDestinationAllowed;
+    }
+
+    /**
+     * Whether a JMS consumer is allowed to send a reply message to the same destination that the consumer is using to
+     * consume from. This prevents an endless loop by consuming and sending back the same message to itself.
+     */
+    public void setReplyToSameDestinationAllowed(boolean replyToSameDestinationAllowed) {
+        this.replyToSameDestinationAllowed = replyToSameDestinationAllowed;
     }
 
     public JmsMessageType getJmsMessageType() {

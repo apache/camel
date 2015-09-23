@@ -105,7 +105,9 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     /**
      * Sets the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast.
-     * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy
+     * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy.
+     * If an exception is thrown from the aggregate method in the AggregationStrategy, then by default, that exception
+     * is not handled by the error handler. The error handler can be enabled to react if enabling the shareUnitOfWork option.
      */
     public MulticastDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
@@ -115,6 +117,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     /**
      * Sets a reference to the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast.
      * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy
+     * If an exception is thrown from the aggregate method in the AggregationStrategy, then by default, that exception
+     * is not handled by the error handler. The error handler can be enabled to react if enabling the shareUnitOfWork option.
      */
     public MulticastDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setStrategyRef(aggregationStrategyRef);

@@ -41,5 +41,5 @@ public interface RestConsumerFactory {
      * @throws Exception can be thrown
      */
     Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                            String consumes, String produces, Map<String, Object> parameters) throws Exception;
+                            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception;
 }

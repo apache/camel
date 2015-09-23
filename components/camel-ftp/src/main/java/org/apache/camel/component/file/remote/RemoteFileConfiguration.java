@@ -46,37 +46,37 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int port;
     @UriPath(name = "directoryName")
     private String directoryName;
-    @UriParam
+    @UriParam(label = "security")
     private String username;
-    @UriParam
+    @UriParam(label = "security")
     private String password;
     @UriParam
     private boolean binary;
     @UriParam
     private boolean passiveMode;
-    @UriParam(defaultValue = "10000")
+    @UriParam(defaultValue = "10000", label = "advanced")
     private int connectTimeout = 10000;
-    @UriParam(defaultValue = "30000")
+    @UriParam(defaultValue = "30000", label = "advanced")
     private int timeout = 30000;
-    @UriParam(defaultValue = "300000")
+    @UriParam(defaultValue = "300000", label = "advanced")
     private int soTimeout = 300000;
-    @UriParam(defaultValue = "32768")
+    @UriParam(defaultValue = "32768", label = "consumer,advanced")
     private int receiveBufferSize = 32 * 1024;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean throwExceptionOnConnectFailed;
-    @UriParam
+    @UriParam(label = "advanced")
     private String siteCommand;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "advanced")
     private boolean stepwise = true;
     @UriParam(defaultValue = "UNIX")
     private PathSeparator separator = PathSeparator.UNIX;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean streamDownload;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "consumer,advanced")
     private boolean useList = true;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean ignoreFileNotFoundOrPermissionError;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean sendNoop = true;
 
     public RemoteFileConfiguration() {

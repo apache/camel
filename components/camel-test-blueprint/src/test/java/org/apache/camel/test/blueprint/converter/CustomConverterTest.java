@@ -18,12 +18,10 @@ package org.apache.camel.test.blueprint.converter;
 
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.camel.test.blueprint.Foo;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("See CAMEL-9072")
 public class CustomConverterTest extends CamelBlueprintTestSupport {
-
+    
     @Override
     protected String getBlueprintDescriptor() {
         return "org/apache/camel/test/blueprint/converter/CustomConverterTest.xml";

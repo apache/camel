@@ -77,7 +77,7 @@ public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsume
     }
 
     @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // reset task as the state of the task is not to be preserved
         // which otherwise may cause isBatchAllowed() to return a wrong answer
         this.shutdownRunningTask = null;
