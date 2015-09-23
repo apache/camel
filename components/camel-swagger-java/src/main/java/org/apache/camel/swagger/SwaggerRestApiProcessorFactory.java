@@ -16,6 +16,7 @@
  */
 package org.apache.camel.swagger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -28,6 +29,27 @@ public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
     @Override
     public Processor createApiProcessor(CamelContext camelContext, String contextPath, String contextIdPattern,
                                         RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
-        return new RestSwaggerProcessor(contextIdPattern, configuration.getApiProperties());
+
+        Map<String, Object> options = new HashMap<String, Object>(parameters);
+        options.putAll(configuration.getApiProperties());
+
+        // need to include host in options
+        String host = (String) options.get("host");
+        if (host == null) {
+            host = configuration.getHost();
+            int port = configuration.getPort();
+            if (host != null && port > 0) {
+                options.put("host", host + ":" + port);
+            } else if (host != null) {
+                options.put("host", host);
+            } else {
+                options.put("host", "localhost");
+            }
+        }
+        // and context path is the base.path
+        String path = configuration.getContextPath();
+        options.put("base.path", path);
+
+        return new RestSwaggerProcessor(contextIdPattern, options);
     }
 }

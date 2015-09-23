@@ -83,7 +83,7 @@ public class RestSwaggerProcessor implements Processor {
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, name, route);
+                    support.renderResourceListing(adapter, swaggerConfig, name, route, exchange.getContext().getClassResolver());
                 }
             }
         } catch (Exception e) {

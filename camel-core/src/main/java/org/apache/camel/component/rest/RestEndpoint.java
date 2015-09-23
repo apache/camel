@@ -271,7 +271,6 @@ public class RestEndpoint extends DefaultEndpoint {
                 }
             }
 
-
             // calculate the url to the rest service
             String path = getPath();
             if (!path.startsWith("/")) {

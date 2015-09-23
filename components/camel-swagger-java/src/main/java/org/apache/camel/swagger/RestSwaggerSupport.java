@@ -38,6 +38,7 @@ import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.CamelVersionHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
@@ -167,7 +168,7 @@ public class RestSwaggerSupport {
         return answer;
     }
 
-    public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route) throws Exception {
+    public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, ClassResolver classResolver) throws Exception {
         LOG.trace("renderResourceListing");
 
         if (cors) {
@@ -179,7 +180,7 @@ public class RestSwaggerSupport {
         List<RestDefinition> rests = getRestDefinitions(contextId);
         if (rests != null) {
             // read the rest-dsl into swagger model
-            Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, new DefaultClassResolver());
+            Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
 
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);

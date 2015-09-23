@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.swagger.jaxrs.config.BeanConfig;
+import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.swagger.RestApiResponseAdapter;
 import org.apache.camel.swagger.RestSwaggerSupport;
 import org.slf4j.Logger;
@@ -47,6 +49,7 @@ public class RestSwaggerServlet extends HttpServlet {
     private BeanConfig swaggerConfig = new BeanConfig();
     private RestSwaggerSupport swagger = new RestSwaggerSupport();
     private volatile boolean initDone;
+    private final ClassResolver classResolver = new DefaultClassResolver();
 
     @Override
     public void init(final ServletConfig config) throws ServletException {
@@ -89,7 +92,7 @@ public class RestSwaggerServlet extends HttpServlet {
                     route = route.substring(contextId.length());
                 }
 
-                swagger.renderResourceListing(adapter, swaggerConfig, contextId, route);
+                swagger.renderResourceListing(adapter, swaggerConfig, contextId, route, classResolver);
             }
         } catch (Exception e) {
             LOG.warn("Error rendering swagger due " + e.getMessage(), e);

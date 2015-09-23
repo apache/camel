@@ -32,6 +32,8 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.HostUtils;
+import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(scheme = "rest-api", title = "REST API", syntax = "rest-api:path/contextId", consumerOnly = true, label = "core,rest")
 public class RestApiEndpoint extends DefaultEndpoint {
@@ -141,7 +143,36 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
         if (factory != null) {
 
-            // calculate the url to the rest API service
+            // if no explicit port/host configured, then use port from rest configuration
+            String scheme = "http";
+            String host = "";
+            int port = 80;
+
+            if (config.getScheme() != null) {
+                scheme = config.getScheme();
+            }
+            if (config.getHost() != null) {
+                host = config.getHost();
+            }
+            int num = config.getPort();
+            if (num > 0) {
+                port = num;
+            }
+
+            // if no explicit hostname set then resolve the hostname
+            if (ObjectHelper.isEmpty(host)) {
+                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                    host = HostUtils.getLocalHostName();
+                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                    host = HostUtils.getLocalIp();
+                }
+
+                // no host was configured so calculate a host to use
+                String targetHost = scheme + "://" + host + (port != 80 ? ":" + port : "");
+                getParameters().put("host", targetHost);
+            }
+
+            // the base path should start with a leading slash
             String path = getPath();
             if (path != null && !path.startsWith("/")) {
                 path = "/" + path;
@@ -203,7 +234,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
         }
 
         if (factory != null) {
-
+            // calculate the url to the rest API service
             RestConfiguration config = getCamelContext().getRestConfiguration(cname, true);
 
             // calculate the url to the rest API service
