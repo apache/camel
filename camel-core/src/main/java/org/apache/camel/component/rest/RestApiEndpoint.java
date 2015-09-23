@@ -144,13 +144,9 @@ public class RestApiEndpoint extends DefaultEndpoint {
         if (factory != null) {
 
             // if no explicit port/host configured, then use port from rest configuration
-            String scheme = "http";
             String host = "";
             int port = 80;
 
-            if (config.getScheme() != null) {
-                scheme = config.getScheme();
-            }
             if (config.getHost() != null) {
                 host = config.getHost();
             }
@@ -168,7 +164,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
                 }
 
                 // no host was configured so calculate a host to use
-                String targetHost = scheme + "://" + host + (port != 80 ? ":" + port : "");
+                // there should be no schema in the host (but only port)
+                String targetHost = host + (port != 80 ? ":" + port : "");
                 getParameters().put("host", targetHost);
             }
 
