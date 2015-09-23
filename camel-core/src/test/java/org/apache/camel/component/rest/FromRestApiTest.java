@@ -33,7 +33,6 @@ public class FromRestApiTest extends ContextTestSupport {
     }
 
     public void testFromRestModel() throws Exception {
-
         assertEquals(1, context.getRestDefinitions().size());
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
@@ -55,7 +54,6 @@ public class FromRestApiTest extends ContextTestSupport {
 
                 rest("/say/hello")
                     .get().to("log:hello");
-
             }
         };
     }

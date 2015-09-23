@@ -131,14 +131,16 @@ public class RestApiEndpoint extends DefaultEndpoint {
             factory = factories.iterator().next();
         }
 
-        // lookup on classpath using factory finder
-        String name = apiComponentName != null ? apiComponentName : config.getApiComponent();
-        if (name == null) {
-            name = DEFAULT_API_COMPONENT_NAME;
-        }
-        Object instance = getCamelContext().getFactoryFinder(RESOURCE_PATH).newInstance(name);
-        if (instance instanceof RestApiProcessorFactory) {
-            factory = (RestApiProcessorFactory) instance;
+        // lookup on classpath using factory finder to automatic find it (just add camel-swagger-java to classpath etc)
+        if (factory == null) {
+            String name = apiComponentName != null ? apiComponentName : config.getApiComponent();
+            if (name == null) {
+                name = DEFAULT_API_COMPONENT_NAME;
+            }
+            Object instance = getCamelContext().getFactoryFinder(RESOURCE_PATH).newInstance(name);
+            if (instance instanceof RestApiProcessorFactory) {
+                factory = (RestApiProcessorFactory) instance;
+            }
         }
 
         if (factory != null) {
