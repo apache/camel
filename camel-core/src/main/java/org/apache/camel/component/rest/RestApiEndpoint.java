@@ -16,18 +16,15 @@
  */
 package org.apache.camel.component.rest;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestApiProcessorFactory;
@@ -39,8 +36,8 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(scheme = "rest-api", title = "REST API", syntax = "rest-api:path", consumerOnly = true, label = "core,rest")
 public class RestApiEndpoint extends DefaultEndpoint {
 
+    public static final String DEFAULT_API_COMPONENT_NAME = "swagger";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
-    private FactoryFinder factoryFinder;
 
     @UriPath @Metadata(required = "true")
     private String path;
@@ -107,13 +104,6 @@ public class RestApiEndpoint extends DefaultEndpoint {
         this.parameters = parameters;
     }
 
-    private Class<?> findApiProcessorFactory(String name, CamelContext context) throws ClassNotFoundException, IOException {
-        if (factoryFinder == null) {
-            factoryFinder = context.getFactoryFinder(RESOURCE_PATH);
-        }
-        return factoryFinder.findClass(name);
-    }
-
     @Override
     public Producer createProducer() throws Exception {
         RestApiProcessorFactory factory = null;
@@ -128,6 +118,9 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
         // lookup on classpath using factory finder
         String name = apiComponentName != null ? apiComponentName : config.getApiComponent();
+        if (name == null) {
+            name = DEFAULT_API_COMPONENT_NAME;
+        }
         Object instance = getCamelContext().getFactoryFinder(RESOURCE_PATH).newInstance(name);
         if (instance instanceof RestApiProcessorFactory) {
             factory = (RestApiProcessorFactory) instance;
@@ -152,6 +145,9 @@ public class RestApiEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         RestApiConsumerFactory factory = null;
         String cname = null;
+
+        // we use the rest component as the HTTP consumer to service the API
+        // the API then uses the api component (eg usually camel-swagger-java) to build the API
         if (getComponentName() != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(getComponentName());
             if (comp != null && comp instanceof RestApiConsumerFactory) {
