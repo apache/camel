@@ -27,7 +27,7 @@ import org.apache.camel.spi.RestConfiguration;
 public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
 
     @Override
-    public Processor createApiProcessor(CamelContext camelContext, String contextPath, String contextIdPattern,
+    public Processor createApiProcessor(CamelContext camelContext, String contextPath, String contextIdPattern, boolean contextIdListing,
                                         RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         Map<String, Object> options = new HashMap<String, Object>(parameters);
@@ -50,6 +50,6 @@ public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
         String path = configuration.getContextPath();
         options.put("base.path", path);
 
-        return new RestSwaggerProcessor(contextIdPattern, options);
+        return new RestSwaggerProcessor(contextIdPattern, contextIdListing, options);
     }
 }

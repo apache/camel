@@ -23,6 +23,7 @@ import io.swagger.jaxrs.config.BeanConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +33,12 @@ public class RestSwaggerProcessor implements Processor {
     private final BeanConfig swaggerConfig;
     private final RestSwaggerSupport support;
     private final String contextIdPattern;
+    private final boolean contextIdListing;
 
     @SuppressWarnings("unchecked")
-    public RestSwaggerProcessor(String contextIdPattern, Map<String, Object> parameters) {
+    public RestSwaggerProcessor(String contextIdPattern, boolean contextIdListing, Map<String, Object> parameters) {
         this.contextIdPattern = contextIdPattern;
+        this.contextIdListing = contextIdListing;
         this.support = new RestSwaggerSupport();
         this.swaggerConfig = new BeanConfig();
 
@@ -55,17 +58,23 @@ public class RestSwaggerProcessor implements Processor {
 
         try {
             // render list of camel contexts as root
-            if (route == null || route.equals("") || route.equals("/")) {
+            if (contextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
                 support.renderCamelContexts(adapter, contextId, contextIdPattern);
             } else {
-                // first part is the camel context
-                if (route.startsWith("/")) {
-                    route = route.substring(1);
-                }
-                // the remainder is the route part
-                String name = route.split("/")[0];
-                if (route.startsWith(contextId)) {
-                    route = route.substring(name.length());
+                String name;
+                if (ObjectHelper.isNotEmpty(route)) {
+                    // first part is the camel context
+                    if (route.startsWith("/")) {
+                        route = route.substring(1);
+                    }
+                    // the remainder is the route part
+                    name = route.split("/")[0];
+                    if (route.startsWith(contextId)) {
+                        route = route.substring(name.length());
+                    }
+                } else {
+                    // listing not enabled then get current camel context as the name
+                    name = exchange.getContext().getName();
                 }
 
                 boolean match = true;

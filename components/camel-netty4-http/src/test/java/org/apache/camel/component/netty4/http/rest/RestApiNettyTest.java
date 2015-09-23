@@ -30,14 +30,7 @@ public class RestApiNettyTest extends BaseNettyTest {
 
     @Test
     public void testApi() throws Exception {
-        String out = template.requestBody("netty4-http:http://localhost:{{port}}/api-doc/", null, String.class);
-        assertNotNull(out);
-        log.info(out);
-
-        String id = context.getName();
-        assertTrue(out.contains("{\"name\": \"" + id + "\"}"));
-
-        out = template.requestBody("netty4-http:http://localhost:{{port}}/api-doc/" + id, null, String.class);
+        String out = template.requestBody("netty4-http:http://localhost:{{port}}/api-doc", null, String.class);
         assertNotNull(out);
         log.info(out);
 

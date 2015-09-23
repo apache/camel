@@ -175,7 +175,10 @@ public class RestApiEndpoint extends DefaultEndpoint {
                 path = "/" + path;
             }
 
-            Processor processor = factory.createApiProcessor(getCamelContext(), path, getContextIdPattern(), config, getParameters());
+            // whether listing of the context id's is enabled or not
+            boolean contextIdListing = config.isApiContextListing();
+
+            Processor processor = factory.createApiProcessor(getCamelContext(), path, getContextIdPattern(), contextIdListing, config, getParameters());
             return new RestApiProducer(this, processor);
         } else {
             throw new IllegalStateException("Cannot find RestApiProcessorFactory in Registry or classpath");
@@ -242,7 +245,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
             // TODO: is this needed?
             // there may be an optional context path configured to help Camel calculate the correct urls for the REST services
-            // this may be needed when using camel-serlvet where we cannot get the actual context-path or port number of the servlet engine
+            // this may be needed when using camel-servlet where we cannot get the actual context-path or port number of the servlet engine
             // during init of the servlet
 /*            String contextPath = config.getApiContextPath();
             if (contextPath != null) {

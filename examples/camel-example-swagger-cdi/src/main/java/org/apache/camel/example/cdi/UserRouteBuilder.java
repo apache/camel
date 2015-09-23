@@ -39,8 +39,8 @@ public class UserRouteBuilder extends RouteBuilder {
             .dataFormatProperty("prettyPrint", "true")
             // setup context path and port number that netty will use
             .contextPath("/rest").port(8080)
-            // add swagger api-doc out of the box, and only allow the docs for this CamelContext (#name#)
-            .apiContextPath("/api-doc").apiContextIdPattern("#name#")
+            // add swagger api-doc out of the box
+            .apiContextPath("/api-doc")
                 .apiProperty("api.title", "User API").apiProperty("api.version", "1.2.3")
                 // and enable CORS
                 .apiProperty("cors", "true");

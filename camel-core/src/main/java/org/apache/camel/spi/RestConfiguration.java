@@ -45,6 +45,7 @@ public class RestConfiguration {
     private String contextPath;
     private String apiContextPath;
     private String apiContextIdPattern;
+    private boolean apiContextListing;
     private RestHostNameResolver restHostNameResolver = RestHostNameResolver.localHostName;
     private RestBindingMode bindingMode = RestBindingMode.off;
     private boolean skipBindingOnErrorCode = true;
@@ -199,6 +200,18 @@ public class RestConfiguration {
      */
     public void setApiContextIdPattern(String apiContextIdPattern) {
         this.apiContextIdPattern = apiContextIdPattern;
+    }
+
+    public boolean isApiContextListing() {
+        return apiContextListing;
+    }
+
+    /**
+     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover
+     * these contexts, if <tt>false</tt> then only the current CamelContext is in use.
+     */
+    public void setApiContextListing(boolean apiContextListing) {
+        this.apiContextListing = apiContextListing;
     }
 
     /**
