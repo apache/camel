@@ -96,6 +96,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private RouteDefinition route;
     @XmlTransient
     private RestDefinition rest;
+    @XmlAttribute
+    private String routeId;
 
     @Override
     public String getLabel() {
@@ -237,6 +239,17 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      */
     public void setOutType(String outType) {
         this.outType = outType;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    /**
+     * The route id this rest-dsl is using (read-only)
+     */
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public RestDefinition getRest() {

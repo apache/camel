@@ -177,7 +177,7 @@ public class RestSwaggerSupport {
         List<RestDefinition> rests = getRestDefinitions(contextId);
         if (rests != null) {
             // read the rest-dsl into swagger model
-            Swagger swagger = reader.read(rests, route, swaggerConfig, new DefaultClassResolver());
+            Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, new DefaultClassResolver());
 
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);

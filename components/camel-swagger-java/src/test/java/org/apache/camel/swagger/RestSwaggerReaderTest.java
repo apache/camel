@@ -65,7 +65,7 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         config.setBasePath("/api");
         RestSwaggerReader reader = new RestSwaggerReader();
 
-        Swagger swagger = reader.read(context.getRestDefinitions(), null, config, new DefaultClassResolver());
+        Swagger swagger = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);
 
         ObjectMapper mapper = new ObjectMapper();

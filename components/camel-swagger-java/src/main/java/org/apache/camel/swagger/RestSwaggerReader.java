@@ -68,7 +68,7 @@ public class RestSwaggerReader {
      * @param classResolver     class resolver to use
      * @return the swagger model
      */
-    public Swagger read(List<RestDefinition> rests, String route, BeanConfig config, ClassResolver classResolver) {
+    public Swagger read(List<RestDefinition> rests, String route, BeanConfig config, String camelContextId, ClassResolver classResolver) {
         Swagger swagger = new Swagger();
 
         for (RestDefinition rest : rests) {
@@ -80,7 +80,7 @@ public class RestSwaggerReader {
                 }
             }
 
-            parse(swagger, rest, classResolver);
+            parse(swagger, rest, camelContextId, classResolver);
         }
 
         // configure before returning
@@ -88,7 +88,7 @@ public class RestSwaggerReader {
         return swagger;
     }
 
-    private void parse(Swagger swagger, RestDefinition rest, ClassResolver classResolver) {
+    private void parse(Swagger swagger, RestDefinition rest, String camelContextId, ClassResolver classResolver) {
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         Collections.sort(verbs, new VerbOrdering());
@@ -143,6 +143,10 @@ public class RestSwaggerReader {
             Operation op = new Operation();
             // group in the same tag
             op.addTag(pathAsTag);
+
+            // add id as vendor extensions
+            op.getVendorExtensions().put("x-camelContextId", camelContextId);
+            op.getVendorExtensions().put("x-routeId", verb.getRouteId());
 
             Path path = swagger.getPath(opPath);
             if (path == null) {

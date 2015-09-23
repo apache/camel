@@ -74,7 +74,7 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestSwaggerReader reader = new RestSwaggerReader();
 
-        Swagger swagger = reader.read(context.getRestDefinitions(), null, config, new DefaultClassResolver());
+        Swagger swagger = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);
 
         ObjectMapper mapper = new ObjectMapper();
