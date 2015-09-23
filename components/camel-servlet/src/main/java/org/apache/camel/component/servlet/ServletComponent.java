@@ -29,13 +29,14 @@ import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
-public class ServletComponent extends HttpCommonComponent implements RestConsumerFactory {
+public class ServletComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
     private String servletName = "CamelServlet";
     private HttpRegistry httpRegistry;
@@ -160,6 +161,19 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration, parameters, false);
+    }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
+        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
+    }
+
+    Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                              String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api) throws Exception {
+
         String path = basePath;
         if (uriTemplate != null) {
             // make sure to avoid double slashes
@@ -185,7 +199,12 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         String query = URISupport.createQueryString(map);
 
-        String url = "servlet:///%s?httpMethodRestrict=%s";
+        String url;
+        if (api) {
+            url = "servlet:///%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
+        } else {
+            url = "servlet:///%s?httpMethodRestrict=%s";
+        }
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
 
