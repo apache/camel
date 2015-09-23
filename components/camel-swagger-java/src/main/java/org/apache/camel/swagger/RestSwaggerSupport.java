@@ -198,7 +198,7 @@ public class RestSwaggerSupport {
     /**
      * Renders a list of available CamelContexts in the JVM
      */
-    public void renderCamelContexts(RestApiResponseAdapter response, String contextIdPattern) throws Exception {
+    public void renderCamelContexts(RestApiResponseAdapter response, String contextId, String contextIdPattern) throws Exception {
         LOG.trace("renderCamelContexts");
 
         if (cors) {
@@ -214,12 +214,20 @@ public class RestSwaggerSupport {
         List<String> contexts = findCamelContexts();
 
         // filter non matched CamelContext's
-        Iterator<String> it = contexts.iterator();
-        while (it.hasNext()) {
-            String name = it.next();
-            boolean match = EndpointHelper.matchPattern(name, contextIdPattern);
-            if (!match) {
-                it.remove();
+        if (contextIdPattern != null) {
+            Iterator<String> it = contexts.iterator();
+            while (it.hasNext()) {
+                String name = it.next();
+
+                boolean match;
+                if ("#name#".equals(contextIdPattern)) {
+                    match = name.equals(contextId);
+                } else {
+                    match = EndpointHelper.matchPattern(name, contextIdPattern);
+                }
+                if (!match) {
+                    it.remove();
+                }
             }
         }
 

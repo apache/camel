@@ -77,7 +77,7 @@ public class RestSwaggerServlet extends HttpServlet {
 
             // render list of camel contexts as root
             if (route == null || route.equals("") || route.equals("/")) {
-                swagger.renderCamelContexts(adapter, null);
+                swagger.renderCamelContexts(adapter, null, null);
             } else {
                 // first part is the camel context
                 if (route.startsWith("/")) {

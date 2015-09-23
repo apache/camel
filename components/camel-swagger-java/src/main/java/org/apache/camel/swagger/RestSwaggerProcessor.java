@@ -48,7 +48,7 @@ public class RestSwaggerProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        String contextId;
+        String contextId = exchange.getContext().getName();
         String route = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
 
         RestApiResponseAdapter adapter = new ExchangeRestApiResponseAdapter(exchange);
@@ -56,30 +56,34 @@ public class RestSwaggerProcessor implements Processor {
         try {
             // render list of camel contexts as root
             if (route == null || route.equals("") || route.equals("/")) {
-                support.renderCamelContexts(adapter, contextIdPattern);
+                support.renderCamelContexts(adapter, contextId, contextIdPattern);
             } else {
                 // first part is the camel context
                 if (route.startsWith("/")) {
                     route = route.substring(1);
                 }
                 // the remainder is the route part
-                contextId = route.split("/")[0];
+                String name = route.split("/")[0];
                 if (route.startsWith(contextId)) {
-                    route = route.substring(contextId.length());
+                    route = route.substring(name.length());
                 }
 
                 boolean match = true;
                 if (contextIdPattern != null) {
-                    match = EndpointHelper.matchPattern(contextId, contextIdPattern);
+                    if ("#name#".equals(contextIdPattern)) {
+                        match = name.equals(contextId);
+                    } else {
+                        match = EndpointHelper.matchPattern(name, contextIdPattern);
+                    }
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{contextId, contextIdPattern, match});
+                        LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{name, contextIdPattern, match});
                     }
                 }
 
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, contextId, route);
+                    support.renderResourceListing(adapter, swaggerConfig, name, route);
                 }
             }
         } catch (Exception e) {
