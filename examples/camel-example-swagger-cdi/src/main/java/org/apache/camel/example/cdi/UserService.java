@@ -20,10 +20,12 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
+import javax.inject.Named;
 
 /**
  * A {@link org.apache.camel.example.cdi.User} service which we rest enable the routes defined in the XML file.
  */
+@Named("userService")
 public class UserService {
 
     // use a tree map so they become sorted
