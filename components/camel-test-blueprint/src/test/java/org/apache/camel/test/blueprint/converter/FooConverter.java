@@ -17,17 +17,16 @@
 package org.apache.camel.test.blueprint.converter;
 
 import org.apache.camel.Converter;
+import org.apache.camel.TypeConverters;
 import org.apache.camel.test.blueprint.Foo;
 
-@Converter
-public final class MyConverter {
-    
-    private MyConverter() {
-        //Helper class
-    }
+public class FooConverter implements TypeConverters {
 
+    public FooConverter() {
+    }
+    
     @Converter
-    public static Foo convertToFoo(String data) {
+    public Foo convertToFoo(String data) {
         String[] s = data.split(",");
         Foo foo = new Foo();
         foo.setFirst(s[0]);
