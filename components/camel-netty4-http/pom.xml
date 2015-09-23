@@ -41,12 +41,8 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-netty4</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-codec-http</artifactId>
-      <version>${netty-version}</version>
-    </dependency>
-
+    <!-- we use netty-all as dependency which has HTTP included -->
+ 
     <!-- testing -->
     <dependency>
       <groupId>com.jcraft</groupId>
