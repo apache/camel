@@ -218,6 +218,15 @@ public interface CamelController {
     String getRestModelAsXml(String camelContextName) throws Exception;
 
     /**
+     * Return the REST services API documentation as JSon (requires camel-swagger-java on classpath)
+     *
+     * @param camelContextName the Camel context.
+     * @return the REST API documentation as JSon
+     * @throws java.lang.Exception can be thrown
+     */
+    String getRestApiDocAsJson(String camelContextName) throws Exception;
+
+    /**
      * Return the REST services for the given Camel context.
      *
      * @param camelContextName the Camel context.

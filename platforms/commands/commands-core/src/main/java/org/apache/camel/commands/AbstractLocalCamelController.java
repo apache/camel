@@ -404,6 +404,15 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return ModelHelper.dumpModelAsXml(null, def);
     }
 
+    public String getRestApiDocAsJson(String camelContextName) throws Exception {
+        CamelContext context = this.getLocalCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+
+        return context.getRestRegistry().apiDocsAsJson();
+    }
+
     public List<Map<String, String>> getEndpoints(String camelContextName) throws Exception {
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 

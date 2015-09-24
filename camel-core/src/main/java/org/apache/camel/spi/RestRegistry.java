@@ -143,4 +143,11 @@ public interface RestRegistry extends Service {
      */
     int size();
 
+    /**
+     * Outputs the Rest services API documentation in JSon (requires camel-swagger-java on classpath)
+     *
+     * @return  the API docs in JSon, or <tt>null</tt> if camel-swagger-java is not on classpath
+     */
+    String apiDocAsJson();
+
 }

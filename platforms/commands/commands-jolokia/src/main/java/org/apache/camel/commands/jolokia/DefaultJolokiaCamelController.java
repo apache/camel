@@ -510,6 +510,27 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
+    public String getRestApiDocAsJson(String camelContextName) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=services,name=DefaultRestRegistry", found.getDomain(), found.getKeyProperty("context"));
+            ObjectName on = ObjectName.getInstance(pattern);
+
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "apiDocAsJson()"));
+            if (response != null) {
+                String json = response.getValue();
+                return json;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public List<Map<String, String>> getEndpoints(String camelContextName) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");

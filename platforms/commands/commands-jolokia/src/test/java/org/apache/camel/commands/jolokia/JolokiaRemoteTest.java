@@ -160,6 +160,15 @@ public class JolokiaRemoteTest {
     }
 
     @Test
+    public void testRestsApiDoc() throws Exception {
+        controller = new DefaultJolokiaCamelController();
+        controller.connect(url, null, null);
+
+        String data = controller.getRestApiDocAsJson("camel-1");
+        System.out.println(data);
+    }
+
+    @Test
     public void testGetEndpoints() throws Exception {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
