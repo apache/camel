@@ -17,6 +17,7 @@
 package org.apache.camel.management.mbean;
 
 import java.util.List;
+import java.util.Map;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
@@ -24,11 +25,15 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedRestRegistryMBean;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  *
@@ -82,4 +87,39 @@ public class ManagedRestRegistry extends ManagedService implements ManagedRestRe
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
+
+    @Override
+    public String apiDocAsJson() {
+        // see if there is a rest-api endpoint which would be the case if rest api-doc has been explicit enabled
+        Endpoint found = null;
+        for (Map.Entry<String, Endpoint> entry : getContext().getEndpointMap().entrySet()) {
+            String uri = entry.getKey();
+            if (uri.startsWith("rest-api")) {
+                found = entry.getValue();
+                break;
+            }
+        }
+
+        try {
+            if (found != null) {
+                Producer producer = found.createProducer();
+                ServiceHelper.startService(producer);
+
+                try {
+                    Exchange dummy = found.createExchange();
+                    producer.process(dummy);
+
+                    String json = dummy.hasOut() ? dummy.getOut().getBody(String.class) : dummy.getIn().getBody(String.class);
+                    return json;
+                } finally {
+                    ServiceHelper.stopService(producer);
+                }
+            }
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+
+        return null;
+    }
+
 }
