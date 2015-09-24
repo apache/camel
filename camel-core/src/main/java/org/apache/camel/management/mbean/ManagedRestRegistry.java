@@ -31,6 +31,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedRestRegistryMBean;
+import org.apache.camel.component.rest.RestApiEndpoint;
+import org.apache.camel.component.rest.RestEndpoint;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -91,22 +94,38 @@ public class ManagedRestRegistry extends ManagedService implements ManagedRestRe
     @Override
     public String apiDocAsJson() {
         // see if there is a rest-api endpoint which would be the case if rest api-doc has been explicit enabled
-        Endpoint found = null;
+        Endpoint restApiEndpoint = null;
+        Endpoint restEndpoint = null;
         for (Map.Entry<String, Endpoint> entry : getContext().getEndpointMap().entrySet()) {
             String uri = entry.getKey();
-            if (uri.startsWith("rest-api")) {
-                found = entry.getValue();
+            if (uri.startsWith("rest-api:")) {
+                restApiEndpoint = entry.getValue();
                 break;
+            } else if (restEndpoint == null && uri.startsWith("rest:")) {
+                restEndpoint = entry.getValue();
+            }
+        }
+
+        if (restApiEndpoint == null && restEndpoint != null) {
+            // no rest-api has been explicit enabled, then we need to create it first
+            RestEndpoint rest = (RestEndpoint) restEndpoint;
+            String componentName = rest.getComponentName();
+
+            if (componentName != null) {
+                RestConfiguration config = getContext().getRestConfiguration(componentName, true);
+                String apiComponent = config.getApiComponent() != null ? config.getApiComponent() : RestApiEndpoint.DEFAULT_API_COMPONENT_NAME;
+                String path = config.getApiContextPath() != null ? config.getApiContextPath() : "api-doc";
+                restApiEndpoint = getContext().getEndpoint(String.format("rest-api:%s/%s?componentName=%s&apiComponentName=%s&contextIdPattern=#name#", path, getCamelId(), componentName, apiComponent));
             }
         }
 
         try {
-            if (found != null) {
-                Producer producer = found.createProducer();
+            if (restApiEndpoint != null) {
+                Producer producer = restApiEndpoint.createProducer();
                 ServiceHelper.startService(producer);
 
                 try {
-                    Exchange dummy = found.createExchange();
+                    Exchange dummy = restApiEndpoint.createExchange();
                     producer.process(dummy);
 
                     String json = dummy.hasOut() ? dummy.getOut().getBody(String.class) : dummy.getIn().getBody(String.class);

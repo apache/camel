@@ -21,10 +21,12 @@ import java.util.Set;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestApiProcessorFactory;
@@ -41,7 +43,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
     public static final String DEFAULT_API_COMPONENT_NAME = "swagger";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
 
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     private String path;
     @UriPath
     private String contextIdPattern;
@@ -137,9 +140,14 @@ public class RestApiEndpoint extends DefaultEndpoint {
             if (name == null) {
                 name = DEFAULT_API_COMPONENT_NAME;
             }
-            Object instance = getCamelContext().getFactoryFinder(RESOURCE_PATH).newInstance(name);
-            if (instance instanceof RestApiProcessorFactory) {
-                factory = (RestApiProcessorFactory) instance;
+            try {
+                FactoryFinder finder = getCamelContext().getFactoryFinder(RESOURCE_PATH);
+                Object instance = finder.newInstance(name);
+                if (instance instanceof RestApiProcessorFactory) {
+                    factory = (RestApiProcessorFactory) instance;
+                }
+            } catch (NoFactoryAvailableException e) {
+                // ignore
             }
         }
 
@@ -183,7 +191,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
             Processor processor = factory.createApiProcessor(getCamelContext(), path, getContextIdPattern(), contextIdListing, config, getParameters());
             return new RestApiProducer(this, processor);
         } else {
-            throw new IllegalStateException("Cannot find RestApiProcessorFactory in Registry or classpath");
+            throw new IllegalStateException("Cannot find RestApiProcessorFactory in Registry or classpath (such as the camel-swagger-java component)");
         }
     }
 
