@@ -207,7 +207,6 @@ public final class PGPDataFormatUtil {
         return findPublicKeys(userids, forEncryption, pgpSec);
     }
 
-    @SuppressWarnings("unchecked")
     public static List<PGPPublicKey> findPublicKeys(List<String> useridParts, boolean forEncryption, PGPPublicKeyRingCollection pgpPublicKeyringCollection) {
         List<PGPPublicKey> result = new ArrayList<PGPPublicKey>(useridParts.size());
         for (Iterator<PGPPublicKeyRing> keyRingIter = pgpPublicKeyringCollection.getKeyRings(); keyRingIter.hasNext();) {
@@ -422,8 +421,7 @@ public final class PGPDataFormatUtil {
                 LOG.debug("User ID {} found in primary key with key ID {} containing one of the parts {}", new Object[] {
                     foundKeyUserIdForUserIdPart[0], primaryKey.getKeyID(), useridParts });
                 // add all signing keys
-                for (@SuppressWarnings("unchecked")
-                Iterator<PGPSecretKey> iterKey = keyring.getSecretKeys(); iterKey.hasNext();) {
+                for (Iterator<PGPSecretKey> iterKey = keyring.getSecretKeys(); iterKey.hasNext();) {
                     PGPSecretKey secKey = iterKey.next();
                     if (isSigningKey(secKey)) {
                         PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider)
