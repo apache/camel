@@ -21,12 +21,13 @@ import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * for ${name} data.
  */
-public class ${name}DataFormat implements DataFormat {
+public class ${name}DataFormat extends ServiceSupport implements DataFormat {
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         byte[] bytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, graph);
@@ -37,4 +38,15 @@ public class ${name}DataFormat implements DataFormat {
         byte[] bytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, stream);
         return bytes;
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        // init logic here
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // cleanup logic here
+    }
+
 }
