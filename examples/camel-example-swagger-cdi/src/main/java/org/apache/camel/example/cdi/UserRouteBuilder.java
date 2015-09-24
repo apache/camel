@@ -38,7 +38,7 @@ public class UserRouteBuilder extends RouteBuilder {
             // and output using pretty print
             .dataFormatProperty("prettyPrint", "true")
             // setup context path and port number that netty will use
-            .contextPath("/rest").port(8080)
+            .contextPath("/").port(8080)
             // add swagger api-doc out of the box
             .apiContextPath("/api-doc")
                 .apiProperty("api.title", "User API").apiProperty("api.version", "1.2.3")
