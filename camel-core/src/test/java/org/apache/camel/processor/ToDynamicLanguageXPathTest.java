@@ -37,7 +37,7 @@ public class ToDynamicLanguageXPathTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .toD("xpath:/order/@uri");
+                    .toD("language:xpath:/order/@uri");
             }
         };
     }
