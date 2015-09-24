@@ -34,6 +34,7 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
@@ -52,6 +53,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String KEY_CONTEXT = "context";
     public static final String TYPE_CONTEXT = "context";
     public static final String TYPE_ENDPOINT = "endpoints";
+    public static final String TYPE_DATAFORMAT = "dataformats";
     public static final String TYPE_PROCESSOR = "processors";
     public static final String TYPE_CONSUMER = "consumers";
     public static final String TYPE_PRODUCER = "producers";
@@ -116,6 +118,18 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_CONTEXT + "=").append(getContextId(endpoint.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ENDPOINT + ",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(getEndpointId(endpoint)));
+        return createObjectName(buffer);
+    }
+
+    public ObjectName getObjectNameForDataFormat(CamelContext context, DataFormat dataFormat) throws MalformedObjectNameException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
+        buffer.append(KEY_TYPE + "=" + TYPE_DATAFORMAT + ",");
+        buffer.append(KEY_NAME + "=").append(dataFormat.getClass().getSimpleName());
+        if (!(dataFormat instanceof StaticService)) {
+            buffer.append("(").append(ObjectHelper.getIdentityHashCode(dataFormat)).append(")");
+        }
         return createObjectName(buffer);
     }
 

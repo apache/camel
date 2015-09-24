@@ -35,6 +35,7 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ManagementAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +134,12 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
             if (ms.getService() instanceof Endpoint) {
                 return null;
             }
-            objectName = getManagementNamingStrategy().getObjectNameForService(ms.getContext(), ms.getService());
+            if (ms.getService() instanceof DataFormat) {
+                DataFormat df = (DataFormat) ms.getService();
+                objectName = getManagementNamingStrategy().getObjectNameForDataFormat(ms.getContext(), df);
+            } else {
+                objectName = getManagementNamingStrategy().getObjectNameForService(ms.getContext(), ms.getService());
+            }
         }
 
         return nameType.cast(objectName);
