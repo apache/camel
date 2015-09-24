@@ -1519,7 +1519,7 @@
     <bundle>mvn:org.apache.camel/camel-stringtemplate/${project.version}</bundle>
   </feature>
   <feature name='camel-swagger' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details> camel-swagger need to access the http OSGi services </details>
+    <details>camel-swagger is deprecated, use camel-swagger-java instead</details>
     <feature>http</feature>
     <feature version='${project.version}'>camel-core</feature>
     <!-- must use Scala 2.10 -->
