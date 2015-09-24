@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -33,6 +34,8 @@ import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.swagger.RestApiResponseAdapter;
 import org.apache.camel.swagger.RestSwaggerSupport;
+import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +49,40 @@ import static org.apache.camel.swagger.SwaggerHelper.buildUrl;
 public class RestSwaggerServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerServlet.class);
-    private BeanConfig swaggerConfig = new BeanConfig();
-    private RestSwaggerSupport swagger = new RestSwaggerSupport();
-    private volatile boolean initDone;
+    private final BeanConfig swaggerConfig = new BeanConfig();
+    private final RestSwaggerSupport support = new RestSwaggerSupport();
     private final ClassResolver classResolver = new DefaultClassResolver();
+    private volatile boolean initDone;
+
+    private String contextIdPattern;
+    private boolean contextIdListing;
+
+    public String getContextIdPattern() {
+        return contextIdPattern;
+    }
+
+    /**
+     * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
+     * <p/>
+     * The pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
+     *
+     * @param contextIdPattern  the pattern
+     */
+    public void setContextIdPattern(String contextIdPattern) {
+        this.contextIdPattern = contextIdPattern;
+    }
+
+    public boolean isContextIdListing() {
+        return contextIdListing;
+    }
+
+    /**
+     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover
+     * these contexts, if <tt>false</tt> then only if there is exactly one CamelContext then its used.
+     */
+    public void setContextIdListing(boolean contextIdListing) {
+        this.contextIdListing = contextIdListing;
+    }
 
     @Override
     public void init(final ServletConfig config) throws ServletException {
@@ -61,7 +94,7 @@ public class RestSwaggerServlet extends HttpServlet {
             Object value = config.getInitParameter(name);
             parameters.put(name, value);
         }
-        swagger.initSwagger(swaggerConfig, parameters);
+        support.initSwagger(swaggerConfig, parameters);
     }
 
     @Override
@@ -71,31 +104,59 @@ public class RestSwaggerServlet extends HttpServlet {
             initBaseAndApiPaths(request);
         }
 
-        String contextId;
+        String contextId = null;
         String route = request.getPathInfo();
 
         RestApiResponseAdapter adapter = new ServletRestApiResponseAdapter(response);
 
         try {
-
             // render list of camel contexts as root
-            if (route == null || route.equals("") || route.equals("/")) {
-                swagger.renderCamelContexts(adapter, null, null);
+            if (contextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
+                support.renderCamelContexts(adapter, contextId, contextIdPattern);
             } else {
-                // first part is the camel context
-                if (route.startsWith("/")) {
-                    route = route.substring(1);
-                }
-                // the remainder is the route part
-                contextId = route.split("/")[0];
-                if (route.startsWith(contextId)) {
-                    route = route.substring(contextId.length());
+                String name = null;
+                if (ObjectHelper.isNotEmpty(route)) {
+                    // first part is the camel context
+                    if (route.startsWith("/")) {
+                        route = route.substring(1);
+                    }
+                    // the remainder is the route part
+                    name = route.split("/")[0];
+                    if (ObjectHelper.isNotEmpty(name)) {
+                        route = route.substring(name.length());
+                    }
+                } else {
+                    // listing not enabled then see if there is only one CamelContext and use that as the name
+                    List<String> contexts = support.findCamelContexts();
+                    if (contexts.size() == 1) {
+                        name = contexts.get(0);
+                    }
                 }
 
-                swagger.renderResourceListing(adapter, swaggerConfig, contextId, route, classResolver);
+                boolean match = false;
+                if (name != null) {
+                    match = true;
+                    if (contextIdPattern != null) {
+                        if ("#name#".equals(contextIdPattern)) {
+                            // always match as we do not know what is the current CamelContext in a plain servlet
+                            match = true;
+                        } else {
+                            match = EndpointHelper.matchPattern(name, contextIdPattern);
+                        }
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{name, contextIdPattern, match});
+                        }
+                    }
+                }
+
+                if (!match) {
+                    adapter.noContent();
+                } else {
+                    support.renderResourceListing(adapter, swaggerConfig, name, route, classResolver);
+                }
             }
         } catch (Exception e) {
-            LOG.warn("Error rendering swagger due " + e.getMessage(), e);
+            LOG.warn("Error rendering Swagger API due " + e.getMessage(), e);
         }
     }
 
