@@ -54,11 +54,11 @@ public class RestSwaggerServlet extends HttpServlet {
     private final ClassResolver classResolver = new DefaultClassResolver();
     private volatile boolean initDone;
 
-    private String contextIdPattern;
-    private boolean contextIdListing;
+    private String apiContextIdPattern;
+    private boolean apiContextIdListing;
 
-    public String getContextIdPattern() {
-        return contextIdPattern;
+    public String getApiContextIdPattern() {
+        return apiContextIdPattern;
     }
 
     /**
@@ -66,22 +66,22 @@ public class RestSwaggerServlet extends HttpServlet {
      * <p/>
      * The pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
      *
-     * @param contextIdPattern  the pattern
+     * @param apiContextIdPattern  the pattern
      */
-    public void setContextIdPattern(String contextIdPattern) {
-        this.contextIdPattern = contextIdPattern;
+    public void setApiContextIdPattern(String apiContextIdPattern) {
+        this.apiContextIdPattern = apiContextIdPattern;
     }
 
-    public boolean isContextIdListing() {
-        return contextIdListing;
+    public boolean isApiContextIdListing() {
+        return apiContextIdListing;
     }
 
     /**
      * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover
      * these contexts, if <tt>false</tt> then only if there is exactly one CamelContext then its used.
      */
-    public void setContextIdListing(boolean contextIdListing) {
-        this.contextIdListing = contextIdListing;
+    public void setApiContextIdListing(boolean apiContextIdListing) {
+        this.apiContextIdListing = apiContextIdListing;
     }
 
     @Override
@@ -95,6 +95,16 @@ public class RestSwaggerServlet extends HttpServlet {
             parameters.put(name, value);
         }
         support.initSwagger(swaggerConfig, parameters);
+
+        // allow to configure these options from the servlet config as well
+        Object pattern = parameters.remove("apiContextIdPattern");
+        if (pattern != null) {
+            apiContextIdPattern = pattern.toString();
+        }
+        Object listing = parameters.remove("apiContextIdListing");
+        if (listing != null) {
+            apiContextIdListing = Boolean.valueOf(listing.toString());
+        }
     }
 
     @Override
@@ -111,8 +121,8 @@ public class RestSwaggerServlet extends HttpServlet {
 
         try {
             // render list of camel contexts as root
-            if (contextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
-                support.renderCamelContexts(adapter, contextId, contextIdPattern);
+            if (apiContextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
+                support.renderCamelContexts(adapter, contextId, apiContextIdPattern);
             } else {
                 String name = null;
                 if (ObjectHelper.isNotEmpty(route)) {
@@ -136,15 +146,15 @@ public class RestSwaggerServlet extends HttpServlet {
                 boolean match = false;
                 if (name != null) {
                     match = true;
-                    if (contextIdPattern != null) {
-                        if ("#name#".equals(contextIdPattern)) {
+                    if (apiContextIdPattern != null) {
+                        if ("#name#".equals(apiContextIdPattern)) {
                             // always match as we do not know what is the current CamelContext in a plain servlet
                             match = true;
                         } else {
-                            match = EndpointHelper.matchPattern(name, contextIdPattern);
+                            match = EndpointHelper.matchPattern(name, apiContextIdPattern);
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{name, contextIdPattern, match});
+                            LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{name, apiContextIdPattern, match});
                         }
                     }
                 }
