@@ -410,7 +410,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             return null;
         }
 
-        return context.getRestRegistry().apiDocsAsJson();
+        return context.getRestRegistry().apiDocAsJson();
     }
 
     public List<Map<String, String>> getEndpoints(String camelContextName) throws Exception {
