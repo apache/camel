@@ -92,9 +92,10 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
                 // maybe its a language
                 try {
                     Language partLanguage = routeContext.getCamelContext().resolveLanguage(before);
-                    Expression exp = partLanguage.createExpression(after);
-                    list.add(exp);
-                    continue;
+                    if (partLanguage != null) {
+                        Expression exp = partLanguage.createExpression(after);
+                        list.add(exp);
+                    }
                 } catch (NoSuchLanguageException e) {
                     // ignore
                 }

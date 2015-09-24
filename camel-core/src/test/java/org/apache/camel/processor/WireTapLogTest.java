@@ -14,23 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.script;
+package org.apache.camel.processor;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.Language;
-import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
-public class ScriptLanguageResolver implements LanguageResolver {
+public class WireTapLogTest extends ContextTestSupport {
 
-    public Language resolveLanguage(String name, CamelContext context) {
-        // only return if we can suppor the language
-        if (ScriptBuilder.supportScriptLanguage(name)) {
-            return new ScriptLanguage(name);
-        } else {
-            return null;
-        }
+    public void testWireTapLog() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+    
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:start")
+                    .wireTap("log:com.foo.MyApp?level=WARN")
+                    .to("mock:result");
+            }
+        };
     }
 }
