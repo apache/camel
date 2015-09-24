@@ -26,6 +26,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -35,7 +36,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
  * Zip file data format.
  * See {@link org.apache.camel.model.dataformat.ZipDataFormat} for "deflate" compression.
  */
-public class ZipFileDataFormat implements DataFormat {
+public class ZipFileDataFormat extends ServiceSupport implements DataFormat {
     private boolean usingIterator;
     
     public void setUsingIterator(boolean usingIterator) {
@@ -97,4 +98,13 @@ public class ZipFileDataFormat implements DataFormat {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }
