@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
@@ -57,6 +58,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
     public RestApiEndpoint(String endpointUri, RestApiComponent component) {
         super(endpointUri, component);
+        setExchangePattern(ExchangePattern.InOut);
     }
 
     @Override

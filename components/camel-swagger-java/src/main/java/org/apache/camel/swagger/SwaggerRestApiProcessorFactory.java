@@ -31,7 +31,9 @@ public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
                                         RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         Map<String, Object> options = new HashMap<String, Object>(parameters);
-        options.putAll(configuration.getApiProperties());
+        if (configuration.getApiProperties() != null) {
+            options.putAll(configuration.getApiProperties());
+        }
 
         // need to include host in options
         String host = (String) options.get("host");
