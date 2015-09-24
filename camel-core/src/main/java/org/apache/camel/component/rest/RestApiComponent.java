@@ -21,6 +21,9 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
+/**
+ * Rest API component.
+ */
 public class RestApiComponent extends UriEndpointComponent {
 
     public RestApiComponent() {

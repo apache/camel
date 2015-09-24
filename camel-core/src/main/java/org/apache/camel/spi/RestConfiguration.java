@@ -19,8 +19,8 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 /**
- * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} for Camel components to support
- * the Camel {@link org.apache.camel.model.rest.RestDefinition rest} DSL.
+ * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} and {@link org.apache.camel.spi.RestApiConsumerFactory}
+ * for Camel components to support the Camel {@link org.apache.camel.model.rest.RestDefinition rest} DSL.
  */
 public class RestConfiguration {
 
