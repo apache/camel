@@ -28,6 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXSource;
 
+import org.apache.camel.support.ServiceSupport;
 import org.w3c.dom.Node;
 
 import org.xml.sax.ContentHandler;
@@ -45,7 +46,6 @@ import org.ccil.cowan.tagsoup.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Dataformat for TidyMarkup (aka Well formed HTML in XML form.. may or may not
  * be XHTML) This dataformat is intended to convert bad HTML from a site (or
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * xpath'ed on.
  * 
  */
-public class TidyMarkupDataFormat implements DataFormat {
+public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat {
 
     /*
      * Our Logger
@@ -114,8 +114,6 @@ public class TidyMarkupDataFormat implements DataFormat {
 
     /**
      * Unmarshal the data
-     * 
-     * @throws Exception
      */
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
 
@@ -184,9 +182,6 @@ public class TidyMarkupDataFormat implements DataFormat {
 
     /**
      * Create the tagSoup Parser
-     * 
-     * @return
-     * @throws CamelException
      */
     protected XMLReader createTagSoupParser() throws CamelException {
         XMLReader reader = new Parser();
@@ -230,24 +225,6 @@ public class TidyMarkupDataFormat implements DataFormat {
         return reader;
     }
 
-    /**
-     * @param htmlSchema
-     *            the htmlSchema to set
-     */
-    public void setParsingSchema(Schema schema) {
-        this.parsingSchema = schema;
-    }
-
-    /**
-     * @return the htmlSchema
-     */
-    public Schema getParsingSchema() {
-        if (parsingSchema == null) {
-            this.parsingSchema = new HTMLSchema();
-        }
-        return parsingSchema;
-    }
-
     protected ContentHandler createContentHandler(Writer w) {
         XMLWriter xmlWriter = new XMLWriter(w);
 
@@ -268,64 +245,56 @@ public class TidyMarkupDataFormat implements DataFormat {
 
     }
 
-    /**
-     * @param parserFeatures
-     *            the parserFeatures to set
-     */
+    public void setParsingSchema(Schema schema) {
+        this.parsingSchema = schema;
+    }
+
+    public Schema getParsingSchema() {
+        if (parsingSchema == null) {
+            this.parsingSchema = new HTMLSchema();
+        }
+        return parsingSchema;
+    }
+
     public void setParserFeatures(Map<String, Boolean> parserFeatures) {
         this.parserFeatures = parserFeatures;
     }
 
-    /**
-     * @return the parserFeatures
-     */
     public Map<String, Boolean> getParserFeatures() {
         return parserFeatures;
     }
 
-    /**
-     * @param parserPropeties
-     *            the parserPropeties to set
-     */
     public void setParserPropeties(Map<String, Object> parserPropeties) {
         this.parserPropeties = parserPropeties;
     }
 
-    /**
-     * @return the parserPropeties
-     */
     public Map<String, Object> getParserPropeties() {
         return parserPropeties;
     }
 
-    /**
-     * @param method
-     *            the method to set
-     */
     public void setMethod(String method) {
         this.method = method;
     }
 
-    /**
-     * @return the method
-     */
     public String getMethod() {
         return method;
     }
 
-    /**
-     * @return the dataObjectType
-     */
     public Class<?> getDataObjectType() {
         return dataObjectType;
     }
 
-    /**
-     * @param dataObjectType
-     *            the dataObjectType to set
-     */
     public void setDataObjectType(Class<?> dataObjectType) {
         this.dataObjectType = dataObjectType;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

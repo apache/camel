@@ -19,6 +19,7 @@ package org.apache.camel.groovy.dataformat;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.camel.support.ServiceSupport;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Common attributes and methods for XmlParser and XmlSlurper usage.
  */
-public abstract class AbstractXmlDataFormat implements DataFormat {
+public abstract class AbstractXmlDataFormat extends ServiceSupport implements DataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlDataFormat.class);
     private static final ErrorHandler DEFAULT_HANDLER = new DefaultErrorHandler();
@@ -90,4 +91,13 @@ public abstract class AbstractXmlDataFormat implements DataFormat {
 
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

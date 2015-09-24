@@ -22,9 +22,10 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 
-public class SyslogDataFormat implements DataFormat {
+public class SyslogDataFormat extends ServiceSupport implements DataFormat {
 
     @Override
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
@@ -70,5 +71,15 @@ public class SyslogDataFormat implements DataFormat {
         }
 
         return message;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

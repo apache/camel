@@ -24,6 +24,7 @@ import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -38,7 +39,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
  * Tar file data format.
  * Based on ZipFileDataFormat from camel-zipfile component
  */
-public class TarFileDataFormat implements DataFormat {
+public class TarFileDataFormat extends ServiceSupport implements DataFormat {
     private boolean usingIterator;
 
     public void setUsingIterator(boolean usingIterator) {
@@ -107,5 +108,15 @@ public class TarFileDataFormat implements DataFormat {
                 IOHelper.close(tis, baos);
             }
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

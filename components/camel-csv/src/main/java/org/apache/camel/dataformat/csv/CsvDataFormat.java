@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.QuoteMode;
 
@@ -34,7 +35,7 @@ import org.apache.commons.csv.QuoteMode;
  * Autogeneration can be disabled. In this case, only the fields defined in
  * csvConfig are written on the output.
  */
-public class CsvDataFormat implements DataFormat {
+public class CsvDataFormat extends ServiceSupport implements DataFormat {
     // CSV format options
     private CSVFormat format = CSVFormat.DEFAULT;
     private boolean commentMarkerDisabled;
@@ -72,17 +73,22 @@ public class CsvDataFormat implements DataFormat {
     }
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-        if (marshaller == null) {
-            marshaller = CsvMarshaller.create(getActiveFormat(), this);
-        }
         marshaller.marshal(exchange, object, outputStream);
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        if (unmarshaller == null) {
-            unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
-        }
         return unmarshaller.unmarshal(exchange, inputStream);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        marshaller = CsvMarshaller.create(getActiveFormat(), this);
+        unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
     CSVFormat getActiveFormat() {
@@ -151,11 +157,6 @@ public class CsvDataFormat implements DataFormat {
         return answer;
     }
 
-    private void reset() {
-        marshaller = null;
-        unmarshaller = null;
-    }
-
     //region Getters/Setters
 
     /**
@@ -179,7 +180,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setFormat(CSVFormat format) {
         this.format = (format == null) ? CSVFormat.DEFAULT : format;
-        reset();
         return this;
     }
 
@@ -228,7 +228,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setCommentMarkerDisabled(boolean commentMarkerDisabled) {
         this.commentMarkerDisabled = commentMarkerDisabled;
-        reset();
         return this;
     }
 
@@ -252,7 +251,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setCommentMarker(Character commentMarker) {
         this.commentMarker = commentMarker;
-        reset();
         return this;
     }
 
@@ -276,7 +274,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setDelimiter(Character delimiter) {
         this.delimiter = delimiter;
-        reset();
         return this;
     }
 
@@ -298,7 +295,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setEscapeDisabled(boolean escapeDisabled) {
         this.escapeDisabled = escapeDisabled;
-        reset();
         return this;
     }
 
@@ -322,7 +318,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setEscape(Character escape) {
         this.escape = escape;
-        reset();
         return this;
     }
 
@@ -344,7 +339,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setHeaderDisabled(boolean headerDisabled) {
         this.headerDisabled = headerDisabled;
-        reset();
         return this;
     }
 
@@ -368,7 +362,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setHeader(String[] header) {
         this.header = Arrays.copyOf(header, header.length);
-        reset();
         return this;
     }
 
@@ -392,7 +385,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setAllowMissingColumnNames(Boolean allowMissingColumnNames) {
         this.allowMissingColumnNames = allowMissingColumnNames;
-        reset();
         return this;
     }
 
@@ -416,7 +408,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setIgnoreEmptyLines(Boolean ignoreEmptyLines) {
         this.ignoreEmptyLines = ignoreEmptyLines;
-        reset();
         return this;
     }
 
@@ -440,7 +431,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setIgnoreSurroundingSpaces(Boolean ignoreSurroundingSpaces) {
         this.ignoreSurroundingSpaces = ignoreSurroundingSpaces;
-        reset();
         return this;
     }
 
@@ -462,7 +452,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setNullStringDisabled(boolean nullStringDisabled) {
         this.nullStringDisabled = nullStringDisabled;
-        reset();
         return this;
     }
 
@@ -486,7 +475,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setNullString(String nullString) {
         this.nullString = nullString;
-        reset();
         return this;
     }
 
@@ -508,7 +496,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setQuoteDisabled(boolean quoteDisabled) {
         this.quoteDisabled = quoteDisabled;
-        reset();
         return this;
     }
 
@@ -532,7 +519,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setQuote(Character quote) {
         this.quote = quote;
-        reset();
         return this;
     }
 
@@ -556,7 +542,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setQuoteMode(QuoteMode quoteMode) {
         this.quoteMode = quoteMode;
-        reset();
         return this;
     }
 
@@ -578,7 +563,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setRecordSeparatorDisabled(boolean recordSeparatorDisabled) {
         this.recordSeparatorDisabled = recordSeparatorDisabled;
-        reset();
         return this;
     }
 
@@ -602,7 +586,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setRecordSeparator(String recordSeparator) {
         this.recordSeparator = recordSeparator;
-        reset();
         return this;
     }
 
@@ -626,7 +609,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setSkipHeaderRecord(Boolean skipHeaderRecord) {
         this.skipHeaderRecord = skipHeaderRecord;
-        reset();
         return this;
     }
 

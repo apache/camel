@@ -25,11 +25,12 @@ import net.fortuna.ical4j.model.Calendar;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * Bridge ICal data format to camel world.
  */
-public class ICalDataFormat implements DataFormat {
+public class ICalDataFormat extends ServiceSupport implements DataFormat {
 
     /**
      * Class responsible for writing out calendar instances.
@@ -70,6 +71,16 @@ public class ICalDataFormat implements DataFormat {
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         return builder.build(stream);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
 }
