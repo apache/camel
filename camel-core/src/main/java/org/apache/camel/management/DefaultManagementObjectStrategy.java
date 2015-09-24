@@ -42,6 +42,7 @@ import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedConvertBody;
 import org.apache.camel.management.mbean.ManagedCustomLoadBalancer;
+import org.apache.camel.management.mbean.ManagedDataFormat;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
@@ -153,6 +154,7 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -176,6 +178,17 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             ManagedComponent mc = new ManagedComponent(name, component);
             mc.init(context.getManagementStrategy());
             return mc;
+        }
+    }
+
+    @SuppressWarnings({"deprecation", "unchecked"})
+    public Object getManagedObjectForDataFormat(CamelContext context, DataFormat dataFormat) {
+        if (dataFormat instanceof org.apache.camel.spi.ManagementAware) {
+            return ((org.apache.camel.spi.ManagementAware<DataFormat>) dataFormat).getManagedObject(dataFormat);
+        } else {
+            ManagedDataFormat md = new ManagedDataFormat(context, dataFormat);
+            md.init(context.getManagementStrategy());
+            return md;
         }
     }
 

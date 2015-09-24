@@ -81,6 +81,7 @@ import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -449,6 +450,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                 managedBacklogDebuggers.put(backlogDebugger, md);
             }
             return md;
+        } else if (service instanceof DataFormat) {
+            answer = getManagementObjectStrategy().getManagedObjectForDataFormat(context, (DataFormat) service);
         } else if (service instanceof Producer) {
             answer = getManagementObjectStrategy().getManagedObjectForProducer(context, (Producer) service);
         } else if (service instanceof Consumer) {

@@ -25,6 +25,7 @@ import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
+import org.apache.camel.management.mbean.ManagedDataFormat;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
@@ -35,7 +36,6 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ManagementAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +92,9 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         } else if (managedObject instanceof ManagedComponent) {
             ManagedComponent mc = (ManagedComponent) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
+        } else if (managedObject instanceof ManagedDataFormat) {
+            ManagedDataFormat md = (ManagedDataFormat) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForDataFormat(md.getContext(), md.getDataFormat());
         } else if (managedObject instanceof ManagedEndpoint) {
             ManagedEndpoint me = (ManagedEndpoint) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForEndpoint(me.getEndpoint());
@@ -134,12 +137,7 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
             if (ms.getService() instanceof Endpoint) {
                 return null;
             }
-            if (ms.getService() instanceof DataFormat) {
-                DataFormat df = (DataFormat) ms.getService();
-                objectName = getManagementNamingStrategy().getObjectNameForDataFormat(ms.getContext(), df);
-            } else {
-                objectName = getManagementNamingStrategy().getObjectNameForService(ms.getContext(), ms.getService());
-            }
+            objectName = getManagementNamingStrategy().getObjectNameForService(ms.getContext(), ms.getService());
         }
 
         return nameType.cast(objectName);
