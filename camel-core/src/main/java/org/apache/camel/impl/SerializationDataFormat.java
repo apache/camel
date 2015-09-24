@@ -32,7 +32,7 @@ import org.apache.camel.util.ExchangeHelper;
  *
  * @version 
  */
-public class SerializationDataFormat implements DataFormat {
+public class SerializationDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat {
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         ObjectOutput out = ExchangeHelper.convertToMandatoryType(exchange, ObjectOutput.class, stream);
@@ -59,5 +59,15 @@ public class SerializationDataFormat implements DataFormat {
                 // ignore
             }
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

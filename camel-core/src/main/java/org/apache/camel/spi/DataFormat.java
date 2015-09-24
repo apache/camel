@@ -21,6 +21,7 @@ import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Service;
 
 /**
  * Represents a
@@ -31,7 +32,9 @@ import org.apache.camel.Message;
  *
  * @version 
  */
-public interface DataFormat {
+public interface DataFormat extends Service {
+
+    // TODO: DataFormats should extends Service like the others
 
     /**
      * Marshals the object to the given Stream.

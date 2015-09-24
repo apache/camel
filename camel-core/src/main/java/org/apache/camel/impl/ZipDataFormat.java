@@ -31,7 +31,7 @@ import org.apache.camel.util.IOHelper;
  * "Deflate" compression data format.
  * See {@link org.apache.camel.model.dataformat.ZipFileDataFormat} for Zip file compression.
  */
-public class ZipDataFormat implements DataFormat {
+public class ZipDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat {
 
     private int compressionLevel;
 
@@ -78,4 +78,13 @@ public class ZipDataFormat implements DataFormat {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

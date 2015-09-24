@@ -30,7 +30,7 @@ import org.apache.camel.util.ExchangeHelper;
  *
  * @version 
  */
-public class StringDataFormat implements DataFormat {
+public class StringDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat {
 
     private String charset;
 
@@ -73,5 +73,14 @@ public class StringDataFormat implements DataFormat {
 
         return answer;
     }
-    
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

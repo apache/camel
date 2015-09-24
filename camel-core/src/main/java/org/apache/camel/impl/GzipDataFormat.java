@@ -24,12 +24,13 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.*;
 import org.apache.camel.util.IOHelper;
 
 /**
  * GZip {@link org.apache.camel.spi.DataFormat} for reading/writing data using gzip.
  */
-public class GzipDataFormat implements DataFormat {
+public class GzipDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat {
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
@@ -59,4 +60,13 @@ public class GzipDataFormat implements DataFormat {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

@@ -71,7 +71,7 @@ public class RefDataFormatTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e2
-    public static final class MyReverseDataFormat implements DataFormat {
+    public static final class MyReverseDataFormat extends ServiceSupport implements DataFormat {
 
         public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
             byte[] bytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, graph);
@@ -92,6 +92,16 @@ public class RefDataFormatTest extends ContextTestSupport {
                 sb.append(ch);
             }
             return sb.toString();
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            // noop
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            // noop
         }
     }
     // END SNIPPET: e2
