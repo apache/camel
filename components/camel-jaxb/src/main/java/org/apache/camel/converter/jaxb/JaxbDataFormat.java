@@ -44,6 +44,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+
+import org.apache.camel.spi.DataFormatName;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.CamelContext;
@@ -68,7 +70,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
     private static final BlockingQueue<SchemaFactory> SCHEMA_FACTORY_POOL = new LinkedBlockingQueue<SchemaFactory>();
@@ -107,6 +109,11 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     public JaxbDataFormat(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "jaxb";
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException, SAXException {

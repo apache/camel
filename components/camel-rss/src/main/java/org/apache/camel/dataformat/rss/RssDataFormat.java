@@ -22,10 +22,9 @@ import java.io.OutputStream;
 import com.sun.syndication.feed.synd.SyndFeed;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * RSS DataFormat
@@ -39,12 +38,16 @@ import org.slf4j.LoggerFactory;
  * Uses <a href="https://rome.dev.java.net/">ROME</a> for RSS parsing.
  * <p/>
  */
-public class RssDataFormat extends ServiceSupport implements DataFormat {
-    protected static final Logger LOG = LoggerFactory.getLogger(RssDataFormat.class);
-    
+public class RssDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+
+    @Override
+    public String getDataFormatName() {
+        return "rss";
+    }
+
     public void marshal(Exchange exchange, Object body, OutputStream out) throws Exception {
-        SyndFeed feed = ExchangeHelper.convertToMandatoryType(exchange, SyndFeed.class, body);        
-        String xml = RssConverter.feedToXml(feed);            
+        SyndFeed feed = ExchangeHelper.convertToMandatoryType(exchange, SyndFeed.class, body);
+        String xml = RssConverter.feedToXml(feed);
         out.write(xml.getBytes());
     }
 

@@ -38,6 +38,7 @@ import com.google.zxing.datamatrix.encoder.SymbolShapeHint;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * https://github.com/zxing/zxing
  */
-public class BarcodeDataFormat extends ServiceSupport implements DataFormat {
+public class BarcodeDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     /**
      * Logger.
@@ -135,6 +136,11 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat {
         this.params.setType(type);
         this.params.setFormat(format);
         this.optimizeHints();
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "barcode";
     }
 
     /**

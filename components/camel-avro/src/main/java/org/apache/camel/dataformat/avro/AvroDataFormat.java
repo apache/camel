@@ -36,10 +36,11 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
-public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final String GENERIC_CONTAINER_CLASSNAME = GenericContainer.class.getName();
     private CamelContext camelContext;
@@ -52,6 +53,11 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     public AvroDataFormat(Schema schema) {
         this.schema = schema;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "avro";
     }
 
     public CamelContext getCamelContext() {

@@ -40,6 +40,7 @@ import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.transform.dom.DOMSource;
 
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -66,7 +67,7 @@ import org.slf4j.LoggerFactory;
 
 
 
-public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     /**
      * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
@@ -363,7 +364,12 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setKeyPassword(keyPassword);
         this.setDigestAlgorithm(digestAlgorithm);
     }
-    
+
+    @Override
+    public String getDataFormatName() {
+        return "secureXML";
+    }
+
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;

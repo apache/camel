@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.QuoteMode;
@@ -35,7 +36,7 @@ import org.apache.commons.csv.QuoteMode;
  * Autogeneration can be disabled. In this case, only the fields defined in
  * csvConfig are written on the output.
  */
-public class CsvDataFormat extends ServiceSupport implements DataFormat {
+public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     // CSV format options
     private CSVFormat format = CSVFormat.DEFAULT;
     private boolean commentMarkerDisabled;
@@ -70,6 +71,11 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat {
 
     public CsvDataFormat(CSVFormat format) {
         setFormat(format);
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "csv";
     }
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {

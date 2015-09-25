@@ -21,6 +21,7 @@ import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.jibx.runtime.BindingDirectory;
@@ -29,7 +30,7 @@ import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
 
-public class JibxDataFormat extends ServiceSupport implements DataFormat {
+public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private Class<?> unmarshallClass;
     private String bindingName;
 
@@ -43,6 +44,11 @@ public class JibxDataFormat extends ServiceSupport implements DataFormat {
     public JibxDataFormat(Class<?> unmarshallClass, String bindingName) {
         this.setUnmarshallClass(unmarshallClass);
         this.setBindingName(bindingName);
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "jibx";
     }
 
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {

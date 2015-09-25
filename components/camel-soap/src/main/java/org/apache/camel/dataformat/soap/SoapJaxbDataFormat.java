@@ -92,6 +92,11 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     }
 
     @Override
+    public String getDataFormatName() {
+        return "soapjaxb";
+    }
+
+    @Override
     protected void doStart() throws Exception {
         if ("1.2".equals(version)) {
             LOG.debug("Using SOAP 1.2 adapter");

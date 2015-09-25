@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ChildServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.boon.json.JsonFactory;
@@ -37,7 +38,7 @@ import org.boon.json.ObjectMapper;
  * href="http://richardhightower.github.io/site/Boon/">Boon</a> to marshal to
  * and from JSON.
  */
-public class BoonDataFormat extends ChildServiceSupport implements DataFormat {
+public class BoonDataFormat extends ChildServiceSupport implements DataFormat, DataFormatName {
 
     private final ObjectMapper objectMapper;
     private Class<?> unmarshalType;
@@ -65,6 +66,11 @@ public class BoonDataFormat extends ChildServiceSupport implements DataFormat {
     public BoonDataFormat(Class<?> unmarshalType, ObjectMapper mapper) {
         this.unmarshalType = unmarshalType;
         this.objectMapper = mapper;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "boon";
     }
 
     @Override

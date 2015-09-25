@@ -30,6 +30,7 @@ import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
@@ -38,7 +39,7 @@ import org.apache.camel.util.IOHelper;
  * <a href="http://json-lib.sourceforge.net/">json-lib</a> to convert between XML
  * and JSON directly.
  */
-public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
+public class XmlJsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private XMLSerializer serializer;
 
@@ -57,6 +58,11 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
     private TypeHintsEnum typeHints;
 
     public XmlJsonDataFormat() {
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "xmljson";
     }
 
     @Override

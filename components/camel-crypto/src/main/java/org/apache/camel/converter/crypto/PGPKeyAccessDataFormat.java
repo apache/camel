@@ -33,6 +33,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -78,7 +79,7 @@ import org.slf4j.LoggerFactory;
  * array or file, then you should use the class {@link PGPDataFormat}.
  * 
  */
-public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat {
+public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final Logger log = LoggerFactory.getLogger(PGPKeyAccessDataFormat.class);
 
@@ -178,6 +179,11 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private String fileName = PGPLiteralData.CONSOLE;
 
     public PGPKeyAccessDataFormat() {
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "pgp";
     }
 
     protected String findKeyUserid(Exchange exchange) {

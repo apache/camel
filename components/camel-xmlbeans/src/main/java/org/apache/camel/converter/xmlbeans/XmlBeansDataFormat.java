@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -31,7 +32,12 @@ import org.apache.xmlbeans.XmlObject;
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using XmlBeans to marshal to and from XML
  */
-public class XmlBeansDataFormat extends ServiceSupport implements DataFormat {
+public class XmlBeansDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+
+    @Override
+    public String getDataFormatName() {
+        return "xmlBeans";
+    }
 
     public void marshal(final Exchange exchange, final Object body, final OutputStream stream) throws Exception {
         ObjectHelper.callWithTCCL(new Callable<Void>() {
@@ -42,7 +48,7 @@ public class XmlBeansDataFormat extends ServiceSupport implements DataFormat {
                 return null;
             }
         }, exchange);
-        
+
     }
 
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
@@ -63,5 +69,4 @@ public class XmlBeansDataFormat extends ServiceSupport implements DataFormat {
     protected void doStop() throws Exception {
         // noop
     }
-
 }

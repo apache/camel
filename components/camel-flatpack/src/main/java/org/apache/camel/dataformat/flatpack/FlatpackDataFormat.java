@@ -36,6 +36,7 @@ import net.sf.flatpack.writer.Writer;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.flatpack.DataSetList;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -56,7 +57,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class FlatpackDataFormat extends ServiceSupport implements DataFormat {
+public class FlatpackDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private static final Logger LOG = LoggerFactory.getLogger(FlatpackDataFormat.class);
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
     private char delimiter = ',';
@@ -66,6 +67,11 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat {
     private boolean allowShortLines;
     private boolean ignoreExtraColumns;
     private String definition;
+
+    @Override
+    public String getDataFormatName() {
+        return "flatback";
+    }
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {

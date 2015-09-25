@@ -216,4 +216,9 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
         }
         return new FixedWidthFieldLengths(fields);
     }
+
+    @Override
+    public String getDataFormatName() {
+        return "univocity-fixed";
+    }
 }

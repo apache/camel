@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -46,7 +47,7 @@ import org.apache.xmlrpc.parser.XmlRpcRequestParser;
 import org.apache.xmlrpc.parser.XmlRpcResponseParser;
 import org.apache.xmlrpc.util.SAXParsers;
 
-public class XmlRpcDataFormat extends ServiceSupport implements DataFormat {
+public class XmlRpcDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private XmlRpcStreamRequestConfig xmlRpcStreamRequestConfig = new XmlRpcHttpRequestConfigImpl();
     private TypeFactory typeFactory = new TypeFactoryImpl(null);
     private boolean isRequest;
@@ -63,6 +64,11 @@ public class XmlRpcDataFormat extends ServiceSupport implements DataFormat {
             throw new XmlRpcException("Unsupported encoding: " + encoding, e);
         }
         return writer;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "xmlrpc";
     }
 
     @Override

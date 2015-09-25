@@ -28,7 +28,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXSource;
 
-import org.apache.camel.support.ServiceSupport;
 import org.w3c.dom.Node;
 
 import org.xml.sax.ContentHandler;
@@ -38,6 +37,8 @@ import org.xml.sax.XMLReader;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
@@ -53,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * xpath'ed on.
  * 
  */
-public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat {
+public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     /*
      * Our Logger
@@ -103,6 +104,11 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat {
      * </p>
      */
     private Map<String, Object> parserPropeties;
+
+    @Override
+    public String getDataFormatName() {
+        return "tidyMarkup";
+    }
 
     /**
      * Unsupported operation. We cannot create ugly HTML.
