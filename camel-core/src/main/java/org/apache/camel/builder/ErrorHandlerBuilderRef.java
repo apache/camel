@@ -134,7 +134,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
             }
         } else {
             // use specific configured error handler
-            answer = routeContext.mandatoryLookup(ref, ErrorHandlerBuilder.class);
+            answer = routeContext.lookup(ref, ErrorHandlerBuilder.class);
         }
 
         return answer;
