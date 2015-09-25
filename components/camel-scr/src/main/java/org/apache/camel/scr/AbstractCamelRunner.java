@@ -42,6 +42,7 @@ import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.ReflectionHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -54,7 +55,7 @@ public abstract class AbstractCamelRunner implements Runnable {
     public static final String PROPERTY_PREFIX = "camel.scr.properties.prefix";
     
     protected Logger log = LoggerFactory.getLogger(getClass());
-    protected CamelContext context;
+    protected ModelCamelContext context;
     protected SimpleRegistry registry = new SimpleRegistry();
 
     // Configured fields
