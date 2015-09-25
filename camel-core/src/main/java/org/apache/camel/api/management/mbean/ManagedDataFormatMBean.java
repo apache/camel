@@ -23,6 +23,9 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedDataFormatMBean {
 
+    @ManagedAttribute(description = "The name of the data format")
+    String getName();
+
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 

@@ -19,6 +19,7 @@ package org.apache.camel.management;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -38,6 +39,24 @@ public class ManagedDataFormatTest extends ManagementTestSupport {
         // there should be 1 data format
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=dataformats,*"), null);
         assertEquals(1, set.size());
+
+        ObjectName on = set.iterator().next();
+
+        String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"title\": \"String Encoding\""));
+        assertTrue(json.contains("\"modelJavaType\": \"org.apache.camel.model.dataformat.StringDataFormat\""));
+        assertTrue(json.contains("\"charset\": { \"kind\": \"attribute\""));
+        assertTrue(json.contains("\"value\": \"iso-8859-1\""));
+
+        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
+        assertNotNull(data);
+        assertEquals(2, data.size());
+
+        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
+        assertNotNull(data);
+        assertEquals(1, data.size());
     }
 
     @Override

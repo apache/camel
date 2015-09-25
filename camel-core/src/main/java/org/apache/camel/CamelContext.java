@@ -1559,6 +1559,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     String explainComponentJson(String componentName, boolean includeAllOptions);
 
     /**
+     * Returns a JSON schema representation of the component parameters (not endpoint parameters) for the given component by its id.
+     *
+     * @param dataFormat the data format instance.
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json
+     */
+    String explainDataFormatJson(String dataFormatName, DataFormat dataFormat, boolean includeAllOptions);
+
+    /**
      * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri.
      *
      * @param uri the endpoint uri
