@@ -57,7 +57,7 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
 
     @Override
     public String getDataFormatName() {
-        return "json";
+        return "json-xstream";
     }
 
     public boolean isPrettyPrint() {

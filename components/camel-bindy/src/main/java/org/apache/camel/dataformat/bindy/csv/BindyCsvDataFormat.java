@@ -54,6 +54,11 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         super(type);
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "bindy-csv";
+    }
+
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 

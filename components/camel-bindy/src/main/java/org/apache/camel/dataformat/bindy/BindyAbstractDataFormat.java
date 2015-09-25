@@ -36,11 +36,6 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
         this.classType = classType;
     }
 
-    @Override
-    public String getDataFormatName() {
-        return "bindy";
-    }
-
     public Class<?> getClassType() {
         return classType;
     }

@@ -1643,7 +1643,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             String json = getDataFormatParameterJsonSchema(dataFormatName);
             if (json == null) {
-                return null;
+                // the model may be shared for multiple data formats such as bindy, json (xstream, jackson, gson)
+                if (dataFormatName.contains("-")) {
+                    dataFormatName = ObjectHelper.before(dataFormatName, "-");
+                    json = getDataFormatParameterJsonSchema(dataFormatName);
+                }
+                if (json == null) {
+                    return null;
+                }
             }
 
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);

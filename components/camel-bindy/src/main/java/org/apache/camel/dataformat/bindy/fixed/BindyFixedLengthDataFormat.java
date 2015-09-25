@@ -60,6 +60,11 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         super(type);
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "bindy-fixed";
+    }
+
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();

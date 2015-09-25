@@ -35,6 +35,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
@@ -42,7 +43,7 @@ import org.apache.camel.util.IOHelper;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://code.google.com/p/google-gson/">Gson</a> to marshal to and from JSON.
  */
-public class GsonDataFormat extends ServiceSupport implements DataFormat {
+public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private Gson gson;
     private Class<?> unmarshalType;
@@ -113,6 +114,11 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
     public GsonDataFormat(Gson gson, Type unmarshalGenericType) {
         this.gson = gson;
         this.unmarshalGenericType = unmarshalGenericType;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "json-gson";
     }
 
     @Override
