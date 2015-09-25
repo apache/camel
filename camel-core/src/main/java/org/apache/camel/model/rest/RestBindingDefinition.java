@@ -100,7 +100,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingProcessor(null, null, null, null, consumes, produces, mode, skip, cors, corsHeaders);
+            return new RestBindingProcessor(context, null, null, null, null, consumes, produces, mode, skip, cors, corsHeaders);
         }
 
         // setup json data format
@@ -134,7 +134,6 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", type.endsWith("[]"));
             }
             setAdditionalConfiguration(config, context, json, "json.in.");
-            context.addService(json);
 
             Class<?> outClazz = null;
             if (outType != null) {
@@ -146,7 +145,6 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
             }
             setAdditionalConfiguration(config, context, outJson, "json.out.");
-            context.addService(outJson);
         }
 
         // setup xml data format
@@ -180,7 +178,6 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
             }
             setAdditionalConfiguration(config, context, jaxb, "xml.in.");
-            context.addService(jaxb);
 
             Class<?> outClazz = null;
             if (outType != null) {
@@ -196,10 +193,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
             }
             setAdditionalConfiguration(config, context, outJaxb, "xml.out.");
-            context.addService(outJaxb);
         }
 
-        return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders);
+        return new RestBindingProcessor(context, json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders);
     }
 
     private void setAdditionalConfiguration(RestConfiguration config, CamelContext context, 

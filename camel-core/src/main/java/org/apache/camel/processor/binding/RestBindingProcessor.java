@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Route;
@@ -34,6 +36,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * A {@link org.apache.camel.Processor} that binds the REST DSL incoming and outgoing messages
@@ -44,6 +47,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class RestBindingProcessor extends ServiceSupport implements AsyncProcessor {
 
+    private final CamelContext camelContext;
     private final AsyncProcessor jsonUnmarshal;
     private final AsyncProcessor xmlUnmarshal;
     private final AsyncProcessor jsonMarshal;
@@ -55,11 +59,13 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     private final boolean enableCORS;
     private final Map<String, String> corsHeaders;
 
-    public RestBindingProcessor(DataFormat jsonDataFormat, DataFormat xmlDataFormat,
+    public RestBindingProcessor(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                                 DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
                                 String consumes, String produces, String bindingMode,
                                 boolean skipBindingOnErrorCode, boolean enableCORS,
                                 Map<String, String> corsHeaders) {
+
+        this.camelContext = camelContext;
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
@@ -212,12 +218,25 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        // inject CamelContext before starting
+        if (jsonMarshal instanceof CamelContextAware) {
+            ((CamelContextAware) jsonMarshal).setCamelContext(camelContext);
+        }
+        if (jsonUnmarshal instanceof CamelContextAware) {
+            ((CamelContextAware) jsonUnmarshal).setCamelContext(camelContext);
+        }
+        if (xmlMarshal instanceof CamelContextAware) {
+            ((CamelContextAware) xmlMarshal).setCamelContext(camelContext);
+        }
+        if (xmlUnmarshal instanceof CamelContextAware) {
+            ((CamelContextAware) xmlUnmarshal).setCamelContext(camelContext);
+        }
+        ServiceHelper.startServices(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
     }
 
     @Override
     protected void doStop() throws Exception {
-        // noop
+        ServiceHelper.stopServices(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
     }
 
     /**
