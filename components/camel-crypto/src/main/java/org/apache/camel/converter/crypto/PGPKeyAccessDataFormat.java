@@ -81,8 +81,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
-    private static final Logger log = LoggerFactory.getLogger(PGPKeyAccessDataFormat.class);
-
     public static final String KEY_USERID = "CamelPGPDataFormatKeyUserid";
     public static final String KEY_USERIDS = "CamelPGPDataFormatKeyUserids";
     public static final String SIGNATURE_KEY_USERID = "CamelPGPDataFormatSignatureKeyUserid";
@@ -385,7 +383,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
                 pgpFactory = new PGPObjectFactory(uncompressedData, new BcKeyFingerprintCalculator());
                 object = pgpFactory.nextObject();
             } else {
-                log.debug("PGP Message does not contain a Compressed Data Packet");
+                LOG.debug("PGP Message does not contain a Compressed Data Packet");
             }
             PGPOnePassSignature signature;
             if (object instanceof PGPOnePassSignatureList) {
