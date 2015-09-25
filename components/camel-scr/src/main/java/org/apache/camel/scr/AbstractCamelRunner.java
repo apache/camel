@@ -201,7 +201,7 @@ public abstract class AbstractCamelRunner implements Runnable {
             context.start();
             started = true;
         } catch (Exception e) {
-            // LOL so the best we can do is to try to start every 5th second and cross our fingers - yeah OSGi is lovely ;(
+            // we should have a better way - than just try every 5th second to try to start the bundle
             log.warn("Failed to start Camel context. Will try again when more Camel components have been registered.", e);
         }
     }
