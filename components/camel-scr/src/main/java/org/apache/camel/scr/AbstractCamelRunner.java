@@ -42,6 +42,7 @@ import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.ReflectionHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -54,9 +55,12 @@ public abstract class AbstractCamelRunner implements Runnable {
     public static final String PROPERTY_PREFIX = "camel.scr.properties.prefix";
     
     protected Logger log = LoggerFactory.getLogger(getClass());
-    protected CamelContext context;
+    protected ModelCamelContext context;
     protected SimpleRegistry registry = new SimpleRegistry();
-    protected boolean active;
+
+    // Configured fields
+    private String camelContextId;
+    private boolean active;
 
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture starter;
@@ -82,11 +86,11 @@ public abstract class AbstractCamelRunner implements Runnable {
         // Configure fields from properties
         configure(context, this, log, true);
 
-        setupCamelContext(bundleContext);
+        setupCamelContext(bundleContext, camelContextId);
     }
 
     protected void createCamelContext(final BundleContext bundleContext, final Map<String, String> props) {
-        if (null != bundleContext) {
+        if (bundleContext != null) {
             context = new OsgiDefaultCamelContext(bundleContext, registry);
             // Setup the application context classloader with the bundle classloader
             context.setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
@@ -96,18 +100,13 @@ public abstract class AbstractCamelRunner implements Runnable {
             context = new DefaultCamelContext(registry);
         }
         setupPropertiesComponent(context, props, log);
-
-        String name = props.remove("camelContextId");
-        if (name != null) {
-            context.setNameStrategy(new ExplicitCamelContextNameStrategy(name));
-        }
-
-        // ensure we publish this CamelContext to the OSGi service registry
-        context.getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
     }
     
-    protected void setupCamelContext(final BundleContext bundleContext) throws Exception {
+    protected void setupCamelContext(final BundleContext bundleContext, final String camelContextId) throws Exception {
         // Set up CamelContext
+        if (camelContextId != null) {
+            context.setNameStrategy(new ExplicitCamelContextNameStrategy(camelContextId));
+        }
         context.setUseMDCLogging(true);
         context.setUseBreadcrumb(true);
 
@@ -115,6 +114,9 @@ public abstract class AbstractCamelRunner implements Runnable {
         for (RoutesBuilder route : getRouteBuilders()) {
             context.addRoutes(configure(context, route, log));
         }
+
+        // ensure we publish this CamelContext to the OSGi service registry
+        context.getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
     }
 
     public static void setupPropertiesComponent(final CamelContext context, final Map<String, String> props, Logger log) {
