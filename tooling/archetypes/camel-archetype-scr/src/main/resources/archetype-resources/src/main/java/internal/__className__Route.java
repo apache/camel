@@ -21,12 +21,12 @@ package ${package}.internal;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.commons.lang.Validate;
 
 public class ${className}Route extends RouteBuilder {
 
-    SimpleRegistry registry;
+    Registry registry;
 
     // Configured fields
     private String camelRouteId;
@@ -35,16 +35,13 @@ public class ${className}Route extends RouteBuilder {
     private Double backOffMultiplier;
     private Long maximumRedeliveryDelay;
 
-    public ${className}Route(final SimpleRegistry registry) {
+    public ${className}Route(final Registry registry) {
         this.registry = registry;
     }
 
     @Override
 	public void configure() throws Exception {
         checkProperties();
-
-        // Add a bean to Camel context registry
-        // registry.put("test", "bean");
 
         errorHandler(defaultErrorHandler()
             .retryAttemptedLogLevel(LoggingLevel.WARN)
