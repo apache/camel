@@ -1244,10 +1244,6 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rome/${rome-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rss/${project.version}</bundle>
   </feature>
-  <feature name='camel-ruby' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle dependency='true'>mvn:org.jruby/jruby-complete/${jruby-version}</bundle>
-  </feature>
   <feature name='camel-rx' version='${project.version}' start-level='50'>
     <details>The camel-rx feature can only run on a SUN JVM. You need to add the package sun.misc to the java platform packages in the etc/jre.properties file.</details>
     <feature version='${project.version}'>camel-core</feature>
