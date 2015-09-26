@@ -27,6 +27,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -112,7 +114,8 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     }
 
     private String[] getAvailableScriptNames() {
-        List<String> names = new ArrayList<String>();
+        // use a set to avoid duplicate names
+        Set<String> names = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         for (List<BundleScriptEngineResolver> list : resolvers.values()) {
             for (BundleScriptEngineResolver r : list) {
                 names.addAll(r.getScriptNames());
@@ -174,7 +177,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
             configURL = (URL) e.nextElement();
         }
         if (configURL != null) {
-            LOG.info("Found ScriptEngineFactory in " + bundle.getSymbolicName());
+            LOG.info("Found ScriptEngineFactory in bundle: {}", bundle.getSymbolicName());
             resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
         }
     }
