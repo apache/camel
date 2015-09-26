@@ -19,23 +19,15 @@ package org.apache.camel.component.jolt;
 import java.util.Map;
 
 import com.bazaarvoice.jolt.Transform;
-
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ResourceHelper;
 
-public class JoltComponent extends DefaultComponent {
+public class JoltComponent extends UriEndpointComponent {
     private Transform transform;
 
-    public Transform getTransform() {
-        return transform;
-    }
-
-    /**
-     * Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created
-     */
-    public void setTransform(Transform transform) {
-        this.transform = transform;
+    public JoltComponent() {
+        super(JoltEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -53,4 +45,17 @@ public class JoltComponent extends DefaultComponent {
 
         return answer;
     }
+
+    public Transform getTransform() {
+        return transform;
+    }
+
+    /**
+     * Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created
+     */
+    public void setTransform(Transform transform) {
+        this.transform = transform;
+    }
+
+
 }

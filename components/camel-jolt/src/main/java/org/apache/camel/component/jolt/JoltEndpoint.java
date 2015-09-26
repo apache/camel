@@ -138,7 +138,7 @@ public class JoltEndpoint extends ResourceEndpoint {
     }
     
     /**
-     * Specifies the Transform DSL of the enpoint resource. If non is specified <code>Chainr</code> will be used.
+     * Specifies the Transform DSL of the endpoint resource. If none is specified <code>Chainr</code> will be used.
      */
     public void setTransformDsl(JoltTransformType transformType) {
         this.transformDsl = transformType;
