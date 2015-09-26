@@ -26,7 +26,7 @@ import org.apache.camel.spi.LanguageResolver;
 public class ScriptLanguageResolver implements LanguageResolver {
 
     public Language resolveLanguage(String name, CamelContext context) {
-        // only return if we can suppor the language
+        // only return if we can support the language
         if (ScriptBuilder.supportScriptLanguage(name)) {
             return new ScriptLanguage(name);
         } else {

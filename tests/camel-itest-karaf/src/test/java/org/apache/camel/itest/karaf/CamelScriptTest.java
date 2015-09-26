@@ -29,12 +29,12 @@ public class CamelScriptTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testLanguage(COMPONENT);
+        testLanguage("Groovy");
     }
 
     @Configuration
     public static Option[] configure() {
-        return configure(COMPONENT);
+        return configure(COMPONENT, "script-groovy");
     }
 
 }
