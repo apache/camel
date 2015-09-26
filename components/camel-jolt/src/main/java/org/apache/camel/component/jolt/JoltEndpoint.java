@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "jolt", title = "JOLT", syntax = "jolt:/spec.json", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true, label = "transformation")
 public class JoltEndpoint extends ResourceEndpoint {
     
     private Transform transform;
@@ -74,7 +74,7 @@ public class JoltEndpoint extends ResourceEndpoint {
         if (transform == null) {
             if (log.isDebugEnabled()) {
                 String path = getResourceUri();
-                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{getResourceUri(), path, getEndpointUri()});
+                log.debug("Jolt content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{getResourceUri(), path, getEndpointUri()});
             }
 
             // Sortr does not require a spec

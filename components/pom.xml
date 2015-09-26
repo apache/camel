@@ -140,6 +140,7 @@
     <module>camel-jing</module>
     <module>camel-jira</module>
     <module>camel-jmx</module>
+    <module>camel-jolt</module>
     <module>camel-josql</module>
     <module>camel-jpa</module>
     <module>camel-jsonpath</module>

@@ -46,7 +46,6 @@ public class JoltRemovrTest extends CamelTestSupport {
         assertEquals(2, exchange.getOut().getBody(Map.class).size());
         assertEquals(null, exchange.getOut().getBody(Map.class).get("removeMe"));
         assertEquals("World", exchange.getOut().getBody(Map.class).get("Hello"));
-        
     }
     
     @Override
