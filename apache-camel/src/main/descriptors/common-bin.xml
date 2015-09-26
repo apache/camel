@@ -117,6 +117,7 @@
         <include>org.apache.camel:camel-jira</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-jmx</include>
+        <include>org.apache.camel:camel-jolt</include>
         <include>org.apache.camel:camel-josql</include>
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
