@@ -249,7 +249,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             }
         }
         path = FileUtil.stripLeadingSeparator(path);
-
+        
         String scheme = "http";
         String host = "";
         int port = 0;
@@ -270,6 +270,13 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             port = num;
         }
 
+        String contextPath = config.getContextPath();
+        if(ObjectHelper.isNotEmpty(contextPath)) {
+        	contextPath = FileUtil.stripTrailingSeparator(contextPath);
+        	contextPath = FileUtil.stripLeadingSeparator(contextPath);
+        	path =  contextPath + "/" + path;
+        }
+        
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
             if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
