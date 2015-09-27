@@ -419,6 +419,10 @@ public abstract class MainSupport extends ServiceSupport {
         for (RouteBuilder routeBuilder : routeBuilders) {
             camelContext.addRoutes(routeBuilder);
         }
+        // allow to do configuration before its started
+        for (MainListener listener : listeners) {
+            listener.configure(camelContext);
+        }
     }
 
     public void addRouteBuilder(RouteBuilder routeBuilder) {
