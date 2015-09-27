@@ -41,7 +41,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -272,7 +271,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
 
         String contextPath = config.getContextPath();
-        if(StringUtils.isNotEmpty(contextPath)) {
+        if(ObjectHelper.isNotEmpty(contextPath)) {
         	contextPath = FileUtil.stripTrailingSeparator(contextPath);
         	contextPath = FileUtil.stripLeadingSeparator(contextPath);
         	path =  contextPath + "/" + path;
