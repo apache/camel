@@ -377,6 +377,8 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency="true">wrap:mvn:javax.servlet/servlet-api/2.5</bundle>
     <bundle dependency='true'>wrap:mvn:com.dropbox.core/dropbox-core-sdk/${dropbox-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.squareup.okhttp/okhttp/${squareup-okhttp-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.squareup.okio/okio/${squareup-okio-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dropbox/${project.version}</bundle>
   </feature>
   <feature name='camel-elasticsearch' version='${project.version}' resolver='(obr)' start-level='50'>
