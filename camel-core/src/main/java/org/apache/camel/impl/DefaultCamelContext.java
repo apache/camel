@@ -2654,7 +2654,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public String getUptime() {
         // compute and log uptime
         if (startDate == null) {
-            return "not started";
+            return "";
         }
         long delta = new Date().getTime() - startDate.getTime();
         return TimeUtils.printDuration(delta);
