@@ -270,11 +270,14 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             port = num;
         }
 
+        // prefix path with context-path if configured in rest-dsl configuration
         String contextPath = config.getContextPath();
         if (ObjectHelper.isNotEmpty(contextPath)) {
             contextPath = FileUtil.stripTrailingSeparator(contextPath);
             contextPath = FileUtil.stripLeadingSeparator(contextPath);
-            path = contextPath + "/" + path;
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
+            }
         }
         
         // if no explicit hostname set then resolve the hostname

@@ -159,28 +159,38 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         }
         path = FileUtil.stripLeadingSeparator(path);
 
-        if (ObjectHelper.isNotEmpty(path)) {
-            // spark-rest uses :name syntax instead of {name} so we need to replace those
-            Matcher matcher = pattern.matcher(path);
-            path = matcher.replaceAll(":$1");
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("spark-rest", true);
         }
-
-        String uri = String.format("spark-rest:%s:%s", verb, path);
 
         Map<String, Object> map = new HashMap<String, Object>();
         if (consumes != null) {
             map.put("accept", consumes);
         }
 
-        // build query string, and append any endpoint configuration properties
-        RestConfiguration config = configuration;
-        if (config == null) {
-            config = getCamelContext().getRestConfiguration("spark-rest", true);
-        }
         // setup endpoint options
         if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
             map.putAll(config.getEndpointProperties());
         }
+
+        if (ObjectHelper.isNotEmpty(path)) {
+            // spark-rest uses :name syntax instead of {name} so we need to replace those
+            Matcher matcher = pattern.matcher(path);
+            path = matcher.replaceAll(":$1");
+        }
+
+        // prefix path with context-path if configured in rest-dsl configuration
+        String contextPath = config.getContextPath();
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
+            }
+        }
+
+        String uri = String.format("spark-rest:%s:%s", verb, path);
 
         String query = URISupport.createQueryString(map);
 

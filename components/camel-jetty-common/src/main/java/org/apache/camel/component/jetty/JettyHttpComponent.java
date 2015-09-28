@@ -1036,6 +1036,16 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             port = num;
         }
 
+        // prefix path with context-path if configured in rest-dsl configuration
+        String contextPath = config.getContextPath();
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
+            }
+        }
+
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
             if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {

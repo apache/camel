@@ -197,6 +197,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             map.putAll(config.getEndpointProperties());
         }
 
+        // do not append with context-path as the servlet path should be without context-path
+
         String query = URISupport.createQueryString(map);
 
         String url;
