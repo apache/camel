@@ -1,5 +1,5 @@
-/** 
-* Licensed to the Apache Software Foundation (ASF) under one or more
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package org.apache.camel.component.cxf;
+package org.apache.camel.component.cxf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,60 +28,55 @@ import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.junit.Test;
 
 public class CxfProducerSoapActionTest extends CamelTestSupport {
-	
-	private static final String SOAP_ACTION = "http://camel.apache.org/order/Order";
-	private static final String OPERATION_NAMESPACE = "http://camel.apache.org/order";
-	private static final String OPERATION_NAME = "order";
-	private static final String DIRECT_START = "direct:start";
-	private static final String CXF_ENDPOINT = "cxf:http://localhost:9000/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
-	private static final String REQUEST_MESSAGE = "<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-			+ "<Body/>"
-			+ "</Envelope>";
 
-	@Test
-	public void testSendSoapRequestWithoutSoapActionSet() {
-		template.requestBody(DIRECT_START, REQUEST_MESSAGE, String.class);
-	}
-	
-	
-	protected RouteBuilder createRouteBuilder() {
-		return new RouteBuilder() {
+    private static final String SOAP_ACTION = "http://camel.apache.org/order/Order";
+    private static final String OPERATION_NAMESPACE = "http://camel.apache.org/order";
+    private static final String OPERATION_NAME = "order";
+    private static final String DIRECT_START = "direct:start";
+    private static final String CXF_ENDPOINT = "cxf:http://localhost:9000/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
+    private static final String REQUEST_MESSAGE = "<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                                                  + "<Body/>" + "</Envelope>";
 
-			@Override
-			public void configure() throws Exception {
-				from(DIRECT_START)
-				.setHeader(CxfConstants.OPERATION_NAME, constant(OPERATION_NAME))
-				.setHeader(CxfConstants.OPERATION_NAMESPACE, constant(OPERATION_NAMESPACE))
-				.process(new Processor() {
+    @Test
+    public void testSendSoapRequestWithoutSoapActionSet() {
+        template.requestBody(DIRECT_START, REQUEST_MESSAGE, String.class);
+    }
 
-					@Override
-					public void process(Exchange exchange) throws Exception {
-						
-						final List<Object> params = new ArrayList<Object>();
-						params.add("foo");
-						params.add(10);
-						params.add("bar");
-												
-						exchange.getIn().setBody(params);
-						
-					}
-				})
-				.to("log:org.apache.camel?level=DEBUG")
-				.to(CXF_ENDPOINT + "&serviceClass=org.apache.camel.order.OrderEndpoint");
-				
-				from(CXF_ENDPOINT + "&dataFormat=POJO&serviceClass=org.apache.camel.order.OrderEndpoint")
-				.process(new Processor() {
-					
-					@Override
-					public void process(Exchange exchange) throws Exception {
-						String soapAction = exchange.getIn().getHeader(SoapBindingConstants.SOAP_ACTION, String.class);
-						assertEquals(SOAP_ACTION, soapAction);
-						
-					}
-				});
-			}
-			
-		};
-	}
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+
+            @Override
+            public void configure() throws Exception {
+                from(DIRECT_START).setHeader(CxfConstants.OPERATION_NAME, constant(OPERATION_NAME))
+                    .setHeader(CxfConstants.OPERATION_NAMESPACE, constant(OPERATION_NAMESPACE))
+                    .process(new Processor() {
+
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            final List<Object> params = new ArrayList<Object>();
+                            params.add("foo");
+                            params.add(10);
+                            params.add("bar");
+    
+                            exchange.getIn().setBody(params);
+    
+                        }
+                    }).to("log:org.apache.camel?level=DEBUG")
+                        .to(CXF_ENDPOINT + "&serviceClass=org.apache.camel.order.OrderEndpoint");
+
+                from(CXF_ENDPOINT + "&dataFormat=POJO&serviceClass=org.apache.camel.order.OrderEndpoint")
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            String soapAction = exchange.getIn().getHeader(SoapBindingConstants.SOAP_ACTION,
+                                                                           String.class);
+                            assertEquals(SOAP_ACTION, soapAction);
+    
+                        }
+                    });
+            }
+
+        };
+    }
 
 }
