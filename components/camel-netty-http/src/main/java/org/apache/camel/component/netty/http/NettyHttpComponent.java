@@ -272,10 +272,10 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
 
         String contextPath = config.getContextPath();
-        if(ObjectHelper.isNotEmpty(contextPath)) {
-        	contextPath = FileUtil.stripTrailingSeparator(contextPath);
-        	contextPath = FileUtil.stripLeadingSeparator(contextPath);
-        	path =  contextPath + "/" + path;
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            path = contextPath + "/" + path;
         }
         
         // if no explicit hostname set then resolve the hostname
