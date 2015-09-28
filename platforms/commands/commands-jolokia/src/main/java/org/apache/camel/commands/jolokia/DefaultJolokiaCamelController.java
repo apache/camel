@@ -332,7 +332,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
 
             List<J4pReadRequest> list = new ArrayList<J4pReadRequest>();
             for (ObjectName on : sr.getObjectNames()) {
-                list.add(new J4pReadRequest(on, "CamelId", "RouteId", "State"));
+                list.add(new J4pReadRequest(on, "CamelId", "RouteId", "State", "Uptime", "ExchangesTotal", "ExchangesInflight", "ExchangesFailed"));
             }
 
             List<J4pReadResponse> lrr = jolokia.execute(list);
@@ -343,6 +343,10 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
                     row.put("camelContextName", rr.getValue("CamelId").toString());
                     row.put("routeId", routeId);
                     row.put("state", rr.getValue("State").toString());
+                    row.put("uptime", rr.getValue("Uptime").toString());
+                    row.put("exchangesTotal", rr.getValue("ExchangesTotal").toString());
+                    row.put("exchangesInflight", rr.getValue("ExchangesInflight").toString());
+                    row.put("exchangesFailed", rr.getValue("ExchangesFailed").toString());
                     answer.add(row);
                 }
             }
