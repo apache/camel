@@ -49,6 +49,7 @@ public class ScrHelperTest {
     public void scrHelperTest() throws Exception {
         Map<String, String> properties = ScrHelper.getScrProperties("src/test/resources/componentDefinitionExample.xml", "my.example.Component");
         assertEquals("exampleContext", properties.get("camelContextId"));
+        assertEquals("true", properties.get("active"));
         assertTrue(properties.size() == 6);
     }
 }
