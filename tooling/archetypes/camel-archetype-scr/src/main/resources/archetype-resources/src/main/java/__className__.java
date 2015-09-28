@@ -31,16 +31,10 @@ import org.apache.felix.scr.annotations.*;
 @Component(label = ${className}.COMPONENT_LABEL, description = ${className}.COMPONENT_DESCRIPTION, immediate = true, metatype = true)
 @Properties({
     @Property(name = "camelContextId", value = "${artifactId}"),
-    @Property(name = "camelRouteId", value = "foo/timer-log"),
+    @Property(name = "camelRouteId", value = "foo"),
     @Property(name = "active", value = "true"),
     @Property(name = "from", value = "timer:foo?period=5000"),
-    @Property(name = "to", value = "log:foo?showHeaders=true"),
-    @Property(name = "messageOk", value = "Success: {{from}} -> {{to}}"),
-    @Property(name = "messageError", value = "Failure: {{from}} -> {{to}}"),
-    @Property(name = "maximumRedeliveries", value = "0"),
-    @Property(name = "redeliveryDelay", value = "5000"),
-    @Property(name = "backOffMultiplier", value = "2"),
-    @Property(name = "maximumRedeliveryDelay", value = "60000")
+    @Property(name = "to", value = "log:foo")
 })
 @References({
     @Reference(name = "camelComponent",referenceInterface = ComponentResolver.class,
@@ -55,7 +49,8 @@ public class ${className} extends AbstractCamelRunner {
     @Override
     protected List<RoutesBuilder>getRouteBuilders() {
         List<RoutesBuilder>routesBuilders = new ArrayList<>();
-        routesBuilders.add(new ${className}Route(registry));
+        routesBuilders.add(new ${className}Route());
         return routesBuilders;
     }
+
 }
