@@ -27,7 +27,7 @@
 
   <artifactId>camel-jetty8</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Jetty8</name>
+  <name>Camel :: Jetty8 (deprecated)</name>
   <description>Camel Jetty8 support</description>
 
   <properties>

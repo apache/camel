@@ -296,8 +296,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
             File[] components = componentsDir.listFiles();
             if (components != null) {
                 for (File dir : components) {
-                    // skip camel-jetty9 as its a duplicate of camel-jetty8
-                    if (dir.isDirectory() && !"camel-jetty9".equals(dir.getName()) && !"target".equals(dir.getName())) {
+                    // skip camel-jetty8 as its a duplicate of camel-jetty9
+                    if (dir.isDirectory() && !"camel-jetty8".equals(dir.getName()) && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
 
                         // special for camel-salesforce which is in a sub dir
