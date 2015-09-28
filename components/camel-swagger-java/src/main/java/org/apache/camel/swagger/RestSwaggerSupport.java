@@ -179,6 +179,8 @@ public class RestSwaggerSupport {
 
         List<RestDefinition> rests = getRestDefinitions(contextId);
         if (rests != null) {
+            response.addHeader(Exchange.CONTENT_TYPE, "application/json");
+
             // read the rest-dsl into swagger model
             Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
 
