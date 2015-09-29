@@ -58,6 +58,7 @@ public class RestConfiguration {
     private Map<String, Object> dataFormatProperties;
     private Map<String, Object> apiProperties;
     private Map<String, String> corsHeaders;
+    private boolean apiContextRouteDefined = false;
 
     /**
      * Gets the name of the Camel component to use as the REST consumer
@@ -458,4 +459,22 @@ public class RestConfiguration {
     public void setCorsHeaders(Map<String, String> corsHeaders) {
         this.corsHeaders = corsHeaders;
     }
+
+	/**
+	 * @return
+	 */
+	public boolean isApiContextRouteDefined() {
+		return apiContextRouteDefined;
+	}
+
+	/**
+	 * Sets if a route definition for the API has been set or not.
+	 * This is to avoid adding API routes multiple times.
+	 * 
+	 * @param apiContextRouteDefined
+	 */
+	public void setApiContextRouteDefined(boolean apiContextRouteDefined) {
+		this.apiContextRouteDefined = apiContextRouteDefined;
+	}
+    
 }

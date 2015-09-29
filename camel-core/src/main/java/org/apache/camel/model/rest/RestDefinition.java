@@ -533,7 +533,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
         for (RestConfiguration config : camelContext.getRestConfigurations()) {
             addRouteDefinition(camelContext, answer, config.getComponent());
-            if (config.getApiContextPath() != null) {
+            if (config.getApiContextPath() != null && !config.isApiContextRouteDefined()) {
                 addApiRouteDefinition(camelContext, answer, config);
             }
         }
@@ -576,6 +576,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         route.to(to);
         route.setRestDefinition(this);
         answer.add(route);
+        configuration.setApiContextRouteDefined(true);
     }
 
     private void addRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, String component) {
