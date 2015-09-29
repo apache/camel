@@ -61,9 +61,9 @@
 
         From the command shell you can use curl to access the service as shown below:
 <pre>
-    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat/rest/user/123
-    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat/rest/user/findAll
-    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat/rest/user
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-swagger-java/rest/user/123
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-swagger-java/rest/user/findAll
+    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-swagger-java/rest/user
 </pre>
 
         Notice when trying to get user with id 789 then there is a built-in delay of 0.5-2 seconds, to simulate some
@@ -78,7 +78,7 @@
         </ul>
 
         <p/>
-        To use the swagger ui, follow this link. Replace the URL value with this one to access the REST local resources http://localhost:8080/camel-example-servlet-rest-tomcat/api-docs/myCamel
+        To use the swagger ui, follow this link. Replace the URL value with this one to access the REST local resources http://localhost:8080/camel-example-swagger-java/api-docs/myCamel
         <ul>
             <li><a href="index.html">swagger</a> - swagger ui page</li>
         </ul>
