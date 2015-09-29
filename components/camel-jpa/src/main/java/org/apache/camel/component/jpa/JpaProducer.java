@@ -55,7 +55,7 @@ public class JpaProducer extends DefaultProducer {
     public void process(final Exchange exchange) {
         // resolve the entity manager before evaluating the expression
         final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,
-                getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager());
+                getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
         final Object values = expression.evaluate(exchange, Object.class);
 
         if (values != null) {
