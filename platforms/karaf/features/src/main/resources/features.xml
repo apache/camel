@@ -482,6 +482,15 @@
     <bundle dependency='true'>wrap:mvn:com.google.code.geocoder-java/geocoder-java/${geocoder-java-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-geocoder/${project.version}</bundle>
   </feature>
+  <feature name='camel-git' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.eclipse.jgit/org.eclipse.jgit/${jgit-version}</bundle>
+    <bundle dependency='true'>mvn:com.googlecode.javaewah/JavaEWAH/0.7.9</bundle>
+    <bundle dependency="true">wrap:mvn:com.jcraft/jsch/${jsch-version}$Bundle-SymbolicName=com.jcraft.jsch&amp;Bundle-Version=${jsch-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-git/${project.version}</bundle>
+  </feature>
   <feature name='camel-github' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <!--the lastest gson version of github core supports is 2.2.2 -->
