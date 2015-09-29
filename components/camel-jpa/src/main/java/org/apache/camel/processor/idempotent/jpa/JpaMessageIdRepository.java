@@ -83,7 +83,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean add(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, true);
 
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -118,7 +118,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean contains(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, true);
 
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -147,7 +147,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean remove(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, true);
 
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
