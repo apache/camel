@@ -314,13 +314,18 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     protected void doStop() throws Exception {
-        LOG.info("Apache Camel " + getVersion() + " stopping");
+        if (!isStopped()) {
+            LOG.info("Apache Camel " + getVersion() + " stopping");
+        }
         // call completed to properly stop as we count down the waiting latch
         completed();
     }
 
     protected void doStart() throws Exception {
-        LOG.info("Apache Camel " + getVersion() + " starting");
+        if (!isStarted()) {
+            // only log if we are not already started as camel-spring-boot etc. has a different start ordering
+            LOG.info("Apache Camel " + getVersion() + " starting");
+        }
     }
 
     protected void waitUntilCompleted() {
