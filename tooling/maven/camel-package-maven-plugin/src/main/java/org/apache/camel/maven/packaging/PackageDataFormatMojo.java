@@ -363,7 +363,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
     private static String createParameterJsonSchema(DataFormatModel dataFormatModel, String schema) {
         StringBuilder buffer = new StringBuilder("{");
-        // component model
+        // dataformat model
         buffer.append("\n \"dataformat\": {");
         buffer.append("\n    \"name\": \"").append(dataFormatModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("dataformat").append("\",");

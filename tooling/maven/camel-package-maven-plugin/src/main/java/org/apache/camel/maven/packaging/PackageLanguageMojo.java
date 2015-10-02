@@ -110,7 +110,7 @@ public class PackageLanguageMojo extends AbstractMojo {
         // first we need to setup the output directory because the next check
         // can stop the build before the end and eclipse always needs to know about that directory 
         if (projectHelper != null) {
-            projectHelper.addResource(project, languageOutDir.getPath(), Collections.singletonList("**/dataformat.properties"), Collections.emptyList());
+            projectHelper.addResource(project, languageOutDir.getPath(), Collections.singletonList("**/language.properties"), Collections.emptyList());
         }
 
         if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
@@ -180,10 +180,14 @@ public class PackageLanguageMojo extends AbstractMojo {
                                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                                 for (Map<String, String> row : rows) {
                                     if (row.containsKey("title")) {
-                                        languageModel.setTitle(row.get("title"));
+                                        // title may be special for some languages
+                                        String title = asTitle(name, row.get("title"));
+                                        languageModel.setTitle(title);
                                     }
                                     if (row.containsKey("description")) {
-                                        languageModel.setDescription(row.get("description"));
+                                        // description may be special for some languages
+                                        String desc = asDescription(name, row.get("description"));
+                                        languageModel.setDescription(desc);
                                     }
                                     if (row.containsKey("label")) {
                                         languageModel.setLabel(row.get("label"));
@@ -314,6 +318,22 @@ public class PackageLanguageMojo extends AbstractMojo {
         return name;
     }
 
+    private static String asTitle(String name, String title) {
+        // special for some languages
+        if ("file".equals(name)) {
+            return "File";
+        }
+        return title;
+    }
+
+    private static String asDescription(String name, String description) {
+        // special for some languages
+        if ("file".equals(name)) {
+            return "For expressions and predicates using the file/simple language";
+        }
+        return description;
+    }
+
     private static Artifact findCamelCoreArtifact(MavenProject project) {
         // maybe this project is camel-core itself
         Artifact artifact = project.getArtifact();
@@ -340,7 +360,7 @@ public class PackageLanguageMojo extends AbstractMojo {
 
     private static String createParameterJsonSchema(LanguageModel languageModel, String schema) {
         StringBuilder buffer = new StringBuilder("{");
-        // component model
+        // language model
         buffer.append("\n \"language\": {");
         buffer.append("\n    \"name\": \"").append(languageModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("language").append("\",");
