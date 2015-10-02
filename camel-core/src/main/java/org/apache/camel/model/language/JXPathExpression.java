@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "language", title = "JXPath")
+@Metadata(label = "language,java", title = "JXPath")
 @XmlRootElement(name = "jxpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JXPathExpression extends ExpressionDefinition {
