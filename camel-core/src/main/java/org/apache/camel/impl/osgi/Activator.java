@@ -225,7 +225,32 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 }
             }
         }
+
+        // it may be running outside real OSGi container such as when unit testing with camel-test-blueprint
+        // then we need to use a different canSee algorithm that works outside real OSGi
+        if (bundle.getBundleId() > 0) {
+            Bundle root = bundle.getBundleContext().getBundle(0);
+            if (root != null && "org.apache.felix.connect".equals(root.getSymbolicName())) {
+                return checkCompat(bundle, clazz);
+            }
+        }
+
         return false;
+    }
+
+    /**
+     * Check if bundle can see the given class used by camel-test-blueprint
+     */
+    protected static boolean checkCompat(Bundle bundle, Class<?> clazz) {
+        // Check bundle compatibility
+        try {
+            if (bundle.loadClass(clazz.getName()) != clazz) {
+                return false;
+            }
+        } catch (Throwable t) {
+            return false;
+        }
+        return true;
     }
 
     protected static class BundleComponentResolver extends BaseResolver<Component> implements ComponentResolver {
