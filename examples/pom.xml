@@ -65,7 +65,6 @@
     <module>camel-example-route-throttling</module>
     <module>camel-example-servlet-rest-blueprint</module>
     <module>camel-example-servlet-tomcat</module>
-    <module>camel-example-servlet-tomcat-blueprintweb</module>
     <module>camel-example-servlet-tomcat-no-spring</module>
     <module>camel-example-simplejirabot</module>
     <module>camel-example-spark-rest-tomcat</module>
