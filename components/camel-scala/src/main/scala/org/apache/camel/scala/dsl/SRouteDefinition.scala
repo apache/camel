@@ -19,6 +19,9 @@ package org.apache.camel.scala.dsl
 import org.apache.camel.model.RouteDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 import org.apache.camel.builder.ErrorHandlerBuilder
+import org.apache.camel.spi.RoutePolicy
+
+import scala.collection.JavaConversions._
 
 case class SRouteDefinition(override val target: RouteDefinition, builder: RouteBuilder) extends SAbstractDefinition[RouteDefinition] {
  
@@ -40,4 +43,6 @@ case class SRouteDefinition(override val target: RouteDefinition, builder: Route
 
   def noAutoStartup() = wrap(target.autoStartup(false))
 
+  def routePolicy(routePolicy: RoutePolicy*) = wrap(target.setRoutePolicies(routePolicy))
+  
 }
