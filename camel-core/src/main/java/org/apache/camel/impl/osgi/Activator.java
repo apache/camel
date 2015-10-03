@@ -242,11 +242,13 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             return true;
         }
         BundleCapability packageCap = packageCapabilities.get(clazz.getPackage().getName());
-        BundleWiring wiring = bundle.adapt(BundleWiring.class);
-        List<BundleWire> imports = wiring.getRequiredWires(PACKAGE_NAMESPACE);
-        for (BundleWire importWire : imports) {
-            if (packageCap.equals(importWire.getCapability())) {
-                return true;
+        if (packageCap != null) {
+            BundleWiring wiring = bundle.adapt(BundleWiring.class);
+            List<BundleWire> imports = wiring.getRequiredWires(PACKAGE_NAMESPACE);
+            for (BundleWire importWire : imports) {
+                if (packageCap.equals(importWire.getCapability())) {
+                    return true;
+                }
             }
         }
         return false;
