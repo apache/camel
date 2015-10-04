@@ -1,0 +1,5 @@
+@NAME(projects)
+  SELECT *
+  FROM projects
+  WHERE license = :body
+  ORDER BY id

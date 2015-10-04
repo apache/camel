@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.opengamma.elsql.ElSql;
+import com.opengamma.elsql.SpringSqlParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.SqlEndpoint;
 import org.apache.camel.component.sql.SqlProcessingStrategy;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 public class ElsqlSqlProcessingStrategy implements SqlProcessingStrategy {
 
@@ -42,7 +44,9 @@ public class ElsqlSqlProcessingStrategy implements SqlProcessingStrategy {
 
     @Override
     public int commit(final SqlEndpoint endpoint, final Exchange exchange, final Object data, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
-        String sql = elSql.getSql(elSqlName, new ElsqlSqlParams(exchange, data));
+        final SqlParameterSource param = new ElsqlSqlMapSource(exchange, data);
+        final String sql = elSql.getSql(elSqlName, new SpringSqlParams(param));
+        LOG.debug("ElSql @{} using sql: {}", elSqlName, sql);
 
         return jdbcTemplate.execute(sql, new PreparedStatementCallback<Integer>() {
             @Override

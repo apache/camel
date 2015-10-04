@@ -22,14 +22,16 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.opengamma.elsql.ElSql;
+import com.opengamma.elsql.SpringSqlParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.component.sql.SqlEndpoint;
 import org.apache.camel.component.sql.SqlOutputType;
 import org.apache.camel.impl.DefaultProducer;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 
@@ -37,9 +39,9 @@ public class ElsqlProducer extends DefaultProducer {
 
     private final ElSql elSql;
     private final String elSqlName;
-    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public ElsqlProducer(SqlEndpoint endpoint, ElSql elSql, String elSqlName, JdbcTemplate jdbcTemplate) {
+    public ElsqlProducer(SqlEndpoint endpoint, ElSql elSql, String elSqlName, NamedParameterJdbcTemplate jdbcTemplate) {
         super(endpoint);
         this.elSql = elSql;
         this.elSqlName = elSqlName;
@@ -55,19 +57,22 @@ public class ElsqlProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         Object data = exchange.getIn().getBody();
 
-        final String sql = elSql.getSql(elSqlName, new ElsqlSqlParams(exchange, data));
+        final SqlParameterSource param = new ElsqlSqlMapSource(exchange, data);
+        final String sql = elSql.getSql(elSqlName, new SpringSqlParams(param));
+        log.debug("ElSql @{} using sql: {}", elSqlName, sql);
 
-        jdbcTemplate.execute(sql, new PreparedStatementCallback<Object>() {
+        jdbcTemplate.execute(sql, param, new PreparedStatementCallback<Object>() {
             @Override
             public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
                 ResultSet rs = null;
                 try {
                     boolean isResultSet = ps.execute();
                     if (isResultSet) {
+                        rs = ps.getResultSet();
+
                         // preserve headers first, so we can override the SQL_ROW_COUNT header
                         exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
 
-                        rs = ps.getResultSet();
                         SqlOutputType outputType = getEndpoint().getOutputType();
                         log.trace("Got result list from query: {}, outputType={}", rs, outputType);
                         if (outputType == SqlOutputType.SelectList) {
@@ -99,8 +104,6 @@ public class ElsqlProducer extends DefaultProducer {
                         } else {
                             throw new IllegalArgumentException("Invalid outputType=" + outputType);
                         }
-                    } else {
-                        exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                     }
                 } finally {
                     closeResultSet(rs);

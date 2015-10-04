@@ -20,20 +20,20 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import com.opengamma.elsql.ElSqlConfig;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.sql.SqlComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-public class ElsqlComponent extends SqlComponent {
+public class ElsqlComponent extends UriEndpointComponent {
 
+    private DataSource dataSource;
     private ElSqlConfig elSqlConfig;
     private String resourceUri;
 
-    public ElsqlComponent(CamelContext context) {
-        super(context, ElsqlEndpoint.class);
+    public ElsqlComponent() {
+        super(ElsqlEndpoint.class);
     }
 
     @Override
@@ -57,12 +57,12 @@ public class ElsqlComponent extends SqlComponent {
             throw new IllegalArgumentException("DataSource must be configured");
         }
 
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
+        NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(target);
         IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
 
         String elsqlName = remaining;
         String resUri = resourceUri;
-        String[] part = remaining.split("/");
+        String[] part = remaining.split(":");
         if (part.length == 2) {
             elsqlName = part[0];
             resUri = part[1];
@@ -104,6 +104,27 @@ public class ElsqlComponent extends SqlComponent {
         return endpoint;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (elSqlConfig == null) {
+            elSqlConfig = ElSqlConfig.DEFAULT;
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    /**
+     * Sets the DataSource to use to communicate with the database.
+     */
     public ElSqlConfig getElSqlConfig() {
         return elSqlConfig;
     }
@@ -124,24 +145,6 @@ public class ElsqlComponent extends SqlComponent {
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
-    }
-
-    /**
-     * Sets the DataSource to use to communicate with the database.
-     */
-    @Override
-    public void setDataSource(DataSource dataSource) {
-        super.setDataSource(dataSource);
-    }
-
-    /**
-     * Sets whether to use placeholder and replace all placeholder characters with ? sign in the SQL queries.
-     * <p/>
-     * This option is default <tt>true</tt>
-     */
-    @Override
-    public void setUsePlaceholder(boolean usePlaceholder) {
-        super.setUsePlaceholder(usePlaceholder);
     }
 
 }

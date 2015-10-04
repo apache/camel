@@ -25,20 +25,19 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.sql.SqlEndpoint;
-import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
-import org.apache.camel.component.sql.SqlProcessingStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-@UriEndpoint(scheme = "elsql", title = "SQL", syntax = "elsql:elsqlName/resourceUri", consumerClass = ElsqlConsumer.class, label = "database,sql")
+@UriEndpoint(scheme = "elsql", title = "SQL", syntax = "elsql:elsqlName:resourceUri", consumerClass = ElsqlConsumer.class, label = "database,sql")
 public class ElsqlEndpoint extends SqlEndpoint {
 
     private volatile ElSql elSql;
+    private NamedParameterJdbcTemplate jdbcTemplate;
 
     @UriPath
     @Metadata(required = "true")
@@ -48,18 +47,21 @@ public class ElsqlEndpoint extends SqlEndpoint {
     @UriParam
     private ElSqlConfig elSqlConfig;
 
-    public ElsqlEndpoint(String uri, Component component, JdbcTemplate jdbcTemplate, String elsqlName, String resourceUri) {
-        super(uri, component, jdbcTemplate, null);
+    public ElsqlEndpoint(String uri, Component component, NamedParameterJdbcTemplate jdbcTemplate, String elsqlName, String resourceUri) {
+        super(uri, component, null, null);
         this.elsqlName = elsqlName;
         this.resourceUri = resourceUri;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        // TODO: must be named
+        /*
         SqlProcessingStrategy proStrategy = new ElsqlSqlProcessingStrategy(elsqlName, elSql);
         SqlPrepareStatementStrategy preStategy = new ElsqlSqlPrepareStatementStrategy();
 
-        ElsqlConsumer consumer = new ElsqlConsumer(this, processor, getJdbcTemplate(), elsqlName, preStategy, proStrategy);
+        ElsqlConsumer consumer = new ElsqlConsumer(this, processor, jdbcTemplate, elsqlName, preStategy, proStrategy);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         consumer.setOnConsume(getOnConsume());
         consumer.setOnConsumeFailed(getOnConsumeFailed());
@@ -70,11 +72,13 @@ public class ElsqlEndpoint extends SqlEndpoint {
         consumer.setRouteEmptyResultSet(isRouteEmptyResultSet());
         configureConsumer(consumer);
         return consumer;
+        */
+        return null;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        ElsqlProducer result = new ElsqlProducer(this, elSql, elsqlName, getJdbcTemplate());
+        ElsqlProducer result = new ElsqlProducer(this, elSql, elsqlName, jdbcTemplate);
         return result;
     }
 
@@ -86,7 +90,6 @@ public class ElsqlEndpoint extends SqlEndpoint {
         ObjectHelper.notNull(resourceUri, "resourceUri", this);
 
         URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), resourceUri);
-
         elSql = ElSql.parse(elSqlConfig, url);
     }
 

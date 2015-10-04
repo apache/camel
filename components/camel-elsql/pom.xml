@@ -34,6 +34,7 @@
       org.apache.camel.component.elsql.*;${camel.osgi.version}
     </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
+      org.apache.camel.component.sql.*,
       !org.apache.camel.component.elsql.*,
       ${camel.osgi.import.defaults},
       *

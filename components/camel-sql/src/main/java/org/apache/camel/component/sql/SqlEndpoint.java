@@ -49,52 +49,73 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 public class SqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Sets the SQL query to perform") @Metadata(required = "true")
+
     private String query;
-    @UriParam
+    @UriParam(description = "Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database.")
     @Deprecated
     private String dataSourceRef;
-    @UriParam
+    @UriParam(description = "Sets the DataSource to use to communicate with the database.")
     private DataSource dataSource;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", description = "Enables or disables batch mode")
     private boolean batch;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Sets the maximum number of messages to poll")
     private int maxMessagesPerPoll;
-    @UriParam(label = "consumer,advanced")
+    @UriParam(label = "consumer,advanced",
+            description = "Allows to plugin to use a custom org.apache.camel.component.sql.SqlProcessingStrategy to execute queries when the consumer has processed the rows/batch.")
     private SqlProcessingStrategy processingStrategy;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+            description = "Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement.")
     private SqlPrepareStatementStrategy prepareStatementStrategy;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+            description = "After processing each row then this query can be executed, if the Exchange was processed successfully, for example to mark the row as processed. The query can have parameter.")
     private String onConsume;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+            description = "After processing each row then this query can be executed, if the Exchange failed, for example to mark the row as failed. The query can have parameter.")
     private String onConsumeFailed;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+            description = "After processing the entire batch, this query can be executed to bulk update rows etc. The query cannot have parameters.")
     private String onConsumeBatchComplete;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true",
+            description = "Sets how resultset should be delivered to route. Indicates delivery as either a list or individual object. defaults to true.")
     private boolean useIterator = true;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+            description = "Sets whether empty resultset should be allowed to be sent to the next hop. Defaults to false. So the empty resultset will be filtered out.")
     private boolean routeEmptyResultSet;
-    @UriParam(label = "consumer", defaultValue = "-1")
+    @UriParam(label = "consumer", defaultValue = "-1", description = "Sets an expected update count to validate when using onConsume.")
     private int expectedUpdateCount = -1;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Sets whether to break batch if onConsume failed.")
     private boolean breakBatchOnConsumeFail;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", description = "Whether to allow using named parameters in the queries.")
     private boolean allowNamedParameters = true;
-    @UriParam(label = "producer,advanced")
+    @UriParam(label = "producer,advanced",
+            description = "If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, "
+                    + "also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1"
+                    + " or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters.")
     private boolean alwaysPopulateStatement;
-    @UriParam(defaultValue = ",")
+    @UriParam(defaultValue = ",",
+            description = "The separator to use when parameter values is taken from message body (if the body is a String type), to be inserted at # placeholders."
+            + "Notice if you use named parameters, then a Map type is used instead. The default value is ,")
     private char separator = ',';
-    @UriParam(defaultValue = "SelectList")
+    @UriParam(defaultValue = "SelectList", description = "Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way:"
+            + "a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long object."
+            + "b) If the query has more than one column, then it will return a Map of that result."
+            + "c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names."
+            + "It will assume your class has a default constructor to create instance with."
+            + "d) If the query resulted in more than one rows, it throws an non-unique result exception.")
     private SqlOutputType outputType = SqlOutputType.SelectList;
-    @UriParam
+    @UriParam(description = "Specify the full package and class name to use as conversion when outputType=SelectOne.")
     private String outputClass;
-    @UriParam(label = "producer,advanced")
+    @UriParam(label = "producer,advanced", description = "If set greater than zero, then Camel will use this count value of parameters to replace instead of"
+            + " querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead.")
     private int parametersCount;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", description = "If set, will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing")
     private boolean noop;
-    @UriParam
+    @UriParam(description = "Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored"
+            + " in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header"
+            + " to store the query result and the original message body is preserved.")
     private String outputHeader;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", description = "Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used.")
     private boolean useMessageBodyForSql;
 
     public SqlEndpoint() {
@@ -372,9 +393,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * Sets how resultset should be delivered to route.
-     * Indicates delivery as either a list or individual object.
-     * defaults to true.
+     * Sets how resultset should be delivered to route. Indicates delivery as either a list or individual object. defaults to true.
      */
     public void setUseIterator(boolean useIterator) {
         this.useIterator = useIterator;
@@ -386,7 +405,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     /**
      * Sets whether empty resultset should be allowed to be sent to the next hop.
-     * defaults to false. So the empty resultset will be filtered out.
+     * Defaults to false. So the empty resultset will be filtered out.
      */
     public void setRouteEmptyResultSet(boolean routeEmptyResultSet) {
         this.routeEmptyResultSet = routeEmptyResultSet;

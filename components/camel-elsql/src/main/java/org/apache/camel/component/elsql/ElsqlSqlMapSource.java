@@ -19,50 +19,36 @@ package org.apache.camel.component.elsql;
 import java.util.Collections;
 import java.util.Map;
 
-import com.opengamma.elsql.SqlParams;
 import org.apache.camel.Exchange;
-import org.apache.camel.language.simple.SimpleLanguage;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public class ElsqlSqlParams implements SqlParams {
+public class ElsqlSqlMapSource extends MapSqlParameterSource {
 
     private final Exchange exchange;
     private final Map<?, ?> bodyMap;
     private final Map<?, ?> headersMap;
 
-    public ElsqlSqlParams(Exchange exchange, Object body) {
+    public ElsqlSqlMapSource(Exchange exchange, Object body) {
         this.exchange = exchange;
         this.bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
         this.headersMap = safeMap(exchange.getIn().getHeaders());
+
+        addValue("body", body);
+
+        for (Map.Entry<?, ?> entry : bodyMap.entrySet()) {
+            String name = entry.getKey().toString();
+            Object value = entry.getValue();
+            addValue(name, value);
+        }
+        for (Map.Entry<?, ?> entry : headersMap.entrySet()) {
+            String name = entry.getKey().toString();
+            Object value = entry.getValue();
+            addValue(name, value);
+        }
     }
 
     private static Map<?, ?> safeMap(Map<?, ?> map) {
         return (map == null || map.isEmpty()) ? Collections.emptyMap() : map;
-    }
-
-    @Override
-    public boolean contains(String variable) {
-        if (variable.startsWith("${") && variable.endsWith("}")) {
-            return SimpleLanguage.expression(variable).evaluate(exchange, Object.class) != null;
-        } else if (bodyMap.containsKey(variable)) {
-            return true;
-        } else if (headersMap.containsKey(variable)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public Object get(String variable) {
-        if (variable.startsWith("${") && variable.endsWith("}")) {
-            return SimpleLanguage.expression(variable).evaluate(exchange, Object.class) != null;
-        } else if (bodyMap.containsKey(variable)) {
-            return bodyMap.get(variable);
-        } else if (headersMap.containsKey(variable)) {
-            return headersMap.get(variable);
-        }
-
-        return null;
     }
 
 }
