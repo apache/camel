@@ -126,6 +126,7 @@
     <module>camel-infinispan</module>
     <module>camel-irc</module>
     <module>camel-jackson</module>
+    <module>camel-jacksonxml</module>
     <module>camel-javaspace</module>
     <module>camel-jaxb</module>
     <module>camel-jasypt</module>
