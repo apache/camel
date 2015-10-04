@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,10 +28,6 @@ import org.apache.camel.processor.Throttler.TimeSlot;
 
 import static org.apache.camel.builder.Builder.constant;
 
-
-/**
- * @version
- */
 public class ThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
     protected int messageCount = 9;
@@ -255,6 +252,68 @@ public class ThrottlerTest extends ContextTestSupport {
         assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
         long maxTime = (messageCount - 1) * INTERVAL / throttle * 3;
         assertTrue("Should take at most " + maxTime + "ms, was: " + delta, delta <= maxTime);
+    }
+
+    /*
+    Given: you have a throttler which rejects messages
+    Then:
+    Throttler should return an exception when calculating the delay or set the exception
+    on the exchange when processing the delay.
+     */
+    public void testWhenTimeSlotIsFullShouldReturnThrottlerRejectedExecutionException() {
+        if (!canTest()) {
+            return;
+        }
+        Throttler throttler = new Throttler(context, null, constant(1), 1000, null, false, true);
+        AsyncCallback callback = new AsyncCallback() {
+            @Override
+            public void done(boolean doneSync) {
+
+            }
+        };
+        throttler.calculateDelay(new DefaultExchange(context));
+
+        boolean exceptionThrown = false;
+        DefaultExchange exchange = null;
+        try {
+            long delay = throttler.calculateDelay(new DefaultExchange(context));
+            exchange = new DefaultExchange(context);
+            throttler.processDelay(exchange,
+                    callback,
+                    delay);
+        } catch (ThrottlerRejectedExecutionException e) {
+            exceptionThrown = true;
+        }
+        assertTrue(exceptionThrown || exchange.getException().getClass() == ThrottlerRejectedExecutionException.class);
+    }
+
+    /*
+       Given: you have a throttler which rejects messages after the first message
+       Then: the timeslot should be the original timeslot or the new timeslot should not be full
+     */
+    public void testRejectionOfExecutionShouldNotFillNextTimeSlot() {
+        if (!canTest()) {
+            return;
+        }
+        Throttler throttler = new Throttler(context, null, constant(1), 10000, null, false, true);
+        AsyncCallback callback = new AsyncCallback() {
+            @Override
+            public void done(boolean doneSync) {
+
+            }
+        };
+        throttler.calculateDelay(new DefaultExchange(context));
+        TimeSlot currentSlot = throttler.getSlot();
+        DefaultExchange exchange;
+        try {
+            long delay = throttler.calculateDelay(new DefaultExchange(context));
+            exchange = new DefaultExchange(context);
+            throttler.processDelay(exchange,
+                    callback,
+                    delay);
+        } catch (ThrottlerRejectedExecutionException ignore) {
+        }
+        assertTrue(currentSlot == throttler.getSlot() || !throttler.getSlot().isFull());
     }
 
     protected RouteBuilder createRouteBuilder() {
