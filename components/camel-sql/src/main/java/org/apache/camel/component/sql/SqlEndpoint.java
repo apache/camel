@@ -421,7 +421,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<?> queryForList(ResultSet rs, boolean allowMapToClass) throws SQLException {
+    public List<?> queryForList(ResultSet rs, boolean allowMapToClass) throws SQLException {
         if (allowMapToClass && outputClass != null) {
             Class<?> outputClazz = getCamelContext().getClassResolver().resolveClass(outputClass);
             RowMapper rowMapper = new BeanPropertyRowMapper(outputClazz);
@@ -437,7 +437,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     }
 
     @SuppressWarnings("unchecked")
-    protected Object queryForObject(ResultSet rs) throws SQLException {
+    public Object queryForObject(ResultSet rs) throws SQLException {
         Object result = null;
         if (outputClass == null) {
             RowMapper rowMapper = new ColumnMapRowMapper();

@@ -14,39 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sql;
+package org.apache.camel.component.elsql;
 
 import java.util.Map;
 import javax.sql.DataSource;
 
+import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.Metadata;
+import org.apache.camel.component.sql.SqlComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-/**
- * The <a href="http://camel.apache.org/sql-component.html">SQL Component</a> is for working with databases using JDBC queries.
- *
- * @version 
- */
-public class SqlComponent extends UriEndpointComponent {
-    private DataSource dataSource;
-    @Metadata(defaultValue = "true")
-    private boolean usePlaceholder = true;
+public class ElsqlComponent extends SqlComponent {
 
-    public SqlComponent() {
-        super(SqlEndpoint.class);
-    }
+    private ElSqlConfig elSqlConfig;
+    private String resourceUri;
 
-    public SqlComponent(CamelContext context) {
-        super(context, SqlEndpoint.class);
-    }
-
-    public SqlComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
-        super(context, endpointClass);
+    public ElsqlComponent(CamelContext context) {
+        super(context, ElsqlEndpoint.class);
     }
 
     @Override
@@ -64,59 +51,87 @@ public class SqlComponent extends UriEndpointComponent {
         }
         if (target == null) {
             // fallback and use component
-            target = dataSource;
+            target = getDataSource();
         }
         if (target == null) {
             throw new IllegalArgumentException("DataSource must be configured");
         }
 
-        String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
-        
         JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
         IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
 
-        String query = remaining.replaceAll(parameterPlaceholderSubstitute, "?");
+        String elsqlName = remaining;
+        String resUri = resourceUri;
+        String[] part = remaining.split("/");
+        if (part.length == 2) {
+            elsqlName = part[0];
+            resUri = part[1];
+        } else if (part.length > 2) {
+            throw new IllegalArgumentException("Invalid uri. Must by elsql:elsqlName/resourceUri, was: " + uri);
+        }
 
+        /* TODO: add this later
         String onConsume = getAndRemoveParameter(parameters, "consumer.onConsume", String.class);
         if (onConsume == null) {
             onConsume = getAndRemoveParameter(parameters, "onConsume", String.class);
         }
-        if (onConsume != null && usePlaceholder) {
+        if (onConsume != null && isUsePlaceholder()) {
             onConsume = onConsume.replaceAll(parameterPlaceholderSubstitute, "?");
         }
         String onConsumeFailed = getAndRemoveParameter(parameters, "consumer.onConsumeFailed", String.class);
         if (onConsumeFailed == null) {
             onConsumeFailed = getAndRemoveParameter(parameters, "onConsumeFailed", String.class);
         }
-        if (onConsumeFailed != null && usePlaceholder) {
+        if (onConsumeFailed != null && isUsePlaceholder()) {
             onConsumeFailed = onConsumeFailed.replaceAll(parameterPlaceholderSubstitute, "?");
         }
         String onConsumeBatchComplete = getAndRemoveParameter(parameters, "consumer.onConsumeBatchComplete", String.class);
         if (onConsumeBatchComplete == null) {
             onConsumeBatchComplete = getAndRemoveParameter(parameters, "onConsumeBatchComplete", String.class);
         }
-        if (onConsumeBatchComplete != null && usePlaceholder) {
+        if (onConsumeBatchComplete != null && isUsePlaceholder()) {
             onConsumeBatchComplete = onConsumeBatchComplete.replaceAll(parameterPlaceholderSubstitute, "?");
         }
+         */
 
-        SqlEndpoint endpoint = new SqlEndpoint(uri, this, jdbcTemplate, query);
-        endpoint.setOnConsume(onConsume);
-        endpoint.setOnConsumeFailed(onConsumeFailed);
-        endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
+        ElsqlEndpoint endpoint = new ElsqlEndpoint(uri, this, jdbcTemplate, elsqlName, resUri);
+//        endpoint.setOnConsume(onConsume);
+//        endpoint.setOnConsumeFailed(onConsumeFailed);
+//        endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
         endpoint.setDataSource(ds);
         endpoint.setDataSourceRef(dataSourceRef);
+        endpoint.setElSqlConfig(elSqlConfig);
         return endpoint;
+    }
+
+    public ElSqlConfig getElSqlConfig() {
+        return elSqlConfig;
+    }
+
+    /**
+     * To use the given ElSqlConfig as configuration
+     */
+    public void setElSqlConfig(ElSqlConfig elSqlConfig) {
+        this.elSqlConfig = elSqlConfig;
+    }
+
+    public String getResourceUri() {
+        return resourceUri;
+    }
+
+    /**
+     * The eqlsql resource tile which contains the elsql SQL statements to use
+     */
+    public void setResourceUri(String resourceUri) {
+        this.resourceUri = resourceUri;
     }
 
     /**
      * Sets the DataSource to use to communicate with the database.
      */
+    @Override
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
+        super.setDataSource(dataSource);
     }
 
     /**
@@ -124,11 +139,9 @@ public class SqlComponent extends UriEndpointComponent {
      * <p/>
      * This option is default <tt>true</tt>
      */
+    @Override
     public void setUsePlaceholder(boolean usePlaceholder) {
-        this.usePlaceholder = usePlaceholder;
+        super.setUsePlaceholder(usePlaceholder);
     }
 
-    public boolean isUsePlaceholder() {
-        return usePlaceholder;
-    }
 }
