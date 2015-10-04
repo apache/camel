@@ -195,7 +195,7 @@
     <google-api-services-mail-version>v1-rev15-1.19.0</google-api-services-mail-version>
     <grizzly-websockets-version>2.3.21</grizzly-websockets-version>
     <groovy-version>2.4.5</groovy-version>
-    <gson-version>2.3.1</gson-version>
+    <gson-version>2.4</gson-version>
     <guice3-version>3.0</guice3-version>
     <guice-version>4.0</guice-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
