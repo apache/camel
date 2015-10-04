@@ -244,6 +244,7 @@
     <jasypt-version>1.9.2</jasypt-version>
     <java-apns-bundle-version>1.0.0.Beta6_1</java-apns-bundle-version>
     <java-apns-version>1.0.0.Beta6</java-apns-version>
+    <java-ewah-version>0.7.9</java-ewah-version>
     <javacrumbs-version>0.22</javacrumbs-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
     <javax.el-api-version>2.2.5</javax.el-api-version>
