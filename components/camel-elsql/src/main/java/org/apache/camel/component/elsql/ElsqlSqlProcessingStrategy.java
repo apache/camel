@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import com.opengamma.elsql.ElSql;
 import com.opengamma.elsql.SpringSqlParams;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.SqlEndpoint;
+import org.apache.camel.component.sql.DefaultSqlEndpoint;
 import org.apache.camel.component.sql.SqlProcessingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class ElsqlSqlProcessingStrategy implements SqlProcessingStrategy {
     }
 
     @Override
-    public int commit(final SqlEndpoint endpoint, final Exchange exchange, final Object data, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
+    public int commit(final DefaultSqlEndpoint endpoint, final Exchange exchange, final Object data, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
         final SqlParameterSource param = new ElsqlSqlMapSource(exchange, data);
         final String sql = elSql.getSql(elSqlName, new SpringSqlParams(param));
         LOG.debug("ElSql @{} using sql: {}", elSqlName, sql);
@@ -63,7 +63,7 @@ public class ElsqlSqlProcessingStrategy implements SqlProcessingStrategy {
     }
 
     @Override
-    public int commitBatchComplete(final SqlEndpoint endpoint, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
+    public int commitBatchComplete(final DefaultSqlEndpoint endpoint, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
         return 0;
     }
 }

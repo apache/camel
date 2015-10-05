@@ -35,7 +35,7 @@ public interface SqlProcessingStrategy {
      * @return the update count if the query returned an update count
      * @throws Exception can be thrown in case of error
      */
-    int commit(SqlEndpoint endpoint, Exchange exchange, Object data, JdbcTemplate jdbcTemplate, String query) throws Exception;
+    int commit(DefaultSqlEndpoint endpoint, Exchange exchange, Object data, JdbcTemplate jdbcTemplate, String query) throws Exception;
 
     /**
      * Commit callback when the batch is complete. This allows you to do one extra query after all rows has been processed in the batch.
@@ -46,6 +46,6 @@ public interface SqlProcessingStrategy {
      * @return the update count if the query returned an update count
      * @throws Exception can be thrown in case of error
      */
-    int commitBatchComplete(SqlEndpoint endpoint, JdbcTemplate jdbcTemplate, String query) throws Exception;
+    int commitBatchComplete(DefaultSqlEndpoint endpoint, JdbcTemplate jdbcTemplate, String query) throws Exception;
 
 }

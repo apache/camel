@@ -69,8 +69,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
-    public SqlEndpoint getEndpoint() {
-        return (SqlEndpoint) super.getEndpoint();
+    public DefaultSqlEndpoint getEndpoint() {
+        return (DefaultSqlEndpoint) super.getEndpoint();
     }
 
     @Override
