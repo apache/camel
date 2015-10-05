@@ -381,6 +381,11 @@
     <bundle dependency='true'>wrap:mvn:com.squareup.okio/okio/${squareup-okio-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dropbox/${project.version}</bundle>
   </feature>
+  <feature name='camel-elsql' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version="${project.version}">camel-sql</feature>
+    <bundle dependency="true">wrap:mvn:com.opengamma/elsql/${elsql-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-elsql/${project.version}</bundle>
+  </feature>
   <feature name='camel-elasticsearch' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature>http</feature>

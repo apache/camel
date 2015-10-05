@@ -146,6 +146,7 @@
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
     <elasticsearch-bundle-version>1.7.1_1</elasticsearch-bundle-version>
     <elasticsearch-version>1.7.1</elasticsearch-version>
+    <elsql-version>1.1</elsql-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <embedmongo-version>1.50.0</embedmongo-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
