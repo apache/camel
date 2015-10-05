@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version
  */
-@Metadata(label = "dataformat,transformation,jacksonxml", title = "JacksonXML")
+@Metadata(label = "dataformat,transformation,xml", title = "JacksonXML")
 @XmlRootElement(name = "jacksonxml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JacksonXMLDataFormat extends DataFormatDefinition {
