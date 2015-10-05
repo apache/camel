@@ -17,7 +17,6 @@
 package org.apache.camel.component.jacksonxml;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jacksonxml.JacksonXMLConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -46,7 +45,7 @@ public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-            	JacksonXMLDataFormat format = new JacksonXMLDataFormat();
+                JacksonXMLDataFormat format = new JacksonXMLDataFormat();
 
                 from("direct:backPojo").unmarshal(format).to("mock:reversePojo");
 

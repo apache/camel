@@ -37,13 +37,13 @@ public class JacksonObjectListSplitTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // you can specify the pojo class type for unmarshal the jason file
-            	JacksonXMLDataFormat format = new JacksonXMLDataFormat(DummyObject.class);
+                JacksonXMLDataFormat format = new JacksonXMLDataFormat(DummyObject.class);
                 format.useList();
                 from("direct:start").unmarshal(format).split(body()).to("mock:result");
             }
         };
     }
-    
+
     public static class DummyObject {
 
         private String dummy;

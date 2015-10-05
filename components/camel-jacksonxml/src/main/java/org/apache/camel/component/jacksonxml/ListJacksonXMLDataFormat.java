@@ -36,7 +36,7 @@ public class ListJacksonXMLDataFormat extends JacksonXMLDataFormat {
         super(unmarshalType, jsonView);
         useList();
     }
-    
+
     public ListJacksonXMLDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
         super(unmarshalType, jsonView, enableJaxbAnnotationModule);
         useList();

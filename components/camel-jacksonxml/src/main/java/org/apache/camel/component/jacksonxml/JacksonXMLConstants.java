@@ -19,7 +19,7 @@ package org.apache.camel.component.jacksonxml;
 public final class JacksonXMLConstants {
 
     public static final String ENABLE_TYPE_CONVERTER = "CamelJacksonXmlEnableTypeConverter";
-    
+
     public static final String ENABLE_XML_TYPE_CONVERTER = "CamelJacksonXmlEnableTypeConverter";
 
     public static final String UNMARSHAL_TYPE = "CamelJacksonXmlUnmarshalType";

@@ -26,7 +26,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version 
+ * @version
  */
 public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 

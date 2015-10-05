@@ -19,7 +19,10 @@ package org.apache.camel.component.jacksonxml;
 //START SNIPPET: marker
 public class Views {
 
-    static class Age { }
-    static class Weight { }
+    static class Age {
+    }
+
+    static class Weight {
+    }
 }
 //END SNIPPET: marker

@@ -17,7 +17,6 @@
 package org.apache.camel.component.jacksonxml;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.dataformat.JsonLibrary;
 
 public class JacksonJsonDataFormatTest extends JacksonMarshalTest {
 

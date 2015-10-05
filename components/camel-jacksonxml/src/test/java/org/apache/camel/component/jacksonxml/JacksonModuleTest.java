@@ -44,7 +44,7 @@ public class JacksonModuleTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-            	JacksonXMLDataFormat format = new JacksonXMLDataFormat();
+                JacksonXMLDataFormat format = new JacksonXMLDataFormat();
                 format.setInclude("NON_NULL");
                 format.setModuleClassNames("org.apache.camel.component.jacksonxml.MyModule");
 

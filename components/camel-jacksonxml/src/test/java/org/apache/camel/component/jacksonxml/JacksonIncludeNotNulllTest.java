@@ -43,7 +43,7 @@ public class JacksonIncludeNotNulllTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-            	JacksonXMLDataFormat format = new JacksonXMLDataFormat();
+                JacksonXMLDataFormat format = new JacksonXMLDataFormat();
                 format.setInclude("NON_NULL");
 
                 from("direct:marshal").marshal(format).to("mock:marshal");

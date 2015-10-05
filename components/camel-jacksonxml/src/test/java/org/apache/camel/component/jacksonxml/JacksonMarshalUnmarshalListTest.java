@@ -71,7 +71,7 @@ public class JacksonMarshalUnmarshalListTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-            	JacksonXMLDataFormat format = new JacksonXMLDataFormat(TestPojo.class);
+                JacksonXMLDataFormat format = new JacksonXMLDataFormat(TestPojo.class);
                 format.useList();
 
                 from("direct:backPojo").unmarshal(format).to("mock:reversePojo");

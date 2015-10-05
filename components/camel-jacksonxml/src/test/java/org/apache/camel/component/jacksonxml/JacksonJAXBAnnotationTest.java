@@ -49,7 +49,7 @@ public class JacksonJAXBAnnotationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-            	JacksonXMLDataFormat format = new JacksonXMLDataFormat();
+                JacksonXMLDataFormat format = new JacksonXMLDataFormat();
 
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
