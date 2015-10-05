@@ -24,7 +24,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.sql.SqlEndpoint;
+import org.apache.camel.component.sql.DefaultSqlEndpoint;
 import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
 import org.apache.camel.component.sql.SqlProcessingStrategy;
 import org.apache.camel.spi.Metadata;
@@ -37,7 +37,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 @UriEndpoint(scheme = "elsql", title = "SQL", syntax = "elsql:elsqlName:resourceUri", consumerClass = ElsqlConsumer.class, label = "database,sql")
-public class ElsqlEndpoint extends SqlEndpoint {
+public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     private volatile ElSql elSql;
     private NamedParameterJdbcTemplate namedJdbcTemplate;
@@ -51,7 +51,7 @@ public class ElsqlEndpoint extends SqlEndpoint {
     private ElSqlConfig elSqlConfig;
 
     public ElsqlEndpoint(String uri, Component component, NamedParameterJdbcTemplate namedJdbcTemplate, String elsqlName, String resourceUri) {
-        super(uri, component, null, null);
+        super(uri, component, null);
         this.elsqlName = elsqlName;
         this.resourceUri = resourceUri;
         this.namedJdbcTemplate = namedJdbcTemplate;

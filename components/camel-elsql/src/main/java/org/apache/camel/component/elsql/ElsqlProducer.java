@@ -25,7 +25,6 @@ import com.opengamma.elsql.ElSql;
 import com.opengamma.elsql.SpringSqlParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.SqlConstants;
-import org.apache.camel.component.sql.SqlEndpoint;
 import org.apache.camel.component.sql.SqlOutputType;
 import org.apache.camel.impl.DefaultProducer;
 import org.springframework.dao.DataAccessException;
@@ -41,7 +40,7 @@ public class ElsqlProducer extends DefaultProducer {
     private final String elSqlName;
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public ElsqlProducer(SqlEndpoint endpoint, ElSql elSql, String elSqlName, NamedParameterJdbcTemplate jdbcTemplate) {
+    public ElsqlProducer(ElsqlEndpoint endpoint, ElSql elSql, String elSqlName, NamedParameterJdbcTemplate jdbcTemplate) {
         super(endpoint);
         this.elSql = elSql;
         this.elSqlName = elSqlName;

@@ -17,15 +17,15 @@
 package org.apache.camel.component.elsql;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.sql.DefaultSqlEndpoint;
 import org.apache.camel.component.sql.SqlConsumer;
-import org.apache.camel.component.sql.SqlEndpoint;
 import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
 import org.apache.camel.component.sql.SqlProcessingStrategy;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class ElsqlConsumer extends SqlConsumer {
 
-    public ElsqlConsumer(SqlEndpoint endpoint, Processor processor, JdbcTemplate jdbcTemplate, String query,
+    public ElsqlConsumer(DefaultSqlEndpoint endpoint, Processor processor, JdbcTemplate jdbcTemplate, String query,
                          SqlPrepareStatementStrategy sqlPrepareStatementStrategy, SqlProcessingStrategy sqlProcessingStrategy) {
         super(endpoint, processor, jdbcTemplate, query, sqlPrepareStatementStrategy, sqlProcessingStrategy);
     }
