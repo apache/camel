@@ -21,12 +21,13 @@ import org.apache.camel.component.sql.DefaultSqlEndpoint;
 import org.apache.camel.component.sql.SqlConsumer;
 import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
 import org.apache.camel.component.sql.SqlProcessingStrategy;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 public class ElsqlConsumer extends SqlConsumer {
 
-    public ElsqlConsumer(DefaultSqlEndpoint endpoint, Processor processor, JdbcTemplate jdbcTemplate, String query,
+    public ElsqlConsumer(DefaultSqlEndpoint endpoint, Processor processor, NamedParameterJdbcTemplate namedJdbcTemplate, String query, SqlParameterSource parameterSource,
                          SqlPrepareStatementStrategy sqlPrepareStatementStrategy, SqlProcessingStrategy sqlProcessingStrategy) {
-        super(endpoint, processor, jdbcTemplate, query, sqlPrepareStatementStrategy, sqlProcessingStrategy);
+        super(endpoint, processor, namedJdbcTemplate, query, parameterSource, sqlPrepareStatementStrategy, sqlProcessingStrategy);
     }
 }

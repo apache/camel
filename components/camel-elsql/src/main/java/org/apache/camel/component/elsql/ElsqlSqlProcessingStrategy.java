@@ -23,32 +23,34 @@ import com.opengamma.elsql.ElSql;
 import com.opengamma.elsql.SpringSqlParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.DefaultSqlEndpoint;
-import org.apache.camel.component.sql.SqlProcessingStrategy;
+import org.apache.camel.component.sql.SqlNamedProcessingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-public class ElsqlSqlProcessingStrategy implements SqlProcessingStrategy {
+public class ElsqlSqlProcessingStrategy implements SqlNamedProcessingStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElsqlSqlProcessingStrategy.class);
-    private final String elSqlName;
     private final ElSql elSql;
 
-    public ElsqlSqlProcessingStrategy(String elSqlName, ElSql elSql) {
-        this.elSqlName = elSqlName;
+    public ElsqlSqlProcessingStrategy(ElSql elSql) {
         this.elSql = elSql;
     }
 
     @Override
-    public int commit(final DefaultSqlEndpoint endpoint, final Exchange exchange, final Object data, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
-        final SqlParameterSource param = new ElsqlSqlMapSource(exchange, data);
-        final String sql = elSql.getSql(elSqlName, new SpringSqlParams(param));
-        LOG.debug("ElSql @{} using sql: {}", elSqlName, sql);
+    public int commit(DefaultSqlEndpoint defaultSqlEndpoint, Exchange exchange, Object data, NamedParameterJdbcTemplate jdbcTemplate,
+                      SqlParameterSource parameterSource, String query) throws Exception {
 
-        return jdbcTemplate.execute(sql, new PreparedStatementCallback<Integer>() {
+        final SqlParameterSource param = new ElsqlSqlMapSource(exchange, data);
+        final String sql = elSql.getSql(query, new SpringSqlParams(param));
+        LOG.debug("commit @{} using sql: {}", query, sql);
+
+        return jdbcTemplate.execute(sql, param, new PreparedStatementCallback<Integer>() {
             @Override
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
                 ps.execute();
@@ -63,7 +65,34 @@ public class ElsqlSqlProcessingStrategy implements SqlProcessingStrategy {
     }
 
     @Override
-    public int commitBatchComplete(final DefaultSqlEndpoint endpoint, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
-        return 0;
+    public int commitBatchComplete(DefaultSqlEndpoint endpoint, NamedParameterJdbcTemplate namedJdbcTemplate,
+                            SqlParameterSource parameterSource, String query) throws Exception {
+
+        final SqlParameterSource param = new EmptySqlParameterSource();
+        final String sql = elSql.getSql(query, new SpringSqlParams(param));
+        LOG.debug("commitBatchComplete @{} using sql: {}", query, sql);
+
+        return namedJdbcTemplate.execute(sql, param, new PreparedStatementCallback<Integer>() {
+            @Override
+            public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
+                ps.execute();
+
+                int updateCount = ps.getUpdateCount();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Update count {}", updateCount);
+                }
+                return updateCount;
+            }
+        });
+    }
+
+    @Override
+    public int commit(DefaultSqlEndpoint defaultSqlEndpoint, Exchange exchange, Object data, JdbcTemplate jdbcTemplate, String query) throws Exception {
+        throw new UnsupportedOperationException("Should not be called");
+    }
+
+    @Override
+    public int commitBatchComplete(DefaultSqlEndpoint defaultSqlEndpoint, JdbcTemplate jdbcTemplate, String query) throws Exception {
+        throw new UnsupportedOperationException("Should not be called");
     }
 }

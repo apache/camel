@@ -70,34 +70,23 @@ public class ElsqlComponent extends UriEndpointComponent {
             throw new IllegalArgumentException("Invalid uri. Must by elsql:elsqlName/resourceUri, was: " + uri);
         }
 
-        /* TODO: add this later
         String onConsume = getAndRemoveParameter(parameters, "consumer.onConsume", String.class);
         if (onConsume == null) {
             onConsume = getAndRemoveParameter(parameters, "onConsume", String.class);
-        }
-        if (onConsume != null && isUsePlaceholder()) {
-            onConsume = onConsume.replaceAll(parameterPlaceholderSubstitute, "?");
         }
         String onConsumeFailed = getAndRemoveParameter(parameters, "consumer.onConsumeFailed", String.class);
         if (onConsumeFailed == null) {
             onConsumeFailed = getAndRemoveParameter(parameters, "onConsumeFailed", String.class);
         }
-        if (onConsumeFailed != null && isUsePlaceholder()) {
-            onConsumeFailed = onConsumeFailed.replaceAll(parameterPlaceholderSubstitute, "?");
-        }
         String onConsumeBatchComplete = getAndRemoveParameter(parameters, "consumer.onConsumeBatchComplete", String.class);
         if (onConsumeBatchComplete == null) {
             onConsumeBatchComplete = getAndRemoveParameter(parameters, "onConsumeBatchComplete", String.class);
         }
-        if (onConsumeBatchComplete != null && isUsePlaceholder()) {
-            onConsumeBatchComplete = onConsumeBatchComplete.replaceAll(parameterPlaceholderSubstitute, "?");
-        }
-         */
 
         ElsqlEndpoint endpoint = new ElsqlEndpoint(uri, this, jdbcTemplate, elsqlName, resUri);
-//        endpoint.setOnConsume(onConsume);
-//        endpoint.setOnConsumeFailed(onConsumeFailed);
-//        endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
+        endpoint.setOnConsume(onConsume);
+        endpoint.setOnConsumeFailed(onConsumeFailed);
+        endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
         endpoint.setDataSource(ds);
         endpoint.setDataSourceRef(dataSourceRef);
         endpoint.setElSqlConfig(elSqlConfig);
@@ -116,6 +105,13 @@ public class ElsqlComponent extends UriEndpointComponent {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+    }
+
+    /**
+     * Sets the DataSource to use to communicate with the database.
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public DataSource getDataSource() {

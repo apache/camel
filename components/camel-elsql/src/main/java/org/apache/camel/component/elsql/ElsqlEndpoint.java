@@ -20,6 +20,7 @@ import java.net.URL;
 
 import com.opengamma.elsql.ElSql;
 import com.opengamma.elsql.ElSqlConfig;
+import com.opengamma.elsql.SpringSqlParams;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -33,11 +34,16 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 @UriEndpoint(scheme = "elsql", title = "SQL", syntax = "elsql:elsqlName:resourceUri", consumerClass = ElsqlConsumer.class, label = "database,sql")
 public class ElsqlEndpoint extends DefaultSqlEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ElsqlEndpoint.class);
 
     private volatile ElSql elSql;
     private NamedParameterJdbcTemplate namedJdbcTemplate;
@@ -59,12 +65,14 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        SqlProcessingStrategy proStrategy = new ElsqlSqlProcessingStrategy(elsqlName, elSql);
+        SqlProcessingStrategy proStrategy = new ElsqlSqlProcessingStrategy(elSql);
         SqlPrepareStatementStrategy preStategy = new ElsqlSqlPrepareStatementStrategy();
 
-        JdbcTemplate template = new JdbcTemplate(getDataSource());
+        final SqlParameterSource param = new EmptySqlParameterSource();
+        final String sql = elSql.getSql(elsqlName, new SpringSqlParams(param));
+        LOG.debug("ElsqlConsumer @{} using sql: {}", elsqlName, sql);
 
-        ElsqlConsumer consumer = new ElsqlConsumer(this, processor, template, elsqlName, preStategy, proStrategy);
+        ElsqlConsumer consumer = new ElsqlConsumer(this, processor, namedJdbcTemplate, sql, param, preStategy, proStrategy);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         consumer.setOnConsume(getOnConsume());
         consumer.setOnConsumeFailed(getOnConsumeFailed());

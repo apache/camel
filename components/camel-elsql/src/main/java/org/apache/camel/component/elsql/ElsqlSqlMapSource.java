@@ -20,10 +20,16 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.AbstractSqlParameterSource;
 
-public class ElsqlSqlMapSource extends MapSqlParameterSource {
+/**
+ * A {@link org.springframework.jdbc.core.namedparam.SqlParameterSource} that is used by {@link com.opengamma.elsql.ElSql}
+ * to lookup parameter values. This source will lookup in the Camel {@link Exchange} and {@link org.apache.camel.Message}
+ * assuming they are Map based.
+ */
+public class ElsqlSqlMapSource extends AbstractSqlParameterSource {
 
+    // use the maps from the Camel Message as they are case insensitive which makes it easier for end users to work with
     private final Exchange exchange;
     private final Map<?, ?> bodyMap;
     private final Map<?, ?> headersMap;
@@ -32,23 +38,36 @@ public class ElsqlSqlMapSource extends MapSqlParameterSource {
         this.exchange = exchange;
         this.bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
         this.headersMap = safeMap(exchange.getIn().getHeaders());
-
-        addValue("body", body);
-
-        for (Map.Entry<?, ?> entry : bodyMap.entrySet()) {
-            String name = entry.getKey().toString();
-            Object value = entry.getValue();
-            addValue(name, value);
-        }
-        for (Map.Entry<?, ?> entry : headersMap.entrySet()) {
-            String name = entry.getKey().toString();
-            Object value = entry.getValue();
-            addValue(name, value);
-        }
     }
 
     private static Map<?, ?> safeMap(Map<?, ?> map) {
         return (map == null || map.isEmpty()) ? Collections.emptyMap() : map;
     }
 
+    @Override
+    public boolean hasValue(String paramName) {
+        if ("body".equals(paramName)) {
+            return true;
+        } else if (bodyMap.containsKey(paramName)) {
+            return true;
+        } else if (headersMap.containsKey(paramName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public Object getValue(String paramName) throws IllegalArgumentException {
+        Object answer;
+        if ("body".equals(paramName)) {
+            answer = exchange.getIn().getBody();
+        } else {
+            answer = bodyMap.get(paramName);
+            if (answer == null) {
+                headersMap.get(paramName);
+            }
+        }
+        return answer;
+    }
 }
