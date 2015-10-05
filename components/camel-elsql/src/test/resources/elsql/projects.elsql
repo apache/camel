@@ -7,7 +7,3 @@
   SELECT *
   FROM projects
   ORDER BY id
-@NAME(deleteProject)
-  DELETE
-  FROM projects
-  WHERE id = :id
