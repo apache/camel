@@ -25,13 +25,14 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.util.IOHelper;
 
 /**
  * "Deflate" compression data format.
  * See {@link org.apache.camel.model.dataformat.ZipFileDataFormat} for Zip file compression.
  */
-public class ZipDataFormat implements DataFormat {
+public class ZipDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat, DataFormatName {
 
     private int compressionLevel;
 
@@ -41,6 +42,11 @@ public class ZipDataFormat implements DataFormat {
 
     public ZipDataFormat(int compressionLevel) {
         this.compressionLevel = compressionLevel;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "zip";
     }
 
     public int getCompressionLevel() {
@@ -66,7 +72,7 @@ public class ZipDataFormat implements DataFormat {
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
         InflaterInputStream unzipInput = new InflaterInputStream(is);
-        
+
         // Create an expandable byte array to hold the inflated data
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
@@ -78,4 +84,13 @@ public class ZipDataFormat implements DataFormat {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

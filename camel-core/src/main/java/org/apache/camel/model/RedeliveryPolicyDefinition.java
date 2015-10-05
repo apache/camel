@@ -156,13 +156,13 @@ public class RedeliveryPolicyDefinition {
                 }
             }
             if (delayPattern != null) {
-                answer.setDelayPattern(delayPattern);
+                answer.setDelayPattern(CamelContextHelper.parseText(context, delayPattern));
             }
             if (allowRedeliveryWhileStopping != null) {
                 answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context, allowRedeliveryWhileStopping));
             }
             if (exchangeFormatterRef != null) {
-                answer.setExchangeFormatterRef(exchangeFormatterRef);
+                answer.setExchangeFormatterRef(CamelContextHelper.parseText(context, exchangeFormatterRef));
             }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);

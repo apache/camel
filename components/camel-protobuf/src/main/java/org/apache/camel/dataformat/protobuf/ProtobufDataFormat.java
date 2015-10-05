@@ -28,10 +28,11 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
-public class ProtobufDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class ProtobufDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;
     private Message defaultInstance;
@@ -42,6 +43,11 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Ca
 
     public ProtobufDataFormat(Message defaultInstance) {
         this.defaultInstance = defaultInstance;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "protobuf";
     }
 
     public CamelContext getCamelContext() {

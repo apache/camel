@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq.reply;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.Queue.DeclareOk;
@@ -142,7 +143,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         /**
          * Unbind consumer from channel
          */
-        private void stop() throws IOException {
+        private void stop() throws IOException, TimeoutException {
             if (channel.isOpen()) {
                 if (tag != null) {
                     channel.basicCancel(tag);

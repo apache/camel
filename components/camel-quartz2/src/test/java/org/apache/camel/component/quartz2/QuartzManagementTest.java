@@ -24,16 +24,6 @@ import org.junit.Test;
 
 public class QuartzManagementTest extends BaseQuartzTest {
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
-    protected boolean isEnableJmx() {
-        return true;
-    }
-
     protected MBeanServer getMBeanServer() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.16.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-stringtemplate</artifactId>
@@ -43,7 +43,7 @@
     </dependency>
     <dependency>
       <groupId>org.antlr</groupId>
-      <artifactId>stringtemplate</artifactId>
+      <artifactId>ST4</artifactId>
       <version>${stringtemplate-version}</version>
     </dependency>
 

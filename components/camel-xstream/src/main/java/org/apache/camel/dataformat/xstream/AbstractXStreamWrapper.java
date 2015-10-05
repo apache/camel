@@ -38,13 +38,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) interface which leverage the XStream library for XML or JSON's marshaling and unmarshaling
  */
-public abstract class AbstractXStreamWrapper implements DataFormat {
+public abstract class AbstractXStreamWrapper extends ServiceSupport implements DataFormat, DataFormatName {
 
     private XStream xstream;
     private HierarchicalStreamDriver xstreamDriver;
@@ -289,4 +291,14 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
     protected abstract HierarchicalStreamReader createHierarchicalStreamReader(
             Exchange exchange, InputStream stream) throws XMLStreamException;
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

@@ -81,6 +81,7 @@ import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -449,8 +450,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                 managedBacklogDebuggers.put(backlogDebugger, md);
             }
             return md;
-        } else if (service instanceof EventNotifier) {
-            answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
+        } else if (service instanceof DataFormat) {
+            answer = getManagementObjectStrategy().getManagedObjectForDataFormat(context, (DataFormat) service);
         } else if (service instanceof Producer) {
             answer = getManagementObjectStrategy().getManagedObjectForProducer(context, (Producer) service);
         } else if (service instanceof Consumer) {
@@ -478,6 +479,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedRuntimeEndpointRegistry(context, (RuntimeEndpointRegistry) service);
         } else if (service instanceof StreamCachingStrategy) {
             answer = new ManagedStreamCachingStrategy(context, (StreamCachingStrategy) service);
+        } else if (service instanceof EventNotifier) {
+            answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);
@@ -758,7 +761,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         // that then delegates to the real mbean which we register later in the onServiceAdd method
         DelegatePerformanceCounter pc = new DelegatePerformanceCounter();
         // set statistics enabled depending on the option
-        boolean enabled = camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
+        boolean enabled = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended();
         pc.setStatisticsEnabled(enabled);
 
         // and add it as a a registered counter that will be used lazy when Camel
@@ -793,7 +796,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         }
 
         // only if custom id assigned
-        if (getManagementStrategy().isOnlyManageProcessorWithCustomId()) {
+        boolean only = getManagementStrategy().getManagementAgent().getOnlyRegisterProcessorWithCustomId() != null
+                && getManagementStrategy().getManagementAgent().getOnlyRegisterProcessorWithCustomId();
+        if (only) {
             return processor.hasCustomIdAssigned();
         }
 
@@ -908,8 +913,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         @Override
         public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             // we are disabled either if configured explicit, or if level is off
-            boolean disabled = !camelContext.getManagementStrategy().isLoadStatisticsEnabled()
-                    || camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.Off;
+            boolean load = camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled() != null
+                    && camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled();
+            boolean disabled = !load || camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.Off;
 
             LOG.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
             if (!disabled) {

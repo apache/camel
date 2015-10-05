@@ -57,5 +57,5 @@ public class UpdatedDateFilterTest extends Assert {
             }
         }
     }
-    
+
 }

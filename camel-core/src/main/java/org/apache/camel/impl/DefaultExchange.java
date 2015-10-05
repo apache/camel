@@ -80,7 +80,7 @@ public final class DefaultExchange implements Exchange {
 
     @Override
     public String toString() {
-        return String.format("Exchange[%s][%s]", exchangeId, out == null ? in : out);
+        return String.format("Exchange[%s][%s]", exchangeId == null ? "" : exchangeId, out == null ? in : out);
     }
 
     public Exchange copy() {

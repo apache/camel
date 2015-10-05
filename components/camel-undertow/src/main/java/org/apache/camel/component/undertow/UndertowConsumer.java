@@ -16,7 +16,12 @@
  */
 package org.apache.camel.component.undertow;
 
+import java.net.URI;
+
+import io.undertow.server.HttpHandler;
+
 import org.apache.camel.Processor;
+import org.apache.camel.component.undertow.handlers.HttpCamelHandler;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +33,8 @@ public class UndertowConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
 
+    private UndertowHost undertowHost;
+
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
@@ -37,18 +44,57 @@ public class UndertowConsumer extends DefaultConsumer {
         return (UndertowEndpoint) super.getEndpoint();
     }
 
+    public UndertowHost getUndertowHost() {
+        if (undertowHost == null) {
+            undertowHost = createUndertowHost();
+        }
+        return undertowHost;
+    }
+
+    protected UndertowHost createUndertowHost() {
+        return new DefaultUndertowHost();
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         LOG.debug("Undertow consumer is starting");
         getEndpoint().getComponent().registerConsumer(this);
-        getEndpoint().getComponent().startServer(this);
+
+        URI httpUri = getEndpoint().getHttpURI();
+        UndertowHost host = getUndertowHost();
+
+        host.validateEndpointURI(httpUri);
+        host.registerHandler(httpUri.getPath(), new HttpCamelHandler(this));
     }
 
     @Override
     protected void doStop() {
         LOG.debug("Undertow consumer is stopping");
+
+        URI httpUri = getEndpoint().getHttpURI();
+        UndertowHost host = getUndertowHost();
+
+        host.unregisterHandler(httpUri.getPath());
+
         getEndpoint().getComponent().unregisterConsumer(this);
     }
 
+    class DefaultUndertowHost implements UndertowHost {
+
+        @Override
+        public void validateEndpointURI(URI httpURI) {
+            // all URIs are good
+        }
+
+        @Override
+        public void registerHandler(String path, HttpHandler handler) {
+            getEndpoint().getComponent().startServer(UndertowConsumer.this);
+        }
+
+        @Override
+        public void unregisterHandler(String path) {
+            // do nothing
+        }
+    }
 }

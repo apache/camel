@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.16-SNAPSHOT</version>
+        <version>2.16.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jetty</artifactId>
@@ -33,14 +33,14 @@
         <camel.osgi.import.before.defaults>
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
-        <camel.osgi.export.pkg>org.apache.camel.component.jetty8</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.component.jetty9</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jetty</camel.osgi.export.service>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jetty8</artifactId>
+            <artifactId>camel-jetty9</artifactId>
         </dependency>
     </dependencies>
 

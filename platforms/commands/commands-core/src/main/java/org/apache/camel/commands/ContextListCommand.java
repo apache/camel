@@ -28,6 +28,9 @@ public class ContextListCommand extends AbstractCamelCommand {
 
     private static final String CONTEXT_COLUMN_LABEL = "Context";
     private static final String STATUS_COLUMN_LABEL = "Status";
+    private static final String TOTAL_COLUMN_LABEL = "Total #";
+    private static final String FAILED_COLUMN_LABEL = "Failed #";
+    private static final String INFLIGHT_COLUMN_LABEL = "Inflight #";
     private static final String UPTIME_COLUMN_LABEL = "Uptime";
     private static final int DEFAULT_FORMAT_BUFFER_LENGTH = 24;
     private static final String DEFAULT_FIELD_PREAMBLE = " ";
@@ -47,10 +50,11 @@ public class ContextListCommand extends AbstractCamelCommand {
         final String rowFormat = buildFormatString(columnWidths, false);
 
         if (camelContexts.size() > 0) {
-            out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, STATUS_COLUMN_LABEL, UPTIME_COLUMN_LABEL));
-            out.println(String.format(headerFormat, "-------", "------", "------"));
+            out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, STATUS_COLUMN_LABEL, TOTAL_COLUMN_LABEL, FAILED_COLUMN_LABEL, INFLIGHT_COLUMN_LABEL, UPTIME_COLUMN_LABEL));
+            out.println(String.format(headerFormat, "-------", "------", "-------", "--------", "----------", "------"));
             for (Map<String, String> row : camelContexts) {
-                out.println(String.format(rowFormat, row.get("name"), row.get("state"), row.get("uptime")));
+                out.println(String.format(rowFormat, row.get("name"), row.get("state"), row.get("exchangesTotal"),
+                        row.get("exchangesFailed"), row.get("exchangesInflight"), row.get("uptime")));
             }
         }
 
@@ -63,6 +67,9 @@ public class ContextListCommand extends AbstractCamelCommand {
         } else {
             int maxNameLen = 0;
             int maxStatusLen = 0;
+            int maxTotalLen = 0;
+            int maxFailedLen = 0;
+            int maxInflightLen = 0;
             int maxUptimeLen = 0;
 
             for (Map<String, String> row : camelContexts) {
@@ -72,13 +79,25 @@ public class ContextListCommand extends AbstractCamelCommand {
                 final String status = row.get("state");
                 maxStatusLen = java.lang.Math.max(maxStatusLen, status == null ? 0 : status.length());
 
+                final String total = row.get("exchangesTotal");
+                maxTotalLen = java.lang.Math.max(maxTotalLen, total == null ? 0 : total.length());
+
+                final String failed = row.get("exchangesFailed");
+                maxFailedLen = java.lang.Math.max(maxFailedLen, failed == null ? 0 : failed.length());
+
+                final String inflight = row.get("exchangesInflight");
+                maxInflightLen = java.lang.Math.max(maxInflightLen, inflight == null ? 0 : inflight.length());
+
                 final String uptime = row.get("uptime");
                 maxUptimeLen = java.lang.Math.max(maxUptimeLen, uptime == null ? 0 : uptime.length());
             }
 
-            final Map<String, Integer> retval = new Hashtable<String, Integer>(3);
+            final Map<String, Integer> retval = new Hashtable<String, Integer>();
             retval.put(CONTEXT_COLUMN_LABEL, maxNameLen);
             retval.put(STATUS_COLUMN_LABEL, maxStatusLen);
+            retval.put(TOTAL_COLUMN_LABEL, maxTotalLen);
+            retval.put(FAILED_COLUMN_LABEL, maxFailedLen);
+            retval.put(INFLIGHT_COLUMN_LABEL, maxInflightLen);
             retval.put(UPTIME_COLUMN_LABEL, maxUptimeLen);
 
             return retval;
@@ -101,14 +120,23 @@ public class ContextListCommand extends AbstractCamelCommand {
 
         int contextLen = java.lang.Math.min(columnWidths.get(CONTEXT_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         int statusLen = java.lang.Math.min(columnWidths.get(STATUS_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
+        int totalLen = java.lang.Math.min(columnWidths.get(TOTAL_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
+        int failedlLen = java.lang.Math.min(columnWidths.get(FAILED_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
+        int inflightLen = java.lang.Math.min(columnWidths.get(INFLIGHT_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         int uptimeLen = java.lang.Math.min(columnWidths.get(UPTIME_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         contextLen = Math.max(MIN_COLUMN_WIDTH, contextLen);
         statusLen = Math.max(MIN_COLUMN_WIDTH, statusLen);
-        // last row does not have min width
+        totalLen = Math.max(MIN_COLUMN_WIDTH, totalLen);
+        failedlLen = Math.max(MIN_COLUMN_WIDTH, failedlLen);
+        inflightLen = Math.max(MIN_COLUMN_WIDTH, inflightLen);
+        uptimeLen = Math.max(MIN_COLUMN_WIDTH, uptimeLen);
 
         final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
         retval.append(fieldPreamble).append("%-").append(contextLen).append('.').append(contextLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(statusLen).append('.').append(statusLen).append('s').append(fieldPostamble).append(' ');
+        retval.append(fieldPreamble).append("%").append(totalLen).append('.').append(totalLen).append('s').append(fieldPostamble).append(' ');
+        retval.append(fieldPreamble).append("%").append(failedlLen).append('.').append(failedlLen).append('s').append(fieldPostamble).append(' ');
+        retval.append(fieldPreamble).append("%").append(inflightLen).append('.').append(inflightLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(uptimeLen).append('.').append(uptimeLen).append('s').append(fieldPostamble).append(' ');
 
         return retval.toString();

@@ -56,7 +56,7 @@ public class EipDocumentationTest extends ContextTestSupport {
         log.info(json);
         assertNotNull("Should have found json for simple", json);
 
-        assertTrue(json.contains("\"label\": \"language\""));
+        assertTrue(json.contains("\"label\": \"language,core,java\""));
         assertTrue(json.contains("\"name\": \"simple\""));
     }
 

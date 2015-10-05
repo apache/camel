@@ -59,15 +59,14 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
 
     @Test
     public void testSplitAttachments() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedMessageCount(2);
 
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
 
         Thread.sleep(2000);
-
-        MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedMessageCount(2);
 
         mock.assertIsSatisfied();
 
@@ -87,22 +86,19 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
         assertTrue("Should have license.txt file attachment", license);
     }
 
-
     @Test
     public void testExtractAttachments() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedMessageCount(2);
 
         // set the expression to extract the attachments as byte[]s
         splitAttachmentsExpression.setExtractAttachments(true);
-
 
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
 
         Thread.sleep(2000);
-
-        MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedMessageCount(2);
 
         mock.assertIsSatisfied();
 
@@ -119,8 +115,8 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
         byte[] expected1 = IOUtils.toByteArray(new FileDataSource("src/test/data/logo.jpeg").getInputStream());
         byte[] expected2 = IOUtils.toByteArray(new FileDataSource("src/main/resources/META-INF/LICENSE.txt").getInputStream());
 
-        assertArrayEquals(expected1, (byte[]) first.getBody());
-        assertArrayEquals(expected2, (byte[]) second.getBody());
+        assertArrayEquals(expected1, first.getBody(byte[].class));
+        assertArrayEquals(expected2, second.getBody(byte[].class));
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.ec2;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -37,6 +38,10 @@ public class EC2Configuration {
     private String amazonEc2Endpoint;
     @UriParam @Metadata(required = "true")
     private EC2Operations operation;
+    @UriParam
+    private String proxyHost;
+    @UriParam
+    private Integer proxyPort;
     
     public AmazonEC2Client getAmazonEc2Client() {
         return amazonEc2Client;
@@ -92,4 +97,26 @@ public class EC2Configuration {
     public void setOperation(EC2Operations operation) {
         this.operation = operation;
     } 
+    
+    /**
+     * To define a proxy host when instantiating the SQS client
+     */
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    /**
+     * To define a proxy port when instantiating the SQS client
+     */
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
 }

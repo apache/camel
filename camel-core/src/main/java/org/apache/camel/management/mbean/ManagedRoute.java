@@ -28,7 +28,6 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 import javax.management.Query;
 import javax.management.QueryExp;
@@ -64,8 +63,16 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         this.route = route;
         this.context = context;
         this.description = route.getDescription();
-        boolean enabled = context.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
+
+        exchangesInFlightKeys.clear();
+        exchangesInFlightStartTimestamps.clear();
     }
 
     public Route getRoute() {
@@ -104,6 +111,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             status = ServiceStatus.Stopped;
         }
         return status.name();
+    }
+
+    public String getUptime() {
+        return route.getUptime();
     }
 
     public Integer getInflightExchanges() {
@@ -413,13 +424,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             return null;
         }
         return oldest.exchangeId;
-    }
-
-    @Override
-    public void init(ManagementStrategy strategy) {
-        exchangesInFlightKeys.clear();
-        exchangesInFlightStartTimestamps.clear();
-        super.init(strategy);
     }
 
     @Override

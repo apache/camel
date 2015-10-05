@@ -20,10 +20,8 @@ import java.net.URI;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -123,7 +121,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      * @return an exchange
      */
     public Exchange createExchange(PDU pdu) {
-        return createExchange(getExchangePattern(), pdu);
+        Exchange exchange = super.createExchange();
+        exchange.setIn(new SnmpMessage(pdu));
+        return exchange;
     }
 
     /**
@@ -134,32 +134,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      * @return an exchange
      */
     public Exchange createExchange(PDU pdu, CommandResponderEvent event) {
-        return createExchange(getExchangePattern(), pdu, event);
-    }
-
-    /**
-     * creates an exchange for the given pattern and message
-     *
-     * @param pattern the message exchange pattern
-     * @param pdu     the pdu
-     * @return the exchange
-     */
-    private Exchange createExchange(ExchangePattern pattern, PDU pdu) {
-        Exchange exchange = new DefaultExchange(this, pattern);
-        exchange.setIn(new SnmpMessage(pdu));
-        return exchange;
-    }
-
-    /**
-     * creates an exchange for the given pattern and message
-     *
-     * @param pattern the message exchange pattern
-     * @param pdu     the pdu
-     * @param event   a snmp4j CommandResponderEvent
-     * @return the exchange
-     */
-    private Exchange createExchange(ExchangePattern pattern, PDU pdu, CommandResponderEvent event) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange();
         exchange.setIn(new SnmpMessage(pdu, event));
         return exchange;
     }

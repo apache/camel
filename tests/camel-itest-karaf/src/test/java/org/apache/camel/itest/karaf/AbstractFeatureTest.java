@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -206,10 +208,20 @@ public abstract class AbstractFeatureTest {
         return mavenOption;
     }
 
-    public static Option[] configure(String feature) {
+    public static Option[] configure(String mainFeature, String... extraFeatures) {
         switchPlatformEncodingToUTF8();
         String karafVersion = getKarafVersion();
         LOG.info("*** The karaf version is " + karafVersion + " ***");
+
+        List<String> list = new ArrayList<String>();
+        list.add("cxf-jaxb");
+        list.add("camel-core");
+        list.add("camel-spring");
+        list.add("camel-" + mainFeature);
+        for (String extra : extraFeatures) {
+            list.add("camel-" + extra);
+        }
+        String[] features = list.toArray(new String[list.size()]);
 
         Option[] options = new Option[] {
             // for remote debugging
@@ -239,7 +251,7 @@ public abstract class AbstractFeatureTest {
 
 
             // install the cxf jaxb spec as the karaf doesn't provide it by default
-            KarafDistributionOption.features(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-" + feature)
+            KarafDistributionOption.features(getCamelKarafFeatureUrl(), features)
         };
 
         return options;

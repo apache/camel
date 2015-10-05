@@ -83,9 +83,19 @@ import org.junit.Test;
  */
 public class SignatureAlgorithmTest extends CamelTestSupport {
 
-    private static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    private static String payload;
     private KeyPair keyPair;
+    
+    static {
+        boolean includeNewLine = true;
+        if (System.getProperty("java.version") != null
+            && System.getProperty("java.version").startsWith("1.9")) {
+            includeNewLine = false;
+        }
+        payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + (includeNewLine ? "\n" : "")
+            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    }
     
     public SignatureAlgorithmTest() throws Exception {
         // BouncyCastle is required for some algorithms
@@ -626,9 +636,15 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
         return new SecretKey() {
             private static final long serialVersionUID = 5629454124145851381L;
             
-            public String getFormat()   { return "RAW"; }
-            public byte[] getEncoded()  { return secret; }
-            public String getAlgorithm() { return "SECRET"; }
+            public String getFormat()   {
+                return "RAW";
+            }
+            public byte[] getEncoded()  {
+                return secret;
+            }
+            public String getAlgorithm() {
+                return "SECRET";
+            }
         };
     }
 }

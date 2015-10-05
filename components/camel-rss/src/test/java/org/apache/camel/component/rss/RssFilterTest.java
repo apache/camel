@@ -20,7 +20,6 @@ import javax.naming.Context;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-
 import org.apache.camel.Body;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -48,11 +47,11 @@ public class RssFilterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // See RssFilterWithXPathTest for an example of how to do this with XPath
-                
+
                 // START SNIPPET: ex1
                 // only entries with Camel in the title will get through the filter
                 from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").
-                    filter().method("myFilterBean", "titleContainsCamel").to("mock:result");
+                        filter().method("myFilterBean", "titleContainsCamel").to("mock:result");
                 // END SNIPPET: ex1
             }
         };

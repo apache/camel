@@ -50,7 +50,12 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     public XStreamDataFormat(XStream xstream) {
         super(xstream);
     }
-    
+
+    @Override
+    public String getDataFormatName() {
+        return "xstream";
+    }
+
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }

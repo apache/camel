@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.16.1-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -213,6 +213,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-elsql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-eventadmin</artifactId>
     </dependency>
     <dependency>
@@ -251,7 +255,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-geocoder</artifactId>
     </dependency>
-     <dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-git</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-github</artifactId>
     </dependency>
@@ -313,6 +321,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-http-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-http4</artifactId>
     </dependency>
     <dependency>
@@ -357,6 +369,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jbpm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jclouds</artifactId>
     </dependency>
     <dependency>
@@ -370,6 +386,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jetty-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -402,6 +422,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jmx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jolt</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -733,6 +757,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-swagger</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-swagger-java</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

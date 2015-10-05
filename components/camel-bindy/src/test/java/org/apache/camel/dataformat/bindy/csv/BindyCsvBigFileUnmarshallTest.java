@@ -53,7 +53,7 @@ public class BindyCsvBigFileUnmarshallTest extends AbstractJUnit4SpringContextTe
     public static class ContextConfig extends RouteBuilder {
         public void configure() {
             BindyCsvDataFormat camelDataFormat = 
-                new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
             from("file://src/test/data/big?noop=true").unmarshal(camelDataFormat).to("mock:result");
         }
 

@@ -142,12 +142,10 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         super.doStart();
 
         // configure component options
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
-            // configure additional options on spark configuration
-            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
-                setProperties(this, config.getComponentProperties());
-            }
+        RestConfiguration config = getCamelContext().getRestConfiguration("restlet", true);
+        // configure additional options on spark configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(this, config.getComponentProperties());
         }
 
         component.start();
@@ -666,7 +664,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -685,17 +683,28 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         int port = this.getPort();
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config.getComponent() == null || config.getComponent().equals("restlet")) {
-            if (config.getScheme() != null) {
-                scheme = config.getScheme();
-            }
-            if (config.getHost() != null) {
-                host = config.getHost();
-            }
-            int num = config.getPort();
-            if (num > 0) {
-                port = num;
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("restlet", true);
+        }
+        if (config.getScheme() != null) {
+            scheme = config.getScheme();
+        }
+        if (config.getHost() != null) {
+            host = config.getHost();
+        }
+        int num = config.getPort();
+        if (num > 0) {
+            port = num;
+        }
+
+        // prefix path with context-path if configured in rest-dsl configuration
+        String contextPath = config.getContextPath();
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
             }
         }
 
@@ -710,7 +719,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
+        if (config.getComponent() == null || config.getComponent().equals("restlet")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
@@ -740,7 +749,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(consumer, config.getConsumerProperties());
         }
 

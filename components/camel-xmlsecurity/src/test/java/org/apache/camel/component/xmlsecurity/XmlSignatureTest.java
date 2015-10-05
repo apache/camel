@@ -103,9 +103,19 @@ import org.junit.Test;
 
 public class XmlSignatureTest extends CamelTestSupport {
 
-    protected static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    protected static String payload;
+    private static boolean includeNewLine = true;
     private KeyPair keyPair;
+    
+    static {
+        if (System.getProperty("java.version") != null
+            && System.getProperty("java.version").startsWith("1.9")) {
+            includeNewLine = false;
+        }
+        payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + (includeNewLine ? "\n" : "")
+            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -143,7 +153,7 @@ public class XmlSignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: enveloping XML signature
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
-                from("direct:enveloping").to(getSignerEndpointURIEnveloping()).to("mock:signed").to(getVerifierEncpointURIEnveloping())
+                from("direct:enveloping").to(getSignerEndpointURIEnveloping()).to("mock:signed").to(getVerifierEndpointURIEnveloping())
                         .to("mock:result");
                 // END SNIPPET: enveloping XML signature
             }
@@ -482,7 +492,8 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testSetTransformMethodXpath2InRouteDefinition() throws Exception {
         // example from http://www.w3.org/TR/2002/REC-xmldsig-filter2-20021108/
-        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
                 + "<Document xmlns=\"http://test/test\">                             "
                 + "<ToBeSigned>                                                     "
                 + "   <!-- comment -->                                              "
@@ -781,8 +792,9 @@ public class XmlSignatureTest extends CamelTestSupport {
         endpoint.setParentNamespace("http://test");
         endpoint.setXpathsToIdAttributes(null);
 
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         sendBody("direct:detached", detachedPayload,
@@ -830,8 +842,9 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     private Element testDetachedSignatureInternal() throws InterruptedException, XPathExpressionException, SAXException, IOException,
             ParserConfigurationException {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         MockEndpoint mockVerified = getMockEndpoint("mock:verified");
@@ -869,8 +882,9 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     void testDetached2Xpaths(String xpath1exp, String xpath2exp) throws InterruptedException, XPathExpressionException, SAXException,
             IOException, ParserConfigurationException {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><test ID=\"myID\"><b>bValue</b><ts:B xmlns:ts=\"http://testB\"><C ID=\"cID\"><D>dvalue</D></C></ts:B></test></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><test ID=\"myID\"><b>bValue</b><ts:B xmlns:ts=\"http://testB\"><C ID=\"cID\"><D>dvalue</D></C></ts:B></test></ns:root>";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         MockEndpoint mockVerified = getMockEndpoint("mock:verified");
@@ -919,8 +933,9 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     @Test
     public void testExceptionSchemaValidation() throws Exception {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><error>bValue</error></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><error>bValue</error></a></ns:root>";
         MockEndpoint mock = setupExceptionMock();
         mock.expectedMessageCount(1);
         sendBody("direct:detached", detachedPayload);
@@ -930,8 +945,9 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     @Test
     public void testEceptionDetachedNoXmlSchema() throws Exception {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         XmlSignerEndpoint endpoint = getDetachedSignerEndpoint();
         endpoint.setSchemaResourceUri(null);
         MockEndpoint mock = setupExceptionMock();
@@ -953,8 +969,9 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testExceptionDetachedXPathNoIdAttribute() throws Exception {
         String value = "not id";
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\" stringAttr=\"" + value + "\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\" stringAttr=\"" + value + "\"><b>bValue</b></a></ns:root>";
         String xPath = "a/@stringAttr";
 
         MockEndpoint mock = testXpath(xPath, detachedPayload);
@@ -986,8 +1003,9 @@ public class XmlSignatureTest extends CamelTestSupport {
     }
 
     private MockEndpoint testXpath(String xPath) throws InterruptedException {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         return testXpath(xPath, detachedPayload);
     }
 
@@ -1003,8 +1021,9 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     @Test
     public void testExceptionDetachedNoParent() throws Exception {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root ID=\"rootId\" xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root ID=\"rootId\" xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         String xPath = "//@ID";
         String localName = "root";
         String namespaceURI = "http://test";
@@ -1020,18 +1039,18 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testOutputXmlEncodingEnveloping() throws Exception {
 
         String inputEncoding = "UTF-8";
-        String signerEncoding = "UTF-16LE";
+        String signerEncoding = "UTF-16";
         String outputEncoding = "ISO-8859-1"; // latin 1
 
         String signerEndpointUri = getSignerEndpointURIEnveloping();
-        String verifierEndpointUri = getVerifierEncpointURIEnveloping();
+        String verifierEndpointUri = getVerifierEndpointURIEnveloping();
 
         String directStart = "direct:enveloping";
 
         checkOutputEncoding(inputEncoding, signerEncoding, outputEncoding, signerEndpointUri, verifierEndpointUri, directStart);
     }
 
-    String getVerifierEncpointURIEnveloping() {
+    String getVerifierEndpointURIEnveloping() {
         return "xmlsecurity:verify://enveloping?keySelector=#selector";
     }
 
@@ -1043,7 +1062,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testOutputXmlEncodingEnveloped() throws Exception {
 
         String inputEncoding = "UTF-8";
-        String signerEncoding = "UTF-16LE";
+        String signerEncoding = "UTF-16";
         String outputEncoding = "ISO-8859-1"; // latin 1
 
         String signerEndpointUri = getSignerEndpointURIEnveloped();
@@ -1063,7 +1082,8 @@ public class XmlSignatureTest extends CamelTestSupport {
     }
 
     private byte[] getPayloadForEncoding(String encoding) {
-        String s = "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>\n"
+        String s = "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>"
+                + (includeNewLine ? "\n" : "")
                 + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
         return s.getBytes(Charset.forName(encoding));
     }
@@ -1153,8 +1173,9 @@ public class XmlSignatureTest extends CamelTestSupport {
         XmlSignerEndpoint endpoint = getSignatureEncpointForSignException();
         MockEndpoint mock = setupExceptionMock();
         try {
-            String myPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                    "<ns:root ID=\"rootId\" xmlns:ns=\"http://test\"></ns:root>";
+            String myPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                    + (includeNewLine ? "\n" : "")
+                    + "<ns:root ID=\"rootId\" xmlns:ns=\"http://test\"></ns:root>";
             endpoint.setParentXpath(XmlSignatureHelper.getXpathFilter("/pre:root/@ID", Collections.singletonMap("pre", "http://test"))); // xpath with no element result
             sendBody("direct:signexceptions", myPayload);
             assertMockEndpointsSatisfied();
@@ -1167,7 +1188,8 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     @Test
     public void testEnvelopedSignatureWithParentXpath() throws Exception {
-        String myPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        String myPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
                 + "<ns:root xmlns:ns=\"http://test\"><a>a1</a><a/><test>Test Message</test></ns:root>";
         setupMock(myPayload);
         sendBody("direct:envelopedParentXpath", myPayload);

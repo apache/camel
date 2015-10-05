@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http.DefaultHttpBinding;
-import org.apache.camel.component.http.HttpMessage;
+import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpMessage;
 import org.eclipse.jetty.util.MultiPartInputStreamParser;
 
 final class AttachmentHttpBinding extends DefaultHttpBinding {

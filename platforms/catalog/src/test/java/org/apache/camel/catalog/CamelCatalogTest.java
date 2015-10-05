@@ -30,6 +30,16 @@ public class CamelCatalogTest extends TestCase {
     private CamelCatalog catalog = new DefaultCamelCatalog();
 
     @Test
+    public void testFindLanguageNames() throws Exception {
+        List<String> names = catalog.findLanguageNames();
+
+        assertTrue(names.contains("el"));
+        assertTrue(names.contains("simple"));
+        assertTrue(names.contains("spel"));
+        assertTrue(names.contains("xpath"));
+    }
+
+    @Test
     public void testFindNames() throws Exception {
         List<String> names = catalog.findComponentNames();
         assertNotNull(names);

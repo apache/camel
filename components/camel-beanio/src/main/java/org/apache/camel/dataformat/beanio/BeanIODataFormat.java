@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
  * {@link DataFormat}) for beanio data.
  */
-public class BeanIODataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class BeanIODataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final String LOG_PREFIX = "BeanIO: ";
     private static final Logger LOG = LoggerFactory.getLogger(BeanIODataFormat.class);
@@ -71,6 +72,11 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
     public BeanIODataFormat(String mapping, String streamName) {
         this.mapping = mapping;
         this.streamName = streamName;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "beanio";
     }
 
     @Override

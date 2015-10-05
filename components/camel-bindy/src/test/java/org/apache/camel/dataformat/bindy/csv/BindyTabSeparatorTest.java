@@ -17,14 +17,12 @@
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.tab.PurchaseOrder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.CastUtils;
 import org.junit.Test;
 
 /**
@@ -41,9 +39,8 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<Map<?, PurchaseOrder>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
-        PurchaseOrder order = rows.get(0).get(PurchaseOrder.class.getName());
-
+        PurchaseOrder order = mock.getReceivedExchanges().get(0).getIn().getBody(PurchaseOrder.class);
+        
         assertEquals(123, order.getId());
         assertEquals("Camel in Action", order.getName());
         assertEquals(2, order.getAmount());
@@ -70,6 +67,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshalEmptyTrailingNoneRequiredFields() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
@@ -81,9 +79,10 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<Map<?, PurchaseOrder>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
-        PurchaseOrder order = rows.get(0).get(PurchaseOrder.class.getName());
-
+              
+        List<PurchaseOrder> orders = (List<PurchaseOrder>)mock.getReceivedExchanges().get(0).getIn().getBody();
+        PurchaseOrder order = orders.get(0);
+        
         assertEquals(123, order.getId());
         assertEquals("Camel in Action", order.getName());
         assertEquals(2, order.getAmount());
@@ -115,7 +114,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                BindyCsvDataFormat bindy = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.tab");
+                BindyCsvDataFormat bindy = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.tab.PurchaseOrder.class);
 
                 from("direct:marshal")
                         .marshal(bindy)

@@ -28,6 +28,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.EmptyConsumerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -61,6 +62,7 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
     private long timeout;
     private boolean aggregateOnException;
     private int cacheSize;
+    private boolean ignoreInvalidEndpoint;
 
     /**
      * Creates a new {@link PollEnricher}.
@@ -87,6 +89,14 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return consumerCache.getEndpointUtilizationStatistics();
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -141,6 +151,14 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
         this.cacheSize = cacheSize;
     }
 
+    public boolean isIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
+    }
+
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
@@ -172,13 +190,20 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
         Endpoint endpoint;
 
         // use dynamic endpoint so calculate the endpoint to use
+        Object recipient = null;
         try {
-            Object recipient = expression.evaluate(exchange, Object.class);
+            recipient = expression.evaluate(exchange, Object.class);
             endpoint = resolveEndpoint(exchange, recipient);
             // acquire the consumer from the cache
             consumer = consumerCache.acquirePollingConsumer(endpoint);
         } catch (Throwable e) {
-            exchange.setException(e);
+            if (isIgnoreInvalidEndpoint()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                }
+            } else {
+                exchange.setException(e);
+            }
             callback.done(true);
             return true;
         }

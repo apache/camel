@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -74,13 +76,10 @@ abstract class CsvMarshaller {
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
         CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream), format);
         try {
-            List<?> list = ExchangeHelper.convertToType(exchange, List.class, object);
-            if (list != null) {
-                for (Object child : list) {
-                    printer.printRecord(getRecordValues(exchange, child));
-                }
-            } else {
-                printer.printRecord(getRecordValues(exchange, object));
+            Iterator it = ObjectHelper.createIterator(object);
+            while (it.hasNext()) {
+                Object child = it.next();
+                printer.printRecord(getRecordValues(exchange, child));
             }
         } finally {
             IOHelper.close(printer);
@@ -88,7 +87,8 @@ abstract class CsvMarshaller {
     }
 
     private Iterable<?> getRecordValues(Exchange exchange, Object data) throws NoTypeConversionAvailableException {
-        Map<?, ?> map = ExchangeHelper.convertToType(exchange, Map.class, data);
+        // each row must be a map or list based
+        Map<?, ?> map = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, data);
         if (map != null) {
             return getMapRecordValues(map);
         }

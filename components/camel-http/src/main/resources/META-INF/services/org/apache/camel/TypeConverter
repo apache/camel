@@ -15,5 +15,4 @@
 # limitations under the License.
 #
 
-org.apache.camel.component.http.HttpConverter
 org.apache.camel.component.http.RequestEntityConverter

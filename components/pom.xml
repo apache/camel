@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.16.1-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -45,13 +45,13 @@
     <module>camel-bam</module>
     <module>camel-groovy</module>
     <module>camel-scala</module>
+    <module>camel-http-common</module>
     <module>camel-http</module>
     <module>camel-http4</module>
     <module>camel-jetty-common</module>
+    <module>camel-jetty</module>
     <module>camel-jetty8</module>
     <module>camel-jetty9</module>
-    <!-- camel-jetty is used to republish the camel-jetty8 -->
-    <module>camel-jetty</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
     <module>camel-jms</module>
@@ -104,6 +104,7 @@
     <module>camel-gae</module>
     <module>camel-ganglia</module>
     <module>camel-geocoder</module>
+    <module>camel-git</module>
     <module>camel-github</module>
     <module>camel-google-calendar</module>
     <module>camel-google-drive</module>
@@ -128,6 +129,7 @@
     <module>camel-javaspace</module>
     <module>camel-jaxb</module>
     <module>camel-jasypt</module>
+    <module>camel-jbpm</module>
     <module>camel-jclouds</module>
     <module>camel-jcr</module>
     <module>camel-jdbc</module>
@@ -137,6 +139,7 @@
     <module>camel-jing</module>
     <module>camel-jira</module>
     <module>camel-jmx</module>
+    <module>camel-jolt</module>
     <module>camel-josql</module>
     <module>camel-jpa</module>
     <module>camel-jsonpath</module>
@@ -221,7 +224,9 @@
     <module>camel-stringtemplate</module>
     <module>camel-syslog</module>
     <module>camel-swagger</module>
+    <module>camel-swagger-java</module>
     <module>camel-tagsoup</module>
+    <module>camel-tarfile</module>
     <module>camel-twitter</module>
     <module>camel-undertow</module>
     <module>camel-univocity-parsers</module>

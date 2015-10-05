@@ -206,4 +206,9 @@ public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvForma
             format.setDelimiter(delimiter);
         }
     }
+
+    @Override
+    public String getDataFormatName() {
+        return "univocity-csv";
+    }
 }

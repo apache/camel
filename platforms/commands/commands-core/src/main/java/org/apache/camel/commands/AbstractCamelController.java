@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.commands.internal.RegexUtil;
 import org.apache.camel.util.JsonSchemaHelper;
@@ -35,6 +36,26 @@ import org.apache.camel.util.JsonSchemaHelper;
 public abstract class AbstractCamelController implements CamelController {
 
     private CamelCatalog catalog = new DefaultCamelCatalog();
+
+    @Override
+    public List<Map<String, String>> getCamelContexts(String filter) throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        List<Map<String, String>> context = getCamelContexts();
+        if (filter != null) {
+            filter = RegexUtil.wildcardAsRegex(filter);
+        } else {
+            filter = "*";
+        }
+        for (Map<String, String> entry : context) {
+            String name = entry.get("name");
+            if (name.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(name, filter) || name.matches(filter)) {
+                answer.add(entry);
+            }
+        }
+
+        return answer;
+    }
 
     @Override
     public List<Map<String, String>> listEipsCatalog(String filter) throws Exception {

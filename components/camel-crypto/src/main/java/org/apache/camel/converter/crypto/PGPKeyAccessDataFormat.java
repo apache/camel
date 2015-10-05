@@ -33,6 +33,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -78,7 +79,7 @@ import org.slf4j.LoggerFactory;
  * array or file, then you should use the class {@link PGPDataFormat}.
  * 
  */
-public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat {
+public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     public static final String KEY_USERID = "CamelPGPDataFormatKeyUserid";
     public static final String KEY_USERIDS = "CamelPGPDataFormatKeyUserids";
@@ -163,6 +164,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private int algorithm = SymmetricKeyAlgorithmTags.CAST5; // for encryption
 
     private int compressionAlgorithm = CompressionAlgorithmTags.ZIP; // for encryption
+    
+    private boolean withCompressedDataPacket = true; // for encryption
 
     private String signatureVerificationOption = "optional";
 
@@ -174,6 +177,11 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private String fileName = PGPLiteralData.CONSOLE;
 
     public PGPKeyAccessDataFormat() {
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "pgp";
     }
 
     protected String findKeyUserid(Exchange exchange) {
@@ -210,7 +218,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return exchange.getIn().getHeader(Exchange.FILE_NAME, getFileName(), String.class);
     }
 
-    public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
+    public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception { //NOPMD
         List<String> userids = determineEncryptionUserIds(exchange);
         List<PGPPublicKey> keys = publicKeyAccessor.getEncryptionKeys(exchange, userids);
         if (keys.isEmpty()) {
@@ -233,9 +241,15 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         }
         OutputStream encOut = encGen.open(outputStream, new byte[BUFFER_SIZE]);
 
-        PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(findCompressionAlgorithm(exchange));
-        OutputStream comOut = new BufferedOutputStream(comData.open(encOut));
-
+        OutputStream comOut;
+        if (withCompressedDataPacket) {
+            PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(findCompressionAlgorithm(exchange));
+            comOut = new BufferedOutputStream(comData.open(encOut));
+        } else {
+            comOut = encOut;
+            LOG.debug("No Compressed Data packet is added");  
+        }
+            
         List<PGPSignatureGenerator> sigGens = createSignatureGenerator(exchange, comOut);
 
         PGPLiteralDataGenerator litData = new PGPLiteralDataGenerator();
@@ -311,7 +325,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return result;
     }
 
-    protected List<PGPSignatureGenerator> createSignatureGenerator(Exchange exchange, OutputStream out) throws Exception {
+    protected List<PGPSignatureGenerator> createSignatureGenerator(Exchange exchange, OutputStream out) throws Exception { //NOPMD
 
         if (secretKeyAccessor == null) {
             return null;
@@ -345,7 +359,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     @SuppressWarnings("resource")
-    public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception {
+    public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception { //NOPMD
         if (encryptedStream == null) {
             return null;
         }
@@ -361,10 +375,16 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         try {
             in = PGPUtil.getDecoderStream(encryptedStream);
             encData = getDecryptedData(exchange, in);
-            uncompressedData = getUncompressedData(encData);
-            PGPObjectFactory pgpFactory = new PGPObjectFactory(uncompressedData, new BcKeyFingerprintCalculator());
+            PGPObjectFactory pgpFactory = new PGPObjectFactory(encData, new BcKeyFingerprintCalculator());
             Object object = pgpFactory.nextObject();
-
+            if (object instanceof PGPCompressedData) {
+                PGPCompressedData comData = (PGPCompressedData) object;
+                uncompressedData = comData.getDataStream();
+                pgpFactory = new PGPObjectFactory(uncompressedData, new BcKeyFingerprintCalculator());
+                object = pgpFactory.nextObject();
+            } else {
+                LOG.debug("PGP Message does not contain a Compressed Data Packet");
+            }
             PGPOnePassSignature signature;
             if (object instanceof PGPOnePassSignatureList) {
                 signature = getSignature(exchange, (PGPOnePassSignatureList) object);
@@ -416,17 +436,6 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         } else {
             return bos.toByteArray();
         }
-    }
-
-    private InputStream getUncompressedData(InputStream encData) throws IOException, PGPException {
-        PGPObjectFactory pgpFactory = new PGPObjectFactory(encData, new BcKeyFingerprintCalculator());
-        Object compObj = pgpFactory.nextObject();
-        if (!(compObj instanceof PGPCompressedData)) {
-            throw getFormatException();
-        }
-        PGPCompressedData comData = (PGPCompressedData) compObj;
-        InputStream uncompressedData = comData.getDataStream();
-        return uncompressedData;
     }
 
     private InputStream getDecryptedData(Exchange exchange, InputStream encryptedStream) throws Exception, PGPException {
@@ -489,7 +498,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return new IllegalArgumentException(
                 "The input message body has an invalid format. The PGP decryption/verification processor expects a sequence of PGP packets of the form "
                         + "(entries in brackets are optional and ellipses indicate repetition, comma represents  sequential composition, and vertical bar separates alternatives): "
-                        + "Public Key Encrypted Session Key ..., Symmetrically Encrypted Data | Sym. Encrypted and Integrity Protected Data, Compressed Data, (One Pass Signature ...,) "
+                        + "Public Key Encrypted Session Key ..., Symmetrically Encrypted Data | Sym. Encrypted and Integrity Protected Data, (Compressed Data,) (One Pass Signature ...,) "
                         + "Literal Data, (Signature ...,)");
     }
 
@@ -709,6 +718,18 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return signatureVerificationOption;
     }
 
+    public boolean isWithCompressedDataPacket() {
+        return withCompressedDataPacket;
+    }
+
+    /** Indicator that Compressed Data packet shall be added during encryption.
+     * The default value is true.
+     * If <tt>false</tt> then the compression algorithm (see {@link #setCompressionAlgorithm(int)} is ignored. 
+     */
+    public void setWithCompressedDataPacket(boolean withCompressedDataPacket) {
+        this.withCompressedDataPacket = withCompressedDataPacket;
+    }
+
     /**
      * Signature verification option. Controls the behavior for the signature
      * verification during unmarshaling. Possible values are
@@ -762,7 +783,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doStart() throws Exception { //NOPMD
         if (Security.getProvider(BC) == null && BC.equals(getProvider())) {
             LOG.debug("Adding BouncyCastleProvider as security provider");
             Security.addProvider(new BouncyCastleProvider());
@@ -772,7 +793,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected void doStop() throws Exception { //NOPMD
         // noop
     }
 }

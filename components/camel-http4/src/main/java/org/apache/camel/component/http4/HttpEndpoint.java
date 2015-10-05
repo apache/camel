@@ -23,14 +23,10 @@ import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.http4.helper.HttpHelper;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.spi.Metadata;
+import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
@@ -49,46 +45,24 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @UriEndpoint(scheme = "http4,http4s", title = "HTTP4,HTTP4S", syntax = "http4:httpUri", producerOnly = true, label = "http")
-public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class HttpEndpoint extends HttpCommonEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
+
+    // Note: all options must be documented with description in annotations so extended components can access the documentation
+
     private HttpContext httpContext;
-    private HttpComponent component;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpClientConnectionManager clientConnectionManager;
     private HttpClientBuilder clientBuilder;
-    private HttpClient httpClient;
-    private UrlRewrite urlRewrite;
-    private CookieStore cookieStore = new BasicCookieStore();
+    private  HttpClient httpClient;
 
-    @UriPath @Metadata(required = "true", label = "producer")
-    private URI httpUri;
-    @UriParam
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    @UriParam
-    private HttpBinding httpBinding;
-    @UriParam(label = "producer", defaultValue = "true")
-    private boolean throwExceptionOnFailure = true;
     @UriParam(label = "producer")
-    private boolean bridgeEndpoint;
-    @UriParam(label = "consumer")
-    private boolean matchOnUriPrefix;
-    @UriParam(defaultValue = "true")
-    private boolean chunked = true;
-    @UriParam(label = "consumer")
-    private boolean disableStreamCache;
-    @UriParam
-    private boolean transferException;
-    @UriParam(label = "consumer")
-    private boolean traceEnabled;
+    private CookieStore cookieStore = new BasicCookieStore();
     @UriParam(label = "producer")
     private boolean authenticationPreemptive;
-    @UriParam(label = "consumer")
-    private String httpMethodRestrict;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean clearExpiredCookies = true;
-    @UriParam(label = "producer")
-    private boolean ignoreResponseBody;
 
     public HttpEndpoint() {
     }
@@ -108,9 +82,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientBuilder clientBuilder,
                         HttpClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(endPointURI, component);
-        this.component = component;
-        this.httpUri = httpURI;
+        super(endPointURI, component, httpURI);
         this.clientBuilder = clientBuilder;
         this.httpClientConfigurer = clientConfigurer;
         this.clientConnectionManager = clientConnectionManager;
@@ -192,31 +164,18 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return clientBuilder.build();
     }
 
-    public void connect(HttpConsumer consumer) throws Exception {
-        component.connect(consumer);
+    @Override
+    public HttpComponent getComponent() {
+        return (HttpComponent) super.getComponent();
     }
 
-    public void disconnect(HttpConsumer consumer) throws Exception {
-        component.disconnect(consumer);
-    }
-
-    public boolean isLenientProperties() {
-        // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
-        return true;
-    }
-
-    public boolean isSingleton() {
-        return true;
-    }
-    
     @Override
     protected void doStop() throws Exception {
-        if (component != null && component.getClientConnectionManager() != clientConnectionManager) {
+        if (getComponent() != null && getComponent().getClientConnectionManager() != clientConnectionManager) {
             // need to shutdown the ConnectionManager
             clientConnectionManager.shutdown();
         }
     }
-
 
     // Properties
     //-------------------------------------------------------------------------
@@ -253,56 +212,8 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.httpClientConfigurer = httpClientConfigurer;
     }
 
-    public HttpBinding getHttpBinding() {
-        if (httpBinding == null) {
-            // create a new binding and use the options from this endpoint
-            httpBinding = new DefaultHttpBinding();
-            httpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
-            httpBinding.setTransferException(isTransferException());
-        }
-        return httpBinding;
-    }
-
-    /**
-     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-     */
-    public void setHttpBinding(HttpBinding httpBinding) {
-        this.httpBinding = httpBinding;
-    }
-
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
-    }
-
-    public String getPath() {
-        //if the path is empty, we just return the default path here
-        return httpUri.getPath().length() == 0 ? "/" : httpUri.getPath();
-    }
-
-    public int getPort() {
-        if (httpUri.getPort() == -1) {
-            if ("https".equals(getProtocol()) || "https4".equals(getProtocol())) {
-                return 443;
-            } else {
-                return 80;
-            }
-        }
-        return httpUri.getPort();
-    }
-
-    public String getProtocol() {
-        return httpUri.getScheme();
-    }
-
-    public URI getHttpUri() {
-        return httpUri;
-    }
-
-    /**
-     * The url of the HTTP endpoint to call.
-     */
-    public void setHttpUri(URI httpUri) {
-        this.httpUri = httpUri;
     }
 
     public HttpClientConnectionManager getClientConnectionManager() {
@@ -314,131 +225,6 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
      */
     public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
-    }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
-     */
-    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
-        this.headerFilterStrategy = headerFilterStrategy;
-    }
-
-    public boolean isThrowExceptionOnFailure() {
-        return throwExceptionOnFailure;
-    }
-
-    /**
-     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
-     * This allows you to get all responses regardless of the HTTP status code.
-     */
-    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
-        this.throwExceptionOnFailure = throwExceptionOnFailure;
-    }
-
-    public boolean isBridgeEndpoint() {
-        return bridgeEndpoint;
-    }
-
-    /**
-     * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request.
-     * You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
-     */
-    public void setBridgeEndpoint(boolean bridge) {
-        this.bridgeEndpoint = bridge;
-    }
-
-    public boolean isMatchOnUriPrefix() {
-        return matchOnUriPrefix;
-    }
-
-    /**
-     * Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
-     * <p/>
-     * See more details at: http://camel.apache.org/how-do-i-let-jetty-match-wildcards.html
-     */
-    public void setMatchOnUriPrefix(boolean match) {
-        this.matchOnUriPrefix = match;
-    }
-    
-    public boolean isDisableStreamCache() {
-        return this.disableStreamCache;
-    }
-
-    /**
-     * Determines whether or not the raw input stream from Jetty is cached or not
-     * (Camel will read the stream into a in memory/overflow to file, Stream caching) cache.
-     * By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel
-     * can retrieve all data from the stream. However you can set this option to true when you for example need
-     * to access the raw stream, such as streaming it directly to a file or other persistent store.
-     * DefaultHttpBinding will copy the request input stream into a stream cache and put it into message bod
-     * if this option is false to support reading the stream multiple times.
-     * If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,
-     * in case you do not need to read the message payload multiple times.
-     */
-    public void setDisableStreamCache(boolean disable) {
-        this.disableStreamCache = disable;
-    }
-
-    public boolean isChunked() {
-        return this.chunked;
-    }
-
-    /**
-     * If this option is false Jetty servlet will disable the HTTP streaming and set the content-length header on the response
-     */
-    public void setChunked(boolean chunked) {
-        this.chunked = chunked;
-    }
-
-    public boolean isTransferException() {
-        return transferException;
-    }
-
-    /**
-     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
-     * This allows you to get all responses regardless of the HTTP status code.
-     */
-    public void setTransferException(boolean transferException) {
-        this.transferException = transferException;
-    }
-    
-    public boolean isTraceEnabled() {
-        return this.traceEnabled;
-    }
-
-    /**
-     * Specifies whether to enable HTTP TRACE for this Jetty consumer. By default TRACE is turned off.
-     */
-    public void setTraceEnabled(boolean traceEnabled) {
-        this.traceEnabled = traceEnabled;
-    }
-
-    public String getHttpMethodRestrict() {
-        return httpMethodRestrict;
-    }
-
-    /**
-     * Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc.
-     * Multiple methods can be specified separated by comma.
-     */
-    public void setHttpMethodRestrict(String httpMethodRestrict) {
-        this.httpMethodRestrict = httpMethodRestrict;
-    }
-
-    public UrlRewrite getUrlRewrite() {
-        return urlRewrite;
-    }
-
-    /**
-     * Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints.
-     * See more details at http://camel.apache.org/urlrewrite.html
-     */
-    public void setUrlRewrite(UrlRewrite urlRewrite) {
-        this.urlRewrite = urlRewrite;
     }
 
     public boolean isClearExpiredCookies() {
@@ -476,17 +262,6 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
      */
     public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
         this.authenticationPreemptive = authenticationPreemptive;
-    }
-
-    public boolean isIgnoreResponseBody() {
-        return ignoreResponseBody;
-    }
-
-    /**
-     * If this option is true, The http producer won't read response body and cached the input stream.
-     */
-    public void setIgnoreResponseBody(boolean ignoreResponseBody) {
-        this.ignoreResponseBody = ignoreResponseBody;
     }
 
 }

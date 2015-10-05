@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.util.concurrent.ExecutorService;
 
 import kafka.message.MessageAndMetadata;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -26,8 +27,6 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -36,7 +35,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
-    
+
     @UriParam(description = "If the option is true, then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message.", defaultValue = "false")
     private boolean bridgeEndpoint;
 
@@ -71,7 +70,30 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @Override
     public Producer createProducer() throws Exception {
-        return new KafkaProducer(this);
+        String msgClassName = getConfiguration().getSerializerClass();
+        String keyClassName = getConfiguration().getKeySerializerClass();
+        if (msgClassName == null) {
+            msgClassName = KafkaConstants.KAFKA_DEFAULT_ENCODER;
+        }
+        if (keyClassName == null) {
+            keyClassName = msgClassName;
+        }
+
+        ClassLoader cl = getClass().getClassLoader();
+
+        Class<?> k;
+        try {
+            k = cl.loadClass(keyClassName);
+        } catch (ClassNotFoundException x) {
+            k = getCamelContext().getClassResolver().resolveMandatoryClass(keyClassName);
+        }
+        Class<?> v;
+        try {
+            v = cl.loadClass(msgClassName);
+        } catch (ClassNotFoundException x) {
+            v = getCamelContext().getClassResolver().resolveMandatoryClass(msgClassName);
+        }
+        return createProducer(k, v, this);
     }
 
     @Override
@@ -84,20 +106,23 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public Exchange createKafkaExchange(MessageAndMetadata<byte[], byte[]> mm) {
-        Exchange exchange = new DefaultExchange(this, getExchangePattern());
+        Exchange exchange = super.createExchange();
 
-        Message message = new DefaultMessage();
+        Message message = exchange.getIn();
         message.setHeader(KafkaConstants.PARTITION, mm.partition());
         message.setHeader(KafkaConstants.TOPIC, mm.topic());
+        message.setHeader(KafkaConstants.OFFSET, mm.offset());
         if (mm.key() != null) {
             message.setHeader(KafkaConstants.KEY, new String(mm.key()));
         }
         message.setBody(mm.message());
-        exchange.setIn(message);
 
         return exchange;
     }
 
+    protected <K, V> KafkaProducer<K, V> createProducer(Class<K> keyClass, Class<V> valueClass, KafkaEndpoint endpoint) {
+        return new KafkaProducer<K, V>(endpoint);
+    }
 
     // Delegated properties from the configuration
     //-------------------------------------------------------------------------

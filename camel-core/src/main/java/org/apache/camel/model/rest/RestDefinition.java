@@ -29,9 +29,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -46,6 +49,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     @XmlAttribute
     private String path;
+
+    @XmlAttribute
+    private String tag;
 
     @XmlAttribute
     private String consumes;
@@ -79,6 +85,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    /**
+     * To configure a special tag for the operations within this rest definition.
+     */
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getConsumes() {
@@ -169,6 +186,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    /**
+     * To set the tag to use of this REST service
+     */
+    public RestDefinition tag(String tag) {
+        setTag(tag);
+        return this;
+    }
+
     public RestDefinition get() {
         return addVerb("get", null);
     }
@@ -207,6 +232,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition head(String uri) {
         return addVerb("head", uri);
+    }
+
+    public RestDefinition options() {
+        return addVerb("options", null);
+    }
+
+    public RestDefinition options(String uri) {
+        return addVerb("options", uri);
     }
 
     public RestDefinition verb(String verb) {
@@ -276,8 +309,26 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return param(verb);
     }
 
+    public RestDefinition param(RestOperationParamDefinition param) {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.getParams().add(param);
+        return this;
+    }
+
     public RestOperationParamDefinition param(VerbDefinition verb) {
         return new RestOperationParamDefinition(verb);
+    }
+
+    public RestDefinition responseMessage(RestOperationResponseMsgDefinition msg) {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.getResponseMsgs().add(msg);
+        return this;
     }
 
     public RestOperationResponseMsgDefinition responseMessage() {
@@ -387,7 +438,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Routes directly to the given endpoint.
+     * Routes directly to the given static endpoint.
      * <p/>
      * If you need additional routing capabilities, then use {@link #route()} instead.
      *
@@ -404,6 +455,27 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setTo(to);
+        return this;
+    }
+
+    /**
+     * Routes directly to the given dynamic endpoint.
+     * <p/>
+     * If you need additional routing capabilities, then use {@link #route()} instead.
+     *
+     * @param uri the uri of the endpoint
+     * @return this builder
+     */
+    public RestDefinition toD(String uri) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        ToDynamicDefinition to = new ToDynamicDefinition(uri);
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setToD(to);
         return this;
     }
 
@@ -437,6 +509,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             answer = new HeadVerbDefinition();
         } else if ("put".equals(verb)) {
             answer = new PutVerbDefinition();
+        } else if ("options".equals(verb)) {
+            answer = new OptionsVerbDefinition();
         } else {
             answer = new VerbDefinition();
             answer.setMethod(verb);
@@ -454,7 +528,57 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) {
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
+        if (camelContext.getRestConfigurations().isEmpty()) {
+            camelContext.getRestConfiguration();
+        }
+        for (RestConfiguration config : camelContext.getRestConfigurations()) {
+            addRouteDefinition(camelContext, answer, config.getComponent());
+            if (config.getApiContextPath() != null) {
+                addApiRouteDefinition(camelContext, answer, config);
+            }
+        }
+        return answer;
+    }
 
+    private void addApiRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, RestConfiguration configuration) {
+        RouteDefinition route = new RouteDefinition();
+
+        // create the from endpoint uri which is using the rest-api component
+        String from = "rest-api:" + configuration.getApiContextPath();
+
+        // append options
+        Map<String, Object> options = new HashMap<String, Object>();
+
+        String routeId = "rest-api-" + route.idOrCreate(camelContext.getNodeIdFactory());
+        options.put("routeId", routeId);
+        if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
+            options.put("componentName", configuration.getComponent());
+        }
+        if (configuration.getApiContextIdPattern() != null) {
+            options.put("contextIdPattern", configuration.getApiContextIdPattern());
+        }
+
+        if (!options.isEmpty()) {
+            String query;
+            try {
+                query = URISupport.createQueryString(options);
+            } catch (URISyntaxException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+            from = from + "?" + query;
+        }
+
+        // we use the same uri as the producer (so we have a little route for the rest api)
+        String to = from;
+
+        // the route should be from this rest endpoint
+        route.fromRest(from);
+        route.to(to);
+        route.setRestDefinition(this);
+        answer.add(route);
+    }
+
+    private void addRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, String component) {
         for (VerbDefinition verb : getVerbs()) {
             // either the verb has a singular to or a embedded route
             RouteDefinition route = verb.getRoute();
@@ -462,11 +586,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 // it was a singular to, so add a new route and add the singular
                 // to as output to this route
                 route = new RouteDefinition();
-                route.getOutputs().add(verb.getTo());
+                ProcessorDefinition def = verb.getTo() != null ? verb.getTo() : verb.getToD();
+                route.getOutputs().add(def);
             }
 
             // add the binding
             RestBindingDefinition binding = new RestBindingDefinition();
+            binding.setComponent(component);
             binding.setType(verb.getType());
             binding.setOutType(verb.getOutType());
             // verb takes precedence over configuration on rest
@@ -532,7 +658,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 }
             }
             String routeId = route.idOrCreate(camelContext.getNodeIdFactory());
+            verb.setRouteId(routeId);
             options.put("routeId", routeId);
+            if (component != null && !component.isEmpty()) {
+                options.put("componentName", component);
+            }
 
             // include optional description, which we favor from 1) to/route description 2) verb description 3) rest description
             // this allows end users to define general descriptions and override then per to/route or verb
@@ -611,8 +741,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             route.setRestDefinition(this);
             answer.add(route);
         }
-
-        return answer;
     }
 
     private String buildUri(VerbDefinition verb) {

@@ -22,10 +22,8 @@ import javax.mail.search.SearchTerm;
 import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.UriEndpoint;
@@ -40,19 +38,19 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private long delay = MailConsumer.DEFAULT_CONSUMER_DELAY;
     @UriParam
     private MailConfiguration configuration;
-    @UriParam
+    @UriParam(label = "advanced")
     private MailBinding binding;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new MailHeaderFilterStrategy();
-    @UriParam
+    @UriParam(label = "advanced")
     private ContentTypeResolver contentTypeResolver;
-    @UriParam
+    @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
-    @UriParam
+    @UriParam(label = "consumer,filter")
     private SearchTerm searchTerm;
-    @UriParam
+    @UriParam(label = "consumer,sort")
     private SortTerm[] sortTerm;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private MailBoxPostProcessAction postProcessAction;
 
     public MailEndpoint() {
@@ -122,17 +120,8 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return false;
     }
 
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        return createExchange(pattern, null);
-    }
-
     public Exchange createExchange(Message message) {
-        return createExchange(getExchangePattern(), message);
-    }
-
-    private Exchange createExchange(ExchangePattern pattern, Message message) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange();
         exchange.setProperty(Exchange.BINDING, getBinding());
         exchange.setIn(new MailMessage(message, getConfiguration().isMapMailMessage()));
         return exchange;

@@ -25,7 +25,6 @@ import com.github.dockerjava.api.command.BuildImageCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -51,7 +50,6 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
     private boolean remove = true;
     private String tag = "1.0";
 
-    @Ignore
     @Test
     public void buildImageFromInputStreamHeaderTest() {
 
@@ -65,7 +63,6 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
 
     }
 
-    @Ignore
     @Test
     public void buildImageFromFileHeaderTest() {
 

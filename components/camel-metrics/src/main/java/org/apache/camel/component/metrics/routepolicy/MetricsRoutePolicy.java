@@ -44,19 +44,21 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
     private Route route;
 
     private static final class MetricsStatistics {
-        private Timer responses;
+        private final String routeId;
+        private final Timer responses;
 
-        private MetricsStatistics(Timer responses) {
+        private MetricsStatistics(Route route, Timer responses) {
+            this.routeId = route.getId();
             this.responses = responses;
         }
 
         public void onExchangeBegin(Exchange exchange) {
             Timer.Context context = responses.time();
-            exchange.setProperty("MetricsRoutePolicy", context);
+            exchange.setProperty("MetricsRoutePolicy-" + routeId, context);
         }
 
         public void onExchangeDone(Exchange exchange) {
-            Timer.Context context = exchange.getProperty("MetricsRoutePolicy", Timer.Context.class);
+            Timer.Context context = (Timer.Context) exchange.removeProperty("MetricsRoutePolicy-" + routeId);
             if (context != null) {
                 context.stop();
             }
@@ -136,7 +138,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         // for know we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core
         Timer responses = registryService.getMetricsRegistry().timer(createName("responses"));
-        statistics = new MetricsStatistics(responses);
+        statistics = new MetricsStatistics(route, responses);
     }
 
     private String createName(String type) {

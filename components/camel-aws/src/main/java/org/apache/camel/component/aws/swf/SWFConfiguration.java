@@ -66,6 +66,10 @@ public class SWFConfiguration {
     private String stateResultType;
     @UriParam(label = "producer,workflow")
     private String terminationDetails;
+    @UriParam(label = "producer,workflow", defaultValue = "3600")
+    private String executionStartToCloseTimeout = "3600";
+    @UriParam(label = "producer,workflow", defaultValue = "600")
+    private String taskStartToCloseTimeout = "600";
     @UriParam
     private DataConverter dataConverter;
     @UriParam(label = "producer,activity")
@@ -323,12 +327,36 @@ public class SWFConfiguration {
         this.activitySchedulingOptions = activitySchedulingOptions;
     }
 
-    public int getActivityThreadPoolSize() { return activityThreadPoolSize; }
+    public int getActivityThreadPoolSize() {
+        return activityThreadPoolSize;
+    }
 
     /**
      * Maximum number of threads in work pool for activity.
      */
     public void setActivityThreadPoolSize(int activityThreadPoolSize) {
         this.activityThreadPoolSize = activityThreadPoolSize;
+    }
+
+    /**
+     * Set the execution start to close timeout.
+     */
+    public String getExecutionStartToCloseTimeout() {
+        return executionStartToCloseTimeout;
+    }
+
+    public void setExecutionStartToCloseTimeout(String executionStartToCloseTimeout) {
+        this.executionStartToCloseTimeout = executionStartToCloseTimeout;
+    }
+
+    /**
+     * Set the task start to close timeout.
+     */
+    public String getTaskStartToCloseTimeout() {
+        return taskStartToCloseTimeout;
+    }
+
+    public void setTaskStartToCloseTimeout(String taskStartToCloseTimeout) {
+        this.taskStartToCloseTimeout = taskStartToCloseTimeout;
     }
 }

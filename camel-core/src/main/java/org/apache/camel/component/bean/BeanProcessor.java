@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
 public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(BeanProcessor.class);
 
+    private final BeanHolder beanHolder;
     private Processor processor;
     private boolean multiParameterArray;
     private String method;
-    private BeanHolder beanHolder;
     private boolean shorthandMethod;
 
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {

@@ -54,17 +54,10 @@ import com.github.dockerjava.api.command.UnpauseContainerCmd;
 import com.github.dockerjava.api.command.VersionCmd;
 import com.github.dockerjava.api.command.WaitContainerCmd;
 import com.github.dockerjava.api.model.AuthConfig;
-import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Capability;
-import com.github.dockerjava.api.model.Device;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.ExposedPorts;
 import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.Link;
-import com.github.dockerjava.api.model.LxcConf;
-import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.Ports;
-import com.github.dockerjava.api.model.RestartPolicy;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
 import com.github.dockerjava.api.model.VolumesFrom;
@@ -908,6 +901,12 @@ public class DockerProducer extends DefaultProducer {
         if (dns != null) {
             createContainerCmd.withDns(dns);
         }
+        
+        String domainName = DockerHelper.getProperty(DockerConstants.DOCKER_DOMAIN_NAME, configuration, message, String.class);
+
+        if (domainName != null) {
+            createContainerCmd.withDomainName(domainName);
+        }
 
         String[] env = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_ENV, message);
 
@@ -1285,96 +1284,6 @@ public class DockerProducer extends DefaultProducer {
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
         StartContainerCmd startContainerCmd = client.startContainerCmd(containerId);
-
-        Bind[] binds = DockerHelper.getArrayProperty(DockerConstants.DOCKER_BINDS, message, Bind.class);
-
-        if (binds != null) {
-            startContainerCmd.withBinds(binds);
-        }
-
-        Capability[] capAdd = DockerHelper.getArrayProperty(DockerConstants.DOCKER_CAP_ADD, message, Capability.class);
-
-        if (capAdd != null) {
-            startContainerCmd.withCapAdd(capAdd);
-        }
-
-        Capability[] capDrop = DockerHelper.getArrayProperty(DockerConstants.DOCKER_CAP_DROP, message, Capability.class);
-
-        if (capDrop != null) {
-            startContainerCmd.withCapDrop(capDrop);
-        }
-
-        Device[] devices = DockerHelper.getArrayProperty(DockerConstants.DOCKER_DEVICES, message, Device.class);
-
-        if (devices != null) {
-            startContainerCmd.withDevices(devices);
-        }
-
-        String[] dns = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_DNS, message);
-
-        if (dns != null) {
-            startContainerCmd.withDns(dns);
-        }
-
-        String[] dnsSearch = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_DNS_SEARCH, message);
-
-        if (dnsSearch != null) {
-            startContainerCmd.withDnsSearch(dnsSearch);
-        }
-
-        Link[] links = DockerHelper.getArrayProperty(DockerConstants.DOCKER_LINKS, message, Link.class);
-
-        if (links != null) {
-            startContainerCmd.withLinks(links);
-        }
-
-        LxcConf[] lxcConf = DockerHelper.getArrayProperty(DockerConstants.DOCKER_LXC_CONF, message, LxcConf.class);
-
-        if (lxcConf != null) {
-            startContainerCmd.withLxcConf(lxcConf);
-        }
-
-        String networkMode = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK_MODE, configuration, message, String.class);
-
-        if (networkMode != null) {
-            startContainerCmd.withNetworkMode(networkMode);
-        }
-
-        Ports ports = DockerHelper.getProperty(DockerConstants.DOCKER_PORTS, configuration, message, Ports.class);
-
-        if (ports != null) {
-            startContainerCmd.withPortBindings(ports);
-        }
-
-        PortBinding[] portBinding = DockerHelper.getArrayProperty(DockerConstants.DOCKER_PORT_BINDINGS, message, PortBinding.class);
-
-        if (portBinding != null) {
-            startContainerCmd.withPortBindings(portBinding);
-        }
-
-        Boolean privileged = DockerHelper.getProperty(DockerConstants.DOCKER_PRIVILEGED, configuration, message, Boolean.class);
-
-        if (privileged != null) {
-            startContainerCmd.withPrivileged(privileged);
-        }
-
-        Boolean publishAllPorts = DockerHelper.getProperty(DockerConstants.DOCKER_PUBLISH_ALL_PORTS, configuration, message, Boolean.class);
-
-        if (publishAllPorts != null) {
-            startContainerCmd.withPublishAllPorts(publishAllPorts);
-        }
-
-        RestartPolicy restartPolicy = DockerHelper.getProperty(DockerConstants.DOCKER_RESTART_POLICY, configuration, message, RestartPolicy.class);
-
-        if (restartPolicy != null) {
-            startContainerCmd.withRestartPolicy(restartPolicy);
-        }
-
-        String volumesFrom = DockerHelper.getProperty(DockerConstants.DOCKER_VOLUMES_FROM, configuration, message, String.class);
-
-        if (volumesFrom != null) {
-            startContainerCmd.withVolumesFrom(volumesFrom);
-        }
 
         return startContainerCmd;
 

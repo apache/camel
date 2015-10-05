@@ -192,7 +192,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n \"component\": {");
         buffer.append("\n    \"kind\": \"").append("component").append("\",");
         buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
-        buffer.append("\n    \"extendsScheme\": \"").append(componentModel.getExtendsScheme()).append("\",");
+        if (!Strings.isNullOrEmpty(componentModel.getExtendsScheme())) {
+            buffer.append("\n    \"extendsScheme\": \"").append(componentModel.getExtendsScheme()).append("\",");
+        }
         buffer.append("\n    \"syntax\": \"").append(componentModel.getSyntax()).append("\",");
         buffer.append("\n    \"title\": \"").append(componentModel.getTitle()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
@@ -464,12 +466,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 String fieldName = methodName.substring(3);
                 fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
 
-                ExecutableElement setter = method;
-                String name = fieldName;
-                name = prefix + name;
-                TypeMirror fieldType = setter.getParameters().get(0).asType();
-                String fieldTypeName = fieldType.toString();
-                TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+                // we usually favor putting the @Metadata annotation on the field instead of the setter, so try to use it if its there
+                VariableElement field = findFieldElement(classElement, fieldName);
+                if (field != null && metadata == null) {
+                    metadata = field.getAnnotation(Metadata.class);
+                }
 
                 String required = metadata != null ? metadata.required() : null;
                 String label = metadata != null ? metadata.label() : null;
@@ -478,6 +479,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 // String defaultValueNote = param.defaultValueNote();
                 String defaultValue = metadata != null ? metadata.defaultValue() : null;
                 String defaultValueNote = null;
+
+                ExecutableElement setter = method;
+                String name = fieldName;
+                name = prefix + name;
+                TypeMirror fieldType = setter.getParameters().get(0).asType();
+                String fieldTypeName = fieldType.toString();
+                TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
                 String docComment = findJavaDoc(elementUtils, method, fieldName, name, classElement, false);
                 if (isNullOrEmpty(docComment)) {

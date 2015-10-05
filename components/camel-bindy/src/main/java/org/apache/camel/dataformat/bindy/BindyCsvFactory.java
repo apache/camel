@@ -34,7 +34,6 @@ import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,15 +67,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean quoting;
     private boolean autospanLine;
 
-    public BindyCsvFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
-        super(resolver, packageNames);
-
-        // initialize specific parameters of the csv model
-        initCsvModel();
-    }
-
-    public BindyCsvFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
-        super(resolver, type);
+    public BindyCsvFactory(Class<?> type) throws Exception {
+        super(type);
 
         // initialize specific parameters of the csv model
         initCsvModel();
@@ -258,8 +250,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (model.containsKey(clazz.getName())) {
 
                 Object obj = model.get(clazz.getName());
-                
-                if (obj != null && LOG.isDebugEnabled()) {
+                if (LOG.isDebugEnabled()) {
                     LOG.debug("Model object: {}, class: {}", obj, obj.getClass().getName());
                 }
                 if (obj != null) {

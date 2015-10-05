@@ -35,7 +35,6 @@ import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -51,18 +50,19 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     public BindyCsvDataFormat() {
     }
 
-    public BindyCsvDataFormat(String... packages) {
-        super(packages);
-    }
-
     public BindyCsvDataFormat(Class<?> type) {
         super(type);
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "bindy-csv";
     }
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
-        BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyCsvFactory factory = (BindyCsvFactory)getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
@@ -117,7 +117,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyCsvFactory factory = (BindyCsvFactory)getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
@@ -313,11 +313,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     @Override
-    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
-        if (getClassType() != null) {
-            return new BindyCsvFactory(resolver, getClassType());
-        } else {
-            return new BindyCsvFactory(resolver, getPackages());
-        }
+    protected BindyAbstractFactory createModelFactory() throws Exception {
+        return new BindyCsvFactory(getClassType());
     }
 }

@@ -56,7 +56,7 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
                     .split(body().tokenize(LS)).streaming()
                     .to("mock:split")
                     .choice()
-                        .when(body(String.class).isNotNull()).to("mock:body")
+                        .when(bodyAs(String.class).isNotNull()).to("mock:body")
                         .otherwise().to("mock:other")
                     .end();
             }

@@ -53,6 +53,9 @@ public class DozerProducer extends DefaultProducer {
         if (unmarshalId != null) {
             LOG.debug("Unmarshalling input data using data format '{}'.", unmarshalId);
             resolveUnmarshaller(exchange, unmarshalId).process(exchange);
+            if (exchange.getException() != null) {
+                throw exchange.getException();
+            }
         }
         
         // Load the target model class
@@ -95,6 +98,9 @@ public class DozerProducer extends DefaultProducer {
         if (marshalId != null) {
             LOG.debug("Marshalling output data using data format '{}'.", marshalId);
             resolveMarshaller(exchange, marshalId).process(exchange);
+            if (exchange.getException() != null) {
+                throw exchange.getException();
+            }
         }
     }
     

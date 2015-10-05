@@ -73,10 +73,15 @@ public final class FacebookPropertiesHelper {
                 // add to an existing reading reference?
                 // NOTE Reading class does not support overwriting properties!!!
                 Reading reading = configuration.getReading();
-                if (reading == null) {
-                    reading = new Reading();
+
+                if (reading != null) {
+                    Reading readingUpdate = new Reading();
+                    ReadingBuilder.setProperties(readingUpdate, readingProperties);
+
+                    reading = ReadingBuilder.merge(reading, readingUpdate);
                 } else {
-                    reading = ReadingBuilder.copy(reading, false);
+                    reading = new Reading();
+                    ReadingBuilder.setProperties(reading, readingProperties);
                 }
                 // set properties
                 ReadingBuilder.setProperties(reading,

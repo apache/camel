@@ -28,8 +28,6 @@ import org.apache.camel.spi.Metadata;
  * To specify the rest operation response messages using Swagger.
  * <p/>
  * This maps to the Swagger Response Message Object.
- * see com.wordnik.swagger.model.ResponseMessage
- * and https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md#525-response-message-object.
  */
 @Metadata(label = "rest")
 @XmlRootElement(name = "responseMessage")
@@ -39,8 +37,9 @@ public class RestOperationResponseMsgDefinition {
     @XmlTransient
     private VerbDefinition verb;
 
-    @XmlAttribute(required = true)
-    private int code;
+    @XmlAttribute
+    @Metadata(defaultValue = "200")
+    private String code;
 
     @XmlAttribute(required = true)
     private String message;
@@ -56,14 +55,11 @@ public class RestOperationResponseMsgDefinition {
     public RestOperationResponseMsgDefinition() {
     }
 
-    public int getCode() {
-        return code != 0 ? code : 200;
+    public String getCode() {
+        return code != null ? code : "200";
     }
 
-    /**
-     * Sets the Swagger Operation's ResponseMessage code
-     */
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
@@ -71,9 +67,6 @@ public class RestOperationResponseMsgDefinition {
         return responseModel != null ? responseModel : "";
     }
 
-    /**
-     * Sets the Swagger Operation's ResponseMessage responseModel
-     */
     public void setResponseModel(String responseModel) {
         this.responseModel = responseModel;
     }
@@ -82,23 +75,29 @@ public class RestOperationResponseMsgDefinition {
         return message != null ? message : "success";
     }
 
-    /**
-     * Sets the Swagger Operation's ResponseMessage message
-     */
     public void setMessage(String message) {
         this.message = message;
     }
 
     /**
-     * The return code
+     * The response code such as a HTTP status code.
      */
     public RestOperationResponseMsgDefinition code(int code) {
+        setCode("" + code);
+        return this;
+    }
+
+    /**
+     * The response code such as a HTTP status code. Can use <tt>general</tt>, or other words
+     * to indicate general error responses that do not map to a specific HTTP status code.
+     */
+    public RestOperationResponseMsgDefinition code(String code) {
         setCode(code);
         return this;
     }
 
     /**
-     * The return message
+     * The response message (description)
      */
     public RestOperationResponseMsgDefinition message(String msg) {
         setMessage(msg);

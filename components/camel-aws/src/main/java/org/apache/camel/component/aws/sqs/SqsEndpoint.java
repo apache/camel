@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.sqs;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQS;
@@ -31,6 +32,7 @@ import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -214,7 +216,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     }
 
     private Exchange createExchange(ExchangePattern pattern, com.amazonaws.services.sqs.model.Message msg) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         message.setBody(msg.getBody());
         message.setHeaders(new HashMap<String, Object>(msg.getAttributes()));
@@ -262,8 +264,16 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
      * @return AmazonSQSClient
      */
     AmazonSQS createClient() {
+        AmazonSQS client = null;
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonSQS client = new AmazonSQSClient(credentials);
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            client = new AmazonSQSClient(credentials, clientConfiguration);
+        } else {
+            client = new AmazonSQSClient(credentials);
+        }
         return client;
     }
 

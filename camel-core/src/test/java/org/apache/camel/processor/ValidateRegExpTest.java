@@ -70,7 +70,7 @@ public class ValidateRegExpTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .validate(body(String.class).regex("^\\d{2}\\.\\d{2}\\.\\d{4}$"))
+                    .validate(bodyAs(String.class).regex("^\\d{2}\\.\\d{2}\\.\\d{4}$"))
                     .to("mock:result");
             }
         };

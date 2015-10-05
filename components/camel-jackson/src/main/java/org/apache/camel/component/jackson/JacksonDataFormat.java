@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://jackson.codehaus.org/">Jackson</a> to marshal to and from JSON.
  */
-public class JacksonDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class JacksonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
 
@@ -66,6 +67,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
     private boolean enableJaxbAnnotationModule;
     private String enableFeatures;
     private String disableFeatures;
+    private boolean enableJacksonTypeConverter;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -134,6 +136,11 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
         this.objectMapper = mapper;
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "json-jackson";
     }
 
     public CamelContext getCamelContext() {
@@ -301,6 +308,20 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
      */
     public void setAllowJmsType(boolean allowJmsType) {
         this.allowJmsType = allowJmsType;
+    }
+
+    public boolean isEnableJacksonTypeConverter() {
+        return enableJacksonTypeConverter;
+    }
+
+    /**
+     * If enabled then Jackson is allowed to attempt to be used during Camels <a href="https://camel.apache.org/type-converter.html">type converter</a>
+     * as a {@link org.apache.camel.FallbackConverter} that attempts to convert POJOs to/from {@link Map}/{@link List} types.
+     * <p/>
+     * This should only be enabled when desired to be used.
+     */
+    public void setEnableJacksonTypeConverter(boolean enableJacksonTypeConverter) {
+        this.enableJacksonTypeConverter = enableJacksonTypeConverter;
     }
 
     public String getEnableFeatures() {

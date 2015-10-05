@@ -17,6 +17,8 @@
 package org.apache.camel.component.http4;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -57,15 +59,15 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
     public void testDoNotMessWithComponent() throws Exception {
         // get default
         HttpEndpoint end = context.getEndpoint("http4://www.google.com", HttpEndpoint.class);
-        assertIsInstanceOf(MyBinding.class, end.getHttpBinding());
+        assertIsInstanceOf(MyBinding.class, end.getBinding());
 
         // use a endpoint specific binding
         HttpEndpoint end2 = context.getEndpoint("http4://www.google.com?httpBinding=#other", HttpEndpoint.class);
-        assertIsInstanceOf(MyOtherBinding.class, end2.getHttpBinding());
+        assertIsInstanceOf(MyOtherBinding.class, end2.getBinding());
 
         // and the default option has not been messed with
         HttpEndpoint end3 = context.getEndpoint("http4://www.google.com", HttpEndpoint.class);
-        assertIsInstanceOf(MyBinding.class, end3.getHttpBinding());
+        assertIsInstanceOf(MyBinding.class, end3.getBinding());
         
         // test the headerFilterStrategy
         HttpEndpoint end4 = context.getEndpoint("http4://www.google.com?headerFilterStrategy=#myStrategy", HttpEndpoint.class);

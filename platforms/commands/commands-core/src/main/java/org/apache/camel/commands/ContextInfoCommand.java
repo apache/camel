@@ -75,6 +75,9 @@ public class ContextInfoCommand extends AbstractCamelCommand {
         out.println(stringEscape.unescapeJava("\u001B[1mMiscellaneous\u001B[0m"));
         out.println(stringEscape.unescapeJava("\tSuspended: " + row.get("suspended")));
         out.println(stringEscape.unescapeJava("\tShutdown Timeout: " + row.get("shutdownTimeout") + " sec."));
+        if (row.get("managementStatisticsLevel") != null) {
+            out.println(stringEscape.unescapeJava("\tManagement StatisticsLevel: " + row.get("managementStatisticsLevel")));
+        }
         out.println(stringEscape.unescapeJava("\tAllow UseOriginalMessage: " + row.get("allowUseOriginalMessage")));
         out.println(stringEscape.unescapeJava("\tMessage History: " + row.get("messageHistory")));
         out.println(stringEscape.unescapeJava("\tTracing: " + row.get("tracing")));

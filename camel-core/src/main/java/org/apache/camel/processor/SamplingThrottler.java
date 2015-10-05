@@ -102,6 +102,18 @@ public class SamplingThrottler extends DelegateAsyncProcessor implements Traceab
         }
     }
 
+    public long getMessageFrequency() {
+        return messageFrequency;
+    }
+
+    public long getSamplePeriod() {
+        return samplePeriod;
+    }
+
+    public TimeUnit getUnits() {
+        return units;
+    }
+
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         boolean doSend = false;

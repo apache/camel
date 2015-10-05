@@ -1,0 +1,13 @@
+@NAME(projectsById)
+  SELECT *
+  FROM projects
+  WHERE license = :body
+  ORDER BY id
+@NAME(allProjects)
+  SELECT *
+  FROM projects
+  ORDER BY id
+@NAME(deleteProject)
+  DELETE
+  FROM projects
+  WHERE id = :id

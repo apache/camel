@@ -22,6 +22,7 @@ import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
@@ -30,7 +31,7 @@ import org.apache.camel.util.ExchangeHelper;
  *
  * @version 
  */
-public class StringDataFormat implements DataFormat {
+public class StringDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat, DataFormatName {
 
     private String charset;
 
@@ -39,6 +40,11 @@ public class StringDataFormat implements DataFormat {
 
     public StringDataFormat(String charset) {
         this.charset = charset;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "string";
     }
 
     public String getCharset() {
@@ -73,5 +79,14 @@ public class StringDataFormat implements DataFormat {
 
         return answer;
     }
-    
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

@@ -52,6 +52,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
 
+    private static final int UNUSED_LABELS_WARN = 15;
+
     /**
      * The maven project.
      *
@@ -285,15 +287,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> duplicateJsonFiles = new TreeSet<File>();
         Set<File> componentFiles = new TreeSet<File>();
         Set<File> missingComponents = new TreeSet<File>();
-        Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
+        Map<String, Set<String>> usedComponentLabels = new TreeMap<String, Set<String>>();
+        Set<String> usedOptionLabels = new TreeSet<String>();
+        Set<String> unlabeledOptions = new TreeSet<String>();
 
         // find all json files in components and camel-core
         if (componentsDir != null && componentsDir.isDirectory()) {
             File[] components = componentsDir.listFiles();
             if (components != null) {
                 for (File dir : components) {
-                    // skip camel-jetty9 as its a duplicate of camel-jetty8
-                    if (dir.isDirectory() && !"camel-jetty9".equals(dir.getName()) && !"target".equals(dir.getName())) {
+                    // skip camel-jetty8 as its a duplicate of camel-jetty9
+                    if (dir.isDirectory() && !"camel-jetty8".equals(dir.getName()) && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
 
                         // special for camel-salesforce which is in a sub dir
@@ -351,7 +355,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
             }
 
-            // check if we have a label as we want the components to include labels
+            // check if we have a component label as we want the components to include labels
             try {
                 String text = loadText(new FileInputStream(file));
                 String name = asComponentName(file);
@@ -361,14 +365,48 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     String label = matcher.group(1);
                     String[] labels = label.split(",");
                     for (String s : labels) {
-                        Set<String> components = usedLabels.get(s);
+                        Set<String> components = usedComponentLabels.get(s);
                         if (components == null) {
                             components = new TreeSet<String>();
-                            usedLabels.put(s, components);
+                            usedComponentLabels.put(s, components);
                         }
                         components.add(name);
                     }
                 }
+
+                // check all the component options and grab the label(s) they use
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", text, true);
+                for (Map<String, String> row : rows) {
+                    String label = row.get("label");
+
+                    if (label != null && !label.isEmpty()) {
+                        String[] parts = label.split(",");
+                        for (String part : parts) {
+                            usedOptionLabels.add(part);
+                        }
+                    }
+                }
+
+                // check all the endpoint options and grab the label(s) they use
+                int unused = 0;
+                rows = JSonSchemaHelper.parseJsonSchema("properties", text, true);
+                for (Map<String, String> row : rows) {
+                    String label = row.get("label");
+
+                    if (label != null && !label.isEmpty()) {
+                        String[] parts = label.split(",");
+                        for (String part : parts) {
+                            usedOptionLabels.add(part);
+                        }
+                    } else {
+                        unused++;
+                    }
+                }
+
+                if (unused >= UNUSED_LABELS_WARN) {
+                    unlabeledOptions.add(name);
+                }
+
             } catch (IOException e) {
                 // ignore
             }
@@ -401,7 +439,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedLabels);
+        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels, unlabeledOptions);
     }
 
     protected void executeDataFormats() throws MojoExecutionException, MojoFailureException {
@@ -687,7 +725,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
-    private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Map<String, Set<String>> usedLabels) {
+    private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Map<String,
+            Set<String>> usedComponentLabels, Set<String> usedOptionsLabels, Set<String> unusedLabels) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -703,14 +742,28 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
-        if (!usedLabels.isEmpty()) {
+        if (!usedComponentLabels.isEmpty()) {
             getLog().info("");
-            getLog().info("\tUsed labels: " + usedLabels.size());
-            for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
+            getLog().info("\tUsed component labels: " + usedComponentLabels.size());
+            for (Map.Entry<String, Set<String>> entry : usedComponentLabels.entrySet()) {
                 getLog().info("\t\t" + entry.getKey() + ":");
                 for (String name : entry.getValue()) {
                     getLog().info("\t\t\t" + name);
                 }
+            }
+        }
+        if (!usedOptionsLabels.isEmpty()) {
+            getLog().info("");
+            getLog().info("\tUsed component/endpoint options labels: " + usedOptionsLabels.size());
+            for (String name : usedOptionsLabels) {
+                getLog().info("\t\t\t" + name);
+            }
+        }
+        if (!unusedLabels.isEmpty()) {
+            getLog().info("");
+            getLog().info("\tComponent with more than " + UNUSED_LABELS_WARN + " unlabelled options: " + unusedLabels.size());
+            for (String name : unusedLabels) {
+                getLog().info("\t\t\t" + name);
             }
         }
         if (!missing.isEmpty()) {

@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -43,8 +42,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -73,13 +70,13 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean limitConcurrentConsumers = true;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private boolean multipleConsumers;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private boolean purgeWhenStopping;
-    @UriParam(label = "consumer", defaultValue = "1000")
+    @UriParam(label = "consumer,advanced", defaultValue = "1000")
     private int pollTimeout = 1000;
 
     @UriParam(label = "producer", defaultValue = "IfReplyExpected")
@@ -405,7 +402,6 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.purgeWhenStopping = purgeWhenStopping;
     }
 
-    @ManagedAttribute(description = "Singleton")
     public boolean isSingleton() {
         return true;
     }
@@ -443,94 +439,6 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public Set<SedaProducer> getProducers() {
         return new HashSet<SedaProducer>(producers);
-    }
-
-    @ManagedOperation(description = "Current number of Exchanges in Queue")
-    public long queueSize() {
-        return getExchanges().size();
-    }
-
-    @ManagedOperation(description = "Get Exchange from queue by index")
-    public String browseExchange(Integer index) {
-        List<Exchange> exchanges = getExchanges();
-        if (index >= exchanges.size()) {
-            return null;
-        }
-        Exchange exchange = exchanges.get(index);
-        if (exchange == null) {
-            return null;
-        }
-        // must use java type with JMX such as java.lang.String
-        return exchange.toString();
-    }
-
-    @ManagedOperation(description = "Get message body from queue by index")
-    public String browseMessageBody(Integer index) {
-        List<Exchange> exchanges = getExchanges();
-        if (index >= exchanges.size()) {
-            return null;
-        }
-        Exchange exchange = exchanges.get(index);
-        if (exchange == null) {
-            return null;
-        }
-
-        // must use java type with JMX such as java.lang.String
-        String body;
-        if (exchange.hasOut()) {
-            body = exchange.getOut().getBody(String.class);
-        } else {
-            body = exchange.getIn().getBody(String.class);
-        }
-
-        return body;
-    }
-
-    @ManagedOperation(description = "Get message as XML from queue by index")
-    public String browseMessageAsXml(Integer index, Boolean includeBody) {
-        List<Exchange> exchanges = getExchanges();
-        if (index >= exchanges.size()) {
-            return null;
-        }
-        Exchange exchange = exchanges.get(index);
-        if (exchange == null) {
-            return null;
-        }
-
-        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-        String xml = MessageHelper.dumpAsXml(msg, includeBody);
-
-        return xml;
-    }
-
-    @ManagedOperation(description = "Gets all the messages as XML from the queue")
-    public String browseAllMessagesAsXml(Boolean includeBody) {
-        return browseRangeMessagesAsXml(0, Integer.MAX_VALUE, includeBody);
-    }
-
-    @ManagedOperation(description = "Gets the range of messages as XML from the queue")
-    public String browseRangeMessagesAsXml(Integer fromIndex, Integer toIndex, Boolean includeBody) {
-        return EndpointHelper.browseRangeMessagesAsXml(this, fromIndex, toIndex, includeBody);
-    }
-
-    @ManagedAttribute(description = "Camel context ID")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint URI", mask = true)
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Endpoint service state")
-    public String getState() {
-        return getStatus().name();
     }
 
     void onStarted(SedaProducer producer) {

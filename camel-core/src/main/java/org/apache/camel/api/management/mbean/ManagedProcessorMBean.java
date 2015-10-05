@@ -41,6 +41,9 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Processor Index")
     Integer getIndex();
 
+    @ManagedAttribute(description = "Whether this processor supports extended JMX information")
+    Boolean getSupportExtendedInformation();
+
     @ManagedOperation(description = "Start Processor")
     void start() throws Exception;
 
@@ -52,5 +55,8 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedOperation(description = "Explain how this processor is configured")
     TabularData explain(boolean allOptions);
+
+    @ManagedOperation(description = "Dumps the processor as XML")
+    String dumpProcessorAsXml() throws Exception;
 
 }

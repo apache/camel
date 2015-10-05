@@ -71,7 +71,7 @@ public class FreemarkerComponent extends UriEndpointComponent {
 
     public synchronized Configuration getConfiguration() {
         if (configuration == null) {
-            configuration = new Configuration(Configuration.VERSION_2_3_21);
+            configuration = new Configuration();
             configuration.setTemplateLoader(new URLTemplateLoader() {
                 @Override
                 protected URL getURL(String name) {

@@ -46,6 +46,13 @@ public interface Route extends EndpointAware {
     String getId();
 
     /**
+     * Gets the uptime in a human readable format
+     *
+     * @return the uptime in days/hours/minutes
+     */
+    String getUptime();
+
+    /**
      * Gets the inbound {@link Consumer}
      *
      * @return the inbound consumer

@@ -25,6 +25,7 @@ import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
+import org.apache.camel.management.mbean.ManagedDataFormat;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
@@ -91,6 +92,9 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         } else if (managedObject instanceof ManagedComponent) {
             ManagedComponent mc = (ManagedComponent) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
+        } else if (managedObject instanceof ManagedDataFormat) {
+            ManagedDataFormat md = (ManagedDataFormat) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForDataFormat(md.getContext(), md.getDataFormat());
         } else if (managedObject instanceof ManagedEndpoint) {
             ManagedEndpoint me = (ManagedEndpoint) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForEndpoint(me.getEndpoint());

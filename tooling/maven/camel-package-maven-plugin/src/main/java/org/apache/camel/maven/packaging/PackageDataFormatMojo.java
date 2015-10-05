@@ -132,37 +132,12 @@ public class PackageDataFormatMojo extends AbstractMojo {
                 File[] files = f.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory
-                        if (file.isDirectory()) {
-                            continue;
-                        }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
+                        String javaType = readClassFromCamelResource(file, buffer, buildContext);
+                        if (!file.isDirectory() && file.getName().charAt(0) != '.') {
                             count++;
-                            if (buffer.length() > 0) {
-                                buffer.append(" ");
-                            }
-                            buffer.append(name);
                         }
-
-                        if (!buildContext.hasDelta(file)) {
-                            // if this file has not changed,
-                            // then no need to store the javatype
-                            // for the json file to be generated again
-                            // (but we do need the name above!)
-                            continue;
-                        }
-
-                        // find out the javaType for each data format
-                        try {
-                            String text = loadText(new FileInputStream(file));
-                            Map<String, String> map = parseAsMap(text);
-                            String javaType = map.get("class");
-                            if (javaType != null) {
-                                javaTypes.put(name, javaType);
-                            }
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Failed to read file " + file + ". Reason: " + e, e);
+                        if (javaType != null) {
+                            javaTypes.put(file.getName(), javaType);
                         }
                     }
                 }
@@ -300,6 +275,37 @@ public class PackageDataFormatMojo extends AbstractMojo {
         }
     }
 
+    private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {
+        // skip directories as there may be a sub .resolver directory
+        if (file.isDirectory()) {
+            return null;
+        }
+        String name = file.getName();
+        if (name.charAt(0) != '.') {
+            if (buffer.length() > 0) {
+                buffer.append(" ");
+            }
+            buffer.append(name);
+        }
+
+        if (!buildContext.hasDelta(file)) {
+            // if this file has not changed,
+            // then no need to store the javatype
+            // for the json file to be generated again
+            // (but we do need the name above!)
+            return null;
+        }
+
+        // find out the javaType for each data format
+        try {
+            String text = loadText(new FileInputStream(file));
+            Map<String, String> map = parseAsMap(text);
+            return map.get("class");
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to read file " + file + ". Reason: " + e, e);
+        }
+    }
+
     private static String asModelName(String name) {
         // special for some data formats
         if ("json-gson".equals(name) || "json-jackson".equals(name) || "json-xstream".equals(name)) {
@@ -357,7 +363,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
     private static String createParameterJsonSchema(DataFormatModel dataFormatModel, String schema) {
         StringBuilder buffer = new StringBuilder("{");
-        // component model
+        // dataformat model
         buffer.append("\n \"dataformat\": {");
         buffer.append("\n    \"name\": \"").append(dataFormatModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("dataformat").append("\",");

@@ -271,6 +271,12 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
                 XmlElementRef elementRef = fieldElement.getAnnotation(XmlElementRef.class);
                 if (elementRef != null) {
 
+                    // special for routes
+                    processRoutes(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
+
+                    // special for rests
+                    processRests(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
+
                     // special for outputs
                     processOutputs(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
 
@@ -607,6 +613,42 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             // custom id
             docComment = findJavaDoc(elementUtils, null, "customId", null, classElement, true);
             ep = new EipOption("customId", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+            eipOptions.add(ep);
+        }
+    }
+
+    /**
+     * Special for processing an @XmlElementRef routes field
+     */
+    private void processRoutes(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
+                               VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
+        if ("routes".equals(fieldName)) {
+
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+
+            Set<String> oneOfTypes = new TreeSet<String>();
+            oneOfTypes.add("route");
+
+            EipOption ep = new EipOption("routes", "element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes);
+            eipOptions.add(ep);
+        }
+    }
+
+    /**
+     * Special for processing an @XmlElementRef rests field
+     */
+    private void processRests(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
+                               VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
+        if ("rests".equals(fieldName)) {
+
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+
+            Set<String> oneOfTypes = new TreeSet<String>();
+            oneOfTypes.add("rest");
+
+            EipOption ep = new EipOption("rests", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes);
             eipOptions.add(ep);
         }
     }

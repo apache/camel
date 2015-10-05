@@ -18,7 +18,6 @@ package org.apache.camel.component.sjms;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelException;
@@ -28,12 +27,12 @@ import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
-import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
+import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
+import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +45,13 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     private ConnectionFactory connectionFactory;
     private ConnectionResource connectionResource;
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
-    private KeyFormatStrategy keyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+    private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
     private Integer connectionCount = 1;
     private TransactionCommitStrategy transactionCommitStrategy;
     private TimedTaskManager timedTaskManager;
     private DestinationCreationStrategy destinationCreationStrategy;
     private ExecutorService asyncStartStopExecutorService;
+    private MessageCreatedStrategy messageCreatedStrategy;
 
     public SjmsComponent() {
         super(SjmsEndpoint.class);
@@ -60,8 +60,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         validateMepAndReplyTo(parameters);
-        uri = normalizeUri(uri);
-        SjmsEndpoint endpoint = new SjmsEndpoint(uri, this);
+        SjmsEndpoint endpoint = new SjmsEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         if (endpoint.isTransacted()) {
             endpoint.setSynchronous(true);
@@ -72,39 +71,13 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         if (destinationCreationStrategy != null) {
             endpoint.setDestinationCreationStrategy(destinationCreationStrategy);
         }
+        if (headerFilterStrategy != null) {
+            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
+        }
+        if (messageCreatedStrategy != null) {
+            endpoint.setMessageCreatedStrategy(messageCreatedStrategy);
+        }
         return endpoint;
-    }
-
-    /**
-     * Helper method used to detect the type of endpoint and add the "queue"
-     * protocol if it is a default endpoint URI.
-     *
-     * @param uri The value passed into our call to create an endpoint
-     * @return String
-     * @throws Exception
-     */
-    private static String normalizeUri(String uri) throws Exception {
-        String tempUri = uri;
-        String endpointName = tempUri.substring(0, tempUri.indexOf(":"));
-        tempUri = tempUri.substring(endpointName.length());
-        if (tempUri.startsWith("://")) {
-            tempUri = tempUri.substring(3);
-        }
-        String protocol = null;
-        if (tempUri.indexOf(":") > 0) {
-            protocol = tempUri.substring(0, tempUri.indexOf(":"));
-        }
-        if (ObjectHelper.isEmpty(protocol)) {
-            protocol = "queue";
-        } else if (protocol != null && (protocol.equals("queue") || protocol.equals("topic"))) {
-            tempUri = tempUri.substring(protocol.length() + 1);
-        } else {
-            throw new Exception("Unsupported Protocol: " + protocol);
-        }
-
-        String path = tempUri;
-        uri = endpointName + "://" + protocol + ":" + path;
-        return uri;
     }
 
     /**
@@ -235,12 +208,12 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
      * You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy
      * and refer to it using the # notation.
      */
-    public void setKeyFormatStrategy(KeyFormatStrategy keyFormatStrategy) {
-        this.keyFormatStrategy = keyFormatStrategy;
+    public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
+        this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
     }
 
-    public KeyFormatStrategy getKeyFormatStrategy() {
-        return keyFormatStrategy;
+    public JmsKeyFormatStrategy getJmsKeyFormatStrategy() {
+        return jmsKeyFormatStrategy;
     }
 
     public TransactionCommitStrategy getTransactionCommitStrategy() {
@@ -276,4 +249,17 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     public void setTimedTaskManager(TimedTaskManager timedTaskManager) {
         this.timedTaskManager = timedTaskManager;
     }
+
+    public MessageCreatedStrategy getMessageCreatedStrategy() {
+        return messageCreatedStrategy;
+    }
+
+    /**
+     * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt>
+     * objects when Camel is sending a JMS message.
+     */
+    public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
+        this.messageCreatedStrategy = messageCreatedStrategy;
+    }
+
 }

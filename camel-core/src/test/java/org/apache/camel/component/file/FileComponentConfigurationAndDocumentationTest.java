@@ -42,7 +42,7 @@ public class FileComponentConfigurationAndDocumentationTest extends ContextTestS
         assertNotNull(json);
 
         assertTrue(json.contains("\"doneFileName\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"string\""));
-        assertTrue(json.contains("\"exclude\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"exclude\": { \"kind\": \"parameter\", \"label\": \"consumer,filter\", \"type\": \"string\""));
         assertTrue(json.contains("\"delete\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"boolean\""));
     }
 

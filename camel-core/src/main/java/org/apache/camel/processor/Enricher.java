@@ -30,6 +30,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -66,6 +67,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
     private boolean aggregateOnException;
     private boolean shareUnitOfWork;
     private int cacheSize;
+    private boolean ignoreInvalidEndpoint;
 
     public Enricher(Expression expression) {
         this.expression = expression;
@@ -85,6 +87,14 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
+        return producerCache.getEndpointUtilizationStatistics();
     }
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
@@ -119,6 +129,14 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         this.cacheSize = cacheSize;
     }
 
+    public boolean isIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
+    }
+
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
@@ -141,13 +159,20 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         final Endpoint endpoint;
 
         // use dynamic endpoint so calculate the endpoint to use
+        Object recipient = null;
         try {
-            Object recipient = expression.evaluate(exchange, Object.class);
+            recipient = expression.evaluate(exchange, Object.class);
             endpoint = resolveEndpoint(exchange, recipient);
             // acquire the consumer from the cache
             producer = producerCache.acquireProducer(endpoint);
         } catch (Throwable e) {
-            exchange.setException(e);
+            if (isIgnoreInvalidEndpoint()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                }
+            } else {
+                exchange.setException(e);
+            }
             callback.done(true);
             return true;
         }

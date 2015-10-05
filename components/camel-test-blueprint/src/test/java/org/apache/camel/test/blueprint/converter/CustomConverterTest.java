@@ -21,7 +21,7 @@ import org.apache.camel.test.blueprint.Foo;
 import org.junit.Test;
 
 public class CustomConverterTest extends CamelBlueprintTestSupport {
-
+    
     @Override
     protected String getBlueprintDescriptor() {
         return "org/apache/camel/test/blueprint/converter/CustomConverterTest.xml";

@@ -25,11 +25,11 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http.HttpConstants;
-import org.apache.camel.component.http.HttpHeaderFilterStrategy;
-import org.apache.camel.component.http.HttpOperationFailedException;
-import org.apache.camel.component.http.HttpProtocolHeaderFilterStrategy;
-import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.http.common.HttpConstants;
+import org.apache.camel.http.common.HttpHeaderFilterStrategy;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
@@ -46,6 +46,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;
+    private String okStatusCodeRange;
 
     public DefaultJettyHttpBinding() {
     }
@@ -60,7 +61,8 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
             // if we do not use failed exception then populate response for all response codes
             populateResponse(exchange, httpExchange, in, getHeaderFilterStrategy(), responseCode);
         } else {
-            if (responseCode >= 100 && responseCode < 300) {
+            boolean ok = HttpHelper.isStatusCodeOk(responseCode, okStatusCodeRange);
+            if (ok) {
                 // only populate response for OK response
                 populateResponse(exchange, httpExchange, in, getHeaderFilterStrategy(), responseCode);
             } else {
@@ -97,6 +99,14 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
+    }
+
+    public String getOkStatusCodeRange() {
+        return okStatusCodeRange;
+    }
+
+    public void setOkStatusCodeRange(String okStatusCodeRange) {
+        this.okStatusCodeRange = okStatusCodeRange;
     }
 
     protected void populateResponse(Exchange exchange, JettyContentExchange httpExchange,

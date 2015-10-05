@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -46,6 +47,10 @@ public class SesConfiguration {
     private String returnPath;
     @UriParam
     private List<String> replyToAddresses;
+    @UriParam
+    private String proxyHost;
+    @UriParam
+    private Integer proxyPort;
 
     public String getAccessKey() {
         return accessKey;
@@ -156,6 +161,28 @@ public class SesConfiguration {
     public void setAmazonSESEndpoint(String amazonSesEndpoint) {
         this.amazonSESEndpoint = amazonSesEndpoint;
     }
+    
+    /**
+     * To define a proxy host when instantiating the SQS client
+     */
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    /**
+     * To define a proxy port when instantiating the SQS client
+     */
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
 
     @Override
     public String toString() {
@@ -169,6 +196,8 @@ public class SesConfiguration {
                 + ", to='" + to + '\''
                 + ", returnPath='" + returnPath + '\''
                 + ", replyToAddresses='" + replyToAddresses + '\''
+                + ", proxyHost=" + proxyHost
+                + ", proxyPort=" + proxyPort
                 + '}';
     }
 }

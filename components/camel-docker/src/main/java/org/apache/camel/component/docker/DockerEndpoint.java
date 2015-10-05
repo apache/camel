@@ -20,6 +20,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.docker.consumer.DockerEventsConsumer;
+import org.apache.camel.component.docker.consumer.DockerStatsConsumer;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.component.docker.producer.DockerProducer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -64,6 +65,8 @@ public class DockerEndpoint extends DefaultEndpoint {
         switch (operation) {
         case EVENTS:
             return new DockerEventsConsumer(this, processor);
+        case STATS:
+            return new DockerStatsConsumer(this, processor);
         default:
             throw new DockerException(operation + " is not a valid consumer operation");
         }

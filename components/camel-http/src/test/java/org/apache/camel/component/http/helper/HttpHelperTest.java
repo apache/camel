@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpMethods;
+import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
@@ -104,46 +105,6 @@ public class HttpHelperTest {
                 createExchangeWithOptionalCamelHttpUriHeader(null, "/search"),
                 createHttpEndpoint(true, "http://www.google.com/"));
         assertEquals("http://www.google.com/search", url);
-    }
-
-    @Test
-    public void createMethodAlwaysUseUserChoosenMethod() throws URISyntaxException {
-        HttpMethods method = HttpHelper.createMethod(
-                createExchangeWithOptionalHttpQueryAndHttpMethodHeader("q=camel", HttpMethods.POST),
-                createHttpEndpoint(true, "http://www.google.com/search"), false);
-        assertEquals(HttpMethods.POST, method);
-    }
-
-    @Test
-    public void createMethodUseGETIfQueryIsProvidedInHeader() throws URISyntaxException {
-        HttpMethods method = HttpHelper.createMethod(
-                createExchangeWithOptionalHttpQueryAndHttpMethodHeader("q=camel", null),
-                createHttpEndpoint(true, "http://www.google.com/search"), false);
-        assertEquals(HttpMethods.GET, method);
-    }
-
-    @Test
-    public void createMethodUseGETIfQueryIsProvidedInEndpointURI() throws URISyntaxException {
-        HttpMethods method = HttpHelper.createMethod(
-                createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null, null),
-                createHttpEndpoint(true, "http://www.google.com/search?q=test"), false);
-        assertEquals(HttpMethods.GET, method);
-    }
-
-    @Test
-    public void createMethodUseGETIfNoneQueryOrPayloadIsProvided() throws URISyntaxException {
-        HttpMethods method = HttpHelper.createMethod(
-                createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null, null),
-                createHttpEndpoint(true, "http://www.google.com/search"), false);
-        assertEquals(HttpMethods.GET, method);
-    }
-
-    @Test
-    public void createMethodUsePOSTIfNoneQueryButPayloadIsProvided() throws URISyntaxException {
-        HttpMethods method = HttpHelper.createMethod(
-                createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null, null),
-                createHttpEndpoint(true, "http://www.google.com/search"), true);
-        assertEquals(HttpMethods.POST, method);
     }
 
     @Test

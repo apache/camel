@@ -58,6 +58,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
     private boolean autoStartScheduler = true;
     private boolean prefixJobNameWithEndpointId;
     private boolean enableJmx = true;
+    private boolean prefixInstanceName = true;
 
     public QuartzComponent() {
         super(QuartzEndpoint.class);
@@ -139,6 +140,20 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         this.propertiesFile = propertiesFile;
     }
 
+    public boolean isPrefixInstanceName() {
+        return prefixInstanceName;
+    }
+
+    /**
+     * Whether to prefix the Quartz Scheduler instance name with the CamelContext name.
+     * <p/>
+     * This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default.
+     * You can set this option to <tt>false</tt> to reuse Quartz scheduler instances between multiple CamelContext's.
+     */
+    public void setPrefixInstanceName(boolean prefixInstanceName) {
+        this.prefixInstanceName = prefixInstanceName;
+    }
+
     public SchedulerFactory getSchedulerFactory() throws SchedulerException {
         if (schedulerFactory == null) {
             schedulerFactory = createSchedulerFactory();
@@ -157,8 +172,10 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             prop.put("org.terracotta.quartz.skipUpdateCheck", "true");
 
             // camel context name will be a suffix to use one scheduler per context
-            String instName = createInstanceName(prop);
-            prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
+            if (isPrefixInstanceName()) {
+                String instName = createInstanceName(prop);
+                prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
+            }
 
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
@@ -187,8 +204,11 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             }
 
             // camel context name will be a suffix to use one scheduler per context
-            String instName = createInstanceName(prop);
-            prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
+            if (isPrefixInstanceName()) {
+                // camel context name will be a suffix to use one scheduler per context
+                String instName = createInstanceName(prop);
+                prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
+            }
 
             // force disabling update checker (will do online check over the internet)
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");

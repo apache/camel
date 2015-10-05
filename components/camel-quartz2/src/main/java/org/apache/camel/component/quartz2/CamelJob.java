@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.quartz2;
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.util.EndpointHelper;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -121,6 +125,7 @@ public class CamelJob implements Job {
 
         // fallback and lookup existing from registry (eg maybe a @Consume POJO with a quartz endpoint, and thus not from a route)
         String endpointUri = quartzContext.getMergedJobDataMap().getString(QuartzConstants.QUARTZ_ENDPOINT_URI);
+        
         QuartzEndpoint result = null;
 
         // Even though the same camelContext.getEndpoint call, but if/else display different log.
@@ -129,6 +134,10 @@ public class CamelJob implements Job {
                 LOG.debug("Getting Endpoint from camelContext.");
             }
             result = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
+        } else if ((result = searchForEndpointMatch(camelContext, endpointUri)) != null) { 
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found match for endpoint URI = " + endpointUri + " by searching endpoint list.");
+            }        
         } else {
             LOG.warn("Cannot find existing QuartzEndpoint with uri: {}. Creating new endpoint instance.", endpointUri);
             result = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
@@ -138,5 +147,15 @@ public class CamelJob implements Job {
         }
 
         return result;
+    }
+
+    protected QuartzEndpoint searchForEndpointMatch(CamelContext camelContext, String endpointUri) {
+        Collection<Endpoint> endpoints = camelContext.getEndpoints();
+        for (Endpoint endpoint : endpoints) {
+            if (endpointUri.equals(endpoint.getEndpointUri())) {
+                return (QuartzEndpoint) endpoint;
+            }
+        }
+        return null;
     }
 }

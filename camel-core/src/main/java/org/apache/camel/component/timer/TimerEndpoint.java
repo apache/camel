@@ -43,7 +43,7 @@ import org.apache.camel.spi.UriPath;
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = "true")
     private String timerName;
-    @UriParam
+    @UriParam(label = "advanced")
     private Date time;
     @UriParam(defaultValue = "1000")
     private long period = 1000;
@@ -51,11 +51,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private long delay = 1000;
     @UriParam
     private boolean fixedRate;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "advanced")
     private boolean daemon = true;
     @UriParam(defaultValue = "0")
     private long repeatCount;
-    @UriParam
+    @UriParam(label = "advanced")
     private Timer timer;
 
     public TimerEndpoint() {
@@ -83,6 +83,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         Consumer answer = new TimerConsumer(this, processor);
         configureConsumer(answer);
         return answer;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
     }
 
     @Override
@@ -201,31 +206,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      */
     public void setTime(Date time) {
         this.time = time;
-    }
-
-    @ManagedAttribute(description = "Singleton")
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @ManagedAttribute(description = "Camel id")
-    public String getCamelId() {
-        return this.getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return this.getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri")
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Endpoint State")
-    public String getState() {
-        return getStatus().name();
     }
 
     public Timer getTimer(TimerConsumer consumer) {

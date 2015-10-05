@@ -37,7 +37,8 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     private DataSource dataSource;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     private String dataSourceName;
     @UriParam
     private int readSize;
@@ -48,6 +49,8 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private Map<String, Object> parameters;
     @UriParam(defaultValue = "true")
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
+    @UriParam
+    private boolean useGetBytesForBlob;
     @UriParam
     private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
     @UriParam(defaultValue = "true")
@@ -239,6 +242,19 @@ public class JdbcEndpoint extends DefaultEndpoint {
      */
     public void setBeanRowMapper(BeanRowMapper beanRowMapper) {
         this.beanRowMapper = beanRowMapper;
+    }
+
+    public boolean isUseGetBytesForBlob() {
+        return this.useGetBytesForBlob;
+    }
+
+    /**
+     * To read BLOB columns as bytes instead of string data.
+     * <p/>
+     * This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes.
+     */
+    public void setUseGetBytesForBlob(boolean useGetBytesForBlob) {
+        this.useGetBytesForBlob = useGetBytesForBlob;
     }
 
     @Override

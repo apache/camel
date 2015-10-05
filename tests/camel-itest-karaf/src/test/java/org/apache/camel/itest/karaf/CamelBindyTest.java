@@ -31,7 +31,7 @@ public class CamelBindyTest extends AbstractFeatureTest {
     
     protected DataFormatDefinition createDataformatDefinition(String format) {        
         BindyDataFormat dataformate = new BindyDataFormat();
-        dataformate.setPackages(new String[]{"Dummy"});
+        dataformate.setClassType(String.class);
         return dataformate;
     }
 

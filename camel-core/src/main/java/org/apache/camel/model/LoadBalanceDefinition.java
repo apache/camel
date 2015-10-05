@@ -106,6 +106,14 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
             // then create it and reuse it
             loadBalancer = loadBalancerType.createLoadBalancer(routeContext);
             loadBalancerType.setLoadBalancer(loadBalancer);
+
+            // some load balancers can only support a fixed number of outputs
+            int max = loadBalancerType.getMaximumNumberOfOutputs();
+            int size = getOutputs().size();
+            if (size > max) {
+                throw new IllegalArgumentException("To many outputs configured on " + loadBalancerType + ": " + size + " > " + max);
+            }
+
             for (ProcessorDefinition<?> processorType : getOutputs()) {
                 // output must not be another load balancer
                 // check for instanceof as the code below as there is compilation errors on earlier versions of JDK6
@@ -286,7 +294,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      */
     public LoadBalanceDefinition sticky(Expression correlationExpression) {
         StickyLoadBalancerDefinition def = new StickyLoadBalancerDefinition();
-        def.setCorrelationExpression(new ExpressionSubElementDefinition(correlationExpression));
+        def.setCorrelationExpression(correlationExpression);
         setLoadBalancerType(def);
         return this;
     }

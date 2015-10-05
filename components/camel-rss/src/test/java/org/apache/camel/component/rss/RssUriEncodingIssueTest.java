@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 @Ignore("Must be online")
 public class RssUriEncodingIssueTest extends CamelTestSupport {

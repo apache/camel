@@ -216,7 +216,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                     Object clone = endpoint.getCamelContext().getInjector().newInstance(filter.getClass());
                     if (clone instanceof ModelAwareFilter) {
                         ((ModelAwareFilter<?>) clone).apply(endpoint.getCamelContext(), model);
-                        clonedFilters.add((ModelAwareFilter<?>) clone);
+                        clonedFilters.add((Filter) clone);
                     }
                 }
             }

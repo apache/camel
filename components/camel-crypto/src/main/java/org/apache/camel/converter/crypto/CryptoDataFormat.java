@@ -35,6 +35,8 @@ import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -67,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * <li>http://en.wikipedia.org/wiki/HMAC</li>
  * </ul>
  */
-public class CryptoDataFormat implements DataFormat {
+public class CryptoDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     public static final String KEY = "CamelCryptoKey";
 
@@ -94,6 +96,11 @@ public class CryptoDataFormat implements DataFormat {
         this.algorithm = algorithm;
         this.configuredkey = key;
         this.cryptoProvider = cryptoProvider;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "crypto";
     }
 
     private Cipher initializeCipher(int mode, Key key, byte[] iv) throws Exception {
@@ -171,6 +178,16 @@ public class CryptoDataFormat implements DataFormat {
             }
         }
         return unmarshalled;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
     private void inlineInitVector(OutputStream outputStream, byte[] iv) throws IOException {

@@ -154,7 +154,7 @@ public class RestOperationParamDefinition {
     }
 
     public String getDataType() {
-        return dataType;
+        return dataType != null ? dataType : "string";
     }
 
     /**

@@ -66,6 +66,7 @@
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ejb</include>
         <include>org.apache.camel:camel-elasticsearch</include>
+        <include>org.apache.camel:camel-elsql</include>
         <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-facebook</include>
@@ -76,6 +77,7 @@
         <include>org.apache.camel:camel-gae</include>
         <include>org.apache.camel:camel-ganglia</include>
         <include>org.apache.camel:camel-geocoder</include>
+        <include>org.apache.camel:camel-git</include>
         <include>org.apache.camel:camel-github</include>
         <include>org.apache.camel:camel-google-calendar</include>
         <include>org.apache.camel:camel-google-drive</include>
@@ -93,6 +95,7 @@
         <include>org.apache.camel:camel-hdfs2</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-http</include>
+        <include>org.apache.camel:camel-http-common</include>
         <include>org.apache.camel:camel-http4</include>
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-ical</include>
@@ -102,10 +105,12 @@
         <include>org.apache.camel:camel-jasypt</include>
         <include>org.apache.camel:camel-javaspace</include>
         <include>org.apache.camel:camel-jaxb</include>
+        <include>org.apache.camel:camel-jbpm</include>
         <include>org.apache.camel:camel-jcr</include>
         <include>org.apache.camel:camel-jclouds</include>
         <include>org.apache.camel:camel-jdbc</include>
         <include>org.apache.camel:camel-jetty-common</include>
+        <include>org.apache.camel:camel-jetty</include>
         <include>org.apache.camel:camel-jetty8</include>
         <include>org.apache.camel:camel-jetty9</include>
         <include>org.apache.camel:camel-jgroups</include>
@@ -114,6 +119,7 @@
         <include>org.apache.camel:camel-jira</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-jmx</include>
+        <include>org.apache.camel:camel-jolt</include>
         <include>org.apache.camel:camel-josql</include>
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
@@ -201,6 +207,7 @@
         <include>org.apache.camel:camel-stringtemplate</include>
         <include>org.apache.camel:camel-syslog</include>
         <include>org.apache.camel:camel-swagger</include>
+        <include>org.apache.camel:camel-swagger-java</include> 
         <include>org.apache.camel:camel-tagsoup</include>
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-test-blueprint</include>

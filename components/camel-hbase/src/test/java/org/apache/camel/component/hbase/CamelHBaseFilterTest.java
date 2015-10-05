@@ -37,7 +37,7 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        filters.add(new ModelAwareColumnMatchingFilter());
+        filters.add(new ModelAwareColumnMatchingFilter().getFilteredList());
         jndi.bind("myFilters", filters);
         return jndi;
     }

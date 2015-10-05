@@ -17,7 +17,6 @@
 package org.apache.camel.component.sjms.producer;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
@@ -36,11 +35,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.MessageConsumerResources;
 import org.apache.camel.component.sjms.MessageProducerResources;
 import org.apache.camel.component.sjms.SjmsEndpoint;
+import org.apache.camel.component.sjms.SjmsMessage;
 import org.apache.camel.component.sjms.SjmsProducer;
 import org.apache.camel.component.sjms.jms.JmsConstants;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
@@ -52,9 +53,24 @@ public class InOutProducer extends SjmsProducer {
 
     private static final Map<String, Exchanger<Object>> EXCHANGERS = new ConcurrentHashMap<String, Exchanger<Object>>();
 
+    private static final String GENERATED_CORRELATION_ID_PREFIX = "Camel-";
+    private UuidGenerator uuidGenerator;
+    private GenericObjectPool<MessageConsumerResources> consumers;
+
+    public InOutProducer(final SjmsEndpoint endpoint) {
+        super(endpoint);
+    }
+
+    public UuidGenerator getUuidGenerator() {
+        return uuidGenerator;
+    }
+
+    public void setUuidGenerator(UuidGenerator uuidGenerator) {
+        this.uuidGenerator = uuidGenerator;
+    }
+
     /**
-     * A pool of {@link MessageConsumerResources} objects that are the reply
-     * consumers.
+     * A pool of {@link MessageConsumerResources} objects that are the reply consumers.
      */
     protected class MessageConsumerResourcesFactory extends BasePoolableObjectFactory<MessageConsumerResources> {
 
@@ -121,12 +137,6 @@ public class InOutProducer extends SjmsProducer {
         }
     }
 
-    private GenericObjectPool<MessageConsumerResources> consumers;
-
-    public InOutProducer(final SjmsEndpoint endpoint) {
-        super(endpoint);
-    }
-
     @Override
     protected void doStart() throws Exception {
         if (ObjectHelper.isEmpty(getNamedReplyTo())) {
@@ -134,12 +144,16 @@ public class InOutProducer extends SjmsProducer {
         } else {
             log.debug("Using {} as the reply to destination.", getNamedReplyTo());
         }
-        if (getConsumers() == null) {
-            setConsumers(new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory()));
-            getConsumers().setMaxActive(getConsumerCount());
-            getConsumers().setMaxIdle(getConsumerCount());
-            while (getConsumers().getNumIdle() < getConsumers().getMaxIdle()) {
-                getConsumers().addObject();
+        if (uuidGenerator == null) {
+            // use the generator configured on the camel context
+            uuidGenerator = getEndpoint().getCamelContext().getUuidGenerator();
+        }
+        if (consumers == null) {
+            consumers = new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory());
+            consumers.setMaxActive(getConsumerCount());
+            consumers.setMaxIdle(getConsumerCount());
+            while (consumers.getNumIdle() < consumers.getMaxIdle()) {
+                consumers.addObject();
             }
         }
         super.doStart();
@@ -148,9 +162,9 @@ public class InOutProducer extends SjmsProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (getConsumers() != null) {
-            getConsumers().close();
-            setConsumers(null);
+        if (consumers != null) {
+            consumers.close();
+            consumers = null;
         }
     }
 
@@ -185,16 +199,14 @@ public class InOutProducer extends SjmsProducer {
             exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), getCommitStrategy()));
         }
 
-        Message request = JmsMessageHelper.createMessage(exchange, producer.getSession(), getEndpoint());
+        Message request = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
 
-        // TODO just set the correlation id don't get it from the
-        // message
-        String correlationId;
-        if (exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class) == null) {
-            correlationId = UUID.randomUUID().toString().replace("-", "");
-        } else {
-            correlationId = exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class);
+        String correlationId = exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class);
+        if (correlationId == null) {
+            // we append the 'Camel-' prefix to know it was generated by us
+            correlationId = GENERATED_CORRELATION_ID_PREFIX + getUuidGenerator().generateUuid();
         }
+
         Object responseObject = null;
         Exchanger<Object> messageExchanger = new Exchanger<Object>();
         JmsMessageHelper.setCorrelationId(request, correlationId);
@@ -229,8 +241,13 @@ public class InOutProducer extends SjmsProducer {
             if (responseObject instanceof Throwable) {
                 exchange.setException((Throwable) responseObject);
             } else if (responseObject instanceof Message) {
-                Message response = (Message) responseObject;
-                JmsMessageHelper.populateExchange(response, exchange, true, getEndpoint().getJmsKeyFormatStrategy());
+                Message message = (Message) responseObject;
+
+                SjmsMessage response = new SjmsMessage(message, consumer.getSession(), getEndpoint().getBinding());
+                // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
+                // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access
+                // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).
+                exchange.setOut(response);
             } else {
                 exchange.setException(new CamelException("Unknown response type: " + responseObject));
             }
@@ -239,11 +256,4 @@ public class InOutProducer extends SjmsProducer {
         callback.done(isSynchronous());
     }
 
-    public void setConsumers(GenericObjectPool<MessageConsumerResources> consumers) {
-        this.consumers = consumers;
-    }
-
-    public GenericObjectPool<MessageConsumerResources> getConsumers() {
-        return consumers;
-    }
 }

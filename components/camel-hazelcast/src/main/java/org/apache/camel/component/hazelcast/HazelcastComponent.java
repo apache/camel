@@ -32,8 +32,10 @@ import org.apache.camel.component.hazelcast.map.HazelcastMapEndpoint;
 import org.apache.camel.component.hazelcast.multimap.HazelcastMultimapEndpoint;
 import org.apache.camel.component.hazelcast.queue.HazelcastQueueEndpoint;
 import org.apache.camel.component.hazelcast.replicatedmap.HazelcastReplicatedmapEndpoint;
+import org.apache.camel.component.hazelcast.ringbuffer.HazelcastRingbufferEndpoint;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
+import org.apache.camel.component.hazelcast.set.HazelcastSetEndpoint;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicEndpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
@@ -137,12 +139,28 @@ public class HazelcastComponent extends UriEndpointComponent {
             remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.REPLICATEDMAP_PREFIX.length()), '/');
             endpoint = new HazelcastReplicatedmapEndpoint(hzInstance, uri, remaining, this);
             endpoint.setCommand(HazelcastCommand.replicatedmap);
-        }        
+        } 
+        
+        if (remaining.startsWith(HazelcastConstants.SET_PREFIX)) {
+            // remaining is anything (name it foo ;)
+            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.SET_PREFIX.length()), '/');
+            endpoint = new HazelcastSetEndpoint(hzInstance, uri, this, remaining);
+            endpoint.setCommand(HazelcastCommand.set);
+        } 
+        
+        
+        if (remaining.startsWith(HazelcastConstants.RINGBUFFER_PREFIX)) {
+            // remaining is anything (name it foo ;)
+            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.RINGBUFFER_PREFIX.length()), '/');
+            endpoint = new HazelcastRingbufferEndpoint(hzInstance, uri, this, remaining);
+            endpoint.setCommand(HazelcastCommand.ringbuffer);
+        } 
         
         if (endpoint == null) {
-            throw new IllegalArgumentException(String.format("Your URI does not provide a correct 'type' prefix. It should be anything like 'hazelcast:[%s|%s|%s|%s|%s|%s|%s|%s]name' but is '%s'.",
+            throw new IllegalArgumentException(String.format("Your URI does not provide a correct 'type' prefix. It should be anything like " 
+                    + "'hazelcast:[%s|%s|%s|%s|%s|%s|%s|%s|%s|%s]name' but is '%s'.",
                     HazelcastConstants.MAP_PREFIX, HazelcastConstants.MULTIMAP_PREFIX, HazelcastConstants.ATOMICNUMBER_PREFIX, HazelcastConstants.INSTANCE_PREFIX, HazelcastConstants.QUEUE_PREFIX,
-                    HazelcastConstants.SEDA_PREFIX, HazelcastConstants.LIST_PREFIX, HazelcastConstants.REPLICATEDMAP_PREFIX, uri));
+                    HazelcastConstants.SEDA_PREFIX, HazelcastConstants.LIST_PREFIX, HazelcastConstants.REPLICATEDMAP_PREFIX, HazelcastConstants.SET_PREFIX, HazelcastConstants.RINGBUFFER_PREFIX, uri));
         }
 
         if (defaultOperation != -1) {

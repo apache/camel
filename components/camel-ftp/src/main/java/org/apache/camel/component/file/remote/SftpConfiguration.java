@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 import java.security.KeyPair;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -30,35 +31,37 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
 
-    @UriParam
+    @UriParam(label = "security")
     private String knownHostsFile;
-    @UriParam
+    @UriParam(label = "security")
     private String knownHostsUri;
     private byte[] knownHosts;
-    @UriParam
+    @UriParam(label = "security")
     private String privateKeyFile;
-    @UriParam
+    @UriParam(label = "security")
     private String privateKeyUri;
     private byte[] privateKey;
-    @UriParam
+    @UriParam(label = "security")
     private String privateKeyPassphrase;
     private KeyPair keyPair;
-    @UriParam(defaultValue = "no", enums = "no,yes")
+    @UriParam(defaultValue = "no", enums = "no,yes", label = "security")
     private String strictHostKeyChecking = "no";
-    @UriParam
+    @UriParam(label = "advanced")
     private int serverAliveInterval;
-    @UriParam(defaultValue = "1")
+    @UriParam(defaultValue = "1", label = "advanced")
     private int serverAliveCountMax = 1;
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private String chmod;
     // comma separated list of ciphers. 
     // null means default jsch list will be used
-    @UriParam
+    @UriParam(label = "security")
     private String ciphers;
-    @UriParam
+    @UriParam(label = "advanced")
     private int compression;
-    @UriParam
+    @UriParam(label = "security")
     private String preferredAuthentications;
+    @UriParam(defaultValue = "WARN")
+    private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -244,5 +247,17 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     
     public String getPreferredAuthentications() {
         return preferredAuthentications;
+    }
+
+    public LoggingLevel getJschLoggingLevel() {
+        return jschLoggingLevel;
+    }
+
+    /**
+     * The logging level to use for JSCH activity logging.
+     * As JSCH is verbose at by default at INFO level the threshold is WARN by default.
+     */
+    public void setJschLoggingLevel(LoggingLevel jschLoggingLevel) {
+        this.jschLoggingLevel = jschLoggingLevel;
     }
 }

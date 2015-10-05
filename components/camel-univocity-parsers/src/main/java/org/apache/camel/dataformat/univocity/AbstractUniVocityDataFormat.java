@@ -31,6 +31,8 @@ import com.univocity.parsers.common.CommonWriterSettings;
 import com.univocity.parsers.common.Format;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 
 import static org.apache.camel.util.IOHelper.getCharsetName;
 
@@ -48,7 +50,8 @@ import static org.apache.camel.util.IOHelper.getCharsetName;
  * @param <DF>  the data format class (for providing a fluent API)
  */
 public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends CommonWriterSettings<F>,
-        W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>, DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>> implements DataFormat {
+        W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>, DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>>
+        extends ServiceSupport implements DataFormat, DataFormatName {
     protected String nullValue;
     protected Boolean skipEmptyLines;
     protected Boolean ignoreTrailingWhitespaces;
@@ -614,5 +617,15 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     @SuppressWarnings("unchecked")
     private DF self() {
         return (DF) this;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

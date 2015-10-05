@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * JiBX data format
  */
-@Metadata(label = "dataformat,transformation", title = "JiBX")
+@Metadata(label = "dataformat,transformation,xml", title = "JiBX")
 @XmlRootElement(name = "jibx")
 @XmlAccessorType(XmlAccessType.NONE)
 public class JibxDataFormat extends DataFormatDefinition {

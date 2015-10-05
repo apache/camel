@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.optaplanner.core.api.solver.SolverFactory;
 
 /**
  * OptaPlanner component for Camel
@@ -32,13 +31,10 @@ public class OptaPlannerComponent extends UriEndpointComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SolverFactory solverFactory = SolverFactory.createFromXmlResource(remaining);
-
-        OptaPlannerEndpoint endpoint = new OptaPlannerEndpoint(uri, this, remaining);
-        endpoint.setSolverFactory(solverFactory);
-        setProperties(endpoint, parameters);
-
-        return endpoint;
+        OptaPlannerConfiguration configuration = new OptaPlannerConfiguration();
+        configuration.setConfigFile(remaining);
+        setProperties(configuration, parameters);
+        return new OptaPlannerEndpoint(uri, this, configuration);
     }
 
 }

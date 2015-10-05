@@ -85,31 +85,6 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         this.blockWhenFull = blockWhenFull;
     }
 
-    @ManagedAttribute(description = "Camel ID")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri", mask = true)
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Service State")
-    public String getState() {
-        ServiceStatus status = this.getStatus();
-        // if no status exists then its stopped
-        if (status == null) {
-            status = ServiceStatus.Stopped;
-        }
-        return status.name();
-    }
-
     @ManagedAttribute(description = "Queue name")
     public String getName() {
         return name;
@@ -138,6 +113,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         return concurrentConsumers;
     }
 
+    @ManagedAttribute(description = "Option to specify whether the caller should wait for the async task to complete or not before continuing")
     public WaitForTaskToComplete getWaitForTaskToComplete() {
         return waitForTaskToComplete;
     }
@@ -151,7 +127,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         this.waitForTaskToComplete = waitForTaskToComplete;
     }
 
-    @ManagedAttribute
+    @ManagedAttribute(description = "Timeout (in milliseconds) before a producer will stop waiting for an asynchronous task to complete")
     public long getTimeout() {
         return timeout;
     }
@@ -164,13 +140,18 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         this.timeout = timeout;
     }
 
+    @Override
+    @ManagedAttribute(description = "Specifies whether multiple consumers are allowed")
+    public boolean isMultipleConsumersSupported() {
+        return isMultipleConsumers();
+    }
+
     /**
      * Specifies whether multiple consumers are allowed.
      * If enabled, you can use Disruptor for Publish-Subscribe messaging.
      * That is, you can send a message to the queue and have each consumer receive a copy of the message.
      * When enabled, this option should be specified on every consumer endpoint.
      */
-    @ManagedAttribute
     public boolean isMultipleConsumers() {
         return multipleConsumers;
     }
@@ -189,12 +170,6 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         return Collections.unmodifiableSet(producers);
     }
 
-    @Override
-    @ManagedAttribute
-    public boolean isMultipleConsumersSupported() {
-        return isMultipleConsumers();
-    }
-
     @ManagedAttribute
     public boolean isBlockWhenFull() {
         return blockWhenFull;
@@ -209,6 +184,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         this.blockWhenFull = blockWhenFull;
     }
 
+    @ManagedAttribute(description = "Defines the strategy used by consumer threads to wait on new exchanges to be published")
     public DisruptorWaitStrategy getWaitStrategy() {
         return waitStrategy;
     }
@@ -221,6 +197,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         this.waitStrategy = waitStrategy;
     }
 
+    @ManagedAttribute(description = " Defines the producers allowed on the Disruptor")
     public DisruptorProducerType getProducerType() {
         return producerType;
     }

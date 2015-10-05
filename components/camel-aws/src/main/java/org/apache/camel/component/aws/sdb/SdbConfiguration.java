@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -41,6 +42,10 @@ public class SdbConfiguration {
     private boolean consistentRead;
     @UriParam(defaultValue = "PutAttributes")
     private SdbOperations operation = SdbOperations.PutAttributes;
+    @UriParam
+    private String proxyHost;
+    @UriParam
+    private Integer proxyPort;
 
     /**
      * The region with which the AWS-SDB client wants to work with.
@@ -128,5 +133,27 @@ public class SdbConfiguration {
      */
     public void setConsistentRead(boolean consistentRead) {
         this.consistentRead = consistentRead;
+    }
+    
+    /**
+     * To define a proxy host when instantiating the SQS client
+     */
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    /**
+     * To define a proxy port when instantiating the SQS client
+     */
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
     }
 }

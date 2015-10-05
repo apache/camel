@@ -47,8 +47,9 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true, label = "core,transformation")
 public class XsltEndpoint extends ProcessorEndpoint {
 
+    public static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
+
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
-    private static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
 
     private volatile boolean cacheCleared;
     private volatile XsltBuilder xslt;
@@ -58,15 +59,15 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private String resourceUri;
     @UriParam(defaultValue = "true")
     private boolean contentCache = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private XmlConverter converter;
-    @UriParam
+    @UriParam(label = "advanced")
     private String transformerFactoryClass;
-    @UriParam
+    @UriParam(label = "advanced")
     private TransformerFactory transformerFactory;
     @UriParam
     private boolean saxon;
-    @UriParam
+    @UriParam(label = "advanced")
     private ResultHandlerFactory resultHandlerFactory;
     @UriParam(defaultValue = "true")
     private boolean failOnNullBody = true;
@@ -74,9 +75,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private XsltOutput output = XsltOutput.string;
     @UriParam(defaultValue = "0")
     private int transformerCacheSize;
-    @UriParam
+    @UriParam(label = "advanced")
     private ErrorListener errorListener;
-    @UriParam
+    @UriParam(label = "advanced")
     private URIResolver uriResolver;
     @UriParam(defaultValue = "true")
     private boolean allowStAX = true;
@@ -104,21 +105,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
     @ManagedAttribute(description = "Whether the XSLT stylesheet is cached")
     public boolean isCacheStylesheet() {
         return contentCache;
-    }
-
-    @ManagedAttribute(description = "Endpoint State")
-    public String getState() {
-        return getStatus().name();
-    }
-
-    @ManagedAttribute(description = "Camel ID")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return getCamelContext().getManagementName();
     }
 
     public XsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
@@ -151,6 +137,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.xslt = xslt;
     }
 
+    @ManagedAttribute(description = "The name of the template to load from classpath or file system")
     public String getResourceUri() {
         return resourceUri;
     }
@@ -195,6 +182,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.transformerFactory = transformerFactory;
     }
 
+    @ManagedAttribute(description = "Whether to use Saxon as the transformerFactoryClass")
     public boolean isSaxon() {
         return saxon;
     }
@@ -219,6 +207,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.resultHandlerFactory = resultHandlerFactory;
     }
 
+    @ManagedAttribute(description = "Whether or not to throw an exception if the input body is null")
     public boolean isFailOnNullBody() {
         return failOnNullBody;
     }
@@ -230,6 +219,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.failOnNullBody = failOnNullBody;
     }
 
+    @ManagedAttribute(description = "What kind of option to use.")
     public XsltOutput getOutput() {
         return output;
     }
@@ -268,6 +258,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.errorListener = errorListener;
     }
 
+    @ManagedAttribute(description = "Cache for the resource content (the stylesheet file) when it is loaded.")
     public boolean isContentCache() {
         return contentCache;
     }
@@ -292,6 +283,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.uriResolver = uriResolver;
     }
 
+    @ManagedAttribute(description = "Whether to allow using StAX as the javax.xml.transform.Source")
     public boolean isAllowStAX() {
         return allowStAX;
     }

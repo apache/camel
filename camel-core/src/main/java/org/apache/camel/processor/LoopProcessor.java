@@ -183,6 +183,10 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
         return expression;
     }
 
+    public boolean isCopy() {
+        return copy;
+    }
+
     public String getTraceLabel() {
         return "loop[" + expression + "]";
     }

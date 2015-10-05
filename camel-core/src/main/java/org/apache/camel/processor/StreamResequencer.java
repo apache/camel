@@ -28,6 +28,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -76,6 +77,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     private final ExceptionHandler exceptionHandler;
     private final ResequencerEngine<Exchange> engine;
     private final Processor processor;
+    private final Expression expression;
     private Delivery delivery;
     private int capacity;
     private boolean ignoreInvalidExchanges;
@@ -86,13 +88,18 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
      * @param processor next processor that processes re-ordered exchanges.
      * @param comparator a sequence element comparator for exchanges.
      */
-    public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator) {
+    public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator, Expression expression) {
         ObjectHelper.notNull(camelContext, "CamelContext");
         this.camelContext = camelContext;
         this.engine = new ResequencerEngine<Exchange>(comparator);
         this.engine.setSequenceSender(this);
         this.processor = processor;
+        this.expression = expression;
         this.exceptionHandler = new LoggingExceptionHandler(camelContext, getClass());
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 
     /**
@@ -148,6 +155,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     public void setRejectOld(Boolean rejectOld) {
         engine.setRejectOld(rejectOld);
+    }
+
+    public boolean isRejectOld() {
+        return engine.getRejectOld() != null && engine.getRejectOld();
     }
 
     /**

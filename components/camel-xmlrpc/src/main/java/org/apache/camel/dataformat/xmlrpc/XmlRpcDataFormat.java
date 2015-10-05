@@ -23,6 +23,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -45,7 +47,7 @@ import org.apache.xmlrpc.parser.XmlRpcRequestParser;
 import org.apache.xmlrpc.parser.XmlRpcResponseParser;
 import org.apache.xmlrpc.util.SAXParsers;
 
-public class XmlRpcDataFormat implements DataFormat {
+public class XmlRpcDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private XmlRpcStreamRequestConfig xmlRpcStreamRequestConfig = new XmlRpcHttpRequestConfigImpl();
     private TypeFactory typeFactory = new TypeFactoryImpl(null);
     private boolean isRequest;
@@ -65,6 +67,11 @@ public class XmlRpcDataFormat implements DataFormat {
     }
 
     @Override
+    public String getDataFormatName() {
+        return "xmlrpc";
+    }
+
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         // need to check the object type
         XMLWriter control = getXMLWriter(exchange, stream);
@@ -76,7 +83,6 @@ public class XmlRpcDataFormat implements DataFormat {
             // TODO write the fault message here
             writer.write(xmlRpcStreamRequestConfig, graph);
         }
-        
     }
 
     protected int getErrorCode(Exchange exchange) {
@@ -165,6 +171,16 @@ public class XmlRpcDataFormat implements DataFormat {
     
     public TypeFactory getTypeFactory() {
         return typeFactory;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
 }

@@ -55,6 +55,8 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
     private AggregationStrategy aggregationStrategy;
     @XmlAttribute
     private Integer cacheSize;
+    @XmlAttribute
+    private Boolean ignoreInvalidEndpoint;
 
     public PollEnrichDefinition() {
     }
@@ -79,6 +81,7 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
 
         // if no timeout then we should block, and there use a negative timeout
         long time = timeout != null ? timeout : -1;
+        boolean isIgnoreInvalidEndpoint = getIgnoreInvalidEndpoint() != null && getIgnoreInvalidEndpoint();
         Expression exp = getExpression().createExpression(routeContext);
 
         PollEnricher enricher = new PollEnricher(exp, time);
@@ -95,6 +98,7 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
         if (getCacheSize() != null) {
             enricher.setCacheSize(getCacheSize());
         }
+        enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
 
         return enricher;
     }
@@ -192,13 +196,23 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
 
     /**
      * Sets the maximum size used by the {@link org.apache.camel.impl.ConsumerCache} which is used
-     * to cache and reuse consumers when using this pollEnrich, when uris are reused.
+     * to cache and reuse consumers when uris are reused.
      *
      * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return the builder
      */
     public PollEnrichDefinition cacheSize(int cacheSize) {
         setCacheSize(cacheSize);
+        return this;
+    }
+
+    /**
+     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     *
+     * @return the builder
+     */
+    public PollEnrichDefinition ignoreInvalidEndpoint() {
+        setIgnoreInvalidEndpoint(true);
         return this;
     }
 
@@ -268,5 +282,13 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
 
     public void setCacheSize(Integer cacheSize) {
         this.cacheSize = cacheSize;
+    }
+
+    public Boolean getIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(Boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 }

@@ -19,7 +19,6 @@ package org.apache.camel.component.twitter;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
@@ -59,7 +58,7 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
         return Twitter4JFactory.getProducer(this, getEndpointUri());
     }
 
-    @ManagedAttribute
+    @Override
     public boolean isSingleton() {
         return true;
     }
@@ -70,32 +69,6 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
 
     public void setProperties(TwitterConfiguration properties) {
         this.properties = properties;
-    }
-
-    @ManagedAttribute(description = "Camel ID")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri", mask = true)
-    @Override
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Service State")
-    public String getState() {
-        ServiceStatus status = this.getStatus();
-        // if no status exists then its stopped
-        if (status == null) {
-            status = ServiceStatus.Stopped;
-        }
-        return status.name();
     }
 
     @ManagedAttribute

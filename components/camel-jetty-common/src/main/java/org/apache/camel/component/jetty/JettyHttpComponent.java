@@ -40,12 +40,14 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http.CamelServlet;
-import org.apache.camel.component.http.HttpBinding;
-import org.apache.camel.component.http.HttpComponent;
-import org.apache.camel.component.http.HttpConsumer;
-import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.camel.component.http.UrlRewrite;
+import org.apache.camel.http.common.CamelServlet;
+import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpCommonComponent;
+import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.http.common.HttpConfiguration;
+import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.HttpRestServletResolveConsumerStrategy;
+import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
@@ -91,7 +93,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class JettyHttpComponent extends HttpComponent implements RestConsumerFactory {
+public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory {
     public static final String TMP_DIR = "CamelJettyTempDir";
     
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
@@ -197,9 +199,13 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(addressUri, parameters);
         // create endpoint after all known parameters have been extracted from parameters
+
+        // include component scheme in the uri
+        String scheme = ObjectHelper.before(uri, ":");
+        endpointUri = new URI(scheme + ":" + endpointUri);
+
         JettyHttpEndpoint endpoint = createEndpoint(endpointUri, httpUri);
-        
-        
+
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
@@ -407,7 +413,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         context.getServletHandler().addFilterWithMapping(filterHolder, pathSpec, 0);
     }
 
-    private void enableMultipartFilter(HttpEndpoint endpoint, Server server, String connectorKey) throws Exception {
+    private void enableMultipartFilter(HttpCommonEndpoint endpoint, Server server, String connectorKey) throws Exception {
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         CamelContext camelContext = this.getCamelContext();
         FilterHolder filterHolder = new FilterHolder();
@@ -445,7 +451,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
     @Override
     public void disconnect(HttpConsumer consumer) throws Exception {
         // If the connector is not needed anymore then stop it
-        HttpEndpoint endpoint = consumer.getEndpoint();
+        HttpCommonEndpoint endpoint = consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
         
         synchronized (CONNECTORS) {
@@ -468,7 +474,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         }
     }
     
-    private String getConnectorKey(HttpEndpoint endpoint) {
+    private String getConnectorKey(HttpCommonEndpoint endpoint) {
         return endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
     }
 
@@ -792,6 +798,24 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         this.jettyHttpBinding = jettyHttpBinding;
     }
 
+    /**
+     * Not to be used - use JettyHttpBinding instead.
+     */
+    @Override
+    @Metadata(description = "Not to be used - use JettyHttpBinding instead.")
+    public void setHttpBinding(HttpBinding httpBinding) {
+        throw new IllegalArgumentException("Not to be used - use JettyHttpBinding instead.");
+    }
+
+    /**
+     * Jetty component does not use HttpConfiguration.
+     */
+    @Override
+    @Metadata(description = "Jetty component does not use HttpConfiguration.")
+    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+        throw new IllegalArgumentException("Jetty component does not use HttpConfiguration.");
+    }
+
     public synchronized MBeanContainer getMbContainer() {
         // If null, provide the default implementation.
         if (mbContainer == null) {
@@ -979,7 +1003,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -997,17 +1021,28 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         int port = 0;
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config.getComponent() == null || config.getComponent().equals("jetty")) {
-            if (config.getScheme() != null) {
-                scheme = config.getScheme();
-            }
-            if (config.getHost() != null) {
-                host = config.getHost();
-            }
-            int num = config.getPort();
-            if (num > 0) {
-                port = num;
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("jetty", true);
+        }
+        if (config.getScheme() != null) {
+            scheme = config.getScheme();
+        }
+        if (config.getHost() != null) {
+            host = config.getHost();
+        }
+        int num = config.getPort();
+        if (num > 0) {
+            port = num;
+        }
+
+        // prefix path with context-path if configured in rest-dsl configuration
+        String contextPath = config.getContextPath();
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
             }
         }
 
@@ -1022,7 +1057,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("jetty"))) {
+        if (config.getComponent() == null || config.getComponent().equals("jetty")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
@@ -1051,7 +1086,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(consumer, config.getConsumerProperties());
         }
 
@@ -1095,7 +1130,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         context.addServlet(holder, "/*");
 
         // use rest enabled resolver in case we use rest
-        camelServlet.setServletResolveConsumerStrategy(new JettyRestServletResolveConsumerStrategy());
+        camelServlet.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
 
         return camelServlet;
     }

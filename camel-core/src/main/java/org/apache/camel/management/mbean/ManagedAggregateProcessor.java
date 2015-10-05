@@ -45,9 +45,22 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
         return processor;
     }
 
+    @Override
+    public AggregateDefinition getDefinition() {
+        return (AggregateDefinition) super.getDefinition();
+    }
+
+    public String getCorrelationExpressionLanguage() {
+        if (getDefinition().getCorrelationExpression() != null) {
+            return getDefinition().getCorrelationExpression().getExpressionType().getLanguage();
+        } else {
+            return null;
+        }
+    }
+
     public String getCorrelationExpression() {
-        if (processor.getCorrelationExpression() != null) {
-            return processor.getCorrelationExpression().toString();
+        if (getDefinition().getCorrelationExpression() != null) {
+            return getDefinition().getCorrelationExpression().getExpressionType().getExpression();
         } else {
             return null;
         }
@@ -57,9 +70,17 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
         return processor.getCompletionTimeout();
     }
 
+    public String getCompletionTimeoutLanguage() {
+        if (getDefinition().getCompletionTimeoutExpression() != null) {
+            return getDefinition().getCompletionTimeoutExpression().getExpressionType().getLanguage();
+        } else {
+            return null;
+        }
+    }
+
     public String getCompletionTimeoutExpression() {
-        if (processor.getCompletionTimeoutExpression() != null) {
-            return processor.getCompletionTimeoutExpression().toString();
+        if (getDefinition().getCompletionTimeoutExpression() != null) {
+            return getDefinition().getCompletionTimeoutExpression().getExpressionType().getExpression();
         } else {
             return null;
         }
@@ -73,9 +94,17 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
         return processor.getCompletionSize();
     }
 
+    public String getCompletionSizeExpressionLanguage() {
+        if (getDefinition().getCompletionSizeExpression() != null) {
+            return getDefinition().getCompletionSizeExpression().getExpressionType().getLanguage();
+        } else {
+            return null;
+        }
+    }
+
     public String getCompletionSizeExpression() {
-        if (processor.getCompletionSizeExpression() != null) {
-            return processor.getCompletionSizeExpression().toString();
+        if (getDefinition().getCompletionSizeExpression() != null) {
+            return getDefinition().getCompletionSizeExpression().getExpressionType().getExpression();
         } else {
             return null;
         }
@@ -105,9 +134,18 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
         return processor.isEagerCheckCompletion();
     }
 
+    @Override
+    public String getCompletionPredicateLanguage() {
+        if (getDefinition().getCompletionPredicate() != null) {
+            return getDefinition().getCompletionPredicate().getExpressionType().getLanguage();
+        } else {
+            return null;
+        }
+    }
+
     public String getCompletionPredicate() {
-        if (processor.getCompletionPredicate() != null) {
-            return processor.getCompletionPredicate().toString();
+        if (getDefinition().getCompletionPredicate() != null) {
+            return getDefinition().getCompletionPredicate().getExpressionType().getExpression();
         } else {
             return null;
         }
@@ -119,6 +157,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     public boolean isForceCompletionOnStop() {
         return processor.isCompletionFromBatchConsumer();
+    }
+
+    public boolean isCompleteAllOnStop() {
+        return processor.isCompleteAllOnStop();
     }
 
     public int getInProgressCompleteExchanges() {
@@ -148,6 +190,14 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
         } else {
             return 0;
         }
+    }
+
+    public int getClosedCorrelationKeysCacheSize() {
+        return processor.getClosedCorrelationKeysCacheSize();
+    }
+
+    public void clearClosedCorrelationKeysCache() {
+        processor.clearClosedCorrelationKeysCache();
     }
 
     public long getTotalIn() {

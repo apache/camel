@@ -21,12 +21,12 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.16.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-swagger</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Swagger</name>
+  <name>Camel :: Swagger (deprecated)</name>
   <description>Camel Swagger support</description>
 
   <properties>
@@ -83,7 +83,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty8</artifactId>
+      <artifactId>camel-jetty</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-http-common</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty-common</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

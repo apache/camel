@@ -37,12 +37,15 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.util.JsonSchemaHelper;
 
 /**
@@ -71,6 +74,10 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("status", context.getStatus().name());
             answer.put("uptime", context.getUptime());
             answer.put("suspended", context.getStatus().isSuspended());
+            if (context.getManagementStrategy().getManagementAgent() != null) {
+                String level = context.getManagementStrategy().getManagementAgent().getStatisticsLevel().name();
+                answer.put("managementStatisticsLevel", level);
+            }
             answer.put("allowUseOriginalMessage", context.isAllowUseOriginalMessage());
             answer.put("messageHistory", context.isMessageHistory());
             answer.put("tracing", context.isTracing());
@@ -260,6 +267,17 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                         row.put("camelContextName", context.getName());
                         row.put("routeId", route.getId());
                         row.put("state", getRouteState(route));
+                        row.put("uptime", route.getUptime());
+                        ManagedRouteMBean mr = context.getManagedRoute(route.getId(), ManagedRouteMBean.class);
+                        if (mr != null) {
+                            row.put("exchangesTotal", "" + mr.getExchangesTotal());
+                            row.put("exchangesInflight", "" + mr.getExchangesInflight());
+                            row.put("exchangesFailed", "" + mr.getExchangesFailed());
+                        } else {
+                            row.put("exchangesTotal", "0");
+                            row.put("exchangesInflight", "0");
+                            row.put("exchangesFailed", "0");
+                        }
                         answer.add(row);
                     }
                 }
@@ -398,6 +416,15 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return ModelHelper.dumpModelAsXml(null, def);
     }
 
+    public String getRestApiDocAsJson(String camelContextName) throws Exception {
+        CamelContext context = this.getLocalCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+
+        return context.getRestRegistry().apiDocAsJson();
+    }
+
     public List<Map<String, String>> getEndpoints(String camelContextName) throws Exception {
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
@@ -420,6 +447,56 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                     answer.add(row);
                 }
             }
+        }
+        return answer;
+    }
+
+    public List<Map<String, String>> getEndpointRuntimeStatistics(String camelContextName) throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        if (camelContextName != null) {
+            CamelContext context = this.getLocalCamelContext(camelContextName);
+            if (context != null) {
+                EndpointRegistry staticRegistry = context.getEndpointRegistry();
+                for (RuntimeEndpointRegistry.Statistic stat : context.getRuntimeEndpointRegistry().getEndpointStatistics()) {
+
+                    String url = stat.getUri();
+                    String routeId = stat.getRouteId();
+                    String direction = stat.getDirection();
+                    Boolean isStatic = staticRegistry.isStatic(url);
+                    Boolean isDynamic = staticRegistry.isDynamic(url);
+                    long hits = stat.getHits();
+
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("camelContextName", context.getName());
+                    row.put("uri", url);
+                    row.put("routeId", routeId);
+                    row.put("direction", direction);
+                    row.put("static", isStatic.toString());
+                    row.put("dynamic", isDynamic.toString());
+                    row.put("hits", "" + hits);
+                    answer.add(row);
+                }
+            }
+
+            // sort the list
+            Collections.sort(answer, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> endpoint1, Map<String, String> endpoint2) {
+                    // sort by route id
+                    String route1 = endpoint1.get("routeId");
+                    String route2 = endpoint2.get("routeId");
+                    int num = route1.compareTo(route2);
+                    if (num == 0) {
+                        // we want in before out
+                        String dir1 = endpoint1.get("direction");
+                        String dir2 = endpoint2.get("direction");
+                        num = dir1.compareTo(dir2);
+                    }
+                    return num;
+                }
+
+            });
         }
         return answer;
     }

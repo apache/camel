@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sns;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sns.AmazonSNS;
@@ -125,8 +126,16 @@ public class SnsEndpoint extends DefaultEndpoint {
      * @return AmazonSNSClient
      */
     AmazonSNS createSNSClient() {
+        AmazonSNS client = null;
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonSNS client = new AmazonSNSClient(credentials);
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            client = new AmazonSNSClient(credentials, clientConfiguration);
+        } else {
+            client = new AmazonSNSClient(credentials);
+        }
         return client;
     }
 }

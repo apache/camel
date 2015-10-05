@@ -44,6 +44,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.AggregationRepository;
@@ -51,6 +52,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultTimeoutMap;
@@ -81,7 +83,7 @@ import org.slf4j.LoggerFactory;
  * and older prices are discarded). Another idea is to combine line item messages
  * together into a single invoice message.
  */
-public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared, IdAware {
+public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
 
@@ -204,6 +206,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private AtomicInteger batchConsumerCounter = new AtomicInteger();
     private boolean discardOnCompletionTimeout;
     private boolean forceCompletionOnStop;
+    private boolean completeAllOnStop;
 
     private ProducerTemplate deadLetterProducerTemplate;
 
@@ -783,6 +786,26 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         timeoutMap.put(key, exchange.getExchangeId(), timeout);
     }
 
+    /**
+     * Current number of closed correlation keys in the memory cache
+     */
+    public int getClosedCorrelationKeysCacheSize() {
+        if (closedCorrelationKeys != null) {
+            return closedCorrelationKeys.size();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Clear all the closed correlation keys stored in the cache
+     */
+    public void clearClosedCorrelationKeysCache() {
+        if (closedCorrelationKeys != null) {
+            closedCorrelationKeys.clear();
+        }
+    }
+
     public AggregateProcessorStatistics getStatistics() {
         return statistics;
     }
@@ -871,6 +894,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         this.completionFromBatchConsumer = completionFromBatchConsumer;
     }
 
+    public boolean isCompleteAllOnStop() {
+        return completeAllOnStop;
+    }
+
     public ExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
@@ -913,6 +940,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     public void setForceCompletionOnStop(boolean forceCompletionOnStop) {
         this.forceCompletionOnStop = forceCompletionOnStop;
+    }
+
+    public void setCompleteAllOnStop(boolean completeAllOnStop) {
+        this.completeAllOnStop = completeAllOnStop;
     }
 
     public void setTimeoutCheckerExecutorService(ScheduledExecutorService timeoutCheckerExecutorService) {
@@ -1350,13 +1381,30 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // we are shutting down, so force completion if this option was enabled
         // but only do this when forced=false, as that is when we have chance to
         // send out new messages to be routed by Camel. When forced=true, then
         // we have to shutdown in a hurry
         if (!forced && forceCompletionOnStop) {
             doForceCompletionOnStop();
+        }
+    }
+
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // not in use
+        return true;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        if (completeAllOnStop) {
+            // we want to regard all pending exchanges in the repo as inflight
+            Set<String> keys = getAggregationRepository().getKeys();
+            return keys != null ? keys.size() : 0;
+        } else {
+            return 0;
         }
     }
 

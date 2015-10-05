@@ -21,6 +21,8 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.policies.LoadBalancingPolicy;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Message;
@@ -31,6 +33,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.utils.cassandra.CassandraLoadBalancingPolicies;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
 /**
@@ -65,6 +68,8 @@ public class CassandraEndpoint extends DefaultEndpoint {
     private Session session;
     @UriParam
     private ConsistencyLevel consistencyLevel;
+    @UriParam
+    private String loadBalancingPolicy;
 
     /**
      * How many rows should be retrieved in message body
@@ -140,6 +145,7 @@ public class CassandraEndpoint extends DefaultEndpoint {
     }
 
     protected Cluster.Builder createClusterBuilder() throws Exception {
+        CassandraLoadBalancingPolicies cassLoadBalancingPolicies = new CassandraLoadBalancingPolicies();
         Cluster.Builder clusterBuilder = Cluster.builder();
         for (String host : hosts.split(",")) {
             clusterBuilder = clusterBuilder.addContactPoint(host);
@@ -152,6 +158,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         }
         if (username != null && !username.isEmpty() && password != null) {
             clusterBuilder.withCredentials(username, password);
+        }
+        if (loadBalancingPolicy != null && !loadBalancingPolicy.isEmpty()) {
+            clusterBuilder.withLoadBalancingPolicy(cassLoadBalancingPolicies.getLoadBalancingPolicy(loadBalancingPolicy));
         }
         return clusterBuilder;
     }
@@ -337,4 +346,17 @@ public class CassandraEndpoint extends DefaultEndpoint {
     public void setPrepareStatements(boolean prepareStatements) {
         this.prepareStatements = prepareStatements;
     }
+
+    /**
+     * To use a specific LoadBalancingPolicy
+     */
+    public String getLoadBalancingPolicy() {
+        return loadBalancingPolicy;
+    }
+
+    public void setLoadBalancingPolicy(String loadBalancingPolicy) {
+        this.loadBalancingPolicy = loadBalancingPolicy;
+    }
+    
+    
 }

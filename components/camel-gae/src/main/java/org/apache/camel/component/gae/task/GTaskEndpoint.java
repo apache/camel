@@ -30,16 +30,13 @@ import org.apache.camel.component.gae.bind.HttpBindingInvocationHandler;
 import org.apache.camel.component.gae.bind.InboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBindingSupport;
-import org.apache.camel.component.http.HttpBinding;
-import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
+import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
  * Represents a <a href="http://camel.apache.org/gtask.html">Google App Engine Task Queueing endpoint</a>.
@@ -61,11 +58,8 @@ public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSup
     @UriParam(label = "producer")
     private String outboundBindingRef;
 
-    public GTaskEndpoint(String endpointUri, ServletComponent component,
-            URI httpUri, HttpClientParams params,
-            HttpConnectionManager httpConnectionManager,
-            HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
+    public GTaskEndpoint(String endpointUri, ServletComponent component, URI httpUri) throws URISyntaxException {
+        super(endpointUri, component, httpUri);
     }
 
     public OutboundBinding<GTaskEndpoint, TaskOptions, Void> getOutboundBinding() {

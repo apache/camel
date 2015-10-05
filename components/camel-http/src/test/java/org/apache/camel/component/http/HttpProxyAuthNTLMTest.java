@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -50,7 +51,7 @@ public class HttpProxyAuthNTLMTest extends CamelTestSupport {
                 config.setProxyHost("myProxyHosy");
                 config.setProxyPort(1234);
 
-                config.setProxyAuthMethod(AuthMethod.NTLM);
+                config.setProxyAuthMethod("NTLM");
                 config.setProxyAuthUsername("myUser");
                 config.setProxyAuthPassword("myPassword");
                 config.setProxyAuthDomain("myDomain");

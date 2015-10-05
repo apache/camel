@@ -47,11 +47,10 @@ public class EventHelperTest {
             }
             
         });
-        ManagementStrategy managementStrategy = new DefaultManagementStrategy();
-        managementStrategy.addEventNotifier(en1);
-        managementStrategy.addEventNotifier(en2);
-        camelContext.setManagementStrategy(managementStrategy);
-        
+
+        camelContext.getManagementStrategy().addEventNotifier(en1);
+        camelContext.getManagementStrategy().addEventNotifier(en2);
+
         camelContext.start();
         camelContext.stop();
         
@@ -79,11 +78,10 @@ public class EventHelperTest {
             }
             
         });
-        ManagementStrategy managementStrategy = new DefaultManagementStrategy();
-        managementStrategy.addEventNotifier(en1);
-        managementStrategy.addEventNotifier(en2);
-        camelContext.setManagementStrategy(managementStrategy);
-        
+
+        camelContext.getManagementStrategy().addEventNotifier(en1);
+        camelContext.getManagementStrategy().addEventNotifier(en2);
+
         camelContext.start();
         camelContext.stop();
         
@@ -111,11 +109,10 @@ public class EventHelperTest {
             }
             
         });
-        ManagementStrategy managementStrategy = new DefaultManagementStrategy();
-        managementStrategy.addEventNotifier(en1);
-        managementStrategy.addEventNotifier(en2);
-        camelContext.setManagementStrategy(managementStrategy);
-        
+
+        camelContext.getManagementStrategy().addEventNotifier(en1);
+        camelContext.getManagementStrategy().addEventNotifier(en2);
+
         camelContext.start();
         camelContext.stop();
         

@@ -25,9 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
-
 import org.eclipse.jetty.server.handler.StatisticsHandler;
-
 import org.junit.Test;
 
 public class HandlerTest extends BaseJettyTest {

@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "XML Beans")
+@Metadata(label = "dataformat,transformation,xml", title = "XML Beans")
 @XmlRootElement(name = "xmlBeans")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLBeansDataFormat extends DataFormatDefinition {

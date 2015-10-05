@@ -19,8 +19,8 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 /**
- * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} for Camel components to support
- * the Camel {@link org.apache.camel.model.rest.RestDefinition rest} DSL.
+ * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} and {@link org.apache.camel.spi.RestApiConsumerFactory}
+ * for Camel components to support the Camel {@link org.apache.camel.model.rest.RestDefinition rest} DSL.
  */
 public class RestConfiguration {
 
@@ -38,10 +38,14 @@ public class RestConfiguration {
     }
 
     private String component;
+    private String apiComponent;
     private String scheme;
     private String host;
     private int port;
     private String contextPath;
+    private String apiContextPath;
+    private String apiContextIdPattern;
+    private boolean apiContextListing;
     private RestHostNameResolver restHostNameResolver = RestHostNameResolver.localHostName;
     private RestBindingMode bindingMode = RestBindingMode.off;
     private boolean skipBindingOnErrorCode = true;
@@ -52,6 +56,7 @@ public class RestConfiguration {
     private Map<String, Object> endpointProperties;
     private Map<String, Object> consumerProperties;
     private Map<String, Object> dataFormatProperties;
+    private Map<String, Object> apiProperties;
     private Map<String, String> corsHeaders;
 
     /**
@@ -70,6 +75,24 @@ public class RestConfiguration {
      */
     public void setComponent(String componentName) {
         this.component = componentName;
+    }
+
+    /**
+     * Gets the name of the Camel component to use as the REST API (such as swagger)
+     *
+     * @return the component name, or <tt>null</tt> to let Camel use the default name <tt>swagger</tt>
+     */
+    public String getApiComponent() {
+        return apiComponent;
+    }
+
+    /**
+     * Sets the name of the Camel component to use as the REST API (such as swagger)
+     *
+     * @param apiComponent the name of the component (such as swagger)
+     */
+    public void setApiComponent(String apiComponent) {
+        this.apiComponent = apiComponent;
     }
 
     /**
@@ -139,12 +162,57 @@ public class RestConfiguration {
      * Sets a leading context-path the REST services will be using.
      * <p/>
      * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
-     * is deployed using a context-path.
+     * is deployed using a context-path. Or for components such as <tt>camel-jetty</tt> or <tt>camel-netty4-http</tt>
+     * that includes a HTTP server.
      *
      * @param contextPath the context path
      */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    public String getApiContextPath() {
+        return apiContextPath;
+    }
+
+    /**
+     * Sets a leading API context-path the REST API services will be using.
+     * <p/>
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
+     * is deployed using a context-path.
+     *
+     * @param contextPath the API context path
+     */
+    public void setApiContextPath(String contextPath) {
+        this.apiContextPath = contextPath;
+    }
+
+    public String getApiContextIdPattern() {
+        return apiContextIdPattern;
+    }
+
+    /**
+     * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
+     * <p/>
+     * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only.
+     * For any other value, the pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
+     *
+     * @param apiContextIdPattern  the pattern
+     */
+    public void setApiContextIdPattern(String apiContextIdPattern) {
+        this.apiContextIdPattern = apiContextIdPattern;
+    }
+
+    public boolean isApiContextListing() {
+        return apiContextListing;
+    }
+
+    /**
+     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover
+     * these contexts, if <tt>false</tt> then only the current CamelContext is in use.
+     */
+    public void setApiContextListing(boolean apiContextListing) {
+        this.apiContextListing = apiContextListing;
     }
 
     /**
@@ -359,6 +427,19 @@ public class RestConfiguration {
      */
     public void setDataFormatProperties(Map<String, Object> dataFormatProperties) {
         this.dataFormatProperties = dataFormatProperties;
+    }
+
+    public Map<String, Object> getApiProperties() {
+        return apiProperties;
+    }
+
+    /**
+     * Sets additional options on api level
+     *
+     * @param apiProperties the options
+     */
+    public void setApiProperties(Map<String, Object> apiProperties) {
+        this.apiProperties = apiProperties;
     }
 
     /**

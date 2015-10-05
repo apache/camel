@@ -33,8 +33,7 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Represents an Undertow endpoint.
@@ -42,9 +41,9 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
     consumerClass = UndertowConsumer.class, label = "http")
 public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private UndertowComponent component;
+    private SSLContext sslContext;
 
     @UriPath
     private URI httpURI;
@@ -53,7 +52,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
     @UriParam
-    private SSLContext sslContext;
+    private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private String httpMethodRestrict;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -63,10 +62,9 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     @UriParam
     private Boolean transferException;
 
-    public UndertowEndpoint(String uri, UndertowComponent component, URI httpURI) throws URISyntaxException {
+    public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {
         super(uri, component);
         this.component = component;
-        this.httpURI = httpURI;
     }
 
     @Override
@@ -95,6 +93,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
         return true;
     }
 
+    @Override
+    public boolean isLenientProperties() {
+        // true to allow dynamic URI options to be configured and passed to external system for eg. the UndertowProducer
+        return true;
+    }
+
     public Exchange createExchange(HttpServerExchange httpExchange) throws Exception {
         Exchange exchange = createExchange();
 
@@ -105,6 +109,10 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
 
         exchange.setIn(in);
         return exchange;
+    }
+
+    public SSLContext getSslContext() {
+        return sslContext;
     }
 
     public URI getHttpURI() {
@@ -152,15 +160,15 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
         undertowHttpBinding.setHeaderFilterStrategy(headerFilterStrategy);
     }
 
-    public SSLContext getSslContext() {
-        return sslContext;
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
     }
 
     /**
      * To configure security using SSLContextParameters
      */
-    public void setSslContext(SSLContext sslContext) {
-        this.sslContext = sslContext;
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public Boolean getThrowExceptionOnFailure() {
@@ -198,4 +206,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
         this.undertowHttpBinding = undertowHttpBinding;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (sslContextParameters != null) {
+            sslContext = sslContextParameters.createSSLContext();
+        }
+    }
 }

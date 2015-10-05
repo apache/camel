@@ -36,12 +36,14 @@
 		</route>
 	</camelContext>
 
-   <camel:proxy id="sayProxy1"
-	             serviceInterface="org.apache.camel.spring.remoting.ISay"
-	             serviceUrl="direct:foo"
+  <camel:proxy id="sayProxy1"
+               binding="false"
+ 	             serviceInterface="org.apache.camel.spring.remoting.ISay"
+ 	             serviceUrl="direct:foo"
 	             camelContextId="context-1"/>
 
-	<camel:proxy id="sayProxy2"
+  <camel:proxy id="sayProxy2"
+               binding="false"
 	             serviceInterface="org.apache.camel.spring.remoting.ISay"
 	             serviceUrl="direct:foo"
 	             camelContextId="context-2"/>

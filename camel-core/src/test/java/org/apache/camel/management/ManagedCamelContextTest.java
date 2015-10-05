@@ -76,6 +76,9 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         String managementName = (String) mbeanServer.getAttribute(on, "ManagementName");
         assertEquals("19-camel-1", managementName);
 
+        String level = (String) mbeanServer.getAttribute(on, "ManagementStatisticsLevel");
+        assertEquals("Default", level);
+
         String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertNotNull(uptime);
 

@@ -151,12 +151,16 @@ public class Throttler extends DelayProcessorSupport implements Traceable, IdAwa
     /*
      * Determine what the next available time slot is for handling an Exchange
      */
-    protected synchronized TimeSlot nextSlot() {
+    protected synchronized TimeSlot nextSlot() throws ThrottlerRejectedExecutionException {
         if (slot == null) {
             slot = new TimeSlot();
-        }
-        if (slot.isFull() || !slot.isPast()) {
-            slot = slot.next();
+        } else {
+            if (rejectExecution && slot.isFull() && !slot.isPast()) {
+                throw new ThrottlerRejectedExecutionException("Exceed the max request limit!");
+            }
+            if (slot.isFull() || slot.isPast()) {
+                slot = slot.next();
+            }
         }
         slot.assign();
         return slot;
@@ -193,7 +197,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable, IdAwa
 
         protected boolean isPast() {
             long current = System.currentTimeMillis();
-            return current < (startTime + duration);
+            return current > (startTime + duration);
         }
 
         protected boolean isActive() {

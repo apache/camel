@@ -140,7 +140,9 @@ public class HazelcastMapProducerForSpringTest extends HazelcastCamelSpringTestS
         template.sendBodyAndHeader("direct:getAll", null, HazelcastConstants.OBJECT_ID, l);
         String body = consumer.receiveBody("seda:out", 5000, String.class);
         verify(map).getAll(l);
-        assertEquals("{key3=value3, key2=value2, key1=value1}", body);
+        assertTrue(body.contains("key1=value1"));
+        assertTrue(body.contains("key2=value2"));
+        assertTrue(body.contains("key3=value3"));
     }
 
     @Test

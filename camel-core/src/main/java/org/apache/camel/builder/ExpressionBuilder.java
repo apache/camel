@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
@@ -1727,6 +1728,20 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression fileNameNoExtensionSingleExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                return FileUtil.stripExt(name, true);
+            }
+
+            @Override
+            public String toString() {
+                return "file:name.noext.single";
+            }
+        };
+    }
+
     public static Expression fileOnlyNameNoExtensionExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -1741,6 +1756,20 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression fileOnlyNameNoExtensionSingleExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = fileOnlyNameExpression().evaluate(exchange, String.class);
+                return FileUtil.stripExt(name, true);
+            }
+
+            @Override
+            public String toString() {
+                return "file:onlyname.noext.single";
+            }
+        };
+    }
+
     public static Expression fileExtensionExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -1751,6 +1780,20 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "file:ext";
+            }
+        };
+    }
+
+    public static Expression fileExtensionSingleExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                return FileUtil.onlyExt(name, true);
+            }
+
+            @Override
+            public String toString() {
+                return "file:ext.single";
             }
         };
     }
@@ -1866,6 +1909,42 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "properties(" + key + ")";
+            }
+        };
+    }
+    
+    /**
+     * Returns a random number between min and max
+     */
+    public static Expression randomExpression(final int min, final int max) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Random random = new Random();
+                int randomNum = random.nextInt(max - min) + min;
+                return randomNum;
+            }
+
+            @Override
+            public String toString() {
+                return "random";
+            }
+        };
+    }
+    
+    /**
+     * Returns a random number between 0 and upperbound (exclusive)
+     */
+    public static Expression randomExpression(final int upperbound) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Random random = new Random();
+                int randomNum = random.nextInt(upperbound);
+                return randomNum;
+            }
+
+            @Override
+            public String toString() {
+                return "random";
             }
         };
     }

@@ -52,17 +52,18 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
 
     public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException {
         ModelMBeanInfo mbi = null;
+        ModelMBeanInfo standardMbi = null;
+        Object custom = null;
 
         // prefer to use the managed instance if it has been annotated with JMX annotations
         if (obj instanceof ManagedInstance) {
             // there may be a custom embedded instance which have additional methods
-            Object custom = ((ManagedInstance) obj).getInstance();
+            custom = ((ManagedInstance) obj).getInstance();
             if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
                 LOG.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
-                // get the mbean info from the custom managed object
-                mbi = assembler.getMBeanInfo(null, custom, name.toString());
-                // and let the custom object be registered in JMX
-                obj = custom;
+                // get the mbean info into different groups (mbi = both, standard = standard out of the box mbi)
+                mbi = assembler.getMBeanInfo(obj, custom, name.toString());
+                standardMbi = assembler.getMBeanInfo(obj, null, name.toString());
             }
         }
 
@@ -77,13 +78,27 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
         }
 
         RequiredModelMBean mbean;
+        RequiredModelMBean mixinMBean = null;
+
         boolean sanitize = camelContext.getManagementStrategy().getManagementAgent().getMask() != null && camelContext.getManagementStrategy().getManagementAgent().getMask();
-        if (sanitize) {
-            mbean = new MaskRequiredModelMBean(mbi, sanitize);
-        } else {
-            mbean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
-            mbean.setModelMBeanInfo(mbi);
+
+        // if we have a custom mbean then create a mixin mbean for the standard mbean which we would
+        // otherwise have created that contains the out of the box attributes and operations
+        // as we want a combined mbean that has both the custom and the standard
+        if (standardMbi != null) {
+            mixinMBean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
+            mixinMBean.setModelMBeanInfo(standardMbi);
+            try {
+                mixinMBean.setManagedResource(obj, "ObjectReference");
+            } catch (InvalidTargetObjectTypeException e) {
+                throw new JMException(e.getMessage());
+            }
+            // use custom as the object to call
+            obj = custom;
         }
+
+        // use a mixin mbean model to combine the custom and standard (custom is optional)
+        mbean = new MixinRequiredModelMBean(mbi, sanitize, standardMbi, mixinMBean);
 
         try {
             mbean.setManagedResource(obj, "ObjectReference");

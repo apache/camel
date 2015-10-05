@@ -59,17 +59,19 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
     private Component component;
-    @UriParam(defaultValue = "InOnly", description = "Sets the default exchange pattern when creating an exchange")
+    @UriParam(defaultValue = "InOnly", label = "advanced",
+            description = "Sets the default exchange pattern when creating an exchange")
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     // option to allow end user to dictate whether async processing should be
     // used or not (if possible)
-    @UriParam(defaultValue = "false",
+    @UriParam(defaultValue = "false", label = "advanced",
             description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
     private boolean synchronous;
     private final String id = EndpointHelper.createEndpointId();
     private Map<String, Object> consumerProperties;
     private int pollingConsumerQueueSize = 1000;
     private boolean pollingConsumerBlockWhenFull = true;
+    private long pollingConsumerBlockTimeout;
 
     /**
      * Constructs a fully-initialized DefaultEndpoint instance. This is the
@@ -222,9 +224,13 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     public PollingConsumer createPollingConsumer() throws Exception {
         // should not call configurePollingConsumer when its EventDrivenPollingConsumer
-        LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} and blockWhenFull: {}", getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                    new Object[]{getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout()});
+        }
         EventDrivenPollingConsumer consumer = new EventDrivenPollingConsumer(this, getPollingConsumerQueueSize());
         consumer.setBlockWhenFull(isPollingConsumerBlockWhenFull());
+        consumer.setBlockTimeout(getPollingConsumerBlockTimeout());
         return consumer;
     }
 
@@ -319,6 +325,26 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      */
     public void setPollingConsumerBlockWhenFull(boolean pollingConsumerBlockWhenFull) {
         this.pollingConsumerBlockWhenFull = pollingConsumerBlockWhenFull;
+    }
+
+    /**
+     * Sets the timeout in millis to use when adding to the internal queue off when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used.
+     *
+     * @see #setPollingConsumerBlockWhenFull(boolean)
+     */
+    public long getPollingConsumerBlockTimeout() {
+        return pollingConsumerBlockTimeout;
+    }
+
+    /**
+     * Sets the timeout in millis to use when adding to the internal queue off when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used.
+     *
+     * @see #setPollingConsumerBlockWhenFull(boolean)
+     */
+    public void setPollingConsumerBlockTimeout(long pollingConsumerBlockTimeout) {
+        this.pollingConsumerBlockTimeout = pollingConsumerBlockTimeout;
     }
 
     public void configureProperties(Map<String, Object> options) {

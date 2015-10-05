@@ -485,11 +485,33 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setRestConfiguration(RestConfiguration restConfiguration);
 
     /**
-     * Gets the current REST configuration
+     * Gets the default REST configuration
      *
      * @return the configuration, or <tt>null</tt> if none has been configured.
      */
     RestConfiguration getRestConfiguration();
+    
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
+     *
+     * @param restConfiguration the REST configuration
+     */
+    void addRestConfiguration(RestConfiguration restConfiguration);
+
+    /**
+     * Gets the REST configuration for the given component
+     *
+     * @param component the component name to get the configuration
+     * @param defaultIfNotFound determine if the default configuration is returned if there isn't a 
+     *        specific configuration for the given component  
+     * @return the configuration, or <tt>null</tt> if none has been configured.
+     */
+    RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound);
+    
+    /**
+     * Gets all the RestConfiguration's
+     */
+    Collection<RestConfiguration> getRestConfigurations();
 
     /**
      * Returns the order in which the route inputs was started.
@@ -1535,6 +1557,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the json or <tt>null</tt> if the component was not found
      */
     String explainComponentJson(String componentName, boolean includeAllOptions);
+
+    /**
+     * Returns a JSON schema representation of the component parameters (not endpoint parameters) for the given component by its id.
+     *
+     * @param dataFormat the data format instance.
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json
+     */
+    String explainDataFormatJson(String dataFormatName, DataFormat dataFormat, boolean includeAllOptions);
 
     /**
      * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri.

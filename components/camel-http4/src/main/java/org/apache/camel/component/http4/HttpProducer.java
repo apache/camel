@@ -36,9 +36,11 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.component.http4.helper.HttpHelper;
-
+import org.apache.camel.component.http4.helper.HttpMethodHelper;
 import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -50,6 +52,7 @@ import org.apache.camel.util.URISupport;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -110,7 +113,8 @@ public class HttpProducer extends DefaultProducer {
         String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
         if (httpProtocolVersion != null) {
             // set the HTTP protocol version
-            httpRequest.setProtocolVersion(HttpHelper.parserHttpVersion(httpProtocolVersion));
+            int[] version = HttpHelper.parserHttpVersion(httpProtocolVersion);
+            httpRequest.setProtocolVersion(new HttpVersion(version[0], version[1]));
         }
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
 
@@ -161,10 +165,18 @@ public class HttpProducer extends DefaultProducer {
             int responseCode = httpResponse.getStatusLine().getStatusCode();
             LOG.debug("Http responseCode: {}", responseCode);
 
-            if (throwException && (responseCode < 100 || responseCode >= 300)) {
-                throw populateHttpOperationFailedException(exchange, httpRequest, httpResponse, responseCode);
-            } else {
+            if (!throwException) {
+                // if we do not use failed exception then populate response for all response codes
                 populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
+            } else {
+                boolean ok = HttpHelper.isStatusCodeOk(responseCode, getEndpoint().getOkStatusCodeRange());
+                if (ok) {
+                    // only populate response for OK response
+                    populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
+                } else {
+                    // operation failed so populate exception to throw
+                    throw populateHttpOperationFailedException(exchange, httpRequest, httpResponse, responseCode);
+                }
             }
         } finally {
             if (httpResponse != null) {
@@ -210,10 +222,12 @@ public class HttpProducer extends DefaultProducer {
             }
         }
 
-        // preserve headers from in by copying any non existing headers
-        // to avoid overriding existing headers with old values
-        // Just filter the http protocol headers
-        MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
+        // endpoint might be configured to copy headers from in to out
+        // to avoid overriding existing headers with old values just
+        // filter the http protocol headers
+        if (getEndpoint().isCopyHeaders()) {
+            MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
+        }
     }
 
     protected Exception populateHttpOperationFailedException(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse, int responseCode) throws IOException, ClassNotFoundException {
@@ -375,7 +389,7 @@ public class HttpProducer extends DefaultProducer {
 
         // create http holder objects for the request
         HttpEntity requestEntity = createRequestEntity(exchange);
-        HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
+        HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
         HttpRequestBase method = methodToUse.createMethod(url);
 
         LOG.trace("Using URL: {} with method: {}", url, method);

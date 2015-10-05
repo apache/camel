@@ -157,15 +157,13 @@ public class RouteBuilderTest extends TestSupport {
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             ChoiceProcessor choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, channel.getNextProcessor());
-            List<Processor> filters = choiceProcessor.getFilters();
+            List<FilterProcessor> filters = choiceProcessor.getFilters();
             assertEquals("Should be two when clauses", 2, filters.size());
 
             Processor filter1 = filters.get(0);
-            assertTrue(filter1 instanceof FilterProcessor);
             assertSendTo(unwrapChannel(((FilterProcessor) filter1).getProcessor()).getNextProcessor(), "direct://b");
 
             Processor filter2 = filters.get(1);
-            assertTrue(filter2 instanceof FilterProcessor);
             assertSendTo(unwrapChannel(((FilterProcessor) filter2).getProcessor()).getNextProcessor(), "direct://c");
 
             assertSendTo(unwrapChannel(choiceProcessor.getOtherwise()).getNextProcessor(), "direct://d");

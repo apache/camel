@@ -26,6 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.jboss.netty.channel.ChannelHandler;
+import org.jboss.netty.handler.codec.frame.TooLongFrameException;
 
 /**
  * Extended configuration for using HTTP with Netty.
@@ -35,26 +36,32 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     @UriPath @Metadata(required = "true")
     private String path;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean urlDecodeHeaders;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean mapHeaders = true;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean compression;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferException;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
     @UriParam
     private boolean bridgeEndpoint;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean disableStreamCache;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean send503whenSuspended = true;
-    @UriParam(defaultValue = "" + 1024 * 1024)
+    @UriParam(label = "consumer,advanced", defaultValue = "" + 1024 * 1024)
     private int chunkedMaxContentLength = 1024 * 1024;
+    @UriParam(label = "consumer,advanced", defaultValue = "8192")
+    private int maxHeaderSize = 8192;
+    @UriParam(label = "producer,advanced", defaultValue = "200-299")
+    private String okStatusCodeRange = "200-299";
+    @UriParam(label = "producer,advanced")
+    private boolean useRelativePath;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -220,7 +227,19 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     public void setChunkedMaxContentLength(int chunkedMaxContentLength) {
         this.chunkedMaxContentLength = chunkedMaxContentLength;
     }
-    
+
+    public int getMaxHeaderSize() {
+        return maxHeaderSize;
+    }
+
+    /**
+     * The maximum length of all headers.
+     * If the sum of the length of each header exceeds this value, a {@link TooLongFrameException} will be raised.
+     */
+    public void setMaxHeaderSize(int maxHeaderSize) {
+        this.maxHeaderSize = maxHeaderSize;
+    }
+
     // Don't support allowDefaultCodec
     public boolean isAllowDefaultCodec() {
         return false;
@@ -230,4 +249,30 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         throw new UnsupportedOperationException("You cannot setAllowDefaultCodec here.");
     }
 
+    public String getOkStatusCodeRange() {
+        return okStatusCodeRange;
+    }
+
+    /**
+     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * <p/>
+     * The default range is <tt>200-299</tt>
+     */
+    public void setOkStatusCodeRange(String okStatusCodeRange) {
+        this.okStatusCodeRange = okStatusCodeRange;
+    }  
+
+    /**
+     * Sets whether to use a relative path in HTTP requests.
+     * <p/>
+     * Some third party backend systems such as IBM Datapower do not support absolute URIs in HTTP POSTs, and setting
+     * this option to <tt>true</tt> can work around this problem.
+     */
+    public void setUseRelativePath(boolean useRelativePath) {
+        this.useRelativePath = useRelativePath;
+    }
+
+    public boolean isUseRelativePath() {
+        return this.useRelativePath;        
+    }
 }

@@ -38,11 +38,9 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -81,9 +79,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @UriPath @Metadata(required = "true")
     private String destinationName;
     private Destination destination;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "consumer")
     private String selector;
     @UriParam
     private JmsConfiguration configuration;
@@ -288,7 +286,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange(pattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
         return exchange;
     }
@@ -418,7 +416,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.selector = selector;
     }
 
-    @ManagedAttribute
     public boolean isSingleton() {
         return true;
     }
@@ -649,6 +646,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public String getReplyTo() {
         return getConfiguration().getReplyTo();
+    }
+
+    @ManagedAttribute
+    public String getReplyToOverride() {
+        return getConfiguration().getReplyToOverride();
+    }
+
+    @ManagedAttribute
+    public boolean isReplyToSameDestinationAllowed() {
+        return getConfiguration().isReplyToSameDestinationAllowed();
     }
 
     @ManagedAttribute
@@ -982,6 +989,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public void setReplyToOverride(String replyToDestination) {
+        getConfiguration().setReplyToOverride(replyToDestination);
+    }
+
+    @ManagedAttribute
+    public void setReplyToSameDestinationAllowed(boolean replyToSameDestinationAllowed) {
+        getConfiguration().setReplyToSameDestinationAllowed(replyToSameDestinationAllowed);
+    }
+
+    @ManagedAttribute
     public void setReplyToDeliveryPersistent(boolean replyToDeliveryPersistent) {
         getConfiguration().setReplyToDeliveryPersistent(replyToDeliveryPersistent);
     }
@@ -1215,32 +1232,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setReplyToType(String replyToType) {
         ReplyToType type = ReplyToType.valueOf(replyToType);
         configuration.setReplyToType(type);
-    }
-
-    @ManagedAttribute(description = "Camel ID")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri", mask = true)
-    @Override
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Service State")
-    public String getState() {
-        ServiceStatus status = this.getStatus();
-        // if no status exists then its stopped
-        if (status == null) {
-            status = ServiceStatus.Stopped;
-        }
-        return status.name();
     }
 
     @ManagedAttribute(description = "Number of running message listeners")
