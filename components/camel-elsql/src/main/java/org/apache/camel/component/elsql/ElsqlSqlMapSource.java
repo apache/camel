@@ -48,12 +48,8 @@ public class ElsqlSqlMapSource extends AbstractSqlParameterSource {
     public boolean hasValue(String paramName) {
         if ("body".equals(paramName)) {
             return true;
-        } else if (bodyMap.containsKey(paramName)) {
-            return true;
-        } else if (headersMap.containsKey(paramName)) {
-            return true;
         } else {
-            return false;
+            return bodyMap.containsKey(paramName) || headersMap.containsKey(paramName);
         }
     }
 
