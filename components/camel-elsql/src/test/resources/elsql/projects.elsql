@@ -1,4 +1,4 @@
-@NAME(projects)
+@NAME(projectsById)
   SELECT *
   FROM projects
   WHERE license = :body

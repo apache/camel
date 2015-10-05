@@ -45,7 +45,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElsqlEndpoint.class);
 
-    private volatile ElSql elSql;
+    private ElSql elSql;
     private NamedParameterJdbcTemplate namedJdbcTemplate;
 
     @UriPath
@@ -53,6 +53,8 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     private String elsqlName;
     @UriPath
     private String resourceUri;
+    @UriParam
+    private ElSqlDatabaseVendor databaseVendor;
     @UriParam
     private ElSqlConfig elSqlConfig;
 
@@ -95,8 +97,13 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        ObjectHelper.notNull(elSqlConfig, "elSqlConfig", this);
         ObjectHelper.notNull(resourceUri, "resourceUri", this);
+
+        if (elSqlConfig == null && databaseVendor != null) {
+            elSqlConfig = databaseVendor.asElSqlConfig();
+        } else if (elSqlConfig == null) {
+            elSqlConfig = ElSqlDatabaseVendor.Default.asElSqlConfig();
+        }
 
         URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), resourceUri);
         elSql = ElSql.parse(elSqlConfig, url);
@@ -109,12 +116,23 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         return elsqlName;
     }
 
+    public ElSqlDatabaseVendor getDatabaseVendor() {
+        return databaseVendor;
+    }
+
+    /**
+     * To use a vendor specific {@link com.opengamma.elsql.ElSqlConfig}
+     */
+    public void setDatabaseVendor(ElSqlDatabaseVendor databaseVendor) {
+        this.databaseVendor = databaseVendor;
+    }
+
     public ElSqlConfig getElSqlConfig() {
         return elSqlConfig;
     }
 
     /**
-     * The elsql configuration to use
+     * To use a specific configured ElSqlConfig. It may be better to use the <tt>databaseVendor</tt> option instead.
      */
     public void setElSqlConfig(ElSqlConfig elSqlConfig) {
         this.elSqlConfig = elSqlConfig;
@@ -125,7 +143,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     }
 
     /**
-     * The eqlsql resource tile which contains the elsql SQL statements to use
+     * The resource file which contains the elsql SQL statements to use
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;

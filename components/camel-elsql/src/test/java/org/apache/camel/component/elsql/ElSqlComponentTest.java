@@ -29,7 +29,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-public class ElSqlDataSourceTest extends CamelTestSupport {
+public class ElSqlComponentTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
@@ -76,8 +76,11 @@ public class ElSqlDataSourceTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                getContext().getComponent("elsql", ElsqlComponent.class).setDataSource(db);
+                getContext().getComponent("elsql", ElsqlComponent.class).setResourceUri("elsql/projects.elsql");
+
                 from("direct:simple")
-                        .to("elsql:projectsById:elsql/projects.elsql?dataSource=dataSource")
+                        .to("elsql:projectsById")
                         .to("mock:result");
             }
         };

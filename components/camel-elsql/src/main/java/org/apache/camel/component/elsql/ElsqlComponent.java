@@ -28,6 +28,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 public class ElsqlComponent extends UriEndpointComponent {
 
+    private ElSqlDatabaseVendor databaseVendor;
     private DataSource dataSource;
     private ElSqlConfig elSqlConfig;
     private String resourceUri;
@@ -67,7 +68,7 @@ public class ElsqlComponent extends UriEndpointComponent {
             elsqlName = part[0];
             resUri = part[1];
         } else if (part.length > 2) {
-            throw new IllegalArgumentException("Invalid uri. Must by elsql:elsqlName/resourceUri, was: " + uri);
+            throw new IllegalArgumentException("Invalid uri. Must by elsql:elsqlName:resourceUri, was: " + uri);
         }
 
         String onConsume = getAndRemoveParameter(parameters, "consumer.onConsume", String.class);
@@ -84,27 +85,25 @@ public class ElsqlComponent extends UriEndpointComponent {
         }
 
         ElsqlEndpoint endpoint = new ElsqlEndpoint(uri, this, jdbcTemplate, elsqlName, resUri);
+        endpoint.setElSqlConfig(elSqlConfig);
+        endpoint.setDatabaseVendor(databaseVendor);
+        endpoint.setDataSource(ds);
+        endpoint.setDataSourceRef(dataSourceRef);
         endpoint.setOnConsume(onConsume);
         endpoint.setOnConsumeFailed(onConsumeFailed);
         endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
-        endpoint.setDataSource(ds);
-        endpoint.setDataSourceRef(dataSourceRef);
-        endpoint.setElSqlConfig(elSqlConfig);
         return endpoint;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        if (elSqlConfig == null) {
-            elSqlConfig = ElSqlConfig.DEFAULT;
-        }
+    public ElSqlDatabaseVendor getDatabaseVendor() {
+        return databaseVendor;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
+    /**
+     * To use a vendor specific {@link com.opengamma.elsql.ElSqlConfig}
+     */
+    public void setDatabaseVendor(ElSqlDatabaseVendor databaseVendor) {
+        this.databaseVendor = databaseVendor;
     }
 
     /**
@@ -126,7 +125,7 @@ public class ElsqlComponent extends UriEndpointComponent {
     }
 
     /**
-     * To use the given ElSqlConfig as configuration
+     * To use a specific configured ElSqlConfig. It may be better to use the <tt>databaseVendor</tt> option instead.
      */
     public void setElSqlConfig(ElSqlConfig elSqlConfig) {
         this.elSqlConfig = elSqlConfig;
@@ -137,7 +136,7 @@ public class ElsqlComponent extends UriEndpointComponent {
     }
 
     /**
-     * The eqlsql resource tile which contains the elsql SQL statements to use
+     * The resource file which contains the elsql SQL statements to use
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
