@@ -438,6 +438,8 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             originalExchange = null;
             // and reset the size to 1
             size = 1;
+            // make sure to track timeout as we just restart the correlation group when we are in pre completion mode
+            trackTimeout(key, newExchange);
         }
 
         // aggregate the exchanges
@@ -495,7 +497,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             batchConsumerCorrelationKeys.clear();
             // we have already submitted to completion, so answer should be null
             answer = null;
-        } else {
+        } else if (answer != null) {
             // we are complete for this exchange
             answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
             answer = onCompletion(key, originalExchange, answer, false);
@@ -650,6 +652,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
         if (!fromTimeout && timeoutMap != null) {
             // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
+            LOG.trace("Removing correlation key {} from timeout", key);
             timeoutMap.remove(key);
         }
 
