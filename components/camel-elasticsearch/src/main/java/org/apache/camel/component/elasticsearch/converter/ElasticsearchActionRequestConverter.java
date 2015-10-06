@@ -91,12 +91,23 @@ public final class ElasticsearchActionRequestConverter {
 
     @Converter
     public static SearchRequest toSearchRequest(Object queryObject, Exchange exchange) {
-        Map<?, ?> query = exchange.getContext().getTypeConverter().convertTo(Map.class, queryObject);
-        return new SearchRequest(exchange.getIn().getHeader(
-                ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-                .types(exchange.getIn().getHeader(
-                        ElasticsearchConstants.PARAM_INDEX_TYPE,
-                        String.class)).source(query);
+        SearchRequest searchRequest = new SearchRequest(exchange.getIn()
+                                                        .getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
+                                      .types(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class));
+        // Setup the query object into the search request
+        if (queryObject instanceof byte[]) { 
+            searchRequest.source((byte[]) queryObject);
+        } else if (queryObject instanceof Map) {
+            searchRequest.source((Map<String, Object>) queryObject);
+        } else if (queryObject instanceof String) {
+            searchRequest.source((String) queryObject);
+        } else if (queryObject instanceof XContentBuilder) {
+            searchRequest.source((XContentBuilder) queryObject);
+        } else {
+            // Cannot convert the queryObject into SearchRequest
+            return null;
+        }                                                                          
+        return searchRequest;
     }
 
     @Converter
