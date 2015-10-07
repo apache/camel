@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -49,6 +50,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultMessage;
@@ -284,13 +286,16 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
                 try (ByteArrayOutputStream b = new ByteArrayOutputStream(); ObjectOutputStream o = new ObjectOutputStream(b);) {
                     o.writeObject(msg.getBody());
                     body = b.toByteArray();
+                } catch (NotSerializableException nse) {
+                    LOG.warn("Can not send object " + msg.getBody().getClass() + " via RabbitMQ because it contains non-serializable objects.");
+                    throw new RuntimeCamelException(e);
                 }
             } else if (msg.getBody() == null) {
                 properties = getMessageConverter().buildProperties(camelExchange).build();
                 body = null;
             } else {
                 LOG.warn("Could not convert {} to byte[]", msg.getBody());
-                throw new IOException(e);
+                throw new RuntimeCamelException(e);
             }
         }
         String rabbitExchange = getExchangeName(msg);
@@ -299,7 +304,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         Boolean immediate = camelExchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE, isImmediate(), Boolean.class);
 
         LOG.debug("Sending message to exchange: {} with CorrelationId = {}", rabbitExchange, properties.getCorrelationId());
-
         channel.basicPublish(rabbitExchange, routingKey, mandatory, immediate, properties, body);
     }
 
