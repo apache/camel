@@ -35,6 +35,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
@@ -58,10 +59,16 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         URI uriHttpUriAddress = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
 
+        // any additional channel options
+        Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "option.");
+
         // create the endpoint first
         UndertowEndpoint endpoint = createEndpointInstance(endpointUri, this);
         endpoint.setUndertowHttpBinding(undertowHttpBinding);
         setProperties(endpoint, parameters);
+        if (options != null) {
+            endpoint.setOptions(options);
+        }
 
         // then re-create the http uri with the remaining parameters which the endpoint did not use
         URI httpUri = URISupport.createRemainingURI(
