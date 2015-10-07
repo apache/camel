@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.springframework.jdbc.core.namedparam.AbstractSqlParameterSource;
 
 /**
@@ -48,6 +49,8 @@ public class ElsqlSqlMapSource extends AbstractSqlParameterSource {
     public boolean hasValue(String paramName) {
         if ("body".equals(paramName)) {
             return true;
+        } else if (paramName.startsWith("${") && paramName.endsWith("}")) {
+            return true;
         } else {
             return bodyMap.containsKey(paramName) || headersMap.containsKey(paramName);
         }
@@ -58,6 +61,9 @@ public class ElsqlSqlMapSource extends AbstractSqlParameterSource {
         Object answer;
         if ("body".equals(paramName)) {
             answer = exchange.getIn().getBody();
+        } else if (paramName.startsWith("${") && paramName.endsWith("}")) {
+            // its a simple language expression
+            answer = SimpleLanguage.expression(paramName).evaluate(exchange, Object.class);
         } else {
             answer = bodyMap.get(paramName);
             if (answer == null) {
