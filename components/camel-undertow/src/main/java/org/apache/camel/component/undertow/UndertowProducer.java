@@ -34,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xnio.BufferAllocator;
@@ -53,10 +54,14 @@ import org.xnio.XnioWorker;
 public class UndertowProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowProducer.class);
     private UndertowEndpoint endpoint;
+    private XnioWorker worker;
+    private ByteBufferSlicePool pool;
+    private OptionMap options;
 
-    public UndertowProducer(UndertowEndpoint endpoint) {
+    public UndertowProducer(UndertowEndpoint endpoint, OptionMap options) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.options = options;
     }
 
     @Override
@@ -66,12 +71,12 @@ public class UndertowProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        ClientConnection connection = null;
+
         try {
             final UndertowClient client = UndertowClient.getInstance();
-            XnioWorker worker = Xnio.getInstance().createWorker(OptionMap.EMPTY);
 
-            IoFuture<ClientConnection> connect = client.connect(endpoint.getHttpURI(), worker,
-                    new ByteBufferSlicePool(BufferAllocator.DIRECT_BYTE_BUFFER_ALLOCATOR, 8192, 8192 * 8192), OptionMap.EMPTY);
+            IoFuture<ClientConnection> connect = client.connect(endpoint.getHttpURI(), worker, pool, options);
 
             // creating the url to use takes 2-steps
             String url = UndertowHelper.createURL(exchange, getEndpoint());
@@ -99,9 +104,11 @@ public class UndertowProducer extends DefaultAsyncProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Executing http {} method: {}", method, url);
             }
-            connect.get().sendRequest(request, new UndertowProducerCallback(bodyAsByte, exchange, callback));
+            connection = connect.get();
+            connection.sendRequest(request, new UndertowProducerCallback(connection, bodyAsByte, exchange, callback));
 
         } catch (Exception e) {
+            IOHelper.close(connection);
             exchange.setException(e);
             callback.done(true);
             return true;
@@ -115,23 +122,45 @@ public class UndertowProducer extends DefaultAsyncProducer {
         return endpoint.getUndertowHttpBinding().toHttpRequest(request, camelExchange.getIn());
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        pool = new ByteBufferSlicePool(BufferAllocator.DIRECT_BYTE_BUFFER_ALLOCATOR, 8192, 8192 * 8192);
+        worker = Xnio.getInstance().createWorker(options);
+
+        LOG.debug("Created worker: {} with options: {}", worker, options);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (worker != null && !worker.isShutdown()) {
+            LOG.debug("Shutting down worker: {}", worker);
+            worker.shutdown();
+        }
+    }
+
     /**
      * Everything important happens in callback
      */
     private class UndertowProducerCallback implements ClientCallback<ClientExchange> {
 
+        private final ClientConnection connection;
         private final ByteBuffer body;
         private final Exchange camelExchange;
         private final AsyncCallback callback;
 
-        public UndertowProducerCallback(ByteBuffer body, Exchange camelExchange, AsyncCallback callback) {
+        public UndertowProducerCallback(ClientConnection connection, ByteBuffer body, Exchange camelExchange, AsyncCallback callback) {
+            this.connection = connection;
             this.body = body;
             this.camelExchange = camelExchange;
             this.callback = callback;
         }
 
         @Override
-        public void completed(ClientExchange clientExchange) {
+        public void completed(final ClientExchange clientExchange) {
             clientExchange.setResponseListener(new ClientCallback<ClientExchange>() {
                 @Override
                 public void completed(ClientExchange clientExchange) {
@@ -146,6 +175,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
                     } catch (Exception e) {
                         camelExchange.setException(e);
                     } finally {
+                        IOHelper.close(connection);
                         // make sure to call callback
                         callback.done(false);
                     }
@@ -155,8 +185,12 @@ public class UndertowProducer extends DefaultAsyncProducer {
                 public void failed(IOException e) {
                     LOG.trace("failed: {}", e);
                     camelExchange.setException(e);
-                    // make sure to call callback
-                    callback.done(false);
+                    try {
+                        IOHelper.close(connection);
+                    } finally {
+                        // make sure to call callback
+                        callback.done(false);
+                    }
                 }
             });
 
@@ -167,6 +201,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
                 }
             } catch (IOException e) {
                 camelExchange.setException(e);
+                IOHelper.close(connection);
                 // make sure to call callback
                 callback.done(false);
             }
@@ -176,6 +211,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
         public void failed(IOException e) {
             LOG.trace("failed: {}", e);
             camelExchange.setException(e);
+            IOHelper.close(connection);
             // make sure to call callback
             callback.done(false);
         }
