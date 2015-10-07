@@ -34,6 +34,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -625,6 +626,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
 
+    /**
+     * Loads a collection of rest definitions from the given {@link java.io.InputStream}.
+	 *
+	 * @param is input stream with the rest(s) definition to add
+	 * @throws Exception if the rest definitions could not be loaded for whatever reason
+	 * @return the rest definitions
+	 */
+    RestsDefinition loadRestsDefinition(InputStream is) throws Exception;
+    
     /**
      * Adds a collection of route definitions to the context
      *

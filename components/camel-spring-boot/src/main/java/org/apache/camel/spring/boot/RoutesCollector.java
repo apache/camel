@@ -22,7 +22,10 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -68,7 +71,8 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             }
 
             loadXmlRoutes(applicationContext, camelContext);
-
+            loadXmlRests(applicationContext, camelContext);
+            
             if (camelContextConfigurations != null) {
                 for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
                     LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
@@ -102,4 +106,23 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
         }
     }
 
+    private void loadXmlRests(ApplicationContext applicationContext, CamelContext camelContext) {
+    	LOG.debug("Started RESTs detection. Scanning classpath (/camel-rest/*.xml)...");
+    	try {
+    		final Resource[] xmlRests = applicationContext.getResources("classpath:camel-rest/*.xml");
+    		for (final Resource xmlRest : xmlRests) {
+    			final RestsDefinition xmlDefinitions = camelContext.loadRestsDefinition(xmlRest.getInputStream());
+    			camelContext.addRestDefinitions(xmlDefinitions.getRests());
+    			for (final RestDefinition xmlDefinition : xmlDefinitions.getRests()) {
+    				final List<RouteDefinition> routeDefinitions = xmlDefinition.asRouteDefinition(camelContext);
+    				camelContext.addRouteDefinitions(routeDefinitions);
+    			}
+    		}
+    	} catch (FileNotFoundException e) {
+    		LOG.debug("No XML rests found in the classpath (/camel-rest/*.xml). Skipping XML rests detection.");
+    	} catch (Exception e) {
+    		throw new RuntimeException(e);
+    	}
+    }
+    
 }

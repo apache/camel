@@ -39,6 +39,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -97,6 +98,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
@@ -866,6 +868,35 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return answer;
     }
 
+    public synchronized RestsDefinition loadRestsDefinition(InputStream is) throws Exception {
+    	// load routes using JAXB
+    	if (jaxbContext == null) {
+    		// must use classloader from CamelContext to have JAXB working
+    		jaxbContext = getModelJAXBContextFactory().newJAXBContext();
+    	}
+
+    	Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+    	Object result = unmarshaller.unmarshal(is);
+
+    	if (result == null) {
+    		throw new IOException("Cannot unmarshal to rests using JAXB from input stream: " + is);
+    	}
+
+    	// can either be routes or a single route
+    	RestsDefinition answer;
+    	if (result instanceof RestDefinition) {
+    		RestDefinition rest = (RestDefinition) result;
+    		answer = new RestsDefinition();
+    		answer.getRests().add(rest);
+    	} else if (result instanceof RestsDefinition) {
+    		answer = (RestsDefinition) result;
+    	} else {
+    		throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
+    	}
+
+    	return answer;
+    }
+    
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         if (routeDefinitions == null || routeDefinitions.isEmpty()) {
             return;
