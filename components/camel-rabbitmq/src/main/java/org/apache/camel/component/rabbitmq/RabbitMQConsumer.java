@@ -33,6 +33,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultConsumer;
 
 
@@ -216,7 +217,11 @@ public class RabbitMQConsumer extends DefaultConsumer {
             if (!exchange.isFailed()) {
                 // processing success
                 if (sendReply && exchange.getPattern().isOutCapable()) {
-                    endpoint.publishExchangeToChannel(exchange, channel, properties.getReplyTo());
+                    try {
+                        endpoint.publishExchangeToChannel(exchange, channel, properties.getReplyTo());
+                    } catch (RuntimeCamelException e) {
+                        getExceptionHandler().handleException("Error processing exchange", exchange, e);
+                    }
                 }
                 if (!consumer.endpoint.isAutoAck()) {
                     log.trace("Acknowledging receipt [delivery_tag={}]", deliveryTag);
@@ -226,7 +231,11 @@ public class RabbitMQConsumer extends DefaultConsumer {
                 // the inOut exchange failed so put the exception in the body and send back
                 msg.setBody(exchange.getException());
                 exchange.setOut(msg);
-                endpoint.publishExchangeToChannel(exchange, channel, properties.getReplyTo());
+                try {
+                    endpoint.publishExchangeToChannel(exchange, channel, properties.getReplyTo());
+                } catch (RuntimeCamelException e) {
+                    getExceptionHandler().handleException("Error processing exchange", exchange, e);
+                }
             } else {
                 boolean isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE, false, boolean.class);
                 // processing failed, then reject and handle the exception
