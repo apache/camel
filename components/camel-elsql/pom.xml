@@ -56,7 +56,7 @@
     <dependency>
       <groupId>com.opengamma</groupId>
       <artifactId>elsql</artifactId>
-      <version>${elsql-version}</version>
+      <version>1.1.1-SNAPSHOT</version>
     </dependency>
 
     <!-- test dependencies -->
