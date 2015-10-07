@@ -166,6 +166,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     protected boolean doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
                                  boolean suspendOnly, boolean abortAfterTimeout, boolean forceShutdown) throws Exception {
 
+        // timeout must be a positive value
+        if (timeout <= 0) {
+            throw new IllegalArgumentException("Timeout must be a positive value");
+        }
+
         // just return if no routes to shutdown
         if (routes.isEmpty()) {
             return true;
