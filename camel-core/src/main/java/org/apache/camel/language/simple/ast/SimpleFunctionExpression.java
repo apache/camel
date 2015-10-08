@@ -334,11 +334,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 if (tokens.length > 2) {
                     throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
                 }
-                int min = Integer.parseInt(tokens[0]);
-                int max = Integer.parseInt(tokens[1]);
+                int min = Integer.parseInt(tokens[0].trim());
+                int max = Integer.parseInt(tokens[1].trim());
                 return ExpressionBuilder.randomExpression(min, max);
             } else {
-                int max = Integer.parseInt(values);
+                int max = Integer.parseInt(values.trim());
                 return ExpressionBuilder.randomExpression(max);
             }
         }
