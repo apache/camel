@@ -712,6 +712,9 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
      */
     private void processVerbs(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
                               VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
+
+        Elements elementUtils = processingEnv.getElementUtils();
+
         if ("verbs".equals(fieldName) && supportOutputs(originalClassType)) {
             String kind = "element";
             String name = elementRef.name();
@@ -721,6 +724,8 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             name = prefix + name;
             TypeMirror fieldType = fieldElement.asType();
             String fieldTypeName = fieldType.toString();
+
+            String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassType, true);
 
             // gather oneOf which extends any of the output base classes
             Set<String> oneOfTypes = new TreeSet<String>();
@@ -739,7 +744,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
                 }
             }
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", false, false, null, true, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", docComment, false, false, null, true, oneOfTypes);
             eipOptions.add(ep);
         }
     }
