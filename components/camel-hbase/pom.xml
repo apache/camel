@@ -31,8 +31,8 @@
 
     <properties>
 		<camel.osgi.import.before.defaults>
-			org.apache.hadoop.conf;version="[1,2)",
-			org.apache.hadoop.hbase.*;version="[0.9,1)"
+			org.apache.hadoop.conf;version="[2,3)",
+			org.apache.hadoop.hbase.*;version="[1,2)"
 		</camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.component.hbase.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=hbase</camel.osgi.export.service>
@@ -48,11 +48,33 @@
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-client</artifactId>
             <version>${hbase-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-auth</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-mapreduce-client-core</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
+		<!-- because hbase-client 1.1.1 use hadoop2.5.1 by default, check is it still required by the next version update -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-auth</artifactId>
+			<version>${hadoop2-version}</version>
+		</dependency>
+		<!-- because hbase-client 1.1.1 use hadoop2.5.1 by default, check is it still required by the next version update -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-mapreduce-client-core</artifactId>
+			<version>${hadoop2-version}</version>
+		</dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
-            <version>${hadoop-version}</version>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop2-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-codec</groupId>
@@ -130,14 +152,71 @@
             <version>${hbase-version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-hdfs</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
+		<!-- because hbase-server 1.1.1 use hadoop2.5.1 by default, check is it still required by the next version update -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-client</artifactId>
+			<version>${hadoop2-version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<!-- because hbase-server 1.1.1 use hadoop2.5.1 by default, check is it still required by the next version update -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>${hadoop2-version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-testing-util</artifactId>
             <version>${hbase-version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-hdfs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-minicluster</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-client</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
+		<!-- because hbase-testing-util 1.1.1 use hadoop2.5.1 by default, check is it still required by the next version update -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>${hadoop2-version}</version>
+			<type>test-jar</type>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<!-- because hbase-testing-util 1.1.1 use hadoop2.5.1 by default, check is it still required by the next version update -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-minicluster</artifactId>
+			<version>${hadoop2-version}</version>
+			<scope>test</scope>
+		</dependency>
+
         <!-- Using a low version of guava could let the server shutdown quickly -->
         <dependency>
             <groupId>com.google.guava</groupId>
