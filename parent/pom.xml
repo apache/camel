@@ -462,7 +462,7 @@
     <spring-data-redis-version>1.6.0.RELEASE</spring-data-redis-version>
     <spring-integration-version>2.2.6.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-    <spring-ldap-version>2.0.3.RELEASE</spring-ldap-version>
+    <spring-ldap-version>2.0.4.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>2.0.3.RELEASE_1</spring-ldap-bundle-version>
     <!-- spring 1.1.0 is not OSGi bundle any more -->
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
@@ -472,13 +472,14 @@
     <!-- Karaf features file. -->
     <spring-version-range-karaf>[3.2,4)</spring-version-range-karaf>
     <spring-version>${spring4-version}</spring-version>
-    <spring32-version>3.2.13.RELEASE</spring32-version>
+    <spring32-version>3.2.14.RELEASE</spring32-version>
     <spring40-version>4.0.9.RELEASE</spring40-version>
-    <spring4-version>4.1.6.RELEASE</spring4-version>
+    <spring41-version>4.1.7.RELEASE</spring41-version>
+    <spring4-version>4.1.7.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.2.8.RELEASE</spring-security-version>
-    <spring-ws-bundle-version>2.1.4.RELEASE</spring-ws-bundle-version>
-    <spring-ws-version>2.2.1.RELEASE</spring-ws-version>
+    <spring-ws-bundle-version>2.2.2.RELEASE_1</spring-ws-bundle-version>
+    <spring-ws-version>2.2.2.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>
     <squareup-okhttp-version>2.5.0</squareup-okhttp-version>
@@ -509,7 +510,7 @@
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>
-    <vertx-version>3.0.0</vertx-version>
+    <vertx-version>3.1.0</vertx-version>
     <vysper-version>0.7</vysper-version>
     <weld2-version>2.3.0.Final</weld2-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
