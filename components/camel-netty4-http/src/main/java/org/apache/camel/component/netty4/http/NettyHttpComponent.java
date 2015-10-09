@@ -104,16 +104,25 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             config.setPort(shared.getPort());
         }
 
-        // create the address uri which includes the remainder parameters (which is not configuration parameters for this component)
+        NettyHttpBinding bindingFromUri = resolveAndRemoveReferenceParameter(parameters, "nettyHttpBinding", NettyHttpBinding.class);
+
+        // create the address uri which includes the remainder parameters (which
+        // is not configuration parameters for this component)
         URI u = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
-        
+
         String addressUri = URISupport.createRemainingURI(u, parameters).toString();
 
         NettyHttpEndpoint answer = new NettyHttpEndpoint(addressUri, this, config);
 
-        // must use a copy of the binding on the endpoint to avoid sharing same instance that can cause side-effects
+        // must use a copy of the binding on the endpoint to avoid sharing same
+        // instance that can cause side-effects
         if (answer.getNettyHttpBinding() == null) {
-            Object binding = getNettyHttpBinding();
+            Object binding = null;
+            if (bindingFromUri != null) {
+                binding = bindingFromUri;
+            } else {
+                binding = getNettyHttpBinding();
+            }
             if (binding instanceof RestNettyHttpBinding) {
                 NettyHttpBinding copy = ((RestNettyHttpBinding) binding).copy();
                 answer.setNettyHttpBinding(copy);
