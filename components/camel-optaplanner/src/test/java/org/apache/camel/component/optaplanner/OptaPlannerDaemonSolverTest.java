@@ -21,7 +21,7 @@ import java.util.Iterator;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.Test;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.core.impl.solver.ProblemFactChange;
@@ -46,7 +46,7 @@ public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
         template.requestBody("direct:in", planningProblem);
         getMockEndpoint("mock:result").assertIsSatisfied();
         getMockEndpoint("mock:result").reset();
-        getMockEndpoint("mock:result").setExpectedCount(1);
+        getMockEndpoint("mock:result").setExpectedCount(0);
 
         template.requestBody("direct:in", new ProblemFactChange() {
             @Override
@@ -77,7 +77,7 @@ public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
         getMockEndpoint("mock:result").assertIsSatisfied();
         CloudBalance bestSolution = (CloudBalance) template.requestBody("direct:in", "foo");
 
-        assertEquals(3, bestSolution.getComputerList().size());
+        assertEquals(4, bestSolution.getComputerList().size());
     }
 
     protected RouteBuilder createRouteBuilder() {

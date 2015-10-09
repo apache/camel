@@ -391,7 +391,7 @@
     <openejb-version>4.7.2</openejb-version>
     <openjpa-version>2.4.0</openjpa-version>
     <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
-    <optaplanner-version>6.2.0.Final</optaplanner-version>
+    <optaplanner-version>6.3.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
     <osgi-version>4.3.1</osgi-version>
