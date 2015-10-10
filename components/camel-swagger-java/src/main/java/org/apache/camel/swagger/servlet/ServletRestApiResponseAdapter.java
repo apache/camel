@@ -30,7 +30,7 @@ public class ServletRestApiResponseAdapter implements RestApiResponseAdapter {
     }
 
     @Override
-    public void addHeader(String name, String value) {
+    public void setHeader(String name, String value) {
         // use set header to avoid adding the same value multiple times (the method should have been named setHeader really)
         response.setHeader(name, value);
     }
