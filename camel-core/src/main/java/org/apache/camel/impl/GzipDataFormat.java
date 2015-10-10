@@ -25,7 +25,6 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.*;
 import org.apache.camel.util.IOHelper;
 
 /**
