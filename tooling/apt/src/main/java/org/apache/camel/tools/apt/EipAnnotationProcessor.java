@@ -78,7 +78,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     };
     // special for verbs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_VERBS = new String[]{
-            "org.apache.camel.model.rest.VerbDefinition"
+        "org.apache.camel.model.rest.VerbDefinition"
     };
 
     private boolean skipUnwanted = true;
