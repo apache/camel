@@ -160,9 +160,9 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
     val headers = Map[String, List[String]]()
 
     if (cors) {
-      response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
-      response.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH")
-      response.addHeader("Access-Control-Allow-Origin", "*")
+      response.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
+      response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH")
+      response.setHeader("Access-Control-Allow-Origin", "*")
     }
 
     val rests = getRestDefinitions(camelId)
@@ -205,9 +205,9 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
     val pathPart = docRoot
 
     if (cors) {
-      response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
-      response.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH")
-      response.addHeader("Access-Control-Allow-Origin", "*")
+      response.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
+      response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH")
+      response.setHeader("Access-Control-Allow-Origin", "*")
     }
 
     val rests = getRestDefinitions(camelId)
