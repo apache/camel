@@ -43,12 +43,13 @@ import org.slf4j.LoggerFactory;
 /**
  * A Consumer of messages from the Amazon Web Service Simple Storage Service
  * <a href="http://aws.amazon.com/s3/">AWS S3</a>
- * 
+ *
  */
 public class S3Consumer extends ScheduledBatchPollingConsumer {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(S3Consumer.class);
     private String marker;
+    private boolean filesConsumed;
 
     public S3Consumer(S3Endpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
@@ -59,56 +60,69 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         // must reset for each poll
         shutdownRunningTask = null;
         pendingExchanges = 0;
-        
+
         String fileName = getConfiguration().getFileName();
         String bucketName = getConfiguration().getBucketName();
-        Queue<Exchange> exchanges = null;
 
-        if (fileName != null) {
-            LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
+        Queue<Exchange> exchanges;
 
-            S3Object s3Object = getAmazonS3Client().getObject(new GetObjectRequest(bucketName, fileName));
-            exchanges = createExchanges(s3Object);
+        if (filesConsumed) {
+            exchanges = new LinkedList<Exchange>();
         } else {
-            LOG.trace("Queueing objects in bucket [{}]...", bucketName);
-        
-            ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
-            listObjectsRequest.setBucketName(bucketName);
-            listObjectsRequest.setPrefix(getConfiguration().getPrefix());
-            if (maxMessagesPerPoll > 0) {
-                listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
+            if (fileName != null) {
+                LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
+
+                S3Object s3Object = getAmazonS3Client().getObject(new GetObjectRequest(bucketName, fileName));
+                exchanges = createExchanges(s3Object);
+                if (!getConfiguration().isDeleteAfterRead()) {
+                    filesConsumed = true;
+                }
+            } else {
+                LOG.trace("Queueing objects in bucket [{}]...", bucketName);
+
+                ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
+                listObjectsRequest.setBucketName(bucketName);
+                listObjectsRequest.setPrefix(getConfiguration().getPrefix());
+                if (maxMessagesPerPoll > 0) {
+                    listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
+                }
+                if (marker != null && !getConfiguration().isDeleteAfterRead()) {
+                    listObjectsRequest.setMarker(marker);
+                }
+
+                ObjectListing listObjects = getAmazonS3Client().listObjects(listObjectsRequest);
+                // we only setup the marker if the file is not deleted
+                if (!getConfiguration().isDeleteAfterRead()) {
+                    // if the marker is truncated, the nextMarker should not be null
+                    if (listObjects.getNextMarker() != null) {
+                        marker = listObjects.getNextMarker();
+                    } else {
+                        // if there is no marker, the files are consumed, we should not pull it again
+                        filesConsumed = true;
+                    }
+                }
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
+                }
+
+                exchanges = createExchanges(listObjects.getObjectSummaries());
             }
-            if (marker != null && !getConfiguration().isDeleteAfterRead()) {
-                listObjectsRequest.setMarker(marker);
-            }
-        
-            ObjectListing listObjects = getAmazonS3Client().listObjects(listObjectsRequest);
-            // we only setup the marker if the file is not deleted
-            if (!getConfiguration().isDeleteAfterRead()) {
-                // where marker is track
-                marker = listObjects.getMarker();
-            }
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
-            }
-        
-            exchanges = createExchanges(listObjects.getObjectSummaries());
         }
         return processBatch(CastUtils.cast(exchanges));
     }
-    
+
     protected Queue<Exchange> createExchanges(S3Object s3Object) {
         Queue<Exchange> answer = new LinkedList<Exchange>();
         Exchange exchange = getEndpoint().createExchange(s3Object);
         answer.add(exchange);
         return answer;
     }
-    
+
     protected Queue<Exchange> createExchanges(List<S3ObjectSummary> s3ObjectSummaries) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Received {} messages in this poll", s3ObjectSummaries.size());
         }
-        
+
         Queue<Exchange> answer = new LinkedList<Exchange>();
         for (S3ObjectSummary s3ObjectSummary : s3ObjectSummaries) {
             S3Object s3Object = getAmazonS3Client().getObject(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey());
@@ -118,7 +132,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
 
         return answer;
     }
-    
+
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
@@ -160,7 +174,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
 
         return total;
     }
-    
+
     /**
      * Strategy to delete the message after being processed.
      *
@@ -171,9 +185,9 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
             if (getConfiguration().isDeleteAfterRead()) {
                 String bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
                 String key = exchange.getIn().getHeader(S3Constants.KEY, String.class);
-                
+
                 LOG.trace("Deleting object from bucket {} with key {}...", bucketName, key);
-                
+
                 getAmazonS3Client().deleteObject(bucketName, key);
 
                 LOG.trace("Deleted object from bucket {} with key {}...", bucketName, key);
@@ -200,11 +214,11 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
     protected S3Configuration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
-    
+
     protected AmazonS3 getAmazonS3Client() {
         return getEndpoint().getS3Client();
     }
-    
+
     @Override
     public S3Endpoint getEndpoint() {
         return (S3Endpoint) super.getEndpoint();
