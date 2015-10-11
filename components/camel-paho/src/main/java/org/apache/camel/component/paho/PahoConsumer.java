@@ -28,8 +28,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.paho.PahoConstants.HEADER_ORIGINAL_MESSAGE;
-
 public class PahoConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(PahoConsumer.class);
@@ -51,9 +49,26 @@ public class PahoConsumer extends DefaultConsumer {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
+                String headerKey;
+                Object headerValue;
+                String headerType = getEndpoint().getHeaderType();
+                if (PahoConstants.HEADER_ORIGINAL_MESSAGE.equals(headerType)) {
+                    headerKey = PahoConstants.HEADER_ORIGINAL_MESSAGE;
+                    headerValue = message;
+                } else {
+                    MqttProperties props = new MqttProperties();
+                    props.setTopic(topic);
+                    props.setQos(message.getQos());
+                    props.setRetain(message.isRetained());
+                    props.setDuplicate(message.isDuplicate());
+                    
+                    headerKey = PahoConstants.HEASER_MQTT_PROPERTIES;
+                    headerValue = props;
+                }
+                
                 Exchange exchange = ExchangeBuilder.anExchange(getEndpoint().getCamelContext()).
                         withBody(message.getPayload()).
-                        withHeader(HEADER_ORIGINAL_MESSAGE, message).
+                        withHeader(headerKey, headerValue).
                         build();
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     @Override

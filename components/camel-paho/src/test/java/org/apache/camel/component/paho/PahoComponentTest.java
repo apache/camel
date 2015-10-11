@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.paho;
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -34,6 +36,9 @@ public class PahoComponentTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:test")
     MockEndpoint mock;
+    
+    @EndpointInject(uri = "mock:test2")
+    MockEndpoint mock2;
 
     BrokerService broker;
 
@@ -65,8 +70,10 @@ public class PahoComponentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:test").to("paho:queue?brokerUrl=tcp://localhost:" + mqttPort);
-
                 from("paho:queue?brokerUrl=tcp://localhost:" + mqttPort).to("mock:test");
+
+                from("direct:test2").to("paho:queue?brokerUrl=tcp://localhost:" + mqttPort);
+                from("paho:queue?headerType=PahoOriginalMessage&brokerUrl=tcp://localhost:" + mqttPort).to("mock:test2");
 
                 from("paho:persistenceTest?persistence=FILE&brokerUrl=tcp://localhost:" + mqttPort).to("mock:persistenceTest");
 
@@ -83,6 +90,26 @@ public class PahoComponentTest extends CamelTestSupport {
     }
 
     // Tests
+
+    @Test
+    public void checkOptions() {
+        String uri = "paho:/test/topic"
+                + "?clientId=sampleClient"
+                + "&brokerUrl=tcp://localhost:" + mqttPort
+                + "&qos=2"
+                + "&persistence=file"
+                + "&headerType=testType";
+        
+        PahoEndpoint endpoint = getMandatoryEndpoint(uri, PahoEndpoint.class);
+
+        // Then
+        assertEquals("/test/topic", endpoint.getTopic());
+        assertEquals("sampleClient", endpoint.getClientId());
+        assertEquals("tcp://localhost:" + mqttPort, endpoint.getBrokerUrl());
+        assertEquals(2, endpoint.getQos());
+        assertEquals(PahoPersistence.FILE, endpoint.getPersistence());
+        assertEquals("testType", endpoint.getHeaderType());
+    }
 
     @Test
     public void shouldReadMessageFromMqtt() throws InterruptedException {
@@ -132,7 +159,7 @@ public class PahoComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldKeepOriginalMessageInHeader() throws InterruptedException {
+    public void shouldKeepDefaultMessageInHeader() throws InterruptedException, UnsupportedEncodingException {
         // Given
         final String msg = "msg";
         mock.expectedBodiesReceived(msg);
@@ -143,6 +170,26 @@ public class PahoComponentTest extends CamelTestSupport {
         // Then
         mock.assertIsSatisfied();
         Exchange exchange = mock.getExchanges().get(0);
+        MqttProperties mqttProperties = exchange.getIn().getHeader(PahoConstants.HEASER_MQTT_PROPERTIES,
+                MqttProperties.class);
+        String payload = new String((byte[]) exchange.getIn().getBody(), "utf-8");
+
+        assertEquals("queue", new String(mqttProperties.getTopic()));
+        assertEquals(msg, new String(payload));
+    }
+
+    @Test
+    public void shouldKeepOriginalMessageInHeader() throws InterruptedException {
+        // Given
+        final String msg = "msg";
+        mock2.expectedBodiesReceived(msg);
+
+        // When
+        template.sendBody("direct:test2", msg);
+
+        // Then
+        mock2.assertIsSatisfied();
+        Exchange exchange = mock2.getExchanges().get(0);
         MqttMessage message = exchange.getIn().getHeader(PahoConstants.HEADER_ORIGINAL_MESSAGE, MqttMessage.class);
         assertEquals(msg, new String(message.getPayload()));
     }

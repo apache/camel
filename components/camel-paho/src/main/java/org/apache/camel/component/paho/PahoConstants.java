@@ -18,6 +18,8 @@ package org.apache.camel.component.paho;
 
 public final class PahoConstants {
 
+    public static final String HEASER_MQTT_PROPERTIES = "MqttProperties";
+
     public static final String HEADER_ORIGINAL_MESSAGE = "PahoOriginalMessage";
 
     private PahoConstants() {
