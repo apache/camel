@@ -184,6 +184,12 @@ public class CamelCatalogTest extends TestCase {
 
         assertEquals("queue", map.get("destinationType"));
         assertEquals("foo", map.get("destinationName"));
+
+        map = catalog.endpointProperties("jms:foo");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+
+        assertEquals("foo", map.get("destinationName"));
     }
 
     @Test

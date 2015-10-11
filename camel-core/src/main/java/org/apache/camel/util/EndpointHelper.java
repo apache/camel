@@ -16,14 +16,18 @@
  */
 package org.apache.camel.util;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.camel.CamelContext;
@@ -42,13 +46,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Some helper methods for working with {@link Endpoint} instances
- *
- * @version 
  */
 public final class EndpointHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointHelper.class);
     private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong(0);
+    private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
+
 
     private EndpointHelper() {
         //Utility Class
@@ -98,10 +102,10 @@ public final class EndpointHelper {
      * <p/>
      * The match rules are applied in this order:
      * <ul>
-     *   <li>exact match, returns true</li>
-     *   <li>wildcard match (pattern ends with a * and the uri starts with the pattern), returns true</li>
-     *   <li>regular expression match, returns true</li>
-     *   <li>otherwise returns false</li>
+     * <li>exact match, returns true</li>
+     * <li>wildcard match (pattern ends with a * and the uri starts with the pattern), returns true</li>
+     * <li>regular expression match, returns true</li>
+     * <li>otherwise returns false</li>
      * </ul>
      *
      * @param context the Camel context, if <tt>null</tt> then property placeholder resolution is skipped.
@@ -148,8 +152,8 @@ public final class EndpointHelper {
 
     /**
      * Matches the endpoint with the given pattern.
-     * @see #matchEndpoint(org.apache.camel.CamelContext, String, String)
      *
+     * @see #matchEndpoint(org.apache.camel.CamelContext, String, String)
      * @deprecated use {@link #matchEndpoint(org.apache.camel.CamelContext, String, String)} instead.
      */
     @Deprecated
@@ -162,10 +166,10 @@ public final class EndpointHelper {
      * <p/>
      * The match rules are applied in this order:
      * <ul>
-     *   <li>exact match, returns true</li>
-     *   <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
-     *   <li>regular expression match, returns true</li>
-     *   <li>otherwise returns false</li>
+     * <li>exact match, returns true</li>
+     * <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     * <li>regular expression match, returns true</li>
+     * <li>otherwise returns false</li>
      * </ul>
      *
      * @param name    the name
@@ -199,8 +203,8 @@ public final class EndpointHelper {
      * <p/>
      * The match rules are applied in this order:
      * <ul>
-     *   <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
-     *   <li>otherwise returns false</li>
+     * <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     * <li>otherwise returns false</li>
      * </ul>
      *
      * @param name    the name
@@ -220,8 +224,8 @@ public final class EndpointHelper {
      * <p/>
      * The match rules are applied in this order:
      * <ul>
-     *   <li>regular expression match, returns true</li>
-     *   <li>otherwise returns false</li>
+     * <li>regular expression match, returns true</li>
+     * <li>otherwise returns false</li>
      * </ul>
      *
      * @param name    the name
@@ -312,7 +316,7 @@ public final class EndpointHelper {
      * @param value   reference parameter value.
      * @param type    type of object to lookup.
      * @return lookup result (or <code>null</code> only if
-     *         <code>mandatory</code> is <code>false</code>).
+     * <code>mandatory</code> is <code>false</code>).
      * @throws IllegalArgumentException if object was not found in registry and
      *                                  <code>mandatory</code> is <code>true</code>.
      */
@@ -329,9 +333,9 @@ public final class EndpointHelper {
      * Resolves a reference list parameter by making lookups in the registry.
      * The parameter value must be one of the following:
      * <ul>
-     *   <li>a comma-separated list of references to beans of type T</li>
-     *   <li>a single reference to a bean type T</li>
-     *   <li>a single reference to a bean of type java.util.List</li>
+     * <li>a comma-separated list of references to beans of type T</li>
+     * <li>a single reference to a bean type T</li>
+     * <li>a single reference to a bean of type java.util.List</li>
      * </ul>
      *
      * @param context     Camel context to use for lookup.
@@ -396,7 +400,7 @@ public final class EndpointHelper {
     /**
      * Gets the route id for the given endpoint in which there is a consumer listening.
      *
-     * @param endpoint  the endpoint
+     * @param endpoint the endpoint
      * @return the route id, or <tt>null</tt> if none found
      */
     public static String getRouteIdFromEndpoint(Endpoint endpoint) {
@@ -425,7 +429,7 @@ public final class EndpointHelper {
     /**
      * Lookup the id the given endpoint has been enlisted with in the {@link org.apache.camel.spi.Registry}.
      *
-     * @param endpoint  the endpoint
+     * @param endpoint the endpoint
      * @return the endpoint id, or <tt>null</tt> if not found
      */
     public static String lookupEndpointRegistryId(Endpoint endpoint) {
@@ -453,9 +457,9 @@ public final class EndpointHelper {
     /**
      * Browses the {@link BrowsableEndpoint} within the given range, and returns the messages as a XML payload.
      *
-     * @param endpoint the browsable endpoint
-     * @param fromIndex  from range
-     * @param toIndex    to range
+     * @param endpoint    the browsable endpoint
+     * @param fromIndex   from range
+     * @param toIndex     to range
      * @param includeBody whether to include the message body in the XML payload
      * @return XML payload with the messages
      * @throws IllegalArgumentException if the from and to range is invalid
@@ -507,6 +511,156 @@ public final class EndpointHelper {
             return ExchangePattern.asEnum(pattern);
         }
         return null;
+    }
+
+    /**
+     * Parses the endpoint uri and builds a map of documentation information for each option which is extracted
+     * from the component json documentation
+     *
+     * @param camelContext the Camel context
+     * @param uri          the endpoint uri
+     * @return a map for each option in the uri with the corresponding information from the json
+     * @throws Exception is thrown in case of error
+     */
+    public static Map<String, Object> endpointProperties(CamelContext camelContext, String uri) throws Exception {
+        // NOTICE: This logic is similar to org.apache.camel.catalog.DefaultCamelCatalog#endpointProperties
+        // as the catalog also offers similar functionality (without having camel-core on classpath)
+
+        // parse the uri
+        URI u = new URI(uri);
+        String scheme = u.getScheme();
+
+        String json = camelContext.getComponentParameterJsonSchema(u.getScheme());
+        if (json == null) {
+            throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
+        }
+
+        // grab the syntax
+        String syntax = null;
+        List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("syntax")) {
+                syntax = row.get("syntax");
+                break;
+            }
+        }
+        if (syntax == null) {
+            throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
+        }
+
+        // parse the syntax and find the same group in the uri
+        Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
+        List<String> word = new ArrayList<String>();
+        while (matcher.find()) {
+            String s = matcher.group(1);
+            if (!scheme.equals(s)) {
+                word.add(s);
+            }
+        }
+
+        String uriPath = stripQuery(uri);
+
+        // if there is only one, then use uriPath as is
+        List<String> word2 = new ArrayList<String>();
+
+        if (word.size() == 1) {
+            String s = uriPath;
+            s = URISupport.stripPrefix(s, scheme);
+            // strip any leading : or / after the scheme
+            while (s.startsWith(":") || s.startsWith("/")) {
+                s = s.substring(1);
+            }
+            word2.add(s);
+        } else {
+            Matcher matcher2 = SYNTAX_PATTERN.matcher(uriPath);
+            while (matcher2.find()) {
+                String s = matcher2.group(1);
+                if (!scheme.equals(s)) {
+                    word2.add(s);
+                }
+            }
+        }
+
+        rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+
+        boolean defaultValueAdded = false;
+
+        // now parse the uri to know which part isw what
+        Map<String, String> options = new LinkedHashMap<String, String>();
+
+        // word contains the syntax path elements
+        Iterator<String> it = word2.iterator();
+        for (int i = 0; i < word.size(); i++) {
+            String key = word.get(i);
+
+            boolean allOptions = word.size() == word2.size();
+            boolean required = JsonSchemaHelper.isPropertyRequired(rows, key);
+            String defaultValue = JsonSchemaHelper.getPropertyDefaultValue(rows, key);
+
+            // we have all options so no problem
+            if (allOptions) {
+                String value = it.next();
+                options.put(key, value);
+            } else {
+                // we have a little problem as we do not not have all options
+                if (!required) {
+                    String value = defaultValue;
+                    options.put(key, value);
+                    defaultValueAdded = true;
+                } else {
+                    String value = it.next();
+                    options.put(key, value);
+                }
+            }
+        }
+
+        Map<String, Object> answer = new LinkedHashMap<String, Object>();
+
+        // remove all options which are using default values and are not required
+        for (Map.Entry<String, String> entry : options.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            if (defaultValueAdded) {
+                boolean required = JsonSchemaHelper.isPropertyRequired(rows, key);
+                String defaultValue = JsonSchemaHelper.getPropertyDefaultValue(rows, key);
+
+                if (!required && defaultValue != null) {
+                    if (defaultValue.equals(value)) {
+                        continue;
+                    }
+                }
+            }
+
+            // we should keep this in the answer
+            answer.put(key, value);
+        }
+
+        // now parse the uri parameters
+        Map<String, Object> parameters = URISupport.parseParameters(u);
+
+        // and covert the values to String so its JMX friendly
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue() != null ? entry.getValue().toString() : "";
+            answer.put(key, value);
+        }
+
+        return answer;
+    }
+
+    /**
+     * Strips the query parameters from the uri
+     *
+     * @param uri the uri
+     * @return the uri without the query parameter
+     */
+    private static String stripQuery(String uri) {
+        int idx = uri.indexOf('?');
+        if (idx > -1) {
+            uri = uri.substring(0, idx);
+        }
+        return uri;
     }
 
 }
