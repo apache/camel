@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.spi.ShutdownAware;
-import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,6 @@ public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsume
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledBatchPollingConsumer.class);
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
-    @UriParam
     protected int maxMessagesPerPoll;
 
     public ScheduledBatchPollingConsumer(Endpoint endpoint, Processor processor) {
