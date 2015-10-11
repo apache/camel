@@ -2045,8 +2045,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
             }
 
-            json = ObjectHelper.before(json, "  \"properties\": {");
+            // skip component properties
+            json = ObjectHelper.before(json, "  \"componentProperties\": {");
 
+            // and rewrite properties
             StringBuilder buffer = new StringBuilder("  \"properties\": {");
 
             boolean first = true;
