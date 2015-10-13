@@ -23,6 +23,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.support.TypeConverterSupport;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
+import org.dozer.metadata.ClassMappingMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,9 +53,20 @@ public class DozerTypeConverter extends TypeConverterSupport {
 
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
+        // find the map id, so we can provide that when trying to map from source to destination
+        String mapId = null;
+        if (value != null) {
+            Class<?> sourceType = value.getClass();
+            Class<?> destType = type;
+            ClassMappingMetadata metadata = mapper.getMappingMetadata().getClassMapping(sourceType, destType);
+            if (metadata != null) {
+                mapId = metadata.getMapId();
+            }
+        }
+
         // if the exchange is null, we have no chance to ensure that the TCCL is the one from the CamelContext
         if (exchange == null) {
-            return mapper.map(value, type);
+            return mapper.map(value, type, mapId);
         }
         
         T answer = null;
@@ -66,14 +78,14 @@ public class DozerTypeConverter extends TypeConverterSupport {
             LOG.debug("Switching TCCL to: {}.", contextCl);
             try {
                 Thread.currentThread().setContextClassLoader(contextCl);
-                answer = mapper.map(value, type);
+                answer = mapper.map(value, type, mapId);
             } finally {
                 LOG.debug("Restored TCCL to: {}.", prev);
                 Thread.currentThread().setContextClassLoader(prev);
             }
         } else {
             // just try with the current TCCL as-is
-            answer = mapper.map(value, type);
+            answer = mapper.map(value, type, mapId);
         }
 
         return answer;
