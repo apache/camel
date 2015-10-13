@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.Test;
@@ -37,47 +38,25 @@ public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
 
     @Test
     public void testAsynchronousProblemSolving() throws Exception {
-        getMockEndpoint("mock:result").setExpectedCount(1);
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.setExpectedCount(1);
         CloudBalancingGenerator generator = new CloudBalancingGenerator(true);
         final CloudBalance planningProblem = generator.createCloudBalance(4, 12);
         assertNull(planningProblem.getScore());
         assertNull(planningProblem.getProcessList().get(0).getComputer());
 
         template.requestBody("direct:in", planningProblem);
-        getMockEndpoint("mock:result").assertIsSatisfied();
-        getMockEndpoint("mock:result").reset();
-        getMockEndpoint("mock:result").setExpectedCount(0);
+        mockEndpoint.assertIsSatisfied();
+        mockEndpoint.reset();
+        mockEndpoint.setExpectedCount(1);
 
-        template.requestBody("direct:in", new ProblemFactChange() {
-            @Override
-            public void doChange(ScoreDirector scoreDirector) {
-                CloudBalance cloudBalance = (CloudBalance) scoreDirector.getWorkingSolution();
-                CloudComputer computer = null;
-                for (CloudProcess process : cloudBalance.getProcessList()) {
-                    computer = process.getComputer();
-                    if (ObjectUtils.equals(process.getComputer(), computer)) {
-                        scoreDirector.beforeVariableChanged(process, "computer");
-                        process.setComputer(null);
-                        scoreDirector.afterVariableChanged(process, "computer");
-                    }
-                }
-                cloudBalance.setComputerList(new ArrayList<CloudComputer>(cloudBalance.getComputerList()));
-                for (Iterator<CloudComputer> it = cloudBalance.getComputerList().iterator(); it.hasNext();) {
-                    CloudComputer workingComputer = it.next();
-                    if (ObjectUtils.equals(workingComputer, computer)) {
-                        scoreDirector.beforeProblemFactRemoved(workingComputer);
-                        it.remove(); // remove from list
-                        scoreDirector.beforeProblemFactRemoved(workingComputer);
-                        break;
-                    }
-                }
-            }
-        });
+        CloudComputer firstComputer = planningProblem.getComputerList().get(0);
+        assertNotNull(firstComputer);
+        template.requestBody("direct:in", new RemoveComputerChange(firstComputer));
 
-        getMockEndpoint("mock:result").assertIsSatisfied();
+        mockEndpoint.assertIsSatisfied();
         CloudBalance bestSolution = (CloudBalance) template.requestBody("direct:in", "foo");
-
-        assertEquals(4, bestSolution.getComputerList().size());
+        assertEquals(3, bestSolution.getComputerList().size());
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -93,4 +72,34 @@ public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
         };
     }
 
+    private static class RemoveComputerChange implements ProblemFactChange {
+
+        private final CloudComputer removingComputer;
+
+        public RemoveComputerChange(CloudComputer removingComputer) {
+            this.removingComputer = removingComputer;
+        }
+
+        @Override
+        public void doChange(ScoreDirector scoreDirector) {
+            CloudBalance cloudBalance = (CloudBalance) scoreDirector.getWorkingSolution();
+            for (CloudProcess process : cloudBalance.getProcessList()) {
+                if (ObjectUtils.equals(process.getComputer(), removingComputer)) {
+                    scoreDirector.beforeVariableChanged(process, "computer");
+                    process.setComputer(null);
+                    scoreDirector.afterVariableChanged(process, "computer");
+                }
+            }
+            cloudBalance.setComputerList(new ArrayList<CloudComputer>(cloudBalance.getComputerList()));
+            for (Iterator<CloudComputer> it = cloudBalance.getComputerList().iterator(); it.hasNext();) {
+                CloudComputer workingComputer = it.next();
+                if (ObjectUtils.equals(workingComputer, removingComputer)) {
+                    scoreDirector.beforeProblemFactRemoved(workingComputer);
+                    it.remove(); // remove from list
+                    scoreDirector.beforeProblemFactRemoved(workingComputer);
+                    break;
+                }
+            }
+        }
+    }
 }
