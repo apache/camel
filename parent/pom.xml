@@ -544,7 +544,7 @@
     <xstream-version>1.4.8</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
-    <zkclient-version>0.5</zkclient-version>
+    <zkclient-version>0.6</zkclient-version>
     <zookeeper-version>3.4.6</zookeeper-version>
     <zxing-version>3.2.1</zxing-version>
     <zxing-bundle-version>3.2.1_1</zxing-bundle-version>
