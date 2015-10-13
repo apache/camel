@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.lang3.ObjectUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.core.impl.solver.ProblemFactChange;
@@ -36,7 +37,7 @@ import org.optaplanner.examples.cloudbalancing.persistence.CloudBalancingGenerat
  */
 public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
 
-    @Test
+    @Test @Ignore("https://issues.jboss.org/browse/PLANNER-468") // TODO Unignore when upgraded to optaplanner 6.3.1+
     public void testAsynchronousProblemSolving() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.setExpectedCount(1);
