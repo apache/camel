@@ -16,10 +16,14 @@
  */
 package org.apache.camel.dataformat.base64;
 
+
+
 import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.apache.camel.dataformat.base64.Base64TestConstants.DECODED;
 
-public class Base64DataFormatDefaultsTest extends Base64DataFormatTestBase {
+public class SpringBase64DataFormatDefaultsTest extends SpringBase64DataFormatTestBase {
 
     private static final String ENCODED = "IrRWhNZNjFxQ6WXJEIsehbnFdurtgacAq+t6Zh3uYlyclF3HAx995mbIydQlymM8V3yA+Yb1p3Ij\r\n"
             + "7AS1VQaUNHAljNpHUqrWR6EmASZV/EQvR5Gk8XDvRrrtkoDm+jdZ/XKfest2OIzhixZF1mcqyi1P\r\n"
@@ -40,8 +44,13 @@ public class Base64DataFormatDefaultsTest extends Base64DataFormatTestBase {
             + "TCRJ/SE7CVrEfmdmROlJpAJHfUlQIJq1aW3mTE5zTmAygypxRUDCmA+eY9wdCicFp6YptdCEK3P2\r\n"
             + "7QzZsSASAByd5jxHMiIBkdwGzj1501xZ7hFLJDXDTQ==\r\n";
 
-    public Base64DataFormatDefaultsTest() {
-        format = new Base64DataFormat();
+    public SpringBase64DataFormatDefaultsTest() {
+    }
+    
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataFormat/base64/SpringBase64DataFormatDefaultsTest.xml");
     }
 
     @Test
