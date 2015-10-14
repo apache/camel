@@ -38,8 +38,11 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -446,20 +449,24 @@ public final class IntrospectionSupport {
         return rc;
     }
 
-    public static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
+    public static boolean setProperties(CamelContext context, TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
 
         for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, Object> entry = iter.next();
-            if (setProperty(typeConverter, target, entry.getKey(), entry.getValue())) {
+            if (setProperty(context, typeConverter, target, entry.getKey(), entry.getValue())) {
                 iter.remove();
                 rc = true;
             }
         }
 
         return rc;
+    }
+    
+    public static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
+        return setProperties(null, typeConverter, target, properties);
     }
 
     public static boolean setProperties(Object target, Map<String, Object> properties) throws Exception {
@@ -561,7 +568,7 @@ public final class IntrospectionSupport {
             }
         }
 
-        if (typeConversionFailed != null) {
+        if (typeConversionFailed != null && !isPropertyPlaceholder(context, value)) {
             // we did not find a setter method to use, and if we did try to use a type converter then throw
             // this kind of exception as the caused by will hint this error
             throw new IllegalArgumentException("Could not find a suitable setter for property: " + name
@@ -572,6 +579,29 @@ public final class IntrospectionSupport {
         }
     }
 
+    private static boolean isPropertyPlaceholder(CamelContext context, Object value) {
+        if (context != null) {
+            Component component = context.hasComponent("properties");
+            if (component != null) {
+                PropertiesComponent pc;
+                try {
+                    pc = context.getTypeConverter().mandatoryConvertTo(PropertiesComponent.class, component);
+                } catch (Exception e) {
+                    return false;
+                }
+                if (value.toString().contains(pc.getPrefixToken()) && value.toString().contains(pc.getSuffixToken())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
+        // allow build pattern as a setter as well
+        return setProperty(context, typeConverter, target, name, value, null, true);
+    }
+    
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
         return setProperty(null, typeConverter, target, name, value, null, true);
