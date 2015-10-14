@@ -37,7 +37,7 @@ import org.optaplanner.examples.cloudbalancing.persistence.CloudBalancingGenerat
  */
 public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
 
-    @Test @Ignore("https://issues.jboss.org/browse/PLANNER-468") // TODO Unignore when upgraded to optaplanner 6.3.1+
+    @Test
     public void testAsynchronousProblemSolving() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.setExpectedCount(1);
@@ -98,6 +98,7 @@ public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
                     scoreDirector.beforeProblemFactRemoved(workingComputer);
                     it.remove(); // remove from list
                     scoreDirector.beforeProblemFactRemoved(workingComputer);
+                    scoreDirector.triggerVariableListeners();
                     break;
                 }
             }
