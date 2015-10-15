@@ -18,12 +18,13 @@ package org.apache.camel.component.metrics.routepolicy;
 
 import java.util.Map;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 
 /**
  * CAMEL-9226 - check metrics are counted correctly in multicast sub-routes
@@ -47,10 +48,10 @@ public class MetricsRoutePolicyMulticastSubRouteTest extends CamelTestSupport {
     @Test
     public void testMetricsRoutePolicy() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:bar1").expectedMessageCount(1);
-        getMockEndpoint("mock:bar2").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:end").expectedMessageCount(1);
 
-        template.sendBody("direct:multicast", "Hello World");
+        template.sendBody("seda:multicast", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -75,9 +76,9 @@ public class MetricsRoutePolicyMulticastSubRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:foo").routeId("foo").to("mock:foo");
 
-                from("direct:bar").routeId("bar").multicast().to("mock:bar1", "mock:bar2");
+                from("direct:bar").routeId("bar").to("mock:bar");
 
-                from("direct:multicast").routeId("multicast").multicast().to("direct:foo", "direct:bar");
+                from("seda:multicast").routeId("multicast").multicast().to("direct:foo").to("direct:bar").end().to("mock:end");
 
             }
         };
