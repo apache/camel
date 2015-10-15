@@ -48,10 +48,10 @@ public class MetricsRoutePolicyMulticastSubRouteTest extends CamelTestSupport {
     @Test
     public void testMetricsRoutePolicy() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:end").expectedMessageCount(1);
+        getMockEndpoint("mock:bar1").expectedMessageCount(1);
+        getMockEndpoint("mock:bar2").expectedMessageCount(1);
 
-        template.sendBody("seda:multicast", "Hello World");
+        template.sendBody("direct:multicast", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -76,9 +76,9 @@ public class MetricsRoutePolicyMulticastSubRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:foo").routeId("foo").to("mock:foo");
 
-                from("direct:bar").routeId("bar").to("mock:bar");
+                from("direct:bar").routeId("bar").multicast().to("mock:bar1", "mock:bar2");
 
-                from("seda:multicast").routeId("multicast").multicast().to("direct:foo").to("direct:bar").end().to("mock:end");
+                from("direct:multicast").routeId("multicast").multicast().to("direct:foo", "direct:bar");
 
             }
         };
