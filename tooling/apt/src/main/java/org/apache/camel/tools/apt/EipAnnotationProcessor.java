@@ -59,7 +59,10 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
     // special when using expression/predicates in the model
     private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
-    private static final String ONE_OF_LANGUAGES = "org.apache.camel.model.language.ExpressionDefinition";
+    private static final String[] ONE_OF_LANGUAGES = new String[]{
+            "org.apache.camel.model.language.ExpressionDefinition",
+            "org.apache.camel.model.language.NamespaceAwareExpression"
+    };
     // special for inputs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_INPUTS = new String[]{
         "org.apache.camel.model.ProcessorDefinition",
@@ -439,18 +442,20 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             if (isOneOf) {
                 // okay its actually an language expression, so favor using that in the eip option
                 kind = "expression";
-                fieldTypeName = ONE_OF_LANGUAGES;
-                TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
-                String superClassName = canonicalClassName(languages.toString());
-                // find all classes that has that superClassName
-                Set<TypeElement> children = new LinkedHashSet<TypeElement>();
-                findTypeElementChildren(roundEnv, children, superClassName);
-                for (TypeElement child : children) {
-                    XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
-                    if (rootElement != null) {
-                        String childName = rootElement.name();
-                        if (childName != null) {
-                            oneOfTypes.add(childName);
+                for (String language : ONE_OF_LANGUAGES) {
+                    fieldTypeName = language;
+                    TypeElement languages = findTypeElement(roundEnv, language);
+                    String superClassName = canonicalClassName(languages.toString());
+                    // find all classes that has that superClassName
+                    Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                    findTypeElementChildren(roundEnv, children, superClassName);
+                    for (TypeElement child : children) {
+                        XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                        if (rootElement != null) {
+                            String childName = rootElement.name();
+                            if (childName != null) {
+                                oneOfTypes.add(childName);
+                            }
                         }
                     }
                 }
@@ -772,17 +777,19 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
             // gather oneOf expression/predicates which uses language
             Set<String> oneOfTypes = new TreeSet<String>();
-            TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
-            String superClassName = canonicalClassName(languages.toString());
-            // find all classes that has that superClassName
-            Set<TypeElement> children = new LinkedHashSet<TypeElement>();
-            findTypeElementChildren(roundEnv, children, superClassName);
-            for (TypeElement child : children) {
-                XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
-                if (rootElement != null) {
-                    String childName = rootElement.name();
-                    if (childName != null) {
-                        oneOfTypes.add(childName);
+            for (String language : ONE_OF_LANGUAGES) {
+                TypeElement languages = findTypeElement(roundEnv, language);
+                String superClassName = canonicalClassName(languages.toString());
+                // find all classes that has that superClassName
+                Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                findTypeElementChildren(roundEnv, children, superClassName);
+                for (TypeElement child : children) {
+                    XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                    if (rootElement != null) {
+                        String childName = rootElement.name();
+                        if (childName != null) {
+                            oneOfTypes.add(childName);
+                        }
                     }
                 }
             }
