@@ -34,7 +34,6 @@ import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTableInterface;
-import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -49,20 +48,16 @@ import org.apache.hadoop.hbase.util.Bytes;
 public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
 
     private HBaseEndpoint endpoint;
-    private String tableName;
-    private final HTablePool tablePool;
     private HBaseRow rowModel;
 
-    public HBaseProducer(HBaseEndpoint endpoint, HTablePool tablePool, String tableName) {
+    public HBaseProducer(HBaseEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.tableName = tableName;
-        this.tablePool = tablePool;
         this.rowModel = endpoint.getRowModel();
     }
 
     public void process(Exchange exchange) throws Exception {
-        HTableInterface table = tablePool.getTable(tableName.getBytes());
+		HTableInterface table = endpoint.getTable();
         try {
 
             updateHeaders(exchange);
@@ -105,7 +100,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 mappingStrategy.applyScanResults(exchange.getOut(), new HBaseData(scanOperationResult));
             }
         } finally {
-            table.close();
+			table.close();
         }
     }
 
