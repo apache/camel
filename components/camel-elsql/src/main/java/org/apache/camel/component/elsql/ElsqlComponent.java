@@ -136,7 +136,9 @@ public class ElsqlComponent extends UriEndpointComponent {
     }
 
     /**
-     * The resource file which contains the elsql SQL statements to use
+     * The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma.
+     * The resources are loaded on the classpath by default, you can prefix with <tt>file:</tt> to load from file system.
+     * Notice you can set this option on the component and then you do not have to configure this on the endpoint.
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;

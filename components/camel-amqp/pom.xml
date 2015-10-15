@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16.1-SNAPSHOT</version>
+    <version>2.17-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-amqp</artifactId>
@@ -48,13 +48,11 @@
       <groupId>org.apache.qpid</groupId>
       <artifactId>qpid-amqp-1-0-client-jms</artifactId>
       <version>${qpid-version}</version>
-      <optional>true</optional>
     </dependency>
     <dependency>
         <groupId>org.apache.qpid</groupId>
         <artifactId>qpid-client</artifactId>
         <version>${qpid-version}</version>
-        <optional>true</optional>
     </dependency>
 
     <!-- testing -->

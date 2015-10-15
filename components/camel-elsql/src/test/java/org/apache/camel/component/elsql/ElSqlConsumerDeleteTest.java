@@ -91,8 +91,9 @@ public class ElSqlConsumerDeleteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 getContext().getComponent("elsql", ElsqlComponent.class).setDataSource(db);
+                getContext().getComponent("elsql", ElsqlComponent.class).setResourceUri("elsql/projects.elsql,elsql/delete.elsql");
 
-                from("elsql:allProjects:elsql/projects.elsql?consumer.onConsume=deleteProject")
+                from("elsql:allProjects?consumer.onConsume=deleteProject")
                         .to("mock:result");
             }
         };

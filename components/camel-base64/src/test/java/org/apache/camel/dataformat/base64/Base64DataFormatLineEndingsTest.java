@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.base64;
 
 import org.junit.Test;
+import static org.apache.camel.dataformat.base64.Base64TestConstants.DECODED;
 
 public class Base64DataFormatLineEndingsTest extends Base64DataFormatTestBase {
 

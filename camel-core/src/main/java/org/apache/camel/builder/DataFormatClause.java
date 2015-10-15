@@ -36,6 +36,7 @@ import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
+import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
@@ -301,6 +302,125 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         pgp.setArmored(armored);
         pgp.setIntegrity(integrity);
         return dataFormat(pgp);
+    }
+    
+    /**
+     * Uses the Jackson XML data format
+     */
+    public T jacksonxml() {
+        return dataFormat(new JacksonXMLDataFormat());
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     */
+    public T jacksonxml(Class<?> unmarshalType) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     * @param jsonView
+     *            the view type for xml jackson type
+     */
+    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        jacksonXMLDataFormat.setJsonView(jsonView);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format using the Jackson library turning pretty
+     * printing on or off
+     * 
+     * @param prettyPrint
+     *            turn pretty printing on or off
+     */
+    public T jacksonxml(boolean prettyPrint) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     * @param prettyPrint
+     *            turn pretty printing on or off
+     */
+    public T jacksonxml(Class<?> unmarshalType, boolean prettyPrint) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     * @param jsonView
+     *            the view type for xml jackson type
+     * @param prettyPrint
+     *            turn pretty printing on or off
+     */
+    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, boolean prettyPrint) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        jacksonXMLDataFormat.setJsonView(jsonView);
+        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     * @param jsonView
+     *            the view type for xml jackson type
+     * @param include
+     *            include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     */
+    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, String include) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        jacksonXMLDataFormat.setJsonView(jsonView);
+        jacksonXMLDataFormat.setInclude(include);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     * @param jsonView
+     *            the view type for xml jackson type
+     * @param include
+     *            include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     * @param prettyPrint
+     *            turn pretty printing on or off
+     */
+    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        jacksonXMLDataFormat.setJsonView(jsonView);
+        jacksonXMLDataFormat.setInclude(include);
+        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(jacksonXMLDataFormat);
     }
 
     /**

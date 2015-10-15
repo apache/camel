@@ -268,8 +268,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         int pos2 = json.indexOf("groupDelay");
         assertTrue("LoggerName should come before groupDelay", pos < pos2);
 
-        assertEquals(8, StringHelper.countChar(json, '{'));
-        assertEquals(8, StringHelper.countChar(json, '}'));
+        assertEquals(6, StringHelper.countChar(json, '{'));
+        assertEquals(6, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
@@ -303,8 +303,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         int pos2 = json.indexOf("groupDelay");
         assertTrue("LoggerName should come before groupDelay", pos < pos2);
 
-        assertEquals(14, StringHelper.countChar(json, '{'));
-        assertEquals(14, StringHelper.countChar(json, '}'));
+        assertEquals(12, StringHelper.countChar(json, '{'));
+        assertEquals(12, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
         assertTrue(json.contains("\"label\": \"core,monitoring\""));

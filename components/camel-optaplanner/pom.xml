@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16.1-SNAPSHOT</version>
+    <version>2.17-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-optaplanner</artifactId>
@@ -50,15 +50,22 @@
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-examples</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- TODO Upgrade from log4j to logback -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

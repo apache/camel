@@ -98,7 +98,7 @@ public final class CamelOpenMBeanTypes {
         return new CompositeType("dataformats", "DataFormats", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
                 new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
 

@@ -47,11 +47,13 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
+        // TODO: Camel 3.0 - Should be named customDataFormat to avoid naming clash with custom loadbalancer
         @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
         @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
         @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
         @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
         @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),
+        @XmlElement(required = false, name = "jacksonxml", type = JacksonXMLDataFormat.class),
         @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
         @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
         @XmlElement(required = false, name = "json", type = JsonDataFormat.class),

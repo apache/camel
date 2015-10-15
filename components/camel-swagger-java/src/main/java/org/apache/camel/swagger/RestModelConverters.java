@@ -33,7 +33,18 @@ public class RestModelConverters extends ModelConverters {
         Map<String, Model> resolved = super.read(clazz);
         if (resolved != null) {
             for (Model model : resolved.values()) {
+                // enrich with the class name of the model
                 model.getVendorExtensions().put("x-className", new StringProperty(name));
+            }
+
+            // read any extra using read-all
+            Map<String, Model> extra = super.readAll(clazz);
+            if (extra != null) {
+                for (Map.Entry<String, Model> entry : extra.entrySet()) {
+                    if (!resolved.containsKey(entry.getKey())) {
+                        resolved.put(entry.getKey(), entry.getValue());
+                    }
+                }
             }
         }
         return resolved;

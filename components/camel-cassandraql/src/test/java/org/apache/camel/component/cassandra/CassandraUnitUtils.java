@@ -60,7 +60,7 @@ public final class CassandraUnitUtils {
     }
 
     public static CassandraCQLUnit cassandraCQLUnit(CQLDataSet dataset) {
-        return new CassandraCQLUnit(dataset, "/camel-cassandra.yaml", HOST, 9042);
+        return new CassandraCQLUnit(dataset, "/camel-cassandra.yaml");
     }
 
     /**

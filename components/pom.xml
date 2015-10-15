@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.16.1-SNAPSHOT</version>
+    <version>2.17-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -94,6 +94,7 @@
     <module>camel-eclipse</module>
     <module>camel-ejb</module>
     <module>camel-elasticsearch</module>
+    <module>camel-elsql</module>
     <module>camel-eventadmin</module>
     <module>camel-exec</module>
     <module>camel-facebook</module>
@@ -126,6 +127,7 @@
     <module>camel-infinispan</module>
     <module>camel-irc</module>
     <module>camel-jackson</module>
+    <module>camel-jacksonxml</module>
     <module>camel-javaspace</module>
     <module>camel-jaxb</module>
     <module>camel-jasypt</module>

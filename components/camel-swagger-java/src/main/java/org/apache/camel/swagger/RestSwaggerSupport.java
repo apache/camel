@@ -34,7 +34,6 @@ import io.swagger.models.Info;
 import io.swagger.models.License;
 import io.swagger.models.Swagger;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -172,14 +171,14 @@ public class RestSwaggerSupport {
         LOG.trace("renderResourceListing");
 
         if (cors) {
-            response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-            response.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
-            response.addHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+            response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
+            response.setHeader("Access-Control-Allow-Origin", "*");
         }
 
         List<RestDefinition> rests = getRestDefinitions(contextId);
         if (rests != null) {
-            response.addHeader(Exchange.CONTENT_TYPE, "application/json");
+            response.setHeader(Exchange.CONTENT_TYPE, "application/json");
 
             // read the rest-dsl into swagger model
             Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
@@ -190,7 +189,7 @@ public class RestSwaggerSupport {
             byte[] bytes = mapper.writeValueAsBytes(swagger);
 
             int len = bytes.length;
-            response.addHeader(Exchange.CONTENT_LENGTH, "" + len);
+            response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
 
             response.writeBytes(bytes);
         } else {
@@ -205,12 +204,12 @@ public class RestSwaggerSupport {
         LOG.trace("renderCamelContexts");
 
         if (cors) {
-            response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-            response.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
-            response.addHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+            response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
+            response.setHeader("Access-Control-Allow-Origin", "*");
         }
 
-        response.addHeader(Exchange.CONTENT_TYPE, "application/json");
+        response.setHeader(Exchange.CONTENT_TYPE, "application/json");
 
         StringBuffer sb = new StringBuffer();
 
@@ -245,7 +244,7 @@ public class RestSwaggerSupport {
         sb.append("\n]");
 
         int len = sb.length();
-        response.addHeader(Exchange.CONTENT_LENGTH, "" + len);
+        response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
 
         response.writeBytes(sb.toString().getBytes());
     }

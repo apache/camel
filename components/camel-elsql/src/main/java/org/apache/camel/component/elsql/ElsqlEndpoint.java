@@ -17,6 +17,8 @@
 package org.apache.camel.component.elsql;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.opengamma.elsql.ElSql;
 import com.opengamma.elsql.ElSqlConfig;
@@ -105,8 +107,16 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
             elSqlConfig = ElSqlDatabaseVendor.Default.asElSqlConfig();
         }
 
-        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), resourceUri);
-        elSql = ElSql.parse(elSqlConfig, url);
+        // there can be multiple resources
+        // so we have all this lovely code to turn that into an URL[]
+        List<URL> list = new ArrayList<URL>();
+        Iterable it = ObjectHelper.createIterable(resourceUri);
+        for (Object path : it) {
+            URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), path.toString());
+            list.add(url);
+        }
+        URL[] urls = list.toArray(new URL[list.size()]);
+        elSql = ElSql.parse(elSqlConfig, urls);
     }
 
     /**
@@ -143,7 +153,9 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     }
 
     /**
-     * The resource file which contains the elsql SQL statements to use
+     * The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma.
+     * The resources are loaded on the classpath by default, you can prefix with <tt>file:</tt> to load from file system.
+     * Notice you can set this option on the component and then you do not have to configure this on the endpoint.
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
