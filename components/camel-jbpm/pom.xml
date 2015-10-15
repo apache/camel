@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.16.1-SNAPSHOT</version>
+        <version>2.17-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jbpm</artifactId>
@@ -68,7 +68,16 @@
                     <groupId>org.jboss.spec.javax.xml.ws</groupId>
                     <artifactId>jboss-jaxws-api_2.2_spec</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.1.4.GA</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>

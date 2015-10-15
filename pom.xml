@@ -26,7 +26,7 @@
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel</artifactId>
-  <version>2.16.1-SNAPSHOT</version>
+  <version>2.17-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel build POM</description>
@@ -552,6 +552,9 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
+                <configuration>
+                  <additionalparam>${javadoc.opts}</additionalparam>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -617,6 +620,9 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
+                <configuration>
+                    <additionalparam>${javadoc.opts}</additionalparam>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -639,5 +645,14 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>doclint-java8-disable</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+        <javadoc.opts>-Xdoclint:none</javadoc.opts>
+      </properties>
+     </profile>
   </profiles>
 </project>

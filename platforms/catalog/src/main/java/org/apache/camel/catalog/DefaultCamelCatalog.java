@@ -447,6 +447,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public Map<String, String> endpointProperties(String uri) throws URISyntaxException {
+        // NOTICE: This logic is similar to org.apache.camel.util.EndpointHelper#endpointProperties
+        // as the catalog also offers similar functionality (without having camel-core on classpath)
+
         // parse the uri
         URI u = new URI(uri);
         String scheme = u.getScheme();

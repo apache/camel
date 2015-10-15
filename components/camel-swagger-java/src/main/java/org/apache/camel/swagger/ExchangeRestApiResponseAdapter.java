@@ -29,7 +29,7 @@ public class ExchangeRestApiResponseAdapter implements RestApiResponseAdapter {
     }
 
     @Override
-    public void addHeader(String name, String value) {
+    public void setHeader(String name, String value) {
         exchange.getIn().setHeader(name, value);
     }
 

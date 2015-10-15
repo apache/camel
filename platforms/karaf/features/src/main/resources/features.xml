@@ -383,7 +383,7 @@
   </feature>
   <feature name='camel-elsql' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version="${project.version}">camel-sql</feature>
-    <bundle dependency="true">wrap:mvn:com.opengamma/elsql/${elsql-version}</bundle>
+    <bundle dependency="true">mvn:com.opengamma/elsql/${elsql-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-elsql/${project.version}</bundle>
   </feature>
   <feature name='camel-elasticsearch' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -827,9 +827,14 @@
     <bundle dependency='true'>mvn:org.drools/drools-core/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-compiler/${jbpm-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.kie/kie-internal/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.kie/kie-api/${jbpm-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.kie.remote/kie-remote-common/${jbpm-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.kie.remote.ws/kie-remote-ws-common/${jbpm-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.kie.remote/kie-remote-jaxb/${jbpm-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.kie.remote/kie-services-client/6.1.0.Final</bundle>
     <bundle dependency='true'>wrap:mvn:org.kie.remote/kie-remote-client/${jbpm-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jbpm/${project.version}</bundle>
   </feature>

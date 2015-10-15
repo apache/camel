@@ -40,4 +40,38 @@ public class JmsComponentConfigurationAndDocumentationTest extends CamelTestSupp
         assertNotNull(json);
     }
 
+    @Test
+    public void testExplainComponentJson() throws Exception {
+        String json = context.explainComponentJson("jms", false);
+        assertNotNull(json);
+
+        log.info(json);
+        assertTrue(json.contains("\"syntax\": \"jms:destinationType:destinationName\""));
+    }
+
+    @Test
+    public void testExplainEndpointJson() throws Exception {
+        String json = context.explainEndpointJson("jms:queue:foo?replyTo=bar", false);
+        assertNotNull(json);
+        log.info(json);
+        assertTrue(json.contains("\"syntax\": \"jms:destinationType:destinationName\""));
+        assertTrue(json.contains("\"destinationType\": { \"kind\": \"path\", \"type\": \"string\", \"javaType\": \"java.lang.String\""
+                + ", \"deprecated\": \"false\", \"value\": \"queue\", \"defaultValue\": \"queue\""));
+        assertTrue(json.contains("\"destinationName\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\""
+                + ", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"value\": \"foo\""));
+        assertTrue(json.contains("\"replyTo\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"string\""
+                + ", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"value\": \"bar\""));
+
+        json = context.explainEndpointJson("jms:foo?replyTo=bar", false);
+        assertNotNull(json);
+        log.info(json);
+        assertTrue(json.contains("\"syntax\": \"jms:destinationType:destinationName\""));
+        assertTrue(json.contains("\"destinationType\": { \"kind\": \"path\", \"type\": \"string\", \"javaType\": \"java.lang.String\""
+                + ", \"deprecated\": \"false\", \"defaultValue\": \"queue\""));
+        assertTrue(json.contains("\"destinationName\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\""
+                + ", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"value\": \"foo\""));
+        assertTrue(json.contains("\"replyTo\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"string\""
+                + ", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"value\": \"bar\""));
+    }
+
 }

@@ -35,12 +35,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.rabbitmq.testbeans.TestNonSerializableObject;
+import org.apache.camel.component.rabbitmq.testbeans.TestPartiallySerializableObject;
 import org.apache.camel.component.rabbitmq.testbeans.TestSerializableObject;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class RabbitMQInOutIntTest extends CamelTestSupport {
-    
+
     public static final String ROUTING_KEY = "rk5";
     public static final long TIMEOUT_MS = 2000;
     private static final String EXCHANGE = "ex5";
@@ -51,7 +53,8 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
     @Produce(uri = "direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?exchangeType=direct&username=cameltest&password=cameltest" + "&autoAck=true&queue=q4&routingKey=" + ROUTING_KEY
+    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
+                    + "&autoAck=true&queue=q4&routingKey=" + ROUTING_KEY
                     + "&transferException=true&requestTimeout=" + TIMEOUT_MS)
     private Endpoint rabbitMQEndpoint;
 
@@ -68,6 +71,10 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         if (exchange.getIn().getBody(TestSerializableObject.class) != null) {
                             TestSerializableObject foo = exchange.getIn().getBody(TestSerializableObject.class);
+                            foo.setDescription("foobar");
+                        } else if (exchange.getIn().getBody(TestPartiallySerializableObject.class) != null) {
+                            TestPartiallySerializableObject foo = exchange.getIn().getBody(TestPartiallySerializableObject.class);
+                            foo.setNonSerializableObject(new TestNonSerializableObject());
                             foo.setDescription("foobar");
                         } else if (exchange.getIn().getBody(String.class) != null) {
                             if (exchange.getIn().getBody(String.class).contains("header")) {
@@ -146,6 +153,21 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
         TestSerializableObject reply = template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, TestSerializableObject.class);
         assertEquals("foobar", reply.getName());
         assertEquals("foobar", reply.getDescription());
+    }
+
+    @Test
+    public void partiallySerializeTest() throws InterruptedException, IOException {
+        TestPartiallySerializableObject foo = new TestPartiallySerializableObject();
+        foo.setName("foobar");
+
+        try {
+            TestPartiallySerializableObject reply = template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, TestPartiallySerializableObject.class);
+        } catch (CamelExecutionException e) {
+            // expected
+        }
+        // Make sure we didn't crash the one Consumer thread
+        String reply2 = template.requestBodyAndHeader("direct:rabbitMQ", "partiallySerializeTest1", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
+        assertEquals("partiallySerializeTest1 response", reply2);
     }
 
     @Test

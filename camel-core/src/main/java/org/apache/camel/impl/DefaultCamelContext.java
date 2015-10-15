@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +40,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -1968,7 +1971,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             Map<String, String[]> uriOptions = new LinkedHashMap<String, String[]>();
 
             // insert values from uri
-            Map<String, Object> options = URISupport.parseParameters(u);
+            Map<String, Object> options = EndpointHelper.endpointProperties(this, uri);
 
             // extract consumer. prefix options
             Map<String, Object> consumerOptions = IntrospectionSupport.extractProperties(options, "consumer.");
@@ -2024,12 +2027,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
 
-                if ("path".equals(kind)) {
-                    // if its the path option then we need to grab the actual value from the uri, which is the remainder path
-                    value = URISupport.extractRemainderPath(u, false);
-                    value = URISupport.sanitizePath(value);
-                }
-
                 boolean isUriOption = uriOptions.containsKey(name);
 
                 // always include from uri or path options
@@ -2045,8 +2042,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
             }
 
-            json = ObjectHelper.before(json, "  \"properties\": {");
+            // skip component properties
+            json = ObjectHelper.before(json, "  \"componentProperties\": {");
 
+            // and rewrite properties
             StringBuilder buffer = new StringBuilder("  \"properties\": {");
 
             boolean first = true;

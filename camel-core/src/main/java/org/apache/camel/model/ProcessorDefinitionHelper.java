@@ -613,6 +613,10 @@ public final class ProcessorDefinitionHelper {
     }
 
     private static void addRestoreAction(final Object target, final Map<String, Object> properties) {
+        addRestoreAction(null, target, properties);
+    }
+    
+    private static void addRestoreAction(final CamelContext context, final Object target, final Map<String, Object> properties) {
         if (properties.isEmpty()) {
             return;
         }
@@ -626,7 +630,7 @@ public final class ProcessorDefinitionHelper {
             @Override
             public void run() {
                 try {
-                    IntrospectionSupport.setProperties(null, target, properties);
+                    IntrospectionSupport.setProperties(context, null, target, properties);
                 } catch (Exception e) {
                     LOG.warn("Could not restore definition properties", e);
                 }
@@ -742,7 +746,7 @@ public final class ProcessorDefinitionHelper {
                 }
             }
         }
-        addRestoreAction(definition, changedProperties);
+        addRestoreAction(camelContext, definition, changedProperties);
     }
 
     /**
