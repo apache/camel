@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hbase;
 
+import java.security.PrivilegedAction;
 import java.util.List;
 
 import org.apache.camel.Consumer;
@@ -30,8 +31,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.security.UserGroupInformation;
 
 /**
  * Represents an HBase endpoint.
@@ -66,21 +69,30 @@ public class HBaseEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
 
+	/**
+	 * in the purpose of performance optimization
+	 */
+	private byte[] tableNameBytes;
+
+	private UserGroupInformation ugi = null;
+
     public HBaseEndpoint(String uri, HBaseComponent component, HTablePool tablePool, String tableName) {
         super(uri, component);
         this.tableName = tableName;
         this.tablePool = tablePool;
         if (this.tableName == null) {
             throw new IllegalArgumentException("Table name can not be null");
-        }
+        }else{
+			tableNameBytes = tableName.getBytes();
+		}
     }
 
     public Producer createProducer() throws Exception {
-        return new HBaseProducer(this, tablePool, tableName);
+        return new HBaseProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        HBaseConsumer consumer =  new HBaseConsumer(this, processor, tablePool, tableName);
+        HBaseConsumer consumer =  new HBaseConsumer(this, processor);
         configureConsumer(consumer);
         consumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
         return consumer;
@@ -217,4 +229,23 @@ public class HBaseEndpoint extends DefaultEndpoint {
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
+
+
+	/**
+	 * Gets connection to the table (secured or not, depends on the object initialization)
+	 * please remember to close the table after use
+	 * @return table, remember to close!
+	 */
+	public HTableInterface getTable(){
+		if (ugi!=null){
+			return ugi.doAs(new PrivilegedAction<HTableInterface>() {
+				@Override
+				public HTableInterface run() {
+					return tablePool.getTable(tableNameBytes);
+				}
+			});
+		}else{
+			return tablePool.getTable(tableNameBytes);
+		}
+	}
 }
