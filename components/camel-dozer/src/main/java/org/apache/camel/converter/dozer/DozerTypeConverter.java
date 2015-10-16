@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class DozerTypeConverter extends TypeConverterSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DozerTypeConverter.class);
-    
+
     private final DozerBeanMapper mapper;
 
     public DozerTypeConverter(DozerBeanMapper mapper) {
@@ -53,42 +53,39 @@ public class DozerTypeConverter extends TypeConverterSupport {
 
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
-        // find the map id, so we can provide that when trying to map from source to destination
-        String mapId = null;
-        if (value != null) {
-            Class<?> sourceType = value.getClass();
-            Class<?> destType = type;
-            ClassMappingMetadata metadata = mapper.getMappingMetadata().getClassMapping(sourceType, destType);
-            if (metadata != null) {
-                mapId = metadata.getMapId();
+
+        CamelContext context = exchange != null ? exchange.getContext() : null;
+        ClassLoader appcl = context != null ? context.getApplicationContextClassLoader() : null;
+
+        T result;
+
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            if (appcl != null && appcl != tccl) {
+                LOG.debug("Switching TCCL to: {}", appcl);
+                Thread.currentThread().setContextClassLoader(appcl);
+            }
+
+            // find the map id, so we can provide that when trying to map from source to destination
+            String mapId = null;
+            if (value != null) {
+                Class<?> sourceType = value.getClass();
+                Class<?> destType = type;
+                ClassMappingMetadata metadata = mapper.getMappingMetadata().getClassMapping(sourceType, destType);
+                if (metadata != null) {
+                    mapId = metadata.getMapId();
+                }
+            }
+
+            result = mapper.map(value, type, mapId);
+
+        } finally {
+            if (appcl != null && appcl != tccl) {
+                Thread.currentThread().setContextClassLoader(tccl);
+                LOG.debug("Restored TCCL to: {}", tccl);
             }
         }
 
-        // if the exchange is null, we have no chance to ensure that the TCCL is the one from the CamelContext
-        if (exchange == null) {
-            return mapper.map(value, type, mapId);
-        }
-        
-        T answer = null;
-
-        ClassLoader prev = Thread.currentThread().getContextClassLoader();
-        ClassLoader contextCl = exchange.getContext().getApplicationContextClassLoader();
-        if (contextCl != null) {
-            // otherwise, we ensure that the TCCL is the correct one
-            LOG.debug("Switching TCCL to: {}.", contextCl);
-            try {
-                Thread.currentThread().setContextClassLoader(contextCl);
-                answer = mapper.map(value, type, mapId);
-            } finally {
-                LOG.debug("Restored TCCL to: {}.", prev);
-                Thread.currentThread().setContextClassLoader(prev);
-            }
-        } else {
-            // just try with the current TCCL as-is
-            answer = mapper.map(value, type, mapId);
-        }
-
-        return answer;
+        return result;
     }
-
 }
