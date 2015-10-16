@@ -248,9 +248,11 @@
                 <exclude>**/avro/**/*.avpr</exclude>
                 <exclude>**/OSGI-INF/bundle.info</exclude>
                 <exclude>**/test_rsa*</exclude>
-                <exclude>**/examples/*/src/**/data/**/*.xml</exclude>
+                <exclude>**/data*/**/*.xml</exclude>
                 <exclude>**/dependency-reduced-pom.xml</exclude>
-
+                <exclude>**/Dropbox_API_Terms_and_Conditions.txt</exclude>
+                <exclude>**/MerchandiseRestResource.apxc</exclude>
+                <exclude>**/file-sig-api.txt</exclude>
               </excludes>
             </configuration>
           </plugin>
