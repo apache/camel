@@ -24,7 +24,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.support.*;
 
 /**
  *

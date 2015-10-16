@@ -150,21 +150,12 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     public synchronized XMPPConnection createConnection() throws XMPPException, SmackException, IOException {
-
         if (connection != null && connection.isConnected()) {
             return connection;
         }
 
         if (connection == null) {
-            if (port > 0) {
-                if (getServiceName() == null) {
-                    connection = new XMPPTCPConnection(new ConnectionConfiguration(host, port));
-                } else {
-                    connection = new XMPPTCPConnection(new ConnectionConfiguration(host, port, serviceName));
-                }
-            } else {
-                connection = new XMPPTCPConnection(host);
-            }
+            connection = createConnectionInternal();
         }
 
         connection.connect();
@@ -211,6 +202,15 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         }
 
         return connection;
+    }
+
+    private XMPPTCPConnection createConnectionInternal() {
+        if (port == 0) {
+            port = 5222;
+        }
+        String sName = getServiceName() == null ? host : getServiceName();
+        ConnectionConfiguration conf = new ConnectionConfiguration(host, port, sName);
+        return new XMPPTCPConnection(conf);
     }
 
     /*

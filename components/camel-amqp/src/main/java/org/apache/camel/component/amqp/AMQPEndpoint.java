@@ -22,6 +22,10 @@ import org.apache.camel.spi.UriEndpoint;
 
 @UriEndpoint(scheme = "amqp", extendsScheme = "jms", title = "AMQP",
         syntax = "amqp:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
+/**
+ * AMQP endpoint. This class extends JmsEndpoint because it uses Apache Qpid JMS-compatible client for
+ * performing the AMQP connectivity.
+ */
 public class AMQPEndpoint extends JmsEndpoint {
 
 }

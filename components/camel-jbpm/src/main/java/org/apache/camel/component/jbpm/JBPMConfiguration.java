@@ -19,7 +19,6 @@ package org.apache.camel.component.jbpm;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import javax.naming.InitialContext;
 
 import org.apache.camel.spi.Metadata;
@@ -39,15 +38,10 @@ public class JBPMConfiguration {
     @UriParam(label = "producer", defaultValue = "startProcess")
     private String operation;
     /**
-     * Specifies the key to use
-     */
-    @UriParam
-    private String key;
-    /**
      * Specifies the value to use
      */
     @UriParam
-    private Objects value;
+    private Object value;
     private String processId;
     private Map<String, Object> parameters;
     /**
@@ -56,7 +50,7 @@ public class JBPMConfiguration {
     @UriParam @Metadata(required = "true")
     private Long processInstanceId;
     private String eventType;
-    private String event;
+    private Object event;
     private Integer maxNumber;
     private String identifier;
     private Long workItemId;
@@ -94,19 +88,11 @@ public class JBPMConfiguration {
         this.operation = operation;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public Objects getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(Objects value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -142,11 +128,11 @@ public class JBPMConfiguration {
         this.eventType = eventType;
     }
 
-    public String getEvent() {
+    public Object getEvent() {
         return event;
     }
 
-    public void setEvent(String event) {
+    public void setEvent(Object event) {
         this.event = event;
     }
 
