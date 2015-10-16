@@ -18,13 +18,12 @@ package org.apache.camel.component.metrics.routepolicy;
 
 import java.util.Map;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
 
 /**
  * CAMEL-9226 - check metrics are counted correctly in multicast sub-routes
