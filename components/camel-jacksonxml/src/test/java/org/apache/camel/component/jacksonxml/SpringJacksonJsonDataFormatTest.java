@@ -108,7 +108,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jackson/SpringJacksonJsonDataFormatTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jacksonxml/SpringJacksonJsonDataFormatTest.xml");
     }
 
 }
