@@ -500,7 +500,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @return the builder to continue processing the DSL
      */
     public T tokenize(String token, boolean regex, int group) {
-        return delegate.tokenize(token, regex);
+        return delegate.tokenize(token, regex, group);
     }
 
     /**
