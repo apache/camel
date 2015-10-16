@@ -59,8 +59,8 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     // special when using expression/predicates in the model
     private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
     private static final String[] ONE_OF_LANGUAGES = new String[]{
-            "org.apache.camel.model.language.ExpressionDefinition",
-            "org.apache.camel.model.language.NamespaceAwareExpression"
+        "org.apache.camel.model.language.ExpressionDefinition",
+        "org.apache.camel.model.language.NamespaceAwareExpression"
     };
     // special for inputs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_INPUTS = new String[]{
