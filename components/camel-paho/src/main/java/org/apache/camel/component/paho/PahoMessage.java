@@ -16,56 +16,32 @@
  */
 package org.apache.camel.component.paho;
 
-/**
- * MQTT message properties.
- */
-public class MqttProperties {
+import org.apache.camel.impl.DefaultMessage;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-    private String  topic;
+public class PahoMessage extends DefaultMessage {
 
-    private int     qos;
+    private transient MqttMessage mqttMessage;
 
-    private boolean retain;
-
-    private boolean duplicate;
-
-    public MqttProperties() {}
-
-    public String getTopic() {
-        return topic;
+    public PahoMessage() {
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public PahoMessage(MqttMessage mqttMessage) {
+        this.mqttMessage = mqttMessage;
     }
 
-    public int getQos() {
-        return qos;
+    public MqttMessage getMqttMessage() {
+        return mqttMessage;
     }
 
-    public void setQos(int qos) {
-        this.qos = qos;
+    public void setMqttMessage(MqttMessage mqttMessage) {
+        this.mqttMessage = mqttMessage;
     }
 
-    public boolean isRetain() {
-        return retain;
-    }
-
-    public void setRetain(boolean retain) {
-        this.retain = retain;
-    }
-
-    public boolean isDuplicate() {
-        return duplicate;
-    }
-
-    public void setDuplicate(boolean duplicate) {
-        this.duplicate = duplicate;
-    }
-    
     @Override
-    public String toString() {
-        return "PahoMqttProperties [topic=" + topic + ", qos=" + qos + "]";
+    public PahoMessage newInstance() {
+        return new PahoMessage(mqttMessage);
     }
+
 
 }

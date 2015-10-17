@@ -37,9 +37,6 @@ public class PahoComponentTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:test")
     MockEndpoint mock;
     
-    @EndpointInject(uri = "mock:test2")
-    MockEndpoint mock2;
-
     BrokerService broker;
 
     int mqttPort = AvailablePortFinder.getNextAvailable();
@@ -73,7 +70,6 @@ public class PahoComponentTest extends CamelTestSupport {
                 from("paho:queue?brokerUrl=tcp://localhost:" + mqttPort).to("mock:test");
 
                 from("direct:test2").to("paho:queue?brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho:queue?headerType=PahoOriginalMessage&brokerUrl=tcp://localhost:" + mqttPort).to("mock:test2");
 
                 from("paho:persistenceTest?persistence=FILE&brokerUrl=tcp://localhost:" + mqttPort).to("mock:persistenceTest");
 
@@ -97,9 +93,8 @@ public class PahoComponentTest extends CamelTestSupport {
                 + "?clientId=sampleClient"
                 + "&brokerUrl=tcp://localhost:" + mqttPort
                 + "&qos=2"
-                + "&persistence=file"
-                + "&headerType=testType";
-        
+                + "&persistence=file";
+
         PahoEndpoint endpoint = getMandatoryEndpoint(uri, PahoEndpoint.class);
 
         // Then
@@ -108,7 +103,6 @@ public class PahoComponentTest extends CamelTestSupport {
         assertEquals("tcp://localhost:" + mqttPort, endpoint.getBrokerUrl());
         assertEquals(2, endpoint.getQos());
         assertEquals(PahoPersistence.FILE, endpoint.getPersistence());
-        assertEquals("testType", endpoint.getHeaderType());
     }
 
     @Test
@@ -169,28 +163,29 @@ public class PahoComponentTest extends CamelTestSupport {
 
         // Then
         mock.assertIsSatisfied();
+
         Exchange exchange = mock.getExchanges().get(0);
-        MqttProperties mqttProperties = exchange.getIn().getHeader(PahoConstants.HEASER_MQTT_PROPERTIES,
-                MqttProperties.class);
         String payload = new String((byte[]) exchange.getIn().getBody(), "utf-8");
 
-        assertEquals("queue", new String(mqttProperties.getTopic()));
-        assertEquals(msg, new String(payload));
+        assertEquals("queue", exchange.getIn().getHeader(PahoConstants.MQTT_TOPIC));
+        assertEquals(msg, payload);
     }
 
     @Test
     public void shouldKeepOriginalMessageInHeader() throws InterruptedException {
         // Given
         final String msg = "msg";
-        mock2.expectedBodiesReceived(msg);
+        mock.expectedBodiesReceived(msg);
 
         // When
         template.sendBody("direct:test2", msg);
 
         // Then
-        mock2.assertIsSatisfied();
-        Exchange exchange = mock2.getExchanges().get(0);
-        MqttMessage message = exchange.getIn().getHeader(PahoConstants.HEADER_ORIGINAL_MESSAGE, MqttMessage.class);
+        mock.assertIsSatisfied();
+        Exchange exchange = mock.getExchanges().get(0);
+
+        MqttMessage message = exchange.getIn(PahoMessage.class).getMqttMessage();
+        assertNotNull(message);
         assertEquals(msg, new String(message.getPayload()));
     }
 

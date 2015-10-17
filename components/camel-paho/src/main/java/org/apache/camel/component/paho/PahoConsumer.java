@@ -48,26 +48,8 @@ public class PahoConsumer extends DefaultConsumer {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                String headerKey;
-                Object headerValue;
-                String headerType = getEndpoint().getHeaderType();
-                if (PahoConstants.HEADER_ORIGINAL_MESSAGE.equals(headerType)) {
-                    headerKey = PahoConstants.HEADER_ORIGINAL_MESSAGE;
-                    headerValue = message;
-                } else {
-                    MqttProperties props = new MqttProperties();
-                    props.setTopic(topic);
-                    props.setQos(message.getQos());
-                    props.setRetain(message.isRetained());
-                    props.setDuplicate(message.isDuplicate());
-                    
-                    headerKey = PahoConstants.HEASER_MQTT_PROPERTIES;
-                    headerValue = props;
-                }
-
-                Exchange exchange = getEndpoint().createExchange();
-                exchange.getIn().setBody(message.getPayload());
-                exchange.getIn().setHeader(headerKey, headerValue);
+                LOG.debug("Message arrived on topic: {} -> {}", topic, message);
+                Exchange exchange = getEndpoint().createExchange(message, topic);
 
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     @Override
@@ -79,7 +61,7 @@ public class PahoConsumer extends DefaultConsumer {
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-                LOG.debug("Delivery complete. Token: {}.", token);
+                LOG.debug("Delivery complete. Token: {}", token);
             }
         });
     }

@@ -18,10 +18,11 @@ package org.apache.camel.component.paho;
 
 import java.util.Set;
 
-import static java.lang.System.nanoTime;
+import javax.xml.xpath.XPathConstants;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -32,11 +33,13 @@ import org.apache.camel.spi.UriPath;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.System.nanoTime;
 import static org.apache.camel.component.paho.PahoPersistence.MEMORY;
 
 @UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
@@ -45,15 +48,11 @@ public class PahoEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
 
     // Constants
-
     private static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
-
     private static final int DEFAULT_QOS = 2;
-
     private static final String DEFAULT_QOS_STRING = DEFAULT_QOS + "";
 
     // Configuration members
-
     @UriPath @Metadata(required = "true")
     private String topic;
     @UriParam
@@ -64,8 +63,6 @@ public class PahoEndpoint extends DefaultEndpoint {
     private int qos = DEFAULT_QOS;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = MEMORY;
-    @UriParam(defaultValue = PahoConstants.HEASER_MQTT_PROPERTIES)
-    private String headerType = PahoConstants.HEASER_MQTT_PROPERTIES;
 
     // Collaboration members
     @UriParam
@@ -142,6 +139,17 @@ public class PahoEndpoint extends DefaultEndpoint {
                     connectOptions.size());
         }
         return new MqttConnectOptions();
+    }
+
+    public Exchange createExchange(MqttMessage mqttMessage, String topic) {
+        PahoMessage paho = new PahoMessage();
+        paho.setMqttMessage(mqttMessage);
+        paho.setBody(mqttMessage.getPayload());
+        paho.setHeader(PahoConstants.MQTT_TOPIC, topic);
+
+        Exchange exchange = createExchange();
+        exchange.setIn(paho);
+        return exchange;
     }
 
     // Configuration getters & setters
@@ -225,15 +233,4 @@ public class PahoEndpoint extends DefaultEndpoint {
         this.connectOptions = connOpts;
     }
 
-    public String getHeaderType() {
-        return headerType;
-    }
-
-    /**
-     * Exchange header type.
-     */
-    public void setHeaderType(String headerType) {
-        this.headerType = headerType;
-    }
-    
 }

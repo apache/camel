@@ -27,7 +27,6 @@ public class PahoComponent extends UriEndpointComponent {
     private String brokerUrl;
     private String clientId;
     private MqttConnectOptions connectOptions;
-    private String headerType;
 
     public PahoComponent() {
         super(PahoEndpoint.class);
@@ -45,9 +44,6 @@ public class PahoComponent extends UriEndpointComponent {
         }
         if (connectOptions != null) {
             answer.setConnectOptions(connectOptions);
-        }
-        if (headerType != null) {
-            answer.setHeaderType(headerType);
         }
 
         setProperties(answer, parameters);
@@ -87,14 +83,4 @@ public class PahoComponent extends UriEndpointComponent {
         this.connectOptions = connectOptions;
     }
     
-    public String getHeaderType() {
-        return headerType;
-    }
-
-    /**
-     * Exchange header type.
-     */
-    public void setHeaderType(String headerType) {
-        this.headerType = headerType;
-    }
 }
