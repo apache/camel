@@ -64,6 +64,8 @@ public class PahoEndpoint extends DefaultEndpoint {
     private int qos = DEFAULT_QOS;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = MEMORY;
+    @UriParam(defaultValue = PahoConstants.HEASER_MQTT_PROPERTIES)
+    private String headerType = PahoConstants.HEASER_MQTT_PROPERTIES;
 
     // Collaboration members
     @UriParam
@@ -76,7 +78,12 @@ public class PahoEndpoint extends DefaultEndpoint {
     public PahoEndpoint(String uri, Component component) {
         super(uri, component);
         if (topic == null) {
-            topic = uri.substring(7);
+            int optionIndex = uri.indexOf("?");
+            if (optionIndex > 0) {
+                topic = uri.substring(7, optionIndex);
+            } else {
+                topic = uri.substring(7);
+            }
         }
     }
 
@@ -217,4 +224,16 @@ public class PahoEndpoint extends DefaultEndpoint {
     public void setConnectOptions(MqttConnectOptions connOpts) {
         this.connectOptions = connOpts;
     }
+
+    public String getHeaderType() {
+        return headerType;
+    }
+
+    /**
+     * Exchange header type.
+     */
+    public void setHeaderType(String headerType) {
+        this.headerType = headerType;
+    }
+    
 }
