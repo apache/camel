@@ -1,12 +1,10 @@
-/*
- * #%L
- * Wildfly Camel :: Testsuite
- * %%
- * Copyright (C) 2013 - 2014 RedHat
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -15,9 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
-
 package org.apache.camel.converter.dozer;
 
 import java.util.Arrays;
@@ -39,8 +35,8 @@ public class DozerBeanMappingTest {
     @Test
     public void testMarshalViaDozer() throws Exception {
 
-        CamelContext camelctx = new DefaultCamelContext();
-        camelctx.addRoutes(new RouteBuilder() {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").convertBodyTo(HashMap.class);
@@ -48,25 +44,25 @@ public class DozerBeanMappingTest {
         });
 
         DozerBeanMapperConfiguration mconfig = new DozerBeanMapperConfiguration();
-        mconfig.setMappingFiles(Arrays.asList(new String[] { "bean-to-map-dozer-mappings.xml" }));
-        new DozerTypeConverterLoader(camelctx, mconfig);
+        mconfig.setMappingFiles(Arrays.asList("bean-to-map-dozer-mappings.xml"));
+        new DozerTypeConverterLoader(context, mconfig);
 
-        camelctx.start();
+        context.start();
         try {
-            ProducerTemplate producer = camelctx.createProducerTemplate();
+            ProducerTemplate producer = context.createProducerTemplate();
             Map<?, ?> result = producer.requestBody("direct:start", new Customer("John", "Doe", null), Map.class);
             Assert.assertEquals("John", result.get("firstName"));
             Assert.assertEquals("Doe", result.get("lastName"));
         } finally {
-            camelctx.stop();
+            context.stop();
         }
     }
 
     @Test
     public void testBeanMapping() throws Exception {
 
-        CamelContext camelctx = new DefaultCamelContext();
-        camelctx.addRoutes(new RouteBuilder() {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").convertBodyTo(CustomerB.class);
@@ -74,21 +70,21 @@ public class DozerBeanMappingTest {
         });
 
         DozerBeanMapperConfiguration mconfig = new DozerBeanMapperConfiguration();
-        mconfig.setMappingFiles(Arrays.asList(new String[] { "bean-to-bean-dozer-mappings.xml" }));
-        new DozerTypeConverterLoader(camelctx, mconfig);
+        mconfig.setMappingFiles(Arrays.asList("bean-to-bean-dozer-mappings.xml"));
+        new DozerTypeConverterLoader(context, mconfig);
 
         CustomerA customerA = new CustomerA("Peter", "Post", "SomeStreet", "12345");
 
-        camelctx.start();
+        context.start();
         try {
-            ProducerTemplate producer = camelctx.createProducerTemplate();
+            ProducerTemplate producer = context.createProducerTemplate();
             CustomerB result = producer.requestBody("direct:start", customerA, CustomerB.class);
             Assert.assertEquals(customerA.getFirstName(), result.getFirstName());
             Assert.assertEquals(customerA.getLastName(), result.getLastName());
             Assert.assertEquals(customerA.getStreet(), result.getAddress().getStreet());
             Assert.assertEquals(customerA.getZip(), result.getAddress().getZip());
         } finally {
-            camelctx.stop();
+            context.stop();
         }
     }
 }
