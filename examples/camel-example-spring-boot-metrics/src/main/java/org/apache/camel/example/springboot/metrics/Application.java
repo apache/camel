@@ -19,6 +19,11 @@ package org.apache.camel.example.springboot.metrics;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
+import com.codahale.metrics.MetricFilter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.graphite.GraphiteReporter;
+import com.codahale.metrics.graphite.GraphiteSender;
+import com.codahale.metrics.graphite.GraphiteUDP;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.metrics.routepolicy.MetricsRoutePolicyFactory;
@@ -30,12 +35,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.codahale.metrics.MetricFilter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.graphite.GraphiteReporter;
-import com.codahale.metrics.graphite.GraphiteSender;
-import com.codahale.metrics.graphite.GraphiteUDP;
-
 /**
  * A simple Spring Boot application, with a couple of timed camel routes
  * configured with camel-metrics. Reports metrics to Graphite via
@@ -45,7 +44,7 @@ import com.codahale.metrics.graphite.GraphiteUDP;
 @SpringBootApplication
 public class Application {
 
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 
     @Autowired
     private MetricRegistry metricRegistry;
@@ -54,7 +53,7 @@ public class Application {
      * @param args no command line args required
      */
     public static void main(String[] args) {
-        log.info(" *** STARTING CAMEL METRICS EXAMPLE APPLICATION ***");
+        LOG.info(" *** STARTING CAMEL METRICS EXAMPLE APPLICATION ***");
         SpringApplication.run(Application.class, args);
 
     }
@@ -108,7 +107,7 @@ public class Application {
 
             @Override
             public void beforeApplicationStart(CamelContext context) {
-                log.info("Configuring camel metrics on all routes");
+                LOG.info("Configuring camel metrics on all routes");
                 MetricsRoutePolicyFactory fac = new MetricsRoutePolicyFactory();
                 fac.setMetricsRegistry(metricRegistry);
                 context.addRoutePolicyFactory(fac);
