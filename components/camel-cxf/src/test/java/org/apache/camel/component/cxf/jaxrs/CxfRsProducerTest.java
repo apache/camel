@@ -42,6 +42,10 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+
 public class CxfRsProducerTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1(); 
     private static int port2 = CXFTestSupport.getPort("CxfRsProducerTest.jetty"); 
@@ -468,4 +472,27 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertTrue("The feature should be initialized", feature.initialized);
     }
 
+    @Test
+    public void testProducer422Response() {
+        Exchange exchange = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setPattern(ExchangePattern.InOut);
+                Message message = exchange.getIn();
+                // Try to create a new Customer with an invalid name
+                message.setHeader(Exchange.HTTP_METHOD, "POST");
+                message.setHeader(Exchange.HTTP_PATH, "/customerservice/customers");
+                Customer customer = new Customer();
+                customer.setId(8888);
+                customer.setName("");  // will trigger a 422 response (a common REST server validation response code)
+                message.setBody(customer);
+            }
+        });
+
+        assertNotNull("Expect the exception here", exchange.getException());
+        assertThat("Exception should be a CxfOperationException", exchange.getException(), instanceOf(CxfOperationException.class));
+
+        CxfOperationException cxfOperationException = CxfOperationException.class.cast(exchange.getException());
+
+        assertThat("CXF operation exception has correct response code", cxfOperationException.getStatusCode(), is(422));
+    }
 }
