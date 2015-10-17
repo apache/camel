@@ -40,8 +40,6 @@ import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.transform.dom.DOMSource;
 
-import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -52,6 +50,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.xml.DefaultNamespaceContext;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.xml.security.encryption.EncryptedData;
