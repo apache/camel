@@ -18,7 +18,6 @@ package org.apache.camel.scr.internal;
 
 import java.util.Map;
 
-import org.apache.camel.scr.internal.ScrHelper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
