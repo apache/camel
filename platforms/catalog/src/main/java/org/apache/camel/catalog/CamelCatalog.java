@@ -29,6 +29,11 @@ import javax.management.MXBean;
 public interface CamelCatalog {
 
     /**
+     * The version of this Camel Catalog
+     */
+    String getCatalogVersion();
+
+    /**
      * Find all the component names from the Camel catalog
      */
     List<String> findComponentNames();

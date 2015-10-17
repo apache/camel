@@ -57,6 +57,13 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
 
+    private final VersionHelper version = new VersionHelper();
+
+    @Override
+    public String getCatalogVersion() {
+        return version.getVersion();
+    }
+
     @Override
     public List<String> findComponentNames() {
         List<String> names = new ArrayList<String>();
