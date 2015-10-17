@@ -48,7 +48,8 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
 
         assertTrue(json.contains("\"onConsumeBatchComplete\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"string\""));
         assertTrue(json.contains("\"parametersCount\": { \"kind\": \"parameter\", \"label\": \"producer,advanced\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"onConsume\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"value\": \"foo\""));
+        assertTrue(json.contains("\"onConsume\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", "
+                + "\"value\": \"foo\""));
     }
 
 }

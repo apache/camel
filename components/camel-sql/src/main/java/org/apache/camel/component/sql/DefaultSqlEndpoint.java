@@ -54,7 +54,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
             description = "Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement.")
     private SqlPrepareStatementStrategy prepareStatementStrategy;
     @UriParam(label = "consumer",
-            description = "After processing each row then this query can be executed, if the Exchange was processed successfully, for example to mark the row as processed. The query can have parameter.")
+            description = "After processing each row then this query can be executed, if the Exchange was processed successfully, for example to mark the row as processed. The query can have"
+                    + " parameter.")
     private String onConsume;
     @UriParam(label = "consumer",
             description = "After processing each row then this query can be executed, if the Exchange failed, for example to mark the row as failed. The query can have parameter.")
