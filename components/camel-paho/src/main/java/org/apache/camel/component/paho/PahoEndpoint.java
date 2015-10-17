@@ -18,7 +18,7 @@ package org.apache.camel.component.paho;
 
 import java.util.Set;
 
-import javax.xml.xpath.XPathConstants;
+import static java.lang.System.nanoTime;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -39,7 +39,6 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.System.nanoTime;
 import static org.apache.camel.component.paho.PahoPersistence.MEMORY;
 
 @UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
