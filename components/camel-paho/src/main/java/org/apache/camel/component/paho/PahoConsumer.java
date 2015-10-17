@@ -20,7 +20,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.impl.DefaultConsumer;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -44,7 +43,7 @@ public class PahoConsumer extends DefaultConsumer {
         getEndpoint().getClient().setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
-                LOG.debug("MQTT broker connection lost:", cause);
+                LOG.debug("MQTT broker connection lost due " + cause.getMessage(), cause);
             }
 
             @Override
@@ -65,15 +64,15 @@ public class PahoConsumer extends DefaultConsumer {
                     headerKey = PahoConstants.HEASER_MQTT_PROPERTIES;
                     headerValue = props;
                 }
-                
-                Exchange exchange = ExchangeBuilder.anExchange(getEndpoint().getCamelContext()).
-                        withBody(message.getPayload()).
-                        withHeader(headerKey, headerValue).
-                        build();
+
+                Exchange exchange = getEndpoint().createExchange();
+                exchange.getIn().setBody(message.getPayload());
+                exchange.getIn().setHeader(headerKey, headerValue);
+
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
-
+                        // noop
                     }
                 });
             }
@@ -88,6 +87,7 @@ public class PahoConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+
         if (getEndpoint().getClient().isConnected()) {
             String topic = getEndpoint().getTopic();
             getEndpoint().getClient().unsubscribe(topic);
