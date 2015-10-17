@@ -238,7 +238,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             ));
             for (URL descriptor : CamelBlueprintHelper.getBlueprintDescriptors(getBlueprintDescriptor())) {
                 DocumentBuilder db = dbf.newDocumentBuilder();
-                try (InputStream is = descriptor.openStream()) {
+                InputStream is = null;
+                try {
+                    is = descriptor.openStream();
                     Document doc = db.parse(is);
                     NodeList nl = doc.getDocumentElement().getChildNodes();
                     for (int i = 0; i < nl.getLength(); i++) {
@@ -253,6 +255,10 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
                                 }
                             }
                         }
+                    }
+                } finally {
+                    if (is != null) {
+                        is.close();
                     }
                 }
             }
