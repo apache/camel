@@ -30,6 +30,12 @@ public class CamelCatalogTest extends TestCase {
     private CamelCatalog catalog = new DefaultCamelCatalog();
 
     @Test
+    public void testGetVersion() throws Exception {
+        String version = catalog.getCatalogVersion();
+        assertNotNull(version);
+    }
+
+    @Test
     public void testFindLanguageNames() throws Exception {
         List<String> names = catalog.findLanguageNames();
 
