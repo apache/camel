@@ -238,4 +238,10 @@ public class CamelCatalogTest extends TestCase {
         assertEquals("jms", name);
     }
 
+    @Test
+    public void testListComponentAsJosn() throws Exception {
+        String json = catalog.listComponentAsJson();
+        assertNotNull(json);
+    }
+
 }

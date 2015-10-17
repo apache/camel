@@ -209,4 +209,9 @@ public interface CamelCatalog {
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
     String asEndpointUriXml(String scheme, Map<String, String> properties) throws URISyntaxException;
+
+    /**
+     * Lists all the component summary details in JSon
+     */
+    String listComponentAsJson();
 }
