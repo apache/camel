@@ -1,7 +1,6 @@
 package org.apache.camel.component.kubernetes.consumer.common;
 
 import io.fabric8.kubernetes.api.model.ReplicationController;
-import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.client.Watcher.Action;
 
 public class ReplicationControllerEvent {

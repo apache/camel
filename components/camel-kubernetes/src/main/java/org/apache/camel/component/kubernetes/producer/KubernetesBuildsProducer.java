@@ -18,10 +18,6 @@ package org.apache.camel.component.kubernetes.producer;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.DoneablePersistentVolume;
-import io.fabric8.kubernetes.api.model.PersistentVolume;
-import io.fabric8.kubernetes.api.model.PersistentVolumeList;
-import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ClientOperation;
 import io.fabric8.kubernetes.client.dsl.ClientResource;

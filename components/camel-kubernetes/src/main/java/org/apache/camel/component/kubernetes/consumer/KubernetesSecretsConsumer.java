@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kubernetes.consumer;
 
-import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.Watcher;
@@ -28,7 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
-import org.apache.camel.component.kubernetes.consumer.common.PodEvent;
 import org.apache.camel.component.kubernetes.consumer.common.SecretEvent;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;

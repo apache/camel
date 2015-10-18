@@ -22,9 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * Represents the component that manages {@link GitEndpoint}.
- */
 public class KubernetesComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining,

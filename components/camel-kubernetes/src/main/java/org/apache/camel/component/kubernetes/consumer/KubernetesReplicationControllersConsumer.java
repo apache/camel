@@ -17,7 +17,6 @@
 package org.apache.camel.component.kubernetes.consumer;
 
 import io.fabric8.kubernetes.api.model.ReplicationController;
-import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.Watcher;
 
@@ -29,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.component.kubernetes.consumer.common.ReplicationControllerEvent;
-import org.apache.camel.component.kubernetes.consumer.common.ServiceEvent;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
