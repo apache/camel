@@ -741,7 +741,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
             String scheme = names.get(i);
             String json = componentJSonSchema(scheme);
             // skip first line
-            json = CatalogHelper.between(json, "\"component\": {", "\"componentProperties\"");
+            json = CatalogHelper.between(json, "\"component\": {", "\"componentProperties\": {");
             json = json.trim();
             // skip last comma if not the last
             if (i == names.size() - 1) {
@@ -766,7 +766,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
             String scheme = names.get(i);
             String json = dataFormatJSonSchema(scheme);
             // skip first line
-            json = CatalogHelper.between(json, "\"dataformat\": {", "\"properties\"");
+            json = CatalogHelper.between(json, "\"dataformat\": {", "\"properties\": {");
             json = json.trim();
             // skip last comma if not the last
             if (i == names.size() - 1) {
@@ -791,7 +791,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
             String scheme = names.get(i);
             String json = languageJSonSchema(scheme);
             // skip first line
-            json = CatalogHelper.between(json, "\"language\": {", "\"properties\"");
+            json = CatalogHelper.between(json, "\"language\": {", "\"properties\": {");
             json = json.trim();
             // skip last comma if not the last
             if (i == names.size() - 1) {
@@ -816,7 +816,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
             String scheme = names.get(i);
             String json = modelJSonSchema(scheme);
             // skip first line
-            json = CatalogHelper.between(json, "\"model\": {", "\"properties\"");
+            json = CatalogHelper.between(json, "\"model\": {", "\"properties\": {");
             json = json.trim();
             // skip last comma if not the last
             if (i == names.size() - 1) {

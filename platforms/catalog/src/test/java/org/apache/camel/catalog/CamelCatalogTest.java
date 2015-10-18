@@ -20,10 +20,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
 import org.junit.Test;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
+import static org.junit.Assert.assertNotNull;
 
 public class CamelCatalogTest extends TestCase {
 
@@ -242,24 +245,44 @@ public class CamelCatalogTest extends TestCase {
     public void testListComponentsAsJson() throws Exception {
         String json = catalog.listComponentsAsJson();
         assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
     }
 
     @Test
     public void testListDataFormatsAsJson() throws Exception {
         String json = catalog.listDataFormatsAsJson();
         assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
     }
 
     @Test
     public void testListLanguagesAsJson() throws Exception {
         String json = catalog.listLanguagesAsJson();
         assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
     }
 
     @Test
     public void testListModelsAsJson() throws Exception {
         String json = catalog.listModelsAsJson();
         assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
     }
 
 }
