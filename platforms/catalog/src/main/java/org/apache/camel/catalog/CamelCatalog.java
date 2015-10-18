@@ -211,7 +211,23 @@ public interface CamelCatalog {
     String asEndpointUriXml(String scheme, Map<String, String> properties) throws URISyntaxException;
 
     /**
-     * Lists all the component summary details in JSon
+     * Lists all the components summary details in JSon
      */
-    String listComponentAsJson();
+    String listComponentsAsJson();
+
+    /**
+     * Lists all the data formats summary details in JSon
+     */
+    String listDataFormatsAsJson();
+
+    /**
+     * Lists all the languages summary details in JSon
+     */
+    String listLanguagesAsJson();
+
+    /**
+     * Lists all the models (EIPs) summary details in JSon
+     */
+    String listModelsAsJson();
+
 }

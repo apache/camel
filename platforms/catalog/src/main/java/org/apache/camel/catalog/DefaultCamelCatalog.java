@@ -733,7 +733,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
-    public String listComponentAsJson() {
+    public String listComponentsAsJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         List<String> names = findComponentNames();
@@ -756,4 +756,80 @@ public class DefaultCamelCatalog implements CamelCatalog {
         sb.append("\n]");
         return sb.toString();
     }
+
+    @Override
+    public String listDataFormatsAsJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        List<String> names = findDataFormatNames();
+        for (int i = 0; i < names.size(); i++) {
+            String scheme = names.get(i);
+            String json = dataFormatJSonSchema(scheme);
+            // skip first line
+            json = CatalogHelper.between(json, "\"dataformat\": {", "\"properties\"");
+            json = json.trim();
+            // skip last comma if not the last
+            if (i == names.size() - 1) {
+                json = json.substring(0, json.length() - 1);
+            }
+            sb.append("\n");
+            sb.append("  {\n");
+            sb.append("    ");
+            sb.append(json);
+        }
+
+        sb.append("\n]");
+        return sb.toString();
+    }
+
+    @Override
+    public String listLanguagesAsJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        List<String> names = findLanguageNames();
+        for (int i = 0; i < names.size(); i++) {
+            String scheme = names.get(i);
+            String json = languageJSonSchema(scheme);
+            // skip first line
+            json = CatalogHelper.between(json, "\"language\": {", "\"properties\"");
+            json = json.trim();
+            // skip last comma if not the last
+            if (i == names.size() - 1) {
+                json = json.substring(0, json.length() - 1);
+            }
+            sb.append("\n");
+            sb.append("  {\n");
+            sb.append("    ");
+            sb.append(json);
+        }
+
+        sb.append("\n]");
+        return sb.toString();
+    }
+
+    @Override
+    public String listModelsAsJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        List<String> names = findModelNames();
+        for (int i = 0; i < names.size(); i++) {
+            String scheme = names.get(i);
+            String json = modelJSonSchema(scheme);
+            // skip first line
+            json = CatalogHelper.between(json, "\"model\": {", "\"properties\"");
+            json = json.trim();
+            // skip last comma if not the last
+            if (i == names.size() - 1) {
+                json = json.substring(0, json.length() - 1);
+            }
+            sb.append("\n");
+            sb.append("  {\n");
+            sb.append("    ");
+            sb.append(json);
+        }
+
+        sb.append("\n]");
+        return sb.toString();
+    }
+
 }
