@@ -239,8 +239,26 @@ public class CamelCatalogTest extends TestCase {
     }
 
     @Test
-    public void testListComponentAsJosn() throws Exception {
-        String json = catalog.listComponentAsJson();
+    public void testListComponentsAsJson() throws Exception {
+        String json = catalog.listComponentsAsJson();
+        assertNotNull(json);
+    }
+
+    @Test
+    public void testListDataFormatsAsJson() throws Exception {
+        String json = catalog.listDataFormatsAsJson();
+        assertNotNull(json);
+    }
+
+    @Test
+    public void testListLanguagesAsJson() throws Exception {
+        String json = catalog.listLanguagesAsJson();
+        assertNotNull(json);
+    }
+
+    @Test
+    public void testListModelsAsJson() throws Exception {
+        String json = catalog.listModelsAsJson();
         assertNotNull(json);
     }
 
