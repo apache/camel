@@ -203,6 +203,24 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isNotEmpty(configuration.getClientCertFile())) {
             builder.withClientCertFile(configuration.getClientCertFile());
         }
+        if (ObjectHelper.isNotEmpty(configuration.getApiVersion())) {
+            builder.withApiVersion(configuration.getApiVersion());
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getClientKeyAlgo())) {
+            builder.withClientKeyAlgo(configuration.getClientKeyAlgo());
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getClientKeyData())) {
+            builder.withClientKeyData(configuration.getClientKeyData());
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getClientKeyFile())) {
+            builder.withClientKeyFile(configuration.getClientKeyFile());
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getClientKeyPassphrase())) {
+            builder.withClientKeyPassphrase(configuration.getClientKeyPassphrase());
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getTrustCerts())) {
+            builder.withTrustCerts(configuration.getTrustCerts());
+        }
         
         Config conf = builder.build();
         
