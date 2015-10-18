@@ -16,6 +16,7 @@
  */
 package org.apache.camel.catalog;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -33,6 +34,11 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
 
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
@@ -832,4 +838,28 @@ public class DefaultCamelCatalog implements CamelCatalog {
         return sb.toString();
     }
 
+    @Override
+    public String summaryAsJson() {
+        int archetypes = 0;
+        try {
+            String xml = archetypeCatalogAsXml();
+            Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
+            Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom, XPathConstants.NUMBER);
+            double num = (double) val;
+            archetypes = (int) num;
+        } catch (Exception e) {
+            // ignore
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\n");
+        sb.append("  \"version\": \"" + getCatalogVersion() + "\",\n");
+        sb.append("  \"eips\": " + findModelNames().size() + ",\n");
+        sb.append("  \"components\": " + findComponentNames().size() + ",\n");
+        sb.append("  \"dataformats\": " + findDataFormatNames().size() + ",\n");
+        sb.append("  \"languages\": " + findLanguageNames().size() + ",\n");
+        sb.append("  \"archetypes\": " + archetypes + "\n");
+        sb.append("}");
+        return sb.toString();
+    }
 }
