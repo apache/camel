@@ -230,4 +230,9 @@ public interface CamelCatalog {
      */
     String listModelsAsJson();
 
+    /**
+     * Reports a summary what the catalog contains in JSon
+     */
+    String summaryAsJson();
+
 }
