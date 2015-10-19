@@ -709,6 +709,8 @@
     <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-jaxrs/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-xc/${jackson-version}</bundle>
     <bundle dependency='true'>mvn:org.xerial.snappy/snappy-java/${snappy-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
@@ -990,6 +992,26 @@
   <feature name='camel-krati' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:com.sna-projects.krati/krati/${krati-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-krati/${project.version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+  </feature>
+  <feature name='camel-kubernetes' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
+    <bundle dependency='true'>mvn:com.ning/async-http-client/${ahc-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oauth-provider/${oauth-provider-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
+    <bundle dependency='true'>mvn:io.fabric8/kubernetes-model/${kubernetes-model-version}</bundle>
+    <bundle dependency='true'>mvn:io.fabric8/kubernetes-client/${kubernetes-client-version}</bundle>
+    <bundle dependency='true'>mvn:io.fabric8/openshift-client/${openshift-client-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-kubernetes/${project.version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
   </feature>
   <feature name='camel-ldap' version='${project.version}' resolver='(obr)' start-level='50'>

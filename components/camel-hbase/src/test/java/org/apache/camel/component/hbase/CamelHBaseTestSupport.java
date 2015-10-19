@@ -73,7 +73,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
         try {
             hbaseUtil.startMiniCluster(numServers);
         } catch (Exception e) {
-            LOG.error("couldn't start HBase cluster.", e);
+            LOG.warn("couldn't start HBase cluster. Test is not started, but passed!", e);
             systemReady = false;
         }
     }

@@ -25,6 +25,7 @@ import io.undertow.client.ClientConnection;
 import io.undertow.client.ClientExchange;
 import io.undertow.client.ClientRequest;
 import io.undertow.client.UndertowClient;
+import io.undertow.server.XnioByteBufferPool;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Protocols;
@@ -76,7 +77,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
         try {
             final UndertowClient client = UndertowClient.getInstance();
 
-            IoFuture<ClientConnection> connect = client.connect(endpoint.getHttpURI(), worker, pool, options);
+            IoFuture<ClientConnection> connect = client.connect(endpoint.getHttpURI(), worker, new XnioByteBufferPool(pool), options);
 
             // creating the url to use takes 2-steps
             String url = UndertowHelper.createURL(exchange, getEndpoint());

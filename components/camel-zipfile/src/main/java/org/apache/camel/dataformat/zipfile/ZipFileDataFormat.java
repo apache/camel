@@ -58,7 +58,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
         ZipOutputStream zos = new ZipOutputStream(stream);
         zos.putNextEntry(new ZipEntry(filename));
 
-        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);
+        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
         try {
             IOHelper.copy(is, zos);

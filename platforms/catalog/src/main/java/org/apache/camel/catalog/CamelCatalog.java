@@ -29,6 +29,11 @@ import javax.management.MXBean;
 public interface CamelCatalog {
 
     /**
+     * The version of this Camel Catalog
+     */
+    String getCatalogVersion();
+
+    /**
      * Find all the component names from the Camel catalog
      */
     List<String> findComponentNames();
@@ -204,4 +209,30 @@ public interface CamelCatalog {
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
     String asEndpointUriXml(String scheme, Map<String, String> properties) throws URISyntaxException;
+
+    /**
+     * Lists all the components summary details in JSon
+     */
+    String listComponentsAsJson();
+
+    /**
+     * Lists all the data formats summary details in JSon
+     */
+    String listDataFormatsAsJson();
+
+    /**
+     * Lists all the languages summary details in JSon
+     */
+    String listLanguagesAsJson();
+
+    /**
+     * Lists all the models (EIPs) summary details in JSon
+     */
+    String listModelsAsJson();
+
+    /**
+     * Reports a summary what the catalog contains in JSon
+     */
+    String summaryAsJson();
+
 }

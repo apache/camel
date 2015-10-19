@@ -82,4 +82,5 @@ public class PahoComponent extends UriEndpointComponent {
     public void setConnectOptions(MqttConnectOptions connectOptions) {
         this.connectOptions = connectOptions;
     }
+    
 }
