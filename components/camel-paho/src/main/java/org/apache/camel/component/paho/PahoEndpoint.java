@@ -71,16 +71,9 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     private transient MqttClient client;
 
-    public PahoEndpoint(String uri, Component component) {
+    public PahoEndpoint(String uri, Component component, String topic) {
         super(uri, component);
-        if (topic == null) {
-            int optionIndex = uri.indexOf("?");
-            if (optionIndex > 0) {
-                topic = uri.substring(7, optionIndex);
-            } else {
-                topic = uri.substring(7);
-            }
-        }
+        this.topic = topic;
     }
 
     @Override
