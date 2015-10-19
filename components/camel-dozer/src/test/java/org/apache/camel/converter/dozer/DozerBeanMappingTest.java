@@ -59,6 +59,32 @@ public class DozerBeanMappingTest {
     }
 
     @Test
+    public void testMarshalToInterfaceViaDozer() throws Exception {
+
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").convertBodyTo(Map.class);
+            }
+        });
+
+        DozerBeanMapperConfiguration mconfig = new DozerBeanMapperConfiguration();
+        mconfig.setMappingFiles(Arrays.asList("bean-to-map-dozer-mappings.xml"));
+        new DozerTypeConverterLoader(context, mconfig);
+
+        context.start();
+        try {
+            ProducerTemplate producer = context.createProducerTemplate();
+            Map<?, ?> result = producer.requestBody("direct:start", new Customer("John", "Doe", null), Map.class);
+            Assert.assertEquals("John", result.get("firstName"));
+            Assert.assertEquals("Doe", result.get("lastName"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
     public void testBeanMapping() throws Exception {
 
         CamelContext context = new DefaultCamelContext();

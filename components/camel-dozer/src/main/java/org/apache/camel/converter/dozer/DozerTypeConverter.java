@@ -70,8 +70,7 @@ public class DozerTypeConverter extends TypeConverterSupport {
             String mapId = null;
             if (value != null) {
                 Class<?> sourceType = value.getClass();
-                Class<?> destType = type;
-                ClassMappingMetadata metadata = mapper.getMappingMetadata().getClassMapping(sourceType, destType);
+                ClassMappingMetadata metadata = getClassMappingMetadata(sourceType, type);
                 if (metadata != null) {
                     mapId = metadata.getMapId();
                 }
@@ -86,6 +85,17 @@ public class DozerTypeConverter extends TypeConverterSupport {
             }
         }
 
+        return result;
+    }
+
+    private ClassMappingMetadata getClassMappingMetadata(Class<?> sourceType, Class<?> destType) {
+        ClassMappingMetadata result = null;
+        for (ClassMappingMetadata aux : mapper.getMappingMetadata().getClassMappingsBySource(sourceType)) {
+            if (destType.isAssignableFrom(aux.getDestinationClass())) {
+                result = aux;
+                break;
+            }
+        }
         return result;
     }
 }
