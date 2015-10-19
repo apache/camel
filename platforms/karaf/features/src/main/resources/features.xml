@@ -709,6 +709,8 @@
     <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-jaxrs/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-xc/${jackson-version}</bundle>
     <bundle dependency='true'>mvn:org.xerial.snappy/snappy-java/${snappy-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
