@@ -488,7 +488,7 @@
     <swagger-version>1.3.12</swagger-version>
     <swagger-guava-version>15.0</swagger-guava-version>
     <swagger-bundle-version>1.3.12_1</swagger-bundle-version>
-    <swagger-java-version>1.5.3</swagger-java-version>
+    <swagger-java-version>1.5.4</swagger-java-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.8_1</stringtemplate-bundle-version>
