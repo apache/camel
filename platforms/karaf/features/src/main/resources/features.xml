@@ -1577,22 +1577,45 @@
     <bundle dependency='true'>mvn:org.scala-lang/scala-library/${scala-2.10-version}</bundle>
     <bundle dependency='true'>mvn:org.scala-lang/scala-reflect/${scala-2.10-version}</bundle>
     <bundle>mvn:javax.ws.rs/jsr311-api/${jsr311-api-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${swagger-guava-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-scala_2.10/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-annotations/${swagger-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-core/${swagger-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-jaxrs/${swagger-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${swagger-scala-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-scala-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-scala-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-scala-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-scala-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-scala-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-scala-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-scala_2.10/${jackson2-scala-version}</bundle>
+    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-annotations/${swagger-scala-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-core/${swagger-scala-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-jaxrs/${swagger-scala-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.paranamer/${paranamer-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json4s/${json4s-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-swagger/${project.version}</bundle>
+  </feature>
+  <feature name='camel-swagger-java' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature>http</feature>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:javax.ws.rs/jsr311-api/${jsr311-api-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-xml/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle dependency='true'>mvn:io.swagger/swagger-core/${swagger-java-version}</bundle>
+    <bundle dependency='true'>mvn:io.swagger/swagger-annotations/${swagger-java-version}</bundle>
+    <bundle dependency='true'>mvn:io.swagger/swagger-models/${swagger-java-version}</bundle>
+    <bundle dependency='true'>mvn:io.swagger/swagger-jaxrs/${swagger-java-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-swagger-java/${project.version}</bundle>
   </feature>
   <feature name='camel-syslog' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
