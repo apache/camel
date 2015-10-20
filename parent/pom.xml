@@ -237,8 +237,9 @@
     <ivy-version>2.4.0</ivy-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
-    <jackson2-version>2.6.2</jackson2-version>
-    <jackrabbit-version>2.11.0</jackrabbit-version>
+    <jackson2-scala-version>2.6.1</jackson2-scala-version>
+    <jackson2-version>2.6.3</jackson2-version>
+    <jackrabbit-version>2.11.1</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasper-bundle-version>6.0.44_1</jasper-bundle-version>
     <jasypt-bundle-version>1.9.2_1</jasypt-bundle-version>
@@ -485,9 +486,9 @@
     <squareup-okio-version>1.6.0</squareup-okio-version>
     <sshd-version>0.14.0</sshd-version>
     <stompjms-version>1.19</stompjms-version>
-    <swagger-version>1.3.12</swagger-version>
-    <swagger-guava-version>15.0</swagger-guava-version>
-    <swagger-bundle-version>1.3.12_1</swagger-bundle-version>
+    <swagger-scala-version>1.3.12</swagger-scala-version>
+    <swagger-scala-guava-version>15.0</swagger-scala-guava-version>
+    <swagger-scala-bundle-version>1.3.12_1</swagger-scala-bundle-version>
     <swagger-java-version>1.5.4</swagger-java-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
