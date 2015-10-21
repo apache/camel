@@ -491,4 +491,21 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
     }
+
+    public String getOffsetsStorage() {
+        return configuration.getOffsetsStorage();
+    }
+
+    public void setOffsetsStorage(String offsetsStorage) {
+        configuration.setOffsetsStorage(offsetsStorage);
+    }
+
+    public Boolean isDualCommitEnabled() {
+        return configuration.isDualCommitEnabled();
+    }
+
+    public void setDualCommitEnabled(boolean dualCommitEnabled) {
+        configuration.setDualCommitEnabled(dualCommitEnabled);
+    }
+
 }

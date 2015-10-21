@@ -81,6 +81,10 @@ public class KafkaConfiguration {
     private String autoOffsetReset = "largest";
     @UriParam(label = "consumer")
     private Integer consumerTimeoutMs;
+    @UriParam(label = "consumer", defaultValue = "zookeeper", enums = "zookeeper,kafka")
+    private String offsetsStorage = "zookeeper";
+    @UriParam(label = "consumer", defaultValue = "true")
+    private Boolean dualCommitEnabled = true;
 
     //Zookeepr configuration properties
     @UriParam
@@ -174,6 +178,8 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, "zookeeper.session.timeout.ms", getZookeeperSessionTimeoutMs());
         addPropertyIfNotNull(props, "zookeeper.connection.timeout.ms", getZookeeperConnectionTimeoutMs());
         addPropertyIfNotNull(props, "zookeeper.sync.time.ms", getZookeeperSyncTimeMs());
+        addPropertyIfNotNull(props, "offsets.storage", getOffsetsStorage());
+        addPropertyIfNotNull(props, "dual.commit.enabled", isDualCommitEnabled());
         return props;
     }
 
@@ -742,5 +748,30 @@ public class KafkaConfiguration {
      */
     public void setKeySerializerClass(String keySerializerClass) {
         this.keySerializerClass = keySerializerClass;
+    }
+
+    public String getOffsetsStorage() {
+        return offsetsStorage;
+    }
+
+    /**
+     * Select where offsets should be stored (zookeeper or kafka).
+     */
+    public void setOffsetsStorage(String offsetsStorage) {
+        this.offsetsStorage = offsetsStorage;
+    }
+
+    public Boolean isDualCommitEnabled() {
+        return dualCommitEnabled;
+    }
+
+    /**
+     * If you are using "kafka" as offsets.storage, you can dual commit offsets to ZooKeeper (in addition to Kafka).
+     * This is required during migration from zookeeper-based offset storage to kafka-based offset storage.
+     * With respect to any given consumer group, it is safe to turn this off after all instances within that group have been migrated
+     * to the new version that commits offsets to the broker (instead of directly to ZooKeeper).
+     */
+    public void setDualCommitEnabled(Boolean dualCommitEnabled) {
+        this.dualCommitEnabled = dualCommitEnabled;
     }
 }
