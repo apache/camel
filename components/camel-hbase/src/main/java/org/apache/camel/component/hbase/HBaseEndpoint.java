@@ -68,13 +68,13 @@ public class HBaseEndpoint extends DefaultEndpoint {
     private HBaseRow rowModel;
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
+    @UriParam(description = "UserGroupInformation for HBase communication. If not specified, then Camel talks with HBase without Kerberos")
+    private UserGroupInformation ugi;
 
 	/**
 	 * in the purpose of performance optimization
 	 */
 	private byte[] tableNameBytes;
-
-	private UserGroupInformation ugi = null;
 
     public HBaseEndpoint(String uri, HBaseComponent component, HTablePool tablePool, String tableName) {
         super(uri, component);
