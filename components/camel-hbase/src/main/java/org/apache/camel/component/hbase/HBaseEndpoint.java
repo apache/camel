@@ -230,8 +230,15 @@ public class HBaseEndpoint extends DefaultEndpoint {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
+    /**
+     * Defines privileges to communicate with HBase table by {@link #getTable()}
+      * @param ugi
+     */
+    public void setUgi(UserGroupInformation ugi) {
+        this.ugi = ugi;
+    }
 
-	/**
+    /**
 	 * Gets connection to the table (secured or not, depends on the object initialization)
 	 * please remember to close the table after use
 	 * @return table, remember to close!
