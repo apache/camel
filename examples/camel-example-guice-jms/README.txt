@@ -8,13 +8,16 @@ The example consumes messages from a queue and writes them to the file
 system.
 
 You will need to compile this example first:
+
   mvn compile
   
-To run the example type
+To run the example type:
+
   mvn exec:java
 
 Alternatively to run the example you can also make use of the Guice Maven
-Plugin provided by Camel, so you can instead type
+Plugin provided by Camel, so you can instead type:
+
   mvn guice:run
 
 See the POM of this example about how to make use of this Maven Plugin
