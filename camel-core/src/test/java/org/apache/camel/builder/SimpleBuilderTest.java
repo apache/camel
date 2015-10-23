@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version 
+ * @version
  */
 public class SimpleBuilderTest extends TestSupport {
 
@@ -41,6 +41,19 @@ public class SimpleBuilderTest extends TestSupport {
 
         assertEquals("foo", SimpleBuilder.simple("${body}").evaluate(exchange, String.class));
         assertNull(SimpleBuilder.simple("${header.cheese}").evaluate(exchange, String.class));
+    }
+
+    public void testFormatExpression() throws Exception {
+        exchange.getIn().setHeader("head", "foo");
+
+        assertEquals("foo", SimpleBuilder.simpleF("${header.%s}", "head").evaluate(exchange, String.class));
+        assertNull(SimpleBuilder.simple("${header.cheese}").evaluate(exchange, String.class));
+    }
+
+    public void testFormatExpressionWithResultType() throws Exception {
+        exchange.getIn().setHeader("head", "200");
+
+        assertEquals(200, SimpleBuilder.simpleF("${header.%s}", Integer.class, "head").evaluate(exchange, Object.class));
     }
 
     public void testResultType() throws Exception {

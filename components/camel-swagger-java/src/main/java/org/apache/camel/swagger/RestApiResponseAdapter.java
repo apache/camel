@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public interface RestApiResponseAdapter {
 
-    void addHeader(String name, String value);
+    void setHeader(String name, String value);
 
     void writeBytes(byte[] bytes) throws IOException;
 

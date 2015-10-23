@@ -28,6 +28,8 @@ import java.util.Map;
 import io.undertow.client.ClientExchange;
 import io.undertow.client.ClientRequest;
 import io.undertow.client.ClientResponse;
+import io.undertow.connector.ByteBufferPool;
+import io.undertow.connector.PooledByteBuffer;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
@@ -43,7 +45,6 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xnio.Pooled;
 
 /**
  * DefaultUndertowHttpBinding represent binding used by default, if user doesn't provide any.
@@ -300,8 +301,9 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     }
 
     private byte[] readRequestBody(HttpServerExchange httpExchange) throws IOException {
-        Pooled<ByteBuffer> pooledByteBuffer = httpExchange.getConnection().getBufferPool().allocate();
-        ByteBuffer byteBuffer = pooledByteBuffer.getResource();
+        ByteBufferPool bufferPool = httpExchange.getConnection().getByteBufferPool();
+        PooledByteBuffer pooledByteBuffer = bufferPool.allocate();
+        ByteBuffer byteBuffer = pooledByteBuffer.getBuffer();
 
         byteBuffer.clear();
 
@@ -312,13 +314,14 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         byteBuffer.get(bytes);
 
         byteBuffer.clear();
-        pooledByteBuffer.free();
+        pooledByteBuffer.close();
         return bytes;
     }
 
     private byte[] readResponseBody(ClientExchange httpExchange) throws IOException {
-        Pooled<ByteBuffer> pooledByteBuffer = httpExchange.getConnection().getBufferPool().allocate();
-        ByteBuffer byteBuffer = pooledByteBuffer.getResource();
+        ByteBufferPool bufferPool = httpExchange.getConnection().getBufferPool();
+        PooledByteBuffer pooledByteBuffer = bufferPool.allocate();
+        ByteBuffer byteBuffer = pooledByteBuffer.getBuffer();
 
         byteBuffer.clear();
 
@@ -329,7 +332,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         byteBuffer.get(bytes);
 
         byteBuffer.clear();
-        pooledByteBuffer.free();
+        pooledByteBuffer.close();
         return bytes;
     }
 

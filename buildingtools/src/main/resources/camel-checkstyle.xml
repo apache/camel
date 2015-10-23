@@ -53,7 +53,7 @@ lengths, if/try depths, etc...
     </module>
     
     <module name="FileLength">
-        <property name="max" value="4000"/>
+        <property name="max" value="4500"/>
     </module>
     
     <module name="FileTabCharacter">

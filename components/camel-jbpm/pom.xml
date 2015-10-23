@@ -31,13 +31,6 @@
     <description>Camel JBPM support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            org.apache.camel;version="[2.15,3)",
-            org.apache.camel.impl;version="[2.15,3)",
-            org.apache.camel.spi;version="[2.15,3)",
-            org.apache.camel.util;version="[2.15,3)",
-            *
-        </camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.component.jbpm.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jbpm</camel.osgi.export.service>
     </properties>
@@ -68,7 +61,16 @@
                     <groupId>org.jboss.spec.javax.xml.ws</groupId>
                     <artifactId>jboss-jaxws-api_2.2_spec</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.1.4.GA</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>

@@ -71,6 +71,7 @@
     <module>camel-example-splunk</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-boot</module>
+    <module>camel-example-spring-boot-metrics</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-ws</module>

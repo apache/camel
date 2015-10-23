@@ -27,7 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OptaPlannerProducer extends DefaultProducer {
+
     private static final transient Logger LOGGER = LoggerFactory.getLogger(OptaPlannerProducer.class);
+
     private ExecutorService executor;
     private final OptaPlannerEndpoint endpoint;
     private final OptaPlannerConfiguration configuration;
@@ -68,7 +70,11 @@ public class OptaPlannerProducer extends DefaultProducer {
                 executor.submit(new Runnable() {
                     @Override
                     public void run() {
-                        solver.solve((Solution)body);
+                        try {
+                            solver.solve((Solution) body);
+                        } catch (Throwable e) {
+                            LOGGER.error("Asynchronously solving failed for solverId ({})", solverId, e);
+                        }
                     }
                 });
             } else {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.catalog;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -33,6 +34,11 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
 
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
@@ -56,6 +62,13 @@ public class DefaultCamelCatalog implements CamelCatalog {
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
 
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
+
+    private final VersionHelper version = new VersionHelper();
+
+    @Override
+    public String getCatalogVersion() {
+        return version.getVersion();
+    }
 
     @Override
     public List<String> findComponentNames() {
@@ -447,6 +460,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public Map<String, String> endpointProperties(String uri) throws URISyntaxException {
+        // NOTICE: This logic is similar to org.apache.camel.util.EndpointHelper#endpointProperties
+        // as the catalog also offers similar functionality (without having camel-core on classpath)
+
         // parse the uri
         URI u = new URI(uri);
         String scheme = u.getScheme();
@@ -722,4 +738,128 @@ public class DefaultCamelCatalog implements CamelCatalog {
         return sb.toString();
     }
 
+    @Override
+    public String listComponentsAsJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        List<String> names = findComponentNames();
+        for (int i = 0; i < names.size(); i++) {
+            String scheme = names.get(i);
+            String json = componentJSonSchema(scheme);
+            // skip first line
+            json = CatalogHelper.between(json, "\"component\": {", "\"componentProperties\": {");
+            json = json.trim();
+            // skip last comma if not the last
+            if (i == names.size() - 1) {
+                json = json.substring(0, json.length() - 1);
+            }
+            sb.append("\n");
+            sb.append("  {\n");
+            sb.append("    ");
+            sb.append(json);
+        }
+
+        sb.append("\n]");
+        return sb.toString();
+    }
+
+    @Override
+    public String listDataFormatsAsJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        List<String> names = findDataFormatNames();
+        for (int i = 0; i < names.size(); i++) {
+            String scheme = names.get(i);
+            String json = dataFormatJSonSchema(scheme);
+            // skip first line
+            json = CatalogHelper.between(json, "\"dataformat\": {", "\"properties\": {");
+            json = json.trim();
+            // skip last comma if not the last
+            if (i == names.size() - 1) {
+                json = json.substring(0, json.length() - 1);
+            }
+            sb.append("\n");
+            sb.append("  {\n");
+            sb.append("    ");
+            sb.append(json);
+        }
+
+        sb.append("\n]");
+        return sb.toString();
+    }
+
+    @Override
+    public String listLanguagesAsJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        List<String> names = findLanguageNames();
+        for (int i = 0; i < names.size(); i++) {
+            String scheme = names.get(i);
+            String json = languageJSonSchema(scheme);
+            // skip first line
+            json = CatalogHelper.between(json, "\"language\": {", "\"properties\": {");
+            json = json.trim();
+            // skip last comma if not the last
+            if (i == names.size() - 1) {
+                json = json.substring(0, json.length() - 1);
+            }
+            sb.append("\n");
+            sb.append("  {\n");
+            sb.append("    ");
+            sb.append(json);
+        }
+
+        sb.append("\n]");
+        return sb.toString();
+    }
+
+    @Override
+    public String listModelsAsJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        List<String> names = findModelNames();
+        for (int i = 0; i < names.size(); i++) {
+            String scheme = names.get(i);
+            String json = modelJSonSchema(scheme);
+            // skip first line
+            json = CatalogHelper.between(json, "\"model\": {", "\"properties\": {");
+            json = json.trim();
+            // skip last comma if not the last
+            if (i == names.size() - 1) {
+                json = json.substring(0, json.length() - 1);
+            }
+            sb.append("\n");
+            sb.append("  {\n");
+            sb.append("    ");
+            sb.append(json);
+        }
+
+        sb.append("\n]");
+        return sb.toString();
+    }
+
+    @Override
+    public String summaryAsJson() {
+        int archetypes = 0;
+        try {
+            String xml = archetypeCatalogAsXml();
+            Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
+            Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom, XPathConstants.NUMBER);
+            double num = (double) val;
+            archetypes = (int) num;
+        } catch (Exception e) {
+            // ignore
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\n");
+        sb.append("  \"version\": \"" + getCatalogVersion() + "\",\n");
+        sb.append("  \"eips\": " + findModelNames().size() + ",\n");
+        sb.append("  \"components\": " + findComponentNames().size() + ",\n");
+        sb.append("  \"dataformats\": " + findDataFormatNames().size() + ",\n");
+        sb.append("  \"languages\": " + findLanguageNames().size() + ",\n");
+        sb.append("  \"archetypes\": " + archetypes + "\n");
+        sb.append("}");
+        return sb.toString();
+    }
 }

@@ -1453,6 +1453,12 @@ public class SimpleTest extends LanguageTestSupport {
             Expression expression = SimpleLanguage.simple("random(10)", Integer.class);
             assertTrue(0 <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
         }
+        Expression expression = SimpleLanguage.simple("random(1, 10)", Integer.class);
+        assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+        
+        Expression expression1 = SimpleLanguage.simple("random( 10)", Integer.class);
+        assertTrue(0 <= expression1.evaluate(exchange, Integer.class) && expression1.evaluate(exchange, Integer.class) < max);
+        
         try {
             assertExpression("random(10,21,30)", null);
             fail("Should have thrown exception");

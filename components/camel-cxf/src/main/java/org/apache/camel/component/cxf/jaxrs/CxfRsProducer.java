@@ -401,7 +401,7 @@ public class CxfRsProducer extends DefaultProducer {
     protected CxfOperationException populateCxfRsProducerException(Exchange exchange, Response response, int responseCode) {
         CxfOperationException exception;
         String uri = exchange.getFromEndpoint().getEndpointUri();
-        String statusText = Response.Status.fromStatusCode(responseCode).toString();
+        String statusText = statusTextFromResponseCode(responseCode);
         Map<String, String> headers = parseResponseHeaders(response, exchange);
         //Get the response detail string
         String copy = exchange.getContext().getTypeConverter().convertTo(String.class, response.getEntity());
@@ -420,6 +420,32 @@ public class CxfRsProducer extends DefaultProducer {
         }
 
         return exception;
+    }
+
+    /**
+     * Convert the given HTTP response code to its corresponding status text or
+     * response category. This is useful to avoid creating NPEs if this producer
+     * is presented with an HTTP response code that the JAX-RS API doesn't know.
+     *
+     * @param responseCode the HTTP response code to be converted to status text
+     * @return the status text for the code, or, if JAX-RS doesn't know the code,
+     *         the status category as text
+     */
+    String statusTextFromResponseCode(int responseCode) {
+        Response.Status status = Response.Status.fromStatusCode(responseCode);
+
+        return status != null ? status.toString() : responseCategoryFromCode(responseCode);
+    }
+
+    /**
+     * Return the category of the given HTTP response code, as text. Invalid
+     * codes will result in appropriate text; this method never returns null.
+     *
+     * @param responseCode HTTP response code whose category is to be returned
+     * @return the category of the give response code; never {@code null}.
+     */
+    private String responseCategoryFromCode(int responseCode) {
+        return Response.Status.Family.familyOf(responseCode).name();
     }
 
     protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {

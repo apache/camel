@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
@@ -28,6 +31,12 @@ import static org.apache.camel.catalog.CatalogHelper.loadText;
 public class CamelCatalogTest extends TestCase {
 
     private CamelCatalog catalog = new DefaultCamelCatalog();
+
+    @Test
+    public void testGetVersion() throws Exception {
+        String version = catalog.getCatalogVersion();
+        assertNotNull(version);
+    }
 
     @Test
     public void testFindLanguageNames() throws Exception {
@@ -184,6 +193,12 @@ public class CamelCatalogTest extends TestCase {
 
         assertEquals("queue", map.get("destinationType"));
         assertEquals("foo", map.get("destinationName"));
+
+        map = catalog.endpointProperties("jms:foo");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+
+        assertEquals("foo", map.get("destinationName"));
     }
 
     @Test
@@ -224,6 +239,61 @@ public class CamelCatalogTest extends TestCase {
     public void testEndpointComponentName() throws Exception {
         String name = catalog.endpointComponentName("jms:queue:foo");
         assertEquals("jms", name);
+    }
+
+    @Test
+    public void testListComponentsAsJson() throws Exception {
+        String json = catalog.listComponentsAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testListDataFormatsAsJson() throws Exception {
+        String json = catalog.listDataFormatsAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testListLanguagesAsJson() throws Exception {
+        String json = catalog.listLanguagesAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testListModelsAsJson() throws Exception {
+        String json = catalog.listModelsAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testSummaryAsJson() throws Exception {
+        String json = catalog.summaryAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
     }
 
 }

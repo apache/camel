@@ -63,4 +63,10 @@ public class AMQPComponent extends JmsComponent {
         return new AMQPComponent(ConnectionFactoryImpl.createFromURL(uri));
     }
 
+    public static AMQPComponent amqp10Component(String uri) throws MalformedURLException {
+        ConnectionFactoryImpl connectionFactory = ConnectionFactoryImpl.createFromURL(uri);
+        connectionFactory.setTopicPrefix("topic://");
+        return new AMQPComponent(connectionFactory);
+    }
+
 }
