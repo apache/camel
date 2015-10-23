@@ -71,10 +71,10 @@ public class HBaseEndpoint extends DefaultEndpoint {
     @UriParam(description = "UserGroupInformation for HBase communication. If not specified, then Camel talks with HBase without Kerberos")
     private UserGroupInformation ugi;
 
-	/**
-	 * in the purpose of performance optimization
-	 */
-	private byte[] tableNameBytes;
+    /**
+     * in the purpose of performance optimization
+     */
+    private byte[] tableNameBytes;
 
     public HBaseEndpoint(String uri, HBaseComponent component, HTablePool tablePool, String tableName) {
         super(uri, component);
@@ -82,9 +82,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
         this.tablePool = tablePool;
         if (this.tableName == null) {
             throw new IllegalArgumentException("Table name can not be null");
-        }else{
-			tableNameBytes = tableName.getBytes();
-		}
+        } else {
+            tableNameBytes = tableName.getBytes();
+        }
     }
 
     public Producer createProducer() throws Exception {
@@ -92,7 +92,7 @@ public class HBaseEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        HBaseConsumer consumer =  new HBaseConsumer(this, processor);
+        HBaseConsumer consumer = new HBaseConsumer(this, processor);
         configureConsumer(consumer);
         consumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
         return consumer;
@@ -232,27 +232,27 @@ public class HBaseEndpoint extends DefaultEndpoint {
 
     /**
      * Defines privileges to communicate with HBase table by {@link #getTable()}
-      * @param ugi
+     * @param ugi
      */
     public void setUgi(UserGroupInformation ugi) {
         this.ugi = ugi;
     }
 
     /**
-	 * Gets connection to the table (secured or not, depends on the object initialization)
-	 * please remember to close the table after use
-	 * @return table, remember to close!
-	 */
-	public HTableInterface getTable(){
-		if (ugi!=null){
-			return ugi.doAs(new PrivilegedAction<HTableInterface>() {
-				@Override
-				public HTableInterface run() {
-					return tablePool.getTable(tableNameBytes);
-				}
-			});
-		}else{
-			return tablePool.getTable(tableNameBytes);
-		}
-	}
+     * Gets connection to the table (secured or not, depends on the object initialization)
+     * please remember to close the table after use
+     * @return table, remember to close!
+     */
+    public HTableInterface getTable() {
+        if (ugi != null) {
+            return ugi.doAs(new PrivilegedAction<HTableInterface>() {
+                @Override
+                public HTableInterface run() {
+                    return tablePool.getTable(tableNameBytes);
+                }
+            });
+        } else {
+            return tablePool.getTable(tableNameBytes);
+        }
+    }
 }

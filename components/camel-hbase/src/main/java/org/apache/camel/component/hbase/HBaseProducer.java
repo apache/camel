@@ -57,7 +57,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
     }
 
     public void process(Exchange exchange) throws Exception {
-		HTableInterface table = endpoint.getTable();
+        HTableInterface table = endpoint.getTable();
         try {
 
             updateHeaders(exchange);
@@ -100,7 +100,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 mappingStrategy.applyScanResults(exchange.getOut(), new HBaseData(scanOperationResult));
             }
         } finally {
-			table.close();
+            table.close();
         }
     }
 
@@ -124,7 +124,8 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
 
             ObjectHelper.notNull(family, "HBase column family", cell);
             ObjectHelper.notNull(column, "HBase column", cell);
-            put.add(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column), endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, value));
+            put.add(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column),
+                    endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, value));
         }
         return put;
     }
@@ -168,7 +169,8 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
             List<KeyValue> kvs = result.getColumn(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column));
             if (kvs != null && !kvs.isEmpty()) {
                 //Return the most recent entry.
-                resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(cellModel.getValueType(), kvs.get(0).getValue()));
+                resultCell
+                        .setValue(endpoint.getCamelContext().getTypeConverter().convertTo(cellModel.getValueType(), kvs.get(0).getValue()));
                 resultCell.setTimestamp(kvs.get(0).getTimestamp());
             }
             resultCells.add(resultCell);
@@ -190,7 +192,8 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
      * Performs an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs).
      * The result is <p>the most recent entry</p> for each column.
      */
-    private List<HBaseRow> scanCells(HTableInterface table, HBaseRow model, String start, Integer maxRowScan, List<Filter> filters) throws Exception {
+    private List<HBaseRow> scanCells(HTableInterface table, HBaseRow model, String start, Integer maxRowScan, List<Filter> filters)
+            throws Exception {
         List<HBaseRow> rowSet = new LinkedList<HBaseRow>();
 
         HBaseRow startRow = new HBaseRow(model.getCells());
@@ -249,7 +252,9 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 resultCell.setQualifier(modelCell.getQualifier());
 
                 if (result.getColumnLatest(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column)) != null) {
-                    resultCell.setTimestamp(result.getColumnLatest(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column)).getTimestamp());
+                    resultCell.setTimestamp(
+                            result.getColumnLatest(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column))
+                                    .getTimestamp());
                 }
                 resultRow.getCells().add(resultCell);
             }
@@ -272,7 +277,8 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, endpoint.getMappingStrategyName());
             }
 
-            if (endpoint.getMappingStrategyName() != null && exchange.getIn().getHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME) == null) {
+            if (endpoint.getMappingStrategyName() != null &&
+                    exchange.getIn().getHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME) == null) {
                 exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME, endpoint.getMappingStrategyClassName());
             }
 
