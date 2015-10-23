@@ -54,7 +54,6 @@ public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvForma
      */
     public UniVocityCsvDataFormat setQuoteAllFields(Boolean quoteAllFields) {
         this.quoteAllFields = quoteAllFields;
-        reset();
         return this;
     }
 
@@ -79,7 +78,6 @@ public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvForma
      */
     public UniVocityCsvDataFormat setQuote(Character quote) {
         this.quote = quote;
-        reset();
         return this;
     }
 
@@ -104,7 +102,6 @@ public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvForma
      */
     public UniVocityCsvDataFormat setQuoteEscape(Character quoteEscape) {
         this.quoteEscape = quoteEscape;
-        reset();
         return this;
     }
 
@@ -129,7 +126,6 @@ public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvForma
      */
     public UniVocityCsvDataFormat setDelimiter(Character delimiter) {
         this.delimiter = delimiter;
-        reset();
         return this;
     }
 

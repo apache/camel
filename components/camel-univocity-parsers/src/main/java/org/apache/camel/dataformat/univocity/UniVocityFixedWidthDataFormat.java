@@ -55,7 +55,6 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
      */
     public UniVocityFixedWidthDataFormat setFieldLengths(int[] fieldLengths) {
         this.fieldLengths = fieldLengths;
-        reset();
         return this;
     }
 
@@ -78,7 +77,6 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
      */
     public UniVocityFixedWidthDataFormat setSkipTrailingCharsUntilNewline(Boolean skipTrailingCharsUntilNewline) {
         this.skipTrailingCharsUntilNewline = skipTrailingCharsUntilNewline;
-        reset();
         return this;
     }
 
@@ -101,7 +99,6 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
      */
     public UniVocityFixedWidthDataFormat setRecordEndsOnNewline(Boolean recordEndsOnNewline) {
         this.recordEndsOnNewline = recordEndsOnNewline;
-        reset();
         return this;
     }
 
@@ -126,7 +123,6 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
      */
     public UniVocityFixedWidthDataFormat setPadding(Character padding) {
         this.padding = padding;
-        reset();
         return this;
     }
 
