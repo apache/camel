@@ -16,20 +16,33 @@
  */
 package org.apache.camel.component.timer;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
  */
-public class TimerDelayTest extends ContextTestSupport {
+public class TimerNegativeNoRepeatCountDelayTest extends ContextTestSupport {
 
-    public void testDelay() throws Exception {
+    public void testNegativeDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-
-        assertMockEndpointsSatisfied();
+        List<Exchange> exchanges = mock.getExchanges();
+        
+        context.stopRoute("routeTest");
+        
+        Iterator<Exchange> iter = exchanges.iterator();
+        
+        while (iter.hasNext()) {
+            Exchange exchange = (Exchange) iter.next();
+            assertEquals("negativeDelay", exchange.getProperty(Exchange.TIMER_NAME));
+            assertNotNull(exchange.getProperty(Exchange.TIMER_FIRED_TIME));
+            assertNotNull(exchange.getIn().getHeader("firedTime"));
+        }
     }
 
     @Override
@@ -37,8 +50,7 @@ public class TimerDelayTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer://foo?delay=500&period=0").to("mock:result");
-                
+                from("timer://negativeDelay?delay=-1").routeId("routeTest").to("mock:result");
             }
         };
     }
