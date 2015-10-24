@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -436,12 +437,23 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
         camelContext.addRestDefinitions(getRestCollection().getRests());
 
-        // convert rests into routes so we reuse routes for runtime
+        // convert rests into routes so we they are routes for runtime
+        List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
         for (RestDefinition rest : getRestCollection().getRests()) {
-            List<RouteDefinition> routes = rest.asRouteDefinition(getContext());
-            for (RouteDefinition route : routes) {
-                getRouteCollection().route(route);
+            List<RouteDefinition> list = rest.asRouteDefinition(getContext());
+            routes.addAll(list);
+        }
+        // convert rests api-doc into routes so they are routes for runtime
+        for (RestConfiguration config : camelContext.getRestConfigurations()) {
+            if (config.getApiContextPath() != null) {
+                RouteDefinition route = RestDefinition.asRouteApiDefinition(camelContext, config);
+                routes.add(route);
             }
+        }
+
+        // add the rest routes
+        for (RouteDefinition route : routes) {
+            getRouteCollection().route(route);
         }
     }
 
