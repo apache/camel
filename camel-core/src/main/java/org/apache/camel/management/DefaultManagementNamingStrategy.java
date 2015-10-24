@@ -17,7 +17,9 @@
 package org.apache.camel.management;
 
 import java.net.UnknownHostException;
+import java.util.Map.Entry;
 import java.util.concurrent.ThreadPoolExecutor;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
@@ -33,12 +35,12 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.StaticService;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
+import org.apache.camel.spi.ManagementNamingStrategyAware;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -119,6 +121,11 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_CONTEXT + "=").append(getContextId(endpoint.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ENDPOINT + ",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(getEndpointId(endpoint)));
+        
+        if (endpoint instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)endpoint);
+        }
+        
         return createObjectName(buffer);
     }
 
@@ -128,9 +135,13 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_DATAFORMAT + ",");
         buffer.append(KEY_NAME + "=").append(dataFormat.getClass().getSimpleName());
-        if (!(dataFormat instanceof StaticService)) {
+        
+        if (dataFormat instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)dataFormat);
+        } else if (!(dataFormat instanceof StaticService)) {
             buffer.append("(").append(ObjectHelper.getIdentityHashCode(dataFormat)).append(")");
         }
+        
         return createObjectName(buffer);
     }
 
@@ -140,6 +151,11 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_CONTEXT + "=").append(getContextId(component.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_COMPONENT + ",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(name));
+        
+        if (component instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)component);
+        }
+        
         return createObjectName(buffer);
     }
 
@@ -149,6 +165,11 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_PROCESSOR).append(",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(definition.getId()));
+        
+        if (processor instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)processor);
+        }
+        
         return createObjectName(buffer);
     }
 
@@ -193,10 +214,17 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         } else {
             // create a name based on its instance
             buffer.append(KEY_NAME + "=")
-                .append(builder.getClass().getSimpleName())
-                .append("(").append(ObjectHelper.getIdentityHashCode(builder)).append(")");
+                .append(builder.getClass().getSimpleName());
+
+            if (!(builder instanceof ManagementNamingStrategyAware)) {
+                buffer.append("(").append(ObjectHelper.getIdentityHashCode(builder)).append(")");
+            }
         }
 
+        if (builder instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)builder);
+        }
+        
         return createObjectName(buffer);
     }
 
@@ -210,9 +238,18 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         if (ObjectHelper.isEmpty(name)) {
             name = "Consumer";
         }
+        
+        if (!(consumer instanceof ManagementNamingStrategyAware)) {
+            name += "(" + ObjectHelper.getIdentityHashCode(consumer) + ")";
+        }
+        
         buffer.append(KEY_NAME + "=")
-            .append(name)
-            .append("(").append(ObjectHelper.getIdentityHashCode(consumer)).append(")");
+            .append(name);
+        
+        if (consumer instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)consumer);
+        }
+
         return createObjectName(buffer);
     }
 
@@ -226,9 +263,18 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         if (ObjectHelper.isEmpty(name)) {
             name = "Producer";
         }
+        
+        if (!(producer instanceof ManagementNamingStrategyAware)) {
+            name += "(" + ObjectHelper.getIdentityHashCode(producer) + ")";
+        }
+        
         buffer.append(KEY_NAME + "=")
-            .append(name)
-            .append("(").append(ObjectHelper.getIdentityHashCode(producer)).append(")");
+            .append(name);
+        
+        if (producer instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)producer);
+        }
+        
         return createObjectName(buffer);
     }
 
@@ -241,6 +287,11 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_TRACER + ",");
         buffer.append(KEY_NAME + "=").append(name);
+        
+        if (tracer instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)tracer);
+        }
+        
         return createObjectName(buffer);
     }
 
@@ -256,9 +307,17 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         } else {
             // others can be per instance
             buffer.append(KEY_NAME + "=")
-                .append("EventNotifier")
-                .append("(").append(ObjectHelper.getIdentityHashCode(eventNotifier)).append(")");
+                .append("EventNotifier");
+            
+            if (!(eventNotifier instanceof ManagementNamingStrategyAware)) {
+                buffer.append("(").append(ObjectHelper.getIdentityHashCode(eventNotifier)).append(")");
+            }
         }
+        
+        if (eventNotifier instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)eventNotifier);
+        }
+        
         return createObjectName(buffer);
     }
 
@@ -271,6 +330,11 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ROUTE + ",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(id));
+        
+        if (route instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)route);
+        }
+        
         return createObjectName(buffer);
     }
 
@@ -280,9 +344,13 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
         buffer.append(KEY_NAME + "=").append(service.getClass().getSimpleName());
-        if (!(service instanceof StaticService)) {
+        
+        if (service instanceof ManagementNamingStrategyAware) {
+            appendManagementNamingStrategyAwareAttributes(buffer, (ManagementNamingStrategyAware)service);
+        } else if (!(service instanceof StaticService)) {
             buffer.append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
         }
+        
         return createObjectName(buffer);
     }
 
@@ -346,7 +414,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     private String doGetEndpointId(Endpoint ep) {
-        if (ep.isSingleton()) {
+        if (ep.isSingleton() || ep instanceof ManagementNamingStrategyAware) {
             return ep.getEndpointKey();
         } else {
             // non singleton then add hashcoded id
@@ -368,5 +436,17 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         } catch (MalformedObjectNameException e) {
             throw new MalformedObjectNameException("Could not create ObjectName from: " + text + ". Reason: " + e);
         }
+    }
+    
+    protected void appendManagementNamingStrategyAwareAttributes(StringBuilder buffer, 
+            ManagementNamingStrategyAware object) {
+        
+        for (Entry<String, String> attribute : object.getManagedAttributes().entrySet()) {
+            buffer.append(',')
+                .append(attribute.getKey())
+                .append('=')
+                .append(ObjectName.quote(attribute.getValue()));
+        }
+        
     }
 }
