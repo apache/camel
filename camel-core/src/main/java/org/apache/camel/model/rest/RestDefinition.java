@@ -550,7 +550,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // append options
         Map<String, Object> options = new HashMap<String, Object>();
 
-        String routeId = answer.idOrCreate(camelContext.getNodeIdFactory());
+        String routeId = configuration.getApiContextRouteId();
+        if (routeId == null) {
+            routeId = answer.idOrCreate(camelContext.getNodeIdFactory());
+        }
         options.put("routeId", routeId);
         if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
             options.put("componentName", configuration.getComponent());
