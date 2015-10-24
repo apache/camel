@@ -402,7 +402,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing
             JaxbAnnotationModule module = new JaxbAnnotationModule();
-            LOG.info("Registering module: {}", module);
+            LOG.debug("Registering JaxbAnnotationModule: {}", module);
             objectMapper.registerModule(module);
         }
 
@@ -466,7 +466,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
 
         if (modules != null) {
             for (Module module : modules) {
-                LOG.info("Registering module: {}", module);
+                LOG.debug("Registering module: {}", module);
                 objectMapper.registerModules(module);
             }
         }
@@ -476,7 +476,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
                 String name = o.toString();
                 Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
                 Module module = camelContext.getInjector().newInstance(clazz);
-                LOG.info("Registering module: {} -> {}", name, module);
+                LOG.debug("Registering module: {} -> {}", name, module);
                 objectMapper.registerModule(module);
             }
         }
@@ -488,7 +488,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
                     name = name.substring(1);
                 }
                 Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
-                LOG.info("Registering module: {} -> {}", name, module);
+                LOG.debug("Registering module: {} -> {}", name, module);
                 objectMapper.registerModule(module);
             }
         }
