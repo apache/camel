@@ -106,6 +106,19 @@ public class PahoComponentTest extends CamelTestSupport {
     }
 
     @Test
+    public void shouldUseWildCard() {
+        String[] topics = { "/test/topic", "/test/#", "/test/+/sample", "/test/+/sample/#" };
+
+        for (String topic : topics) {
+            String uri = "paho:" + topic + "?brokerUrl=tcp://localhost:" + mqttPort;
+            PahoEndpoint endpoint = getMandatoryEndpoint(uri, PahoEndpoint.class);
+
+            // Then
+            assertEquals(topic, endpoint.getTopic());
+        }
+    }
+
+    @Test
     public void shouldReadMessageFromMqtt() throws InterruptedException {
         // Given
         String msg = "msg";

@@ -34,7 +34,7 @@ public class PahoComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        PahoEndpoint answer = new PahoEndpoint(uri, this);
+        PahoEndpoint answer = new PahoEndpoint(uri, this, remaining);
 
         if (brokerUrl != null) {
             answer.setBrokerUrl(brokerUrl);
