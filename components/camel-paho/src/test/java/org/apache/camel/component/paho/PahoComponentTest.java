@@ -36,7 +36,10 @@ public class PahoComponentTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:test")
     MockEndpoint mock;
-    
+
+    @EndpointInject(uri = "mock:testCustomizedPaho")
+    MockEndpoint testCustomizedPahoMock;
+
     BrokerService broker;
 
     int mqttPort = AvailablePortFinder.getNextAvailable();
@@ -66,6 +69,9 @@ public class PahoComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                PahoComponent customizedPaho = new PahoComponent();
+                context.addComponent("customizedPaho", customizedPaho);
+
                 from("direct:test").to("paho:queue?brokerUrl=tcp://localhost:" + mqttPort);
                 from("paho:queue?brokerUrl=tcp://localhost:" + mqttPort).to("mock:test");
 
@@ -74,6 +80,9 @@ public class PahoComponentTest extends CamelTestSupport {
                 from("paho:persistenceTest?persistence=FILE&brokerUrl=tcp://localhost:" + mqttPort).to("mock:persistenceTest");
 
                 from("direct:connectOptions").to("paho:registryConnectOptions?connectOptions=#connectOptions&brokerUrl=tcp://localhost:" + mqttPort);
+
+                from("direct:testCustomizedPaho").to("customizedPaho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort);
+                from("paho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort).to("mock:testCustomizedPaho");
             }
         };
     }
@@ -187,6 +196,19 @@ public class PahoComponentTest extends CamelTestSupport {
         MqttMessage message = exchange.getIn(PahoMessage.class).getMqttMessage();
         assertNotNull(message);
         assertEquals(msg, new String(message.getPayload()));
+    }
+
+    @Test
+    public void shouldReadMessageFromCustomizedComponent() throws InterruptedException {
+        // Given
+        String msg = "msg";
+        testCustomizedPahoMock.expectedBodiesReceived(msg);
+
+        // When
+        template.sendBody("direct:testCustomizedPaho", msg);
+
+        // Then
+        testCustomizedPahoMock.assertIsSatisfied();
     }
 
 }
