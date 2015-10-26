@@ -22,6 +22,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
+/**
+ * Component to integrate with the Eclispe Paho MQTT library.
+ */
 public class PahoComponent extends UriEndpointComponent {
 
     private String brokerUrl;
@@ -31,6 +34,8 @@ public class PahoComponent extends UriEndpointComponent {
     public PahoComponent() {
         super(PahoEndpoint.class);
     }
+
+    // Overridden
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -49,6 +54,8 @@ public class PahoComponent extends UriEndpointComponent {
         setProperties(answer, parameters);
         return answer;
     }
+
+    // Getters and setters
 
     public String getBrokerUrl() {
         return brokerUrl;
