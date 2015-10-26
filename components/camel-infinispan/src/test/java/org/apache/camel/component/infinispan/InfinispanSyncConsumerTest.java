@@ -29,7 +29,7 @@ public class InfinispanSyncConsumerTest extends InfinispanTestSupport {
     @Test
     public void consumerReceivedPreAndPostEntryCreatedEventNotifications() throws Exception {
         mockResult.expectedMessageCount(2);
-        mockResult.setMinimumResultWaitTime(900);
+        mockResult.setResultMinimumWaitTime(900);
 
         currentCache().put(KEY_ONE, VALUE_ONE);
         mockResult.assertIsSatisfied();
