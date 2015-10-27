@@ -202,6 +202,13 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @Override
     public Predicate createPredicate(CamelContext camelContext) {
+        if (documentType == null && documentTypeName != null) {
+            try {
+                documentType = camelContext.getClassResolver().resolveMandatoryClass(documentTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
         resolveXPathFactory(camelContext);
         return super.createPredicate(camelContext);
     }
