@@ -54,9 +54,10 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed Route")
 public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener, ManagedRouteMBean {
 
+    public static final String VALUE_UNKNOWN = "Unknown";
+
     private static final Logger LOG = LoggerFactory.getLogger(ManagedRoute.class);
 
-    public static final String VALUE_UNKNOWN = "Unknown";
     protected final Route route;
     protected final String description;
     protected final ModelCamelContext context;
