@@ -305,6 +305,10 @@ public class JmsBinding {
             }
         }
 
+        if (exchange.isFailed()) {
+            answer.setBooleanProperty(JmsConstants.JMS_FAILED_REPLY, true);
+        }
+
         if (answer != null && messageCreatedStrategy != null) {
             messageCreatedStrategy.onMessageCreated(answer, session, exchange, null);
         }

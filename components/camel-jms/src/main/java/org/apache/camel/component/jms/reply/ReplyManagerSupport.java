@@ -29,6 +29,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
@@ -173,6 +174,15 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     if (holder.getOriginalCorrelationId() != null) {
                         JmsMessageHelper.setCorrelationId(message, holder.getOriginalCorrelationId());
                         exchange.getOut().setHeader("JMSCorrelationID", holder.getOriginalCorrelationId());
+                    }
+                    try {
+                        if (message.getBooleanProperty(JmsConstants.JMS_FAILED_REPLY)) {
+                            log.debug("Reply is failed. Setting the exchange as failed:", body);
+                            exchange.getOut().setFault(true);
+                        }
+                    } catch (JMSException e) {
+                        exchange.setException((Exception)body);
+                        log.warn("Exception reading the property: "+JmsConstants.JMS_FAILED_REPLY+" from the JMS message");
                     }
                 }
             } finally {
