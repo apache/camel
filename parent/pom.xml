@@ -421,7 +421,7 @@
     <quartz2-version>2.2.2</quartz2-version>
     <quickfix-bundle-version>1.6.0_1</quickfix-bundle-version>
     <rabbitmq-amqp-client-version>3.5.6</rabbitmq-amqp-client-version>
-    <reflections-bundle-version>0.9.10_1</reflections-bundle-version>
+    <reflections-bundle-version>0.9.10_2</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
     <restlet-version>2.3.1</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
