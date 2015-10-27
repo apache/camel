@@ -23,12 +23,12 @@ import org.apache.camel.RuntimeCamelException;
  * Exception thrown when there is an execution failure.
  */
 public class ExecException extends RuntimeCamelException {
-    
+
+    private static final long serialVersionUID = 7808703605527644487L;
+
     private final int exitValue;
     private final InputStream stdout;
     private final InputStream stderr;
-
-    private static final long serialVersionUID = 7808703605527644487L;
 
     public ExecException(String message, final InputStream stdout, final InputStream stderr, final int exitValue) {
         super(message);
