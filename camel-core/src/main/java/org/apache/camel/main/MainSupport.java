@@ -308,9 +308,6 @@ public abstract class MainSupport extends ServiceSupport {
 
     public void enableTrace() {
         this.trace = true;
-        for (CamelContext context : camelContexts) {
-            context.setTracing(true);
-        }
     }
 
     protected void doStop() throws Exception {
@@ -419,6 +416,9 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        if (trace) {
+            camelContext.setTracing(true);
+        }
         // try to load the route builders from the routeBuilderClasses
         loadRouteBuilders(camelContext);
         for (RouteBuilder routeBuilder : routeBuilders) {
