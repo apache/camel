@@ -37,6 +37,8 @@ import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
@@ -69,6 +71,9 @@ import org.apache.camel.util.ObjectHelper;
  */
 @ManagedResource(description = "Managed CamelContext")
 public class ManagedCamelContext extends ManagedPerformanceCounter implements TimerListener, ManagedCamelContextMBean {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ManagedCamelContext.class);
+
     private final ModelCamelContext context;
     private final LoadTriplet load = new LoadTriplet();
 
@@ -382,8 +387,15 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             return;
         }
 
-        // add will remove existing route first
-        context.addRouteDefinitions(def.getRoutes());
+        try {
+            // add will remove existing route first
+            context.addRouteDefinitions(def.getRoutes());
+        } catch (Exception e) {
+            // log the error as warn as the management api may be invoked remotely over JMX which does not propagate such exception
+            String msg = "Error updating routes from xml: " + xml + " due: " + e.getMessage();
+            LOG.warn(msg, e);
+            throw e;
+        }
     }
 
     public String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
