@@ -33,6 +33,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -65,6 +66,17 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+
+        // the uri must have a leading slash for the context-path matching to work with servlet, and it can be something people
+        // forget to add and then the servlet consumer cannot match the context-path as would have been expected
+        String scheme = ObjectHelper.before(uri, ":");
+        String after = ObjectHelper.after(uri, ":");
+        // rebuild uri to have exactly one leading slash
+        while (after.startsWith("/")) {
+            after = after.substring(1);
+        }
+        after = "/" + after;
+        uri = scheme + ":" + after;
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encodeHttpURI(uri)), parameters);
