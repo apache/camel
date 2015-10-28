@@ -142,8 +142,6 @@ public class WebsocketComponent extends UriEndpointComponent {
                     connector = new SelectChannelConnector();
                 }
 
-                LOG.trace("Jetty Connector added: {}", connector.getName());
-
                 if (endpoint.getPort() != null) {
                     connector.setPort(endpoint.getPort());
                 } else {
@@ -162,6 +160,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                     enableJmx(server);
                 }
                 server.addConnector(connector);
+                LOG.trace("Jetty Connector added: {}", connector.getName());
 
                 // Create ServletContextHandler
                 ServletContextHandler context = createContext(server, connector, endpoint.getHandlers());
@@ -198,6 +197,16 @@ public class WebsocketComponent extends UriEndpointComponent {
                 enableSessionSupport(connectorRef.server, connectorKey);
             }
 
+            WebsocketComponentServlet servlet = addServlet(endpoint.getNodeSynchronization(), prodcon, endpoint.getResourceUri());
+            if (prodcon instanceof WebsocketConsumer) {
+                WebsocketConsumer consumer = WebsocketConsumer.class.cast(prodcon);
+                if (servlet.getConsumer() == null) {
+                    servlet.setConsumer(consumer);
+                }
+                // register the consumer here
+                servlet.connect(consumer);
+            }
+
         }
 
     }
@@ -215,6 +224,10 @@ public class WebsocketComponent extends UriEndpointComponent {
             ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
             if (connectorRef != null) {
                 if (connectorRef.decrement() == 0) {
+                    LOG.info("Stopping Jetty Server as the last connector is disconnecting: {}:{}"
+                            , connectorRef.connector.getHost()
+                            , connectorRef.connector.getPort());
+                    servlets.remove(createPathSpec(endpoint.getResourceUri()));
                     connectorRef.server.removeConnector(connectorRef.connector);
                     if (connectorRef.connector != null) {
                         // static server may not have set a connector
@@ -408,35 +421,10 @@ public class WebsocketComponent extends UriEndpointComponent {
         return createStaticResourcesServer(server, context, home);
     }
 
-    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketProducer producer, String remaining) throws Exception {
+    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketProducerConsumer prodcon, String resourceUri) throws Exception {
 
         // Get Connector from one of the Jetty Instances to add WebSocket Servlet
-        WebsocketEndpoint endpoint = producer.getEndpoint();
-        String key = getConnectorKey(endpoint);
-        ConnectorRef connectorRef = getConnectors().get(key);
-
-        WebsocketComponentServlet servlet;
-
-        if (connectorRef != null) {
-            String pathSpec = createPathSpec(remaining);
-            servlet = servlets.get(pathSpec);
-            if (servlet == null) {
-                // Retrieve Context
-                ServletContextHandler context = (ServletContextHandler) connectorRef.server.getHandler();
-                servlet = createServlet(sync, pathSpec, servlets, context);
-                connectorRef.servlet = servlet;
-                LOG.debug("WebSocket Producer Servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
-            }
-            return servlet;
-        } else {
-            throw new Exception("Jetty instance has not been retrieved for : " + key);
-        }
-    }
-
-    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketConsumer consumer, String resourceUri) throws Exception {
-
-        // Get Connector from one of the Jetty Instances to add WebSocket Servlet
-        WebsocketEndpoint endpoint = consumer.getEndpoint();
+        WebsocketEndpoint endpoint = prodcon.getEndpoint();
         String key = getConnectorKey(endpoint);
         ConnectorRef connectorRef = getConnectors().get(key);
 
@@ -450,15 +438,9 @@ public class WebsocketComponent extends UriEndpointComponent {
                 ServletContextHandler context = (ServletContextHandler) connectorRef.server.getHandler();
                 servlet = createServlet(sync, pathSpec, servlets, context);
                 connectorRef.servlet = servlet;
-                servlets.put(pathSpec, servlet);
                 LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
             }
 
-            if (servlet.getConsumer() == null) {
-                servlet.setConsumer(consumer);
-            }
-            // register the consumer here
-            servlet.connect(consumer);
             return servlet;
         } else {
             throw new Exception("Jetty instance has not been retrieved for : " + key);
