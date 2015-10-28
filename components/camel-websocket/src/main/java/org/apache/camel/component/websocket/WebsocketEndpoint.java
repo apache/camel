@@ -111,22 +111,18 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     public void connect(WebsocketConsumer consumer) throws Exception {
         component.connect(consumer);
-        component.addServlet(sync, consumer, resourceUri);
     }
 
     public void disconnect(WebsocketConsumer consumer) throws Exception {
         component.disconnect(consumer);
-        // Servlet should be removed
     }
 
     public void connect(WebsocketProducer producer) throws Exception {
         component.connect(producer);
-        component.addServlet(sync, producer, resourceUri);
     }
 
     public void disconnect(WebsocketProducer producer) throws Exception {
         component.disconnect(producer);
-        // Servlet should be removed
     }
 
     @Override
@@ -338,6 +334,14 @@ public class WebsocketEndpoint extends DefaultEndpoint {
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
+    }
+
+    /**
+     * NodeSynchronization
+     * @return NodeSynchronization
+     */
+    public NodeSynchronization getNodeSynchronization() {
+        return this.sync;
     }
 
     @Override
