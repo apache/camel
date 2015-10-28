@@ -23,10 +23,10 @@ import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class ServletSetBodyTest extends ServletCamelRouterTestSupport {
+public class ServletNoSlashNeededTest extends ServletCamelRouterTestSupport {
 
     @Test
-    public void testSetBody() throws Exception {
+    public void testNoSlashNeeded() throws Exception {
         WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
         ServletUnitClient client = newClient();
         WebResponse response = client.getResponse(req);
@@ -38,7 +38,7 @@ public class ServletSetBodyTest extends ServletCamelRouterTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("servlet:/hello")
+                from("servlet:hello")
                     .setBody().constant("Bye World");
             }
         };

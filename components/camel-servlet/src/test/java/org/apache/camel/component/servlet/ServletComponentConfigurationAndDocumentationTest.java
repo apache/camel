@@ -31,7 +31,7 @@ public class ServletComponentConfigurationAndDocumentationTest extends CamelTest
     @Test
     public void testComponentConfiguration() throws Exception {
         ServletComponent comp = context.getComponent("servlet", ServletComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("servlet://foo?servletName=MyServlet&proxyHost=myotherproxy&proxyPort=2345");
+        EndpointConfiguration conf = comp.createConfiguration("servlet:foo?servletName=MyServlet&proxyHost=myotherproxy&proxyPort=2345");
 
         assertEquals("myotherproxy", conf.getParameter("proxyHost"));
         assertEquals("2345", conf.getParameter("proxyPort"));

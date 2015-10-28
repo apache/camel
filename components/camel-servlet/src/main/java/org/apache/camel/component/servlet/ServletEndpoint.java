@@ -25,13 +25,17 @@ import org.apache.camel.Producer;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 @UriEndpoint(scheme = "servlet", extendsScheme = "http", title = "Servlet",
-        syntax = "servlet:servletName", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
+        syntax = "servlet:contextPath", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
 public class ServletEndpoint extends HttpCommonEndpoint {
 
     @UriPath(label = "consumer") @Metadata(required = "true")
+    private String contextPath;
+
+    @UriParam(label = "consumer", defaultValue = "CamelServlet")
     private String servletName;
 
     public ServletEndpoint() {
@@ -39,6 +43,18 @@ public class ServletEndpoint extends HttpCommonEndpoint {
 
     public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri) throws URISyntaxException {
         super(endPointURI, component, httpUri);
+        this.contextPath = httpUri.getPath();
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    /**
+     * The context-path to use
+     */
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 
     /**
