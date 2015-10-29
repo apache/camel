@@ -52,6 +52,8 @@ public class WeatherConfiguration {
     private WeatherUnits units = METRIC;
     @UriParam
     private String headerName;
+    @UriParam
+    private String appid;
 
     public WeatherConfiguration(WeatherComponent component) {
         this.component = notNull(component, "component");
@@ -155,6 +157,18 @@ public class WeatherConfiguration {
     public void setLon(String lon) {
         this.lon = lon;
     }
+    
+    /**
+     * APPID ID used to authenticate the user connected to the API Server
+     */
+    public void setAppid(String appid) {
+        this.appid = appid;
+    }
+
+    public String getAppid() {
+        return appid;
+    }
+
 
     public String getQuery() throws Exception {
         return getQuery(getLocation());
@@ -171,7 +185,7 @@ public class WeatherConfiguration {
             // assuming the location is a town or country
             location = "q=" + location;
         }
-
+        
         if (isEmpty(getPeriod())) {
             answer += "weather?" + location;
         } else {
@@ -188,6 +202,10 @@ public class WeatherConfiguration {
             answer += "&mode=" + getMode().name().toLowerCase();
         }
 
+        if (getAppid() != null) {
+            answer += "&APPID=" + getAppid();
+        }
+        
         return answer;
     }
 
