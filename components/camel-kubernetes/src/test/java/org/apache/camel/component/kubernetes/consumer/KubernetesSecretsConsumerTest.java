@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.kubernetes.consumer;
 
-import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.api.model.Secret;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.ning.http.util.Base64;
+
+import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.api.model.Secret;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -30,39 +32,31 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
-import com.ning.http.util.Base64;
-
 public class KubernetesSecretsConsumerTest extends KubernetesTestSupport {
 
-	@EndpointInject(uri = "mock:result")
-	protected MockEndpoint mockResultEndpoint;
+    @EndpointInject(uri = "mock:result")
+    protected MockEndpoint mockResultEndpoint;
 
-	@Test
-	public void createAndDeleteSecrets() throws Exception {
-		if (ObjectHelper.isEmpty(authToken)) {
-			return;
-		}
+    @Test
+    public void createAndDeleteSecrets() throws Exception {
+        if (ObjectHelper.isEmpty(authToken)) {
+            return;
+        }
 
-		mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(
-				KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
-				"DELETED");
-		Exchange ex = template.request("direct:create", new Processor() {
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
+                "DELETED");
+        Exchange ex = template.request("direct:create", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, "test");
                 Map<String, String> labels = new HashMap<String, String>();
                 labels.put("this", "rocks");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRETS_LABELS, labels);
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, labels);
                 Secret s = new Secret();
                 s.setKind("Secret");
                 Map<String, String> mp = new HashMap<String, String>();
@@ -73,8 +67,7 @@ public class KubernetesSecretsConsumerTest extends KubernetesTestSupport {
                 ObjectMeta meta = new ObjectMeta();
                 meta.setName("test");
                 s.setMetadata(meta);
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET, s);
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRET, s);
             }
         });
 
@@ -86,11 +79,8 @@ public class KubernetesSecretsConsumerTest extends KubernetesTestSupport {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_SECRET_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, "test");
             }
         });
 
@@ -98,44 +88,39 @@ public class KubernetesSecretsConsumerTest extends KubernetesTestSupport {
 
         assertTrue(secDeleted);
 
-		Thread.sleep(1 * 1000);
+        Thread.sleep(1 * 1000);
 
-		mockResultEndpoint.assertIsSatisfied();
-	}
+        mockResultEndpoint.assertIsSatisfied();
+    }
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("direct:list")
-						.toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=listSecrets",
-								host, authToken);
-				from("direct:listByLabels")
-						.toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=listSecretsByLabels",
-								host, authToken);
-				from("direct:get")
-						.toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=getSecret",
-								host, authToken);
-				from("direct:create")
-						.toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=createSecret",
-								host, authToken);
-				from("direct:delete")
-						.toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=deleteSecret",
-								host, authToken);
-				fromF("kubernetes://%s?oauthToken=%s&category=secrets", host,
-						authToken).process(new KubernertesProcessor()).to(
-						mockResultEndpoint);
-			}
-		};
-	}
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:list").toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=listSecrets", host,
+                        authToken);
+                from("direct:listByLabels").toF(
+                        "kubernetes://%s?oauthToken=%s&category=secrets&operation=listSecretsByLabels", host,
+                        authToken);
+                from("direct:get").toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=getSecret", host,
+                        authToken);
+                from("direct:create").toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=createSecret", host,
+                        authToken);
+                from("direct:delete").toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=deleteSecret", host,
+                        authToken);
+                fromF("kubernetes://%s?oauthToken=%s&category=secrets", host, authToken)
+                        .process(new KubernertesProcessor()).to(mockResultEndpoint);
+            }
+        };
+    }
 
-	public class KubernertesProcessor implements Processor {
-		@Override
-		public void process(Exchange exchange) throws Exception {
-			Message in = exchange.getIn();
-			log.info("Got event with body: " + in.getBody() + " and action "
-					+ in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
-		}
-	}
+    public class KubernertesProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Message in = exchange.getIn();
+            log.info("Got event with body: " + in.getBody() + " and action "
+                    + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+        }
+    }
 }

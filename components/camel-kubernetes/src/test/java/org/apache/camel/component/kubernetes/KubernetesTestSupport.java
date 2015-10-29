@@ -18,7 +18,7 @@ package org.apache.camel.component.kubernetes;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
 
-public class KubernetesTestSupport extends CamelTestSupport{
+public class KubernetesTestSupport extends CamelTestSupport {
 
     protected String authToken;
     protected String host;

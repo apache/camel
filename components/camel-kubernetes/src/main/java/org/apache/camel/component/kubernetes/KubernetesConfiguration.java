@@ -45,9 +45,9 @@ public class KubernetesConfiguration {
 
     @UriParam(label = "producer", enums = "listNamespaces,listNamespacesByLabels,getNamespace,createNamespace,deleteNamespace,listServices,listServicesByLabels,getService,createService,"
             + "deleteService,listReplicationControllers,listReplicationControllersByLabels,getReplicationController,createReplicationController,deleteReplicationController,listPods,"
-    		+ "listPodsByLabels,getPod,createPod,deletePod,listPersistentVolumes,listPersistentVolumesByLabels,getPersistentVolume,listPersistentVolumesClaims,listPersistentVolumesClaimsByLabels,"
-            + "getPersistentVolumeClaim,createPersistentVolumeClaim,deletePersistentVolumeClaim,listSecrets,listSecretsByLabels,getSecret,createSecret,deleteSecret,listResourcesQuota," 
-    		+ "listResourcesQuotaByLabels,getResourceQuota,createResourceQuota,deleteResourceQuota,listServiceAccounts,listServiceAccountsByLabels,getServiceAccount,createServiceAccount,"
+            + "listPodsByLabels,getPod,createPod,deletePod,listPersistentVolumes,listPersistentVolumesByLabels,getPersistentVolume,listPersistentVolumesClaims,listPersistentVolumesClaimsByLabels,"
+            + "getPersistentVolumeClaim,createPersistentVolumeClaim,deletePersistentVolumeClaim,listSecrets,listSecretsByLabels,getSecret,createSecret,deleteSecret,listResourcesQuota,"
+            + "listResourcesQuotaByLabels,getResourceQuota,createResourceQuota,deleteResourceQuota,listServiceAccounts,listServiceAccountsByLabels,getServiceAccount,createServiceAccount,"
             + "deleteServiceAccount,listNodes,listNodesByLabels,getNode,listBuilds,listBuildsByLabels,getBuild,listBuildConfigs,listBuildConfigsByLabels,getBuildConfig")
     private String operation;
 
@@ -83,7 +83,7 @@ public class KubernetesConfiguration {
 
     @UriParam
     private Boolean trustCerts;
-    
+
     @UriParam(label = "consumer")
     private String namespaceName;
 
@@ -253,7 +253,7 @@ public class KubernetesConfiguration {
     }
 
     /**
-     * The Auth Token 
+     * The Auth Token
      */
     public String getOauthToken() {
         return oauthToken;
@@ -277,27 +277,22 @@ public class KubernetesConfiguration {
     /**
      * The namespace name
      */
-	public String getNamespaceName() {
-		return namespaceName;
-	}
+    public String getNamespaceName() {
+        return namespaceName;
+    }
 
-	public void setNamespaceName(String namespaceName) {
-		this.namespaceName = namespaceName;
-	}
+    public void setNamespaceName(String namespaceName) {
+        this.namespaceName = namespaceName;
+    }
 
-	@Override
-	public String toString() {
-		return "KubernetesConfiguration [masterUrl=" + masterUrl
-				+ ", category=" + category + ", kubernetesClient="
-				+ kubernetesClient + ", username=" + username + ", password="
-				+ password + ", operation=" + operation + ", apiVersion="
-				+ apiVersion + ", caCertData=" + caCertData + ", caCertFile="
-				+ caCertFile + ", clientCertData=" + clientCertData
-				+ ", clientCertFile=" + clientCertFile + ", clientKeyAlgo="
-				+ clientKeyAlgo + ", clientKeyData=" + clientKeyData
-				+ ", clientKeyFile=" + clientKeyFile + ", clientKeyPassphrase="
-				+ clientKeyPassphrase + ", oauthToken=" + oauthToken
-				+ ", trustCerts=" + trustCerts + ", namespaceName="
-				+ namespaceName + "]";
-	}
+    @Override
+    public String toString() {
+        return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient="
+                + kubernetesClient + ", username=" + username + ", password=" + password + ", operation=" + operation
+                + ", apiVersion=" + apiVersion + ", caCertData=" + caCertData + ", caCertFile=" + caCertFile
+                + ", clientCertData=" + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo="
+                + clientKeyAlgo + ", clientKeyData=" + clientKeyData + ", clientKeyFile=" + clientKeyFile
+                + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts="
+                + trustCerts + ", namespaceName=" + namespaceName + "]";
+    }
 }

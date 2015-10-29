@@ -17,7 +17,7 @@
 package org.apache.camel.component.kubernetes;
 
 public interface KubernetesConstants {
-	// Producer
+    // Producer
     String KUBERNETES_OPERATION = "CamelKubernetesOperation";
     String KUBERNETES_NAMESPACE_NAME = "CamelKubernetesNamespaceName";
     String KUBERNETES_NAMESPACE_LABELS = "CamelKubernetesNamespaceLabels";
@@ -50,7 +50,7 @@ public interface KubernetesConstants {
     String KUBERNETES_BUILD_NAME = "CamelKubernetesBuildName";
     String KUBERNETES_BUILD_CONFIGS_LABELS = "CamelKubernetesBuildConfigsLabels";
     String KUBERNETES_BUILD_CONFIG_NAME = "CamelKubernetesBuildConfigName";
-    
+
     // Consumer
     String KUBERNETES_EVENT_ACTION = "CamelKubernetesEventAction";
     String KUBERNETES_EVENT_TIMESTAMP = "CamelKubernetesEventTimestamp";

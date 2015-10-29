@@ -27,14 +27,13 @@ import org.apache.camel.component.kubernetes.consumer.KubernetesPodsConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesReplicationControllersConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesSecretsConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesServicesConsumer;
+import org.apache.camel.component.kubernetes.producer.KubernetesBuildConfigsProducer;
+import org.apache.camel.component.kubernetes.producer.KubernetesBuildsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesNamespacesProducer;
+import org.apache.camel.component.kubernetes.producer.KubernetesNodesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesClaimsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPodsProducer;
-import org.apache.camel.component.kubernetes.KubernetesCategory;
-import org.apache.camel.component.kubernetes.producer.KubernetesBuildConfigsProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesBuildsProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesNodesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesReplicationControllersProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesResourcesQuotaProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesSecretsProducer;
@@ -50,16 +49,14 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "kubernetes", title = "Kubernetes", syntax = "kubernetes:master", label = "cloud,paas")
 public class KubernetesEndpoint extends DefaultEndpoint {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(KubernetesEndpoint.class);
-	
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesEndpoint.class);
+
     @UriParam
     private KubernetesConfiguration configuration;
 
     private DefaultKubernetesClient client;
 
-    public KubernetesEndpoint(String uri, KubernetesComponent component,
-            KubernetesConfiguration config) {
+    public KubernetesEndpoint(String uri, KubernetesComponent component, KubernetesConfiguration config) {
         super(uri, component);
         this.configuration = config;
     }
@@ -67,8 +64,7 @@ public class KubernetesEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getCategory())) {
-            throw new IllegalArgumentException(
-                    "A producer category must be specified");
+            throw new IllegalArgumentException("A producer category must be specified");
         } else {
             String category = configuration.getCategory();
 
@@ -94,25 +90,24 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
             case KubernetesCategory.SECRETS:
                 return new KubernetesSecretsProducer(this);
-                
+
             case KubernetesCategory.RESOURCES_QUOTA:
                 return new KubernetesResourcesQuotaProducer(this);
-                
+
             case KubernetesCategory.SERVICE_ACCOUNTS:
                 return new KubernetesServiceAccountsProducer(this);
-                
+
             case KubernetesCategory.NODES:
                 return new KubernetesNodesProducer(this);
-                
+
             case KubernetesCategory.BUILDS:
                 return new KubernetesBuildsProducer(this);
-                
+
             case KubernetesCategory.BUILD_CONFIGS:
                 return new KubernetesBuildConfigsProducer(this);
-                
+
             default:
-                throw new IllegalArgumentException("The " + category
-                        + " producer category doesn't exist");
+                throw new IllegalArgumentException("The " + category + " producer category doesn't exist");
             }
         }
     }
@@ -120,8 +115,7 @@ public class KubernetesEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (ObjectHelper.isEmpty(configuration.getCategory())) {
-            throw new IllegalArgumentException(
-                    "A consumer category must be specified");
+            throw new IllegalArgumentException("A consumer category must be specified");
         } else {
             String category = configuration.getCategory();
 
@@ -129,19 +123,18 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
             case KubernetesCategory.PODS:
                 return new KubernetesPodsConsumer(this, processor);
-                
+
             case KubernetesCategory.SERVICES:
                 return new KubernetesServicesConsumer(this, processor);
-                
+
             case KubernetesCategory.REPLICATION_CONTROLLERS:
                 return new KubernetesReplicationControllersConsumer(this, processor);
-                
+
             case KubernetesCategory.SECRETS:
                 return new KubernetesSecretsConsumer(this, processor);
-                
+
             default:
-                throw new IllegalArgumentException("The " + category
-                        + " consumer category doesn't exist");
+                throw new IllegalArgumentException("The " + category + " consumer category doesn't exist");
             }
         }
     }
@@ -154,9 +147,9 @@ public class KubernetesEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        
-        client = configuration.getKubernetesClient() != null ? configuration
-                .getKubernetesClient() : createKubernetesClient();
+
+        client = configuration.getKubernetesClient() != null ? configuration.getKubernetesClient()
+                : createKubernetesClient();
     }
 
     @Override
@@ -169,7 +162,6 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         return client;
     }
 
-
     /**
      * The kubernetes Configuration
      */
@@ -179,12 +171,12 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
     private DefaultKubernetesClient createKubernetesClient() {
         LOG.debug("Create Kubernetes client with the following Configuration: " + configuration.toString());
-        
+
         DefaultKubernetesClient kubeClient = new DefaultKubernetesClient();
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());
-        if ((ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper
-                .isNotEmpty(configuration.getPassword()))
+        if ((ObjectHelper.isNotEmpty(configuration.getUsername())
+                && ObjectHelper.isNotEmpty(configuration.getPassword()))
                 && ObjectHelper.isEmpty(configuration.getOauthToken())) {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
@@ -221,9 +213,9 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isNotEmpty(configuration.getTrustCerts())) {
             builder.withTrustCerts(configuration.getTrustCerts());
         }
-        
+
         Config conf = builder.build();
-        
+
         kubeClient = new DefaultKubernetesClient(conf);
         return kubeClient;
     }

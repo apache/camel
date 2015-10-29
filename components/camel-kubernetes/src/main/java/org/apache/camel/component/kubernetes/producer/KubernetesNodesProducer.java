@@ -35,8 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesNodesProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(KubernetesNodesProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesNodesProducer.class);
 
     public KubernetesNodesProducer(KubernetesEndpoint endpoint) {
         super(endpoint);
@@ -51,13 +50,10 @@ public class KubernetesNodesProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String operation;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration()
-                .getOperation())) {
-            operation = exchange.getIn().getHeader(
-                    KubernetesConstants.KUBERNETES_OPERATION, String.class);
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
+            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
-            operation = getEndpoint().getKubernetesConfiguration()
-                    .getOperation();
+            operation = getEndpoint().getKubernetesConfiguration().getOperation();
         }
 
         switch (operation) {
@@ -75,45 +71,36 @@ public class KubernetesNodesProducer extends DefaultProducer {
             break;
 
         default:
-            throw new IllegalArgumentException("Unsupported operation "
-                    + operation);
+            throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        NodeList nodeList = getEndpoint()
-                .getKubernetesClient().nodes().list();
+        NodeList nodeList = getEndpoint().getKubernetesClient().nodes().list();
         exchange.getOut().setBody(nodeList.getItems());
     }
 
-    protected void doListNodesByLabels(Exchange exchange,
-            String operation) throws Exception {
+    protected void doListNodesByLabels(Exchange exchange, String operation) throws Exception {
         NodeList nodeList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NODES_LABELS,
-                Map.class);
-            ClientNonNamespaceOperation<KubernetesClient, Node, NodeList, DoneableNode, ClientResource<Node, DoneableNode>> nodes;
-            nodes = getEndpoint().getKubernetesClient().nodes();
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-            	nodes.withLabel(entry.getKey(), entry.getValue());
-            }
-            nodeList = nodes.list();
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, Map.class);
+        ClientNonNamespaceOperation<KubernetesClient, Node, NodeList, DoneableNode, ClientResource<Node, DoneableNode>> nodes;
+        nodes = getEndpoint().getKubernetesClient().nodes();
+        for (Map.Entry<String, String> entry : labels.entrySet()) {
+            nodes.withLabel(entry.getKey(), entry.getValue());
+        }
+        nodeList = nodes.list();
         exchange.getOut().setBody(nodeList.getItems());
     }
 
-    protected void doGetNode(Exchange exchange, String operation)
-            throws Exception {
+    protected void doGetNode(Exchange exchange, String operation) throws Exception {
         Node node = null;
-        String pvName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NODE_NAME,
-                String.class);
+        String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
             LOG.error("Get a specific Node require specify a Node name");
-            throw new IllegalArgumentException(
-                    "Get a specific Node require specify a Node name");
+            throw new IllegalArgumentException("Get a specific Node require specify a Node name");
         }
         node = getEndpoint().getKubernetesClient().nodes().withName(pvName).get();
-        
+
         exchange.getOut().setBody(node);
     }
 }

@@ -36,8 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesBuildsProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(KubernetesBuildsProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesBuildsProducer.class);
 
     public KubernetesBuildsProducer(KubernetesEndpoint endpoint) {
         super(endpoint);
@@ -52,13 +51,10 @@ public class KubernetesBuildsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String operation;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration()
-                .getOperation())) {
-            operation = exchange.getIn().getHeader(
-                    KubernetesConstants.KUBERNETES_OPERATION, String.class);
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
+            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
-            operation = getEndpoint().getKubernetesConfiguration()
-                    .getOperation();
+            operation = getEndpoint().getKubernetesConfiguration().getOperation();
         }
 
         switch (operation) {
@@ -68,7 +64,7 @@ public class KubernetesBuildsProducer extends DefaultProducer {
             break;
 
         case KubernetesOperations.LIST_BUILD_BY_LABELS_OPERATION:
-        	doListBuildByLabels(exchange, operation);
+            doListBuildByLabels(exchange, operation);
             break;
 
         case KubernetesOperations.GET_BUILD_OPERATION:
@@ -76,64 +72,53 @@ public class KubernetesBuildsProducer extends DefaultProducer {
             break;
 
         default:
-            throw new IllegalArgumentException("Unsupported operation "
-                    + operation);
+            throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        BuildList buildList = getEndpoint()
-                .getKubernetesClient().adapt(OpenShiftClient.class).builds().list();
+        BuildList buildList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().list();
         exchange.getOut().setBody(buildList.getItems());
     }
 
-    protected void doListBuildByLabels(Exchange exchange,
-            String operation) throws Exception {
-    	BuildList buildList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_BUILDS_LABELS,
+    protected void doListBuildByLabels(Exchange exchange, String operation) throws Exception {
+        BuildList buildList = null;
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS,
                 Map.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
             ClientNonNamespaceOperation<OpenShiftClient, Build, BuildList, DoneableBuild, ClientResource<Build, DoneableBuild>> builds;
             builds = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
-            	builds.withLabel(entry.getKey(), entry.getValue());
+                builds.withLabel(entry.getKey(), entry.getValue());
             }
             buildList = builds.list();
         } else {
             ClientOperation<OpenShiftClient, Build, BuildList, DoneableBuild, ClientResource<Build, DoneableBuild>> builds;
             builds = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
-            	builds.withLabel(entry.getKey(), entry.getValue());
+                builds.withLabel(entry.getKey(), entry.getValue());
             }
             buildList = builds.list();
         }
         exchange.getOut().setBody(buildList.getItems());
     }
 
-    protected void doGetBuild(Exchange exchange, String operation)
-            throws Exception {
+    protected void doGetBuild(Exchange exchange, String operation) throws Exception {
         Build build = null;
-        String buildName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_BUILD_NAME,
-                String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String buildName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(buildName)) {
             LOG.error("Get a specific Build require specify a Build name");
-            throw new IllegalArgumentException(
-                    "Get a specific Build require specify a Build name");
+            throw new IllegalArgumentException("Get a specific Build require specify a Build name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Get a specific Build require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Get a specific Build require specify a namespace name");
+            throw new IllegalArgumentException("Get a specific Build require specify a namespace name");
         }
-        build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
-                .inNamespace(namespaceName).withName(buildName).get();
+        build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName)
+                .withName(buildName).get();
         exchange.getOut().setBody(build);
     }
 }

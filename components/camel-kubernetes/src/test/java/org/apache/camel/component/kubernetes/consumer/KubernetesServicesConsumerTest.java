@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.kubernetes.consumer;
 
-import io.fabric8.kubernetes.api.model.IntOrString;
-import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.ServicePort;
-import io.fabric8.kubernetes.api.model.ServiceSpec;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.fabric8.kubernetes.api.model.IntOrString;
+import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.ServicePort;
+import io.fabric8.kubernetes.api.model.ServiceSpec;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -34,112 +34,97 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
-	
+
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mockResultEndpoint;
 
-	@Test
-	public void createAndDeleteService() throws Exception {
-		if (ObjectHelper.isEmpty(authToken)) {
-			return;
-		}
-		
+    @Test
+    public void createAndDeleteService() throws Exception {
+        if (ObjectHelper.isEmpty(authToken)) {
+            return;
+        }
+
         mockResultEndpoint.expectedMessageCount(2);
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "DELETED");
-		Exchange ex = template.request("direct:createService", new Processor() {
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
+                "DELETED");
+        Exchange ex = template.request("direct:createService", new Processor() {
 
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(
-						KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-						"default");
-				exchange.getIn().setHeader(
-						KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
-				Map<String, String> labels = new HashMap<String, String>();
-				labels.put("this", "rocks");
-				exchange.getIn().setHeader(
-						KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
-				ServiceSpec serviceSpec = new ServiceSpec();
-				List<ServicePort> lsp = new ArrayList<ServicePort>();
-				ServicePort sp = new ServicePort();
-				sp.setPort(8080);
-				sp.setTargetPort(new IntOrString(8080));
-				sp.setProtocol("TCP");
-				lsp.add(sp);
-				serviceSpec.setPorts(lsp);
-				Map<String, String> selectorMap = new HashMap<String, String>();
-				selectorMap.put("containter", "test");
-				serviceSpec.setSelector(selectorMap);
-				exchange.getIn().setHeader(
-						KubernetesConstants.KUBERNETES_SERVICE_SPEC,
-						serviceSpec);
-			}
-		});
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
+                Map<String, String> labels = new HashMap<String, String>();
+                labels.put("this", "rocks");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
+                ServiceSpec serviceSpec = new ServiceSpec();
+                List<ServicePort> lsp = new ArrayList<ServicePort>();
+                ServicePort sp = new ServicePort();
+                sp.setPort(8080);
+                sp.setTargetPort(new IntOrString(8080));
+                sp.setProtocol("TCP");
+                lsp.add(sp);
+                serviceSpec.setPorts(lsp);
+                Map<String, String> selectorMap = new HashMap<String, String>();
+                selectorMap.put("containter", "test");
+                serviceSpec.setSelector(selectorMap);
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, serviceSpec);
+            }
+        });
 
-		Service serv = ex.getOut().getBody(Service.class);
+        Service serv = ex.getOut().getBody(Service.class);
 
-		assertEquals(serv.getMetadata().getName(), "test");
+        assertEquals(serv.getMetadata().getName(), "test");
 
-		ex = template.request("direct:deleteService", new Processor() {
+        ex = template.request("direct:deleteService", new Processor() {
 
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(
-						KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-						"default");
-				exchange.getIn().setHeader(
-						KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
-			}
-		});
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
+            }
+        });
 
-		boolean servDeleted = ex.getOut().getBody(Boolean.class);
+        boolean servDeleted = ex.getOut().getBody(Boolean.class);
 
-		assertTrue(servDeleted);
-		
-        Thread.sleep(1*1000);
+        assertTrue(servDeleted);
+
+        Thread.sleep(1 * 1000);
 
         mockResultEndpoint.assertIsSatisfied();
-	}
+    }
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("direct:list")
-						.toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServices",
-								host, authToken);
-				from("direct:listByLabels")
-						.toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServicesByLabels",
-								host, authToken);
-				from("direct:getServices")
-						.toF("kubernetes://%s?oauthToken=%s&category=services&operation=getService",
-								host, authToken);
-				from("direct:createService")
-						.toF("kubernetes://%s?oauthToken=%s&category=services&operation=createService",
-								host, authToken);
-                from("direct:deleteService")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=deleteService",
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:list").toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServices", host,
+                        authToken);
+                from("direct:listByLabels").toF(
+                        "kubernetes://%s?oauthToken=%s&category=services&operation=listServicesByLabels", host,
+                        authToken);
+                from("direct:getServices").toF("kubernetes://%s?oauthToken=%s&category=services&operation=getService",
                         host, authToken);
-				fromF("kubernetes://%s?oauthToken=%s&category=services",
-						host, authToken)
-						.process(new KubernertesProcessor())
-						.to(mockResultEndpoint);
-			}
-		};
-	}
+                from("direct:createService").toF(
+                        "kubernetes://%s?oauthToken=%s&category=services&operation=createService", host, authToken);
+                from("direct:deleteService").toF(
+                        "kubernetes://%s?oauthToken=%s&category=services&operation=deleteService", host, authToken);
+                fromF("kubernetes://%s?oauthToken=%s&category=services", host, authToken)
+                        .process(new KubernertesProcessor()).to(mockResultEndpoint);
+            }
+        };
+    }
 
-	public class KubernertesProcessor implements Processor {
-		@Override
-		public void process(Exchange exchange) throws Exception {
-			Message in = exchange.getIn();
-			log.info("Got event with body: " + in.getBody() + " and action "
-					+ in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
-		}
-	}
+    public class KubernertesProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Message in = exchange.getIn();
+            log.info("Got event with body: " + in.getBody() + " and action "
+                    + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+        }
+    }
 }

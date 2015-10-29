@@ -36,8 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesBuildConfigsProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(KubernetesBuildConfigsProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesBuildConfigsProducer.class);
 
     public KubernetesBuildConfigsProducer(KubernetesEndpoint endpoint) {
         super(endpoint);
@@ -52,13 +51,10 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String operation;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration()
-                .getOperation())) {
-            operation = exchange.getIn().getHeader(
-                    KubernetesConstants.KUBERNETES_OPERATION, String.class);
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
+            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
-            operation = getEndpoint().getKubernetesConfiguration()
-                    .getOperation();
+            operation = getEndpoint().getKubernetesConfiguration().getOperation();
         }
 
         switch (operation) {
@@ -68,7 +64,7 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
             break;
 
         case KubernetesOperations.LIST_BUILD_CONFIGS_BY_LABELS_OPERATION:
-        	doListBuildConfigsByLabels(exchange, operation);
+            doListBuildConfigsByLabels(exchange, operation);
             break;
 
         case KubernetesOperations.GET_BUILD_CONFIG_OPERATION:
@@ -76,61 +72,52 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
             break;
 
         default:
-            throw new IllegalArgumentException("Unsupported operation "
-                    + operation);
+            throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        BuildConfigList buildConfigsList = getEndpoint()
-                .getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs().list();
+        BuildConfigList buildConfigsList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class)
+                .buildConfigs().list();
         exchange.getOut().setBody(buildConfigsList.getItems());
     }
 
-    protected void doListBuildConfigsByLabels(Exchange exchange,
-            String operation) throws Exception {
-    	BuildConfigList buildConfigsList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS,
+    protected void doListBuildConfigsByLabels(Exchange exchange, String operation) throws Exception {
+        BuildConfigList buildConfigsList = null;
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS,
                 Map.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
             ClientNonNamespaceOperation<OpenShiftClient, BuildConfig, BuildConfigList, DoneableBuildConfig, ClientBuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Void>> buildConfigs;
             buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
-            	buildConfigs.withLabel(entry.getKey(), entry.getValue());
+                buildConfigs.withLabel(entry.getKey(), entry.getValue());
             }
             buildConfigsList = buildConfigs.list();
         } else {
             ClientOperation<OpenShiftClient, BuildConfig, BuildConfigList, DoneableBuildConfig, ClientBuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Void>> buildConfigs;
             buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
-            	buildConfigs.withLabel(entry.getKey(), entry.getValue());
+                buildConfigs.withLabel(entry.getKey(), entry.getValue());
             }
             buildConfigsList = buildConfigs.list();
         }
         exchange.getOut().setBody(buildConfigsList.getItems());
     }
 
-    protected void doGetBuildConfig(Exchange exchange, String operation)
-            throws Exception {
+    protected void doGetBuildConfig(Exchange exchange, String operation) throws Exception {
         BuildConfig buildConfig = null;
-        String buildConfigName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_BUILD_CONFIG_NAME,
+        String buildConfigName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIG_NAME,
                 String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(buildConfigName)) {
             LOG.error("Get a specific Build Config require specify a Build Config name");
-            throw new IllegalArgumentException(
-                    "Get a specific Build Config require specify a Build Config name");
+            throw new IllegalArgumentException("Get a specific Build Config require specify a Build Config name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Get a specific Build Config require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Get a specific Build Config require specify a namespace name");
+            throw new IllegalArgumentException("Get a specific Build Config require specify a namespace name");
         }
         buildConfig = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
                 .inNamespace(namespaceName).withName(buildConfigName).get();
