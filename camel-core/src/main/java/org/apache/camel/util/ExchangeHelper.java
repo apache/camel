@@ -788,7 +788,7 @@ public final class ExchangeHelper {
     public static void prepareOutToIn(Exchange exchange) {
         // we are routing using pipes and filters so we need to manually copy OUT to IN
         if (exchange.hasOut()) {
-            exchange.getIn().copyFrom(exchange.getOut());
+            exchange.setIn(exchange.getOut());
             exchange.setOut(null);
         }
     }
