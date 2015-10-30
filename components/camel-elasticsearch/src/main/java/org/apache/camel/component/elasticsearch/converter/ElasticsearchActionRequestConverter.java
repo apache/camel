@@ -51,6 +51,8 @@ public final class ElasticsearchActionRequestConverter {
         } else {
             return null;
         }
+        
+        indexRequest.parent(exchange.getIn().getHeader(ElasticsearchConstants.PARENT, String.class));
 
         return indexRequest
                 .consistencyLevel(exchange.getIn().getHeader(
