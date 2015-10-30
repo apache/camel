@@ -38,6 +38,8 @@ public class WeatherConfiguration {
 
     @UriPath(description = "The name value is not used.") @Metadata(required = "true")
     private String name;
+    @UriParam @Metadata(required = "true")
+    private String appid;
     @UriParam
     private String location = "";
     @UriParam
@@ -52,8 +54,6 @@ public class WeatherConfiguration {
     private WeatherUnits units = METRIC;
     @UriParam
     private String headerName;
-    @UriParam
-    private String appid;
 
     public WeatherConfiguration(WeatherComponent component) {
         this.component = notNull(component, "component");
