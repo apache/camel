@@ -115,7 +115,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         }
         path = FileUtil.stripLeadingSeparator(path);
         String scheme = "http";
-        String host = "";
+        String host = "localhost";
         int port = 0;
 
         RestConfiguration config = configuration;
