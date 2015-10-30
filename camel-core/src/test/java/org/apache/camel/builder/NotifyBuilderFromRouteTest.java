@@ -16,13 +16,16 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.*;
+import java.util.Map;
+
+import org.apache.camel.Consumer;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version 
