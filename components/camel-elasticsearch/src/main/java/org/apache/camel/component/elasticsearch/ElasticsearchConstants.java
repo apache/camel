@@ -35,6 +35,7 @@ public interface ElasticsearchConstants {
     String PARAM_INDEX_TYPE = "indexType";
     String PARAM_CONSISTENCY_LEVEL = "consistencyLevel";
     String PARAM_REPLICATION_TYPE = "replicationType";
+    String PARENT = "parent";
     String TRANSPORT_ADDRESSES = "transportAddresses";
     String PROTOCOL = "elasticsearch";
     String LOCAL_NAME = "local";
