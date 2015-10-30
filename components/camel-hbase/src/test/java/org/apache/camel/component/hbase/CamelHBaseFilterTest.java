@@ -56,9 +56,9 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
             Exchange resp = template.send(endpoint, exchange);
             Message out = resp.getOut();
             assertTrue("two first keys returned",
-                    out.getHeaders().containsValue(body[0][0][0]) &&
-                            out.getHeaders().containsValue(body[1][0][0]) &&
-                            !out.getHeaders().containsValue(body[2][0][0]));
+                    out.getHeaders().containsValue(body[0][0][0])
+                            && out.getHeaders().containsValue(body[1][0][0])
+                            && !out.getHeaders().containsValue(body[2][0][0]));
         }
     }
 
