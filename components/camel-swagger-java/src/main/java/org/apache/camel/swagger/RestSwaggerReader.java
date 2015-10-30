@@ -25,7 +25,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
@@ -98,11 +97,13 @@ public class RestSwaggerReader {
         String pathAsTag = rest.getTag() != null ? rest.getTag() : FileUtil.stripLeadingSeparator(rest.getPath());
         String summary = rest.getDescriptionText();
 
-        // add rest as tag
-        Tag tag = new Tag();
-        tag.description(summary);
-        tag.name(pathAsTag);
-        swagger.addTag(tag);
+        if (ObjectHelper.isNotEmpty(pathAsTag)) {
+            // add rest as tag
+            Tag tag = new Tag();
+            tag.description(summary);
+            tag.name(pathAsTag);
+            swagger.addTag(tag);
+        }
 
         // gather all types in use
         Set<String> types = new LinkedHashSet<>();
@@ -142,8 +143,10 @@ public class RestSwaggerReader {
             String opPath = SwaggerHelper.buildUrl(basePath, verb.getUri());
 
             Operation op = new Operation();
-            // group in the same tag
-            op.addTag(pathAsTag);
+            if (ObjectHelper.isNotEmpty(pathAsTag)) {
+                // group in the same tag
+                op.addTag(pathAsTag);
+            }
 
             // add id as vendor extensions
             op.getVendorExtensions().put("x-camelContextId", camelContextId);
