@@ -89,7 +89,7 @@
     <cdi-api-version>1.1</cdi-api-version>
     <cglib-bundle-version>3.1_1</cglib-bundle-version>
     <cglib-version>3.1</cglib-version>
-    <chunk-templates-version>3.0.1</chunk-templates-version>
+    <chunk-templates-version>3.0.2</chunk-templates-version>
     <classmate-version>1.3.1</classmate-version>
     <cmis-version>0.13.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
