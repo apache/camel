@@ -21,8 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.ning.http.util.Base64;
-
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ServiceAccount;
 
@@ -33,6 +31,7 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 
 public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport {
@@ -103,9 +102,8 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
                 ServiceAccount s = new ServiceAccount();
                 s.setKind("ServiceAccount");
                 Map<String, String> mp = new HashMap<String, String>();
-                mp.put("username", Base64.encode("pippo".getBytes()));
-                mp.put("password", Base64.encode("password".getBytes()));
-
+                mp.put("username", Base64.encodeBase64String("pippo".getBytes()));
+                mp.put("password", Base64.encodeBase64String("password".getBytes()));
                 ObjectMeta meta = new ObjectMeta();
                 meta.setName("test");
                 s.setMetadata(meta);

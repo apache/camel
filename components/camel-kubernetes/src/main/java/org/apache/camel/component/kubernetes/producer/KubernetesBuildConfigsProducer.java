@@ -18,6 +18,7 @@ package org.apache.camel.component.kubernetes.producer;
 
 import java.util.Map;
 
+import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
 import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ClientOperation;
 import io.fabric8.openshift.api.model.BuildConfig;
@@ -88,7 +89,7 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
                 Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<OpenShiftClient, BuildConfig, BuildConfigList, DoneableBuildConfig, ClientBuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Void>> buildConfigs;
+            ClientNonNamespaceOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, ClientBuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Void>> buildConfigs; 
             buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -96,7 +97,7 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
             }
             buildConfigsList = buildConfigs.list();
         } else {
-            ClientOperation<OpenShiftClient, BuildConfig, BuildConfigList, DoneableBuildConfig, ClientBuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Void>> buildConfigs;
+            ClientMixedOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, ClientBuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Void>> buildConfigs; 
             buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 buildConfigs.withLabel(entry.getKey(), entry.getValue());

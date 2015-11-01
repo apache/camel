@@ -25,6 +25,7 @@ import io.fabric8.kubernetes.api.model.ResourceQuotaBuilder;
 import io.fabric8.kubernetes.api.model.ResourceQuotaList;
 import io.fabric8.kubernetes.api.model.ResourceQuotaSpec;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
 import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ClientOperation;
 import io.fabric8.kubernetes.client.dsl.ClientResource;
@@ -107,7 +108,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<KubernetesClient, ResourceQuota, ResourceQuotaList, DoneableResourceQuota, ClientResource<ResourceQuota, DoneableResourceQuota>> resQuota;
+            ClientNonNamespaceOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, ClientResource<ResourceQuota, DoneableResourceQuota>> resQuota; 
             resQuota = getEndpoint().getKubernetesClient().resourceQuotas()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -115,7 +116,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
             }
             resList = resQuota.list();
         } else {
-            ClientOperation<KubernetesClient, ResourceQuota, ResourceQuotaList, DoneableResourceQuota, ClientResource<ResourceQuota, DoneableResourceQuota>> resQuota;
+            ClientMixedOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, ClientResource<ResourceQuota, DoneableResourceQuota>> resQuota; 
             resQuota = getEndpoint().getKubernetesClient().resourceQuotas();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 resQuota.withLabel(entry.getKey(), entry.getValue());
