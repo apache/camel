@@ -19,8 +19,6 @@ package org.apache.camel.component.kubernetes.consumer;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ning.http.util.Base64;
-
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.Secret;
 
@@ -33,6 +31,7 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 
 public class KubernetesSecretsConsumerTest extends KubernetesTestSupport {
@@ -60,8 +59,8 @@ public class KubernetesSecretsConsumerTest extends KubernetesTestSupport {
                 Secret s = new Secret();
                 s.setKind("Secret");
                 Map<String, String> mp = new HashMap<String, String>();
-                mp.put("username", Base64.encode("pippo".getBytes()));
-                mp.put("password", Base64.encode("password".getBytes()));
+                mp.put("username", Base64.encodeBase64String("pippo".getBytes()));
+                mp.put("password", Base64.encodeBase64String("password".getBytes()));
                 s.setData(mp);
 
                 ObjectMeta meta = new ObjectMeta();

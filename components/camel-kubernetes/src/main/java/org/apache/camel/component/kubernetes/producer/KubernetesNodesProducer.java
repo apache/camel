@@ -83,8 +83,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
     protected void doListNodesByLabels(Exchange exchange, String operation) throws Exception {
         NodeList nodeList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, Map.class);
-        ClientNonNamespaceOperation<KubernetesClient, Node, NodeList, DoneableNode, ClientResource<Node, DoneableNode>> nodes;
-        nodes = getEndpoint().getKubernetesClient().nodes();
+        ClientNonNamespaceOperation<Node, NodeList, DoneableNode, ClientResource<Node, DoneableNode>> nodes = getEndpoint().getKubernetesClient().nodes();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             nodes.withLabel(entry.getKey(), entry.getValue());
         }

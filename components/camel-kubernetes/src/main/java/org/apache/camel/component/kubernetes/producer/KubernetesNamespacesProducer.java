@@ -104,8 +104,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "Get a specific namespace by labels require specify a labels set");
         }
-        ClientNonNamespaceOperation<KubernetesClient, Namespace, NamespaceList, DoneableNamespace, ClientResource<Namespace, DoneableNamespace>> namespaces;
-        namespaces = getEndpoint().getKubernetesClient().namespaces();
+        ClientNonNamespaceOperation<Namespace, NamespaceList, DoneableNamespace, ClientResource<Namespace, DoneableNamespace>> namespaces = getEndpoint().getKubernetesClient().namespaces();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             namespaces.withLabel(entry.getKey(), entry.getValue());
         }

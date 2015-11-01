@@ -25,6 +25,7 @@ import io.fabric8.kubernetes.api.model.PersistentVolumeClaimBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimList;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
 import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ClientOperation;
 import io.fabric8.kubernetes.client.dsl.ClientResource;
@@ -109,18 +110,16 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<KubernetesClient, PersistentVolumeClaim, PersistentVolumeClaimList, 
-                DoneablePersistentVolumeClaim, ClientResource<PersistentVolumeClaim, DoneablePersistentVolumeClaim>> pvcs;
-            pvcs = getEndpoint().getKubernetesClient().persistentVolumeClaims()
+            ClientNonNamespaceOperation<PersistentVolumeClaim, PersistentVolumeClaimList, DoneablePersistentVolumeClaim, 
+            ClientResource<PersistentVolumeClaim, DoneablePersistentVolumeClaim>> pvcs = getEndpoint().getKubernetesClient().persistentVolumeClaims()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 pvcs.withLabel(entry.getKey(), entry.getValue());
             }
             pvcList = pvcs.list();
         } else {
-            ClientOperation<KubernetesClient, PersistentVolumeClaim, PersistentVolumeClaimList, 
-                DoneablePersistentVolumeClaim, ClientResource<PersistentVolumeClaim, DoneablePersistentVolumeClaim>> pvcs;
-            pvcs = getEndpoint().getKubernetesClient().persistentVolumeClaims();
+            ClientMixedOperation<PersistentVolumeClaim, PersistentVolumeClaimList, DoneablePersistentVolumeClaim, 
+            ClientResource<PersistentVolumeClaim, DoneablePersistentVolumeClaim>> pvcs = getEndpoint().getKubernetesClient().persistentVolumeClaims();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 pvcs.withLabel(entry.getKey(), entry.getValue());
             }

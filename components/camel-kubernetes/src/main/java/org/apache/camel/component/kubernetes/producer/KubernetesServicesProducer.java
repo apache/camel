@@ -25,6 +25,7 @@ import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
 import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ClientOperation;
 import io.fabric8.kubernetes.client.dsl.ClientResource;
@@ -114,7 +115,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<KubernetesClient, Service, ServiceList, DoneableService, ClientResource<Service, DoneableService>> services;
+            ClientNonNamespaceOperation<Service, ServiceList, DoneableService, ClientResource<Service, DoneableService>> services; 
             services = getEndpoint().getKubernetesClient().services()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -122,7 +123,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
             }
             servicesList = services.list();
         } else {
-            ClientOperation<KubernetesClient, Service, ServiceList, DoneableService, ClientResource<Service, DoneableService>> services;
+            ClientMixedOperation<Service, ServiceList, DoneableService, ClientResource<Service, DoneableService>> services; 
             services = getEndpoint().getKubernetesClient().services();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 services.withLabel(entry.getKey(), entry.getValue());
