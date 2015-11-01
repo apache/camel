@@ -716,6 +716,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         int range = 0;
         boolean first = true;
+        boolean hasQuestionmark = false;
         for (int i = 0; i < options.size(); i++) {
             String key = options.get(i);
             String key2 = options2.get(i);
@@ -726,6 +727,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 if (!first) {
                     sb.append(token);
                 }
+                hasQuestionmark |= token.contains("?") || key.contains("?");
                 sb.append(key2);
                 first = false;
             }
@@ -737,11 +739,13 @@ public class DefaultCamelCatalog implements CamelCatalog {
             String key2 = options2.get(range);
             sb.append(token);
             sb.append(key2);
+            hasQuestionmark |= token.contains("?") || key2.contains("?");
             range++;
         }
 
         if (!copy.isEmpty()) {
-            sb.append('?');
+            // the last option may already contain a ? char, if so we should use & instead of ?
+            sb.append(hasQuestionmark ? ampersand : '?');
             String query = createQueryString(copy, ampersand);
             sb.append(query);
         }
