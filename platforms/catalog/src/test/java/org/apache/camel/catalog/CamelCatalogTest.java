@@ -160,6 +160,13 @@ public class CamelCatalogTest extends TestCase {
 
         String uri = catalog.asEndpointUri("netty4-http", map);
         assertEquals("netty4-http:http:localhost:8080/foo/bar?disconnect=true", uri);
+
+        // lets set a query parameter in the path
+        map.put("path", "foo/bar?verbose=true");
+        map.put("disconnect", "true");
+
+        uri = catalog.asEndpointUri("netty4-http", map);
+        assertEquals("netty4-http:http:localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
     }
 
     @Test
