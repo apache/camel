@@ -150,6 +150,19 @@ public class CamelCatalogTest extends TestCase {
     }
 
     @Test
+    public void testAsEndpointUriNetty4http() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("protocol", "http");
+        map.put("host", "localhost");
+        map.put("port", "8080");
+        map.put("path", "foo/bar");
+        map.put("disconnect", "true");
+
+        String uri = catalog.asEndpointUri("netty4-http", map);
+        assertEquals("netty4-http:http:localhost:8080/foo/bar?disconnect=true", uri);
+    }
+
+    @Test
     public void testAsEndpointUriMapJmsRequiredOnly() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("destinationName", "foo");
