@@ -40,6 +40,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 
+import static org.apache.camel.catalog.CatalogHelper.after;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
 import static org.apache.camel.catalog.URISupport.createQueryString;
@@ -672,6 +673,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
+        // clip the scheme from the syntax
+        syntax = after(syntax, ":");
+
         String originalSyntax = syntax;
 
         // build at first according to syntax (use a tree map as we want the uri options sorted)
@@ -707,16 +711,23 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         // build the endpoint
         StringBuilder sb = new StringBuilder();
+        sb.append(scheme);
+        sb.append(":");
+
         int range = 0;
+        boolean first = true;
         for (int i = 0; i < options.size(); i++) {
             String key = options.get(i);
             String key2 = options2.get(i);
             String token = tokens[i];
 
             // was the option provided?
-            if (i == 0 || properties.containsKey(key)) {
-                sb.append(token);
+            if (properties.containsKey(key)) {
+                if (!first) {
+                    sb.append(token);
+                }
                 sb.append(key2);
+                first = false;
             }
             range++;
         }
