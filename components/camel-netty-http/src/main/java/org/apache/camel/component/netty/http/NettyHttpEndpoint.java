@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * HTTP based {@link NettyEndpoint}
  */
 @UriEndpoint(scheme = "netty-http", extendsScheme = "netty", title = "Netty HTTP",
-        syntax = "netty-http:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http")
+        syntax = "netty-http:protocol:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http")
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);

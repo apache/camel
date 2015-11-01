@@ -33,6 +33,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class NettyHttpConfiguration extends NettyConfiguration {
 
+    @UriPath(enums = "http,https", defaultValue = "http") @Metadata(required = "true")
+    private String protocol;
     @UriPath @Metadata(required = "true")
     private String path;
     @UriParam(label = "consumer,advanced")
@@ -84,6 +86,17 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * The protocol to use which is either http or https
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     public boolean isCompression() {
