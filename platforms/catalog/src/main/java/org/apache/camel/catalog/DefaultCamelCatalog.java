@@ -720,14 +720,17 @@ public class DefaultCamelCatalog implements CamelCatalog {
         for (int i = 0; i < options.size(); i++) {
             String key = options.get(i);
             String key2 = options2.get(i);
-            String token = tokens[i];
+            String token = null;
+            if (tokens.length > i) {
+                token = tokens[i];
+            }
 
             // was the option provided?
             if (properties.containsKey(key)) {
-                if (!first) {
+                if (!first && token != null) {
                     sb.append(token);
                 }
-                hasQuestionmark |= token.contains("?") || key.contains("?");
+                hasQuestionmark |= key.contains("?") || (token != null && token.contains("?"));
                 sb.append(key2);
                 first = false;
             }
@@ -735,11 +738,14 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
         // append any extra options that was in surplus for the last
         while (range < options2.size()) {
-            String token = tokens[range];
+            String token = null;
+            if (tokens.length > range) {
+                token = tokens[range];
+            }
             String key2 = options2.get(range);
             sb.append(token);
             sb.append(key2);
-            hasQuestionmark |= token.contains("?") || key2.contains("?");
+            hasQuestionmark |= key2.contains("?") || (token != null && token.contains("?"));
             range++;
         }
 

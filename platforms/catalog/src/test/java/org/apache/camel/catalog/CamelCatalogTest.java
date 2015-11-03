@@ -170,6 +170,16 @@ public class CamelCatalogTest extends TestCase {
     }
 
     @Test
+    public void testAsEndpointUriTimer() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("timerName", "foo");
+        map.put("period", "5000");
+
+        String uri = catalog.asEndpointUri("timer", map);
+        assertEquals("timer:foo?period=5000", uri);
+    }
+
+    @Test
     public void testAsEndpointUriMapJmsRequiredOnly() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("destinationName", "foo");
