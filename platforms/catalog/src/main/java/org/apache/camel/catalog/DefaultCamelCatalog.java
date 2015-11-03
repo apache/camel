@@ -486,6 +486,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
+        // clip the scheme from the syntax
+        syntax = after(syntax, ":");
+
         // parse the syntax and find the same group in the uri
         Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
         List<String> word = new ArrayList<String>();
@@ -496,6 +499,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
         }
 
+        // clip the scheme from the uri
+        uri = after(uri, ":");
         String uriPath = stripQuery(uri);
 
         // if there is only one, then use uriPath as is
