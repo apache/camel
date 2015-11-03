@@ -249,7 +249,9 @@ public enum FacebookMethodsType {
     GETFRIENDS_WITH_ID(ResponseList.class, "getFriends", String.class, "userId"),
     GETFRIENDS_WITH_ID_OPTIONS(ResponseList.class, "getFriends", String.class, "userId", Reading.class, FacebookConstants.READING_PPROPERTY),
     GETTAGGABLEFRIENDS(ResponseList.class, "getTaggableFriends"),
+    GETTAGGABLEFRIENDS_WITH_ID(ResponseList.class, "getTaggableFriends", String.class, "userId"),
     GETTAGGABLEFRIENDS_WITH_OPTIONS(ResponseList.class, "getTaggableFriends", Reading.class, FacebookConstants.READING_PPROPERTY),
+    GETTAGGABLEFRIENDS_WITH_ID_OPTIONS(ResponseList.class, "getTaggableFriends", String.class, "userId", Reading.class, FacebookConstants.READING_PPROPERTY),
     GETMUTUALFRIENDS(ResponseList.class, "getMutualFriends", String.class, "friendUserId"),
     GETMUTUALFRIENDS_WITH_OPTIONS(ResponseList.class, "getMutualFriends", String.class, "friendUserId", Reading.class, FacebookConstants.READING_PPROPERTY),
     GETMUTUALFRIENDS_WITH_ID(ResponseList.class, "getMutualFriends", String.class, "userId1", String.class, "userId2"),
@@ -369,10 +371,14 @@ public enum FacebookMethodsType {
     MARKNOTIFICATIONASREAD(Boolean.class,  "markNotificationAsRead", String.class, "notificationId"),
 
     // PermissionMethods
+    DELETEALLPERMISSIONS(Boolean.class,  "deleteAllPermissions"),
+    DELETEALLPERMISSIONS_WITH_ID(Boolean.class,  "deleteAllPermissions", String.class, "userId"),
     GETPERMISSIONS(List.class, "getPermissions"),
     GETPERMISSIONS_WITH_ID(List.class, "getPermissions", String.class, "userId"),
     REVOKEPERMISSION(Boolean.class,  "revokePermission", String.class, "permissionName"),
     REVOKEPERMISSION_WITH_ID(Boolean.class,  "revokePermission", String.class, "userId", String.class, "permissionName"),
+    REVOKEALLPERMISSIONS(Boolean.class,  "revokeAllPermissions"),
+    REVOKEALLPERMISSIONS_WITH_ID(Boolean.class,  "revokeAllPermissions", String.class, "userId"),
 
     // PhotoMethods
     ADDTAGTOPHOTO(Boolean.class,  "addTagToPhoto", String.class, "photoId", String.class, "toUserId"),
