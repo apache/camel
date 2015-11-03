@@ -20,10 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import junit.framework.TestCase;
 import org.junit.Test;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
@@ -213,6 +212,21 @@ public class CamelCatalogTest extends TestCase {
         assertEquals("21", map.get("port"));
         assertEquals("foo", map.get("directoryName"));
         assertEquals("5000", map.get("connectTimeout"));
+    }
+
+    @Test
+    public void testEndpointPropertiesNetty4http() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("netty4-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
+        assertNotNull(map);
+        assertEquals(6, map.size());
+
+        assertEquals("http", map.get("protocol"));
+        assertEquals("localhost", map.get("host"));
+        assertEquals("8080", map.get("port"));
+        // TODO: fix me later
+        //assertEquals("foo/bar", map.get("path"));
+        assertEquals("true", map.get("disconnect"));
+        assertEquals("false", map.get("keepAlive"));
     }
 
     @Test
