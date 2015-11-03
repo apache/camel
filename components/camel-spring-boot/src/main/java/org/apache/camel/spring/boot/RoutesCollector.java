@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.model.RoutesDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +37,15 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     private static final Logger LOG = LoggerFactory.getLogger(RoutesCollector.class);
 
     // Collaborators
+    
+    private final ApplicationContext applicationContext;
 
     private final List<CamelContextConfiguration> camelContextConfigurations;
 
     // Constructors
 
-    public RoutesCollector(List<CamelContextConfiguration> camelContextConfigurations) {
+    public RoutesCollector(ApplicationContext applicationContext, List<CamelContextConfiguration> camelContextConfigurations) {
+    	this.applicationContext = applicationContext;
         this.camelContextConfigurations = new ArrayList<CamelContextConfiguration>(camelContextConfigurations);
     }
 
@@ -52,9 +54,9 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         ApplicationContext applicationContext = contextRefreshedEvent.getApplicationContext();
-        CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
-        // if we have not yet started
-        if (camelContext.getStatus() == ServiceStatus.Stopped) {
+        // only listen to context refreshs of "my" applicationContext
+        if (this.applicationContext.equals(applicationContext)) {
+            CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
             for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
                 try {
