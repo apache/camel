@@ -78,7 +78,7 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
         assertTrue(exchange.isFailed());
 
         ConnectException cause = assertIsInstanceOf(ConnectException.class, exchange.getException());
-        assertTrue(cause.getMessage().contains("refused"));
+        assertTrue(cause.getMessage().contains("failed"));
 
         assertEquals(true, exchange.getIn().getHeader(Exchange.REDELIVERED));
         assertEquals(4, exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER));
