@@ -37,15 +37,12 @@ public class MyRoutes extends RouteBuilder {
     @Uri("log:output")
     private Endpoint resultEndpoint;
 
-    @Inject
-    private SomeBean someBean;
-
     @Override
     public void configure() throws Exception {
         // you can configure the route rule with Java DSL here
 
         from(inputEndpoint)
-            .bean(someBean)
+            .beanRef("counterBean")
             .to(resultEndpoint);
     }
 
