@@ -62,10 +62,10 @@ public class CamelTestSupportTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected JndiRegistry createRegistry() {
         called = true;
 
-        JndiRegistry jndi = super.createRegistry();
+        JndiRegistry jndi = (JndiRegistry) super.createRegistry();
         jndi.bind("beer", "yes");
         return jndi;
     }
