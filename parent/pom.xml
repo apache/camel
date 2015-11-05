@@ -221,8 +221,8 @@
     <htmlunit.version>2.15</htmlunit.version>
     <htmlunit-bundle-version>2.15_1</htmlunit-bundle-version>
     <httpunit-version>1.7</httpunit-version>
-    <httpcore4-version>4.4.1</httpcore4-version>
-    <httpclient4-version>4.4.1</httpclient4-version>
+    <httpcore4-version>4.4.4</httpcore4-version>
+    <httpclient4-version>4.5.1</httpclient4-version>
     <httpasyncclient-version>4.1</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
