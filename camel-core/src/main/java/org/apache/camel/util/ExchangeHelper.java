@@ -628,6 +628,20 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Check whether or not stream caching is enabled for the given route or globally.
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
+     */
+    public static boolean isStreamCachingEnabled(final Exchange exchange) {
+        if (exchange.getFromRouteId() == null) {
+            return exchange.getContext().getStreamCachingStrategy().isEnabled();
+        } else {
+            return exchange.getContext().getRoute(exchange.getFromRouteId()).getRouteContext().isStreamCaching();
+        }
+    }
+
+    /**
      * Extracts the body from the given exchange.
      * <p/>
      * If the exchange pattern is provided it will try to honor it and retrieve the body
