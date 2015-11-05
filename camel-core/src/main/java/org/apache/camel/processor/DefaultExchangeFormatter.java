@@ -74,7 +74,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private boolean showStreams;
     @UriParam(label = "formatting")
     private boolean showFiles;
-    @UriParam(label = "formatting", defaultValue = "1000")
+    @UriParam(label = "formatting", defaultValue = "10000")
     private int maxChars = 10000;
     @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default")
     private OutputStyle style = OutputStyle.Default;
