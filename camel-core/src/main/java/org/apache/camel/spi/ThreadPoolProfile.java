@@ -31,7 +31,7 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
  */
 public class ThreadPoolProfile implements Serializable, Cloneable {
 
-    // TODO: Camel 2.9/3.0 consider moving to org.apache.camel
+    // TODO: Camel 3.0 consider moving to org.apache.camel
 
     private static final long serialVersionUID = 1L;
 
