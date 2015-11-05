@@ -22,11 +22,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.processor.CamelLogProcessor;
+import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ServiceHelper;
@@ -41,6 +43,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     private volatile Processor logger;
     private Logger providedLogger;
     private ExchangeFormatter localFormatter;
+
     @UriPath(description = "Name of the logging category to use") @Metadata(required = "true")
     private String loggerName;
     @UriParam(defaultValue = "INFO", enums = "ERROR,WARN,INFO,DEBUG,TRACE,OFF")
@@ -55,6 +58,9 @@ public class LogEndpoint extends ProcessorEndpoint {
     private Boolean groupActiveOnly;
     @UriParam
     private Long groupDelay;
+    // we want to include the uri options of the DefaultExchangeFormatter
+    @UriParam
+    private DefaultExchangeFormatter exchangeFormatter;
 
     public LogEndpoint() {
     }
