@@ -396,8 +396,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
             } else {
                 // bind and store channel so we can close it when stopping
-                answer = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
-                answer.awaitUninterruptibly();
+                answer = connectionlessClientBootstrap.bind(new InetSocketAddress(0)).sync();
                 Channel channel = answer.channel();
                 allChannels.add(channel);
             }
@@ -430,7 +429,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             throw new CamelException("Interrupted while waiting for " + "connection to "
                                      + configuration.getAddress());
         }
-
 
         if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
             ConnectException cause = new ConnectException("Cannot connect to " + configuration.getAddress());
