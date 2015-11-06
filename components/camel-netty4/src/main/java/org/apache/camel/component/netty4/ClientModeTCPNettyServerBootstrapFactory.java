@@ -170,20 +170,9 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
         }
-        // here we need to wait it in other thread
-        final CountDownLatch channelLatch = new CountDownLatch(1);
-        channelFuture.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture cf) throws Exception {
-                channelLatch.countDown();
-            }
-        });
 
-        try {
-            channelLatch.await(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
-        } catch (InterruptedException ex) {
-            throw new CamelException("Interrupted while waiting for " + "connection to " + configuration.getAddress());
-        }
+        // wait for the channel to be open (see io.netty.channel.ChannelFuture javadoc for example/recommendation)
+        channelFuture.awaitUninterruptibly();
 
         if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
             //check if reconnect is enabled and schedule a reconnect, if from handler then don't schedule a reconnect
