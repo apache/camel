@@ -86,6 +86,7 @@
       <groupId>org.apache.deltaspike.cdictrl</groupId>
       <artifactId>deltaspike-cdictrl-api</artifactId>
       <version>${deltaspike-version}</version>
+      <optional>true</optional>
     </dependency>
 
     <!-- logging -->
