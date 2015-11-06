@@ -106,8 +106,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             if (!future.isSuccess()) {
                 // if we cannot bind, the re-create channel
                 allChannels.remove(channel);
-                future = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-                future.awaitUninterruptibly();
+                future = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort())).sync();
                 channel = future.channel();
                 allChannels.add(channel);
             }
@@ -124,7 +123,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         }
     }
 
-    protected void startServerBootstrap() {
+    protected void startServerBootstrap() throws Exception {
         // prefer using explicit configured thread pools
         EventLoopGroup bg = configuration.getBossGroup();
         EventLoopGroup wg = configuration.getWorkerGroup();
@@ -170,9 +169,8 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         LOG.debug("Created ServerBootstrap {}", serverBootstrap);
 
         LOG.info("ServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
-        ChannelFuture channelFutrue = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-        channelFutrue.awaitUninterruptibly();
-        channel = channelFutrue.channel();
+        ChannelFuture channelFuture = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort())).sync();
+        channel = channelFuture.channel();
         // to keep track of all channels in use
         allChannels.add(channel);
     }
@@ -182,9 +180,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         LOG.info("ServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
         
         LOG.trace("Closing {} channels", allChannels.size());
-        if (allChannels != null) {
-            allChannels.close().awaitUninterruptibly();
-        }
+        allChannels.close().awaitUninterruptibly();
 
         // and then shutdown the thread pools
         if (bossGroup != null) {
