@@ -54,7 +54,7 @@
     <arquillian-weld-se-embedded-version>1.0.0.CR9</arquillian-weld-se-embedded-version>
     <asm-bundle-version>3.3.1_1</asm-bundle-version>
     <asm-version>3.3.1</asm-version>
-    <aspectj-version>1.8.6</aspectj-version>
+    <aspectj-version>1.8.7</aspectj-version>
     <atmos-client-version>2.2.2</atmos-client-version>
     <atmosphere-version>2.3.5</atmosphere-version>
     <atmosphere-version-range>[2.0,3.0)</atmosphere-version-range>
