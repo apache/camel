@@ -24,7 +24,7 @@ To enable Camel Commands for the Spring Boot remote shell:
 
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-commands-springboot</artifactId>
+    <artifactId>camel-commands-spring-boot</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>

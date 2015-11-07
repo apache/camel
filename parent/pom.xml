@@ -1709,6 +1709,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-commands-spring-boot</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.camel.karaf</groupId>
         <artifactId>camel-karaf-commands</artifactId>
         <version>${project.version}</version>

@@ -8,7 +8,7 @@
         <version>2.17-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-commands-springboot</artifactId>
+    <artifactId>camel-commands-spring-boot</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Platforms :: Commands :: Spring Boot</name>
     <description>Camel Commands using Spring Boot Shell</description>
