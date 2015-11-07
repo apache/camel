@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,38 +16,12 @@
  */
 package crash.commands.camel
 
-import org.apache.camel.commands.ComponentListCommand
-import org.apache.camel.commands.ContextInflightCommand
-import org.apache.camel.commands.ContextInfoCommand
-import org.apache.camel.commands.ContextListCommand
-import org.apache.camel.commands.ContextResumeCommand
-import org.apache.camel.commands.ContextStartCommand
-import org.apache.camel.commands.ContextStopCommand
-import org.apache.camel.commands.ContextSuspendCommand
-import org.apache.camel.commands.EipExplainCommand
-import org.apache.camel.commands.EndpointExplainCommand
-import org.apache.camel.commands.EndpointListCommand
-import org.apache.camel.commands.EndpointStatisticCommand
-import org.apache.camel.commands.RestRegistryListCommand
-import org.apache.camel.commands.RouteInfoCommand
-import org.apache.camel.commands.RouteListCommand
-import org.apache.camel.commands.RouteProfileCommand
-import org.apache.camel.commands.RouteResetStatsCommand
-import org.apache.camel.commands.RouteResumeCommand
-import org.apache.camel.commands.RouteShowCommand
-import org.apache.camel.commands.RouteStartCommand
-import org.apache.camel.commands.RouteStopCommand
-import org.apache.camel.commands.RouteSuspendCommand
+import org.apache.camel.commands.*
 import org.apache.camel.springboot.commands.crsh.ArgumentCamelContext
 import org.apache.camel.springboot.commands.crsh.ArgumentRouteID
 import org.apache.camel.springboot.commands.crsh.CamelCommandsFacade
-import org.crsh.cli.Argument
-import org.crsh.cli.Command
-import org.crsh.cli.Option
-import org.crsh.cli.Usage
-import org.crsh.cli.Named
-import org.crsh.cli.Required
 import org.apache.camel.springboot.commands.crsh.CamelCommandsPlugin
+import org.crsh.cli.*
 import org.crsh.groovy.GroovyCommand
 
 @Usage("Camel related commands")
@@ -76,8 +49,8 @@ public class camel extends GroovyCommand {
     @Named("eip-explain")
     public String eip_explain(@Required @ArgumentCamelContext String camelContext,
                               @Required @Argument String nameOrId,
-                                 @Usage("Verbose output")
-                                 @Option(names = ["v", "verbose"]) Boolean verbose) {
+                              @Usage("Verbose output")
+                              @Option(names = ["v", "verbose"]) Boolean verbose) {
         Boolean v = (null != verbose && Boolean.valueOf(verbose))
         return getCommandsFacade().runCommand(EipExplainCommand.class, camelContext, nameOrId, v)
     }
@@ -114,8 +87,9 @@ public class camel extends GroovyCommand {
         Boolean _sort = (null != sort && Boolean.valueOf(sort))
         Integer _limit = null != limit ? limit : -1;
 
-        if (_limit != -1)
-            out.println("Limiting output to "+_limit+" messages.")
+        if (_limit != -1) {
+            out.println("Limiting output to " + _limit + " messages.")
+        }
 
         return getCommandsFacade().runCommand(ContextInflightCommand.class, camelContext, _limit, _sort)
     }
@@ -155,15 +129,15 @@ public class camel extends GroovyCommand {
     @Usage("Lists Camel endpoints.")
     @Named("endpoint-list")
     public String endpoint_list(@Required @ArgumentCamelContext String camelContext,
-                                 @Usage("Decode URI so they are human readable")
-                                 @Option(names = ["d", "decode"]) Boolean decode,
-                                 @Usage("Verbose output")
-                                 @Option(names = ["v", "verbose"]) Boolean verbose,
-                                 @Usage("Explain the endpoint options")
-                                 @Option(names = ["e", "explain"]) Boolean explain) {
+                                @Usage("Decode URI so they are human readable")
+                                @Option(names = ["d", "decode"]) Boolean decode,
+                                @Usage("Verbose output")
+                                @Option(names = ["v", "verbose"]) Boolean verbose,
+                                @Usage("Explain the endpoint options")
+                                @Option(names = ["e", "explain"]) Boolean explain) {
         Boolean _verbose = (null != verbose && Boolean.valueOf(verbose))
-        Boolean _decode  = (null != decode && Boolean.valueOf(decode))
-        Boolean _explain  = (null != explain && Boolean.valueOf(explain))
+        Boolean _decode = (null != decode && Boolean.valueOf(decode))
+        Boolean _explain = (null != explain && Boolean.valueOf(explain))
         return getCommandsFacade().runCommand(EndpointListCommand.class, camelContext, _decode, _verbose, _explain);
     }
 
@@ -171,12 +145,12 @@ public class camel extends GroovyCommand {
     @Usage("Explain all Camel endpoints available in the CamelContext.")
     @Named("endpoint-explain")
     public String endpoint_explain(@Required @ArgumentCamelContext String camelContext,
-                                 @Usage("Verbose output")
-                                 @Option(names = ["v", "verbose"]) Boolean verbose,
-                                 @Usage("Filter endpoint by pattern")
-                                 @Option(names = ["f", "filter"]) String filter) {
+                                   @Usage("Verbose output")
+                                   @Option(names = ["v", "verbose"]) Boolean verbose,
+                                   @Usage("Filter endpoint by pattern")
+                                   @Option(names = ["f", "filter"]) String filter) {
         Boolean _verbose = (null != verbose && Boolean.valueOf(verbose))
-        String  _filter =  null != filter ? filter : "*";
+        String _filter = null != filter ? filter : "*";
         return getCommandsFacade().runCommand(EndpointExplainCommand.class, camelContext, _verbose, _filter);
     }
 
@@ -188,8 +162,8 @@ public class camel extends GroovyCommand {
                                  @Option(names = ["d", "decode"]) Boolean decode,
                                  @Usage("Filter the list by in,out,static,dynamic")
                                  @Option(names = ["f", "filter"]) String filter) {
-        Boolean _decode  = (null != decode && Boolean.valueOf(decode))
-        String[]  _filter =  null != filter ? filter.split(",") : ["in","out","static","dynamic"];
+        Boolean _decode = (null != decode && Boolean.valueOf(decode))
+        String[] _filter = null != filter ? filter.split(",") : ["in", "out", "static", "dynamic"];
         return getCommandsFacade().runCommand(EndpointStatisticCommand.class, camelContext, _decode, _filter);
     }
 
@@ -197,12 +171,12 @@ public class camel extends GroovyCommand {
     @Usage("Lists all Camel REST services enlisted in the Rest Registry from a CamelContext.")
     @Named("rest-registry-list")
     public String rest_registry_list(@Required @ArgumentCamelContext String camelContext,
-                                 @Usage("Decode URI so they are human readable")
-                                 @Option(names = ["d", "decode"]) Boolean decode,
-                                 @Usage("Verbose output")
-                                 @Option(names = ["v", "verbose"]) Boolean verbose){
+                                     @Usage("Decode URI so they are human readable")
+                                     @Option(names = ["d", "decode"]) Boolean decode,
+                                     @Usage("Verbose output")
+                                     @Option(names = ["v", "verbose"]) Boolean verbose) {
         Boolean _verbose = (null != verbose && Boolean.valueOf(verbose))
-        Boolean _decode  = (null != decode && Boolean.valueOf(decode))
+        Boolean _decode = (null != decode && Boolean.valueOf(decode))
         return getCommandsFacade().runCommand(RestRegistryListCommand.class, camelContext, _decode, _verbose);
     }
 
@@ -272,7 +246,6 @@ public class camel extends GroovyCommand {
     public String route_start(@Required @ArgumentRouteID String route, @ArgumentCamelContext String camelContext) {
         return getCommandsFacade().runCommand(RouteStartCommand.class, route, camelContext)
     }
-
 
 }
 
