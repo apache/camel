@@ -22,12 +22,14 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class CamelCatalogTest extends TestCase {
+public class CamelCatalogTest {
 
     private CamelCatalog catalog = new DefaultCamelCatalog();
 
