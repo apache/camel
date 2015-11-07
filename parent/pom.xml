@@ -377,9 +377,9 @@
     <mongo-java-driver-version>3.1.0</mongo-java-driver-version>
     <mqtt-client-version>1.12</mqtt-client-version>
     <msv-version>2013.6.1</msv-version>
-    <mustache-java-version>0.8.16</mustache-java-version>
+    <mustache-java-version>0.8.18</mustache-java-version>
     <mustache-guava-version>16.0</mustache-guava-version>
-    <mustache-bundle-version>0.8.16_1</mustache-bundle-version>
+    <mustache-bundle-version>0.8.18_1</mustache-bundle-version>
     <mvel-version>2.2.7.Final</mvel-version>
     <mybatis-version>3.3.0</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
