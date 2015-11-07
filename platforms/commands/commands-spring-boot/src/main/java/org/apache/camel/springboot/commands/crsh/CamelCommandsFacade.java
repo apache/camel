@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.springboot.commands.crsh;
+
+import java.io.PrintStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
@@ -24,11 +29,6 @@ import org.apache.camel.commands.LocalCamelController;
 import org.apache.camel.commands.StringEscape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.PrintStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 public class CamelCommandsFacade {
 
@@ -55,7 +55,7 @@ public class CamelCommandsFacade {
         // [1] - camel context
         if (AbstractRouteCommand.class.isAssignableFrom(clazz) && null == commandArgs[1]) {
             commandArgs[1] = getCamelContextForRoute((String) commandArgs[0]);
-            ops.println("Automatically inferred context name : "+commandArgs[1]);
+            ops.println("Automatically inferred context name : " + commandArgs[1]);
         }
 
         // Finding the right constructor
@@ -64,8 +64,12 @@ public class CamelCommandsFacade {
             types[i] = commandArgs[i].getClass();
 
             // Commands require primitives
-            if (types[i] == Boolean.class) types[i] = boolean.class;
-            if (types[i] == Integer.class) types[i] = int.class;
+            if (types[i] == Boolean.class) {
+                types[i] = boolean.class;
+            }
+            if (types[i] == Integer.class) {
+                types[i] = int.class;
+            }
         }
 
         // Instantiating an object
@@ -100,8 +104,9 @@ public class CamelCommandsFacade {
             StringBuffer error = new StringBuffer();
             error.append("Cannot infer Camel Context. Please provide manually.");
 
-            if (contextNames.size() > 1)
-                error.append(" Contexts : "+contextNames.toString());
+            if (contextNames.size() > 1) {
+                error.append(" Contexts : " + contextNames.toString());
+            }
 
             throw new org.crsh.cli.impl.SyntaxException(error.toString());
         }

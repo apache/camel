@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,15 +23,15 @@ public class CamelCommandsPlugin extends CRaSHPlugin<CamelCommandsPlugin> {
 
     private static CamelCommandsPlugin camelPlugin;
 
-    private static void setCamelPlugin(CamelCommandsPlugin plugin){
+    private CamelCommandsFacade facade;
+
+    private static void setCamelPlugin(CamelCommandsPlugin plugin) {
         camelPlugin = plugin;
     }
 
-    static CamelCommandsPlugin getInstance(){
+    static CamelCommandsPlugin getInstance() {
         return camelPlugin;
     }
-
-    private CamelCommandsFacade facade;
 
     @Override
     public CamelCommandsPlugin getImplementation() {
@@ -48,9 +47,10 @@ public class CamelCommandsPlugin extends CRaSHPlugin<CamelCommandsPlugin> {
 
     @Override
     public void destroy() {
+        // noop
     }
 
-    CamelCommandsFacade getCamelCommandsFacade(){
+    CamelCommandsFacade getCamelCommandsFacade() {
         return this.facade;
     }
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,24 +16,20 @@
  */
 package org.apache.camel.springboot.commands.crsh;
 
+import java.util.LinkedList;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.commands.LocalCamelController;
 import org.crsh.cli.descriptor.ParameterDescriptor;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.LinkedList;
 
 public class CamelCompleter implements Completer {
 
     private LocalCamelController camelController = CamelCommandsPlugin.getInstance().getCamelCommandsFacade().getCamelController();
-    private Logger log = LoggerFactory.getLogger(CamelCompleter.class);
 
     public Completion complete(ParameterDescriptor parameterDescriptor, String prefix) throws Exception {
-
 
         LinkedList<String> values = new LinkedList<String>();
         Completion.Builder builder = new Completion.Builder(prefix);
@@ -47,8 +43,9 @@ public class CamelCompleter implements Completer {
         }
 
         for (String value : values) {
-            if (value.startsWith(prefix))
+            if (value.startsWith(prefix)) {
                 builder.add(value.substring(prefix.length()), true);
+            }
         }
 
         return builder.build();

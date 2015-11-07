@@ -35,14 +35,14 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
 
     private ListableBeanFactory beanFactory;
 
-    CamelControllerImpl(ListableBeanFactory factory){
+    CamelControllerImpl(ListableBeanFactory factory) {
         beanFactory = factory;
     }
 
     public List<CamelContext> getLocalCamelContexts() {
         List<CamelContext> camelContexts = new ArrayList<CamelContext>();
         try {
-            camelContexts.addAll( beanFactory.getBeansOfType(CamelContext.class).values() );
+            camelContexts.addAll(beanFactory.getBeansOfType(CamelContext.class).values());
         } catch (Exception e) {
             LOG.warn("Cannot retrieve the list of Camel contexts.", e);
         }
