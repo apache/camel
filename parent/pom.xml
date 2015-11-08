@@ -292,6 +292,7 @@
     <jodatime2-bundle-version>2.9</jodatime2-bundle-version>
     <jolokia-version>1.3.2</jolokia-version>
     <jolt-version>0.0.16</jolt-version>
+    <jolt-bundle-version>0.0.16_1</jolt-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
     <jruby-version>1.7.18</jruby-version>
