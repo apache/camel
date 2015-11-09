@@ -137,7 +137,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Expression preMove;
     @UriParam(label = "producer")
     protected Expression moveExisting;
-    @UriParam(label = "consumer,filter")
+    @UriParam(label = "consumer,filter", defaultValue = "false")
     protected Boolean idempotent;
     @UriParam(label = "consumer,filter")
     protected Expression idempotentKey;
