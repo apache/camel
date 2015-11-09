@@ -112,6 +112,8 @@ public class PropertiesComponent extends DefaultComponent {
         addFunction(new EnvPropertiesFunction());
         addFunction(new SysPropertiesFunction());
         addFunction(new ServicePropertiesFunction());
+        addFunction(new ServiceHostPropertiesFunction());
+        addFunction(new ServicePortPropertiesFunction());
     }
     
     public PropertiesComponent(String location) {
