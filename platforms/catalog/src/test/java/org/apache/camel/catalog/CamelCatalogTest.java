@@ -180,6 +180,17 @@ public class CamelCatalogTest {
         assertEquals("timer:foo?period=5000", uri);
     }
 
+
+    @Test
+    public void testAsEndpointUriBeanLookup() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("resourceUri", "foo.xslt");
+        map.put("converter", "#myConverter");
+
+        String uri = catalog.asEndpointUri("xslt", map);
+        assertEquals("xslt:foo.xslt?converter=#myConverter", uri);
+    }
+
     @Test
     public void testAsEndpointUriMapJmsRequiredOnly() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
