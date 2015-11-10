@@ -92,6 +92,7 @@ public class PropertiesComponent extends DefaultComponent {
     private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
+    private boolean isDefaultCreated;
     private String[] locations;
     private boolean ignoreMissingLocation;
     private String encoding;
@@ -115,7 +116,11 @@ public class PropertiesComponent extends DefaultComponent {
         addFunction(new ServiceHostPropertiesFunction());
         addFunction(new ServicePortPropertiesFunction());
     }
-    
+
+    public PropertiesComponent(boolean isDefaultCreated) {
+        this.isDefaultCreated = isDefaultCreated;
+    }
+
     public PropertiesComponent(String location) {
         this();
         setLocation(location);
@@ -207,7 +212,7 @@ public class PropertiesComponent extends DefaultComponent {
      * Is this component created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
      */
     public boolean isDefaultCreated() {
-        return locations == null;
+        return isDefaultCreated;
     }
 
     public String[] getLocations() {
