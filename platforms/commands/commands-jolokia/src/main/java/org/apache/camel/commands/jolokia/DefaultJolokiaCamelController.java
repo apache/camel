@@ -77,6 +77,12 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
+    public void using(J4pClient client) {
+        this.jolokia = client;
+        this.url = null;
+    }
+
+    @Override
     public void connect(String url, String username, String password) throws Exception {
         this.jolokia = JolokiaClientFactory.createJolokiaClient(url, username, password);
         this.url = url;
