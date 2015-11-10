@@ -18,19 +18,25 @@ package org.apache.camel.spring.boot.parent;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.boot.RoutesCollector;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.GenericApplicationContext;
 
-public class SpringBootWithParentContextTest {
+public class SpringBootRefreshContextTest {
 
     @Test
-    public void shouldCollectRoutesOnlyInRootContext() {
+    public void shouldOnlyCollectRoutesOnce() {
         GenericApplicationContext parent = new GenericApplicationContext();
         parent.refresh();
-        new SpringApplicationBuilder(Configuration.class).web(false).parent(parent).run();
+		ConfigurableApplicationContext context = new SpringApplicationBuilder(Configuration.class).web(false).parent(parent).run();
+		ContextRefreshedEvent refreshEvent = new ContextRefreshedEvent(context);
+		RoutesCollector collector = context.getBean(RoutesCollector.class);
+		collector.onApplicationEvent(refreshEvent); //no changes should happen here
     }
 
 }
