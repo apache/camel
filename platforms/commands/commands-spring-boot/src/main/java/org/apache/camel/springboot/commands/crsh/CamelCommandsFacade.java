@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.commands.AbstractCamelCommand;
+import org.apache.camel.commands.AbstractContextCommand;
 import org.apache.camel.commands.AbstractRouteCommand;
 import org.apache.camel.commands.LocalCamelController;
 import org.apache.camel.commands.StringEscape;
@@ -56,6 +57,13 @@ public class CamelCommandsFacade {
         if (AbstractRouteCommand.class.isAssignableFrom(clazz) && null == commandArgs[1]) {
             commandArgs[1] = getCamelContextForRoute((String) commandArgs[0]);
             ops.println("Automatically inferred context name : " + commandArgs[1]);
+        }
+
+        // The order of the varargs for Context Command
+        // [0] - camel context
+        if (AbstractContextCommand.class.isAssignableFrom(clazz) && null == commandArgs[0]) {
+            commandArgs[0] = getFirstCamelContextName();
+            ops.println("Context name is not provided. Using the first : " + commandArgs[0]);
         }
 
         // Finding the right constructor
@@ -112,5 +120,14 @@ public class CamelCommandsFacade {
         }
 
         return contextNames.get(0);
+    }
+
+    private String getFirstCamelContextName() throws Exception {
+        if (null == camelController.getLocalCamelContexts() ||
+                camelController.getLocalCamelContexts().size() == 0) {
+            throw new org.crsh.cli.impl.SyntaxException("No camel contexts available");
+        }
+
+        return camelController.getLocalCamelContexts().get(0).getName();
     }
 }

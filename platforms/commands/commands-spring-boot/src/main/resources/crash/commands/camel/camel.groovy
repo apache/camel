@@ -163,7 +163,7 @@ public class camel extends GroovyCommand {
                                  @Usage("Filter the list by in,out,static,dynamic")
                                  @Option(names = ["f", "filter"]) String filter) {
         Boolean _decode = (null != decode && Boolean.valueOf(decode))
-        String[] _filter = null != filter ? filter.split(",") : ["in", "out", "static", "dynamic"];
+        String[] _filter = filter == null ? [] : filter.split(",")
         return getCommandsFacade().runCommand(EndpointStatisticCommand.class, camelContext, _decode, _filter);
     }
 
