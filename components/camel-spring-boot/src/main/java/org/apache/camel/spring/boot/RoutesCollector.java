@@ -82,7 +82,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                 throw new CamelSpringBootInitializationException(e);
             }
         } else {
-            LOG.debug("Not at root context - defer adding routes");
+            LOG.debug("Camel already started, not adding routes.");
         }
     }
 
