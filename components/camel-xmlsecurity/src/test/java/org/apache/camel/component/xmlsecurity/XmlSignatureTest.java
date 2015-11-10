@@ -386,6 +386,14 @@ public class XmlSignatureTest extends CamelTestSupport {
         sendBody("direct:enveloping", payload);
         assertMockEndpointsSatisfied();
     }
+    
+    @Test
+    public void testEnvelopedSignatureWithTransformHeader() throws Exception {
+        setupMock(payload);
+        sendBody("direct:enveloped", payload, Collections.<String, Object>singletonMap(XmlSignatureConstants.HEADER_TRANSFORM_METHODS, 
+                "http://www.w3.org/2000/09/xmldsig#enveloped-signature,http://www.w3.org/TR/2001/REC-xml-c14n-20010315"));
+        assertMockEndpointsSatisfied();
+    }
 
     @Test
     public void testEnvelopingSignatureWithPlainText() throws Exception {
@@ -808,6 +816,12 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testDetachedSignature() throws Exception {
         testDetachedSignatureInternal();
     }
+    
+    @Test
+    public void testDetachedSignatureWitTransformHeader() throws Exception {
+        testDetachedSignatureInternal(Collections.singletonMap(XmlSignatureConstants.HEADER_TRANSFORM_METHODS, 
+                (Object)"http://www.w3.org/2000/09/xmldsig#enveloped-signature,http://www.w3.org/TR/2001/REC-xml-c14n-20010315"));
+    }
 
     @Test
     public void testSignatureIdAtributeNull() throws Exception {
@@ -842,6 +856,12 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     private Element testDetachedSignatureInternal() throws InterruptedException, XPathExpressionException, SAXException, IOException,
             ParserConfigurationException {
+        return testDetachedSignatureInternal(Collections.<String, Object>emptyMap());
+    }
+    
+    private Element testDetachedSignatureInternal(Map<String, Object> headers) throws InterruptedException, XPathExpressionException, SAXException, IOException,
+         ParserConfigurationException {
+
         String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
                 + (includeNewLine ? "\n" : "")
                 + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
@@ -849,7 +869,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         MockEndpoint mockVerified = getMockEndpoint("mock:verified");
         mockVerified.expectedBodiesReceived(detachedPayload);
-        sendBody("direct:detached", detachedPayload);
+        sendBody("direct:detached", detachedPayload, headers);
         assertMockEndpointsSatisfied();
         Map<String, String> namespaceMap = new TreeMap<String, String>();
         namespaceMap.put("ns", "http://test");

@@ -61,6 +61,20 @@ public final class XmlSignatureConstants {
     public static final String HEADER_SCHEMA_RESOURCE_URI = "CamelXmlSignatureSchemaResourceUri";
     
     public static final String HEADER_XPATHS_TO_ID_ATTRIBUTES = "CamelXmlSignatureXpathsToIdAttributes";
+    
+    /**
+     * Header for dynamic specifying the transform methods of the reference to the
+     * signed data. The value of the header must be a comma separated list with
+     * the transform algorithms, for example:
+     * "http://www.w3.org/2000/09/xmldsig#enveloped-signature,http://www.w3.org/TR/2001/REC-xml-c14n-20010315"
+     * <p>
+     * Used for the XML signer. This header will overwrite the configuration
+     * property "transformMethods". You cannot use transform algorithms, which
+     * need parameters like http://www.w3.org/TR/1999/REC-xslt-19991116,
+     * http://www.w3.org/2002/06/xmldsig-filter2, or
+     * http://www.w3.org/TR/1999/REC-xpath-19991116.
+     */
+    public static final String HEADER_TRANSFORM_METHODS = "CamelXmlSignatureTransformMethods";
 
     /*------------------------- headers for XAdES signer ----------------------------------------------------------*/
     /**
