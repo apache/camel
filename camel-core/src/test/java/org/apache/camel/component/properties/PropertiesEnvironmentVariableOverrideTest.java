@@ -63,7 +63,6 @@ public class PropertiesEnvironmentVariableOverrideTest extends ContextTestSuppor
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocations(new String[]{"classpath:org/apache/camel/component/properties/myproperties.properties"});
         context.addComponent("properties", pc);
 

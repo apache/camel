@@ -79,7 +79,6 @@ public class PropertiesComponentOnExceptionTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocations(new String[]{"ref:myprop"});
         context.addComponent("properties", pc);
 
