@@ -41,12 +41,15 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     private static final Logger LOG = LoggerFactory.getLogger(RoutesCollector.class);
 
     // Collaborators
+    
+    private final ApplicationContext applicationContext;
 
     private final List<CamelContextConfiguration> camelContextConfigurations;
 
     // Constructors
 
-    public RoutesCollector(List<CamelContextConfiguration> camelContextConfigurations) {
+    public RoutesCollector(ApplicationContext applicationContext, List<CamelContextConfiguration> camelContextConfigurations) {
+    	this.applicationContext = applicationContext;
         this.camelContextConfigurations = new ArrayList<CamelContextConfiguration>(camelContextConfigurations);
     }
 
@@ -55,7 +58,9 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         ApplicationContext applicationContext = contextRefreshedEvent.getApplicationContext();
-        if (applicationContext.getParent() == null) {
+        
+        // only listen to context refreshs of "my" applicationContext
+        if (this.applicationContext.equals(applicationContext)) {
             CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
             for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
