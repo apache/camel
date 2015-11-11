@@ -41,6 +41,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
@@ -104,6 +105,7 @@ public class Olingo2AppAPITest {
 
     private static Olingo2App olingoApp;
     private static Edm edm;
+    private static Map<String, EdmEntitySet> edmEntitySetMap;
 
     private static Olingo2SampleServer server;
 
@@ -141,6 +143,11 @@ public class Olingo2AppAPITest {
 
         edm = responseHandler.await();
         LOG.info("Read default EntityContainer:  {}", responseHandler.await().getDefaultEntityContainer().getName());
+
+        edmEntitySetMap = new HashMap<String, EdmEntitySet>();
+        for (EdmEntitySet ees : edm.getEntitySets()) {
+            edmEntitySetMap.put(ees.getName(), ees);
+        }
 
         // wait for generated data to be registered in server
         Thread.sleep(2000);
@@ -183,7 +190,7 @@ public class Olingo2AppAPITest {
         final InputStream rawfeed = responseHandler.await();
         assertNotNull("Data feed", rawfeed);
         // for this test, we just let EP to verify the stream data 
-        final ODataFeed dataFeed = EntityProvider.readFeed(TEST_FORMAT_STRING, edm.getEntitySets().get(2), 
+        final ODataFeed dataFeed = EntityProvider.readFeed(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), 
                                                            rawfeed, EntityProviderReadProperties.init().build());
         LOG.info("Entries:  {}", prettyPrint(dataFeed));
     }
@@ -218,7 +225,7 @@ public class Olingo2AppAPITest {
 
         olingoApp.uread(edm, TEST_MANUFACTURER, null, responseHandler);
         InputStream rawentry = responseHandler.await();
-        ODataEntry entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edm.getEntitySets().get(2), 
+        ODataEntry entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), 
                                                     rawentry, EntityProviderReadProperties.init().build());
         LOG.info("Single Entry:  {}", prettyPrint(entry));
 
@@ -226,7 +233,7 @@ public class Olingo2AppAPITest {
 
         olingoApp.uread(edm, TEST_CAR, null, responseHandler);
         rawentry = responseHandler.await();
-        entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edm.getEntitySets().get(0), 
+        entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(CARS),
                                          rawentry, EntityProviderReadProperties.init().build());
         LOG.info("Single Entry:  {}", prettyPrint(entry));
 
@@ -237,7 +244,7 @@ public class Olingo2AppAPITest {
         olingoApp.uread(edm, TEST_MANUFACTURER, queryParams, responseHandler);
 
         rawentry = responseHandler.await();
-        ODataEntry entryExpanded = EntityProvider.readEntry(TEST_FORMAT_STRING, edm.getEntitySets().get(2), 
+        ODataEntry entryExpanded = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), 
                                                             rawentry, EntityProviderReadProperties.init().build());
         LOG.info("Single Entry with expanded Cars relation:  {}", prettyPrint(entryExpanded));
     }
