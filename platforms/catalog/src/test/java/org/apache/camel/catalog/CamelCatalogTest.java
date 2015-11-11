@@ -201,6 +201,9 @@ public class CamelCatalogTest {
         map.put("converter", "#myConverter");
 
         String uri = catalog.asEndpointUri("xslt", map, true);
+        assertEquals("xslt:foo.xslt?converter=%23myConverter", uri);
+
+        uri = catalog.asEndpointUri("xslt", map, false);
         assertEquals("xslt:foo.xslt?converter=#myConverter", uri);
     }
 

@@ -761,8 +761,6 @@ public class DefaultCamelCatalog implements CamelCatalog {
             // the last option may already contain a ? char, if so we should use & instead of ?
             sb.append(hasQuestionmark ? ampersand : '?');
             String query = createQueryString(copy, ampersand, encode);
-            // we do not want to use %23 for # syntax
-            query = query.replaceAll("\\=\\%23", "=#");
             sb.append(query);
         }
 
