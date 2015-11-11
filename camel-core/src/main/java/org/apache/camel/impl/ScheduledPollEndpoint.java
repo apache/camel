@@ -54,7 +54,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     @UriParam(defaultValue = "true", label = "consumer,scheduler", description = "Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.")
     private boolean useFixedDelay = true;
-    @UriParam(label = "consumer", description = "A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation"
+    @UriParam(label = "consumer,advanced", description = "A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation"
             + " to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.")
     private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
     @UriParam(defaultValue = "TRACE", label = "consumer,scheduler",
