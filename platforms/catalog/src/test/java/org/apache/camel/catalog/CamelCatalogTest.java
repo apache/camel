@@ -118,10 +118,10 @@ public class CamelCatalogTest {
         map.put("noop", "true");
         map.put("delay", "5000");
 
-        String uri = catalog.asEndpointUri("file", map);
+        String uri = catalog.asEndpointUri("file", map, true);
         assertEquals("file:src/data/inbox?delay=5000&noop=true", uri);
 
-        String uri2 = catalog.asEndpointUriXml("file", map);
+        String uri2 = catalog.asEndpointUriXml("file", map, true);
         assertEquals("file:src/data/inbox?delay=5000&amp;noop=true", uri2);
     }
 
@@ -133,10 +133,10 @@ public class CamelCatalogTest {
         map.put("directoryName", "foo");
         map.put("connectTimeout", "5000");
 
-        String uri = catalog.asEndpointUri("ftp", map);
+        String uri = catalog.asEndpointUri("ftp", map, true);
         assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
 
-        String uri2 = catalog.asEndpointUriXml("ftp", map);
+        String uri2 = catalog.asEndpointUriXml("ftp", map, true);
         assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri2);
     }
 
@@ -146,7 +146,7 @@ public class CamelCatalogTest {
         map.put("destinationType", "queue");
         map.put("destinationName", "foo");
 
-        String uri = catalog.asEndpointUri("jms", map);
+        String uri = catalog.asEndpointUri("jms", map, true);
         assertEquals("jms:queue:foo", uri);
     }
 
@@ -159,14 +159,14 @@ public class CamelCatalogTest {
         map.put("path", "foo/bar");
         map.put("disconnect", "true");
 
-        String uri = catalog.asEndpointUri("netty4-http", map);
+        String uri = catalog.asEndpointUri("netty4-http", map, true);
         assertEquals("netty4-http:http:localhost:8080/foo/bar?disconnect=true", uri);
 
         // lets set a query parameter in the path
         map.put("path", "foo/bar?verbose=true");
         map.put("disconnect", "true");
 
-        uri = catalog.asEndpointUri("netty4-http", map);
+        uri = catalog.asEndpointUri("netty4-http", map, true);
         assertEquals("netty4-http:http:localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
     }
 
@@ -176,10 +176,23 @@ public class CamelCatalogTest {
         map.put("timerName", "foo");
         map.put("period", "5000");
 
-        String uri = catalog.asEndpointUri("timer", map);
+        String uri = catalog.asEndpointUri("timer", map, true);
         assertEquals("timer:foo?period=5000", uri);
     }
 
+    @Test
+    public void testAsEndpointUriPropertiesPlaceholders() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("timerName", "foo");
+        map.put("period", "{{howoften}}");
+        map.put("repeatCount", "5");
+
+        String uri = catalog.asEndpointUri("timer", map, true);
+        assertEquals("timer:foo?period=%7B%7Bhowoften%7D%7D&repeatCount=5", uri);
+
+        uri = catalog.asEndpointUri("timer", map, false);
+        assertEquals("timer:foo?period={{howoften}}&repeatCount=5", uri);
+    }
 
     @Test
     public void testAsEndpointUriBeanLookup() throws Exception {
@@ -187,7 +200,7 @@ public class CamelCatalogTest {
         map.put("resourceUri", "foo.xslt");
         map.put("converter", "#myConverter");
 
-        String uri = catalog.asEndpointUri("xslt", map);
+        String uri = catalog.asEndpointUri("xslt", map, true);
         assertEquals("xslt:foo.xslt?converter=#myConverter", uri);
     }
 
@@ -195,23 +208,23 @@ public class CamelCatalogTest {
     public void testAsEndpointUriMapJmsRequiredOnly() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("destinationName", "foo");
-        String uri = catalog.asEndpointUri("jms", map);
+        String uri = catalog.asEndpointUri("jms", map, true);
         assertEquals("jms:foo", uri);
 
         map.put("deliveryPersistent", "false");
         map.put("allowNullBody", "true");
 
-        uri = catalog.asEndpointUri("jms", map);
+        uri = catalog.asEndpointUri("jms", map, true);
         assertEquals("jms:foo?allowNullBody=true&deliveryPersistent=false", uri);
 
-        String uri2 = catalog.asEndpointUriXml("jms", map);
+        String uri2 = catalog.asEndpointUriXml("jms", map, true);
         assertEquals("jms:foo?allowNullBody=true&amp;deliveryPersistent=false", uri2);
     }
 
     @Test
     public void testAsEndpointUriJson() throws Exception {
         String json = loadText(CamelCatalogTest.class.getClassLoader().getResourceAsStream("sample.json"));
-        String uri = catalog.asEndpointUri("ftp", json);
+        String uri = catalog.asEndpointUri("ftp", json, true);
         assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
     }
 
