@@ -23,12 +23,25 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * @version 
  */
 public class UnmarshalThenMarshalTest extends CamelTestSupport {
+    
+    @BeforeClass
+    public static void setup() {
+        XStreamTestUtils.setPermissionSystemProperty("");
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        XStreamTestUtils.revertPermissionSystemProperty();
+    }
+
     @Test
     public void testSendXmlAndUnmarshal() throws Exception {
 

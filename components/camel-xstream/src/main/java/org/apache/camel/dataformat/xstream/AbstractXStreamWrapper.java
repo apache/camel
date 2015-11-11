@@ -32,7 +32,10 @@ import com.thoughtworks.xstream.core.util.CompositeClassLoader;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
+import com.thoughtworks.xstream.security.AnyTypePermission;
+import com.thoughtworks.xstream.security.ExplicitTypePermission;
+import com.thoughtworks.xstream.security.TypePermission;
+import com.thoughtworks.xstream.security.WildcardTypePermission;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
@@ -46,6 +49,9 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class AbstractXStreamWrapper implements DataFormat {
 
+    private static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";
+    private static final String PERMISSIONS_PROPERTY_DEFAULT = "-*,java.lang.*,java.util.*";
+    
     private XStream xstream;
     private HierarchicalStreamDriver xstreamDriver;
     private StaxConverter staxConverter;
@@ -53,6 +59,7 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     private Map<String, String> aliases;
     private Map<String, String[]> omitFields;
     private Map<String, String[]> implicitCollections;
+    private String permissions;
     private String mode;
 
     public AbstractXStreamWrapper() {
@@ -171,11 +178,57 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
                 }
             }
 
+            addDefaultPermissions(xstream);
+            if (this.permissions != null) {
+                // permissions ::= pterm (',' pterm)*   # consits of one or more terms
+                // pterm       ::= aod? wterm           # each term preceded by an optional sign 
+                // aod         ::= '+' | '-'            # indicates allow or deny where allow if omitted
+                // wterm       ::= a class name with optional wildcard characters
+                addPermissions(xstream, permissions);
+            }
         } catch (Exception e) {
             throw new RuntimeException("Unable to build XStream instance", e);
         }
 
         return xstream;
+    }
+
+    private static void addPermissions(XStream xstream, String permissions) {
+        for (String pterm : permissions.split(",")) {
+            boolean aod;
+            pterm = pterm.trim();
+            if (pterm.startsWith("-")) {
+                aod = false;
+                pterm = pterm.substring(1);
+            } else {
+                aod = true;
+                if (pterm.startsWith("+")) {
+                    pterm = pterm.substring(1);
+                }
+            }
+            TypePermission typePermission = null;
+            if ("*".equals(pterm)) {
+                // accept or deny any
+                typePermission = AnyTypePermission.ANY;
+            } else if (pterm.indexOf('*') < 0) {
+                // exact type
+                typePermission = new ExplicitTypePermission(new String[]{pterm});
+            } else if (pterm.length() > 0) {
+                // wildcard type
+                typePermission = new WildcardTypePermission(new String[]{pterm});
+            }
+            if (typePermission != null) {
+                if (aod) {
+                    xstream.addPermission(typePermission);
+                } else {
+                    xstream.denyPermission(typePermission);
+                }
+            }
+        }
+    }
+
+    private static void addDefaultPermissions(XStream xstream) {
+        addPermissions(xstream, System.getProperty(PERMISSIONS_PROPERTY_KEY, PERMISSIONS_PROPERTY_DEFAULT));
     }
 
     protected int getModeFromString(String modeString) {
@@ -247,6 +300,14 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
     public void setXstreamDriver(HierarchicalStreamDriver xstreamDriver) {
         this.xstreamDriver = xstreamDriver;
+    }
+
+    public String getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
     }
 
     public String getMode() {
