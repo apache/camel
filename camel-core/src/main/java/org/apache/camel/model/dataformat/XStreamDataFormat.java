@@ -57,6 +57,8 @@ public class XStreamDataFormat extends DataFormatDefinition {
     private String driverRef;
     @XmlAttribute
     private String mode;
+    @XmlAttribute
+    private String permissions;
     
     @XmlJavaTypeAdapter(ConvertersAdapter.class)
     @XmlElement(name = "converters")
@@ -180,6 +182,17 @@ public class XStreamDataFormat extends DataFormatDefinition {
         this.implicitCollections = implicitCollections;
     }
 
+    public String getPermissions() {
+        return permissions;
+    }
+
+    /**
+     * Adds permissionsList
+     */
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if ("json".equals(this.driver)) {
@@ -209,6 +222,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
         }
         if (this.implicitCollections != null) {
             setProperty(camelContext, dataFormat, "implicitCollections", this.implicitCollections);
+        }
+        if (this.permissions != null) {
+            setProperty(camelContext, dataFormat, "permissions", this.permissions);
         }
         if (this.mode != null) {
             setProperty(camelContext, dataFormat, "mode", mode);
@@ -547,5 +563,4 @@ public class XStreamDataFormat extends DataFormatDefinition {
             return "OmitField[" + clsName + ", fields=" + Arrays.asList(this.fields) + "]";
         }
     }
-
 }
