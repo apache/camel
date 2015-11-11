@@ -39,10 +39,10 @@ public class EndpointOptionComparatorTest {
         String group3 = EndpointHelper.labelAsGroupName(label3, false, false);
         String group4 = EndpointHelper.labelAsGroupName(label4, false, false);
 
-        EndpointOption op1 = new EndpointOption("aaa", "string", "true", "", "", "blah", false, group1, label1, false, null);
-        EndpointOption op2 = new EndpointOption("ccc", "string", "true", "", "", "blah", false, group2, label2, false, null);
-        EndpointOption op3 = new EndpointOption("ddd", "string", "true", "", "", "blah", false, group3, label3, false, null);
-        EndpointOption op4 = new EndpointOption("bbb", "string", "true", "", "", "blah", false, group4, label4, false, null);
+        EndpointOption op1 = new EndpointOption("first", "string", "true", "", "", "blah", false, group1, label1, false, null);
+        EndpointOption op2 = new EndpointOption("synchronous", "string", "true", "", "", "blah", false, group2, label2, false, null);
+        EndpointOption op3 = new EndpointOption("second", "string", "true", "", "", "blah", false, group3, label3, false, null);
+        EndpointOption op4 = new EndpointOption("country", "string", "true", "", "", "blah", false, group4, label4, false, null);
 
         List<EndpointOption> list = new ArrayList<EndpointOption>();
         list.add(op1);
@@ -53,9 +53,9 @@ public class EndpointOptionComparatorTest {
         // then by label into the groups
         Collections.sort(list, EndpointHelper.createGroupAndLabelComparator());
 
-        assertEquals("aaa", list.get(0).getName());
-        assertEquals("ddd", list.get(1).getName());
-        assertEquals("bbb", list.get(2).getName());
-        assertEquals("ccc", list.get(3).getName());
+        assertEquals("first", list.get(0).getName()); // common
+        assertEquals("second", list.get(1).getName()); // common
+        assertEquals("synchronous", list.get(2).getName()); // advanced
+        assertEquals("country", list.get(3).getName()); // filter
     }
 }
