@@ -49,11 +49,17 @@ public final class EndpointHelper {
         if (!Strings.isNullOrEmpty(value)) {
 
             // we want to put advanced into own group, so look for a label that has advanced as prefix x,advanced => x (advanced)
-            value = value.replaceFirst("(\\w),(advanced)", "$1 (advanced)");
+            if (value.contains("advanced")) {
+                value = value.replaceFirst("(\\w),(advanced)", "$1 (advanced)");
+            }
 
-            String[] array = value.split(",");
-            // grab last label which is the most specific label we want to use for the tab
-            answer = array[array.length - 1];
+            if (value.contains(",")) {
+                String[] array = value.split(",");
+                // grab last label which is the most specific label we want to use for the tab
+                answer = array[array.length - 1];
+            } else {
+                answer = value;
+            }
             // if we are in consumer/producer only mode, then enrich the advanced label to indicate its advanced of those
             if (answer.equals("advanced") && consumerOnly) {
                 answer = "consumer (advanced)";
