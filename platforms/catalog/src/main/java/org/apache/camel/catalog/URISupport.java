@@ -41,6 +41,17 @@ public final class URISupport {
     }
 
     /**
+     * Normalizes the URI so unsafe charachters is encoded
+     *
+     * @param uri the input uri
+     * @return as URI instance
+     * @throws URISyntaxException is thrown if syntax error in the input uri
+     */
+    public static URI normalizeUri(String uri) throws URISyntaxException {
+        return new URI(UnsafeUriCharactersEncoder.encode(uri, true));
+    }
+
+    /**
      * Strips the query parameters from the uri
      *
      * @param uri  the uri

@@ -228,6 +228,17 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testEndpointPropertiesPlaceholders() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("timer:foo?period={{howoften}}&repeatCount=5");
+        assertNotNull(map);
+        assertEquals(3, map.size());
+
+        assertEquals("foo", map.get("timerName"));
+        assertEquals("{{howoften}}", map.get("period"));
+        assertEquals("5", map.get("repeatCount"));
+    }
+
+    @Test
     public void testEndpointPropertiesNetty4http() throws Exception {
         Map<String, String> map = catalog.endpointProperties("netty4-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);

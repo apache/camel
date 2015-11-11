@@ -44,6 +44,7 @@ import static org.apache.camel.catalog.CatalogHelper.after;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
 import static org.apache.camel.catalog.URISupport.createQueryString;
+import static org.apache.camel.catalog.URISupport.normalizeUri;
 import static org.apache.camel.catalog.URISupport.stripQuery;
 
 /**
@@ -464,8 +465,10 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // NOTICE: This logic is similar to org.apache.camel.util.EndpointHelper#endpointProperties
         // as the catalog also offers similar functionality (without having camel-core on classpath)
 
+        // need to normalize uri first
+
         // parse the uri
-        URI u = new URI(uri);
+        URI u = normalizeUri(uri);
         String scheme = u.getScheme();
 
         String json = componentJSonSchema(scheme);
