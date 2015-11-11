@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt;
+package org.apache.camel.tools.apt.helper;
 
 /**
  * A little helper class for converting a collection of values to a (usually comma separated) string.
  */
-class CollectionStringBuffer {
+public class CollectionStringBuffer {
 
     private final StringBuilder buffer = new StringBuilder();
     private String separator;

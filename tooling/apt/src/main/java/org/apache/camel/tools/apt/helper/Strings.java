@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt;
+package org.apache.camel.tools.apt.helper;
 
 /**
  * Some String helper methods
  */
-final class Strings {
+public final class Strings {
 
     private Strings() {
         //Helper class

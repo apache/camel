@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt;
+package org.apache.camel.tools.apt.helper;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-final class IOHelper {
+public final class IOHelper {
 
     private IOHelper() {
     }
