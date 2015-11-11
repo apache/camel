@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt;
+package org.apache.camel.tools.apt.helper;
 
 import java.net.URI;
 import java.net.URL;
@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 /**
  * A helper class for <a href="http://json-schema.org/">JSON schema</a>.
  */
-final class JsonSchemaHelper {
+public final class JsonSchemaHelper {
 
     private static final String VALID_CHARS = ".-='/\\!&():;";
     private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]");
@@ -39,13 +39,19 @@ final class JsonSchemaHelper {
     }
 
     public static String toJson(String name, String kind, Boolean required, String type, String defaultValue, String description,
-                                Boolean deprecated, String label, boolean enumType, Set<String> enums, boolean oneOfType, Set<String> oneOffTypes) {
+                                Boolean deprecated, String group, String label, boolean enumType, Set<String> enums, boolean oneOfType, Set<String> oneOffTypes) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
         sb.append(Strings.doubleQuote(name));
         sb.append(": { \"kind\": ");
         sb.append(Strings.doubleQuote(kind));
+
+        // we want group early so its easier to spot
+        if (!Strings.isNullOrEmpty(group)) {
+            sb.append(", \"group\": ");
+            sb.append(Strings.doubleQuote(group));
+        }
 
         // we want label early so its easier to spot
         if (!Strings.isNullOrEmpty(label)) {

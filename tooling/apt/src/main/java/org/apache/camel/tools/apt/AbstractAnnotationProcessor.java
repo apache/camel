@@ -41,9 +41,9 @@ import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import static org.apache.camel.tools.apt.IOHelper.loadText;
-import static org.apache.camel.tools.apt.Strings.canonicalClassName;
-import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
+import static org.apache.camel.tools.apt.helper.IOHelper.loadText;
+import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
+import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
 
 /**
  * Abstract class for Camel apt plugins.
