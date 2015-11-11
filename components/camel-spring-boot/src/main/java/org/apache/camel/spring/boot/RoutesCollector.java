@@ -52,7 +52,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         ApplicationContext applicationContext = contextRefreshedEvent.getApplicationContext();
-		CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
+        CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
         // if we have not yet started
         if (camelContext.getStatus() == ServiceStatus.Stopped) {
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());

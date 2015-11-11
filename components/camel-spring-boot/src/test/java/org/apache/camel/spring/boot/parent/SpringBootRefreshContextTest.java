@@ -33,10 +33,10 @@ public class SpringBootRefreshContextTest {
     public void shouldOnlyCollectRoutesOnce() {
         GenericApplicationContext parent = new GenericApplicationContext();
         parent.refresh();
-		ConfigurableApplicationContext context = new SpringApplicationBuilder(Configuration.class).web(false).parent(parent).run();
-		ContextRefreshedEvent refreshEvent = new ContextRefreshedEvent(context);
-		RoutesCollector collector = context.getBean(RoutesCollector.class);
-		collector.onApplicationEvent(refreshEvent); //no changes should happen here
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(Configuration.class).web(false).parent(parent).run();
+        ContextRefreshedEvent refreshEvent = new ContextRefreshedEvent(context);
+        RoutesCollector collector = context.getBean(RoutesCollector.class);
+        collector.onApplicationEvent(refreshEvent); //no changes should happen here
     }
 
 }
