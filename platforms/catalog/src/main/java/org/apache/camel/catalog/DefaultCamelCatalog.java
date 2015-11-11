@@ -607,16 +607,16 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
-    public String asEndpointUri(String scheme, String json) throws URISyntaxException {
-        return doAsEndpointUri(scheme, json, "&");
+    public String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException {
+        return doAsEndpointUri(scheme, json, "&", encode);
     }
 
     @Override
-    public String asEndpointUriXml(String scheme, String json) throws URISyntaxException {
-        return doAsEndpointUri(scheme, json, "&amp;");
+    public String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException {
+        return doAsEndpointUri(scheme, json, "&amp;", encode);
     }
 
-    private String doAsEndpointUri(String scheme, String json, String ampersand) throws URISyntaxException {
+    private String doAsEndpointUri(String scheme, String json, String ampersand, boolean encode) throws URISyntaxException {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
         Map<String, String> copy = new HashMap<String, String>();
@@ -649,20 +649,20 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
         }
 
-        return doAsEndpointUri(scheme, copy, ampersand);
+        return doAsEndpointUri(scheme, copy, ampersand, encode);
     }
 
     @Override
-    public String asEndpointUri(String scheme, Map<String, String> properties) throws URISyntaxException {
-        return doAsEndpointUri(scheme, properties, "&");
+    public String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException {
+        return doAsEndpointUri(scheme, properties, "&", encode);
     }
 
     @Override
-    public String asEndpointUriXml(String scheme, Map<String, String> properties) throws URISyntaxException {
-        return doAsEndpointUri(scheme, properties, "&amp;");
+    public String asEndpointUriXml(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException {
+        return doAsEndpointUri(scheme, properties, "&amp;", encode);
     }
 
-    private String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand) throws URISyntaxException {
+    private String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand, boolean encode) throws URISyntaxException {
         String json = componentJSonSchema(scheme);
         if (json == null) {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
@@ -760,7 +760,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         if (!copy.isEmpty()) {
             // the last option may already contain a ? char, if so we should use & instead of ?
             sb.append(hasQuestionmark ? ampersand : '?');
-            String query = createQueryString(copy, ampersand);
+            String query = createQueryString(copy, ampersand, encode);
             // we do not want to use %23 for # syntax
             query = query.replaceAll("\\=\\%23", "=#");
             sb.append(query);

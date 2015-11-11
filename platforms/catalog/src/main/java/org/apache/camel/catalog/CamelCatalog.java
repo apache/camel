@@ -178,7 +178,7 @@ public interface CamelCatalog {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUri(String scheme, String json) throws URISyntaxException;
+    String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException;
 
     /**
      * Creates an endpoint uri in XML style (eg escape & as &ampl;) from the information in the json schema
@@ -188,7 +188,7 @@ public interface CamelCatalog {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUriXml(String scheme, String json) throws URISyntaxException;
+    String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException;
 
     /**
      * Creates an endpoint uri in Java style from the information from the properties
@@ -198,7 +198,7 @@ public interface CamelCatalog {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUri(String scheme, Map<String, String> properties) throws URISyntaxException;
+    String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;
 
     /**
      * Creates an endpoint uri in XML style (eg escape & as &ampl;) from the information from the properties
@@ -208,7 +208,7 @@ public interface CamelCatalog {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUriXml(String scheme, Map<String, String> properties) throws URISyntaxException;
+    String asEndpointUriXml(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;
 
     /**
      * Lists all the components summary details in JSon
