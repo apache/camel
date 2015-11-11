@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.model.RoutesDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +56,8 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         ApplicationContext applicationContext = contextRefreshedEvent.getApplicationContext();
-        if (applicationContext.getParent() == null) {
-            CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
+		CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
+        if (camelContext.getStatus() == ServiceStatus.Stopped) {
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
             for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
                 try {
@@ -81,7 +82,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                 throw new CamelSpringBootInitializationException(e);
             }
         } else {
-            LOG.debug("Not at root context - defer adding routes");
+            LOG.debug("Camel already started, not adding routes.");
         }
     }
 
