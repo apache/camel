@@ -53,6 +53,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         ApplicationContext applicationContext = contextRefreshedEvent.getApplicationContext();
 		CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
+        // if we have not yet started
         if (camelContext.getStatus() == ServiceStatus.Stopped) {
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
             for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
@@ -60,19 +61,18 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                     LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
                     camelContext.addRoutes(routesBuilder);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new CamelSpringBootInitializationException(e);
                 }
             }
 
-            loadXmlRoutes(applicationContext, camelContext);
+            try {
+                loadXmlRoutes(applicationContext, camelContext);
 
-            if (camelContextConfigurations != null) {
                 for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
                     LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
                     camelContextConfiguration.beforeApplicationStart(camelContext);
                 }
-            }
-            try {
+
                 camelContext.start();
             } catch (Exception e) {
                 throw new CamelSpringBootInitializationException(e);
@@ -84,7 +84,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
 
     // Helpers
 
-    private void loadXmlRoutes(ApplicationContext applicationContext, CamelContext camelContext) {
+    private void loadXmlRoutes(ApplicationContext applicationContext, CamelContext camelContext) throws Exception {
         LOG.debug("Started XML routes detection. Scanning classpath (/camel/*.xml)...");
         try {
             Resource[] xmlRoutes = applicationContext.getResources("classpath:camel/*.xml");
@@ -94,8 +94,6 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             }
         } catch (FileNotFoundException e) {
             LOG.debug("No XMl routes found in the classpath (/camel/*.xml). Skipping XML routes detection.");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
