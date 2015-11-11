@@ -49,7 +49,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     // Constructors
 
     public RoutesCollector(ApplicationContext applicationContext, List<CamelContextConfiguration> camelContextConfigurations) {
-    	this.applicationContext = applicationContext;
+        this.applicationContext = applicationContext;
         this.camelContextConfigurations = new ArrayList<CamelContextConfiguration>(camelContextConfigurations);
     }
 
@@ -61,30 +61,36 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
         // only listen to context refreshs of "my" applicationContext
         if (this.applicationContext.equals(applicationContext)) {
             CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
-            LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
-            for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
+
+            // only add and start Camel if its stopped (initial state)
+            if (camelContext.getStatus().isStopped()) {
+                LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
+                for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
+                    try {
+                        LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
+                        camelContext.addRoutes(routesBuilder);
+                    } catch (Exception e) {
+                        throw new CamelSpringBootInitializationException(e);
+                    }
+                }
+
                 try {
-                    LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
-                    camelContext.addRoutes(routesBuilder);
+                    loadXmlRoutes(applicationContext, camelContext);
+
+                    for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
+                        LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
+                        camelContextConfiguration.beforeApplicationStart(camelContext);
+                    }
+
+                    camelContext.start();
                 } catch (Exception e) {
                     throw new CamelSpringBootInitializationException(e);
                 }
-            }
-
-            try {
-                loadXmlRoutes(applicationContext, camelContext);
-
-                for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
-                    LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
-                    camelContextConfiguration.beforeApplicationStart(camelContext);
-                }
-
-                camelContext.start();
-            } catch (Exception e) {
-                throw new CamelSpringBootInitializationException(e);
+            } else {
+                LOG.debug("Camel already started, not adding routes.");
             }
         } else {
-            LOG.debug("Camel already started, not adding routes.");
+            LOG.debug("Ignore ContextRefreshedEvent: {}", contextRefreshedEvent);
         }
     }
 
