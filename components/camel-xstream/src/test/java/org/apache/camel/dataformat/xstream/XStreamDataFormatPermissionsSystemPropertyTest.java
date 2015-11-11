@@ -17,24 +17,31 @@
 package org.apache.camel.dataformat.xstream;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class XStreamDataFormatDriverConfigTest extends CamelTestSupport {
+public class XStreamDataFormatPermissionsSystemPropertyTest extends XStreamDataFormatPermissionsTest {
 
-    @Test
-    public void testJson() {
-        PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setName("foo");
-
-        XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
-        xStreamDataFormat.setXstreamDriver(new JsonHierarchicalStreamDriver());
-
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        String marshalledOrder = xStream.toXML(purchaseOrder);
-
-        assertEquals("{", marshalledOrder.substring(0, 1));
+    @BeforeClass
+    public static void setup() {
+        // clear the default permissions system property
+        // see AbstractXStreamWrapper.PERMISSIONS_PROPERTY_DEFAULT
+        XStreamTestUtils.setPermissionSystemProperty("");
     }
 
+    @AfterClass
+    public static void cleanup() {
+        XStreamTestUtils.revertPermissionSystemProperty();
+    }
+
+    @Test
+    @Override
+    public void testNone() {
+        XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
+        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+        
+        Object po = xStream.fromXML(XML_PURCHASE_ORDER);
+        assertNotNull(po);
+    }
 }

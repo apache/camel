@@ -22,12 +22,24 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * @version 
  */
 public class XStreamConcurrencyTest extends CamelTestSupport {
+
+    @BeforeClass
+    public static void setup() {
+        XStreamTestUtils.setPermissionSystemProperty("");
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        XStreamTestUtils.revertPermissionSystemProperty();
+    }
 
     @Test
     public void testNoConcurrentProducers() throws Exception {

@@ -33,6 +33,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -42,6 +44,16 @@ public class XStreamConfigurationTest extends CamelTestSupport {
 
     private static volatile boolean constructorInjected;
     private static volatile boolean methodInjected;
+    
+    @BeforeClass
+    public static void setup() {
+        XStreamTestUtils.setPermissionSystemProperty("");
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        XStreamTestUtils.revertPermissionSystemProperty();
+    }
 
     @Override
     public void setUp() throws Exception {
