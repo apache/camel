@@ -78,6 +78,7 @@ http\://camel.apache.org/schema/spring/camel-spring-2.13.4.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.14.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.14.1.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.14.2.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.14.3.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.14.4.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.15.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.15.1.xsd=camel-spring.xsd
