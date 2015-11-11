@@ -60,12 +60,6 @@ public final class EndpointHelper {
             } else {
                 answer = value;
             }
-            // if we are in consumer/producer only mode, then enrich the advanced label to indicate its advanced of those
-            if (answer.equals("advanced") && consumerOnly) {
-                answer = "consumer (advanced)";
-            } else if (answer.equals("advanced") && producerOnly) {
-                answer = "producer (advanced)";
-            }
         }
 
         return answer;
