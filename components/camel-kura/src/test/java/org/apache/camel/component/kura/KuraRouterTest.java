@@ -71,6 +71,11 @@ public class KuraRouterTest extends Assert {
         mockEndpoint.assertIsSatisfied();
     }
 
+    @Test
+    public void shouldCreateConsumerTemplate() throws Exception {
+        assertNotNull(router.consumerTemplate);
+    }
+
 }
 
 class TestKuraRouter extends KuraRouter {

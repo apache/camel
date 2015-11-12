@@ -17,6 +17,7 @@
 package org.apache.camel.component.kura;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
@@ -38,6 +39,8 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
 
     protected ProducerTemplate producerTemplate;
 
+    protected ConsumerTemplate consumerTemplate;
+
     // Lifecycle
 
     @Override
@@ -51,6 +54,7 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
             log.debug("About to start Camel Kura router: {}", getClass().getName());
             camelContext.start();
             producerTemplate = camelContext.createProducerTemplate();
+            consumerTemplate = camelContext.createConsumerTemplate();
             log.debug("Bundle {} started.", bundleContext.getBundle().getBundleId());
         } catch (Throwable e) {
             String errorMessage = "Problem when starting Kura module " + getClass().getName() + ":";
