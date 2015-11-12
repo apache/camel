@@ -112,6 +112,7 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
             for (Map<String, String> row : rows) {
                 String name = row.get("name");
                 String kind = row.get("kind");
+                String group = row.get("group") != null ? row.get("group") : "";
                 String label = row.get("label") != null ? row.get("label") : "";
                 String type = row.get("type");
                 String javaType = row.get("javaType");
@@ -122,8 +123,8 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
 
                 CompositeType ct = CamelOpenMBeanTypes.explainComponentCompositeType();
                 CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
-                        new Object[]{name, kind, label, type, javaType, deprecated, value, defaultValue, description});
+                        new String[]{"option", "kind", "group", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+                        new Object[]{name, kind, group, label, type, javaType, deprecated, value, defaultValue, description});
                 answer.put(data);
             }
 
