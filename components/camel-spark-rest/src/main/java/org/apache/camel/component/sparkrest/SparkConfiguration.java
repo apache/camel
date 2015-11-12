@@ -80,6 +80,9 @@ public class SparkConfiguration {
     /**
      * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized
      * in the response as a application/x-java-serialized-object content type.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;

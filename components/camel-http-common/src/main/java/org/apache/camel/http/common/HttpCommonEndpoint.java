@@ -19,7 +19,6 @@ package org.apache.camel.http.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.camel.Component;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -142,6 +141,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             binding = new DefaultHttpBinding();
             binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             binding.setTransferException(isTransferException());
+            if (getComponent() != null) {
+                binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+            }
             binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
         }
         return binding;
