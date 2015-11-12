@@ -40,6 +40,7 @@ public class MockComponentConfigurationAndDocumentationTest extends ContextTestS
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
+        System.out.println(json);
 
         assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
         assertTrue(json.contains("\"expectedCount\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
@@ -51,8 +52,8 @@ public class MockComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = context.explainEndpointJson("mock:foo?retainFirst=10", true);
         assertNotNull(json);
 
-        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"integer\""
-                + ", \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"10\""));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\","
+                + " \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"10\""));
     }
 
     @Test
