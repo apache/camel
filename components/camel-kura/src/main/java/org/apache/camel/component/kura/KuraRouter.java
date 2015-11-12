@@ -48,6 +48,7 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
             camelContext = createCamelContext();
             camelContext.addRoutes(this);
             beforeStart(camelContext);
+            log.debug("About to start Camel Kura router: {}", getClass().getName());
             camelContext.start();
             producerTemplate = camelContext.createProducerTemplate();
             log.debug("Bundle {} started.", bundleContext.getBundle().getBundleId());
