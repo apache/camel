@@ -127,25 +127,22 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
     protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
                                           String title, String scheme, String extendsScheme, String label) {
+        // gather component information
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, title, scheme, extendsScheme, label);
+
+        String syntax = componentModel.getSyntax();
+        String description = componentModel.getDescription();
+
         writer.println("<html>");
         writer.println("<header>");
         writer.println("<title>" + title  + "</title>");
         writer.println("</header>");
         writer.println("<body>");
         writer.println("<h1>" + title + "</h1>");
-        writer.println("<b>Scheme: " + scheme + "</b>");
-
-        if (label != null) {
-            String[] labels = label.split(",");
-            writer.println("<ul>");
-            for (String text : labels) {
-                writer.println("<li>" + text + "</li>");
-            }
-            writer.println("</ul>");
-        }
-
-        // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, title, scheme, extendsScheme, label);
+        writer.println("<b>Description:</b> " + description + "<br/>");
+        writer.println("<b>Scheme:</b> " + scheme + "<br/>");
+        writer.println("<b>Syntax:</b> " + syntax + "<br/>");
+        writer.println("<b>Maven:</b> " + componentModel.getGroupId() + "/" + componentModel.getArtifactId() + "/" + componentModel.getVersionId() + "<br/>");
 
         writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, classElement, "");
 
@@ -353,24 +350,24 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         if (!endpointOptions.isEmpty() || !endpointPaths.isEmpty()) {
             writer.println("<table class='table'>");
             writer.println("  <tr>");
-            writer.println("    <th>Name</th>");
-            writer.println("    <th>Kind</th>");
-            writer.println("    <th>Type</th>");
-            writer.println("    <th>Required</th>");
-            writer.println("    <th>Deprecated</th>");
-            writer.println("    <th>Default Value</th>");
-            writer.println("    <th>Enum Values</th>");
-            writer.println("    <th>Description</th>");
+            writer.println("    <th align=\"left\">Name</th>");
+            writer.println("    <th align=\"left\">Kind</th>");
+            writer.println("    <th align=\"left\">Group</th>");
+            writer.println("    <th align=\"left\">Required</th>");
+            writer.println("    <th align=\"left\">Default</th>");
+            writer.println("    <th align=\"left\">Type</th>");
+            writer.println("    <th align=\"left\">Enum</th>");
+            writer.println("    <th align=\"left\">Description</th>");
             writer.println("  </tr>");
             // include paths in the top
             for (EndpointPath path : endpointPaths) {
                 writer.println("  <tr>");
                 writer.println("    <td>" + path.getName() + "</td>");
                 writer.println("    <td>" + "path" + "</td>");
-                writer.println("    <td>" + path.getType() + "</td>");
+                writer.println("    <td>" + path.getGroup() + "</td>");
                 writer.println("    <td>" + safeNull(path.getRequired()) + "</td>");
-                writer.println("    <td>" + path.isDeprecated() + "</td>");
                 writer.println("    <td>" + path.getDefaultValue() + "</td>");
+                writer.println("    <td>" + path.getType() + "</td>");
                 writer.println("    <td>" + path.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + path.getDocumentation() + "</td>");
                 writer.println("  </tr>");
@@ -380,10 +377,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 writer.println("  <tr>");
                 writer.println("    <td>" + option.getName() + "</td>");
                 writer.println("    <td>" + "parameter" + "</td>");
-                writer.println("    <td>" + option.getType() + "</td>");
+                writer.println("    <td>" + option.getGroup() + "</td>");
                 writer.println("    <td>" + safeNull(option.getRequired()) + "</td>");
-                writer.println("    <td>" + option.isDeprecated() + "</td>");
                 writer.println("    <td>" + option.getDefaultValue() + "</td>");
+                writer.println("    <td>" + option.getType() + "</td>");
                 writer.println("    <td>" + option.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + option.getDocumentationWithNotes() + "</td>");
                 writer.println("  </tr>");
