@@ -1836,6 +1836,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // find type and description from the json schema
                 String type = null;
                 String kind = null;
+                String group = null;
                 String label = null;
                 String required = null;
                 String javaType = null;
@@ -1846,6 +1847,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     if (name.equals(row.get("name"))) {
                         type = row.get("type");
                         kind = row.get("kind");
+                        group = row.get("group");
                         label = row.get("label");
                         required = row.get("required");
                         javaType = row.get("javaType");
@@ -1857,13 +1859,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // add as selected row
-                selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
             for (Map<String, String> row : rows) {
                 String name = row.get("name");
                 String kind = row.get("kind");
+                String group = row.get("group");
                 String label = row.get("label");
                 String required = row.get("required");
                 String value = row.get("value");
@@ -1878,7 +1881,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 if (includeAllOptions) {
                     // add as selected row
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
                     }
                 }
             }
@@ -1898,20 +1901,24 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                 String name = row[0];
                 String kind = row[1];
-                String label = row[2];
-                String required = row[3];
-                String type = row[4];
-                String javaType = row[5];
-                String deprecated = row[6];
-                String value = row[7];
-                String defaultValue = row[8];
-                String description = row[9];
+                String group = row[2];
+                String label = row[3];
+                String required = row[4];
+                String type = row[5];
+                String javaType = row[6];
+                String deprecated = row[7];
+                String value = row[8];
+                String defaultValue = row[9];
+                String description = row[10];
 
                 // add json of the option
                 buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
                 if (kind != null) {
                     csb.append("\"kind\": \"" + kind + "\"");
+                }
+                if (group != null) {
+                    csb.append("\"group\": \"" + group + "\"");
                 }
                 if (label != null) {
                     csb.append("\"label\": \"" + label + "\"");
@@ -1989,6 +1996,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // find type and description from the json schema
                 String type = null;
                 String kind = null;
+                String group = null;
                 String label = null;
                 String required = null;
                 String javaType = null;
@@ -1999,6 +2007,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     if (name.equals(row.get("name"))) {
                         type = row.get("type");
                         kind = row.get("kind");
+                        group = row.get("group");
                         label = row.get("label");
                         required = row.get("required");
                         javaType = row.get("javaType");
@@ -2010,13 +2019,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // remember this option from the uri
-                uriOptions.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                uriOptions.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
             for (Map<String, String> row : rows) {
                 String name = row.get("name");
                 String kind = row.get("kind");
+                String group = row.get("group");
                 String label = row.get("label");
                 String required = row.get("required");
                 String value = row.get("value");
@@ -2036,7 +2046,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         if (isUriOption) {
                             selected.put(name, uriOptions.get(name));
                         } else {
-                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                            selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
                         }
                     }
                 }
@@ -2059,20 +2069,24 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                 String name = row[0];
                 String kind = row[1];
-                String label = row[2];
-                String required = row[3];
-                String type = row[4];
-                String javaType = row[5];
-                String deprecated = row[6];
-                String value = row[7];
-                String defaultValue = row[8];
-                String description = row[9];
+                String group = row[2];
+                String label = row[3];
+                String required = row[4];
+                String type = row[5];
+                String javaType = row[6];
+                String deprecated = row[7];
+                String value = row[8];
+                String defaultValue = row[9];
+                String description = row[10];
 
                 // add json of the option
                 buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
                 if (kind != null) {
                     csb.append("\"kind\": \"" + kind + "\"");
+                }
+                if (group != null) {
+                    csb.append("\"group\": \"" + group + "\"");
                 }
                 if (label != null) {
                     csb.append("\"label\": \"" + label + "\"");

@@ -41,9 +41,8 @@ public class SedaComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"concurrentConsumers\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"blockWhenFull\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"concurrentConsumers\": { \"kind\": \"parameter\", \"group\": \"consumer\", \"label\": \"consumer\""));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
     }
 
     @Test

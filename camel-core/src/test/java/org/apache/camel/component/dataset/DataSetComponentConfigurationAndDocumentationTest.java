@@ -41,11 +41,9 @@ public class DataSetComponentConfigurationAndDocumentationTest extends ContextTe
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"preloadSize\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"minRate\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"exchangePattern\": { \"kind\": \"parameter\", \"label\": \"advanced\", \"type\": \"string\", \"javaType\": \"org.apache.camel.ExchangePattern\""
-                + ", \"enum\": [ \"InOnly\", \"RobustInOnly\", \"InOut\", \"InOptionalOut\", \"OutOnly\", \"RobustOutOnly\", \"OutIn\", \"OutOptionalIn\" ]"));
-        assertTrue(json.contains("\"InOut\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\", \"type\""));
+        assertTrue(json.contains("\"kind\": \"parameter\", \"group\": \"consuner\", \"label\": \"consuner\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer"));
     }
 
     @Test

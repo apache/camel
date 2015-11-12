@@ -41,8 +41,8 @@ public class DirectVmComponentConfigurationAndDocumentationTest extends ContextT
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"block\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\", \"type\": \"string\""));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\""));
     }
 
     @Test

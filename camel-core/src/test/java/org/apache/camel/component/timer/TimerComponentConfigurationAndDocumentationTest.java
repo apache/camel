@@ -41,9 +41,9 @@ public class TimerComponentConfigurationAndDocumentationTest extends ContextTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timerName\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\""
-                + ", \"deprecated\": \"false\", \"description\": \"The name of the timer\" }"));
-        assertTrue(json.contains("\"delay\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"timerName\": { \"kind\": \"path\", \"group\": \"consumer\", \"required\": \"true\""));
+        assertTrue(json.contains("\"delay\": { \"kind\": \"parameter\", \"group\": \"consumer\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"timer\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\""));
     }
 
     @Test
