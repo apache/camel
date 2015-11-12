@@ -42,14 +42,25 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
-        this.bundleContext = bundleContext;
-        log.debug("Initializing bundle {}.", bundleContext.getBundle().getBundleId());
-        camelContext = createCamelContext();
-        camelContext.addRoutes(this);
-        beforeStart(camelContext);
-        camelContext.start();
-        producerTemplate = camelContext.createProducerTemplate();
-        log.debug("Bundle {} started.", bundleContext.getBundle().getBundleId());
+        try {
+            this.bundleContext = bundleContext;
+            log.debug("Initializing bundle {}.", bundleContext.getBundle().getBundleId());
+            camelContext = createCamelContext();
+            camelContext.addRoutes(this);
+            beforeStart(camelContext);
+            camelContext.start();
+            producerTemplate = camelContext.createProducerTemplate();
+            log.debug("Bundle {} started.", bundleContext.getBundle().getBundleId());
+        } catch (Throwable e) {
+            String errorMessage = "Problem when starting Kura module " + getClass().getName() + ":";
+            log.warn(errorMessage, e);
+
+            // Print error to the Kura console.
+            System.err.println(errorMessage);
+            e.printStackTrace();
+
+            throw e;
+        }
     }
 
     @Override
