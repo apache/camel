@@ -45,10 +45,10 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
                         + " \"deprecated\": \"false\", \"description\": \"Name of data format\" }"));
-        assertTrue(json.contains("\"operation\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\""));
-        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"label\": \"advanced\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"operation\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\", \"type\": \"string\""));
+        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
     }
 
     @Test
