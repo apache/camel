@@ -131,7 +131,6 @@ public abstract class BaseAhcTest extends CamelTestSupport {
     }
     
     protected String getTestServerEndpointTwoUri() {
-        
         return "jetty:" + getTestServerEndpointTwoUrl();
     }
     
