@@ -72,6 +72,19 @@ public final class EndpointHelper {
         return new EndpointOptionGroupAndLabelComparator();
     }
 
+    /**
+     * To sort the component/endpoint options in human friendly order.
+     * <p/>
+     * The order is to include options grouped by
+     * <ul>
+     *     <li>common</li>
+     *     <li>consumer</li>
+     *     <li>consumer (advanced)</li>
+     *     <li>producer</li>
+     *     <li>consumer (advanced)</li>
+     *     <li>... and the rest sorted by a..z</li>
+     * </ul>
+     */
     private static final class EndpointOptionGroupAndLabelComparator implements Comparator<EndpointOption> {
 
         @Override
