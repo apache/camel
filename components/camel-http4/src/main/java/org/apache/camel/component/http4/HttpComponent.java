@@ -66,6 +66,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected SSLContextParameters sslContextParameters;
     protected X509HostnameVerifier x509HostnameVerifier = new BrowserCompatHostnameVerifier();
     protected CookieStore cookieStore;
+    protected boolean allowJavaSerializedObject;
 
     // options to the default created http connection manager
     protected int maxTotalConnections = 200;
@@ -375,6 +376,21 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
     public void setHttpBinding(HttpBinding httpBinding) {
         this.httpBinding = httpBinding;
+    }
+
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     */
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        // need to override and call super for component docs
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
     }
 
     public HttpContext getHttpContext() {

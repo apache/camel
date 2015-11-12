@@ -19,6 +19,7 @@ package org.apache.camel.component.http4;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -111,6 +112,11 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.clientBuilder = clientBuilder;
         this.httpClientConfigurer = clientConfigurer;
         this.clientConnectionManager = clientConnectionManager;
+    }
+
+    @Override
+    public HttpComponent getComponent() {
+        return (HttpComponent) super.getComponent();
     }
 
     public Producer createProducer() throws Exception {
