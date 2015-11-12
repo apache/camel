@@ -90,7 +90,6 @@ public class CamelContinuationServlet extends CamelServlet {
         // we do not support java serialized objects unless explicit enabled
         String contentType = request.getContentType();
         if (HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType) && !consumer.getEndpoint().getComponent().isAllowJavaSerializedObject()) {
-            System.out.println("415 miser !!!");
             response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
             return;
         }
