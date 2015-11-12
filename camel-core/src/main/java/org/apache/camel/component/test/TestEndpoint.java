@@ -45,7 +45,7 @@ public class TestEndpoint extends MockEndpoint {
     private final Endpoint expectedMessageEndpoint;
     @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing") @Metadata(required = "true")
     private String name;
-    @UriParam(defaultValue = "2000")
+    @UriParam(label = "producer", defaultValue = "2000")
     private long timeout = 2000L;
 
     public TestEndpoint(String endpointUri, Component component, Endpoint expectedMessageEndpoint) {

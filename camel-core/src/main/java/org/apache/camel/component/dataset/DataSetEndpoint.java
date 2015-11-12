@@ -48,13 +48,13 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private final AtomicInteger receivedCounter = new AtomicInteger();
     @UriPath(name = "name", description = "Name of DataSet to lookup in the registry") @Metadata(required = "true")
     private volatile DataSet dataSet;
-    @UriParam(label = "consuner", defaultValue = "0")
+    @UriParam(label = "consumer", defaultValue = "0")
     private int minRate;
-    @UriParam(label = "consuner", defaultValue = "3")
+    @UriParam(label = "consumer", defaultValue = "3")
     private long produceDelay = 3;
     @UriParam(label = "producer", defaultValue = "0")
     private long consumeDelay;
-    @UriParam(label = "consuner", defaultValue = "0")
+    @UriParam(label = "consumer", defaultValue = "0")
     private long preloadSize;
     @UriParam(label = "consumer", defaultValue = "1000")
     private long initialDelay = 1000;
