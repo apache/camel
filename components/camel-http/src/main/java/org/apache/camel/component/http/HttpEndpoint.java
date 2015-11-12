@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -110,6 +111,11 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.clientParams = clientParams;
         this.httpClientConfigurer = clientConfigurer;
         this.httpConnectionManager = httpConnectionManager;
+    }
+
+    @Override
+    public HttpComponent getComponent() {
+        return (HttpComponent) super.getComponent();
     }
 
     public Producer createProducer() throws Exception {
