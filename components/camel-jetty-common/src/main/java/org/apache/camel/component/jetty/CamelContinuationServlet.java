@@ -28,6 +28,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.http.CamelServlet;
+import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.http.helper.HttpHelper;
@@ -83,6 +84,14 @@ public class CamelContinuationServlet extends CamelServlet {
 
         if ("TRACE".equals(request.getMethod()) && !consumer.isTraceEnabled()) {
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            return;
+        }
+
+        // we do not support java serialized objects unless explicit enabled
+        String contentType = request.getContentType();
+        if (HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType) && !consumer.getEndpoint().getComponent().isAllowJavaSerializedObject()) {
+            System.out.println("415 miser !!!");
+            response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
             return;
         }
         

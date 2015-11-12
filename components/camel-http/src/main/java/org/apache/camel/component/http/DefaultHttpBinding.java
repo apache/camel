@@ -499,4 +499,12 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
 }

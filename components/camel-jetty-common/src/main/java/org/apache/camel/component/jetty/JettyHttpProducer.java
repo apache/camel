@@ -33,6 +33,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -139,17 +140,20 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
             if (contentType != null) {
                 httpExchange.setRequestContentType(contentType);
             }
-
             if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
-                // serialized java object
-                Serializable obj = exchange.getIn().getMandatoryBody(Serializable.class);
-                // write object to output stream
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                try {
-                    HttpHelper.writeObjectToStream(bos, obj);
-                    httpExchange.setRequestContent(bos.toByteArray());
-                } finally {
-                    IOHelper.close(bos, "body", LOG);
+                if (getEndpoint().getComponent().isAllowJavaSerializedObject() || getEndpoint().isTransferException()) {
+                    // serialized java object
+                    Serializable obj = exchange.getIn().getMandatoryBody(Serializable.class);
+                    // write object to output stream
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    try {
+                        HttpHelper.writeObjectToStream(bos, obj);
+                        httpExchange.setRequestContent(bos.toByteArray());
+                    } finally {
+                        IOHelper.close(bos, "body", LOG);
+                    }
+                } else {
+                    throw new RuntimeCamelException("Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed");
                 }
             } else {
                 Object body = exchange.getIn().getBody();

@@ -46,6 +46,8 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;
+    private boolean allowJavaSerializedObject;
+
     public DefaultJettyHttpBinding() {
         
     }
@@ -97,6 +99,14 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
+    }
+
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
     protected void populateResponse(Exchange exchange, JettyContentExchange httpExchange,
@@ -173,11 +183,17 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
         // if content type is serialized java object, then de-serialize it to a Java object
         if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
-            try {
-                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, httpExchange.getResponseContentBytes());
-                return HttpHelper.deserializeJavaObjectFromStream(is);
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
+            // only deserialize java if allowed
+            if (isAllowJavaSerializedObject() || isTransferException()) {
+                try {
+                    InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, httpExchange.getResponseContentBytes());
+                    return HttpHelper.deserializeJavaObjectFromStream(is);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
+                }
+            } else {
+                // empty body
+                return null;
             }
         } else {
             // just grab the raw content body
