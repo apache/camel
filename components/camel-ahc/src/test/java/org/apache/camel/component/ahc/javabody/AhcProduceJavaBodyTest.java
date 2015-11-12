@@ -22,6 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ahc.AhcComponent;
 import org.apache.camel.component.ahc.AhcConstants;
 import org.apache.camel.component.ahc.BaseAhcTest;
+import org.apache.camel.component.jetty.JettyHttpComponent;
+import org.apache.camel.http.common.HttpCommonComponent;
 import org.junit.Test;
 
 /**
@@ -36,6 +38,9 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
     @Test
     public void testHttpSendJavaBodyAndReceiveString() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(true);
+
         AhcComponent ahc = context.getComponent("ahc", AhcComponent.class);
         ahc.setAllowJavaSerializedObject(true);
 
@@ -70,6 +75,9 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
     @Test
     public void testHttpSendJavaBodyAndReceiveJavaBody() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(true);
+
         AhcComponent ahc = context.getComponent("ahc", AhcComponent.class);
         ahc.setAllowJavaSerializedObject(true);
 
@@ -105,6 +113,9 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
     @Test
     public void testHttpSendStringAndReceiveJavaBody() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(true);
+
         AhcComponent ahc = context.getComponent("ahc", AhcComponent.class);
         ahc.setAllowJavaSerializedObject(true);
 
@@ -135,6 +146,9 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
     @Test
     public void testNotAllowedReceive() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(true);
+
         AhcComponent ahc = context.getComponent("ahc", AhcComponent.class);
         ahc.setAllowJavaSerializedObject(false);
 
@@ -163,6 +177,12 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
     @Test
     public void testNotAllowed() throws Exception {
+        JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
+        jetty.setAllowJavaSerializedObject(false);
+
+        AhcComponent ahc = context.getComponent("ahc", AhcComponent.class);
+        ahc.setAllowJavaSerializedObject(false);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
