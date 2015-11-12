@@ -89,7 +89,9 @@ public class DefaultHttpBinding implements HttpBinding {
     public DefaultHttpBinding(HttpCommonEndpoint endpoint) {
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
         this.transferException = endpoint.isTransferException();
-        this.allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
+        if (endpoint.getComponent() != null) {
+            this.allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
+        }
     }
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
@@ -153,6 +155,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
         // if content type is serialized java object, then de-serialize it to a Java object
         if (request.getContentType() != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
+            // only deserialize java if allowed
             if (allowJavaSerializedObject || isTransferException()) {
                 try {
                     InputStream is = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
@@ -164,7 +167,8 @@ public class DefaultHttpBinding implements HttpBinding {
                     throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
                 }
             } else {
-                throw new RuntimeCamelException("Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed");
+                // set empty body
+                message.setBody(null);
             }
         }
         
