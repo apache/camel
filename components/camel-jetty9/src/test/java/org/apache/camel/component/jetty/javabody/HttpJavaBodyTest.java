@@ -26,7 +26,6 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.jetty.JettyHttpComponent;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -40,7 +39,6 @@ public class HttpJavaBodyTest extends BaseJettyTest {
     }
 
     @Test
-    @Ignore
     public void testHttpSendJavaBodyAndReceiveString() throws Exception {
         JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
         jetty.setAllowJavaSerializedObject(true);
@@ -78,7 +76,6 @@ public class HttpJavaBodyTest extends BaseJettyTest {
     }
 
     @Test
-    @Ignore
     public void testHttpSendJavaBodyAndReceiveJavaBody() throws Exception {
         JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
         jetty.setAllowJavaSerializedObject(true);
@@ -117,7 +114,6 @@ public class HttpJavaBodyTest extends BaseJettyTest {
     }
 
     @Test
-    @Ignore
     public void testHttpSendStringAndReceiveJavaBody() throws Exception {
         JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
         jetty.setAllowJavaSerializedObject(true);
@@ -188,7 +184,6 @@ public class HttpJavaBodyTest extends BaseJettyTest {
     }
 
     @Test
-    @Ignore
     public void testNotAllowed() throws Exception {
         JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
         jetty.setAllowJavaSerializedObject(false);
