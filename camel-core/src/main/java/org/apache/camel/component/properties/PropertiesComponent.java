@@ -118,6 +118,7 @@ public class PropertiesComponent extends DefaultComponent {
     }
 
     public PropertiesComponent(boolean isDefaultCreated) {
+        this();
         this.isDefaultCreated = isDefaultCreated;
     }
 
