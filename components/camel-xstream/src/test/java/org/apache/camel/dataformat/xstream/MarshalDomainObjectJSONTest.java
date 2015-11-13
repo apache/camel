@@ -30,9 +30,6 @@ public class MarshalDomainObjectJSONTest extends MarshalDomainObjectTest {
                 from("direct:marshal").marshal().json();
 
                 from("direct:reverse").unmarshal().json(JsonLibrary.XStream, PurchaseOrder.class).to("mock:reverse");
-
-                from("direct:inPretty").marshal().json(true);
-                from("direct:backPretty").unmarshal().json(JsonLibrary.XStream, PurchaseOrder.class, true).to("mock:reverse");
             }
         };
     }
