@@ -21,13 +21,13 @@ import java.util.Iterator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.direct.DirectConsumer;
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * Camel DirectConsumer implementation.
  */
-public class TwitterConsumerDirect extends DirectConsumer {
+public class TwitterConsumerDirect extends DefaultConsumer {
 
     private Twitter4JConsumer twitter4jConsumer;
 
