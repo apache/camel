@@ -16,7 +16,10 @@
  */
 package org.apache.camel.processor.dynamicrouter;
 
-import org.apache.camel.*;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.DynamicRouter;
+import org.apache.camel.Exchange;
+import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 
 public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
