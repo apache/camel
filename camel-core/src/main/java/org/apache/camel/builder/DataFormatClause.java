@@ -20,8 +20,6 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.zip.Deflater;
 
-import org.w3c.dom.Node;
-
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
@@ -41,6 +39,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
@@ -57,6 +56,7 @@ import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.w3c.dom.Node;
 
 /**
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
@@ -269,6 +269,65 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         IcalDataFormat ical = new IcalDataFormat();
         ical.setValidating(validating);
         return dataFormat(ical);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     */
+    public T mimeMultipart() {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        return dataFormat(mm);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     *
+     * @param multipartSubType Specifies the subtype of the MIME Multipart
+     */
+    public T mimeMultipart(String multipartSubType) {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        mm.setMultipartSubType(multipartSubType);
+        return dataFormat(mm);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     *
+     * @param multipartSubType           the subtype of the MIME Multipart
+     * @param multipartWithoutAttachment defines whether a message without attachment is also marshaled
+     *                                   into a MIME Multipart (with only one body part).
+     * @param headersInline              define the MIME Multipart headers as part of the message body
+     *                                   or as Camel headers
+     * @param binaryContent              have binary encoding for binary content (true) or use Base-64
+     *                                   encoding for binary content (false)
+     */
+    public T mimeMultipart(String multipartSubType, boolean multipartWithoutAttachment, boolean headersInline,
+                           boolean binaryContent) {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        mm.setMultipartSubType(multipartSubType);
+        mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
+        mm.setHeadersInline(headersInline);
+        mm.setBinaryContent(binaryContent);
+        return dataFormat(mm);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     *
+     * @param multipartWithoutAttachment defines whether a message without attachment is also marshaled
+     *                                   into a MIME Multipart (with only one body part).
+     * @param headersInline              define the MIME Multipart headers as part of the message body
+     *                                   or as Camel headers
+     * @param binaryContent              have binary encoding for binary content (true) or use Base-64
+     *                                   encoding for binary content (false)
+     */
+    public T mimeMultipart(boolean multipartWithoutAttachment, boolean headersInline,
+                           boolean binaryContent) {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
+        mm.setHeadersInline(headersInline);
+        mm.setBinaryContent(binaryContent);
+        return dataFormat(mm);
     }
 
     /**

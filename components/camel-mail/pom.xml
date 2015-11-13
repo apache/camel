@@ -30,7 +30,7 @@
     <description>Camel Mail support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.mail.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.component.mail.*,org.apache.camel.dataformat.mime.multipart.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>
           org.apache.camel.spi.ComponentResolver;component=imap,
           org.apache.camel.spi.ComponentResolver;component=imaps,
@@ -38,7 +38,8 @@
           org.apache.camel.spi.ComponentResolver;component=pop3,
           org.apache.camel.spi.ComponentResolver;component=pop3s,
           org.apache.camel.spi.ComponentResolver;component=smtp,
-          org.apache.camel.spi.ComponentResolver;component=smtps
+          org.apache.camel.spi.ComponentResolver;component=smtps,
+          org.apache.camel.spi.DataFormatResolver;dataformat=mime-multipart
         </camel.osgi.export.service>
     </properties>
 
