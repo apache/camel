@@ -33,11 +33,11 @@ public class UndertowRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowRegistry.class);
 
-    int port;
-    SSLContext sslContext;
-    String host;
-    Undertow server;
-    Map<URI, UndertowConsumer> consumersRegistry = new HashMap<URI, UndertowConsumer>();
+    private int port;
+    private SSLContext sslContext;
+    private String host;
+    private Undertow server;
+    private Map<String, UndertowConsumer> consumersRegistry = new HashMap<String, UndertowConsumer>();
 
     public UndertowRegistry(UndertowConsumer consumer, int port) {
         registerConsumer(consumer);
@@ -56,24 +56,26 @@ public class UndertowRegistry {
     }
 
     public void registerConsumer(UndertowConsumer consumer) {
-        URI httpUri = consumer.getEndpoint().getHttpURI();
+        UndertowEndpoint endpoint = consumer.getEndpoint();
+        URI httpUri = endpoint.getHttpURI();
         if (host != null && !host.equals(httpUri.getHost())) {
             throw new IllegalArgumentException("Cannot register UndertowConsumer on different host and same port: {}" + host + " " + httpUri.getHost());
         } else {
             host = httpUri.getHost();
         }
         LOG.info("Adding consumer to consumerRegistry: {}", httpUri);
-        consumersRegistry.put(httpUri, consumer);
-        if (sslContext != null && consumer.getEndpoint().getSslContext() != null) {
+        consumersRegistry.put(endpoint.getEndpointUri(), consumer);
+        if (sslContext != null && endpoint.getSslContext() != null) {
             throw new IllegalArgumentException("Cannot register UndertowConsumer with different SSL config");
         }
 
     }
 
     public void unregisterConsumer(UndertowConsumer consumer) {
-        URI httpUri = consumer.getEndpoint().getHttpURI();
-        if (consumersRegistry.containsKey(httpUri)) {
-            consumersRegistry.remove(httpUri);
+        UndertowEndpoint endpoint = consumer.getEndpoint();
+        String endpointUri = endpoint.getEndpointUri();
+        if (consumersRegistry.containsKey(endpointUri)) {
+            consumersRegistry.remove(endpointUri);
         } else {
             LOG.debug("Cannot unregister consumer {} as it was not registered", consumer);
         }
@@ -91,7 +93,7 @@ public class UndertowRegistry {
         this.server = server;
     }
 
-    public Map<URI, UndertowConsumer> getConsumersRegistry() {
+    public Map<String, UndertowConsumer> getConsumersRegistry() {
         return consumersRegistry;
     }
 
