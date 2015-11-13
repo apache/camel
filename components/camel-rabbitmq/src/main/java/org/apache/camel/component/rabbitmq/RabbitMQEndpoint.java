@@ -95,8 +95,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private String exchangeType = "direct";
     @UriParam
     private String routingKey;
-    @UriParam(defaultValue = "false")
-    private boolean skipQueueDeclare = false;
+    @UriParam
+    private boolean skipQueueDeclare;
     @UriParam
     private Address[] addresses;
     @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
@@ -153,7 +153,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private ArgsConfigurer queueArgsConfigurer;
     @UriParam
     private ArgsConfigurer exchangeArgsConfigurer;
-
     @UriParam
     private long requestTimeout = 20000;
     @UriParam
