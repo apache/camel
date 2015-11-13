@@ -74,8 +74,9 @@ public class UriConfigurationTest extends Assert {
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"accessToken\": { \"kind\": \"parameter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"consumerKey\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        // REVIST this comparison test may be sensitive to some changes.
+        assertTrue(json.contains("\"accessToken\": { \"kind\": \"parameter\", \"group\": \"common\", \"type\": \"string\""));
+        assertTrue(json.contains("\"consumerKey\": { \"kind\": \"parameter\", \"group\": \"common\", \"type\": \"string\""));
     }
 
     @Test
