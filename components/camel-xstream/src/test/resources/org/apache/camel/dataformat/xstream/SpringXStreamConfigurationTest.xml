@@ -44,7 +44,7 @@
                 </implicitCollections>
             </xstream>
             
-           <xstream id="xstream-json" driver="json">
+           <xstream id="xstream-json" driver="json" permissions="org.apache.camel.dataformat.xstream.*">
                 <converters>
                     <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
                 </converters>
@@ -58,7 +58,7 @@
                 </implicitCollections>
             </xstream>
             
-            <xstream id="xstream-driver" driverRef="myDriver"/>            
+            <xstream id="xstream-driver" driverRef="myDriver" permissions="org.apache.camel.dataformat.xstream.*"/>
         </dataFormats>
 
         <route>

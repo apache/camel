@@ -27,8 +27,8 @@
         
         <!-- we define the json xstream data formats to be used (xstream is default) -->
         <dataFormats>
-            <xstream id="xstream-utf8" encoding="UTF-8"/>
-            <xstream id="xstream-default"/>
+            <xstream id="xstream-utf8" encoding="UTF-8" permissions="org.apache.camel.dataformat.stream.*"/>
+            <xstream id="xstream-default" permissions="org.apache.camel.dataformat.stream.*"/>
         </dataFormats>
 
         <route>
