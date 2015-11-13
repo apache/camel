@@ -23,8 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -32,16 +30,6 @@ import org.junit.Test;
  */
 public class UnmarshalThenMarshalTest extends CamelTestSupport {
     
-    @BeforeClass
-    public static void setup() {
-        XStreamTestUtils.setPermissionSystemProperty("");
-    }
-
-    @AfterClass
-    public static void cleanup() {
-        XStreamTestUtils.revertPermissionSystemProperty();
-    }
-
     @Test
     public void testSendXmlAndUnmarshal() throws Exception {
 
@@ -69,13 +57,13 @@ public class UnmarshalThenMarshalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").
-                        marshal().xstream().
+                        marshal().xstream(PurchaseOrder.class).
                         process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 log.debug("marshalled: " + exchange.getIn().getBody(String.class));
                             }
                         }).
-                        unmarshal().xstream().
+                        unmarshal().xstream(PurchaseOrder.class).
                         to("mock:result");
             }
         };

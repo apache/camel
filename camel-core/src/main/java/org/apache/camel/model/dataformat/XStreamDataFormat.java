@@ -38,6 +38,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -50,6 +51,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.NONE)
 public class XStreamDataFormat extends DataFormatDefinition {
     @XmlAttribute
+    private String permissions;
+    @XmlAttribute
     private String encoding;
     @XmlAttribute
     private String driver;
@@ -57,9 +60,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     private String driverRef;
     @XmlAttribute
     private String mode;
-    @XmlAttribute
-    private String permissions;
-    
+
     @XmlJavaTypeAdapter(ConvertersAdapter.class)
     @XmlElement(name = "converters")
     private List<String> converters;
@@ -187,10 +188,35 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Adds permissionsList
+     * Adds permissions that controls which Java packages and classes XStream is allowed to use during
+     * unmarshal from xml/json to Java beans.
+     * <p/>
+     * A permission must be configured either here or globally using a JVM system property. The permission
+     * can be specified in a syntax where a plus sign is allow, and minus sign is deny.
+     * <br/>
+     * Wildcards is supported by using <tt>.*</tt> as prefix. For example to allow <tt>com.foo</tt> and all subpackages
+     * then specfy <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by comma, such as
+     * <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>.
+     * <br/>
+     * The following default permission is always included: <tt>"-*,java.lang.*,java.util.*"</tt> unless
+     * its overridden by specifying a JVM system property with they key <tt>org.apache.camel.xstream.permissions</tt>.
      */
     public void setPermissions(String permissions) {
         this.permissions = permissions;
+    }
+
+    /**
+     * To add permission for the given pojo classes.
+     * @param type the pojo class(es) xstream should use as allowed permission
+     * @see #setPermissions(String)
+     */
+    public void setPermissions(Class<?>... type) {
+        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+        for (Class<?> clazz : type) {
+            csb.append("+");
+            csb.append(clazz.getName());
+        }
+        setPermissions(csb.toString());
     }
 
     @Override
@@ -208,6 +234,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+        if (this.permissions != null) {
+            setProperty(camelContext, dataFormat, "permissions", this.permissions);
+        }
         if (encoding != null) {
             setProperty(camelContext, dataFormat, "encoding", encoding);
         }
@@ -222,9 +251,6 @@ public class XStreamDataFormat extends DataFormatDefinition {
         }
         if (this.implicitCollections != null) {
             setProperty(camelContext, dataFormat, "implicitCollections", this.implicitCollections);
-        }
-        if (this.permissions != null) {
-            setProperty(camelContext, dataFormat, "permissions", this.permissions);
         }
         if (this.mode != null) {
             setProperty(camelContext, dataFormat, "mode", mode);
