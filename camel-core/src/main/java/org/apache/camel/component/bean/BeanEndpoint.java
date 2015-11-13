@@ -42,7 +42,8 @@ public class BeanEndpoint extends DefaultEndpoint {
     private String beanName;
     @UriParam(description = "Sets the name of the method to invoke on the bean")
     private String method;
-    @UriParam(label = "advanced", description = "If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
+    @UriParam(label = "advanced", description = "If enabled, Camel will cache the result of the first Registry look-up."
+            + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
     private boolean cache;
     @UriParam(label = "advanced", description = "How to treat the parameters which are passed from the message body."
             + "true means the message body should be an array of parameters. Note: This option is used internally by Camel, and is not intended for end users to use.")
