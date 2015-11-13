@@ -747,13 +747,6 @@ public class RunMojo extends AbstractExecMojo {
                     Set<Artifact> deps = resolveExecutableDependencies(artifact, true);
                     if (deps != null) {
                         for (Artifact dep : deps) {
-
-                            // we must skip org.apache.aries.blueprint.core:, otherwise we get duplicate blueprint extenders
-                            if (dep.getArtifactId().equals("org.apache.aries.blueprint.core")) {
-                                getLog().debug("Skipping org.apache.aries.blueprint.core -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
-                                continue;
-                            }
-
                             // we skip test scoped
                             if ("test".equals(dep.getScope())) {
                                 getLog().debug("Skipping test scoped -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
