@@ -375,7 +375,7 @@
     <minimal-json-version>0.9.4</minimal-json-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockito-version>1.9.5</mockito-version>
-    <mongo-java-driver-version>3.1.0</mongo-java-driver-version>
+    <mongo-java-driver-version>3.1.1</mongo-java-driver-version>
     <mqtt-client-version>1.12</mqtt-client-version>
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.8.18</mustache-java-version>
