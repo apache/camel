@@ -95,7 +95,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private String exchangeType = "direct";
     @UriParam
     private String routingKey;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean skipQueueDeclare;
     @UriParam
     private Address[] addresses;
