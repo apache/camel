@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.xstream;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.JsonLibrary;
 
 public class MarshalDomainObjectJSONTest extends MarshalDomainObjectTest {
     
@@ -28,7 +29,10 @@ public class MarshalDomainObjectJSONTest extends MarshalDomainObjectTest {
                 // just used for helping to marhsal
                 from("direct:marshal").marshal().json();
 
-                from("direct:reverse").unmarshal().json().to("mock:reverse");
+                from("direct:reverse").unmarshal().json(JsonLibrary.XStream, PurchaseOrder.class).to("mock:reverse");
+
+                from("direct:inPretty").marshal().json(true);
+                from("direct:backPretty").unmarshal().json(JsonLibrary.XStream, PurchaseOrder.class, true).to("mock:reverse");
             }
         };
     }
