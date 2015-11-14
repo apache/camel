@@ -86,7 +86,7 @@ public class BeanExpression implements Expression, Predicate {
             sb.append(ObjectHelper.className(type));
         }
         if (method != null) {
-            sb.append(" method: ").append(method);
+            sb.append(" method:").append(method);
         }
         sb.append("]");
         return sb.toString();
