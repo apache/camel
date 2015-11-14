@@ -158,10 +158,6 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
             }
         });
 
-        Pod pod = ex.getOut().getBody(Pod.class);
-
-        assertEquals(pod.getMetadata().getName(), "test");
-
         ex = template.request("direct:deletePod", new Processor() {
 
             @Override
