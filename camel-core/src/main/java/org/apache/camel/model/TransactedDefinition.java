@@ -76,7 +76,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         String desc = description();
         if (ObjectHelper.isEmpty(desc)) {
             return "Transacted";
-        } else{
+        } else {
             return "Transacted[" + desc + "]";
         }
     }
@@ -96,7 +96,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         String desc = description();
         if (ObjectHelper.isEmpty(desc)) {
             return "transacted";
-        } else{
+        } else {
             return "transacted[" + desc + "]";
         }
     }
