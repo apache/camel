@@ -37,8 +37,13 @@ import org.apache.camel.spi.Registry;
  */
 public class JndiRegistry implements Registry {
     private Context context;
+    private Map environment;
 
     public JndiRegistry() {
+    }
+
+    public JndiRegistry(Map environment) {
+        this.environment = environment;
     }
 
     public JndiRegistry(Context context) {
@@ -145,7 +150,14 @@ public class JndiRegistry implements Registry {
     }
 
     protected Context createContext() throws NamingException {
-        Hashtable<?, ?> properties = new Hashtable<Object, Object>(System.getProperties());
+        Hashtable<Object, Object> properties = new Hashtable<Object, Object>(System.getProperties());
+        if (environment != null) {
+            properties.putAll(environment);
+        }
+        // must include a factory if none provided
+        if (!properties.containsKey("java.naming.factory.initial")) {
+            properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
+        }
         return new InitialContext(properties);
     }
 }
