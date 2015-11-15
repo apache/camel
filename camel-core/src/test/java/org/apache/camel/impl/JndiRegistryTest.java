@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -56,4 +57,20 @@ public class JndiRegistryTest extends TestCase {
         assertEquals("foo", key);
         assertSame(jndi.lookupByName("foo"), set.values().iterator().next());
     }
+
+    public void testDefault() throws Exception {
+        JndiRegistry jndi = new JndiRegistry();
+        jndi.bind("bar", "Hello bar");
+        assertEquals("Hello bar", jndi.lookup("bar"));
+    }
+
+    public void testMap() throws Exception {
+        Map<Object, Object> env = new HashMap<Object, Object>();
+        env.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
+
+        JndiRegistry jndi = new JndiRegistry(env);
+        jndi.bind("bar", "Hello bar");
+        assertEquals("Hello bar", jndi.lookup("bar"));
+    }
+
 }
