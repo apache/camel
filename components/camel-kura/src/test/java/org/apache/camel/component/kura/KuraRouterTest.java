@@ -25,8 +25,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
@@ -74,6 +76,23 @@ public class KuraRouterTest extends Assert {
     @Test
     public void shouldCreateConsumerTemplate() throws Exception {
         assertNotNull(router.consumerTemplate);
+    }
+
+    @Test
+    public void shouldReturnNoService() {
+        given(bundleContext.getServiceReference(any(Class.class))).willReturn(null);
+        assertNull(router.service(ConfigurationAdmin.class));
+    }
+
+    @Test
+    public void shouldReturnService() {
+        assertNotNull(router.service(ConfigurationAdmin.class));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldValidateLackOfService() {
+        given(bundleContext.getServiceReference(any(Class.class))).willReturn(null);
+        router.requiredService(ConfigurationAdmin.class);
     }
 
 }

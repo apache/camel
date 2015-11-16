@@ -49,7 +49,9 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
             this.bundleContext = bundleContext;
             log.debug("Initializing bundle {}.", bundleContext.getBundle().getBundleId());
             camelContext = createCamelContext();
+
             camelContext.addRoutes(this);
+
             beforeStart(camelContext);
             log.debug("About to start Camel Kura router: {}", getClass().getName());
             camelContext.start();
@@ -89,6 +91,14 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
 
     protected <T> T service(Class<T> serviceType) {
         ServiceReference reference = bundleContext.getServiceReference(serviceType);
+        return reference == null ? null : (T) bundleContext.getService(reference);
+    }
+
+    protected <T> T requiredService(Class<T> serviceType) {
+        ServiceReference reference = bundleContext.getServiceReference(serviceType);
+        if (reference == null) {
+            throw new IllegalStateException("Cannot find service: " + serviceType.getName());
+        }
         return (T) bundleContext.getService(reference);
     }
 
