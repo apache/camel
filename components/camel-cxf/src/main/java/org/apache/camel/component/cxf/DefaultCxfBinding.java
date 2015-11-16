@@ -180,8 +180,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,  
                                                           DataFormat.class);
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
-        // propagate attachments if the data format is not POJO with MTOM enabled
-        if (cxfMessage.getAttachments() != null && !(DataFormat.POJO.equals(dataFormat) && isXop)) {
+        // propagate attachments
+        if (cxfMessage.getAttachments() != null) {
             // propagate attachments
             for (Attachment attachment : cxfMessage.getAttachments()) {
                 camelExchange.getOut().addAttachment(attachment.getId(), attachment.getDataHandler());
@@ -375,23 +375,23 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             return;
         }
         
-        // propagate attachments if the data format is not POJO
-        if (!DataFormat.POJO.equals(dataFormat)) {
-            Set<Attachment> attachments = null;
-            boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
-            for (Map.Entry<String, DataHandler> entry : camelExchange.getOut().getAttachments().entrySet()) {
-                if (attachments == null) {
-                    attachments = new HashSet<Attachment>();
-                }
-                AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
-                attachment.setXOP(isXop); 
-                attachments.add(attachment);
+        // propagate attachments
+        
+        Set<Attachment> attachments = null;
+        boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
+        for (Map.Entry<String, DataHandler> entry : camelExchange.getOut().getAttachments().entrySet()) {
+            if (attachments == null) {
+                attachments = new HashSet<Attachment>();
             }
-            
-            if (attachments != null) {
-                outMessage.setAttachments(attachments);
-            }
+            AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
+            attachment.setXOP(isXop);
+            attachments.add(attachment);
         }
+
+        if (attachments != null) {
+            outMessage.setAttachments(attachments);
+        }
+        
        
         BindingOperationInfo boi = cxfExchange.get(BindingOperationInfo.class);
         if (boi != null) {
