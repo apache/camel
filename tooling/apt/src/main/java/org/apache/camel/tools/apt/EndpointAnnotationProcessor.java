@@ -251,8 +251,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n  \"properties\": {");
         first = true;
 
+        // sort the endpoint options in the standard order we prefer
+        List<EndpointPath> paths = new ArrayList<EndpointPath>();
+        paths.addAll(endpointPaths);
+        Collections.sort(paths, EndpointHelper.createPathComparator(componentModel.getSyntax()));
+
         // include paths in the top
-        for (EndpointPath entry : endpointPaths) {
+        for (EndpointPath entry : paths) {
             String label = entry.getLabel();
             if (label != null) {
                 // skip options which are either consumer or producer labels but the component does not support them
@@ -347,7 +352,17 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
         findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, prefix);
 
-        if (!endpointOptions.isEmpty() || !endpointPaths.isEmpty()) {
+        // sort the endpoint options in the standard order we prefer
+        List<EndpointPath> paths = new ArrayList<EndpointPath>();
+        paths.addAll(endpointPaths);
+        Collections.sort(paths, EndpointHelper.createPathComparator(componentModel.getSyntax()));
+
+        // sort the endpoint options in the standard order we prefer
+        List<EndpointOption> options = new ArrayList<EndpointOption>();
+        options.addAll(endpointOptions);
+        Collections.sort(options, EndpointHelper.createGroupAndLabelComparator());
+
+        if (!options.isEmpty() || !paths.isEmpty()) {
             writer.println("<table class='table'>");
             writer.println("  <tr>");
             writer.println("    <th align=\"left\">Name</th>");
@@ -360,7 +375,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             writer.println("    <th align=\"left\">Description</th>");
             writer.println("  </tr>");
             // include paths in the top
-            for (EndpointPath path : endpointPaths) {
+            for (EndpointPath path : paths) {
                 writer.println("  <tr>");
                 writer.println("    <td>" + path.getName() + "</td>");
                 writer.println("    <td>" + "path" + "</td>");
@@ -373,7 +388,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 writer.println("  </tr>");
             }
             // and then regular parameter options
-            for (EndpointOption option : endpointOptions) {
+            for (EndpointOption option : options) {
                 writer.println("  <tr>");
                 writer.println("    <td>" + option.getName() + "</td>");
                 writer.println("    <td>" + "parameter" + "</td>");
