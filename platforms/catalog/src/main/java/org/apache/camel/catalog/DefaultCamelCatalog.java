@@ -681,6 +681,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
+        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+
         // clip the scheme from the syntax
         syntax = after(syntax, ":");
 
@@ -731,6 +733,18 @@ public class DefaultCamelCatalog implements CamelCatalog {
             String token = null;
             if (tokens.length > i) {
                 token = tokens[i];
+            }
+
+            boolean contains = properties.containsKey(key);
+            if (!contains) {
+                // if the key are similar we have no explicit value and can try to find a default value if the option is required
+                if (isPropertyRequired(rows, key)) {
+                    String value = getPropertyDefaultValue(rows, key);
+                    if (value != null) {
+                        properties.put(key, value);
+                        key2 = value;
+                    }
+                }
             }
 
             // was the option provided?
