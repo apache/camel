@@ -42,7 +42,7 @@ public class MyRoutes extends RouteBuilder {
         // you can configure the route rule with Java DSL here
 
         from(inputEndpoint)
-            .beanRef("counterBean")
+            .to("bean:counterBean")
             .to(resultEndpoint);
     }
 
