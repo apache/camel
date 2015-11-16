@@ -19,6 +19,7 @@ package org.apache.camel.tools.apt.helper;
 import java.util.Comparator;
 
 import org.apache.camel.tools.apt.model.EndpointOption;
+import org.apache.camel.tools.apt.model.EndpointPath;
 
 public final class EndpointHelper {
 
@@ -70,6 +71,15 @@ public final class EndpointHelper {
      */
     public static EndpointOptionGroupAndLabelComparator createGroupAndLabelComparator() {
         return new EndpointOptionGroupAndLabelComparator();
+    }
+
+    /**
+     * A comparator to sort the endpoint paths according to syntax.
+     *
+     * @param syntax the endpoint uri syntax
+     */
+    public static EndpointPathComparator createPathComparator(String syntax) {
+        return new EndpointPathComparator(syntax);
     }
 
     /**
@@ -134,6 +144,27 @@ public final class EndpointHelper {
             return 6;
         } else {
             return 9;
+        }
+    }
+
+    private static final class EndpointPathComparator implements Comparator<EndpointPath> {
+
+        private final String syntax;
+
+        public EndpointPathComparator(String syntax) {
+            this.syntax = syntax;
+        }
+
+        @Override
+        public int compare(EndpointPath path1, EndpointPath path2) {
+            int pos1 = syntax != null ? syntax.indexOf(path1.getName()) : -1;
+            int pos2 = syntax != null ? syntax.indexOf(path2.getName()) : -1;
+
+            // use position in syntax to determine the order
+            if (pos1 != -1 && pos2 != -1) {
+                return Integer.compare(pos1, pos2);
+            }
+            return 0;
         }
     }
 
