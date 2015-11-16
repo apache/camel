@@ -153,7 +153,7 @@ public class CamelCatalogTest {
     @Test
     public void testAsEndpointUriNetty4http() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
-        map.put("protocol", "http");
+        // use default protocol
         map.put("host", "localhost");
         map.put("port", "8080");
         map.put("path", "foo/bar");
@@ -162,12 +162,18 @@ public class CamelCatalogTest {
         String uri = catalog.asEndpointUri("netty4-http", map, true);
         assertEquals("netty4-http:http:localhost:8080/foo/bar?disconnect=true", uri);
 
+        // lets add a protocol
+        map.put("protocol", "https");
+
+        uri = catalog.asEndpointUri("netty4-http", map, true);
+        assertEquals("netty4-http:https:localhost:8080/foo/bar?disconnect=true", uri);
+
         // lets set a query parameter in the path
         map.put("path", "foo/bar?verbose=true");
         map.put("disconnect", "true");
 
         uri = catalog.asEndpointUri("netty4-http", map, true);
-        assertEquals("netty4-http:http:localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
+        assertEquals("netty4-http:https:localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
     }
 
     @Test
