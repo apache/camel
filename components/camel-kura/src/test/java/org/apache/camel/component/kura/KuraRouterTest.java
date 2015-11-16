@@ -95,18 +95,19 @@ public class KuraRouterTest extends Assert {
         router.requiredService(ConfigurationAdmin.class);
     }
 
-}
+    static class TestKuraRouter extends KuraRouter {
 
-class TestKuraRouter extends KuraRouter {
+        @Override
+        public void configure() throws Exception {
+            from("direct:start").to("mock:test");
+        }
 
-    @Override
-    public void configure() throws Exception {
-        from("direct:start").to("mock:test");
+        @Override
+        protected CamelContext createCamelContext() {
+            return new DefaultCamelContext();
+        }
+
     }
 
-    @Override
-    protected CamelContext createCamelContext() {
-        return new DefaultCamelContext();
-    }
-
 }
+
