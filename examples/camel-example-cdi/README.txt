@@ -4,8 +4,7 @@ CDI Example
 This example shows how to work with Camel using CDI to configure components,
 endpoints and beans.
 
-The example consumes messages from a queue and writes them to the file
-system.
+A timer triggers a Camel route to run every 5th second which creates a message that is logged to the console.
 
 You will need to compile this example first:
   mvn compile
