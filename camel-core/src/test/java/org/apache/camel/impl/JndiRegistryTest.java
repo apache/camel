@@ -58,13 +58,13 @@ public class JndiRegistryTest extends TestCase {
         assertSame(jndi.lookupByName("foo"), set.values().iterator().next());
     }
 
-    public void testDefault() throws Exception {
-        JndiRegistry jndi = new JndiRegistry();
+    public void testStandalone() throws Exception {
+        JndiRegistry jndi = new JndiRegistry(true);
         jndi.bind("bar", "Hello bar");
         assertEquals("Hello bar", jndi.lookup("bar"));
     }
 
-    public void testMap() throws Exception {
+    public void testCamelContextFactory() throws Exception {
         Map<Object, Object> env = new HashMap<Object, Object>();
         env.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
 
