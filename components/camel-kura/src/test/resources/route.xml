@@ -1,0 +1,6 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="loaded">
+        <from uri="direct:bar"/>
+        <to uri="mock:bar"/>
+    </route>
+</routes>

@@ -16,14 +16,20 @@
  */
 package org.apache.camel.component.kura;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
+import org.apache.camel.model.RoutesDefinition;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +57,16 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
             camelContext = createCamelContext();
 
             camelContext.addRoutes(this);
+            ConfigurationAdmin configurationAdmin = requiredService(ConfigurationAdmin.class);
+            Configuration camelKuraConfig = configurationAdmin.getConfiguration("kura.camel");
+            if (camelKuraConfig != null && camelKuraConfig.getProperties() != null) {
+                Object routePropertyValue = camelKuraConfig.getProperties().get(camelXmlRoutesProperty());
+                if (routePropertyValue != null) {
+                    InputStream routesXml = new ByteArrayInputStream(routePropertyValue.toString().getBytes());
+                    RoutesDefinition loadedRoutes = camelContext.loadRoutesDefinition(routesXml);
+                    camelContext.addRouteDefinitions(loadedRoutes.getRoutes());
+                }
+            }
 
             beforeStart(camelContext);
             log.debug("About to start Camel Kura router: {}", getClass().getName());
@@ -100,6 +116,12 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
             throw new IllegalStateException("Cannot find service: " + serviceType.getName());
         }
         return (T) bundleContext.getService(reference);
+    }
+
+    // Private helpers
+
+    private String camelXmlRoutesProperty() {
+        return "kura.camel." + bundleContext.getBundle().getSymbolicName() + ".route";
     }
 
 }
