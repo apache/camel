@@ -29,7 +29,9 @@ import org.apache.camel.component.servlet.ServletConsumer;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereRequest;
+import org.atmosphere.cpr.AtmosphereRequestImpl;
 import org.atmosphere.cpr.AtmosphereResponse;
+import org.atmosphere.cpr.AtmosphereResponseImpl;
 import org.atmosphere.websocket.WebSocketProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +69,7 @@ public class WebsocketConsumer extends ServletConsumer {
     }
     
     void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        framework.doCometSupport(AtmosphereRequest.wrap(request), AtmosphereResponse.wrap(response));
+        framework.doCometSupport(AtmosphereRequestImpl.wrap(request), AtmosphereResponseImpl.wrap(response));
     }
 
     public void sendMessage(final String connectionKey, Object message) {
