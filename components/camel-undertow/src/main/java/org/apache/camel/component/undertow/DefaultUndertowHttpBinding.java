@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.undertow;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -28,14 +29,13 @@ import java.util.Map;
 import io.undertow.client.ClientExchange;
 import io.undertow.client.ClientRequest;
 import io.undertow.client.ClientResponse;
-import io.undertow.connector.ByteBufferPool;
-import io.undertow.connector.PooledByteBuffer;
 import io.undertow.predicate.Predicate;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import io.undertow.util.MimeMappings;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
@@ -46,6 +46,8 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xnio.ChannelListener;
+import org.xnio.channels.StreamSourceChannel;
 
 /**
  * DefaultUndertowHttpBinding represent binding used by default, if user doesn't provide any.
@@ -83,8 +85,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         //extract body if the method is allowed to have one
         //body is extracted as byte[] then auto TypeConverter kicks in
         if (Methods.POST.equals(httpExchange.getRequestMethod()) || Methods.PUT.equals(httpExchange.getRequestMethod())) {
-            byte[] bytes = readRequestBody(httpExchange);
-            result.setBody(bytes);
+            result.setBody(readFromChannel(httpExchange.getRequestChannel()));
         } else {
             result.setBody(null);
         }
@@ -99,7 +100,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         //retrieve response headers
         populateCamelHeaders(clientExchange.getResponse(), result.getHeaders(), exchange);
 
-        result.setBody(readResponseBody(clientExchange));
+        result.setBody(readFromChannel(clientExchange.getResponseChannel()));
 
         return result;
     }
@@ -322,40 +323,42 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return body;
     }
 
-    private byte[] readRequestBody(HttpServerExchange httpExchange) throws IOException {
-        ByteBufferPool bufferPool = httpExchange.getConnection().getByteBufferPool();
-        PooledByteBuffer pooledByteBuffer = bufferPool.allocate();
-        ByteBuffer byteBuffer = pooledByteBuffer.getBuffer();
+    private byte[] readFromChannel(StreamSourceChannel source) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[1024]);
 
-        byteBuffer.clear();
-
-        httpExchange.getRequestChannel().read(byteBuffer);
-        int pos = byteBuffer.position();
-        byteBuffer.rewind();
-        byte[] bytes = new byte[pos];
-        byteBuffer.get(bytes);
-
-        byteBuffer.clear();
-        pooledByteBuffer.close();
-        return bytes;
+        for (; ; ) {
+            int res = source.read(buffer);
+            if (res == -1) {
+                return out.toByteArray();
+            } else if (res == 0) {
+                source.getReadSetter().set(new ChannelListener<StreamSourceChannel>() {
+                    @Override
+                    public void handleEvent(StreamSourceChannel channel) {
+                        for (; ; ) {
+                            try {
+                                int res = channel.read(buffer);
+                                if (res == -1 || res == 0) {
+                                    out.toByteArray();
+                                    return;
+                                } else {
+                                    buffer.flip();
+                                    out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
+                                    buffer.clear();
+                                }
+                            } catch (IOException e) {
+                                LOG.error("Exception reading from channel {}", e);
+                            }
+                        }
+                    }
+                });
+                source.resumeReads();
+                return out.toByteArray();
+            } else {
+                buffer.flip();
+                out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
+                buffer.clear();
+            }
+        }
     }
-
-    private byte[] readResponseBody(ClientExchange httpExchange) throws IOException {
-        ByteBufferPool bufferPool = httpExchange.getConnection().getBufferPool();
-        PooledByteBuffer pooledByteBuffer = bufferPool.allocate();
-        ByteBuffer byteBuffer = pooledByteBuffer.getBuffer();
-
-        byteBuffer.clear();
-
-        httpExchange.getResponseChannel().read(byteBuffer);
-        int pos = byteBuffer.position();
-        byteBuffer.rewind();
-        byte[] bytes = new byte[pos];
-        byteBuffer.get(bytes);
-
-        byteBuffer.clear();
-        pooledByteBuffer.close();
-        return bytes;
-    }
-
 }
