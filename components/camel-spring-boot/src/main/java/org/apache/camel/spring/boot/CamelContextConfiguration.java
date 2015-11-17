@@ -22,4 +22,6 @@ public interface CamelContextConfiguration {
 
     void beforeApplicationStart(CamelContext camelContext);
 
+    void afterApplicationStart(CamelContext camelContext);
+
 }
