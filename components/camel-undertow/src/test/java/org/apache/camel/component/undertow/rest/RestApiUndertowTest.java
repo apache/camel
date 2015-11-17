@@ -32,8 +32,6 @@ public class RestApiUndertowTest extends BaseUndertowTest {
     public void testApi() throws Exception {
         String out = template.requestBody("undertow:http://localhost:{{port}}/api-doc", null, String.class);
         assertNotNull(out);
-        log.info(out);
-
         assertTrue(out.contains("\"version\" : \"1.2.3\""));
         assertTrue(out.contains("\"title\" : \"The hello rest thing\""));
         assertTrue(out.contains("\"/hello/bye/{name}\""));

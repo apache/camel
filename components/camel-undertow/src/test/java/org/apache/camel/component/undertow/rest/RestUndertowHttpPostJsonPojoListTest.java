@@ -32,7 +32,7 @@ public class RestUndertowHttpPostJsonPojoListTest extends BaseUndertowTest {
         mock.expectedMessageCount(1);
 
         String body = "[ {\"id\": 123, \"name\": \"Donald Duck\"}, {\"id\": 456, \"name\": \"John Doe\"} ]";
-        template.sendBody("undertow:http://localhost:" + getPort() + "/users/new", body);
+        template.sendBody("undertow:http://localhost:{{port}}/users/new", body);
 
         assertMockEndpointsSatisfied();
 
