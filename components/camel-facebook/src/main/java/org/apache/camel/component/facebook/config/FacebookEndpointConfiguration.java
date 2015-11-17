@@ -23,6 +23,7 @@ import java.util.Map;
 
 import facebook4j.AlbumUpdate;
 import facebook4j.CheckinUpdate;
+import facebook4j.CommentUpdate;
 import facebook4j.EventUpdate;
 import facebook4j.GeoLocation;
 import facebook4j.Media;
@@ -55,6 +56,8 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     private String checkinId;
     @UriParam
     private String commentId;
+    @UriParam
+    private CommentUpdate commentUpdate;
     @UriParam
     private String description;
     @UriParam
@@ -268,6 +271,17 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
 
     public String getDescription() {
         return description;
+    }
+
+    public CommentUpdate getCommentUpdate() {
+        return commentUpdate;
+    }
+
+    /**
+     * The facebook Comment to be created or updated
+     */
+    public void setCommentUpdate(CommentUpdate commentUpdate) {
+        this.commentUpdate = commentUpdate;
     }
 
     /**
