@@ -34,6 +34,8 @@ import org.jboss.netty.handler.codec.frame.TooLongFrameException;
 @UriParams
 public class NettyHttpConfiguration extends NettyConfiguration {
 
+    @UriPath(enums = "http,https", defaultValue = "http") @Metadata(required = "true")
+    private String protocol;
     @UriPath @Metadata(required = "true")
     private String path;
     @UriParam(label = "consumer,advanced")
@@ -87,6 +89,17 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         }
     }
 
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * The protocol to use which is either http or https
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
     public boolean isCompression() {
         return compression;
     }
@@ -119,6 +132,9 @@ public class NettyHttpConfiguration extends NettyConfiguration {
      * in the response as a application/x-java-serialized-object content type.
      * On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException.
      * The caused exception is required to be serialized.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;

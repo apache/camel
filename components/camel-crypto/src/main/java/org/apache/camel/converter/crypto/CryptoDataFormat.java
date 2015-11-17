@@ -16,7 +16,6 @@
  */
 package org.apache.camel.converter.crypto;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -34,6 +33,7 @@ import static javax.crypto.Cipher.DECRYPT_MODE;
 import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
@@ -153,31 +153,30 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         }
     }
 
-    public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception {
-        Object unmarshalled = null;
+    public Object unmarshal(final Exchange exchange, final InputStream encryptedStream) throws Exception {
         if (encryptedStream != null) {
             byte[] iv = getInlinedInitializationVector(exchange, encryptedStream);
             Key key = getKey(exchange);
             CipherInputStream cipherStream = null;
-            ByteArrayOutputStream plaintextStream = null;
+            OutputStreamBuilder osb = null;
             try {
                 cipherStream = new CipherInputStream(encryptedStream, initializeCipher(DECRYPT_MODE, key, iv));
-                plaintextStream = new ByteArrayOutputStream(bufferSize);
+                osb = OutputStreamBuilder.withExchange(exchange);
                 HMACAccumulator hmac = getMessageAuthenticationCode(key);
                 byte[] buffer = new byte[bufferSize];
-                hmac.attachStream(plaintextStream);
+                hmac.attachStream(osb);
                 int read;
                 while ((read = cipherStream.read(buffer)) >= 0) {
                     hmac.decryptUpdate(buffer, read);
                 }
                 hmac.validate();
-                unmarshalled = plaintextStream.toByteArray();
+                return osb.build();
             } finally {
                 IOHelper.close(cipherStream, "cipher", LOG);
-                IOHelper.close(plaintextStream, "plaintext", LOG);
+                IOHelper.close(osb, "plaintext", LOG);
             }
         }
-        return unmarshalled;
+        return null;
     }
 
     @Override

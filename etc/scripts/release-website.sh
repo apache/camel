@@ -106,6 +106,5 @@ echo
 echo "cd ${SITE_DIR}/${VERSION}/manual/"
 echo "svn status"
 echo "svn add camel-manual-${VERSION}.html"
-echo "svn add camel-manual-${VERSION}.pdf"
 echo "svn ci -m \"Uploading released manuals for camel-${VERSION}\""
 echo

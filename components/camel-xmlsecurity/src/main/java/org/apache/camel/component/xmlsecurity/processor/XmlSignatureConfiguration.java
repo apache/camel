@@ -34,19 +34,19 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
     private CamelContext context;
     private URIDereferencer uriDereferencer;
 
-    @UriParam(label = "verify,sign")
+    @UriParam(label = "common")
     private String baseUri;
-    @UriParam(label = "verify,sign")
+    @UriParam(label = "common")
     private Map<String, ?> cryptoContextProperties;
-    @UriParam(label = "verify,sign", defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private Boolean disallowDoctypeDecl = Boolean.TRUE;
-    @UriParam(label = "verify,sign", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false")
     private Boolean omitXmlDeclaration = Boolean.FALSE;
-    @UriParam(label = "verify,sign", defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private Boolean clearHeaders = Boolean.TRUE;
-    @UriParam(label = "verify,sign")
+    @UriParam(label = "common")
     private String schemaResourceUri;
-    @UriParam(label = "verify,sign")
+    @UriParam(label = "common")
     private String outputXmlEncoding;
 
     public XmlSignatureConfiguration() {

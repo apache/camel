@@ -95,6 +95,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private String exchangeType = "direct";
     @UriParam
     private String routingKey;
+    @UriParam(label = "producer")
+    private boolean skipQueueDeclare;
     @UriParam
     private Address[] addresses;
     @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
@@ -151,7 +153,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private ArgsConfigurer queueArgsConfigurer;
     @UriParam
     private ArgsConfigurer exchangeArgsConfigurer;
-
     @UriParam
     private long requestTimeout = 20000;
     @UriParam
@@ -369,7 +370,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
                 getExchangeType(),
                 isDurable(),
                 isAutoDelete(), exchangeArgs);
-        if (getQueue() != null) {
+        if (!isSkipQueueDeclare() && getQueue() != null) {
             // need to make sure the queueDeclare is same with the exchange declare
             channel.queueDeclare(getQueue(), isDurable(), false,
                     isAutoDelete(), queueArgs);
@@ -585,6 +586,18 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
      */
     public void setRoutingKey(String routingKey) {
         this.routingKey = routingKey;
+    }
+
+    /**
+     * If true the producer will not declare and bind a queue.
+     * This can be used for directing messages via an existing routing key.
+     */
+    public void setSkipQueueDeclare(boolean skipQueueDeclare) {
+        this.skipQueueDeclare = skipQueueDeclare;
+    }
+
+    public boolean isSkipQueueDeclare() {
+        return skipQueueDeclare;
     }
 
     /**

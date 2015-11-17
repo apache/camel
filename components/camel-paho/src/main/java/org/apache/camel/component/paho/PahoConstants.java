@@ -16,8 +16,17 @@
  */
 package org.apache.camel.component.paho;
 
+/**
+ * Constants to use when working with Paho component.
+ */
 public final class PahoConstants {
 
+    /**
+     * Header indicating a topic of a MQTT message.
+     */
+    public static final String MQTT_TOPIC = "CamelMqttTopic";
+
+    @Deprecated
     public static final String HEADER_ORIGINAL_MESSAGE = "PahoOriginalMessage";
 
     private PahoConstants() {

@@ -29,6 +29,11 @@ import javax.management.MXBean;
 public interface CamelCatalog {
 
     /**
+     * The version of this Camel Catalog
+     */
+    String getCatalogVersion();
+
+    /**
      * Find all the component names from the Camel catalog
      */
     List<String> findComponentNames();
@@ -173,7 +178,7 @@ public interface CamelCatalog {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUri(String scheme, String json) throws URISyntaxException;
+    String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException;
 
     /**
      * Creates an endpoint uri in XML style (eg escape & as &ampl;) from the information in the json schema
@@ -183,7 +188,7 @@ public interface CamelCatalog {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUriXml(String scheme, String json) throws URISyntaxException;
+    String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException;
 
     /**
      * Creates an endpoint uri in Java style from the information from the properties
@@ -193,7 +198,7 @@ public interface CamelCatalog {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUri(String scheme, Map<String, String> properties) throws URISyntaxException;
+    String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;
 
     /**
      * Creates an endpoint uri in XML style (eg escape & as &ampl;) from the information from the properties
@@ -203,5 +208,31 @@ public interface CamelCatalog {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUriXml(String scheme, Map<String, String> properties) throws URISyntaxException;
+    String asEndpointUriXml(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;
+
+    /**
+     * Lists all the components summary details in JSon
+     */
+    String listComponentsAsJson();
+
+    /**
+     * Lists all the data formats summary details in JSon
+     */
+    String listDataFormatsAsJson();
+
+    /**
+     * Lists all the languages summary details in JSon
+     */
+    String listLanguagesAsJson();
+
+    /**
+     * Lists all the models (EIPs) summary details in JSon
+     */
+    String listModelsAsJson();
+
+    /**
+     * Reports a summary what the catalog contains in JSon
+     */
+    String summaryAsJson();
+
 }

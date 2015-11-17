@@ -64,8 +64,11 @@ public class UndertowConsumer extends DefaultConsumer {
         URI httpUri = getEndpoint().getHttpURI();
         UndertowHost host = getUndertowHost();
 
+        HttpCamelHandler httpCamelHandler = new HttpCamelHandler();
+        httpCamelHandler.connectConsumer(this);
+
         host.validateEndpointURI(httpUri);
-        host.registerHandler(httpUri.getPath(), new HttpCamelHandler(this));
+        host.registerHandler(httpUri.getPath(), httpCamelHandler) ;
     }
 
     @Override

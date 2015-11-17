@@ -26,7 +26,7 @@
         
         <!-- START SNIPPET: e1 -->
         <dataFormats>
-            <xstream id="xstream">
+            <xstream id="xstream" permissions="org.apache.camel.dataformat.stream.*">
                 <!-- omit the price file from the PurchaseOrder class -->
                 <omitFields>
                     <omitField class="org.apache.camel.dataformat.xstream.PurchaseOrder">

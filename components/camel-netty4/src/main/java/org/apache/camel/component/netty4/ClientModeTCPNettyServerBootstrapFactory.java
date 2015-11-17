@@ -31,6 +31,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.support.ServiceSupport;
@@ -169,37 +170,15 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
         }
-        // here we need to wait it in other thread
-        final CountDownLatch channelLatch = new CountDownLatch(1);
-        channelFuture.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture cf) throws Exception {
-                channelLatch.countDown();
-            }
-        });
 
-        try {
-            channelLatch.await(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
-        } catch (InterruptedException ex) {
-            throw new CamelException("Interrupted while waiting for " + "connection to " + configuration.getAddress());
-        }
+        // wait for the channel to be open (see io.netty.channel.ChannelFuture javadoc for example/recommendation)
+        channelFuture.awaitUninterruptibly();
 
         if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
-            //check if reconnect is enabled and schedule a reconnect, if from handler then dont schedule a reconnect
+            //check if reconnect is enabled and schedule a reconnect, if from handler then don't schedule a reconnect
             if (configuration.isReconnect()) {
-                final EventLoop loop = channelFuture.channel().eventLoop();
-                loop.schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
-                            doReconnectIfNeeded();
-                        } catch (Exception e) {
-                            LOG.warn("Error during re-connect to " + configuration.getAddress() + ". Will attempt again in "
-                                    + configuration.getReconnectInterval() + " millis. This exception is ignored.", e);
-                        }
-                    }
-                }, configuration.getReconnectInterval(), TimeUnit.MILLISECONDS);
+                scheduleReconnect(channelFuture);
+                return null;
             } else {
                 ConnectException cause = new ConnectException("Cannot connect to " + configuration.getAddress());
                 if (channelFuture.cause() != null) {
@@ -213,7 +192,34 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating connector to address: {}", configuration.getAddress());
         }
+        
+        // schedule a reconnect to happen when the channel closes
+        if (configuration.isReconnect()) {
+            answer.closeFuture().addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    scheduleReconnect(channelFuture);
+                };
+            });
+        }
+        
         return answer;
+    }
+
+    private void scheduleReconnect(final ChannelFuture channelFuture) {
+        final EventLoop loop = channelFuture.channel().eventLoop();
+        loop.schedule(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
+                    doReconnectIfNeeded();
+                } catch (Exception e) {
+                    LOG.warn("Error during re-connect to " + configuration.getAddress() + ". Will attempt again in "
+                            + configuration.getReconnectInterval() + " millis. This exception is ignored.", e);
+                }
+            }
+        }, configuration.getReconnectInterval(), TimeUnit.MILLISECONDS);
     }
 
 }

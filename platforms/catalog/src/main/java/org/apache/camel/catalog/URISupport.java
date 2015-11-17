@@ -41,6 +41,17 @@ public final class URISupport {
     }
 
     /**
+     * Normalizes the URI so unsafe charachters is encoded
+     *
+     * @param uri the input uri
+     * @return as URI instance
+     * @throws URISyntaxException is thrown if syntax error in the input uri
+     */
+    public static URI normalizeUri(String uri) throws URISyntaxException {
+        return new URI(UnsafeUriCharactersEncoder.encode(uri, true));
+    }
+
+    /**
      * Strips the query parameters from the uri
      *
      * @param uri  the uri
@@ -272,7 +283,7 @@ public final class URISupport {
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     @SuppressWarnings("unchecked")
-    public static String createQueryString(Map<String, String> options, String ampersand) throws URISyntaxException {
+    public static String createQueryString(Map<String, String> options, String ampersand, boolean encode) throws URISyntaxException {
         try {
             if (options.size() > 0) {
                 StringBuilder rc = new StringBuilder();
@@ -289,7 +300,7 @@ public final class URISupport {
 
                     // use the value as a String
                     String s = value != null ? value.toString() : null;
-                    appendQueryStringParameter(key, s, rc);
+                    appendQueryStringParameter(key, s, rc, encode);
                 }
                 return rc.toString();
             } else {
@@ -302,8 +313,12 @@ public final class URISupport {
         }
     }
 
-    private static void appendQueryStringParameter(String key, String value, StringBuilder rc) throws UnsupportedEncodingException {
-        rc.append(URLEncoder.encode(key, CHARSET));
+    private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode) throws UnsupportedEncodingException {
+        if (encode) {
+            rc.append(URLEncoder.encode(key, CHARSET));
+        } else {
+            rc.append(key);
+        }
         // only append if value is not null
         if (value != null) {
             rc.append("=");
@@ -311,7 +326,11 @@ public final class URISupport {
                 // do not encode RAW parameters
                 rc.append(value);
             } else {
-                rc.append(URLEncoder.encode(value, CHARSET));
+                if (encode) {
+                    rc.append(URLEncoder.encode(value, CHARSET));
+                } else {
+                    rc.append(value);
+                }
             }
         }
     }

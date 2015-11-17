@@ -22,6 +22,7 @@ import static java.lang.System.nanoTime;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -32,6 +33,7 @@ import org.apache.camel.spi.UriPath;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
@@ -45,15 +47,11 @@ public class PahoEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
 
     // Constants
-
     private static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
-
     private static final int DEFAULT_QOS = 2;
-
     private static final String DEFAULT_QOS_STRING = DEFAULT_QOS + "";
 
     // Configuration members
-
     @UriPath @Metadata(required = "true")
     private String topic;
     @UriParam
@@ -64,6 +62,8 @@ public class PahoEndpoint extends DefaultEndpoint {
     private int qos = DEFAULT_QOS;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = MEMORY;
+    @UriParam(description = "Base directory used by file persistence.", defaultValue = "Current directory")
+    private String filePersistenceDirectory;
 
     // Collaboration members
     @UriParam
@@ -73,11 +73,9 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     private transient MqttClient client;
 
-    public PahoEndpoint(String uri, Component component) {
+    public PahoEndpoint(String uri, String topic, Component component) {
         super(uri, component);
-        if (topic == null) {
-            topic = uri.substring(7);
-        }
+        this.topic = topic;
     }
 
     @Override
@@ -118,7 +116,15 @@ public class PahoEndpoint extends DefaultEndpoint {
     // Resolvers
 
     protected MqttClientPersistence resolvePersistence() {
-        return persistence == MEMORY ? new MemoryPersistence() : new MqttDefaultFilePersistence();
+        if (persistence == MEMORY) {
+            return new MemoryPersistence();
+        } else {
+            if (filePersistenceDirectory != null) {
+                return new MqttDefaultFilePersistence(filePersistenceDirectory);
+            } else {
+                return new MqttDefaultFilePersistence();
+            }
+        }
     }
 
     protected MqttConnectOptions resolveMqttConnectOptions() {
@@ -135,6 +141,17 @@ public class PahoEndpoint extends DefaultEndpoint {
                     connectOptions.size());
         }
         return new MqttConnectOptions();
+    }
+
+    public Exchange createExchange(MqttMessage mqttMessage, String topic) {
+        PahoMessage paho = new PahoMessage();
+        paho.setMqttMessage(mqttMessage);
+        paho.setBody(mqttMessage.getPayload());
+        paho.setHeader(PahoConstants.MQTT_TOPIC, topic);
+
+        Exchange exchange = createExchange();
+        exchange.setIn(paho);
+        return exchange;
     }
 
     // Configuration getters & setters
@@ -196,6 +213,17 @@ public class PahoEndpoint extends DefaultEndpoint {
         this.persistence = persistence;
     }
 
+    public String getFilePersistenceDirectory() {
+        return filePersistenceDirectory;
+    }
+
+    /**
+     * Base directory used by the file persistence provider.
+     */
+    public void setFilePersistenceDirectory(String filePersistenceDirectory) {
+        this.filePersistenceDirectory = filePersistenceDirectory;
+    }
+
     public MqttClient getClient() {
         return client;
     }
@@ -217,4 +245,5 @@ public class PahoEndpoint extends DefaultEndpoint {
     public void setConnectOptions(MqttConnectOptions connOpts) {
         this.connectOptions = connOpts;
     }
+
 }

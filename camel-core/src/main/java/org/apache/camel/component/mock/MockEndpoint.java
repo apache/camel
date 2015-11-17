@@ -117,21 +117,21 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     @UriPath(description = "Name of mock endpoint") @Metadata(required = "true")
     private String name;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "producer", defaultValue = "-1")
     private int expectedCount;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0")
     private long sleepForEmptyTest;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0")
     private long resultWaitTime;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0")
     private long resultMinimumWaitTime;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0")
     private long assertPeriod;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "producer", defaultValue = "-1")
     private int retainFirst;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "producer", defaultValue = "-1")
     private int retainLast;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean copyOnExchange = true;
 
     public MockEndpoint(String endpointUri, Component component) {

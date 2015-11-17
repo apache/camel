@@ -161,8 +161,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         SubnetUtils multicastSubnet = new SubnetUtils(MULTICAST_SUBNET);
 
         if (multicastSubnet.getInfo().isInRange(configuration.getHost())) {
-            ChannelFuture channelFuture = bootstrap.bind(configuration.getPort());
-            channelFuture.awaitUninterruptibly();
+            ChannelFuture channelFuture = bootstrap.bind(configuration.getPort()).sync();
             channel = channelFuture.channel();
             DatagramChannel datagramChannel = (DatagramChannel) channel;
             String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
@@ -173,8 +172,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             allChannels.add(datagramChannel);
         } else {
             LOG.info("ConnectionlessBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
-            ChannelFuture channelFuture = bootstrap.bind(hostAddress);
-            channelFuture.awaitUninterruptibly();
+            ChannelFuture channelFuture = bootstrap.bind(hostAddress).sync();
             channel = channelFuture.channel();
             allChannels.add(channel);
         }

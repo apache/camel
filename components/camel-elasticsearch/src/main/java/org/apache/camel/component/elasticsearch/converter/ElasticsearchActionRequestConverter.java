@@ -57,6 +57,8 @@ public final class ElasticsearchActionRequestConverter {
                         ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, WriteConsistencyLevel.class))
                 .replicationType(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_REPLICATION_TYPE, ReplicationType.class))
+                .parent(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARENT, String.class))
                 .index(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
                 .type(exchange.getIn().getHeader(

@@ -16,13 +16,20 @@
  */
 package org.apache.camel.component.kura;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
+import org.apache.camel.model.RoutesDefinition;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,18 +45,45 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
 
     protected ProducerTemplate producerTemplate;
 
+    protected ConsumerTemplate consumerTemplate;
+
     // Lifecycle
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
-        this.bundleContext = bundleContext;
-        log.debug("Initializing bundle {}.", bundleContext.getBundle().getBundleId());
-        camelContext = createCamelContext();
-        camelContext.addRoutes(this);
-        beforeStart(camelContext);
-        camelContext.start();
-        producerTemplate = camelContext.createProducerTemplate();
-        log.debug("Bundle {} started.", bundleContext.getBundle().getBundleId());
+        try {
+            this.bundleContext = bundleContext;
+            log.debug("Initializing bundle {}.", bundleContext.getBundle().getBundleId());
+            camelContext = createCamelContext();
+
+            camelContext.addRoutes(this);
+            ConfigurationAdmin configurationAdmin = requiredService(ConfigurationAdmin.class);
+            Configuration camelKuraConfig = configurationAdmin.getConfiguration("kura.camel");
+            if (camelKuraConfig != null && camelKuraConfig.getProperties() != null) {
+                Object routePropertyValue = camelKuraConfig.getProperties().get(camelXmlRoutesProperty());
+                if (routePropertyValue != null) {
+                    InputStream routesXml = new ByteArrayInputStream(routePropertyValue.toString().getBytes());
+                    RoutesDefinition loadedRoutes = camelContext.loadRoutesDefinition(routesXml);
+                    camelContext.addRouteDefinitions(loadedRoutes.getRoutes());
+                }
+            }
+
+            beforeStart(camelContext);
+            log.debug("About to start Camel Kura router: {}", getClass().getName());
+            camelContext.start();
+            producerTemplate = camelContext.createProducerTemplate();
+            consumerTemplate = camelContext.createConsumerTemplate();
+            log.debug("Bundle {} started.", bundleContext.getBundle().getBundleId());
+        } catch (Throwable e) {
+            String errorMessage = "Problem when starting Kura module " + getClass().getName() + ":";
+            log.warn(errorMessage, e);
+
+            // Print error to the Kura console.
+            System.err.println(errorMessage);
+            e.printStackTrace();
+
+            throw e;
+        }
     }
 
     @Override
@@ -73,7 +107,21 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
 
     protected <T> T service(Class<T> serviceType) {
         ServiceReference reference = bundleContext.getServiceReference(serviceType);
+        return reference == null ? null : (T) bundleContext.getService(reference);
+    }
+
+    protected <T> T requiredService(Class<T> serviceType) {
+        ServiceReference reference = bundleContext.getServiceReference(serviceType);
+        if (reference == null) {
+            throw new IllegalStateException("Cannot find service: " + serviceType.getName());
+        }
         return (T) bundleContext.getService(reference);
+    }
+
+    // Private helpers
+
+    private String camelXmlRoutesProperty() {
+        return "kura.camel." + bundleContext.getBundle().getSymbolicName() + ".route";
     }
 
 }

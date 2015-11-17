@@ -82,7 +82,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         if (ref != null) {
             String methodText = "";
             if (method != null) {
-                methodText = " method: " + method;
+                methodText = " method:" + method;
             }
             return "ref:" + ref + methodText;
         } else if (bean != null) {

@@ -248,4 +248,10 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?requestTimeoutCheckerInterval=1000", RabbitMQEndpoint.class);
         assertEquals(1000, endpoint.getRequestTimeoutCheckerInterval());
     }
+
+    @Test
+    public void createEndpointWithSkipQueueDeclareEnabled() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?skipQueueDeclare=true", RabbitMQEndpoint.class);
+        assertTrue(endpoint.isSkipQueueDeclare());
+    }
 }

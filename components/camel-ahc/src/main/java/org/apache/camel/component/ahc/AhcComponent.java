@@ -47,6 +47,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     private AsyncHttpClientConfig clientConfig;
     private AhcBinding binding;
     private SSLContextParameters sslContextParameters;
+    private boolean allowJavaSerializedObject;
 
     public AhcComponent() {
         super(AhcEndpoint.class);
@@ -162,6 +163,20 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     */
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
     protected String createAddressUri(String uri, String remaining) {

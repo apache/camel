@@ -16,11 +16,11 @@
  */
 package org.apache.camel.builder;
 
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.zip.Deflater;
 
 import org.w3c.dom.Node;
-
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -41,6 +41,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
@@ -55,6 +56,7 @@ import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
@@ -268,6 +270,65 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         IcalDataFormat ical = new IcalDataFormat();
         ical.setValidating(validating);
         return dataFormat(ical);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     */
+    public T mimeMultipart() {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        return dataFormat(mm);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     *
+     * @param multipartSubType Specifies the subtype of the MIME Multipart
+     */
+    public T mimeMultipart(String multipartSubType) {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        mm.setMultipartSubType(multipartSubType);
+        return dataFormat(mm);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     *
+     * @param multipartSubType           the subtype of the MIME Multipart
+     * @param multipartWithoutAttachment defines whether a message without attachment is also marshaled
+     *                                   into a MIME Multipart (with only one body part).
+     * @param headersInline              define the MIME Multipart headers as part of the message body
+     *                                   or as Camel headers
+     * @param binaryContent              have binary encoding for binary content (true) or use Base-64
+     *                                   encoding for binary content (false)
+     */
+    public T mimeMultipart(String multipartSubType, boolean multipartWithoutAttachment, boolean headersInline,
+                           boolean binaryContent) {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        mm.setMultipartSubType(multipartSubType);
+        mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
+        mm.setHeadersInline(headersInline);
+        mm.setBinaryContent(binaryContent);
+        return dataFormat(mm);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     *
+     * @param multipartWithoutAttachment defines whether a message without attachment is also marshaled
+     *                                   into a MIME Multipart (with only one body part).
+     * @param headersInline              define the MIME Multipart headers as part of the message body
+     *                                   or as Camel headers
+     * @param binaryContent              have binary encoding for binary content (true) or use Base-64
+     *                                   encoding for binary content (false)
+     */
+    public T mimeMultipart(boolean multipartWithoutAttachment, boolean headersInline,
+                           boolean binaryContent) {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
+        mm.setHeadersInline(headersInline);
+        mm.setBinaryContent(binaryContent);
+        return dataFormat(mm);
     }
 
     /**
@@ -720,17 +781,60 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the XStream data format
+     * Uses the XStream data format.
+     * <p/>
+     * Favor using {@link #xstream(String)} to pass in a permission
      */
     public T xstream() {
         return dataFormat(new XStreamDataFormat());
     }
 
     /**
+     * Uses the xstream by setting the encoding or permission
+     *
+     * @param encodingOrPermission is either an encoding or permission syntax
+     */
+    public T xstream(String encodingOrPermission) {
+        // is it an encoding? if not we assume its a permission
+        if (Charset.isSupported(encodingOrPermission)) {
+            return xstream(encodingOrPermission, (String) null);
+        } else {
+            return xstream(null, encodingOrPermission);
+        }
+    }
+
+    /**
      * Uses the xstream by setting the encoding
      */
-    public T xstream(String encoding) {
-        return dataFormat(new XStreamDataFormat(encoding));
+    public T xstream(String encoding, String permission) {
+        XStreamDataFormat xdf = new XStreamDataFormat();
+        xdf.setPermissions(permission);
+        xdf.setEncoding(encoding);
+        return dataFormat(xdf);
+    }
+
+    /**
+     * Uses the xstream by permitting the java type
+     *
+     * @param type the pojo xstream should use as allowed permission
+     */
+    public T xstream(Class<?> type) {
+        return xstream(null, type);
+    }
+
+    /**
+     * Uses the xstream by permitting the java type
+     *
+     * @param encoding encoding to use
+     * @param type the pojo class(es) xstream should use as allowed permission
+     */
+    public T xstream(String encoding, Class<?>... type) {
+        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+        for (Class<?> clazz : type) {
+            csb.append("+");
+            csb.append(clazz.getName());
+        }
+        return xstream(encoding, csb.toString());
     }
 
     /**

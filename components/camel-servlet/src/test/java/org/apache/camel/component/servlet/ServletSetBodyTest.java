@@ -38,7 +38,7 @@ public class ServletSetBodyTest extends ServletCamelRouterTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("servlet:///hello")
+                from("servlet:/hello")
                     .setBody().constant("Bye World");
             }
         };

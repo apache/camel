@@ -40,10 +40,11 @@ public class MockComponentConfigurationAndDocumentationTest extends ContextTestS
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
+        System.out.println(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\""));
-        assertTrue(json.contains("\"expectedCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
+        assertTrue(json.contains("\"expectedCount\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
     }
 
     @Test
@@ -51,10 +52,8 @@ public class MockComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = context.explainEndpointJson("mock:foo?retainFirst=10", true);
         assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
-                + " \"deprecated\": \"false\", \"value\": \"foo\", \"description\": \"Name of mock endpoint\""));
-        assertTrue(json.contains("\"expectedCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\","
+                + " \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"10\""));
     }
 
     @Test

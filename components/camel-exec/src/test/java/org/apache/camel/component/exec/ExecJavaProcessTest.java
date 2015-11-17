@@ -25,9 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.exec.impl.ProvokeExceptionExecCommandExecutor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -58,7 +61,7 @@ import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
  * is set.</b> This is a more credible assumption, than assuming that java is in
  * the path, because the Maven scripts build the path to java with the JAVA_HOME
  * environment variable.
- * 
+ *
  * @see {@link ExecutableJavaProgram}
  */
 public class ExecJavaProcessTest extends CamelTestSupport {
@@ -70,6 +73,18 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:output")
     MockEndpoint output;
+    
+    /**
+     * Create JndiRegistry and bind custom {@link org.apache.camel.component.exec.ExecCommandExecutor}
+     * @return 
+     * @throws java.lang.Exception
+     */
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("executorMock", new ProvokeExceptionExecCommandExecutor());
+        return registry;
+    } 
 
     @Test
     public void testExecJavaProcessExitCode0() throws Exception {
@@ -123,7 +138,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         // the second conversion should not need a reset, this is handled
         // in the type converter.
         String out2 = e.getIn().getBody(String.class);
-        
+
         output.assertIsSatisfied();
         assertEquals(PRINT_IN_STDOUT, out1);
         assertEquals(out1, out2);
@@ -348,12 +363,46 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         assertEquals(expected, IOUtils.toString(inBody.getStdout()));
     }
 
+    /**
+     * Test for thrown {@link ExecException} and access stderr and exitValue
+     * of thrown Exception
+     */
+    @Test
+    public void testExecJavaProcessWithThrownExecException() throws Exception {
+        //add CustomExecutor
+        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                weaveByToString(".*java.*").replace().to("exec:java?commandExecutor=#executorMock");
+            }
+        });
+
+        output.setExpectedMessageCount(0);
+        Exchange out = sendFailExchange(EXIT_WITH_VALUE_0, NO_TIMEOUT);
+        assertEquals(ExecException.class, out.getException().getClass());
+
+        //test if exitValue and stderr are accessible through thrown ExecException
+        ExecException ee = (ExecException) out.getException();
+        assertNotNull(ee.getExitValue());
+        assertNotNull(ee.getStderr());
+
+        output.assertIsSatisfied();
+    }
+
     protected Exchange sendExchange(final Object commandArgument, final long timeout) {
-        return sendExchange(commandArgument, timeout, "testBody", false);
+        return sendExchange(commandArgument, buildArgs(commandArgument), timeout, "testBody", false);
+
+    }
+
+    protected Exchange sendFailExchange(final Object commandArgument, final long timeout) {
+        return sendExchange(commandArgument, buildFailArgs(commandArgument), timeout, "testBody", false);
     }
 
     protected Exchange sendExchange(final Object commandArgument, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
-        final List<String> args = buildArgs(commandArgument);
+        return sendExchange(commandArgument, buildArgs(commandArgument), timeout, body, useStderrOnEmptyStdout);
+    }
+
+    protected Exchange sendExchange(final Object commandArgument, final List<String> args, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
         final String javaAbsolutePath = buildJavaExecutablePath();
 
         return producerTemplate.send(new Processor() {
@@ -373,6 +422,19 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         String classpath = System.getProperty("java.class.path");
         List<String> args = new ArrayList<String>();
         args.add("-cp");
+        args.add(classpath);
+        args.add(EXECUTABLE_PROGRAM_ARG);
+        args.add(commandArgument.toString());
+        return args;
+    }
+
+    /**
+     * Build arguments for execution which will result in error
+     */
+    List<String> buildFailArgs(Object commandArgument) {
+        String classpath = System.getProperty("java.class.path");
+        List<String> args = new ArrayList<String>();
+        args.add("-failArg");
         args.add(classpath);
         args.add(EXECUTABLE_PROGRAM_ARG);
         args.add(commandArgument.toString());

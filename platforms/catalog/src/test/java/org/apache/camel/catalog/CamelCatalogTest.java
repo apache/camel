@@ -20,14 +20,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class CamelCatalogTest extends TestCase {
+public class CamelCatalogTest {
 
     private CamelCatalog catalog = new DefaultCamelCatalog();
+
+    @Test
+    public void testGetVersion() throws Exception {
+        String version = catalog.getCatalogVersion();
+        assertNotNull(version);
+    }
 
     @Test
     public void testFindLanguageNames() throws Exception {
@@ -108,10 +118,10 @@ public class CamelCatalogTest extends TestCase {
         map.put("noop", "true");
         map.put("delay", "5000");
 
-        String uri = catalog.asEndpointUri("file", map);
+        String uri = catalog.asEndpointUri("file", map, true);
         assertEquals("file:src/data/inbox?delay=5000&noop=true", uri);
 
-        String uri2 = catalog.asEndpointUriXml("file", map);
+        String uri2 = catalog.asEndpointUriXml("file", map, true);
         assertEquals("file:src/data/inbox?delay=5000&amp;noop=true", uri2);
     }
 
@@ -123,10 +133,10 @@ public class CamelCatalogTest extends TestCase {
         map.put("directoryName", "foo");
         map.put("connectTimeout", "5000");
 
-        String uri = catalog.asEndpointUri("ftp", map);
+        String uri = catalog.asEndpointUri("ftp", map, true);
         assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
 
-        String uri2 = catalog.asEndpointUriXml("ftp", map);
+        String uri2 = catalog.asEndpointUriXml("ftp", map, true);
         assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri2);
     }
 
@@ -136,31 +146,94 @@ public class CamelCatalogTest extends TestCase {
         map.put("destinationType", "queue");
         map.put("destinationName", "foo");
 
-        String uri = catalog.asEndpointUri("jms", map);
+        String uri = catalog.asEndpointUri("jms", map, true);
         assertEquals("jms:queue:foo", uri);
+    }
+
+    @Test
+    public void testAsEndpointUriNetty4http() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        // use default protocol
+        map.put("host", "localhost");
+        map.put("port", "8080");
+        map.put("path", "foo/bar");
+        map.put("disconnect", "true");
+
+        String uri = catalog.asEndpointUri("netty4-http", map, true);
+        assertEquals("netty4-http:http:localhost:8080/foo/bar?disconnect=true", uri);
+
+        // lets add a protocol
+        map.put("protocol", "https");
+
+        uri = catalog.asEndpointUri("netty4-http", map, true);
+        assertEquals("netty4-http:https:localhost:8080/foo/bar?disconnect=true", uri);
+
+        // lets set a query parameter in the path
+        map.put("path", "foo/bar?verbose=true");
+        map.put("disconnect", "true");
+
+        uri = catalog.asEndpointUri("netty4-http", map, true);
+        assertEquals("netty4-http:https:localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
+    }
+
+    @Test
+    public void testAsEndpointUriTimer() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("timerName", "foo");
+        map.put("period", "5000");
+
+        String uri = catalog.asEndpointUri("timer", map, true);
+        assertEquals("timer:foo?period=5000", uri);
+    }
+
+    @Test
+    public void testAsEndpointUriPropertiesPlaceholders() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("timerName", "foo");
+        map.put("period", "{{howoften}}");
+        map.put("repeatCount", "5");
+
+        String uri = catalog.asEndpointUri("timer", map, true);
+        assertEquals("timer:foo?period=%7B%7Bhowoften%7D%7D&repeatCount=5", uri);
+
+        uri = catalog.asEndpointUri("timer", map, false);
+        assertEquals("timer:foo?period={{howoften}}&repeatCount=5", uri);
+    }
+
+    @Test
+    public void testAsEndpointUriBeanLookup() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("resourceUri", "foo.xslt");
+        map.put("converter", "#myConverter");
+
+        String uri = catalog.asEndpointUri("xslt", map, true);
+        assertEquals("xslt:foo.xslt?converter=%23myConverter", uri);
+
+        uri = catalog.asEndpointUri("xslt", map, false);
+        assertEquals("xslt:foo.xslt?converter=#myConverter", uri);
     }
 
     @Test
     public void testAsEndpointUriMapJmsRequiredOnly() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("destinationName", "foo");
-        String uri = catalog.asEndpointUri("jms", map);
+        String uri = catalog.asEndpointUri("jms", map, true);
         assertEquals("jms:foo", uri);
 
         map.put("deliveryPersistent", "false");
         map.put("allowNullBody", "true");
 
-        uri = catalog.asEndpointUri("jms", map);
+        uri = catalog.asEndpointUri("jms", map, true);
         assertEquals("jms:foo?allowNullBody=true&deliveryPersistent=false", uri);
 
-        String uri2 = catalog.asEndpointUriXml("jms", map);
+        String uri2 = catalog.asEndpointUriXml("jms", map, true);
         assertEquals("jms:foo?allowNullBody=true&amp;deliveryPersistent=false", uri2);
     }
 
     @Test
     public void testAsEndpointUriJson() throws Exception {
         String json = loadText(CamelCatalogTest.class.getClassLoader().getResourceAsStream("sample.json"));
-        String uri = catalog.asEndpointUri("ftp", json);
+        String uri = catalog.asEndpointUri("ftp", json, true);
         assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
     }
 
@@ -174,6 +247,32 @@ public class CamelCatalogTest extends TestCase {
         assertEquals("21", map.get("port"));
         assertEquals("foo", map.get("directoryName"));
         assertEquals("5000", map.get("connectTimeout"));
+    }
+
+    @Test
+    public void testEndpointPropertiesPlaceholders() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("timer:foo?period={{howoften}}&repeatCount=5");
+        assertNotNull(map);
+        assertEquals(3, map.size());
+
+        assertEquals("foo", map.get("timerName"));
+        assertEquals("{{howoften}}", map.get("period"));
+        assertEquals("5", map.get("repeatCount"));
+    }
+
+    @Test
+    public void testEndpointPropertiesNetty4http() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("netty4-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
+        assertNotNull(map);
+        assertEquals(6, map.size());
+
+        assertEquals("http", map.get("protocol"));
+        assertEquals("localhost", map.get("host"));
+        assertEquals("8080", map.get("port"));
+        // TODO: fix me later
+        //assertEquals("foo/bar", map.get("path"));
+        assertEquals("true", map.get("disconnect"));
+        assertEquals("false", map.get("keepAlive"));
     }
 
     @Test
@@ -230,6 +329,61 @@ public class CamelCatalogTest extends TestCase {
     public void testEndpointComponentName() throws Exception {
         String name = catalog.endpointComponentName("jms:queue:foo");
         assertEquals("jms", name);
+    }
+
+    @Test
+    public void testListComponentsAsJson() throws Exception {
+        String json = catalog.listComponentsAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testListDataFormatsAsJson() throws Exception {
+        String json = catalog.listDataFormatsAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testListLanguagesAsJson() throws Exception {
+        String json = catalog.listLanguagesAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testListModelsAsJson() throws Exception {
+        String json = catalog.listModelsAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testSummaryAsJson() throws Exception {
+        String json = catalog.summaryAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
     }
 
 }

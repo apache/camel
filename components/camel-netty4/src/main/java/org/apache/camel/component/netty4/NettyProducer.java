@@ -20,7 +20,6 @@ import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -38,10 +37,8 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.ImmediateEventExecutor;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
@@ -396,8 +393,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
             } else {
                 // bind and store channel so we can close it when stopping
-                answer = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
-                answer.awaitUninterruptibly();
+                answer = connectionlessClientBootstrap.bind(new InetSocketAddress(0)).sync();
                 Channel channel = answer.channel();
                 allChannels.add(channel);
             }
@@ -415,22 +411,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
         }
-        // here we need to wait it in other thread
-        final CountDownLatch channelLatch = new CountDownLatch(1);
-        channelFuture.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture cf) throws Exception {
-                channelLatch.countDown();
-            }
-        });
 
-        try {
-            channelLatch.await(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
-        } catch (InterruptedException ex) {
-            throw new CamelException("Interrupted while waiting for " + "connection to "
-                                     + configuration.getAddress());
-        }
-
+        // wait for the channel to be open (see io.netty.channel.ChannelFuture javadoc for example/recommendation)
+        channelFuture.awaitUninterruptibly();
 
         if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
             ConnectException cause = new ConnectException("Cannot connect to " + configuration.getAddress());

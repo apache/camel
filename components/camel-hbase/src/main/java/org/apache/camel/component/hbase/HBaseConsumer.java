@@ -81,8 +81,11 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
             if (maxMessagesPerPoll > 0) {
                 filters.add(new PageFilter(maxMessagesPerPoll));
             }
-            Filter compoundFilter = new FilterList(filters);
-            scan.setFilter(compoundFilter);
+
+            if (!filters.isEmpty()) {
+                Filter compoundFilter = new FilterList(filters);
+                scan.setFilter(compoundFilter);
+            }
 
             if (rowModel != null && rowModel.getCells() != null) {
                 Set<HBaseCell> cellModels = rowModel.getCells();

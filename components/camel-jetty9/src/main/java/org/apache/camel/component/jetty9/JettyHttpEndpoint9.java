@@ -40,6 +40,9 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint {
         if (this.binding == null) {
             this.binding = new AttachmentHttpBinding();
             this.binding.setTransferException(isTransferException());
+            if (getComponent() != null) {
+                this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+            }
             this.binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
         return this.binding;

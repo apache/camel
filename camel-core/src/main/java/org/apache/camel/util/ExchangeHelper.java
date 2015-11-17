@@ -628,6 +628,20 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Check whether or not stream caching is enabled for the given route or globally.
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
+     */
+    public static boolean isStreamCachingEnabled(final Exchange exchange) {
+        if (exchange.getFromRouteId() == null) {
+            return exchange.getContext().getStreamCachingStrategy().isEnabled();
+        } else {
+            return exchange.getContext().getRoute(exchange.getFromRouteId()).getRouteContext().isStreamCaching();
+        }
+    }
+
+    /**
      * Extracts the body from the given exchange.
      * <p/>
      * If the exchange pattern is provided it will try to honor it and retrieve the body
@@ -788,7 +802,7 @@ public final class ExchangeHelper {
     public static void prepareOutToIn(Exchange exchange) {
         // we are routing using pipes and filters so we need to manually copy OUT to IN
         if (exchange.hasOut()) {
-            exchange.getIn().copyFrom(exchange.getOut());
+            exchange.setIn(exchange.getOut());
             exchange.setOut(null);
         }
     }

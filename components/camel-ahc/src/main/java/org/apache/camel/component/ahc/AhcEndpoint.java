@@ -179,6 +179,9 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * in the response as a application/x-java-serialized-object content type (for example using Jetty or Servlet Camel components).
      * On the producer side the exception will be deserialized and thrown as is, instead of the AhcOperationFailedException.
      * The caused exception is required to be serialized.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;

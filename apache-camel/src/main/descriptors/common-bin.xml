@@ -132,6 +132,7 @@
         <include>org.apache.camel:camel-kestrel</include>
         <include>org.apache.camel:camel-krati</include>
         <include>org.apache.camel:camel-kura</include>
+        <include>org.apache.camel:camel-kubernetes</include>
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-leveldb</include>
         <include>org.apache.camel:camel-linkedin-api</include>
@@ -236,6 +237,7 @@
         <include>org.apache.camel:camel-catalog</include>
         <include>org.apache.camel:camel-commands-core</include>
         <include>org.apache.camel:camel-commands-jolokia</include>
+        <include>org.apache.camel:camel-commands-spring-boot</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
         <!-- this jar is mandatory -->
         <include>org.slf4j:slf4j-api</include>

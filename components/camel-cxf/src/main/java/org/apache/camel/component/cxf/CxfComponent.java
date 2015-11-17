@@ -86,8 +86,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
                 beanId = beanId.substring(2);
             }
 
-            result = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, CxfEndpoint.class);
-            // need to check the CamelContext value 
+            result = createCxfSpringEndpoint(beanId);
+            // need to check the CamelContext value
             if (getCamelContext().equals(result.getCamelContext())) {
                 result.setCamelContext(getCamelContext());
             }
@@ -95,7 +95,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
 
         } else {
             // endpoint URI does not specify a bean
-            result = new CxfEndpoint(remaining, this);
+            result = createCxfEndpoint(remaining);
         }
         if (result.getCamelContext() == null) {
             result.setCamelContext(getCamelContext());
@@ -114,6 +114,14 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         }
 
         return result;
+    }
+
+    protected CxfEndpoint createCxfSpringEndpoint(String beanId) throws Exception {
+        return CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, CxfEndpoint.class);
+    }
+
+    protected CxfEndpoint createCxfEndpoint(String remaining) {
+        return new CxfEndpoint(remaining, this);
     }
 
     @Override

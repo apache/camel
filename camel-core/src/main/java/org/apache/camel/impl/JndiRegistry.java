@@ -31,18 +31,36 @@ import javax.naming.NamingException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.jndi.CamelInitialContextFactory;
 
 /**
  * A {@link Registry} implementation which looks up the objects in JNDI
  */
 public class JndiRegistry implements Registry {
     private Context context;
+    private Map environment;
+    private final boolean standalone;
 
     public JndiRegistry() {
+        this.standalone = false;
+    }
+
+    public JndiRegistry(Map environment) {
+        this.environment = environment;
+        this.standalone = false;
     }
 
     public JndiRegistry(Context context) {
         this.context = context;
+        this.standalone = false;
+    }
+
+    /**
+     * Whether to use standalone mode, where the JNDI initial context factory is using
+     * {@link CamelInitialContextFactory}.
+     */
+    public JndiRegistry(boolean standalone) {
+        this.standalone = true;
     }
 
     public <T> T lookupByNameAndType(String name, Class<T> type) {
@@ -145,7 +163,14 @@ public class JndiRegistry implements Registry {
     }
 
     protected Context createContext() throws NamingException {
-        Hashtable<?, ?> properties = new Hashtable<Object, Object>(System.getProperties());
+        Hashtable<Object, Object> properties = new Hashtable<Object, Object>(System.getProperties());
+        if (environment != null) {
+            properties.putAll(environment);
+        }
+        // must include a factory if none provided in standalone mode
+        if (standalone && !properties.containsKey("java.naming.factory.initial")) {
+            properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
+        }
         return new InitialContext(properties);
     }
 }

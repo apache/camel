@@ -126,6 +126,11 @@ public class DefaultAhcBinding implements AhcBinding {
                 Object data = in.getBody();
                 if (data != null) {
                     if (contentType != null && AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+
+                        if (!endpoint.getComponent().isAllowJavaSerializedObject()) {
+                            throw new CamelExchangeException("Content-type " + AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
+                        }
+
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);
                         // write object to output stream
@@ -228,9 +233,12 @@ public class DefaultAhcBinding implements AhcBinding {
         }
 
         Object body = is;
-        // if content type is a serialized java object then de-serialize it back to a Java object
+        // if content type is a serialized java object then de-serialize it back to a Java object but only if its allowed
+        // an exception can also be transffered as java object
         if (contentType != null && contentType.equals(AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            body = AhcHelper.deserializeJavaObjectFromStream(is);
+            if (endpoint.getComponent().isAllowJavaSerializedObject() || endpoint.isTransferException()) {
+                body = AhcHelper.deserializeJavaObjectFromStream(is);
+            }
         }
 
         if (!endpoint.isThrowExceptionOnFailure()) {

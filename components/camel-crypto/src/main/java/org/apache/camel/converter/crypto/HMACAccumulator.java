@@ -114,7 +114,7 @@ public class HMACAccumulator {
         return maclength;
     }
 
-    public void attachStream(ByteArrayOutputStream outputStream) {
+    public void attachStream(final OutputStream outputStream) {
         this.outputStream = outputStream;
     }
 

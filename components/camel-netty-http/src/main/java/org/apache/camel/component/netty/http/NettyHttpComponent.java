@@ -58,6 +58,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     private HeaderFilterStrategy headerFilterStrategy;
     private NettyHttpSecurityConfiguration securityConfiguration;
 
+    // If the port is not specified Netty set it to -1, we need to set it on a default port in this case
+    private int defaultPortIfNotProvided = 80;
+
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
         super(NettyHttpEndpoint.class);
@@ -166,6 +169,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             ((NettyHttpConfiguration) configuration).setPath(uri.getPath());
         }
 
+        if (configuration.getPort() == -1) {
+            configuration.setPort(defaultPortIfNotProvided);
+        }
         return configuration;
     }
 

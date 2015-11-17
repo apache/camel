@@ -34,6 +34,7 @@ import java.util.Set;
 
 import org.apache.camel.util.CastUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -41,6 +42,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
@@ -747,23 +749,6 @@ public class RunMojo extends AbstractExecMojo {
                     Set<Artifact> deps = resolveExecutableDependencies(artifact, true);
                     if (deps != null) {
                         for (Artifact dep : deps) {
-
-                            // we must skip org.apache.aries.blueprint.core:, otherwise we get duplicate blueprint extenders
-                            if (dep.getArtifactId().equals("org.apache.aries.blueprint.core")) {
-                                getLog().debug("Skipping org.apache.aries.blueprint.core -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
-                                continue;
-                            }
-
-                            // we skip test scoped
-                            if ("test".equals(dep.getScope())) {
-                                getLog().debug("Skipping test scoped -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
-                                continue;
-                            }
-                            if ("provided".equals(dep.getScope())) {
-                                getLog().debug("Skipping provided scoped -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
-                                continue;
-                            }
-
                             getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId()
                                     + " to classpath");
                             path.add(dep.getFile().toURI().toURL());
@@ -966,14 +951,13 @@ public class RunMojo extends AbstractExecMojo {
             // not forgetting the Artifact of the project itself
             dependencyArtifacts.add(executableProject.getArtifact());
 
-            // resolve all dependencies transitively to obtain a comprehensive
-            // list of assemblies
+            // resolve runtime dependencies transitively to obtain a comprehensive list of assemblies
             ArtifactResolutionResult result = artifactResolver.resolveTransitively(dependencyArtifacts,
                                                                                    executablePomArtifact,
                                                                                    Collections.emptyMap(),
                                                                                    this.localRepository,
                                                                                    this.remoteRepositories,
-                                                                                   metadataSource, null,
+                                                                                   metadataSource, new ScopeArtifactFilter(DefaultArtifact.SCOPE_RUNTIME),
                                                                                    Collections.emptyList());
             executableDependencies = CastUtils.cast(result.getArtifacts());
 

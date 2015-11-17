@@ -17,7 +17,7 @@ You will need to compile this example first:
   mvn compile
 
 To run the example type
-  mvn exec:java
+  mvn camel:run
 
 Then open a browser to see live twitter updates in the web page
   http://localhost:9090

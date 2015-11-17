@@ -18,19 +18,17 @@ package org.apache.camel.component.twitter.consumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.direct.DirectConsumer;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.consumer.streaming.StreamingConsumer;
-
+import org.apache.camel.impl.DefaultConsumer;
 import twitter4j.Status;
 
-public class TwitterConsumerEvent extends DirectConsumer implements TweeterStatusListener {
+public class TwitterConsumerEvent extends DefaultConsumer implements TweeterStatusListener {
     private Twitter4JConsumer twitter4jConsumer;
 
     public TwitterConsumerEvent(TwitterEndpoint endpoint, Processor processor,
                                 Twitter4JConsumer twitter4jConsumer) {
         super(endpoint, processor);
-
         this.twitter4jConsumer = twitter4jConsumer;
     }
 
@@ -56,10 +54,15 @@ public class TwitterConsumerEvent extends DirectConsumer implements TweeterStatu
     public void onStatus(Status status) {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setBody(status);
+
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            exchange.setException(e);
+        }
+
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException("Error processing exchange on status update", exchange, exchange.getException());
         }
     }
 }

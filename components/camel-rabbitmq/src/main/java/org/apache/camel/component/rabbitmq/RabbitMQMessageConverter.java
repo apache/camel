@@ -87,67 +87,67 @@ public class RabbitMQMessageConverter {
             msg = exchange.getIn();
         }
 
-        final Object contentType = msg.getHeader(RabbitMQConstants.CONTENT_TYPE);
+        final Object contentType = msg.removeHeader(RabbitMQConstants.CONTENT_TYPE);
         if (contentType != null) {
             properties.contentType(contentType.toString());
         }
 
-        final Object priority = msg.getHeader(RabbitMQConstants.PRIORITY);
+        final Object priority = msg.removeHeader(RabbitMQConstants.PRIORITY);
         if (priority != null) {
             properties.priority(Integer.parseInt(priority.toString()));
         }
 
-        final Object messageId = msg.getHeader(RabbitMQConstants.MESSAGE_ID);
+        final Object messageId = msg.removeHeader(RabbitMQConstants.MESSAGE_ID);
         if (messageId != null) {
             properties.messageId(messageId.toString());
         }
 
-        final Object clusterId = msg.getHeader(RabbitMQConstants.CLUSTERID);
+        final Object clusterId = msg.removeHeader(RabbitMQConstants.CLUSTERID);
         if (clusterId != null) {
             properties.clusterId(clusterId.toString());
         }
 
-        final Object replyTo = msg.getHeader(RabbitMQConstants.REPLY_TO);
+        final Object replyTo = msg.removeHeader(RabbitMQConstants.REPLY_TO);
         if (replyTo != null) {
             properties.replyTo(replyTo.toString());
         }
 
-        final Object correlationId = msg.getHeader(RabbitMQConstants.CORRELATIONID);
+        final Object correlationId = msg.removeHeader(RabbitMQConstants.CORRELATIONID);
         if (correlationId != null) {
             properties.correlationId(correlationId.toString());
         }
 
-        final Object deliveryMode = msg.getHeader(RabbitMQConstants.DELIVERY_MODE);
+        final Object deliveryMode = msg.removeHeader(RabbitMQConstants.DELIVERY_MODE);
         if (deliveryMode != null) {
             properties.deliveryMode(Integer.parseInt(deliveryMode.toString()));
         }
 
-        final Object userId = msg.getHeader(RabbitMQConstants.USERID);
+        final Object userId = msg.removeHeader(RabbitMQConstants.USERID);
         if (userId != null) {
             properties.userId(userId.toString());
         }
 
-        final Object type = msg.getHeader(RabbitMQConstants.TYPE);
+        final Object type = msg.removeHeader(RabbitMQConstants.TYPE);
         if (type != null) {
             properties.type(type.toString());
         }
 
-        final Object contentEncoding = msg.getHeader(RabbitMQConstants.CONTENT_ENCODING);
+        final Object contentEncoding = msg.removeHeader(RabbitMQConstants.CONTENT_ENCODING);
         if (contentEncoding != null) {
             properties.contentEncoding(contentEncoding.toString());
         }
 
-        final Object expiration = msg.getHeader(RabbitMQConstants.EXPIRATION);
+        final Object expiration = msg.removeHeader(RabbitMQConstants.EXPIRATION);
         if (expiration != null) {
             properties.expiration(expiration.toString());
         }
 
-        final Object appId = msg.getHeader(RabbitMQConstants.APP_ID);
+        final Object appId = msg.removeHeader(RabbitMQConstants.APP_ID);
         if (appId != null) {
             properties.appId(appId.toString());
         }
 
-        final Object timestamp = msg.getHeader(RabbitMQConstants.TIMESTAMP);
+        final Object timestamp = msg.removeHeader(RabbitMQConstants.TIMESTAMP);
         if (timestamp != null) {
             properties.timestamp(new Date(Long.parseLong(timestamp.toString())));
         }
@@ -157,7 +157,6 @@ public class RabbitMQMessageConverter {
 
         // TODO: Add support for a HeaderFilterStrategy. See: org.apache.camel.component.jms.JmsBinding#shouldOutputHeader
         for (Map.Entry<String, Object> header : headers.entrySet()) {
-
             // filter header values.
             Object value = getValidRabbitMQHeaderValue(header.getValue());
             if (value != null) {

@@ -533,15 +533,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
         for (RestConfiguration config : camelContext.getRestConfigurations()) {
             addRouteDefinition(camelContext, answer, config.getComponent());
-            if (config.getApiContextPath() != null) {
-                addApiRouteDefinition(camelContext, answer, config);
-            }
         }
         return answer;
     }
 
-    private void addApiRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, RestConfiguration configuration) {
-        RouteDefinition route = new RouteDefinition();
+    /**
+     * Transforms the rest api configuration into a {@link org.apache.camel.model.RouteDefinition} which
+     * Camel routing engine uses to service the rest api docs.
+     */
+    public static RouteDefinition asRouteApiDefinition(CamelContext camelContext, RestConfiguration configuration) {
+        RouteDefinition answer = new RouteDefinition();
 
         // create the from endpoint uri which is using the rest-api component
         String from = "rest-api:" + configuration.getApiContextPath();
@@ -549,7 +550,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // append options
         Map<String, Object> options = new HashMap<String, Object>();
 
-        String routeId = "rest-api-" + route.idOrCreate(camelContext.getNodeIdFactory());
+        String routeId = configuration.getApiContextRouteId();
+        if (routeId == null) {
+            routeId = answer.idOrCreate(camelContext.getNodeIdFactory());
+        }
         options.put("routeId", routeId);
         if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
             options.put("componentName", configuration.getComponent());
@@ -570,12 +574,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
         // we use the same uri as the producer (so we have a little route for the rest api)
         String to = from;
+        answer.fromRest(from);
+        answer.id(routeId);
+        answer.to(to);
 
-        // the route should be from this rest endpoint
-        route.fromRest(from);
-        route.to(to);
-        route.setRestDefinition(this);
-        answer.add(route);
+        return answer;
     }
 
     private void addRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, String component) {
@@ -738,6 +741,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             // the route should be from this rest endpoint
             route.fromRest(from);
+            route.id(routeId);
             route.setRestDefinition(this);
             answer.add(route);
         }

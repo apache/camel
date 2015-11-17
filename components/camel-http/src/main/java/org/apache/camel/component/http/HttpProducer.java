@@ -32,6 +32,7 @@ import java.util.Map;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.http.common.HttpConstants;
@@ -280,7 +281,7 @@ public class HttpProducer extends DefaultProducer {
      * @return the response either as a stream, or as a deserialized java object
      * @throws IOException can be thrown
      */
-    protected static Object extractResponseBody(HttpMethod method, Exchange exchange, boolean ignoreResponseBody) throws IOException, ClassNotFoundException {
+    protected Object extractResponseBody(HttpMethod method, Exchange exchange, boolean ignoreResponseBody) throws IOException, ClassNotFoundException {
         InputStream is = method.getResponseBodyAsStream();
         if (is == null) {
             return null;
@@ -304,7 +305,13 @@ public class HttpProducer extends DefaultProducer {
         
         // if content type is a serialized java object then de-serialize it back to a Java object
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
+            // only deserialize java if allowed
+            if (getEndpoint().getComponent().isAllowJavaSerializedObject() || getEndpoint().isTransferException()) {
+                return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
+            } else {
+                // empty response
+                return null;
+            }
         } else {
             InputStream response = null;
             if (!ignoreResponseBody) {
@@ -418,6 +425,9 @@ public class HttpProducer extends DefaultProducer {
                     String contentType = ExchangeHelper.getContentType(exchange);
 
                     if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+                        if (!getEndpoint().getComponent().isAllowJavaSerializedObject()) {
+                            throw new CamelExchangeException("Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
+                        }
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);
                         // write object to output stream
