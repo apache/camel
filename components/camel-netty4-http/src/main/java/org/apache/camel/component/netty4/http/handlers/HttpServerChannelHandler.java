@@ -300,7 +300,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             if (cause instanceof ClosedChannelException) {
                 LOG.debug("Channel already closed. Ignoring this exception.");
             } else {
-                LOG.warn("Closing channel as an exception was thrown from Netty", cause);
+                LOG.debug("Closing channel as an exception was thrown from Netty", cause);
                 // close channel in case an exception was thrown
                 NettyHelper.close(ctx.channel());
             }
