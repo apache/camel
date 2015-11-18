@@ -44,7 +44,7 @@ public class RestGetTest extends BaseUndertowTest {
                                 String id = exchange.getIn().getHeader("id", String.class);
                                 exchange.getOut().setBody(id + ";Donald Duck");
                             }
-                         });
+                        });
             }
         };
     }

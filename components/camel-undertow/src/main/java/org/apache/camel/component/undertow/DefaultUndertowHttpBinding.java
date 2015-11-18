@@ -327,7 +327,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[1024]);
 
-        for (; ; ) {
+        for (;;) {
             int res = source.read(buffer);
             if (res == -1) {
                 return out.toByteArray();
@@ -335,7 +335,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 source.getReadSetter().set(new ChannelListener<StreamSourceChannel>() {
                     @Override
                     public void handleEvent(StreamSourceChannel channel) {
-                        for (; ; ) {
+                        for (;;) {
                             try {
                                 int res = channel.read(buffer);
                                 if (res == -1 || res == 0) {

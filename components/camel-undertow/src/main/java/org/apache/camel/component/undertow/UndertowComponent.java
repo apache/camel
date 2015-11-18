@@ -16,15 +16,6 @@
  */
 package org.apache.camel.component.undertow;
 
-import io.undertow.Handlers;
-import io.undertow.Undertow;
-import io.undertow.attribute.ExchangeAttributes;
-import io.undertow.predicate.PathTemplatePredicate;
-import io.undertow.predicate.Predicate;
-import io.undertow.predicate.Predicates;
-import io.undertow.server.handlers.PathHandler;
-import io.undertow.server.handlers.PredicateHandler;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -33,6 +24,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import io.undertow.Handlers;
+import io.undertow.Undertow;
+import io.undertow.attribute.ExchangeAttributes;
+import io.undertow.predicate.PathTemplatePredicate;
+import io.undertow.predicate.Predicate;
+import io.undertow.predicate.Predicates;
+import io.undertow.server.handlers.PathHandler;
+import io.undertow.server.handlers.PredicateHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;

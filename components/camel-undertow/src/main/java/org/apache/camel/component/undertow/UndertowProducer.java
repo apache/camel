@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.undertow;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.ByteBuffer;
+
 import io.undertow.client.ClientCallback;
 import io.undertow.client.ClientConnection;
 import io.undertow.client.ClientExchange;
@@ -25,11 +29,6 @@ import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Protocols;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.ByteBuffer;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
