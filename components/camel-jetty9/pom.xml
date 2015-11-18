@@ -26,8 +26,8 @@
 
   <artifactId>camel-jetty9</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Jetty</name>
-  <description>Camel Jetty support</description>
+  <name>Camel :: Jetty9</name>
+  <description>Camel Jetty9 support</description>
 
   <properties>
     <camel.osgi.import.before.defaults>
