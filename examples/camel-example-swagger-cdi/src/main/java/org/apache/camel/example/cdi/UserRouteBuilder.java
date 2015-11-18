@@ -19,6 +19,7 @@ package org.apache.camel.example.cdi;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.model.rest.RestHostNameResolver;
 
 import static org.apache.camel.model.rest.RestParamType.body;
 import static org.apache.camel.model.rest.RestParamType.path;
@@ -34,11 +35,13 @@ public class UserRouteBuilder extends RouteBuilder {
 
         // configure we want to use servlet as the component for the rest DSL
         // and we enable json binding mode
-        restConfiguration().component("netty4-http").bindingMode(RestBindingMode.json)
+        restConfiguration().component("netty4-http")
+            // use json binding mode so Camel automatic binds json <--> pojo
+            .bindingMode(RestBindingMode.json)
             // and output using pretty print
             .dataFormatProperty("prettyPrint", "true")
-            // setup context path and port number that netty will use
-            .contextPath("/").port(8080)
+            // setup context path on localhost and port number that netty will use
+            .contextPath("/").host("localhost").port(8080)
             // add swagger api-doc out of the box
             .apiContextPath("/api-doc")
                 .apiProperty("api.title", "User API").apiProperty("api.version", "1.2.3")
