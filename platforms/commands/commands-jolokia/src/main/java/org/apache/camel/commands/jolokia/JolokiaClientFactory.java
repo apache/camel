@@ -20,8 +20,6 @@ import org.jolokia.client.BasicAuthenticator;
 import org.jolokia.client.J4pClient;
 import org.jolokia.client.J4pClientBuilder;
 
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-
 /**
  * A factory to create a {@link org.jolokia.client.J4pClient} jolokia client that connects to a remote JVM.
  */
@@ -45,6 +43,10 @@ public final class JolokiaClientFactory {
             builder = builder.authenticator(new BasicAuthenticator(true));
         }
         return builder.build();
+    }
+
+    private static boolean isNotEmpty(String text) {
+        return text != null && !text.isEmpty();
     }
 
 }
