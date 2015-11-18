@@ -41,10 +41,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-commands-core</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
 
     <!-- jolokia -->
     <dependency>
