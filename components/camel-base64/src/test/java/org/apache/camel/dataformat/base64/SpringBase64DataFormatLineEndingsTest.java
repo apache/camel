@@ -48,7 +48,7 @@ public class SpringBase64DataFormatLineEndingsTest extends SpringBase64DataForma
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                "org/apache/camel/dataFormat/base64/SpringBase64DataFormatLineEndingsTest.xml");
+                "org/apache/camel/dataformat/base64/SpringBase64DataFormatLineEndingsTest.xml");
     }
 
     @Test

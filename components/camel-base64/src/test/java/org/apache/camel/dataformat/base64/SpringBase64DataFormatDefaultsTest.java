@@ -50,7 +50,7 @@ public class SpringBase64DataFormatDefaultsTest extends SpringBase64DataFormatTe
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                "org/apache/camel/dataFormat/base64/SpringBase64DataFormatDefaultsTest.xml");
+                "org/apache/camel/dataformat/base64/SpringBase64DataFormatDefaultsTest.xml");
     }
 
     @Test
