@@ -63,4 +63,10 @@ public class GHttpComponent extends ServletComponent {
     protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component, URI httpUri) throws Exception {
         return new GHttpEndpoint(endpointUri, component, httpUri);
     }
+
+    @Override
+    protected boolean lenientContextPath() {
+        // must use the path as-is
+        return false;
+    }
 }

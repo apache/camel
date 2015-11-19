@@ -31,7 +31,7 @@ public class RestUndertowHttpBindingModeXmlTest extends BaseUndertowTest {
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        template.sendBody("undertow:http://localhost:" + getPort() + "/users/new", body);
+        template.sendBody("undertow:http://localhost:{{port}}/users/new", body);
 
         assertMockEndpointsSatisfied();
 

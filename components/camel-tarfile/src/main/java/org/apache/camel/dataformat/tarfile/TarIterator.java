@@ -108,10 +108,8 @@ public class TarIterator implements Iterator<Message>, Closeable {
     }
 
     private Message getNextElement() {
-        Message answer = null;
-
         if (tarInputStream == null) {
-            return answer;
+            return null;
         }
 
         try {
@@ -119,7 +117,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
 
             if (current != null) {
                 LOGGER.debug("Reading tarEntry {}", current.getName());
-                answer = new DefaultMessage();
+                Message answer = new DefaultMessage();
                 answer.getHeaders().putAll(inputMessage.getHeaders());
                 answer.setHeader(TARFILE_ENTRY_NAME_HEADER, current.getName());
                 answer.setHeader(Exchange.FILE_NAME, current.getName());
@@ -132,13 +130,12 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 return answer;
             } else {
                 LOGGER.trace("Closed tarInputStream");
+                return null;
             }
         } catch (IOException exception) {
             //Just wrap the IOException as CamelRuntimeException
             throw new RuntimeCamelException(exception);
         }
-
-        return answer;
     }
 
     public void checkNullAnswer(Message answer) {

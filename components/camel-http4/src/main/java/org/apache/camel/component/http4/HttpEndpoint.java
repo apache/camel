@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -27,6 +28,7 @@ import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
@@ -55,7 +57,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private HttpClientConfigurer httpClientConfigurer;
     private HttpClientConnectionManager clientConnectionManager;
     private HttpClientBuilder clientBuilder;
-    private  HttpClient httpClient;
+    private HttpClient httpClient;
 
     @UriParam(label = "producer")
     private CookieStore cookieStore = new BasicCookieStore();
@@ -130,6 +132,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         clientBuilder.setDefaultCookieStore(cookieStore);
         // setup the httpConnectionManager
         clientBuilder.setConnectionManager(clientConnectionManager);
+        if (getComponent() != null && getComponent().getClientConnectionManager() == getClientConnectionManager()) {
+            clientBuilder.setConnectionManagerShared(true);
+        }
 
         // configure http proxy from camelContext
         if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
@@ -174,6 +179,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         if (getComponent() != null && getComponent().getClientConnectionManager() != clientConnectionManager) {
             // need to shutdown the ConnectionManager
             clientConnectionManager.shutdown();
+        }
+        if (httpClient != null && httpClient instanceof Closeable) {
+            IOHelper.close((Closeable)httpClient);
         }
     }
 

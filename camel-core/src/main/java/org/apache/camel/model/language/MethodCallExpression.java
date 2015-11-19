@@ -257,9 +257,9 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     protected String beanName() {
         if (bean != null) {
-            return "ref:" + bean;
+            return bean;
         } else if (ref != null) {
-            return "ref:" + ref;
+            return ref;
         } else if (instance != null) {
             return ObjectHelper.className(instance);
         }
@@ -268,6 +268,7 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public String toString() {
-        return "bean[" + beanName() + (method != null ? " method:" + method : "") + "]";
+        boolean isRef = bean != null || ref != null;
+        return "bean[" + (isRef ? "ref:" : "") + beanName() + (method != null ? " method:" + method : "") + "]";
     }
 }

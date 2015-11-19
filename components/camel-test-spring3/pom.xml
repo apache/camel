@@ -27,7 +27,7 @@
 
     <artifactId>camel-test-spring3</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: Test :: Spring 3.x</name>
+    <name>Camel :: Test :: Spring 3.x (deprecated)</name>
     <description>Camel Testing Library using JUnit and Spring 3.x</description>
 
     <properties>
