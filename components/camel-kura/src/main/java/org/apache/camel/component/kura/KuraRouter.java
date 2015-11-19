@@ -58,7 +58,7 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
 
             camelContext.addRoutes(this);
             ConfigurationAdmin configurationAdmin = requiredService(ConfigurationAdmin.class);
-            Configuration camelKuraConfig = configurationAdmin.getConfiguration("kura.camel");
+            Configuration camelKuraConfig = configurationAdmin.getConfiguration(camelXmlRoutesPid());
             if (camelKuraConfig != null && camelKuraConfig.getProperties() != null) {
                 Object routePropertyValue = camelKuraConfig.getProperties().get(camelXmlRoutesProperty());
                 if (routePropertyValue != null) {
@@ -120,7 +120,11 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
 
     // Private helpers
 
-    private String camelXmlRoutesProperty() {
+    protected String camelXmlRoutesPid() {
+        return "kura.camel";
+    }
+
+    protected String camelXmlRoutesProperty() {
         return "kura.camel." + bundleContext.getBundle().getSymbolicName() + ".route";
     }
 
