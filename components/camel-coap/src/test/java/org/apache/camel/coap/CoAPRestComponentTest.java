@@ -16,15 +16,9 @@
  */
 package org.apache.camel.coap;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.californium.core.CoapClient;
@@ -35,28 +29,13 @@ import org.junit.Test;
 
 public class CoAPRestComponentTest extends CamelTestSupport {
     static int coapport = AvailablePortFinder.getNextAvailable();
-    static int jettyport = AvailablePortFinder.getNextAvailable();
-    
-    
-    /*
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    } 
-    */   
-    
+
     @Test
     public void testCoAP() throws Exception {
         NetworkConfig.createStandardWithoutFile();
         CoapClient client;
         CoapResponse rsp;
-        
-        
-        URL url = new URL("http://localhost:" + jettyport + "/TestResource/Ducky");
-        URLConnection connect = url.openConnection();
-        InputStream ins = connect.getInputStream();
-        assertEquals("Hello Ducky", IOConverter.toString(new InputStreamReader(ins)));
 
-        
         client = new CoapClient("coap://localhost:" + coapport + "/TestResource/Ducky");
         client.setTimeout(1000000);
         rsp = client.get();
@@ -71,7 +50,6 @@ public class CoAPRestComponentTest extends CamelTestSupport {
         rsp = client.post("data", MediaTypeRegistry.TEXT_PLAIN);
         assertEquals("Hello Ducky: data", rsp.getResponseText());
         assertEquals(MediaTypeRegistry.TEXT_PLAIN, rsp.getOptions().getContentFormat());
-        
     }
 
     @Override
@@ -80,10 +58,11 @@ public class CoAPRestComponentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 restConfiguration("coap").host("localhost").port(coapport);
-                restConfiguration("jetty").host("localhost").port(jettyport);
+
                 rest("/TestParms")
                     .get().to("direct:get1")
                     .post().to("direct:post1");
+
                 rest("/TestResource")
                     .get("/{id}").to("direct:get1")
                     .post("/{id}").to("direct:post1");
@@ -94,6 +73,7 @@ public class CoAPRestComponentTest extends CamelTestSupport {
                         exchange.getOut().setBody("Hello " + id);
                     }
                 });
+
                 from("direct:post1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
