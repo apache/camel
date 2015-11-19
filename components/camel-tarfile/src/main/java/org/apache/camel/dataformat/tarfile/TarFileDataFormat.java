@@ -17,12 +17,12 @@
 package org.apache.camel.dataformat.tarfile;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
@@ -49,14 +49,14 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     @Override
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+    public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         String filename = exchange.getIn().getHeader(FILE_NAME, String.class);
         Long filelength = exchange.getIn().getHeader(FILE_LENGTH, Long.class);
-        if (filename != null) {
-            filename = new File(filename).getName(); // remove any path elements
-        } else {
+        if (filename == null) {
             // generate the file name as the camel file component would do
             filename = StringHelper.sanitize(exchange.getIn().getMessageId());
+        } else {
+            filename = Paths.get(filename).getFileName().toString(); // remove any path elements
         }
 
         TarArchiveOutputStream tos = new TarArchiveOutputStream(stream);
@@ -84,19 +84,19 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     @Override
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+    public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
         if (usingIterator) {
             return new TarIterator(exchange.getIn(), stream);
         } else {
-            InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
-            TarArchiveInputStream tis = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, new BufferedInputStream(is));
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            BufferedInputStream bis = new BufferedInputStream(stream);
+            TarArchiveInputStream tis = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, bis);
+            OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
             try {
                 TarArchiveEntry entry = tis.getNextTarEntry();
                 if (entry != null) {
                     exchange.getOut().setHeader(FILE_NAME, entry.getName());
-                    IOHelper.copy(tis, baos);
+                    IOHelper.copy(tis, osb);
                 }
 
                 entry = tis.getNextTarEntry();
@@ -104,10 +104,10 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
                     throw new IllegalStateException("Tar file has more than 1 entry.");
                 }
 
-                return baos.toByteArray();
+                return osb.build();
 
             } finally {
-                IOHelper.close(tis, baos);
+                IOHelper.close(osb, tis, bis);
             }
         }
     }

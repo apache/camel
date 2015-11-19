@@ -16,13 +16,13 @@
  */
 package org.apache.camel.impl;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.util.IOHelper;
@@ -37,7 +37,7 @@ public class GzipDataFormat extends org.apache.camel.support.ServiceSupport impl
         return "gzip";
     }
 
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+    public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
         GZIPOutputStream zipOutput = new GZIPOutputStream(stream);
@@ -49,19 +49,17 @@ public class GzipDataFormat extends org.apache.camel.support.ServiceSupport impl
         }
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+    public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         GZIPInputStream unzipInput = null;
 
-        // Create an expandable byte array to hold the inflated data
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
         try {
-            unzipInput = new GZIPInputStream(is);
-            IOHelper.copy(unzipInput, bos);
-            return bos.toByteArray();
+            unzipInput = new GZIPInputStream(inputStream);
+            IOHelper.copy(unzipInput, osb);
+            return osb.build();
         } finally {
             // must close all input streams
-            IOHelper.close(unzipInput, is);
+            IOHelper.close(osb, unzipInput, inputStream);
         }
     }
 
