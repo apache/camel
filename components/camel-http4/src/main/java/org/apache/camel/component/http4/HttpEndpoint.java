@@ -132,7 +132,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         clientBuilder.setDefaultCookieStore(cookieStore);
         // setup the httpConnectionManager
         clientBuilder.setConnectionManager(clientConnectionManager);
-        if (getClientConnectionManager() == getComponent().getClientConnectionManager()) {
+        if (getComponent() != null && getComponent().getClientConnectionManager() == getClientConnectionManager()) {
             clientBuilder.setConnectionManagerShared(true);
         }
 
