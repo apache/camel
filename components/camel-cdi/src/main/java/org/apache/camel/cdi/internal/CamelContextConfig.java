@@ -63,8 +63,9 @@ public class CamelContextConfig {
                 }
             }
             Object reference = beanManager.getReference(bean, beanClass, createContext);
-            ObjectHelper.notNull(reference, "Could not instantiate bean of type " + beanClass.getName() + " for " + bean);
+            ObjectHelper.notNull(reference, "Could not instantiate bean of type: " + beanClass.getName() + " for " + bean);
             try {
+                // we should not toString reference instance as in CDI it may be proxied
                 if (reference instanceof RoutesBuilder) {
                     RoutesBuilder routeBuilder = (RoutesBuilder)reference;
                     camelContext.addRoutes(routeBuilder);
@@ -72,14 +73,12 @@ public class CamelContextConfig {
                     RouteContainer routeContainer = (RouteContainer)reference;
                     camelContext.addRouteDefinitions(routeContainer.getRoutes());
                 } else {
-                    throw new IllegalArgumentException("Invalid route builder " + reference
-                            + " of type " + beanClass.getName()
+                    throw new IllegalArgumentException("Invalid route builder of type: " + beanClass.getName()
                             + ". Should be RoutesBuilder or RoutesContainer");
                 }
             } catch (Exception e) {
-                throw new RuntimeCamelException(
-                        "Could not add " + reference + " to CamelContext: " + camelContext + ". Reason: " + e,
-                        e);
+                throw new RuntimeCamelException("Error adding route builder of type: " + beanClass.getName()
+                        + " to CamelContext: " + camelContext.getName() + " due " + e.getMessage(), e);
             }
         }
     }
