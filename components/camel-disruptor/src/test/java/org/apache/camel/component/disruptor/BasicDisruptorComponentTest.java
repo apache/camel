@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor;
 
 import java.util.Collections;
@@ -36,15 +35,13 @@ import org.junit.Test;
  * Tests some of the basic disruptor functionality
  */
 public class BasicDisruptorComponentTest extends CamelTestSupport {
-    private static final Integer VALUE = Integer.valueOf(42);
+    private static final Integer VALUE = 42;
     
     @EndpointInject(uri = "mock:result")
     private MockEndpoint resultEndpoint;
 
     @Produce(uri = "disruptor:test")
     private ProducerTemplate template;
-
-    
 
     private final ThreadCounter threadCounter = new ThreadCounter();
 
@@ -53,32 +50,9 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
         resultEndpoint.expectedBodiesReceived(VALUE);
         resultEndpoint.setExpectedMessageCount(1);
 
-        template.asyncSendBody("disruptor:test", VALUE);
+        template.sendBody("disruptor:test", VALUE);
 
-        resultEndpoint.await(5, TimeUnit.SECONDS);
         resultEndpoint.assertIsSatisfied();
-    }
-
-
-    @Test
-    public void testAsynchronous() throws InterruptedException {
-        threadCounter.reset();
-
-        final int messagesSent = 1000;
-
-        resultEndpoint.setExpectedMessageCount(messagesSent);
-
-        final long currentThreadId = Thread.currentThread().getId();
-
-        for (int i = 0; i < messagesSent; ++i) {
-            template.asyncSendBody("disruptor:testAsynchronous", VALUE);
-        }
-
-        resultEndpoint.await(20, TimeUnit.SECONDS);
-        resultEndpoint.assertIsSatisfied();
-
-        assertTrue(threadCounter.getThreadIdCount() > 0);
-        assertFalse(threadCounter.getThreadIds().contains(currentThreadId));
     }
 
     @Test
@@ -90,7 +64,7 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
         resultEndpoint.setExpectedMessageCount(messagesSent);
 
         for (int i = 0; i < messagesSent; ++i) {
-            template.asyncSendBody("disruptor:testMultipleConsumers?concurrentConsumers=4", VALUE);
+            template.sendBody("disruptor:testMultipleConsumers", VALUE);
         }
 
         resultEndpoint.await(20, TimeUnit.SECONDS);
@@ -103,15 +77,16 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
         assertEquals(4, threadCounter.getThreadIdCount());
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("disruptor:test").to("mock:result");
-                from("disruptor:testAsynchronous").process(threadCounter).to("mock:result");
-                from("disruptor:testMultipleConsumers?concurrentConsumers=4").process(threadCounter)
+                from("disruptor:test")
+                        .to("mock:result");
+
+                from("disruptor:testMultipleConsumers?concurrentConsumers=4")
+                        .process(threadCounter)
                         .to("mock:result");
             }
         };
