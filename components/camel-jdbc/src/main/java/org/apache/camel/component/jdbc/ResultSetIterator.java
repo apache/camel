@@ -22,9 +22,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -101,7 +101,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
 
     public Set<String> getColumnNames() {
         // New copy each time in order to ensure immutability
-        Set<String> columnNames = new HashSet<String>(columns.length);
+        Set<String> columnNames = new LinkedHashSet<String>(columns.length);
         for (Column column : columns) {
             columnNames.add(column.getName());
         }
