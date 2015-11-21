@@ -64,7 +64,7 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
         resultEndpoint.setExpectedMessageCount(messagesSent);
 
         for (int i = 0; i < messagesSent; ++i) {
-            template.sendBody("disruptor:testMultipleConsumers", VALUE);
+            template.asyncSendBody("disruptor:testMultipleConsumers", VALUE);
         }
 
         resultEndpoint.await(20, TimeUnit.SECONDS);
@@ -74,7 +74,8 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
 
-        assertEquals(4, threadCounter.getThreadIdCount());
+        int count = threadCounter.getThreadIdCount();
+        assertTrue("Should be " + count + " >= 4", count >= 4);
     }
 
     @Override
