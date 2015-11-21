@@ -41,6 +41,8 @@
       !org.apache.camel.*,
       !com.googlecode.concurrentlinkedhashmap,
       ${camel.osgi.import.defaults},
+      org.springframework.transaction;resolution:=optional,
+      org.apache.camel.spring.spi;resolution:=optional,
       org.apache.xalan.xsltc.trax;resolution:=optional,
       javax.activation;resolution:=optional,
       javax.xml.bind;resolution:=optional,
