@@ -26,13 +26,12 @@ import org.apache.camel.impl.DefaultProducer;
 
 public class WebsocketProducer extends DefaultProducer implements WebsocketProducerConsumer {
 
-    private final WebsocketStore store;
+    private WebsocketStore store;
     private final Boolean sendToAll;
     private final WebsocketEndpoint endpoint;
 
-    public WebsocketProducer(WebsocketEndpoint endpoint, WebsocketStore store) {
+    public WebsocketProducer(WebsocketEndpoint endpoint) {
         super(endpoint);
-        this.store = store;
         this.sendToAll = endpoint.getSendToAll();
         this.endpoint = endpoint;
     }
@@ -111,4 +110,13 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
             }
         }
     }
+
+    //Store is set/unset upon connect/disconnect of the producer
+	public void setStore(WebsocketStore store) {
+		this.store = store;
+	}
+
+	public WebsocketStore getStore() {
+		return store;
+	}
 }
