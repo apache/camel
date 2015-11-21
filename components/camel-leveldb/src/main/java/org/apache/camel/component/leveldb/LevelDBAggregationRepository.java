@@ -173,8 +173,6 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 } finally {
                     batch.close();
                 }
-            } else {
-                LOG.warn("Unable to remove key {} from repository {}: Not Found", key, repositoryName);
             }
 
         } catch (IOException e) {
@@ -192,8 +190,6 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         if (rc != null) {
             levelDBFile.getDb().delete(confirmedLDBKey);
             LOG.trace("Removed confirm index {} -> {}", exchangeId, new Buffer(rc));
-        } else {
-            LOG.warn("Unable to confirm exchangeId [{}]", exchangeId + " from repository " + repositoryName + ": Not Found");
         }
     }
 
@@ -207,7 +203,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         DBIterator it = levelDBFile.getDb().iterator();
 
-        String keyBuffer = null;
+        String keyBuffer;
         try {
             String prefix = repositoryName + '\0';
             for (it.seek(keyBuilder(repositoryName, "")); it.hasNext(); it.next()) {
@@ -222,10 +218,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
                 String key = keyBuffer.substring(prefix.length());
 
-                if (key != null) {
-                    LOG.trace("getKey [{}]", key);
-                    keys.add(key);
-                }
+                LOG.trace("getKey [{}]", key);
+                keys.add(key);
             }
         } finally {
             // Make sure you close the iterator to avoid resource leaks.
@@ -244,7 +238,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         DBIterator it = levelDBFile.getDb().iterator();
 
-        String keyBuffer = null;
+        String keyBuffer;
         try {
             String prefix = getRepositoryNameCompleted() + '\0';
 
@@ -256,11 +250,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 }
                 String exchangeId = keyBuffer.substring(prefix.length());
 
-                if (exchangeId != null) {
-                    LOG.trace("Scan exchangeId [{}]", exchangeId);
-                    answer.add(exchangeId);
-                }
-
+                LOG.trace("Scan exchangeId [{}]", exchangeId);
+                answer.add(exchangeId);
             }
         } finally {
             // Make sure you close the iterator to avoid resource leaks.
