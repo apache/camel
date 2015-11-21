@@ -597,14 +597,30 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return true;
         }
 
+        // Check for case sensitive flag
+        boolean caseSensitive = true;
+        if (ObjectHelper.isNotEmpty(endpoint.getCaseSensitive())) {
+            caseSensitive = endpoint.getCaseSensitive();
+        }
+
         if (ObjectHelper.isNotEmpty(endpoint.getExclude())) {
-            if (name.matches(endpoint.getExclude())) {
+            String excludePattern = endpoint.getExclude();
+            if (caseSensitive == false ) {
+                if (name.toUpperCase().matches(excludePattern.toUpperCase())) {
+                    return false;
+                }
+            } else if (name.matches(excludePattern)) {
                 return false;
             }
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getInclude())) {
-            if (!name.matches(endpoint.getInclude())) {
+            String includePattern = endpoint.getInclude();
+            if (caseSensitive == false) {
+                if (!name.toUpperCase().matches(includePattern.toUpperCase())) {
+                    return false;
+                }
+            } else if (!name.matches(includePattern)) {
                 return false;
             }
         }

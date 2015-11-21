@@ -48,12 +48,14 @@ public class FileConsumerIncludeAndExcludeNameTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "Report 1", Exchange.FILE_NAME, "report1.xml");
         template.sendBodyAndHeader(url, "Report 2", Exchange.FILE_NAME, "report2.txt");
         template.sendBodyAndHeader(url, "Report 3", Exchange.FILE_NAME, "report3.txt");
+        template.sendBodyAndHeader(url, "Report 4", Exchange.FILE_NAME, "Report4.txt");
+        template.sendBodyAndHeader(url, "Secret", Exchange.FILE_NAME, "Secret.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/includeexclude/?include=.*txt&exclude=hello.*")
+                from("file://target/includeexclude/?include=report.*txt&exclude=hello.*")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

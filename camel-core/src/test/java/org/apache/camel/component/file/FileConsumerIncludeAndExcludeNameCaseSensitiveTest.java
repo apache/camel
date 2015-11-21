@@ -22,20 +22,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test that file consumer will include pre and postfixes
+ * Unit test that file consumer will include/exclude pre and postfixes
  */
-public class FileConsumerIncludeNameTest extends ContextTestSupport {
+public class FileConsumerIncludeAndExcludeNameCaseSensitiveTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/include");
+        deleteDirectory("target/includeexclude");
         super.setUp();
     }
 
     public void testIncludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Reports", "Reports");
-        mock.expectedMessageCount(2);
+        mock.expectedBodiesReceivedInAnyOrder("Report 2", "Report 3", "Report 4");
+        mock.expectedMessageCount(3);
 
         sendFiles();
 
@@ -43,19 +43,19 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
     }
 
     private void sendFiles() throws Exception {
-        String url = "file://target/include";
-        template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report1.txt");
-        template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
-        template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader(url, "Reports3", Exchange.FILE_NAME, "Report3.txt");
-        template.sendBodyAndHeader(url, "Secret2", Exchange.FILE_NAME, "Secret2.txt");
+        String url = "file://target/includeexclude";
+        template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(url, "Report 1", Exchange.FILE_NAME, "report1.xml");
+        template.sendBodyAndHeader(url, "Report 2", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(url, "Report 3", Exchange.FILE_NAME, "report3.txt");
+        template.sendBodyAndHeader(url, "Report 4", Exchange.FILE_NAME, "Report4.txt");
+        template.sendBodyAndHeader(url, "Secret", Exchange.FILE_NAME, "Secret.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/include/?include=^report.*txt$")
+                from("file://target/includeexclude/?include=report.*txt&exclude=hello.*&caseSensitive=false")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

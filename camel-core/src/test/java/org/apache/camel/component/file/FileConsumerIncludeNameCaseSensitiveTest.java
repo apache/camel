@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test that file consumer will include pre and postfixes
  */
-public class FileConsumerIncludeNameTest extends ContextTestSupport {
+public class FileConsumerIncludeNameCaseSensitiveTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -34,8 +34,8 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
 
     public void testIncludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Reports", "Reports");
-        mock.expectedMessageCount(2);
+        mock.expectedBodiesReceived("Reports", "Reports", "Reports3");
+        mock.expectedMessageCount(3);
 
         sendFiles();
 
@@ -55,7 +55,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/include/?include=^report.*txt$")
+                from("file://target/include/?include=^report.*txt$&caseSensitive=false")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };
