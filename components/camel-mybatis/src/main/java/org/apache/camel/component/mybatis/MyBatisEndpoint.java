@@ -42,6 +42,9 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
     private String statement;
     @UriParam(label = "producer")
     private StatementType statementType;
+    @UriParam(label = "consumer", description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
+            + "break out processing any further exchanges to cause a rollback eager.")
+    private boolean transacted;
     @UriParam(label = "consumer", defaultValue = "0")
     private int maxMessagesPerPoll;
     @UriParam
@@ -126,6 +129,18 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
     public void setExecutorType(String executorType) {
         this.executorType = ExecutorType.valueOf(executorType.toUpperCase());
+    }
+
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    /**
+     * Enables or disables transaction. If enabled then if processing an exchange failed then the consumer
+     + break out processing any further exchanges to cause a rollback eager
+     */
+    public void setTransacted(boolean transacted) {
+        this.transacted = transacted;
     }
 
     public MyBatisProcessingStrategy getProcessingStrategy() {
