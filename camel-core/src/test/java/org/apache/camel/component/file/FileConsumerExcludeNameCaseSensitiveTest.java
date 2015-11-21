@@ -22,28 +22,22 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test that file consumer will include pre and postfixes
+ * Unit test that file consumer will exclude pre and postfixes
  */
-public class FileConsumerIncludeNameTest extends ContextTestSupport {
+public class FileConsumerExcludeNameCaseSensitiveTest extends ContextTestSupport {
 
-    @Override
-    protected void setUp() throws Exception {
-        deleteDirectory("target/include");
-        super.setUp();
-    }
+    public void testExludePreAndPostfixes() throws Exception {
+        deleteDirectory("target/exclude");
+        prepareFiles();
 
-    public void testIncludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Reports", "Reports");
-        mock.expectedMessageCount(2);
-
-        sendFiles();
-
+        mock.expectedBodiesReceived("Reports", "Reports", "Reports3");
+        mock.expectedMessageCount(3);
         mock.assertIsSatisfied();
     }
 
-    private void sendFiles() throws Exception {
-        String url = "file://target/include";
+    private void prepareFiles() throws Exception {
+        String url = "file://target/exclude";
         template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
         template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report1.txt");
         template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
@@ -55,7 +49,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/include/?include=^report.*txt$")
+                from("file://target/exclude/?exclude=^secret.*|.*xml$&caseSensitive=false")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };
