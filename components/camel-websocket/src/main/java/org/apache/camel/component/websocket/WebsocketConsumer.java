@@ -23,6 +23,7 @@ import org.apache.camel.impl.DefaultConsumer;
 
 public class WebsocketConsumer extends DefaultConsumer implements WebsocketProducerConsumer {
 
+	private WebsocketStore store;
     private final WebsocketEndpoint endpoint;
 
     public WebsocketConsumer(WebsocketEndpoint endpoint, Processor processor) {
@@ -72,4 +73,13 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
         });
     }
 
+	@Override
+	public WebsocketStore getStore() {
+		return store;
+	}
+
+	@Override
+	public void setStore(WebsocketStore store) {
+		this.store = store;
+	}
 }

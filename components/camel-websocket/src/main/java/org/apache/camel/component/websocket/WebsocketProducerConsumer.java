@@ -22,4 +22,8 @@ public interface WebsocketProducerConsumer {
      * Gets the endpoint
      */
     WebsocketEndpoint getEndpoint();
+    
+    WebsocketStore getStore();
+    
+    void setStore(WebsocketStore store);
 }
