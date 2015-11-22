@@ -548,12 +548,15 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                             } else {
                                 evalue = values;
                             }
-                        } else {
+                        } else if (values.size() == 1) {
                             evalue = values.get(0);
+                        } else {
+                            evalue = null;
                         }
-                        camelHeaders.put(entry.getKey(), evalue);
+                        if (evalue != null) {
+                            camelHeaders.put(entry.getKey(), evalue);
+                        }
                     }
-                    
                 }
             }
         }
