@@ -23,7 +23,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.management.MBeanServer;
 import javax.servlet.DispatcherType;
 
@@ -202,7 +201,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                 enableSessionSupport(connectorRef.server, connectorKey);
             }
 
-            NodeSynchronization sync = new DefaultNodeSynchronization(connectorRef.memoryStore);            
+            NodeSynchronization sync = new DefaultNodeSynchronization(connectorRef.memoryStore);
             WebsocketComponentServlet servlet = addServlet(sync, prodcon, endpoint.getResourceUri());
             if (prodcon instanceof WebsocketConsumer) {
                 WebsocketConsumer consumer = WebsocketConsumer.class.cast(prodcon);
@@ -213,11 +212,10 @@ public class WebsocketComponent extends UriEndpointComponent {
                 servlet.connect(consumer);
             }
             if (prodcon instanceof WebsocketProducer) {
-            	WebsocketProducer producer = WebsocketProducer.class.cast(prodcon);
-            	producer.setStore(connectorRef.memoryStore);
+                WebsocketProducer producer = WebsocketProducer.class.cast(prodcon);
+                producer.setStore(connectorRef.memoryStore);
             }
         }
-
     }
 
     /**
@@ -256,7 +254,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                     connectorRef.servlet.disconnect((WebsocketConsumer) prodcon);
                 }
                 if (prodcon instanceof WebsocketProducer) {
-                	((WebsocketProducer) prodcon).setStore(null);
+                    ((WebsocketProducer) prodcon).setStore(null);
                 }
             }
         }
@@ -805,7 +803,7 @@ public class WebsocketComponent extends UriEndpointComponent {
             // must add static resource server to CONNECTORS in case the websocket producers/consumers
             // uses the same port number, and therefore we must be part of this
             MemoryWebsocketStore memoryStore = new MemoryWebsocketStore();
-            ConnectorRef ref = new ConnectorRef(staticResourcesServer, connector, null,memoryStore);
+            ConnectorRef ref = new ConnectorRef(staticResourcesServer, connector, null, memoryStore);
             String key = "websocket:" + host + ":" + port;
             CONNECTORS.put(key, ref);
         }

@@ -52,28 +52,28 @@ public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest exte
         AsyncHttpClient c = new AsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/bar").execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketTextListener() {
-                    @Override
-                    public void onMessage(String message) {
-                        received.add(message);
-                        log.info("received --> " + message);
-                        latch.countDown();
-                    }
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(new WebSocketTextListener() {
+                            @Override
+                            public void onMessage(String message) {
+                                received.add(message);
+                                log.info("received --> " + message);
+                                latch.countDown();
+                            }
 
-                    @Override
-                    public void onOpen(WebSocket websocket) {
-                    }
+                            @Override
+                            public void onOpen(WebSocket websocket) {
+                            }
 
-                    @Override
-                    public void onClose(WebSocket websocket) {
-                    }
+                            @Override
+                            public void onClose(WebSocket websocket) {
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                    }
-                }).build()).get();
+                            @Override
+                            public void onError(Throwable t) {
+                                t.printStackTrace();
+                            }
+                        }).build()).get();
 
         websocket.sendMessage("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -94,16 +94,16 @@ public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest exte
             public void configure() {
 
                 from("websocket://localhost:" + port + "/bar")
-                    .log(">>> Message received from BAR WebSocket Client : ${body}")
-                    .transform().simple("The bar has ${body}")
-                    .to("websocket://localhost:" + port + "/bar");
+                        .log(">>> Message received from BAR WebSocket Client : ${body}")
+                        .transform().simple("The bar has ${body}")
+                        .to("websocket://localhost:" + port + "/bar");
 
                 from("timer://foo?fixedRate=true&period=12000")
-	        		//Use a period which is longer then the latch await time
-	        		.setBody(constant("Broadcasting to Bar"))
-	                .log(">>> Broadcasting message to Bar WebSocket Client")
-	                .setHeader(WebsocketConstants.SEND_TO_ALL,constant(true))
-	                .to("websocket://localhost:" + port + "/bar");
+                        //Use a period which is longer then the latch await time
+                        .setBody(constant("Broadcasting to Bar"))
+                        .log(">>> Broadcasting message to Bar WebSocket Client")
+                        .setHeader(WebsocketConstants.SEND_TO_ALL, constant(true))
+                        .to("websocket://localhost:" + port + "/bar");
             }
         };
     }

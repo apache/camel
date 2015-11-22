@@ -104,15 +104,15 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         if (websocket != null && websocket.getConnection().isOpen()) {
             log.trace("Sending to websocket {} -> {}", websocket.getConnectionKey(), message);
             if (message instanceof String) {
-                websocket.getConnection().sendMessage((String)message);
+                websocket.getConnection().sendMessage((String) message);
             } else if (message instanceof byte[]) {
-                websocket.getConnection().sendMessage((byte[])message, 0, ((byte[])message).length);
+                websocket.getConnection().sendMessage((byte[]) message, 0, ((byte[]) message).length);
             }
         }
     }
 
     //Store is set/unset upon connect/disconnect of the producer
-	public void setStore(WebsocketStore store) {
-		this.store = store;
-	}
+    public void setStore(WebsocketStore store) {
+        this.store = store;
+    }
 }
