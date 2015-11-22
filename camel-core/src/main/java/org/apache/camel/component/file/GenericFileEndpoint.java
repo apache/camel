@@ -129,8 +129,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String include;
     @UriParam(label = "consumer,filter")
     protected String exclude;
-    @UriParam(label = "consumer,filter", defaultValue = "true")
-    protected Boolean caseSensitive;
     @UriParam(label = "consumer,filter")
     protected Expression move;
     @UriParam(label = "consumer")
@@ -441,18 +439,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setExclude(String exclude) {
         this.exclude = exclude;
-    }
-
-    public Boolean getCaseSensitive() {
-        return caseSensitive;
-    }
-
-    /**
-     * Is used to determine if the include & exclude patterns are case sensitive or not
-     * @param caseSensitive
-     */
-    public void setCaseSensitive(Boolean caseSensitive) {
-        this.caseSensitive = caseSensitive;
     }
 
     public String getAntInclude() {

@@ -34,8 +34,8 @@ public class FileConsumerIncludeAndExcludeNameTest extends ContextTestSupport {
 
     public void testIncludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.expectedBodiesReceivedInAnyOrder("Report 2", "Report 3");
+        mock.expectedBodiesReceivedInAnyOrder("Report 2", "Report 3", "Report 4");
+        mock.expectedMessageCount(3);
 
         sendFiles();
 

@@ -31,8 +31,8 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
         prepareFiles();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Reports", "Reports", "Reports3", "Secret2");
-        mock.expectedMessageCount(4);
+        mock.expectedBodiesReceived("Reports", "Reports", "Reports3");
+        mock.expectedMessageCount(3);
         mock.assertIsSatisfied();
     }
 
@@ -49,7 +49,7 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/exclude/?exclude=^secret.*|.*xml$&caseSensitive=true")
+                from("file://target/exclude/?exclude=^secret.*|.*xml$")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };
