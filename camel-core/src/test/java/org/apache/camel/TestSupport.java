@@ -73,9 +73,17 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
-     * Returns a value builder for the given property
+     * Returns a value builder for the given exchange property
      */
+    @Deprecated
     public static ValueBuilder property(String name) {
+        return Builder.exchangeProperty(name);
+    }
+
+    /**
+     * Returns a value builder for the given exchange property
+     */
+    public static ValueBuilder exchangeProperty(String name) {
         return Builder.exchangeProperty(name);
     }
 
