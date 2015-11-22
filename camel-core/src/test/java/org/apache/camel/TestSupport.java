@@ -74,6 +74,8 @@ public abstract class TestSupport extends TestCase {
 
     /**
      * Returns a value builder for the given exchange property
+     * 
+     * @deprecated use {@link #exchangeProperty(String)}
      */
     @Deprecated
     public static ValueBuilder property(String name) {
