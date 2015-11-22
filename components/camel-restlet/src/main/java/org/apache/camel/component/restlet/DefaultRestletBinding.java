@@ -26,9 +26,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.transform.dom.DOMSource;
 
@@ -40,6 +43,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.CacheDirective;
@@ -359,7 +363,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
     }
 
     @SuppressWarnings("unchecked")
-    protected boolean setResponseHeader(Exchange exchange, org.restlet.Message message, String header, Object value) {
+    protected boolean setResponseHeader(Exchange exchange, org.restlet.Response message, String header, Object value) {
         // there must be a value going forward
         if (value == null) {
             return true;
@@ -370,6 +374,77 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
         // special for certain headers
         if (message.getEntity() != null) {
+            // arfg darn restlet you make using your api harder for end users with all this trick just to set those ACL headers
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_CREDENTIAL)) {
+                Boolean bool = exchange.getContext().getTypeConverter().tryConvertTo(Boolean.class, value);
+                if (bool != null) {
+                    message.setAccessControlAllowCredential(bool);
+                }
+                return true;
+            }
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_HEADERS)) {
+                Set set;
+                if (value instanceof Set) {
+                    set = (Set) value;
+                } else {
+                    set = new LinkedHashSet();
+                    Iterator it = ObjectHelper.createIterator(value);
+                    while (it.hasNext()) {
+                        Object next = it.next();
+                        String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, next);
+                        if (text != null) {
+                            set.add(text);
+                        }
+                    }
+                }
+                message.setAccessControlAllowHeaders(set);
+                return true;
+            }
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_METHODS)) {
+                Set set;
+                if (value instanceof Set) {
+                    set = (Set) value;
+                } else {
+                    set = new LinkedHashSet();
+                    Iterator it = ObjectHelper.createIterator(value);
+                    while (it.hasNext()) {
+                        Object next = it.next();
+                        String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, next);
+                        if (text != null) {
+                            Method method = new Method(text);
+                            set.add(method);
+                        }
+                    }
+                }
+                message.setAccessControlAllowMethods(set);
+                return true;
+            }
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_ORIGIN)) {
+                String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, value);
+                if (text != null) {
+                    message.setAccessControlAllowOrigin(text);
+                }
+                return true;
+            }
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_ACCESS_CONTROL_EXPOSE_HEADERS)) {
+                Set set;
+                if (value instanceof Set) {
+                    set = (Set) value;
+                } else {
+                    set = new LinkedHashSet();
+                    Iterator it = ObjectHelper.createIterator(value);
+                    while (it.hasNext()) {
+                        Object next = it.next();
+                        String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, next);
+                        if (text != null) {
+                            Method method = new Method(text);
+                            set.add(method);
+                        }
+                    }
+                }
+                message.setAccessControlExposeHeaders(set);
+                return true;
+            }
             if (header.equalsIgnoreCase(HeaderConstants.HEADER_CACHE_CONTROL)) {
                 if (value instanceof List) {
                     message.setCacheDirectives((List<CacheDirective>) value);
