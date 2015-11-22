@@ -608,7 +608,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 return false;
             }
         }
-//Msno
+
         // use file expression for a simple dynamic file filter
         if (endpoint.getFileName() != null) {
             fileExpressionResult = evaluateFileExpression();
