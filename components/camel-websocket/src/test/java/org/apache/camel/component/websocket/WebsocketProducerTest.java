@@ -71,7 +71,8 @@ public class WebsocketProducerTest {
 
     @Before
     public void setUp() throws Exception {
-        websocketProducer = new WebsocketProducer(endpoint, store);
+        websocketProducer = new WebsocketProducer(endpoint);
+        websocketProducer.setStore(store);
         sockets = Arrays.asList(defaultWebsocket1, defaultWebsocket2);
     }
 
