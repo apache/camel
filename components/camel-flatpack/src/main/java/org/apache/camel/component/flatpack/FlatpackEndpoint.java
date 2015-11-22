@@ -102,12 +102,18 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         loadBalancer.process(exchange);
     }
 
-    public Parser createParser(Exchange exchange) throws InvalidPayloadException, IOException {
+    public Parser createParser(Exchange exchange) throws Exception {
         Reader bodyReader = exchange.getIn().getMandatoryBody(Reader.class);
-        if (FlatpackType.fixed == type) {
-            return createFixedParser(resourceUri, bodyReader);
-        } else {
-            return createDelimitedParser(exchange);
+        try {
+            if (FlatpackType.fixed == type) {
+                return createFixedParser(resourceUri, bodyReader);
+            } else {
+                return createDelimitedParser(exchange);
+            }
+        } catch (Exception e) {
+            // must close reader in case of some exception
+            IOHelper.close(bodyReader);
+            throw e;
         }
     }
 
