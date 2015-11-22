@@ -597,34 +597,18 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return true;
         }
 
-        // Check for case sensitive flag
-        boolean caseSensitive = true;
-        if (ObjectHelper.isNotEmpty(endpoint.getCaseSensitive())) {
-            caseSensitive = endpoint.getCaseSensitive();
-        }
-
         if (ObjectHelper.isNotEmpty(endpoint.getExclude())) {
-            String excludePattern = endpoint.getExclude();
-            if (caseSensitive == false ) {
-                if (name.toUpperCase().matches(excludePattern.toUpperCase())) {
-                    return false;
-                }
-            } else if (name.matches(excludePattern)) {
+            if (name.toUpperCase().matches(endpoint.getExclude().toUpperCase())) {
                 return false;
             }
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getInclude())) {
-            String includePattern = endpoint.getInclude();
-            if (caseSensitive == false) {
-                if (!name.toUpperCase().matches(includePattern.toUpperCase())) {
-                    return false;
-                }
-            } else if (!name.matches(includePattern)) {
+            if (!name.toUpperCase().matches(endpoint.getInclude().toUpperCase())) {
                 return false;
             }
         }
-
+//Msno
         // use file expression for a simple dynamic file filter
         if (endpoint.getFileName() != null) {
             fileExpressionResult = evaluateFileExpression();
