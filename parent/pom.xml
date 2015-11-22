@@ -126,7 +126,7 @@
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <cxf-version>3.1.4</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
-    <cxf-xjc-utils-version>3.0.4</cxf-xjc-utils-version>
+    <cxf-xjc-utils-version>3.0.5</cxf-xjc-utils-version>
     <deltaspike-version>1.5.1</deltaspike-version>
     <derby-version>10.11.1.1</derby-version>
     <disruptor-version>3.3.2</disruptor-version>
