@@ -107,7 +107,10 @@ public abstract class TestSupport extends TestCase {
     /**
      * Returns a predicate and value builder for the outbound body on an
      * exchange
+     * 
+     * @deprecated use {@link #body()}
      */
+    @Deprecated
     public static ValueBuilder outBody() {
         return Builder.outBody();
     }
@@ -115,7 +118,10 @@ public abstract class TestSupport extends TestCase {
     /**
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
+     * 
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public static <T> ValueBuilder outBodyAs(Class<T> type) {
         return Builder.outBodyAs(type);
     }
@@ -131,7 +137,10 @@ public abstract class TestSupport extends TestCase {
     /**
      * Returns a predicate and value builder for the fault message body as a
      * specific type
+     * 
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public static <T> ValueBuilder faultBodyAs(Class<T> type) {
         return Builder.faultBodyAs(type);
     }
