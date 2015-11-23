@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -140,7 +141,8 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     /**
-     * Returns a new JMS endpoint for the given JMS destination using the configuration from the given JMS component
+     * Returns a new JMS endpoint for the given JMS destination using the
+     * configuration from the given JMS component
      */
     public static JmsEndpoint newInstance(Destination destination, JmsComponent component) throws JMSException {
         JmsEndpoint answer = newInstance(destination);
@@ -195,7 +197,8 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             if (resolver != null) {
                 listenerContainer.setDestinationResolver(resolver);
             } else {
-                throw new IllegalArgumentException("Neither destination, destinationName or destinationResolver are specified on this endpoint!");
+                throw new IllegalArgumentException(
+                        "Neither destination, destinationName or destinationResolver are specified on this endpoint!");
             }
             log.debug("Using destinationResolver: {} on listenerContainer: {}", resolver, listenerContainer);
         }
@@ -228,8 +231,8 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         } else {
             // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
             // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
-            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}", 
-                    listenerContainer, configuration.getDefaultTaskExecutorType());
+            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}", listenerContainer,
+                    configuration.getDefaultTaskExecutorType());
         }
 
         // set a default transaction name if none provided
@@ -265,10 +268,13 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     /**
      * Creates a consumer using the given processor and listener container
      *
-     * @param processor         the processor to use to process the messages
-     * @param listenerContainer the listener container
+     * @param processor
+     *            the processor to use to process the messages
+     * @param listenerContainer
+     *            the listener container
      * @return a newly created consumer
-     * @throws Exception if the consumer cannot be created
+     * @throws Exception
+     *             if the consumer cannot be created
      */
     public JmsConsumer createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
         JmsConsumer consumer = new JmsConsumer(this, processor, listenerContainer);
@@ -319,7 +325,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public String getThreadName() {
         return "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
     }
-    
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -426,9 +432,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     /**
-     * Lazily loads the temporary queue type if one has not been explicitly configured
-     * via calling the {@link JmsProviderMetadata#setTemporaryQueueType(Class)}
-     * on the {@link #getConfiguration()} instance
+     * Lazily loads the temporary queue type if one has not been explicitly
+     * configured via calling the
+     * {@link JmsProviderMetadata#setTemporaryQueueType(Class)} on the
+     * {@link #getConfiguration()} instance
      */
     public Class<? extends TemporaryQueue> getTemporaryQueueType() {
         JmsProviderMetadata metadata = getProviderMetadata();
@@ -437,9 +444,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     /**
-     * Lazily loads the temporary topic type if one has not been explicitly configured
-     * via calling the {@link JmsProviderMetadata#setTemporaryTopicType(Class)}
-     * on the {@link #getConfiguration()} instance
+     * Lazily loads the temporary topic type if one has not been explicitly
+     * configured via calling the
+     * {@link JmsProviderMetadata#setTemporaryTopicType(Class)} on the
+     * {@link #getConfiguration()} instance
      */
     public Class<? extends TemporaryTopic> getTemporaryTopicType() {
         JmsOperations template = getMetadataJmsOperations();
@@ -457,7 +465,8 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     /**
-     * Returns the {@link JmsOperations} used for metadata operations such as creating temporary destinations
+     * Returns the {@link JmsOperations} used for metadata operations such as
+     * creating temporary destinations
      */
     protected JmsOperations getMetadataJmsOperations() {
         JmsOperations template = getConfiguration().getMetadataJmsOperations(this);
@@ -572,11 +581,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public ErrorHandler getErrorHandler() {
         return getConfiguration().getErrorHandler();
     }
-    
+
     public LoggingLevel getErrorHandlerLoggingLevel() {
         return getConfiguration().getErrorHandlerLoggingLevel();
     }
-   
+
     @ManagedAttribute
     public boolean isErrorHandlerLogStackTrace() {
         return getConfiguration().isErrorHandlerLogStackTrace();
@@ -613,6 +622,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public int getReplyToMaxConcurrentConsumers() {
         return getConfiguration().getReplyToMaxConcurrentConsumers();
+    }
+
+    @ManagedAttribute
+    public int getMaxChunkSize() {
+        return getConfiguration().getMaxChunkSize();
+    }
+
+    @ManagedAttribute
+    public boolean isChunking() {
+        return getConfiguration().isChunking();
     }
 
     @ManagedAttribute

@@ -16,9 +16,17 @@
  */
 package org.apache.camel.component.jms;
 
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Session;
 
@@ -29,6 +37,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -37,15 +46,13 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.listener.SessionAwareMessageListener;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
 /**
  * A JMS {@link MessageListener} which can be used to delegate processing to a
  * Camel endpoint.
  *
  * Note that instance of this object has to be thread safe (reentrant)
  *
- * @version 
+ * @version
  */
 public class EndpointMessageListener implements SessionAwareMessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
@@ -83,8 +90,39 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 LOG.debug("JMSDestination and JMSReplyTo is the same, will skip sending a reply message to itself: {}", destination);
                 sendReply = false;
             }
+            String pieceID = message.getStringProperty(JmsConstants.JMS_SPLIT_PIECE_ID);
+            Exchange exchange = null;
+            JmsConfiguration configuration = endpoint.getConfiguration();
+            if (pieceID != null && message instanceof BytesMessage && configuration.isTransacted()) {
+                exchange = endpoint.createExchange();
+                byte[] head = new byte[(int) ((BytesMessage) message).getBodyLength()];
+                ((BytesMessage) message).readBytes(head);
+                SplitCache cache = new SplitCache(exchange);
+                cache.add(head);
+                MessageConsumer consumer = null;
 
-            final Exchange exchange = createExchange(message, session, replyDestination);
+                String selector = JmsConstants.JMS_SPLIT_PIECE_ID + "='" + pieceID + "'";
+                consumer = session.createConsumer(session.createQueue(endpoint.getDestinationName()), selector);
+                int count = message.getIntProperty(JmsConstants.JMS_SPLIT_COUNT);
+                LOG.debug("Number of sub messages: {}", count);
+                for (int i = 0; i < count; i++) {
+                    BytesMessage subMessage = (BytesMessage) consumer.receive();
+                    byte[] subBody = new byte[(int) subMessage.getBodyLength()];
+                    subMessage.readBytes(subBody);
+                    cache.add(subBody);
+                    LOG.debug("Received sub message {}", i + 1);
+                }
+                consumer.close();
+                OutputStream os = cache.getCache();
+                exchange = createExchange(message, session, replyDestination);
+                if (cache.isStreamCacheEnabled()) {
+                    exchange.getIn().setBody(((CachedOutputStream) os).getInputStream(), InputStream.class);
+                } else {
+                    exchange.getIn().setBody(((ByteArrayOutputStream) os).toByteArray(), byte[].class);
+                }
+            } else {
+                exchange = createExchange(message, session, replyDestination);
+            }
             if (eagerLoadingOfProperties) {
                 exchange.getIn().getHeaders();
             }
@@ -157,8 +195,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
         private final boolean sendReply;
         private final Object replyDestination;
 
-        private EndpointMessageListenerAsyncCallback(Message message, Exchange exchange, JmsEndpoint endpoint,
-                                                     boolean sendReply, Object replyDestination) {
+        private EndpointMessageListenerAsyncCallback(Message message, Exchange exchange, JmsEndpoint endpoint, boolean sendReply,
+                Object replyDestination) {
             this.message = message;
             this.exchange = exchange;
             this.endpoint = endpoint;
@@ -219,9 +257,9 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             if (rce == null && sendReply && (body != null || cause != null)) {
                 LOG.trace("onMessage.sendReply START");
                 if (replyDestination instanceof Destination) {
-                    sendReply((Destination)replyDestination, message, exchange, body, cause);
+                    sendReply((Destination) replyDestination, message, exchange, body, cause);
                 } else {
-                    sendReply((String)replyDestination, message, exchange, body, cause);
+                    sendReply((String) replyDestination, message, exchange, body, cause);
                 }
                 LOG.trace("onMessage.sendReply END");
             }
@@ -271,7 +309,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
      * Sets the binding used to convert from a Camel message to and from a JMS
      * message
      *
-     * @param binding the binding to use
+     * @param binding
+     *            the binding to use
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
@@ -312,11 +351,12 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
     }
 
     /**
-     * Provides an explicit reply to destination which overrides
-     * any incoming value of {@link Message#getJMSReplyTo()}
+     * Provides an explicit reply to destination which overrides any incoming
+     * value of {@link Message#getJMSReplyTo()}
      *
-     * @param replyToDestination the destination that should be used to send replies to
-     * as either a String or {@link javax.jms.Destination} type.
+     * @param replyToDestination
+     *            the destination that should be used to send replies to as
+     *            either a String or {@link javax.jms.Destination} type.
      */
     public void setReplyToDestination(Object replyToDestination) {
         this.replyToDestination = replyToDestination;
@@ -330,7 +370,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
      * Sets whether asynchronous routing is enabled.
      * <p/>
      * By default this is <tt>false</tt>. If configured as <tt>true</tt> then
-     * this listener will process the {@link org.apache.camel.Exchange} asynchronous.
+     * this listener will process the {@link org.apache.camel.Exchange}
+     * asynchronous.
      */
     public void setAsync(boolean async) {
         this.async = async;
@@ -340,11 +381,14 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
     //-------------------------------------------------------------------------
 
     /**
-     * Strategy to determine which correlation id to use among <tt>JMSMessageID</tt> and <tt>JMSCorrelationID</tt>.
+     * Strategy to determine which correlation id to use among
+     * <tt>JMSMessageID</tt> and <tt>JMSCorrelationID</tt>.
      *
-     * @param message the JMS message
+     * @param message
+     *            the JMS message
      * @return the correlation id to use
-     * @throws JMSException can be thrown
+     * @throws JMSException
+     *             can be thrown
      */
     protected String determineCorrelationId(final Message message) throws JMSException {
         final String messageId = message.getJMSMessageID();
@@ -361,7 +405,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
     }
 
     protected void sendReply(Destination replyDestination, final Message message, final Exchange exchange,
-                             final org.apache.camel.Message out, final Exception cause) {
+            final org.apache.camel.Message out, final Exception cause) {
         if (replyDestination == null) {
             LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
@@ -373,15 +417,15 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 reply.setJMSCorrelationID(correlationID);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", new Object[]{endpoint, correlationID, reply});
+                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", new Object[] { endpoint, correlationID, reply });
                 }
                 return reply;
             }
         });
     }
 
-    protected void sendReply(String replyDestination, final Message message, final Exchange exchange,
-                             final org.apache.camel.Message out, final Exception cause) {
+    protected void sendReply(String replyDestination, final Message message, final Exchange exchange, final org.apache.camel.Message out,
+            final Exception cause) {
         if (replyDestination == null) {
             LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
@@ -393,7 +437,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 reply.setJMSCorrelationID(correlationID);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", new Object[]{endpoint, correlationID, reply});
+                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", new Object[] { endpoint, correlationID, reply });
                 }
                 return reply;
             }
