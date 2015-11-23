@@ -181,6 +181,8 @@ public class JmsConfiguration implements Cloneable {
     private boolean transferExchange;
     @UriParam(label = "advanced")
     private boolean transferException;
+    @UriParam(label = "advanced")
+    private boolean transferFault;
     @UriParam
     private boolean testConnectionOnStartup;
     @UriParam(label = "advanced")
@@ -1534,6 +1536,22 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
+    }
+
+    public boolean isTransferFault() {
+        return transferFault;
+    }
+
+    /**
+     * If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,
+     * then the fault flag on {@link org.apache.camel.Message#isFault()} will be send back in the response as a JMS header with the key
+     * {@link JmsConstants#JMS_TRANSFER_FAULT}.
+     * If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}.
+     * <p/>
+     * You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.
+     */
+    public void setTransferFault(boolean transferFault) {
+        this.transferFault = transferFault;
     }
 
     public boolean isAsyncStartListener() {
