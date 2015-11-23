@@ -43,8 +43,6 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
     @Produce(uri = "disruptor:test")
     private ProducerTemplate template;
 
-    private final ThreadCounter threadCounter = new ThreadCounter();
-
     @Test
     public void testProduce() throws InterruptedException {
         resultEndpoint.expectedBodiesReceived(VALUE);
@@ -55,29 +53,6 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-    @Test
-    public void testMultipleConsumers() throws InterruptedException {
-        threadCounter.reset();
-
-        final int messagesSent = 1000;
-
-        resultEndpoint.setExpectedMessageCount(messagesSent);
-
-        for (int i = 0; i < messagesSent; ++i) {
-            template.asyncSendBody("disruptor:testMultipleConsumers", VALUE);
-        }
-
-        resultEndpoint.await(20, TimeUnit.SECONDS);
-
-        //sleep for another second to check for duplicate messages in transit
-        Thread.sleep(1000);
-
-        resultEndpoint.assertIsSatisfied();
-
-        int count = threadCounter.getThreadIdCount();
-        assertTrue("Should be " + count + " >= 4", count >= 4);
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -85,33 +60,8 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("disruptor:test")
                         .to("mock:result");
-
-                from("disruptor:testMultipleConsumers?concurrentConsumers=4")
-                        .process(threadCounter)
-                        .to("mock:result");
             }
         };
     }
 
-    private static final class ThreadCounter implements Processor {
-
-        private final Set<Long> threadIds = new HashSet<Long>();
-
-        public void reset() {
-            threadIds.clear();
-        }
-
-        @Override
-        public void process(final Exchange exchange) throws Exception {
-            threadIds.add(Thread.currentThread().getId());
-        }
-
-        public Set<Long> getThreadIds() {
-            return Collections.unmodifiableSet(threadIds);
-        }
-
-        public int getThreadIdCount() {
-            return threadIds.size();
-        }
-    }
 }
