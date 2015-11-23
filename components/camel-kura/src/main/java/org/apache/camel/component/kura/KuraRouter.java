@@ -18,6 +18,7 @@ package org.apache.camel.component.kura;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,6 +31,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
+import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +93,14 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
         log.debug("Stopping bundle {}.", bundleContext.getBundle().getBundleId());
         camelContext.stop();
         log.debug("Bundle {} stopped.", bundleContext.getBundle().getBundleId());
+    }
+
+    protected void activate(ComponentContext componentContext, Map<String, Object> properties) throws Exception {
+        start(componentContext.getBundleContext());
+    }
+
+    protected void deactivate(ComponentContext componentContext) throws Exception {
+        stop(componentContext.getBundleContext());
     }
 
     // Callbacks
