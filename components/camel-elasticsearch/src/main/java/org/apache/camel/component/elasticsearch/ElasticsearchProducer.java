@@ -28,6 +28,7 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 
 /**
@@ -60,6 +61,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             return ElasticsearchConstants.OPERATION_INDEX;
         } else if (request instanceof GetRequest) {
             return ElasticsearchConstants.OPERATION_GET_BY_ID;
+        } else if (request instanceof UpdateRequest) {
+            return ElasticsearchConstants.OPERATION_UPDATE;
         } else if (request instanceof BulkRequest) {
             // do we want bulk or bulk_index?
             if ("BULK_INDEX".equals(getEndpoint().getConfig().getOperation())) {
@@ -131,6 +134,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
             message.setBody(client.index(indexRequest).actionGet().getId());
+        } else if (ElasticsearchConstants.OPERATION_UPDATE.equals(operation)) {
+            UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
+            message.setBody(client.update(updateRequest).actionGet().getId());
         } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
             GetRequest getRequest = message.getBody(GetRequest.class);
             message.setBody(client.get(getRequest));

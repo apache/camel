@@ -43,7 +43,7 @@ public class ElasticsearchConfiguration {
 
     @UriPath @Metadata(required = "true")
     private String clusterName;
-    @UriParam(enums = "INDEX,BULK,BULK_INDEX,GET_BY_ID,DELETE") @Metadata(required = "true")
+    @UriParam(enums = "INDEX,UPDATE,BULK,BULK_INDEX,GET_BY_ID,DELETE") @Metadata(required = "true")
     private String operation;
     @UriParam
     private String indexName;

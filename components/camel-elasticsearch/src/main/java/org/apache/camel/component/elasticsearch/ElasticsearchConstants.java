@@ -24,6 +24,7 @@ public interface ElasticsearchConstants {
 
     String PARAM_OPERATION = "operation";
     String OPERATION_INDEX = "INDEX";
+    String OPERATION_UPDATE = "UPDATE";
     String OPERATION_BULK = "BULK";
     String OPERATION_BULK_INDEX = "BULK_INDEX";
     String OPERATION_GET_BY_ID = "GET_BY_ID";
