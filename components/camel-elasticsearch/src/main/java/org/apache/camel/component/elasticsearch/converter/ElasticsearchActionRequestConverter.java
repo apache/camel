@@ -29,6 +29,7 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.support.replication.ReplicationType;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 @Converter
@@ -36,6 +37,36 @@ public final class ElasticsearchActionRequestConverter {
 
     private ElasticsearchActionRequestConverter() {
     }
+
+    // Update requests
+    private static UpdateRequest createUpdateRequest(Object document, Exchange exchange) {
+        UpdateRequest updateRequest = new UpdateRequest();
+        if (document instanceof byte[]) {
+            updateRequest.doc((byte[]) document);
+        } else if (document instanceof Map) {
+            updateRequest.doc((Map<String, Object>) document);
+        } else if (document instanceof String) {
+            updateRequest.doc((String) document);
+        } else if (document instanceof XContentBuilder) {
+            updateRequest.doc((XContentBuilder) document);
+        } else {
+            return null;
+        }
+
+        return updateRequest
+                .consistencyLevel(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, WriteConsistencyLevel.class))
+                .replicationType(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_REPLICATION_TYPE, ReplicationType.class))
+                .parent(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARENT, String.class))
+                .index(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
+                .type(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_INDEX_TYPE, String.class));
+    }
+
+
 
     // Index requests
     private static IndexRequest createIndexRequest(Object document, Exchange exchange) {
@@ -68,6 +99,12 @@ public final class ElasticsearchActionRequestConverter {
     @Converter
     public static IndexRequest toIndexRequest(Object document, Exchange exchange) {
         return createIndexRequest(document, exchange)
+                .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+    }
+
+    @Converter
+    public static UpdateRequest toUpdateRequest(Object document, Exchange exchange) {
+        return createUpdateRequest(document, exchange)
                 .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
     }
 

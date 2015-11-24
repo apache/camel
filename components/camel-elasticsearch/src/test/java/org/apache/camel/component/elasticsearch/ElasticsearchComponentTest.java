@@ -31,6 +31,7 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -90,6 +91,20 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     public void testIndex() throws Exception {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
+        assertNotNull("indexId should be set", indexId);
+    }
+
+    @Test
+    public void testUpdate() throws Exception {
+        Map<String, String> map = createIndexedData();
+        String indexId = template.requestBody("direct:index", map, String.class);
+        assertNotNull("indexId should be set", indexId);
+
+        Map<String, String> newMap = new HashMap<>();
+        newMap.put(createPrefix() + "key2", createPrefix() + "value2");
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
+        indexId = template.requestBodyAndHeaders("direct:update", newMap, headers, String.class);
         assertNotNull("indexId should be set", indexId);
     }
 
@@ -198,6 +213,26 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "123");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        assertNotNull("indexId should be set", indexId);
+        assertEquals("indexId should be equals to the provided id", "123", indexId);
+    }
+
+    @Test
+    public void testUpdateWithIDInHeader() throws Exception {
+        Map<String, String> map = createIndexedData();
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "123");
+
+        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        assertNotNull("indexId should be set", indexId);
+        assertEquals("indexId should be equals to the provided id", "123", indexId);
+
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_UPDATE);
+
+        indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
         assertEquals("indexId should be equals to the provided id", "123", indexId);
     }
@@ -318,6 +353,24 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     }
 
     @Test
+    public void updateRequestBody() throws Exception {
+        String prefix = createPrefix();
+
+        // first index data
+
+        IndexRequest indexRequest = new IndexRequest(prefix + "foo", prefix + "bar", prefix + "testId");
+        indexRequest.source("{\"" + prefix + "content\": \"" + prefix + "hello\"}");
+        template.requestBody("direct:index", indexRequest, String.class);
+
+        // then update
+        UpdateRequest request = new UpdateRequest(prefix + "foo", prefix + "bar", prefix + "testId");
+        request.doc("{\"" + prefix + "content2\": \"" + prefix + "hello2\"}");
+        String documentId = template.requestBody("direct:update", request, String.class);
+
+        assertThat(documentId, equalTo(prefix + "testId"));
+    }
+
+    @Test
     public void getRequestBody() throws Exception {
         String prefix = createPrefix();
 
@@ -398,6 +451,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start").to("elasticsearch://local");
                 from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
+                from("direct:update").to("elasticsearch://local?operation=UPDATE&indexName=twitter&indexType=tweet");
                 from("direct:indexWithReplication").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet&replicationType=SYNC");
                 from("direct:indexWithWriteConsistency").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet&consistencyLevel=ONE");
                 from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
