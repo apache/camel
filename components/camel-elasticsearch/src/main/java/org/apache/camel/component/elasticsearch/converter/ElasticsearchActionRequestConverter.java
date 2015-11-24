@@ -63,7 +63,9 @@ public final class ElasticsearchActionRequestConverter {
                 .index(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
                 .type(exchange.getIn().getHeader(
-                        ElasticsearchConstants.PARAM_INDEX_TYPE, String.class));
+                        ElasticsearchConstants.PARAM_INDEX_TYPE, String.class))
+                .id(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_INDEX_ID, String.class));
     }
 
 
@@ -93,9 +95,7 @@ public final class ElasticsearchActionRequestConverter {
                 .index(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
                 .type(exchange.getIn().getHeader(
-                        ElasticsearchConstants.PARAM_INDEX_TYPE, String.class))
-                .type(exchange.getIn().getHeader(
-                        ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+                        ElasticsearchConstants.PARAM_INDEX_TYPE, String.class));
     }
 
     @Converter

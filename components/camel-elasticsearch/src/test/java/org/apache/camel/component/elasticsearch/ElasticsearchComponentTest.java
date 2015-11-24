@@ -357,7 +357,6 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         String prefix = createPrefix();
 
         // first index data
-
         IndexRequest indexRequest = new IndexRequest(prefix + "foo", prefix + "bar", prefix + "testId");
         indexRequest.source("{\"" + prefix + "content\": \"" + prefix + "hello\"}");
         template.requestBody("direct:index", indexRequest, String.class);
