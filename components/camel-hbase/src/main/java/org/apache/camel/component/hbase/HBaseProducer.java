@@ -277,8 +277,8 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, endpoint.getMappingStrategyName());
             }
 
-            if (endpoint.getMappingStrategyName() != null &&
-                    exchange.getIn().getHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME) == null) {
+            if (endpoint.getMappingStrategyName() != null
+                    && exchange.getIn().getHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME) == null) {
                 exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME, endpoint.getMappingStrategyClassName());
             }
 
