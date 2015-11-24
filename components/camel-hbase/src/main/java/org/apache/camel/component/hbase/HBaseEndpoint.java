@@ -69,7 +69,7 @@ public class HBaseEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
     @UriParam(description = "UserGroupInformation for HBase communication. If not specified, then Camel talks with HBase without Kerberos")
-    private UserGroupInformation ugi;
+    private UserGroupInformation userGroupInformation;
 
     /**
      * in the purpose of performance optimization
@@ -232,10 +232,10 @@ public class HBaseEndpoint extends DefaultEndpoint {
 
     /**
      * Defines privileges to communicate with HBase table by {@link #getTable()}
-     * @param ugi
+     * @param userGroupInformation
      */
-    public void setUgi(UserGroupInformation ugi) {
-        this.ugi = ugi;
+    public void setUserGroupInformation(UserGroupInformation userGroupInformation) {
+        this.userGroupInformation = userGroupInformation;
     }
 
     /**
@@ -244,8 +244,8 @@ public class HBaseEndpoint extends DefaultEndpoint {
      * @return table, remember to close!
      */
     public HTableInterface getTable() {
-        if (ugi != null) {
-            return ugi.doAs(new PrivilegedAction<HTableInterface>() {
+        if (userGroupInformation != null) {
+            return userGroupInformation.doAs(new PrivilegedAction<HTableInterface>() {
                 @Override
                 public HTableInterface run() {
                     return tablePool.getTable(tableNameBytes);
