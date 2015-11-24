@@ -105,6 +105,11 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
 
     // Callbacks
 
+    @Override
+    public void configure() throws Exception {
+        log.debug("No programmatic routes configuration found.");
+    }
+
     protected CamelContext createCamelContext() {
         return new OsgiDefaultCamelContext(bundleContext);
     }
