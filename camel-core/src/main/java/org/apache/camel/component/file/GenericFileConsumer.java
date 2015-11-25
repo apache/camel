@@ -40,9 +40,6 @@ import org.slf4j.LoggerFactory;
  * Base class for file consumers.
  */
 public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsumer {
-    private final Pattern excludePattern;
-    private final Pattern includePattern;
-
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
@@ -53,6 +50,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected Processor customProcessor;
     protected boolean eagerLimitMaxMessagesPerPoll = true;
     protected volatile boolean prepareOnStartup;
+    private final Pattern includePattern;
+    private final Pattern excludePattern;
 
     public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
         super(endpoint, processor);
