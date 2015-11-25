@@ -101,6 +101,7 @@ public class MetricsComponent extends UriEndpointComponent {
                 .outputTo(LOG)
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .withLoggingLevel(Slf4jReporter.LoggingLevel.DEBUG)
                 .build();
         reporter.start(DEFAULT_REPORTING_INTERVAL_SECONDS, TimeUnit.SECONDS);
         return registry;
