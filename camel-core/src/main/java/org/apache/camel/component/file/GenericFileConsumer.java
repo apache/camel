@@ -598,13 +598,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getExclude())) {
-            if (name.matches(endpoint.getExclude())) {
+            if (name.toUpperCase().matches(endpoint.getExclude().toUpperCase())) {
                 return false;
             }
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getInclude())) {
-            if (!name.matches(endpoint.getInclude())) {
+            if (!name.toUpperCase().matches(endpoint.getInclude().toUpperCase())) {
                 return false;
             }
         }
