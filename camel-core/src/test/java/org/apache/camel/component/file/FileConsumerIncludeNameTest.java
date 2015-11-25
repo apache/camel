@@ -34,8 +34,8 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
 
     public void testIncludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Reports", "Reports");
+        mock.expectedBodiesReceived("Reports", "Reports", "Reports3");
+        mock.expectedMessageCount(3);
 
         sendFiles();
 
@@ -48,6 +48,8 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report1.txt");
         template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
         template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(url, "Reports3", Exchange.FILE_NAME, "Report3.txt");
+        template.sendBodyAndHeader(url, "Secret2", Exchange.FILE_NAME, "Secret2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

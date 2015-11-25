@@ -29,6 +29,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
@@ -167,6 +168,17 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                         exchange.setException((Exception) body);
                     } else {
                         log.debug("Reply received. OUT message body set to reply payload: {}", body);
+                    }
+                    if (endpoint.isTransferFault()) {
+                        // remove the header as we do not want to keep it on the Camel Message either
+                        Object faultHeader = response.removeHeader(JmsConstants.JMS_TRANSFER_FAULT);
+                        if (faultHeader != null) {
+                            boolean isFault = exchange.getContext().getTypeConverter().tryConvertTo(boolean.class, faultHeader);
+                            log.debug("Transfer fault on OUT message: {}", isFault);
+                            if (isFault) {
+                                exchange.getOut().setFault(true);
+                            }
+                        }
                     }
 
                     // restore correlation id in case the remote server messed with it

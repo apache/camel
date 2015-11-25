@@ -18,6 +18,7 @@ package org.apache.camel.component.kura;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,6 +31,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
+import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +60,7 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
 
             camelContext.addRoutes(this);
             ConfigurationAdmin configurationAdmin = requiredService(ConfigurationAdmin.class);
-            Configuration camelKuraConfig = configurationAdmin.getConfiguration("kura.camel");
+            Configuration camelKuraConfig = configurationAdmin.getConfiguration(camelXmlRoutesPid());
             if (camelKuraConfig != null && camelKuraConfig.getProperties() != null) {
                 Object routePropertyValue = camelKuraConfig.getProperties().get(camelXmlRoutesProperty());
                 if (routePropertyValue != null) {
@@ -93,7 +95,20 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
         log.debug("Bundle {} stopped.", bundleContext.getBundle().getBundleId());
     }
 
+    protected void activate(ComponentContext componentContext, Map<String, Object> properties) throws Exception {
+        start(componentContext.getBundleContext());
+    }
+
+    protected void deactivate(ComponentContext componentContext) throws Exception {
+        stop(componentContext.getBundleContext());
+    }
+
     // Callbacks
+
+    @Override
+    public void configure() throws Exception {
+        log.debug("No programmatic routes configuration found.");
+    }
 
     protected CamelContext createCamelContext() {
         return new OsgiDefaultCamelContext(bundleContext);
@@ -120,7 +135,11 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
 
     // Private helpers
 
-    private String camelXmlRoutesProperty() {
+    protected String camelXmlRoutesPid() {
+        return "kura.camel";
+    }
+
+    protected String camelXmlRoutesProperty() {
         return "kura.camel." + bundleContext.getBundle().getSymbolicName() + ".route";
     }
 

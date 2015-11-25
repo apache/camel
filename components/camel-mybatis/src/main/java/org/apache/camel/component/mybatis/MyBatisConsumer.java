@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -145,6 +146,16 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
                 }
             } catch (Exception e) {
                 handleException(e);
+            }
+
+            if (getEndpoint().isTransacted() && exchange.isFailed()) {
+                // break out as we are transacted and should rollback
+                Exception cause = exchange.getException();
+                if (cause != null) {
+                    throw cause;
+                } else {
+                    throw new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
+                }
             }
         }
 

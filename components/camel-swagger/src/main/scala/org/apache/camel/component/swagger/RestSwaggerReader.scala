@@ -54,7 +54,7 @@ class RestSwaggerReader {
       resourcePath = "/" + resourcePath
     }
 
-    LOG.debug("Reading rest path: {} -> {}", resourcePath, rest)
+    LOG.debug("Reading rest path: " + resourcePath + " -> " + rest)
 
     // create a list of apis
     val apis = new ListBuffer[ApiDescription]
@@ -107,7 +107,7 @@ class RestSwaggerReader {
         summary = ""
       }
 
-      LOG.debug("Adding operation {} {}", method, nickName)
+      LOG.debug("Adding operation " + method + " " + nickName)
 
       operations += Operation(
         method,

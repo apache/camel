@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor;
 
 import java.util.Collections;
@@ -36,7 +35,7 @@ import org.junit.Test;
  * Tests some of the basic disruptor functionality
  */
 public class BasicDisruptorComponentTest extends CamelTestSupport {
-    private static final Integer VALUE = Integer.valueOf(42);
+    private static final Integer VALUE = 42;
     
     @EndpointInject(uri = "mock:result")
     private MockEndpoint resultEndpoint;
@@ -44,98 +43,25 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
     @Produce(uri = "disruptor:test")
     private ProducerTemplate template;
 
-    
-
-    private final ThreadCounter threadCounter = new ThreadCounter();
-
     @Test
     public void testProduce() throws InterruptedException {
         resultEndpoint.expectedBodiesReceived(VALUE);
         resultEndpoint.setExpectedMessageCount(1);
 
-        template.asyncSendBody("disruptor:test", VALUE);
-
-        resultEndpoint.await(5, TimeUnit.SECONDS);
-        resultEndpoint.assertIsSatisfied();
-    }
-
-
-    @Test
-    public void testAsynchronous() throws InterruptedException {
-        threadCounter.reset();
-
-        final int messagesSent = 1000;
-
-        resultEndpoint.setExpectedMessageCount(messagesSent);
-
-        final long currentThreadId = Thread.currentThread().getId();
-
-        for (int i = 0; i < messagesSent; ++i) {
-            template.asyncSendBody("disruptor:testAsynchronous", VALUE);
-        }
-
-        resultEndpoint.await(20, TimeUnit.SECONDS);
-        resultEndpoint.assertIsSatisfied();
-
-        assertTrue(threadCounter.getThreadIdCount() > 0);
-        assertFalse(threadCounter.getThreadIds().contains(currentThreadId));
-    }
-
-    @Test
-    public void testMultipleConsumers() throws InterruptedException {
-        threadCounter.reset();
-
-        final int messagesSent = 1000;
-
-        resultEndpoint.setExpectedMessageCount(messagesSent);
-
-        for (int i = 0; i < messagesSent; ++i) {
-            template.asyncSendBody("disruptor:testMultipleConsumers?concurrentConsumers=4", VALUE);
-        }
-
-        resultEndpoint.await(20, TimeUnit.SECONDS);
-
-        //sleep for another second to check for duplicate messages in transit
-        Thread.sleep(1000);
+        template.sendBody("disruptor:test", VALUE);
 
         resultEndpoint.assertIsSatisfied();
-
-        assertEquals(4, threadCounter.getThreadIdCount());
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("disruptor:test").to("mock:result");
-                from("disruptor:testAsynchronous").process(threadCounter).to("mock:result");
-                from("disruptor:testMultipleConsumers?concurrentConsumers=4").process(threadCounter)
+                from("disruptor:test")
                         .to("mock:result");
             }
         };
     }
 
-    private static final class ThreadCounter implements Processor {
-
-        private final Set<Long> threadIds = new HashSet<Long>();
-
-        public void reset() {
-            threadIds.clear();
-        }
-
-        @Override
-        public void process(final Exchange exchange) throws Exception {
-            threadIds.add(Thread.currentThread().getId());
-        }
-
-        public Set<Long> getThreadIds() {
-            return Collections.unmodifiableSet(threadIds);
-        }
-
-        public int getThreadIdCount() {
-            return threadIds.size();
-        }
-    }
 }

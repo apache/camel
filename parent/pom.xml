@@ -56,7 +56,7 @@
     <asm-version>3.3.1</asm-version>
     <aspectj-version>1.8.7</aspectj-version>
     <atmos-client-version>2.2.2</atmos-client-version>
-    <atmosphere-version>2.4.0</atmosphere-version>
+    <atmosphere-version>2.4.0.2</atmosphere-version>
     <atmosphere-version-range>[2.0,3.0)</atmosphere-version-range>
     <atomikos-transactions-version>3.9.3</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
@@ -126,7 +126,7 @@
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <cxf-version>3.1.4</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
-    <cxf-xjc-utils-version>3.0.4</cxf-xjc-utils-version>
+    <cxf-xjc-utils-version>3.0.5</cxf-xjc-utils-version>
     <deltaspike-version>1.5.1</deltaspike-version>
     <derby-version>10.11.1.1</derby-version>
     <disruptor-version>3.3.2</disruptor-version>
@@ -196,7 +196,7 @@
     <google-api-services-mail-version>v1-rev15-1.19.0</google-api-services-mail-version>
     <grizzly-websockets-version>2.3.23</grizzly-websockets-version>
     <groovy-version>2.4.5</groovy-version>
-    <gson-version>2.4</gson-version>
+    <gson-version>2.5</gson-version>
     <guice3-version>3.0</guice3-version>
     <guice-version>4.0</guice-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
@@ -228,7 +228,7 @@
     <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
-    <ical4j-version>1.0.6</ical4j-version>
+    <ical4j-version>1.0.7</ical4j-version>
     <infinispan-version>8.0.1.Final</infinispan-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
@@ -306,7 +306,7 @@
     <jsonlib-version>2.4</jsonlib-version>
     <json4s-bundle-version>3.2.8_1</json4s-bundle-version>
     <json-asm-version>1.0.2</json-asm-version>
-    <json-path-version>2.0.0</json-path-version>
+    <json-path-version>2.1.0</json-path-version>
     <json-simple-version>1.1.1</json-simple-version>
     <json-smart-version>2.2</json-smart-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
@@ -448,9 +448,8 @@
     <servlet-version-range>[2.5,4)</servlet-version-range>
     <shiro-version>1.2.4</shiro-version>
     <sip-api-version>1.1</sip-api-version>
-    <!-- use slf4j-api 1.6.x to be easy compatible with older Camel releases -->
-    <slf4j-api-version>1.6.6</slf4j-api-version>
-    <slf4j-version>1.7.12</slf4j-version>
+    <slf4j-api-version>1.7.13</slf4j-api-version>
+    <slf4j-version>1.7.13</slf4j-version>
     <smack-bundle-version>4.0.6</smack-bundle-version>
     <smack-version>4.0.7</smack-version>
     <snakeyaml-version>1.16</snakeyaml-version>
@@ -509,7 +508,7 @@
     <testng-version>6.8.21</testng-version>
     <twitter4j-bundle-version>4.0.4_1</twitter4j-bundle-version>
     <twitter4j-version>4.0.4</twitter4j-version>
-    <undertow-version>1.3.5.Final</undertow-version>
+    <undertow-version>1.3.6.Final</undertow-version>
     <univocity-parsers-version>1.5.6</univocity-parsers-version>
     <unix-socket-factory-version>2015-01-27T15-02-14</unix-socket-factory-version>
     <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>

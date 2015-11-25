@@ -23,7 +23,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.management.MBeanServer;
 import javax.servlet.DispatcherType;
 
@@ -91,12 +90,14 @@ public class WebsocketComponent extends UriEndpointComponent {
         Server server;
         Connector connector;
         WebsocketComponentServlet servlet;
+        MemoryWebsocketStore memoryStore;
         int refCount;
 
-        public ConnectorRef(Server server, Connector connector, WebsocketComponentServlet servlet) {
+        public ConnectorRef(Server server, Connector connector, WebsocketComponentServlet servlet, MemoryWebsocketStore memoryStore) {
             this.server = server;
             this.connector = connector;
             this.servlet = servlet;
+            this.memoryStore = memoryStore;
             increment();
         }
 
@@ -176,14 +177,17 @@ public class WebsocketComponent extends UriEndpointComponent {
                     server = createStaticResourcesServer(server, context, endpoint.getStaticResources());
                 }
 
+                MemoryWebsocketStore memoryStore = new MemoryWebsocketStore();
+                
                 // Don't provide a Servlet object as Producer/Consumer will create them later on
-                connectorRef = new ConnectorRef(server, connector, null);
+                connectorRef = new ConnectorRef(server, connector, null, memoryStore);
 
                 // must enable session before we start
                 if (endpoint.isSessionSupport()) {
                     enableSessionSupport(connectorRef.server, connectorKey);
                 }
                 LOG.info("Jetty Server starting on host: {}:{}", connector.getHost(), connector.getPort());
+                connectorRef.memoryStore.start();
                 connectorRef.server.start();
 
                 CONNECTORS.put(connectorKey, connectorRef);
@@ -197,7 +201,8 @@ public class WebsocketComponent extends UriEndpointComponent {
                 enableSessionSupport(connectorRef.server, connectorKey);
             }
 
-            WebsocketComponentServlet servlet = addServlet(endpoint.getNodeSynchronization(), prodcon, endpoint.getResourceUri());
+            NodeSynchronization sync = new DefaultNodeSynchronization(connectorRef.memoryStore);
+            WebsocketComponentServlet servlet = addServlet(sync, prodcon, endpoint.getResourceUri());
             if (prodcon instanceof WebsocketConsumer) {
                 WebsocketConsumer consumer = WebsocketConsumer.class.cast(prodcon);
                 if (servlet.getConsumer() == null) {
@@ -206,9 +211,11 @@ public class WebsocketComponent extends UriEndpointComponent {
                 // register the consumer here
                 servlet.connect(consumer);
             }
-
+            if (prodcon instanceof WebsocketProducer) {
+                WebsocketProducer producer = WebsocketProducer.class.cast(prodcon);
+                producer.setStore(connectorRef.memoryStore);
+            }
         }
-
     }
 
     /**
@@ -234,6 +241,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                         connectorRef.connector.stop();
                     }
                     connectorRef.server.stop();
+                    connectorRef.memoryStore.stop();
                     CONNECTORS.remove(connectorKey);
                     // Camel controls the lifecycle of these entities so remove the
                     // registered MBeans when Camel is done with the managed objects.
@@ -244,6 +252,9 @@ public class WebsocketComponent extends UriEndpointComponent {
                 }
                 if (prodcon instanceof WebsocketConsumer) {
                     connectorRef.servlet.disconnect((WebsocketConsumer) prodcon);
+                }
+                if (prodcon instanceof WebsocketProducer) {
+                    ((WebsocketProducer) prodcon).setStore(null);
                 }
             }
         }
@@ -791,7 +802,8 @@ public class WebsocketComponent extends UriEndpointComponent {
 
             // must add static resource server to CONNECTORS in case the websocket producers/consumers
             // uses the same port number, and therefore we must be part of this
-            ConnectorRef ref = new ConnectorRef(staticResourcesServer, connector, null);
+            MemoryWebsocketStore memoryStore = new MemoryWebsocketStore();
+            ConnectorRef ref = new ConnectorRef(staticResourcesServer, connector, null, memoryStore);
             String key = "websocket:" + host + ":" + port;
             CONNECTORS.put(key, ref);
         }
@@ -807,6 +819,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                     connectorRef.server.removeConnector(connectorRef.connector);
                     connectorRef.connector.stop();
                     connectorRef.server.stop();
+                    connectorRef.memoryStore.stop();
                     connectorRef.servlet = null;
                 }
                 CONNECTORS.remove(connectorKey);

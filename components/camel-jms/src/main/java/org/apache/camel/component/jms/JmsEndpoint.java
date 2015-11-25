@@ -1112,6 +1112,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public void setTransferFault(boolean transferFault) {
+        getConfiguration().setTransferFault(transferFault);
+    }
+
+    @ManagedAttribute
+    public boolean isTransferFault() {
+        return getConfiguration().isTransferFault();
+    }
+
+    @ManagedAttribute
     public boolean isTestConnectionOnStartup() {
         return configuration.isTestConnectionOnStartup();
     }

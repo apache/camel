@@ -132,13 +132,12 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         String attFileName = "Attachment File Name";
         in.setBody("Body text");
         in.setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1;other-parameter=true");
-        in.setHeader(Exchange.CONTENT_ENCODING, "UTF8");
         addAttachment(attContentType, attText, attFileName);
         Exchange result = template.send("direct:roundtripbinarycontent", exchange);
         Message out = result.getOut();
         assertEquals("Body text", out.getBody(String.class));
         assertThat(out.getHeader(Exchange.CONTENT_TYPE, String.class), startsWith("text/plain"));
-        assertEquals("UTF8", out.getHeader(Exchange.CONTENT_ENCODING));
+        assertEquals("iso8859-1", out.getHeader(Exchange.CONTENT_ENCODING));
         assertTrue(out.hasAttachments());
         assertEquals(1, out.getAttachmentNames().size());
         assertThat(out.getAttachmentNames(), hasItem(attFileName));

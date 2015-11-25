@@ -24,12 +24,15 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
 /**
  * Represents the component that manages {@link ElasticsearchEndpoint}.
  */
 public class ElasticsearchComponent extends UriEndpointComponent {
+
+    private Client client;
 
     public ElasticsearchComponent() {
         super(ElasticsearchEndpoint.class);
@@ -60,8 +63,7 @@ public class ElasticsearchComponent extends UriEndpointComponent {
         
         config.setTransportAddressesList(parseTransportAddresses(config.getTransportAddresses(), config));
         
-        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config);
-        
+        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config, client);
         return endpoint;
     }
     
@@ -83,5 +85,16 @@ public class ElasticsearchComponent extends UriEndpointComponent {
             addressesTrAd.add(new InetSocketTransportAddress(hostname, port));
         }
         return addressesTrAd;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    /**
+     * To use an existing configured Elasticsearch client, instead of creating a client per endpoint.
+     */
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

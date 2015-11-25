@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+
 /**
  * Represents an Elasticsearch endpoint.
  */
@@ -47,12 +48,15 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private Node node;
     private Client client;
+    private volatile boolean closeClient;
     @UriParam
     private ElasticsearchConfiguration configuration;
 
-    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config) throws Exception {
+    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config, Client client) throws Exception {
         super(uri, component);
         this.configuration = config;
+        this.client = client;
+        this.closeClient = client == null;
     }
 
     public Producer createProducer() throws Exception {
@@ -71,31 +75,37 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         super.doStart();
-        if (configuration.isLocal()) {
-            LOG.info("Starting local ElasticSearch server");
-        } else {
-            LOG.info("Joining ElasticSearch cluster " + configuration.getClusterName());
-        }
-        if (configuration.getIp() != null) {
-            this.client = new TransportClient(getSettings())
-                    .addTransportAddress(new InetSocketTransportAddress(configuration.getIp(), configuration.getPort()));
 
-        } else if (configuration.getTransportAddressesList() != null
-               && !configuration.getTransportAddressesList().isEmpty()) {
-            List<TransportAddress> addresses = new ArrayList(configuration.getTransportAddressesList().size());
-            for (TransportAddress address : configuration.getTransportAddressesList()) {
-                addresses.add(address);
+        if (client == null) {
+            if (configuration.isLocal()) {
+                LOG.info("Starting local ElasticSearch server");
+            } else {
+                LOG.info("Joining ElasticSearch cluster " + configuration.getClusterName());
             }
-            this.client = new TransportClient(getSettings())
-                   .addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
-        } else {
-            NodeBuilder builder = nodeBuilder().local(configuration.isLocal()).data(configuration.getData());
-            if (!configuration.isLocal() && configuration.getClusterName() != null) {
-                builder.clusterName(configuration.getClusterName());
+            if (configuration.getIp() != null) {
+                this.client = new TransportClient(getSettings())
+                        .addTransportAddress(new InetSocketTransportAddress(configuration.getIp(), configuration.getPort()));
+
+            } else if (configuration.getTransportAddressesList() != null
+                    && !configuration.getTransportAddressesList().isEmpty()) {
+                List<TransportAddress> addresses = new ArrayList(configuration.getTransportAddressesList().size());
+                for (TransportAddress address : configuration.getTransportAddressesList()) {
+                    addresses.add(address);
+                }
+                this.client = new TransportClient(getSettings())
+                        .addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
+            } else {
+                NodeBuilder builder = nodeBuilder().local(configuration.isLocal()).data(configuration.getData());
+                builder.getSettings().classLoader(Settings.class.getClassLoader());
+                if (configuration.isLocal()) {
+                    builder.getSettings().put("http.enabled", false);
+                }
+                if (!configuration.isLocal() && configuration.getClusterName() != null) {
+                    builder.clusterName(configuration.getClusterName());
+                }
+                node = builder.node();
+                client = node.client();
             }
-            builder.getSettings().classLoader(Settings.class.getClassLoader());
-            node = builder.node();
-            client = node.client();
         }
     }
 
@@ -110,19 +120,24 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
                 .put("client.transport.ignore_cluster_name", false)
                 .put("node.client", true)
                 .put("client.transport.sniff", true)
+                .put("http.enabled", false)
                 .build();
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (configuration.isLocal()) {
-            LOG.info("Stopping local ElasticSearch server");
-        } else {
-            LOG.info("Leaving ElasticSearch cluster " + configuration.getClusterName());
-        }
-        client.close();
-        if (node != null) {
-            node.close();
+        if (closeClient) {
+            if (configuration.isLocal()) {
+                LOG.info("Stopping local ElasticSearch server");
+            } else {
+                LOG.info("Leaving ElasticSearch cluster " + configuration.getClusterName());
+            }
+            client.close();
+            if (node != null) {
+                node.close();
+            }
+            client = null;
+            node = null;
         }
         super.doStop();
     }
