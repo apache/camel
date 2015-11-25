@@ -34,27 +34,31 @@ import org.slf4j.LoggerFactory;
 /**
  * Holder object for sending an exchange over a remote wire as a serialized object.
  * This is usually configured using the <tt>transferExchange=true</tt> option on the endpoint.
- * <p/>
- * Note: Message body of type {@link File} or {@link WrappedFile} is <b>not</b> supported and
+ * <br/>
+ * <b>Note:</b> Message body of type {@link File} or {@link WrappedFile} is <b>not</b> supported and
  * a {@link RuntimeExchangeException} is thrown.
- * <p/>
+ * <br/>
  * As opposed to normal usage where only the body part of the exchange is transferred over the wire,
  * this holder object serializes the following fields over the wire:
  * <ul>
  * <li>exchangeId</li>
  * <li>in body</li>
  * <li>out body</li>
- * <li>in headers</li>
- * <li>out headers</li>
  * <li>fault body </li>
- * <li>fault headers</li>
  * <li>exchange properties</li>
  * <li>exception</li>
  * </ul>
+ * And the following headers is transferred if their values are of primitive types, String or Number based.
+ * <ul>
+ * <li>in headers</li>
+ * <li>out headers</li>
+ * <li>fault headers</li>
+ * </ul>
  * The body is serialized and stored as serialized bytes. The header and exchange properties only include
- * primitive, and String types (and Exception types for exchange properties). Any other type is skipped.
- * <p/>
- * Any object that is not serializable will be skipped and Camel will log this at WARN level.
+ * primitive, String, and Number types (and Exception types for exchange properties). Any other type is skipped.
+ * <br/>
+ * Any message body object that is not serializable will be skipped and Camel will log this at <tt>WARN</tt> level.
+ * And any message header values that is not a primitive value will be skipped and Camel will log this at <tt>DEBUG</tt> level.
  *
  * @version 
  */
@@ -235,6 +239,10 @@ public class DefaultExchangeHolder implements Serializable {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
 
             // silently skip any values which is null
+            if (entry.getValue() == null) {
+                continue;
+            }
+
             Object value = getValidHeaderValue(entry.getKey(), entry.getValue());
             if (value != null) {
                 Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, value);
@@ -260,6 +268,10 @@ public class DefaultExchangeHolder implements Serializable {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
 
             // silently skip any values which is null
+            if (entry.getValue() == null) {
+                continue;
+            }
+
             Object value = getValidExchangePropertyValue(entry.getKey(), entry.getValue());
             if (value != null) {
                 Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, value);
@@ -347,30 +359,16 @@ public class DefaultExchangeHolder implements Serializable {
     }
 
     private static void logInvalidHeaderValue(String type, String key, Object value) {
-        if (key.startsWith("Camel")) {
-            // log Camel at DEBUG level
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Exchange {} containing key: {} with object: {} of type: {} is not valid header type, it will be excluded by the holder."
-                          , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
-            }
-        } else {
-            // log regular at WARN level
-            LOG.warn("Exchange {} containing key: {} with object: {} of type: {} is not valid header type, it will be excluded by the holder."
-                     , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Exchange {} containing key: {} with object: {} of type: {} is not valid header type, it will be excluded by the holder."
+                      , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
         }
     }
 
     private static void logInvalidExchangePropertyValue(String type, String key, Object value) {
-        if (key.startsWith("Camel")) {
-            // log Camel at DEBUG level
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Exchange {} containing key: {} with object: {} of type: {} is not valid exchange property type, it will be excluded by the holder."
-                          , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
-            }
-        } else {
-            // log regular at WARN level
-            LOG.warn("Exchange {} containing key: {} with object: {} of type: {} is not valid exchange property type, it will be excluded by the holder."
-                     , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Exchange {} containing key: {} with object: {} of type: {} is not valid exchange property type, it will be excluded by the holder."
+                      , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
         }
     }
 
