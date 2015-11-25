@@ -43,6 +43,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppBinding</code>
@@ -106,7 +108,9 @@ public class SmppBindingTest {
     public void createSmppMessageFromDeliveryReceiptShouldReturnASmppMessage() throws Exception {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
-        deliverSm.setShortMessage("id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!".getBytes());
+        deliverSm.setShortMessage(
+            "id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!"
+                .getBytes());
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
@@ -167,6 +171,43 @@ public class SmppBindingTest {
         assertEquals(Short.valueOf((short) 1), optionalParameter.get(Short.valueOf((short) 0x0008)));
         assertEquals(Integer.valueOf(1), optionalParameter.get(Short.valueOf((short) 0x0017)));
         assertNull("0x00", optionalParameter.get(Short.valueOf((short) 0x130C)));
+    }
+
+    @Test
+    public void createSmppMessageFromDeliveryReceiptWithPayloadInOptionalParameterShouldReturnASmppMessage() {
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setSmscDeliveryReceipt();
+        deliverSm.setOptionalParametes(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD,
+            "id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!"));
+        try {
+            SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
+
+            assertEquals("Hello SMPP world!", smppMessage.getBody());
+            assertEquals(10, smppMessage.getHeaders().size());
+            assertEquals("2", smppMessage.getHeader(SmppConstants.ID));
+            assertEquals(1, smppMessage.getHeader(SmppConstants.DELIVERED));
+            assertEquals("xxx", smppMessage.getHeader(SmppConstants.ERROR));
+            assertEquals(1, smppMessage.getHeader(SmppConstants.SUBMITTED));
+            assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppConstants.FINAL_STATUS));
+            assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
+        } catch (Exception e) {
+            fail("Should not throw exception while creating smppMessage.");
+        }
+    }
+
+    @Test
+    public void createSmppMessageFromDeliveryReceiptWithoutShortMessageShouldNotThrowException() {
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setSmscDeliveryReceipt();
+        deliverSm.setOptionalParametes(new OptionalParameter.Short((short) 0x2153, (short) 0));
+
+        try {
+            SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
+            Map<Short, Object> optionalParameter = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
+            assertEquals(Short.valueOf((short) 0), optionalParameter.get(Short.valueOf((short) 0x2153)));
+        } catch (Exception e) {
+            fail("Should not throw exception while creating smppMessage in absence of shortMessage");
+        }
     }
 
     @Test
