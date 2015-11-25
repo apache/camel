@@ -22,13 +22,13 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.regex.Pattern;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -40,6 +40,9 @@ import org.slf4j.LoggerFactory;
  * Base class for file consumers.
  */
 public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsumer {
+    private final Pattern excludePattern;
+    private final Pattern includePattern;
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
@@ -48,7 +51,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
     protected Processor customProcessor;
-    @UriParam
     protected boolean eagerLimitMaxMessagesPerPoll = true;
     protected volatile boolean prepareOnStartup;
 
@@ -56,6 +58,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.operations = operations;
+
+        if (endpoint.getInclude() != null) {
+            this.includePattern = Pattern.compile(endpoint.getInclude(), Pattern.CASE_INSENSITIVE);
+        } else {
+            this.includePattern = null;
+        }
+        if (endpoint.getExclude() != null) {
+            this.excludePattern = Pattern.compile(endpoint.getExclude(), Pattern.CASE_INSENSITIVE);
+        } else {
+            this.excludePattern = null;
+        }
     }
 
     public Processor getCustomProcessor() {
@@ -597,14 +610,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return true;
         }
 
-        if (ObjectHelper.isNotEmpty(endpoint.getExclude())) {
-            if (name.toUpperCase().matches(endpoint.getExclude().toUpperCase())) {
+        // exclude take precedence over include
+        if (excludePattern != null)  {
+            if (excludePattern.matcher(name).matches()) {
                 return false;
             }
         }
-
-        if (ObjectHelper.isNotEmpty(endpoint.getInclude())) {
-            if (!name.toUpperCase().matches(endpoint.getInclude().toUpperCase())) {
+        if (includePattern != null)  {
+            if (!includePattern.matcher(name).matches()) {
                 return false;
             }
         }
