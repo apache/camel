@@ -68,7 +68,7 @@ public class HBaseEndpoint extends DefaultEndpoint {
     private HBaseRow rowModel;
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
-    @UriParam(description = "UserGroupInformation for HBase communication. If not specified, then Camel talks with HBase without Kerberos")
+    @UriParam
     private UserGroupInformation userGroupInformation;
 
     /**
@@ -230,9 +230,12 @@ public class HBaseEndpoint extends DefaultEndpoint {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
+    public UserGroupInformation getUserGroupInformation() {
+        return userGroupInformation;
+    }
+
     /**
-     * Defines privileges to communicate with HBase table by {@link #getTable()}
-     * @param userGroupInformation
+     * Defines privileges to communicate with HBase such as using kerberos.
      */
     public void setUserGroupInformation(UserGroupInformation userGroupInformation) {
         this.userGroupInformation = userGroupInformation;
