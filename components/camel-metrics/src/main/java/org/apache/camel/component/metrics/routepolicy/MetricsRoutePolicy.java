@@ -42,6 +42,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MetricsStatistics statistics;
     private Route route;
+    private String namePattern = "##name##.##routeId##.##type##";
 
     private static final class MetricsStatistics {
         private final String routeId;
@@ -113,6 +114,20 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         this.durationUnit = durationUnit;
     }
 
+    public String getNamePattern() {
+        return namePattern;
+    }
+
+    /**
+     * The name pattern to use.
+     * <p/>
+     * Uses dot as separators, but you can change that.
+     * The values <tt>##name##</tt>, <tt>##routeId##</tt>, and <tt>##type##</tt> will be replaced with actual value.
+     */
+    public void setNamePattern(String namePattern) {
+        this.namePattern = namePattern;
+    }
+
     @Override
     public void onInit(Route route) {
         super.onInit(route);
@@ -144,8 +159,13 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
     private String createName(String type) {
         CamelContext context = route.getRouteContext().getCamelContext();
         String name = context.getManagementName() != null ? context.getManagementName() : context.getName();
-        // use colon to separate context from route, and dot for the type name
-        return name + ":" + route.getId() + "." + type;
+
+        String answer = namePattern;
+        answer = answer.replaceFirst("##name##", name);
+        answer = answer.replaceFirst("##routeId##", route.getId());
+        answer = answer.replaceFirst("##type##", type);
+        // use dot to separate context from route, and dot for the type name
+        return answer;
     }
 
     @Override
