@@ -39,7 +39,8 @@ import org.slf4j.LoggerFactory;
  */
 public class WebsocketConsumer extends ServletConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(WebsocketConsumer.class);
-    
+    private boolean enableEventsResending = false;
+
     private AtmosphereFramework framework;
     
     public WebsocketConsumer(WebsocketEndpoint endpoint, Processor processor) {
@@ -66,7 +67,8 @@ public class WebsocketConsumer extends ServletConsumer {
         return (WebsocketEndpoint)super.getEndpoint();
     }
     
-    void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    void service(HttpServletRequest request, HttpServletResponse response, boolean enableEventsResending) throws IOException, ServletException {
+        this.enableEventsResending = enableEventsResending;
         framework.doCometSupport(AtmosphereRequest.wrap(request), AtmosphereResponse.wrap(response));
     }
 
@@ -85,5 +87,26 @@ public class WebsocketConsumer extends ServletConsumer {
                 }
             }
         });
+    }
+
+    public void sendEventNotification(final String connectionKey, final int eventType){
+        final Exchange exchange = getEndpoint().createExchange();
+
+        // set header
+        exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY, connectionKey);
+        exchange.getIn().setHeader(WebsocketConstants.EVENT_TYPE, eventType);
+
+        // send exchange using the async routing engine
+        getAsyncProcessor().process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                }
+            }
+        });
+    }
+
+    public boolean isEnableEventsResending() {
+        return enableEventsResending;
     }
 }

@@ -34,10 +34,18 @@ import org.apache.camel.http.common.HttpConsumer;
  */
 public class CamelWebSocketServlet extends CamelHttpTransportServlet {
     private static final long serialVersionUID = 1764707448550670635L;
+    private static final String RESEND_ALL_WEBSOCKET_EVENTS_PARAM_KEY = "events";
+    private boolean enableEventsResending = false;
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
+
+        final String eventsResendingParameter = getServletConfig().getInitParameter(RESEND_ALL_WEBSOCKET_EVENTS_PARAM_KEY);
+        if (eventsResendingParameter != null && eventsResendingParameter.equals("true")){
+            log.debug("Events resending parameter {}", eventsResendingParameter);
+            enableEventsResending = true;
+        }
 
         // Is there a consumer registered for the request.
         HttpConsumer consumer = getServletResolveConsumerStrategy().resolve(request, getConsumers());
@@ -72,7 +80,7 @@ public class CamelWebSocketServlet extends CamelHttpTransportServlet {
         }
         
         log.debug("Dispatching to Websocket Consumer at {}", consumer.getPath());
-        ((WebsocketConsumer)consumer).service(request, response);
+        ((WebsocketConsumer)consumer).service(request, response, enableEventsResending);
     }
     
 }
