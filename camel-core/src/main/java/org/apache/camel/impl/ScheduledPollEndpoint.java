@@ -64,9 +64,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private boolean sendEmptyMessageWhenIdle;
     @UriParam(label = "consumer,scheduler", description = "If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages.")
     private boolean greedy;
-    @UriParam(enums = "spring,quartz2", label = "consumer,scheduler", description = "To use a cron scheduler from either camel-spring or camel-quartz2 component")
+    @UriParam(enums = "none,spring,quartz2", defaultValue = "none", label = "consumer,scheduler", description = "To use a cron scheduler from either camel-spring or camel-quartz2 component")
     private ScheduledPollConsumerScheduler scheduler;
-    private String schedulerName; // used when configuring scheduler using a string value
+    private String schedulerName = "none"; // used when configuring scheduler using a string value
     @UriParam(label = "consumer,scheduler", description = "To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler.")
     private Map<String, Object> schedulerProperties;
     @UriParam(label = "consumer,scheduler",
@@ -112,7 +112,11 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         }
 
         if (scheduler == null && schedulerName != null) {
-            // special for scheduler if its "spring"
+            if ("none".equals(schedulerName)) {
+                // no cron scheduler in use
+                scheduler = null;
+            }
+            // special for scheduler if its "spring" or "quartz2"
             if ("spring".equals(schedulerName)) {
                 try {
                     Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(SPRING_SCHEDULER, ScheduledPollConsumerScheduler.class);
