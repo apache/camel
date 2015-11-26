@@ -17,7 +17,9 @@
 package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.component.cxf.CXFTestSupport;
+import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
+import org.apache.cxf.logging.FaultListener;
 import org.junit.Test;
 
 public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
@@ -41,6 +43,9 @@ public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
         assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", cfb.getSchemaLocations().get(0));
         assertEquals("Got the wrong loggingFeatureEnabled", true, cfb.isLoggingFeatureEnabled());
         assertEquals("Got the wrong loggingSizeLimit", 200, cfb.getLoggingSizeLimit());
+        Object listener = cfb.getProperties().get(FaultListener.class.getName());
+        assertTrue("NullFaultListener was not added to the properties", listener instanceof NullFaultListener);
     }
 
 }
+
