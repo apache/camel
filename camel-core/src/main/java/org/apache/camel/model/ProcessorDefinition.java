@@ -3253,7 +3253,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
      * @return the builder
      * @see org.apache.camel.processor.Enricher
+     * @deprecated use enrich with a <tt>ref:id</tt> as the resourceUri parameter.
      */
+    @Deprecated
     public Type enrichRef(String resourceRef, String aggregationStrategyRef) {
         return enrichRef(resourceRef, aggregationStrategyRef, false);
     }
@@ -3271,7 +3273,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                               an exception was thrown.
      * @return the builder
      * @see org.apache.camel.processor.Enricher
+     * @deprecated use enrich with a <tt>ref:id</tt> as the resourceUri parameter.
      */
+    @Deprecated
     public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException) {
         return enrichRef(resourceRef, aggregationStrategyRef, false, false);
     }
@@ -3290,7 +3294,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param shareUnitOfWork        whether to share unit of work
      * @return the builder
      * @see org.apache.camel.processor.Enricher
+     * @deprecated use enrich with a <tt>ref:id</tt> as the resourceUri parameter.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichDefinition answer = new EnrichDefinition();
@@ -3452,7 +3458,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
+     * @deprecated use pollEnrich with a <tt>ref:id</tt> as the resourceUri parameter.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
@@ -3482,7 +3490,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                               an exception was thrown.
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
+     * @deprecated use pollEnrich with a <tt>ref:id</tt> as the resourceUri parameter.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
