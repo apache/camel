@@ -236,6 +236,11 @@ public class RabbitMQConsumer extends DefaultConsumer {
                 } catch (RuntimeCamelException e) {
                     getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 }
+
+                if (!consumer.endpoint.isAutoAck()) {
+                    log.trace("Acknowledging receipt when transferring exception [delivery_tag={}]", deliveryTag);
+                    channel.basicAck(deliveryTag, false);
+                }
             } else {
                 boolean isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE, false, boolean.class);
                 // processing failed, then reject and handle the exception
