@@ -115,9 +115,8 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             if ("none".equals(schedulerName)) {
                 // no cron scheduler in use
                 scheduler = null;
-            }
-            // special for scheduler if its "spring" or "quartz2"
-            if ("spring".equals(schedulerName)) {
+            } else if ("spring".equals(schedulerName)) {
+                // special for scheduler if its "spring" or "quartz2"
                 try {
                     Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(SPRING_SCHEDULER, ScheduledPollConsumerScheduler.class);
                     setScheduler(getCamelContext().getInjector().newInstance(clazz));
@@ -125,6 +124,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
                     throw new IllegalArgumentException("Cannot load " + SPRING_SCHEDULER + " from classpath. Make sure camel-spring.jar is on the classpath.", e);
                 }
             } else if ("quartz2".equals(schedulerName)) {
+                // special for scheduler if its "spring" or "quartz2"
                 try {
                     Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(QUARTZ_2_SCHEDULER, ScheduledPollConsumerScheduler.class);
                     setScheduler(getCamelContext().getInjector().newInstance(clazz));
@@ -132,6 +132,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
                     throw new IllegalArgumentException("Cannot load " + QUARTZ_2_SCHEDULER + " from classpath. Make sure camel-quarz2.jar is on the classpath.", e);
                 }
             } else {
+                // must refer to a custom scheduler by the given name
                 setScheduler(CamelContextHelper.mandatoryLookup(getCamelContext(), schedulerName, ScheduledPollConsumerScheduler.class));
             }
         }
@@ -345,7 +346,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     /**
      * Allow to plugin a custom org.apache.camel.spi.ScheduledPollConsumerScheduler to use as the scheduler for
      * firing when the polling consumer runs. This option is used for referring to one of the built-in schedulers
-     * either <tt>spring</tt>, or <tt>quartz2</tt>.
+     * either <tt>spring</tt>, or <tt>quartz2</tt>. Using <tt>none</tt> refers to no scheduler to be used.
      */
     public void setScheduler(String schedulerName) {
         this.schedulerName = schedulerName;
