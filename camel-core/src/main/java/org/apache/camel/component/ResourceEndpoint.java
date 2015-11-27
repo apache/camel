@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ResourceEndpoint extends ProcessorEndpoint implements ManagedResourceEndpointMBean {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private volatile byte[] buffer;
-    @UriPath(description = "Path to the resource") @Metadata(required = "true")
+    @UriPath(description = "Path to the resource, or a reference to lookup a bean in the Registry to use as the resource") @Metadata(required = "true")
     private String resourceUri;
     @UriParam(defaultValue = "false", description = "Sets whether to use resource content cache or not")
     private boolean contentCache;
@@ -96,7 +96,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
      * @throws IOException is thrown if resource is not found or cannot be loaded
      */
     protected InputStream loadResource(String uri) throws IOException {
-        return ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), uri);
+        return ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), uri);
     }
 
     @ManagedAttribute(description = "Whether the resource is cached")
@@ -141,7 +141,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     }
 
     /**
-     * Path to the resource
+     * Path to the resource, or a reference to lookup a bean in the Registry to use as the resource
      *
      * @param resourceUri  the resource path
      */

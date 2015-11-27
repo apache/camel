@@ -45,7 +45,8 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidatorEndpoint.class);
 
-    @UriPath(description = "URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.")
+    @UriPath(description = "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,"
+            + " or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.")
     @Metadata(required = "true")
     private String resourceUri;
     @UriParam(defaultValue = XMLConstants.W3C_XML_SCHEMA_NS_URI, label = "advanced",
@@ -81,7 +82,7 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         ValidatingProcessor validator = new ValidatingProcessor();
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
         byte[] bytes = null;
         try {
             bytes = IOConverter.toBytes(is);
@@ -132,7 +133,8 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.
+     * URL to a local resource on the classpath,or a reference to lookup a bean in the Registry,
+     * or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
