@@ -138,7 +138,7 @@
     <dozer-version>5.5.1</dozer-version>
     <drools-version>6.3.0.Final</drools-version>
     <dropbox-version>1.8.2</dropbox-version>
-    <easymock-version>3.2</easymock-version>
+    <easymock-version>3.4</easymock-version>
     <eclipse-compiler-version>4.2.2</eclipse-compiler-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <ehcache-version>2.10.1</ehcache-version>
