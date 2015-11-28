@@ -56,7 +56,7 @@ public class GAuthPk8Loader implements GAuthKeyLoader {
      * Loads a private key from a PKCS#8 file.
      */
     public PrivateKey loadPrivateKey() throws Exception {
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), keyLocation);
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), keyLocation);
         String str;
         try {
             str = getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, is);

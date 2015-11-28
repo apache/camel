@@ -98,7 +98,7 @@ public class ExpressionMapper extends BaseConverter {
      * @throws IOException is thrown if resource is not found or cannot be loaded
      */
     protected InputStream loadResource(String uri) throws IOException {
-        return ResourceHelper.resolveMandatoryResourceAsInputStream(currentExchange.get().getContext().getClassResolver(), uri);
+        return ResourceHelper.resolveMandatoryResourceAsInputStream(currentExchange.get().getContext(), uri);
     }
     
     /**

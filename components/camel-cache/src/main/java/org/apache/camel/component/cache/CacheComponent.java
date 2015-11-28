@@ -102,7 +102,7 @@ public class CacheComponent extends UriEndpointComponent {
         super.doStart();
         if (cacheManagerFactory == null) {
             if (configurationFile != null) {
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationFile);
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationFile);
                 cacheManagerFactory = new DefaultCacheManagerFactory(is, configurationFile);
             } else {
                 cacheManagerFactory = new DefaultCacheManagerFactory();

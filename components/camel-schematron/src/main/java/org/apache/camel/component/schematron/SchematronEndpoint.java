@@ -127,7 +127,7 @@ public class SchematronEndpoint extends DefaultEndpoint {
             try {
                 // Attempt to read the schematron rules  from the class path first.
                 LOG.debug("Reading schematron rules from class path {}", path);
-                InputStream schRules = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), path);
+                InputStream schRules = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), path);
                 rules = TemplatesFactory.newInstance().getTemplates(schRules, transformerFactory);
             } catch (Exception e) {
                 // Attempts from the file system.

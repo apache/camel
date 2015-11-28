@@ -118,7 +118,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
     }
 
     protected Parser createFixedParser(String resourceUri, Reader bodyReader) throws IOException {
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
         InputStreamReader reader = new InputStreamReader(is);
         Parser parser = getParserFactory().newFixedLengthParser(reader, bodyReader);
         if (isAllowShortLines()) {
@@ -139,7 +139,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         if (ObjectHelper.isEmpty(getResourceUri())) {
             parser = getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
         } else {
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
             InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
             parser = getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
         }

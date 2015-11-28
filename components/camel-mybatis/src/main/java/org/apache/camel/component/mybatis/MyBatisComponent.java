@@ -49,7 +49,7 @@ public class MyBatisComponent extends UriEndpointComponent {
 
     protected SqlSessionFactory createSqlSessionFactory() throws IOException {
         ObjectHelper.notNull(configurationUri, "configurationUri", this);
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationUri);
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationUri);
         try {
             return new SqlSessionFactoryBuilder().build(is);
         } finally {
