@@ -18,6 +18,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -31,10 +33,10 @@ import org.apache.camel.util.AsyncProcessorHelper;
  */
 public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
     private String id;
-    private final String headerName;
+    private final Expression headerName;
     private final Expression expression;
 
-    public SetHeaderProcessor(String headerName, Expression expression) {
+    public SetHeaderProcessor(Expression headerName, Expression expression) {
         this.headerName = headerName;
         this.expression = expression;
     }
@@ -57,7 +59,7 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
             boolean out = exchange.hasOut();
             Message old = out ? exchange.getOut() : exchange.getIn();
 
-            old.setHeader(headerName, newHeader);
+            old.setHeader(resolveHeaderNameByExchange(exchange), newHeader);
 
         } catch (Throwable e) {
             exchange.setException(e);
@@ -65,6 +67,10 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
 
         callback.done(true);
         return true;
+    }
+
+    private String resolveHeaderNameByExchange(Exchange exchange) {
+        return this.headerName.evaluate(exchange, String.class);
     }
 
     @Override
@@ -85,7 +91,7 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     public String getHeaderName() {
-        return headerName;
+        return headerName.toString();
     }
 
     public Expression getExpression() {
@@ -94,7 +100,7 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        //noop
     }
 
     @Override
