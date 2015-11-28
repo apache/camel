@@ -18,6 +18,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
@@ -30,10 +32,10 @@ import org.apache.camel.util.AsyncProcessorHelper;
  */
 public class SetPropertyProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
     private String id;
-    private final String propertyName;
+    private final Expression propertyName;
     private final Expression expression;
 
-    public SetPropertyProcessor(String propertyName, Expression expression) {
+    public SetPropertyProcessor(Expression propertyName, Expression expression) {
         this.propertyName = propertyName;
         this.expression = expression;
     }
@@ -53,13 +55,17 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
                 return true;
             }
 
-            exchange.setProperty(propertyName, newProperty);
+            exchange.setProperty(resolvePropertyNameByExchange(exchange), newProperty);
         } catch (Throwable e) {
             exchange.setException(e);
         }
 
         callback.done(true);
         return true;
+    }
+
+    private String resolvePropertyNameByExchange(Exchange exchange) {
+        return this.propertyName.evaluate(exchange, String.class);
     }
 
     @Override
@@ -80,16 +86,17 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
     }
 
     public String getPropertyName() {
-        return propertyName;
+        return propertyName.toString();
     }
 
     public Expression getExpression() {
         return expression;
     }
 
+
     @Override
     protected void doStart() throws Exception {
-        // noop
+        //noop
     }
 
     @Override
