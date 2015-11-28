@@ -53,9 +53,8 @@ public class Application {
      * @param args no command line args required
      */
     public static void main(String[] args) {
-        LOG.info(" *** STARTING CAMEL METRICS EXAMPLE APPLICATION ***");
+        LOG.info(" *** Starting Camel Metrics Example Application ***");
         SpringApplication.run(Application.class, args);
-
     }
 
     /**
@@ -79,10 +78,9 @@ public class Application {
     @Bean
     public RouteBuilder slowRoute() {
         return new RouteBuilder() {
-
             @Override
             public void configure() throws Exception {
-                from("timer://foo?period=6000&daemon=false").routeId("slow-route").setBody().constant("Slow hello world!").log("${body}");
+                from("timer://foo?period=6000").routeId("slow-route").setBody().constant("Slow hello world!").log("${body}");
             }
         };
     }
@@ -93,10 +91,9 @@ public class Application {
     @Bean
     public RouteBuilder fastRoute() {
         return new RouteBuilder() {
-
             @Override
             public void configure() throws Exception {
-                from("timer://foo?period=2000&daemon=false").routeId("fast-route").setBody().constant("Fast hello world!").log("${body}");
+                from("timer://foo?period=2000").routeId("fast-route").setBody().constant("Fast hello world!").log("${body}");
             }
         };
     }
@@ -104,13 +101,17 @@ public class Application {
     @Bean
     CamelContextConfiguration contextConfiguration() {
         return new CamelContextConfiguration() {
-
             @Override
             public void beforeApplicationStart(CamelContext context) {
-                LOG.info("Configuring camel metrics on all routes");
+                LOG.info("Configuring Camel metrics on all routes");
                 MetricsRoutePolicyFactory fac = new MetricsRoutePolicyFactory();
                 fac.setMetricsRegistry(metricRegistry);
                 context.addRoutePolicyFactory(fac);
+            }
+
+            @Override
+            public void afterApplicationStart(CamelContext camelContext) {
+                // noop
             }
         };
     }
