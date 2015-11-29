@@ -36,6 +36,10 @@ public class TarSplitterRouteIssueTest extends CamelTestSupport {
 
         template.sendBody("seda:decompressFiles", new File("src/test/resources/data/tarfile3.tar"));
 
+        // TODO: a bug which causes the TarSplitter to include an extra empty entry
+        // the bug is in the TarIterator hasNext / next
+        Thread.sleep(2000);
+
         assertMockEndpointsSatisfied();
     }
     
@@ -59,9 +63,8 @@ public class TarSplitterRouteIssueTest extends CamelTestSupport {
                 
                 from("seda:decompressFiles")
                     .split(new TarSplitter()).streaming().shareUnitOfWork()
-                        .log("we are splitting")
+                        .to("log:entry")
                         .to("mock:entry");
-                        //.to("file:target/tar/?fileName=decompressed.txt&fileExist=Append");
             }
         };
     }
