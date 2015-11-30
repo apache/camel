@@ -27,7 +27,7 @@
   <artifactId>camel-restlet</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: Restlet</name>
-  <description>Camel REST (Restlet baesd) Component</description>
+  <description>Camel REST (Restlet based) Component</description>
 
   <properties>
         <camel.osgi.export.pkg>
@@ -111,6 +111,11 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
       <scope>test</scope>
     </dependency>
 

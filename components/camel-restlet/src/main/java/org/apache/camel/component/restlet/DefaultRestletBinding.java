@@ -38,6 +38,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StringSource;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -383,39 +384,12 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 return true;
             }
             if (header.equalsIgnoreCase(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_HEADERS)) {
-                Set set;
-                if (value instanceof Set) {
-                    set = (Set) value;
-                } else {
-                    set = new LinkedHashSet();
-                    Iterator it = ObjectHelper.createIterator(value);
-                    while (it.hasNext()) {
-                        Object next = it.next();
-                        String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, next);
-                        if (text != null) {
-                            set.add(text);
-                        }
-                    }
-                }
+                Set<String> set = convertToStringSet(value, exchange.getContext().getTypeConverter());
                 message.setAccessControlAllowHeaders(set);
                 return true;
             }
             if (header.equalsIgnoreCase(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_METHODS)) {
-                Set set;
-                if (value instanceof Set) {
-                    set = (Set) value;
-                } else {
-                    set = new LinkedHashSet();
-                    Iterator it = ObjectHelper.createIterator(value);
-                    while (it.hasNext()) {
-                        Object next = it.next();
-                        String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, next);
-                        if (text != null) {
-                            Method method = new Method(text);
-                            set.add(method);
-                        }
-                    }
-                }
+                Set<Method> set = convertToMethodSet(value, exchange.getContext().getTypeConverter());
                 message.setAccessControlAllowMethods(set);
                 return true;
             }
@@ -427,21 +401,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 return true;
             }
             if (header.equalsIgnoreCase(HeaderConstants.HEADER_ACCESS_CONTROL_EXPOSE_HEADERS)) {
-                Set set;
-                if (value instanceof Set) {
-                    set = (Set) value;
-                } else {
-                    set = new LinkedHashSet();
-                    Iterator it = ObjectHelper.createIterator(value);
-                    while (it.hasNext()) {
-                        Object next = it.next();
-                        String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, next);
-                        if (text != null) {
-                            Method method = new Method(text);
-                            set.add(method);
-                        }
-                    }
-                }
+                Set<String> set = convertToStringSet(value, exchange.getContext().getTypeConverter());
                 message.setAccessControlExposeHeaders(set);
                 return true;
             }
@@ -524,6 +484,41 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
 
         return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<String> convertToStringSet(Object value, TypeConverter typeConverter) {
+        if (value instanceof Set) {
+            return (Set<String>) value;
+        }
+        Set<String> set = new LinkedHashSet<>();
+        Iterator it = ObjectHelper.createIterator(value);
+        while (it.hasNext()) {
+            Object next = it.next();
+            String text = typeConverter.tryConvertTo(String.class, next);
+            if (text != null) {
+                set.add(text.trim());
+            }
+        }
+        return set;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<Method> convertToMethodSet(Object value, TypeConverter typeConverter) {
+        if (value instanceof Set) {
+            return (Set<Method>) value;
+        }
+        Set<Method> set = new LinkedHashSet<>();
+        Iterator it = ObjectHelper.createIterator(value);
+        while (it.hasNext()) {
+            Object next = it.next();
+            String text = typeConverter.tryConvertTo(String.class, next);
+            if (text != null) {
+                Method method = Method.valueOf(text.trim()); // creates new instance only if no matching instance exists
+                set.add(method);
+            }
+        }
+        return set;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
