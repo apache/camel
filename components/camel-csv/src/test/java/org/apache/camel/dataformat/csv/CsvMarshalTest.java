@@ -98,6 +98,18 @@ public class CsvMarshalTest extends CamelTestSupport {
         assertArrayEquals(new String[]{"A,C", "1,3", "one,three"}, readOutputLines());
     }
 
+    @Test
+    public void shouldMarshalDifferentDynamicColumns() throws Exception {
+    	output.expectedMessageCount(2);
+    	
+    	template.sendBody("direct:default", TestUtils.asMap("A", "1", "B", "2"));    	
+    	template.sendBody("direct:default", TestUtils.asMap("X", "1", "Y", "2", "Z", "3"));
+    	
+    	output.assertIsSatisfied();
+    	assertArrayEquals(new String[]{"1,2"}, readOutputLines());
+    	assertArrayEquals(new String[]{"1,2,3"}, output.getExchanges().get(1).getIn().getBody(String.class).split("\r\n|\r|\n"));
+    }
+    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
