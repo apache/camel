@@ -17,11 +17,9 @@
 package org.apache.camel.component.amqp;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.qpid.jms.JmsConnectionFactory;
