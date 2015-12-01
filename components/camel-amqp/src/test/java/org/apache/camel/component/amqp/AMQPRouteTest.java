@@ -27,9 +27,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 
-/**
- * @version 
- */
 public class AMQPRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
     protected Broker broker;
@@ -37,11 +34,6 @@ public class AMQPRouteTest extends CamelTestSupport {
     @Test
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
-
-        resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).header("cheese").isEqualTo(123);
-        template.sendBodyAndHeader("amqp0-9:queue:ping", expectedBody, "cheese", 123);
-        resultEndpoint.assertIsSatisfied();
 
         resultEndpoint.reset();
         resultEndpoint.expectedMessageCount(1);
@@ -73,7 +65,6 @@ public class AMQPRouteTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addComponent("amqp0-9", amqpComponent("amqp://guest:guest@/test?brokerlist='tcp://localhost:5672'", true));
         camelContext.addComponent("amqp1-0", amqpComponent("amqp://guest:guest@localhost:5672?remote-host=test", false));
         return camelContext;
     }
@@ -81,14 +72,11 @@ public class AMQPRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("amqp0-9:queue:ping")
-                    .to("log:routing")
-                    .to("mock:result");
-
                 from("amqp1-0:queue:ping")
                     .to("log:routing")
                     .to("mock:result");
             }
         };
     }
+
 }
