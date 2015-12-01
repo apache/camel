@@ -150,7 +150,6 @@
     <module>camel-juel</module>
     <module>camel-jxpath</module>
     <module>camel-kafka</module>
-    <module>camel-kinesis</module>
     <module>camel-kestrel</module>
     <module>camel-krati</module>
     <module>camel-kubernetes</module>

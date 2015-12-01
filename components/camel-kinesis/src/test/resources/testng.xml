@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="kinesisCamelTest" annotations="JDK" time-out="10000">
+	<test name="kinesisCamelTest" verbose="10" annotations="JDK" time-out="10000">
+		<packages>
+			<package name="org.apache.camel.component.kinesis" />
+		</packages>
+	</test>
+</suite>
