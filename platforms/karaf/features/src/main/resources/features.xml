@@ -81,7 +81,9 @@
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.qpid/${qpid-bundle-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.qpid/qpid-jms-client/${qpid-jms-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.qpid/proton-j/0.10</bundle>
+    <bundle dependency='true'>wrap:mvn:io.netty/netty-all/4.0.17.Final</bundle>
     <feature version='${project.version}'>camel-jms</feature>
     <bundle>mvn:org.apache.camel/camel-amqp/${project.version}</bundle>
   </feature>

@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.amqp;
 
+import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.qpid.server.Broker;
-import org.apache.qpid.server.BrokerOptions;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,7 +28,7 @@ import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 
 public class AMQPRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
-    protected Broker broker;
+    protected BrokerService broker;
     
     @Test
     public void testJmsRouteWithTextMessage() throws Exception {
@@ -45,13 +44,10 @@ public class AMQPRouteTest extends CamelTestSupport {
 
     @Before
     public void setUp() throws Exception {
-        BrokerOptions options = new BrokerOptions();
-        options.setConfigurationStoreType("memory");
-        options.setInitialConfigurationLocation("src/test/resources/config.json");
-        options.setLogConfigFileLocation("src/test/resources/log4j.xml");
-
-        broker = new Broker();
-        broker.startup(options);
+        broker = new BrokerService();
+        broker.setPersistent(false);
+        broker.addConnector("amqp://0.0.0.0:5672");
+        broker.start();
 
         super.setUp();
         resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
@@ -60,12 +56,12 @@ public class AMQPRouteTest extends CamelTestSupport {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        broker.shutdown();
+        broker.stop();
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addComponent("amqp1-0", amqpComponent("amqp://guest:guest@localhost:5672?remote-host=test", false));
+        camelContext.addComponent("amqp1-0", amqpComponent("amqp://localhost:5672", false));
         return camelContext;
     }
 
