@@ -18,21 +18,37 @@ package org.apache.camel.component.amqp;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 
 public class AMQPRouteTest extends CamelTestSupport {
 
-    protected MockEndpoint resultEndpoint;
+    static BrokerService broker;
 
-    protected BrokerService broker;
+    @EndpointInject(uri = "mock:result")
+    MockEndpoint resultEndpoint;
 
     String expectedBody = "Hello there!";
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        broker = new BrokerService();
+        broker.setPersistent(false);
+        broker.addConnector("amqp://0.0.0.0:5672");
+        broker.start();
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        broker.stop();
+    }
 
     @Test
     public void testJmsQueue() throws Exception {
@@ -43,28 +59,17 @@ public class AMQPRouteTest extends CamelTestSupport {
     }
 
     @Test
+    public void testRequestReply() {
+        String response = template.requestBody("amqp1-0:queue:inOut", expectedBody, String.class);
+        assertEquals("response", response);
+    }
+
+    @Test
     public void testJmsTopic() throws Exception {
         resultEndpoint.expectedMessageCount(2);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
         template.sendBodyAndHeader("amqp1-0:topic:ping", expectedBody, "cheese", 123);
         resultEndpoint.assertIsSatisfied();
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        broker = new BrokerService();
-        broker.setPersistent(false);
-        broker.addConnector("amqp://0.0.0.0:5672");
-        broker.start();
-
-        super.setUp();
-        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-        broker.stop();
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -79,6 +84,9 @@ public class AMQPRouteTest extends CamelTestSupport {
                 from("amqp1-0:queue:ping")
                     .to("log:routing")
                     .to("mock:result");
+
+                from("amqp1-0:queue:inOut")
+                        .setBody().constant("response");
 
                 from("amqp1-0:topic:ping")
                         .to("log:routing")
