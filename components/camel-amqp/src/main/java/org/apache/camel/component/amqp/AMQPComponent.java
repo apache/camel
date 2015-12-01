@@ -24,8 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
-import org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl;
-import org.apache.qpid.client.AMQConnectionFactory;
+import org.apache.qpid.jms.JmsConnectionFactory;
 
 /**
  * This component supports the AMQP protocol using the Client API of the Apache Qpid project.
@@ -52,19 +51,19 @@ public class AMQPComponent extends JmsComponent {
         if (old) {
             return amqpComponentOld(uri);
         }
-        return new AMQPComponent(ConnectionFactoryImpl.createFromURL(uri));
+        return new AMQPComponent(new JmsConnectionFactory(uri));
     }
 
     public static Component amqpComponentOld(String uri) throws URISyntaxException {
-        return new AMQPComponent(new AMQConnectionFactory(uri));
+        return new AMQPComponent(new JmsConnectionFactory(uri));
     }
 
     public static Component amqpComponent(String uri) throws MalformedURLException {
-        return new AMQPComponent(ConnectionFactoryImpl.createFromURL(uri));
+        return new AMQPComponent(new JmsConnectionFactory(uri));
     }
 
     public static AMQPComponent amqp10Component(String uri) throws MalformedURLException {
-        ConnectionFactoryImpl connectionFactory = ConnectionFactoryImpl.createFromURL(uri);
+        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(uri);
         connectionFactory.setTopicPrefix("topic://");
         return new AMQPComponent(connectionFactory);
     }
