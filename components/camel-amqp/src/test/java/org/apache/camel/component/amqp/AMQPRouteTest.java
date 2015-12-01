@@ -24,23 +24,31 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
+import static org.apache.camel.component.amqp.AMQPComponent.amqp10Component;
 
 public class AMQPRouteTest extends CamelTestSupport {
-    protected MockEndpoint resultEndpoint;
-    protected BrokerService broker;
-    
-    @Test
-    public void testJmsRouteWithTextMessage() throws Exception {
-        String expectedBody = "Hello there!";
 
-        resultEndpoint.reset();
+    protected MockEndpoint resultEndpoint;
+
+    protected BrokerService broker;
+
+    String expectedBody = "Hello there!";
+
+    @Test
+    public void testJmsQueue() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
         template.sendBodyAndHeader("amqp1-0:queue:ping", expectedBody, "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
+    public void testJmsTopic() throws Exception {
+        resultEndpoint.expectedMessageCount(2);
+        resultEndpoint.message(0).header("cheese").isEqualTo(123);
+        template.sendBodyAndHeader("amqp1-0:topic:ping", expectedBody, "cheese", 123);
+        resultEndpoint.assertIsSatisfied();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -61,7 +69,7 @@ public class AMQPRouteTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addComponent("amqp1-0", amqpComponent("amqp://localhost:5672", false));
+        camelContext.addComponent("amqp1-0", amqp10Component("amqp://localhost:5672"));
         return camelContext;
     }
 
@@ -71,6 +79,14 @@ public class AMQPRouteTest extends CamelTestSupport {
                 from("amqp1-0:queue:ping")
                     .to("log:routing")
                     .to("mock:result");
+
+                from("amqp1-0:topic:ping")
+                        .to("log:routing")
+                        .to("mock:result");
+
+                from("amqp1-0:topic:ping")
+                        .to("log:routing")
+                        .to("mock:result");
             }
         };
     }
