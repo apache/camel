@@ -24,7 +24,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.apache.camel.component.amqp.AMQPComponent.amqp10Component;
+import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 
 public class AMQPRouteTest extends CamelTestSupport {
 
@@ -69,7 +69,7 @@ public class AMQPRouteTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addComponent("amqp1-0", amqp10Component("amqp://localhost:5672"));
+        camelContext.addComponent("amqp1-0", amqpComponent("amqp://localhost:5672"));
         return camelContext;
     }
 

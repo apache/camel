@@ -47,22 +47,17 @@ public class AMQPComponent extends JmsComponent {
         setConnectionFactory(connectionFactory);
     }
 
-    public static Component amqpComponent(String uri, boolean old) throws MalformedURLException, URISyntaxException {
-        if (old) {
-            return amqpComponentOld(uri);
-        }
-        return new AMQPComponent(new JmsConnectionFactory(uri));
-    }
-
-    public static Component amqpComponentOld(String uri) throws URISyntaxException {
-        return new AMQPComponent(new JmsConnectionFactory(uri));
-    }
-
-    public static Component amqpComponent(String uri) throws MalformedURLException {
-        return new AMQPComponent(new JmsConnectionFactory(uri));
-    }
-
+    /**
+     * Use {@code amqpComponent(String uri)} instead.
+     */
+    @Deprecated
     public static AMQPComponent amqp10Component(String uri) throws MalformedURLException {
+        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(uri);
+        connectionFactory.setTopicPrefix("topic://");
+        return new AMQPComponent(connectionFactory);
+    }
+
+    public static AMQPComponent amqpComponent(String uri) {
         JmsConnectionFactory connectionFactory = new JmsConnectionFactory(uri);
         connectionFactory.setTopicPrefix("topic://");
         return new AMQPComponent(connectionFactory);
