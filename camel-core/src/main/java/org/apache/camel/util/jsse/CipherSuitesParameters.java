@@ -42,7 +42,7 @@ public class CipherSuitesParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("CipherSuitesParameters [cipherSuite=");
+        builder.append("CipherSuitesParameters[cipherSuite=");
         builder.append(Arrays.toString(getCipherSuite().toArray(new String[getCipherSuite().size()])));
         builder.append("]");
         return builder.toString();

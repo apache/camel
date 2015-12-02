@@ -373,7 +373,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("SSLContextParameters [keyManagers=");
+        builder.append("SSLContextParameters[keyManagers=");
         builder.append(keyManagers);
         builder.append(", trustManagers=");
         builder.append(trustManagers);
@@ -399,8 +399,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         builder.append(getSecureSocketProtocolsFilter());
         builder.append(", getSessionTimeout()=");
         builder.append(getSessionTimeout());
-        builder.append(", getContext()=");
-        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

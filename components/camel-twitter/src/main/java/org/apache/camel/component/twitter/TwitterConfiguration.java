@@ -34,48 +34,48 @@ public class TwitterConfiguration {
     @UriPath(description = "What kind of type to use") @Metadata(required = "true")
     private EndpointType type = EndpointType.DIRECT;
     @UriParam
+    private String accessToken;
+    @UriParam
+    private String accessTokenSecret;
+    @UriParam
     private String consumerKey;
     @UriParam
     private String consumerSecret;
     @UriParam
-    private String accessToken;
-    @UriParam
-    private String accessTokenSecret;
+    private String user;
     @UriParam(label = "consumer", defaultValue = "60")
     private int delay = 60;
-    @UriParam
-    private String user;
-    @UriParam
+    @UriParam(label = "filter")
     private String keywords;
-    @UriParam(label = "consumer")
-    private String locations;
-    @UriParam(label = "consumer")
+    @UriParam(label = "filter")
     private String userIds;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "filter", defaultValue = "true")
     private boolean filterOld = true;
-    @UriParam(label = "consumer", defaultValue = "1")
+    @UriParam(label = "filter", defaultValue = "1")
     private long sinceId  = 1;
-    @UriParam
+    @UriParam(label = "filter")
     private String lang;
-    @UriParam
+    @UriParam(label = "filter")
     private Integer count;
-    @UriParam(defaultValue = "1")
+    @UriParam(label = "filter", defaultValue = "1")
     private Integer numberOfPages = 1;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyUser;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyPassword;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer httpProxyPort;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
+    private String locations;
+    @UriParam(label = "consumer,advanced")
     private Double latitude;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private Double longitude;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private Double radius;
-    @UriParam(label = "consumer", defaultValue = "km", enums = "mi,km")
+    @UriParam(label = "consumer,advanced", defaultValue = "km", enums = "km,mi")
     private String distanceMetric;
 
     /**

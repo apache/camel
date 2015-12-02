@@ -23,6 +23,7 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.kubernetes.consumer.KubernetesNamespacesConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesPodsConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesReplicationControllersConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesSecretsConsumer;
@@ -132,6 +133,9 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
             case KubernetesCategory.SECRETS:
                 return new KubernetesSecretsConsumer(this, processor);
+                
+            case KubernetesCategory.NAMESPACES:
+                return new KubernetesNamespacesConsumer(this, processor);
 
             default:
                 throw new IllegalArgumentException("The " + category + " consumer category doesn't exist");

@@ -31,7 +31,7 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
         prepareFiles();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Reports", "Reports", "Reports3");
+        mock.expectedBodiesReceivedInAnyOrder("Reports1", "Reports2", "Reports3");
         mock.expectedMessageCount(3);
         mock.assertIsSatisfied();
     }
@@ -39,9 +39,9 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
     private void prepareFiles() throws Exception {
         String url = "file://target/exclude";
         template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(url, "Reports1", Exchange.FILE_NAME, "report1.txt");
         template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
-        template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(url, "Reports2", Exchange.FILE_NAME, "report2.txt");
         template.sendBodyAndHeader(url, "Reports3", Exchange.FILE_NAME, "Report3.txt");
         template.sendBodyAndHeader(url, "Secret2", Exchange.FILE_NAME, "Secret2.txt");
     }

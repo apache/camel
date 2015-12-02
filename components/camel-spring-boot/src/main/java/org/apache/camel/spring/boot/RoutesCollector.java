@@ -83,6 +83,11 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                     }
 
                     camelContext.start();
+                    
+                    for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
+                        camelContextConfiguration.afterApplicationStart(camelContext);
+                    }
+                    
                 } catch (Exception e) {
                     throw new CamelSpringBootInitializationException(e);
                 }

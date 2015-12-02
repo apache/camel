@@ -34,6 +34,8 @@ public class WebsocketCamelRouterTestSupport extends CamelTestSupport {
     
     protected Server server;
 
+    protected ServletHolder servletHolder;
+
     @Before
     public void setUp() throws Exception {
         server = new Server();
@@ -46,7 +48,7 @@ public class WebsocketCamelRouterTestSupport extends CamelTestSupport {
         context.setContextPath("/");
         server.setHandler(context);
 
-        ServletHolder servletHolder = new ServletHolder(new CamelWebSocketServlet());
+        servletHolder = new ServletHolder(new CamelWebSocketServlet());
         servletHolder.setName("CamelWsServlet");
         context.addServlet(servletHolder, "/*");
         

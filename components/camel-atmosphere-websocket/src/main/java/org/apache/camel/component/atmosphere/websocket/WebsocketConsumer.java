@@ -17,7 +17,6 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,22 +27,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.servlet.ServletConsumer;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
-import org.atmosphere.cpr.AtmosphereRequest;
 import org.atmosphere.cpr.AtmosphereRequestImpl;
-import org.atmosphere.cpr.AtmosphereResponse;
 import org.atmosphere.cpr.AtmosphereResponseImpl;
 import org.atmosphere.websocket.WebSocketProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class WebsocketConsumer extends ServletConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(WebsocketConsumer.class);
-    
     private AtmosphereFramework framework;
-    
+    private boolean enableEventsResending;
+
     public WebsocketConsumer(WebsocketEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.framework = new AtmosphereFramework(false, true);
@@ -58,8 +52,7 @@ public class WebsocketConsumer extends ServletConsumer {
         if (wsp instanceof WebsocketHandler) {
             ((WebsocketHandler)wsp).setConsumer(this);            
         } else {
-            // this should not normally happen
-            LOG.error("unexpected WebSocketHandler: {}", wsp);
+            throw new IllegalArgumentException("Unexpected WebSocketHandler: " + wsp);
         }
     }
 
@@ -68,8 +61,9 @@ public class WebsocketConsumer extends ServletConsumer {
         return (WebsocketEndpoint)super.getEndpoint();
     }
     
-    void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    void service(HttpServletRequest request, HttpServletResponse response, boolean enableEventsResending) throws IOException, ServletException {
         framework.doCometSupport(AtmosphereRequestImpl.wrap(request), AtmosphereResponseImpl.wrap(response));
+        this.enableEventsResending = enableEventsResending;
     }
 
     public void sendMessage(final String connectionKey, Object message) {
@@ -87,5 +81,26 @@ public class WebsocketConsumer extends ServletConsumer {
                 }
             }
         });
+    }
+
+    public void sendEventNotification(String connectionKey, int eventType) {
+        final Exchange exchange = getEndpoint().createExchange();
+
+        // set header
+        exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY, connectionKey);
+        exchange.getIn().setHeader(WebsocketConstants.EVENT_TYPE, eventType);
+
+        // send exchange using the async routing engine
+        getAsyncProcessor().process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                }
+            }
+        });
+    }
+
+    public boolean isEnableEventsResending() {
+        return enableEventsResending;
     }
 }

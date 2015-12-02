@@ -240,7 +240,7 @@ public class MailConfiguration implements Cloneable {
         }
         if (dummyTrustManager && isSecureProtocol()) {
             // set the custom SSL properties
-            properties.put("mail." + protocol + ".socketFactory.class", "org.apache.camel.component.mail.security.DummySSLSocketFactory");
+            properties.put("mail." + protocol + ".socketFactory.class", "org.apache.camel.component.mail.DummySSLSocketFactory");
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
             properties.put("mail." + protocol + ".socketFactory.port", "" + port);
         }

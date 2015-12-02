@@ -124,7 +124,7 @@ public class JingEndpoint extends DefaultEndpoint {
 
         if (inputSource == null) {
             ObjectHelper.notEmpty(resourceUri, "resourceUri", this);
-            InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
+            InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
             inputSource = new InputSource(inputStream);
         }
 

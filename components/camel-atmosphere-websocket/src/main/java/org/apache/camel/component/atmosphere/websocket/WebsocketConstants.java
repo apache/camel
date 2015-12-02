@@ -23,7 +23,12 @@ public final class WebsocketConstants {
     
     public static final String CONNECTION_KEY = "websocket.connectionKey";
     public static final String SEND_TO_ALL = "websocket.sendToAll";
-    
+    public static final String EVENT_TYPE = "websocket.eventType";
+
+    public static final int ONOPEN_EVENT_TYPE = 1;
+    public static final int ONCLOSE_EVENT_TYPE = 0;
+    public static final int ONERROR_EVENT_TYPE = -1;
+
     private WebsocketConstants() {
         //helper class
     }

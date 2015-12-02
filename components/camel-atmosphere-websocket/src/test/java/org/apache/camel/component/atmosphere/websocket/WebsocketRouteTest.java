@@ -116,6 +116,23 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
         wsclient2.close();
     }
 
+    @Test
+    public void testWebsocketEventsResendingEnabled() throws Exception {
+        servletHolder.setInitParameter("events", "true");
+
+        TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola4");
+        wsclient.connect();
+        wsclient.close();
+    }
+
+    @Test
+    public void testWebsocketEventsResendingDisabled() throws Exception {
+        TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola5");
+        wsclient.connect();
+        assertFalse(wsclient.await(10));
+        wsclient.close();
+    }
+
     // START SNIPPET: payload
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -140,7 +157,20 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
                         createResponse(exchange, true);
                     }
                 }).to("atmosphere-websocket:///hola3");
-                
+
+                // route for events resending enabled
+                from("atmosphere-websocket:///hola4").to("log:info").process(new Processor() {
+                    public void process(final Exchange exchange) throws Exception {
+                        checkEventsResendingEnabled(exchange);
+                    }
+                });
+
+                // route for events resending disabled
+                from("atmosphere-websocket:///hola5").to("log:info").process(new Processor() {
+                    public void process(final Exchange exchange) throws Exception {
+                        checkEventsResendingDisabled(exchange);
+                    }
+                }).to("atmosphere-websocket:///hola5");
             }
         };
     }
@@ -163,7 +193,30 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
             exchange.getIn().setBody(createByteResponse(readAll((InputStream)msg)));
         }
     }
-    
+
+    private static void checkEventsResendingEnabled(Exchange exchange) {
+        Object connectionKey = exchange.getIn().getHeader(WebsocketConstants.CONNECTION_KEY);
+        Object eventType = exchange.getIn().getHeader(WebsocketConstants.EVENT_TYPE);
+        Object msg = exchange.getIn().getBody();
+
+        assertEquals(null, msg);
+        assertTrue(connectionKey != null);
+
+        if (eventType instanceof Integer) {
+            assertTrue(eventType.equals(1) || eventType.equals(0) || eventType.equals(-1));
+        }
+    }
+
+    private static void checkEventsResendingDisabled(Exchange exchange) {
+        Object eventType = exchange.getIn().getHeader(WebsocketConstants.EVENT_TYPE);
+
+        if (eventType instanceof Integer) {
+            if (eventType.equals(1) || eventType.equals(0) || eventType.equals(-1)) {
+                exchange.getIn().setBody("Error. This place should never be reached.");
+            }
+        }
+    }
+
     private static byte[] createByteResponse(byte[] req) {
         byte[] resp = new byte[req.length + RESPONSE_GREETING_BYTES.length];
         System.arraycopy(RESPONSE_GREETING_BYTES, 0, resp, 0, RESPONSE_GREETING_BYTES.length);
