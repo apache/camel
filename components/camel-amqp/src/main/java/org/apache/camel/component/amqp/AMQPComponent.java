@@ -55,7 +55,9 @@ public class AMQPComponent extends JmsComponent {
         Set<AMQPConnectionDetails> connectionDetails = getCamelContext().getRegistry().findByType(AMQPConnectionDetails.class);
         if (connectionDetails.size() == 1) {
             AMQPConnectionDetails details = connectionDetails.iterator().next();
-            setConnectionFactory(new JmsConnectionFactory(details.username(), details.password(), details.uri()));
+            JmsConnectionFactory connectionFactory = new JmsConnectionFactory(details.username(), details.password(), details.uri());
+            connectionFactory.setTopicPrefix("topic://");
+            setConnectionFactory(connectionFactory);
         }
         super.doStart();
     }
