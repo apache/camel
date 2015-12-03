@@ -20,6 +20,7 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -75,6 +76,23 @@ public class AMQPRouteTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
+    public void testPrefixWildcard() throws Exception {
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBody("amqp:wildcard.foo.bar", expectedBody);
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testIncludeDestination() throws Exception {
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.message(0).header("JMSDestination").isEqualTo("ping");
+        template.sendBody("amqp:queue:ping", expectedBody);
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    // Routes fixtures
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         camelContext.addComponent("amqp", amqpComponent("amqp://localhost:" + amqpPort));
@@ -96,6 +114,10 @@ public class AMQPRouteTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("amqp:topic:ping")
+                        .to("log:routing")
+                        .to("mock:result");
+
+                from("amqp:queue:wildcard.>")
                         .to("log:routing")
                         .to("mock:result");
             }
