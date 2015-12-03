@@ -154,7 +154,12 @@ public class GitProducer extends DefaultProducer {
         try {
             File localRepo = new File(endpoint.getLocalPath(), "");
             if (!localRepo.exists()) {
-                result = git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
+                    UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                    result = git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                } else {
+                    result = git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                }
             } else {
                 throw new IllegalArgumentException("The local repository directory already exists");
             }
