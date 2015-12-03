@@ -20,8 +20,8 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
@@ -58,13 +58,13 @@ public class AMQPRouteTest extends CamelTestSupport {
     public void testJmsQueue() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
-        template.sendBodyAndHeader("amqp:queue:ping", expectedBody, "cheese", 123);
+        template.sendBodyAndHeader("amqp-customized:queue:ping", expectedBody, "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
 
     @Test
     public void testRequestReply() {
-        String response = template.requestBody("amqp:queue:inOut", expectedBody, String.class);
+        String response = template.requestBody("amqp-customized:queue:inOut", expectedBody, String.class);
         assertEquals("response", response);
     }
 
@@ -72,14 +72,14 @@ public class AMQPRouteTest extends CamelTestSupport {
     public void testJmsTopic() throws Exception {
         resultEndpoint.expectedMessageCount(2);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
-        template.sendBodyAndHeader("amqp:topic:ping", expectedBody, "cheese", 123);
+        template.sendBodyAndHeader("amqp-customized:topic:ping", expectedBody, "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
 
     @Test
     public void testPrefixWildcard() throws Exception {
         resultEndpoint.expectedMessageCount(1);
-        template.sendBody("amqp:wildcard.foo.bar", expectedBody);
+        template.sendBody("amqp-customized:wildcard.foo.bar", expectedBody);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -87,37 +87,49 @@ public class AMQPRouteTest extends CamelTestSupport {
     public void testIncludeDestination() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("JMSDestination").isEqualTo("ping");
-        template.sendBody("amqp:queue:ping", expectedBody);
+        template.sendBody("amqp-customized:queue:ping", expectedBody);
         resultEndpoint.assertIsSatisfied();
     }
 
     // Routes fixtures
 
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("amqpConnection", new AMQPConnectionDetails("amqp://localhost:" + amqpPort));
+        return registry;
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addComponent("amqp", amqpComponent("amqp://localhost:" + amqpPort));
+        camelContext.addComponent("amqp-customized", amqpComponent("amqp://localhost:" + amqpPort));
         return camelContext;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("amqp:queue:ping")
+                from("amqp-customized:queue:ping")
                     .to("log:routing")
                     .to("mock:result");
 
-                from("amqp:queue:inOut")
+                from("amqp-customized:queue:inOut")
                         .setBody().constant("response");
 
-                from("amqp:topic:ping")
+                from("amqp-customized:topic:ping")
                         .to("log:routing")
                         .to("mock:result");
 
-                from("amqp:topic:ping")
+                from("amqp-customized:topic:ping")
                         .to("log:routing")
                         .to("mock:result");
 
-                from("amqp:queue:wildcard.>")
+                from("amqp-customized:queue:wildcard.>")
+                        .to("log:routing")
+                        .to("mock:result");
+
+                from("amqp:queue:uriEndpoint")
                         .to("log:routing")
                         .to("mock:result");
             }
