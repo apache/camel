@@ -22,6 +22,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
@@ -29,6 +30,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
+import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
+import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
 public class AMQPRouteTest extends CamelTestSupport {
 
@@ -47,6 +50,8 @@ public class AMQPRouteTest extends CamelTestSupport {
         broker.setPersistent(false);
         broker.addConnector("amqp://0.0.0.0:" + amqpPort);
         broker.start();
+
+        System.setProperty(AMQP_PORT, amqpPort + "");
     }
 
     @AfterClass
@@ -97,12 +102,13 @@ public class AMQPRouteTest extends CamelTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind("amqpConnection", new AMQPConnectionDetails("amqp://localhost:" + amqpPort));
         return registry;
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
+        JndiRegistry registry = (JndiRegistry)((PropertyPlaceholderDelegateRegistry)camelContext.getRegistry()).getRegistry();
+        registry.bind("amqpConnection", discoverAMQP(camelContext));
         camelContext.addComponent("amqp-customized", amqpComponent("amqp://localhost:" + amqpPort));
         return camelContext;
     }

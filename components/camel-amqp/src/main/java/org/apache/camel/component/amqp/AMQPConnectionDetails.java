@@ -16,7 +16,18 @@
  */
 package org.apache.camel.component.amqp;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.properties.PropertiesComponent;
+
 public class AMQPConnectionDetails {
+
+    public static final String AMQP_HOST = "AMQP_SERVICE_HOST";
+
+    public static final String AMQP_PORT = "AMQP_SERVICE_PORT";
+
+    public static final String AMQP_USERNAME = "AMQP_SERVICE_USERNAME";
+
+    public static final String AMQP_PASSWORD = "AMQP_SERVICE_PASSWORD";
 
     private final String uri;
 
@@ -34,6 +45,21 @@ public class AMQPConnectionDetails {
         this(uri, null, null);
     }
 
+    public static AMQPConnectionDetails discoverAMQP(CamelContext camelContext) {
+        try {
+            PropertiesComponent propertiesComponent = camelContext.getComponent("properties", PropertiesComponent.class);
+
+            String host = property(propertiesComponent, AMQP_HOST, "localhost");
+            int port = Integer.parseInt(property(propertiesComponent, AMQP_PORT , "5672"));
+            String username = property(propertiesComponent, AMQP_USERNAME, null);
+            String password = property(propertiesComponent, AMQP_PASSWORD, null);
+
+            return new AMQPConnectionDetails("amqp://" + host + ":" + port, username, password);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public String uri() {
         return uri;
     }
@@ -44,6 +70,18 @@ public class AMQPConnectionDetails {
 
     public String password() {
         return password;
+    }
+
+    // Helpers
+
+    private static String property(PropertiesComponent propertiesComponent, String key, String defaultValue) {
+        try {
+            return propertiesComponent.parseUri(propertiesComponent.getPrefixToken() + key + propertiesComponent.getSuffixToken());
+        } catch (IllegalArgumentException e) {
+            return defaultValue;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
