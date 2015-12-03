@@ -29,6 +29,8 @@ import org.apache.qpid.jms.JmsConnectionFactory;
  */
 public class AMQPComponent extends JmsComponent {
 
+    // Constructors
+
     public AMQPComponent() {
         super(AMQPEndpoint.class);
     }
@@ -45,6 +47,8 @@ public class AMQPComponent extends JmsComponent {
         setConnectionFactory(connectionFactory);
     }
 
+    // Factory methods
+
     /**
      * Use {@code amqpComponent(String uri)} instead.
      */
@@ -57,6 +61,12 @@ public class AMQPComponent extends JmsComponent {
 
     public static AMQPComponent amqpComponent(String uri) {
         JmsConnectionFactory connectionFactory = new JmsConnectionFactory(uri);
+        connectionFactory.setTopicPrefix("topic://");
+        return new AMQPComponent(connectionFactory);
+    }
+
+    public static AMQPComponent amqpComponent(String uri, String username, String password) {
+        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(username, password, uri);
         connectionFactory.setTopicPrefix("topic://");
         return new AMQPComponent(connectionFactory);
     }
