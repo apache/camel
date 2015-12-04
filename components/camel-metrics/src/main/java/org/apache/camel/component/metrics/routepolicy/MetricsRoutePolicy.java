@@ -164,7 +164,6 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         answer = answer.replaceFirst("##name##", name);
         answer = answer.replaceFirst("##routeId##", route.getId());
         answer = answer.replaceFirst("##type##", type);
-        // use dot to separate context from route, and dot for the type name
         return answer;
     }
 

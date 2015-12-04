@@ -5,19 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.routepolicy;
+package org.apache.camel.component.metrics.messagehistory;
 
 import java.util.concurrent.TimeUnit;
-
 import javax.management.MBeanServer;
 
 import com.codahale.metrics.JmxReporter;
@@ -31,16 +30,17 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.metrics.MetricsComponent;
+import org.apache.camel.component.metrics.routepolicy.MetricsRegistryMBean;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Service holding the {@link MetricRegistry} which registers all metrics.
+ * Service holding the {@link MetricsMessageHistory} which registers all message history metrics.
  */
-@ManagedResource(description = "MetricsRegistry")
-public final class MetricsRegistryService extends ServiceSupport implements CamelContextAware, StaticService, MetricsRegistryMBean {
+@ManagedResource(description = "MetricsMessageHistory")
+public final class MetricsMessageHistoryService extends ServiceSupport implements CamelContextAware, StaticService, MetricsRegistryMBean {
 
     private CamelContext camelContext;
     private MetricRegistry metricsRegistry;
