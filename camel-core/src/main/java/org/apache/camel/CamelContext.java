@@ -53,6 +53,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -1377,6 +1378,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param processorFactory the custom factory
      */
     void setProcessorFactory(ProcessorFactory processorFactory);
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.MessageHistoryFactory}
+     *
+     * @return the factory
+     */
+    public MessageHistoryFactory getMessageHistoryFactory();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.MessageHistoryFactory}
+     *
+     * @param messageHistoryFactory the custom factory
+     */
+    public void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory);
 
     /**
      * Gets the current {@link Debugger}
