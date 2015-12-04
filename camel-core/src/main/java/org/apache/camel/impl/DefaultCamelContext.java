@@ -2955,6 +2955,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(shutdownStrategy);
         addService(packageScanClassResolver);
         addService(restRegistry);
+        addService(messageHistoryFactory);
 
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier) {
