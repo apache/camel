@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.csv;
 
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,7 @@ public class CsvMarshalTest extends CamelTestSupport {
         ));
         output.assertIsSatisfied();
 
-        String[] actuals = readOutputLines();
+        String[] actuals = readOutputLines(0);
         assertArrayEquals(new String[]{"1,2,3", "one,two,three"}, actuals);
     }
 
@@ -58,7 +57,7 @@ public class CsvMarshalTest extends CamelTestSupport {
         ));
         output.assertIsSatisfied();
 
-        String[] actuals = readOutputLines();
+        String[] actuals = readOutputLines(0);
         assertArrayEquals(new String[]{"1", "one"}, actuals);
     }
 
@@ -72,7 +71,7 @@ public class CsvMarshalTest extends CamelTestSupport {
         ));
         output.assertIsSatisfied();
 
-        assertArrayEquals(new String[]{"1,2,3", "one,two,three"}, readOutputLines());
+        assertArrayEquals(new String[]{"1,2,3", "one,two,three"}, readOutputLines(0));
     }
 
     @Test
@@ -82,7 +81,7 @@ public class CsvMarshalTest extends CamelTestSupport {
         template.sendBody("direct:default", TestUtils.asMap("A", "1", "B", "2", "C", "3"));
         output.assertIsSatisfied();
 
-        assertArrayEquals(new String[]{"1,2,3"}, readOutputLines());
+        assertArrayEquals(new String[]{"1,2,3"}, readOutputLines(0));
     }
 
     @Test
@@ -95,7 +94,7 @@ public class CsvMarshalTest extends CamelTestSupport {
         ));
         output.assertIsSatisfied();
 
-        assertArrayEquals(new String[]{"A,C", "1,3", "one,three"}, readOutputLines());
+        assertArrayEquals(new String[]{"A,C", "1,3", "one,three"}, readOutputLines(0));
     }
 
     @Test
@@ -106,8 +105,8 @@ public class CsvMarshalTest extends CamelTestSupport {
     	template.sendBody("direct:default", TestUtils.asMap("X", "1", "Y", "2", "Z", "3"));
     	
     	output.assertIsSatisfied();
-    	assertArrayEquals(new String[]{"1,2"}, readOutputLines());
-    	assertArrayEquals(new String[]{"1,2,3"}, output.getExchanges().get(1).getIn().getBody(String.class).split("\r\n|\r|\n"));
+    	assertArrayEquals(new String[]{"1,2"}, readOutputLines(0));
+    	assertArrayEquals(new String[]{"1,2,3"}, readOutputLines(1));
     }
     
 
@@ -129,7 +128,7 @@ public class CsvMarshalTest extends CamelTestSupport {
         };
     }
 
-    private String[] readOutputLines() {
-        return output.getExchanges().get(0).getIn().getBody(String.class).split("\r\n|\r|\n");
+    private String[] readOutputLines(int index) {
+        return output.getExchanges().get(index).getIn().getBody(String.class).split("\r\n|\r|\n");
     }
 }
