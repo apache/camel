@@ -17,25 +17,16 @@
 package org.apache.camel.component.metrics.messagehistory;
 
 import com.codahale.metrics.MetricRegistry;
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class MetricsMessageHistoryTest extends CamelTestSupport {
-
-    private MetricRegistry registry = new MetricRegistry();
+public class SpringMetricsMessageHistoryTest extends CamelSpringTestSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-
-        MetricsMessageHistoryFactory factory = new MetricsMessageHistoryFactory();
-        factory.setUseJmx(false);
-        factory.setMetricsRegistry(registry);
-        context.setMessageHistoryFactory(factory);
-
-        return context;
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/metrics/messagehistory/SpringMetricsMessageHistoryTest.xml");
     }
 
     @Test
@@ -55,21 +46,8 @@ public class MetricsMessageHistoryTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // there should be 3 names
+        MetricRegistry registry = context.getRegistry().findByType(MetricRegistry.class).iterator().next();
         assertEquals(3, registry.getNames().size());
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("seda:foo")
-                    .to("mock:foo");
-
-                from("seda:bar")
-                    .to("mock:bar")
-                    .to("mock:baz");
-            }
-        };
-    }
 }
