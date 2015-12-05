@@ -21,46 +21,28 @@ import java.util.Date;
 import com.codahale.metrics.Timer;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.impl.DefaultMessageHistory;
 
 /**
  * A codahale metrics based {@link MessageHistory}
  */
-public class MetricsMessageHistory implements MessageHistory {
+public class MetricsMessageHistory extends DefaultMessageHistory {
 
-    private final String routeId;
-    private final NamedNode namedNode;
-    private final Timer timer;
     private final Timer.Context context;
 
     public MetricsMessageHistory(String routeId, NamedNode namedNode, Timer timer) {
-        this.routeId = routeId;
-        this.namedNode = namedNode;
-        this.timer = timer;
+        super(routeId, namedNode, new Date());
         this.context = timer.time();
     }
 
     @Override
-    public String getRouteId() {
-        return routeId;
-    }
-
-    @Override
-    public NamedNode getNode() {
-        return namedNode;
-    }
-
-    @Override
-    public Date getTimestamp() {
-        return null;
-    }
-
-    @Override
-    public long getElapsed() {
-        return timer.getCount();
-    }
-
-    @Override
     public void nodeProcessingDone() {
+        super.nodeProcessingDone();
         context.stop();
     }
+
+    public String toString() {
+        return "MetricsMessageHistory[routeId=" + getRouteId() + ", node=" + getNode().getId() + ']';
+    }
+
 }

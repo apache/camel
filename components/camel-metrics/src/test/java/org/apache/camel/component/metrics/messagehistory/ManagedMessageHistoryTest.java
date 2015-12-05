@@ -63,7 +63,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMetricsRoutePolicy() throws Exception {
+    public void testMessageHistory() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(5);
         getMockEndpoint("mock:bar").expectedMessageCount(5);
         getMockEndpoint("mock:baz").expectedMessageCount(5);
