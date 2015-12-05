@@ -99,16 +99,15 @@ public class CsvMarshalTest extends CamelTestSupport {
 
     @Test
     public void shouldMarshalDifferentDynamicColumns() throws Exception {
-    	output.expectedMessageCount(2);
-    	
-    	template.sendBody("direct:default", TestUtils.asMap("A", "1", "B", "2"));    	
-    	template.sendBody("direct:default", TestUtils.asMap("X", "1", "Y", "2", "Z", "3"));
-    	
-    	output.assertIsSatisfied();
-    	assertArrayEquals(new String[]{"1,2"}, readOutputLines(0));
-    	assertArrayEquals(new String[]{"1,2,3"}, readOutputLines(1));
+        output.expectedMessageCount(2);
+
+        template.sendBody("direct:default", TestUtils.asMap("A", "1", "B", "2"));
+        template.sendBody("direct:default", TestUtils.asMap("X", "1", "Y", "2", "Z", "3"));
+
+        output.assertIsSatisfied();
+        assertArrayEquals(new String[]{"1,2"}, readOutputLines(0));
+        assertArrayEquals(new String[]{"1,2,3"}, readOutputLines(1));
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
