@@ -18,6 +18,7 @@ package org.apache.camel.component.atmosphere.websocket;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -97,6 +98,24 @@ public class WebsocketConsumer extends ServletConsumer {
         for (Map.Entry<String, String> param : queryMap.entrySet()) {
             exchange.getIn().setHeader(param.getKey(), param.getValue());
         }
+
+        // send exchange using the async routing engine
+        getAsyncProcessor().process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                }
+            }
+        });
+    }
+
+    public void sendNotDeliveredMessage(List<String> failedConnectionKeys, Object message) {
+        final Exchange exchange = getEndpoint().createExchange();
+
+        // set header and body
+        exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY_LIST, failedConnectionKeys);
+        exchange.getIn().setHeader(WebsocketConstants.ERROR_TYPE, WebsocketConstants.MESSAGE_NOT_SENT_ERROR_TYPE);
+        exchange.getIn().setBody(message);
 
         // send exchange using the async routing engine
         getAsyncProcessor().process(exchange, new AsyncCallback() {

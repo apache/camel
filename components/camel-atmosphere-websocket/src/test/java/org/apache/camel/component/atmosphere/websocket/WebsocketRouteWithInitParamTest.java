@@ -21,7 +21,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithInitParamTestSupport {
+
+    private static final String[] EXISTED_USERS = {"Kim", "Pavlo", "Peter"};
+    private static String[] BROADCAST_MESSAGE_TO = {};
+    private static Map<String,String> connectionKeyUserMap = new HashMap<>();
 
     @Test
     public void testWebsocketEventsResendingEnabled() throws Exception {
@@ -37,6 +46,99 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         wsclient.close();
     }
 
+    @Test
+    public void testWebsocketSingleClientBroadcastMultipleClients() throws Exception {
+        final int AWAIT_TIME = 5;
+        connectionKeyUserMap.clear();
+
+        TestClient wsclient1 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
+        TestClient wsclient2 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
+        TestClient wsclient3 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
+
+        wsclient1.connect();
+        wsclient1.await(AWAIT_TIME);
+
+        wsclient2.connect();
+        wsclient2.await(AWAIT_TIME);
+
+        wsclient3.connect();
+        wsclient3.await(AWAIT_TIME);
+
+        //all connections were registered in external store
+        assertTrue(connectionKeyUserMap.size() == EXISTED_USERS.length);
+
+        BROADCAST_MESSAGE_TO = new String[]{EXISTED_USERS[0], EXISTED_USERS[1]};
+
+        wsclient1.sendTextMessage("Gambas");
+        wsclient1.await(AWAIT_TIME);
+
+        List<String> received1 = wsclient1.getReceived(String.class);
+        assertEquals(1, received1.size());
+
+        for (int i = 0; i < BROADCAST_MESSAGE_TO.length; i++) {
+            assertTrue(received1.get(0).contains(BROADCAST_MESSAGE_TO[i]));
+        }
+
+        List<String> received2 = wsclient2.getReceived(String.class);
+        assertEquals(1, received2.size());
+        for (int i = 0; i < BROADCAST_MESSAGE_TO.length; i++) {
+            assertTrue(received2.get(0).contains(BROADCAST_MESSAGE_TO[i]));
+        }
+
+        List<String> received3 = wsclient3.getReceived(String.class);
+        assertEquals(0, received3.size());
+
+        wsclient1.close();
+        wsclient2.close();
+        wsclient3.close();
+    }
+
+    @Test
+    public void testWebsocketSingleClientBroadcastMultipleClientsGuaranteeDelivery() throws Exception {
+        final int AWAIT_TIME = 5;
+        connectionKeyUserMap.clear();
+
+        TestClient wsclient1 = new TestClient("ws://localhost:" + PORT + "/hola3", 2);
+        TestClient wsclient2 = new TestClient("ws://localhost:" + PORT + "/hola3", 2);
+        TestClient wsclient3 = new TestClient("ws://localhost:" + PORT + "/hola3", 2);
+
+        wsclient1.connect();
+        wsclient1.await(AWAIT_TIME);
+
+        wsclient2.connect();
+        wsclient2.await(AWAIT_TIME);
+
+        wsclient3.connect();
+        wsclient3.await(AWAIT_TIME);
+
+        //all connections were registered in external store
+        assertTrue(connectionKeyUserMap.size() == EXISTED_USERS.length);
+
+        wsclient2.close();
+        wsclient2.await(AWAIT_TIME);
+
+        BROADCAST_MESSAGE_TO = new String[]{EXISTED_USERS[0], EXISTED_USERS[1]};
+
+        wsclient1.sendTextMessage("Gambas");
+        wsclient1.await(AWAIT_TIME);
+
+        List<String> received1 = wsclient1.getReceived(String.class);
+        assertEquals(1, received1.size());
+
+        for (int i = 0; i < BROADCAST_MESSAGE_TO.length; i++) {
+            assertTrue(received1.get(0).contains(BROADCAST_MESSAGE_TO[i]));
+        }
+
+        List<String> received2 = wsclient2.getReceived(String.class);
+        assertEquals(0, received2.size());
+
+        List<String> received3 = wsclient3.getReceived(String.class);
+        assertEquals(0, received3.size());
+
+        wsclient1.close();
+        wsclient3.close();
+    }
+
     // START SNIPPET: payload
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -48,14 +150,116 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
                     }
                 });
 
-                // route for events resending enabled with parameters from url
+                // route for events resending enabled
                 from("atmosphere-websocket:///hola1").to("log:info").process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
                         checkPassedParameters(exchange);
                     }
                 });
+
+                // route for single client broadcast to multiple clients
+                from("atmosphere-websocket:///hola2").to("log:info")
+                        .choice()
+                        .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONOPEN_EVENT_TYPE))
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                createExternalConnectionRegister(exchange);
+                            }
+                        })
+                        .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONCLOSE_EVENT_TYPE))
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                removeExternalConnectionRegister(exchange);
+                            }
+                        })
+                        .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONERROR_EVENT_TYPE))
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                removeExternalConnectionRegister(exchange);
+                            }
+                        })
+                        .otherwise()
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                createBroadcastMultipleClientsResponse(exchange);
+                            }
+                        }).to("atmosphere-websocket:///hola2");
+
+                // route for single client broadcast to multiple clients guarantee delivery
+                from("atmosphere-websocket:///hola3").to("log:info")
+                        .choice()
+                        .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONOPEN_EVENT_TYPE))
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                createExternalConnectionRegister(exchange);
+                            }
+                        })
+                        .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONCLOSE_EVENT_TYPE))
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                removeExternalConnectionRegister(exchange);
+                            }
+                        })
+                        .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONERROR_EVENT_TYPE))
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                removeExternalConnectionRegister(exchange);
+                            }
+                        })
+                        .when(header(WebsocketConstants.ERROR_TYPE).isEqualTo(WebsocketConstants.MESSAGE_NOT_SENT_ERROR_TYPE))
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                handleNotDeliveredMessage(exchange);
+                            }
+                        })
+                        .otherwise()
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                createBroadcastMultipleClientsResponse(exchange);
+                            }
+                        }).to("atmosphere-websocket:///hola3");
             }
         };
+    }
+
+    private static void handleNotDeliveredMessage(Exchange exchange) {
+        List<String> connectionKeyList = exchange.getIn().getHeader(WebsocketConstants.CONNECTION_KEY_LIST, List.class);
+        assertEquals(1, connectionKeyList.size());
+        assertEquals(connectionKeyList.get(0), connectionKeyUserMap.get(BROADCAST_MESSAGE_TO[1]));
+    }
+
+    private static void createExternalConnectionRegister(Exchange exchange) {
+        Object connectionKey = exchange.getIn().getHeader(WebsocketConstants.CONNECTION_KEY);
+
+        String userName = EXISTED_USERS[0];
+
+        if (connectionKeyUserMap.size() > 0) {
+            userName = EXISTED_USERS[connectionKeyUserMap.size()];
+        }
+
+        connectionKeyUserMap.put(userName, (String) connectionKey);
+    }
+
+    private static void removeExternalConnectionRegister(Exchange exchange) {
+        // remove connectionKey from external store
+    }
+
+    private static void createBroadcastMultipleClientsResponse(Exchange exchange) {
+        List<String> connectionKeyList = new ArrayList<>();
+        Object msg = exchange.getIn().getBody();
+
+        String additionalMessage = "";
+
+        //send the message only to selected connections
+        for (int i = 0; i < BROADCAST_MESSAGE_TO.length; i++) {
+            connectionKeyList.add(connectionKeyUserMap.get(BROADCAST_MESSAGE_TO[i]));
+            additionalMessage += BROADCAST_MESSAGE_TO[i] + " ";
+        }
+
+        additionalMessage += " Received the message: ";
+
+        exchange.getIn().setBody(additionalMessage + msg);
+        exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY_LIST, connectionKeyList);
     }
 
     private static void checkEventsResendingEnabled(Exchange exchange) {
