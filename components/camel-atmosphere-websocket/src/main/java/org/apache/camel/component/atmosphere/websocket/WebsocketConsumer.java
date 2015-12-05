@@ -62,8 +62,8 @@ public class WebsocketConsumer extends ServletConsumer {
     }
     
     void service(HttpServletRequest request, HttpServletResponse response, boolean enableEventsResending) throws IOException, ServletException {
-        framework.doCometSupport(AtmosphereRequestImpl.wrap(request), AtmosphereResponseImpl.wrap(response));
         this.enableEventsResending = enableEventsResending;
+        framework.doCometSupport(AtmosphereRequestImpl.wrap(request), AtmosphereResponseImpl.wrap(response));
     }
 
     public void sendMessage(final String connectionKey, Object message) {
