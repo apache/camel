@@ -157,6 +157,13 @@ public class MetricsMessageHistoryFactory extends ServiceSupport implements Came
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
+
+        // use metrics registry from service if not explicit configured
+        if (metricsRegistry == null) {
+            metricsRegistry = messageHistoryService.getMetricsRegistry();
+        }
+
+        ObjectHelper.notNull(metricsRegistry, "metricsRegistry", this);
     }
 
     @Override
