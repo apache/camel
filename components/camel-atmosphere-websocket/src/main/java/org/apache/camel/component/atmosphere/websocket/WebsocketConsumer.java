@@ -17,6 +17,8 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +39,7 @@ import org.atmosphere.websocket.WebSocketProtocol;
 public class WebsocketConsumer extends ServletConsumer {
     private AtmosphereFramework framework;
     private boolean enableEventsResending;
+    private Map<String, String> queryMap = new HashMap<>();
 
     public WebsocketConsumer(WebsocketEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -63,6 +66,7 @@ public class WebsocketConsumer extends ServletConsumer {
     
     void service(HttpServletRequest request, HttpServletResponse response, boolean enableEventsResending) throws IOException, ServletException {
         this.enableEventsResending = enableEventsResending;
+        this.queryMap = getQueryMap(request.getQueryString());
         framework.doCometSupport(AtmosphereRequestImpl.wrap(request), AtmosphereResponseImpl.wrap(response));
     }
 
@@ -90,6 +94,10 @@ public class WebsocketConsumer extends ServletConsumer {
         exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY, connectionKey);
         exchange.getIn().setHeader(WebsocketConstants.EVENT_TYPE, eventType);
 
+        for (Map.Entry<String, String> param : queryMap.entrySet()) {
+            exchange.getIn().setHeader(param.getKey(), param.getValue());
+        }
+
         // send exchange using the async routing engine
         getAsyncProcessor().process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
@@ -102,5 +110,17 @@ public class WebsocketConsumer extends ServletConsumer {
 
     public boolean isEnableEventsResending() {
         return enableEventsResending;
+    }
+
+    private Map<String, String> getQueryMap(String query) {
+        Map<String, String> map = new HashMap<>();
+        if (query != null) {
+            String[] params = query.split("&");
+            for (String param : params) {
+                String[] nameval = param.split("=");
+                map.put(nameval[0], nameval[1]);
+            }
+        }
+        return map;
     }
 }

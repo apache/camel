@@ -30,6 +30,13 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         wsclient.close();
     }
 
+    @Test
+    public void testPassParametersWebsocketOnOpen() throws Exception {
+        TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola1?param1=value1&param2=value2");
+        wsclient.connect();
+        wsclient.close();
+    }
+
     // START SNIPPET: payload
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -38,6 +45,13 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
                 from("atmosphere-websocket:///hola").to("log:info").process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
                         checkEventsResendingEnabled(exchange);
+                    }
+                });
+
+                // route for events resending enabled with parameters from url
+                from("atmosphere-websocket:///hola1").to("log:info").process(new Processor() {
+                    public void process(final Exchange exchange) throws Exception {
+                        checkPassedParameters(exchange);
                     }
                 });
             }
@@ -54,6 +68,23 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
 
         if (eventType instanceof Integer) {
             assertTrue(eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE) || eventType.equals(WebsocketConstants.ONCLOSE_EVENT_TYPE) || eventType.equals(WebsocketConstants.ONERROR_EVENT_TYPE));
+        }
+    }
+
+    private static void checkPassedParameters(Exchange exchange) {
+        Object connectionKey = exchange.getIn().getHeader(WebsocketConstants.CONNECTION_KEY);
+        Object eventType = exchange.getIn().getHeader(WebsocketConstants.EVENT_TYPE);
+        Object msg = exchange.getIn().getBody();
+
+        assertEquals(null, msg);
+        assertTrue(connectionKey != null);
+
+        if ((eventType instanceof Integer) && eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)) {
+
+            String param1 = (String)exchange.getIn().getHeader("param1");
+            String param2 = (String)exchange.getIn().getHeader("param2");
+
+            assertTrue(param1.equals("value1") && param2.equals("value2"));
         }
     }
     // END SNIPPET: payload
