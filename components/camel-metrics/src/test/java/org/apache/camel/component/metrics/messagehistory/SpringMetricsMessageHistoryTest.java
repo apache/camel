@@ -48,6 +48,17 @@ public class SpringMetricsMessageHistoryTest extends CamelSpringTestSupport {
         // there should be 3 names
         MetricRegistry registry = context.getRegistry().findByType(MetricRegistry.class).iterator().next();
         assertEquals(3, registry.getNames().size());
+
+        // get the message history service
+        MetricsMessageHistoryService service = context.hasService(MetricsMessageHistoryService.class);
+        assertNotNull(service);
+        String json = service.dumpStatisticsAsJson();
+        assertNotNull(json);
+        log.info(json);
+
+        assertTrue(json.contains("foo.history"));
+        assertTrue(json.contains("bar.history"));
+        assertTrue(json.contains("baz.history"));
     }
 
 }

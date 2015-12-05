@@ -85,6 +85,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.metrics:*"), null);
         assertEquals(3, set.size());
 
+        // get the message history service using JMX
         String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsMessageHistoryService", context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
         String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);

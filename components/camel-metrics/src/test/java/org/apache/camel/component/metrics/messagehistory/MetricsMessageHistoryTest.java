@@ -56,6 +56,17 @@ public class MetricsMessageHistoryTest extends CamelTestSupport {
 
         // there should be 3 names
         assertEquals(3, registry.getNames().size());
+
+        // get the message history service
+        MetricsMessageHistoryService service = context.hasService(MetricsMessageHistoryService.class);
+        assertNotNull(service);
+        String json = service.dumpStatisticsAsJson();
+        assertNotNull(json);
+        log.info(json);
+
+        assertTrue(json.contains("foo.history"));
+        assertTrue(json.contains("bar.history"));
+        assertTrue(json.contains("baz.history"));
     }
 
     @Override
@@ -64,11 +75,11 @@ public class MetricsMessageHistoryTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo")
-                    .to("mock:foo");
+                    .to("mock:foo").id("foo");
 
                 from("seda:bar")
-                    .to("mock:bar")
-                    .to("mock:baz");
+                    .to("mock:bar").id("bar")
+                    .to("mock:baz").id("baz");
             }
         };
     }
