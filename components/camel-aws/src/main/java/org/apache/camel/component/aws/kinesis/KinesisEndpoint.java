@@ -29,10 +29,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName", consumerClass = KinesisConsumer.class, label = "cloud,messaging")
+@UriEndpoint(scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName", consumerOnly = true, consumerClass = KinesisConsumer.class, label = "cloud,messaging")
 public class KinesisEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath(label = "consumer,producer", description = "Name of the stream")
+    @UriPath(label = "consumer", description = "Name of the stream")
     @Metadata(required = "true")
     private String streamName;
 
@@ -41,7 +41,7 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
     @Metadata(required = "true")
     private AmazonKinesis amazonKinesisClient;
 
-    @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll")
+    @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll", defaultValue = "1")
     private int maxResultsPerRequest = 1;
 
     @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records")
@@ -74,7 +74,6 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public boolean isSingleton() {
-        // probably right.
         return true;
     }
 
@@ -117,7 +116,7 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public String toString() {
-        return "KinesisEndpoint{" + "amazonKinesisClient=[redacted], maxResultsPerRequest=" + maxResultsPerRequest + ", iteratorType=" + iteratorType + ", streamName=" + streamName + '}';
+        return "KinesisEndpoint{amazonKinesisClient=[redacted], maxResultsPerRequest=" + maxResultsPerRequest + ", iteratorType=" + iteratorType + ", streamName=" + streamName + '}';
     }
-    
+
 }

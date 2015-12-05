@@ -21,18 +21,20 @@ import com.amazonaws.services.kinesis.model.ShardIteratorType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 @RunWith(MockitoJUnitRunner.class)
 public class KinesisEndpointTest {
 
-    @Mock private AmazonKinesis amazonKinesisClient;
+    @Mock
+    private AmazonKinesis amazonKinesisClient;
 
     private CamelContext camelContext;
 
@@ -45,11 +47,11 @@ public class KinesisEndpointTest {
 
     @Test
     public void allTheEndpointParams() throws Exception {
-        KinesisEndpoint endpoint = (KinesisEndpoint)camelContext.getEndpoint("aws-kinesis://some_stream_name"
+        KinesisEndpoint endpoint = (KinesisEndpoint) camelContext.getEndpoint("aws-kinesis://some_stream_name"
                 + "?amazonKinesisClient=#kinesisClient"
                 + "&maxResultsPerRequest=101"
                 + "&iteratorType=latest"
-                );
+        );
 
         assertThat(endpoint.getClient(), is(amazonKinesisClient));
         assertThat(endpoint.getStreamName(), is("some_stream_name"));
@@ -59,9 +61,9 @@ public class KinesisEndpointTest {
 
     @Test
     public void onlyRequiredEndpointParams() throws Exception {
-        KinesisEndpoint endpoint = (KinesisEndpoint)camelContext.getEndpoint("aws-kinesis://some_stream_name"
+        KinesisEndpoint endpoint = (KinesisEndpoint) camelContext.getEndpoint("aws-kinesis://some_stream_name"
                 + "?amazonKinesisClient=#kinesisClient"
-                );
+        );
 
         assertThat(endpoint.getClient(), is(amazonKinesisClient));
         assertThat(endpoint.getStreamName(), is("some_stream_name"));

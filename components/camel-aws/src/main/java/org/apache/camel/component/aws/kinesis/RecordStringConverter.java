@@ -16,28 +16,31 @@
  */
 package org.apache.camel.component.aws.kinesis;
 
-import com.amazonaws.services.kinesis.model.Record;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.amazonaws.services.kinesis.model.Record;
 import org.apache.camel.Converter;
 
 @Converter
-public class RecordStringConverter {
+public final class RecordStringConverter {
+
+    private RecordStringConverter() {
+    }
 
     @Converter
     public static String toString(Record record) {
-        List<Byte> bytes = new ArrayList<>();
-        ByteBuffer buf = record.getData().asReadOnlyBuffer();
-        while (buf.hasRemaining()) {
-            bytes.add(buf.get());
+        Charset charset = Charset.forName("UTF-8");
+
+        ByteBuffer buffer = record.getData();
+        if (buffer.hasArray()) {
+            byte[] bytes = record.getData().array();
+            return new String(bytes, charset);
+        } else {
+            byte[] bytes = new byte[buffer.remaining()];
+            buffer.get(bytes);
+            return new String(bytes, charset);
         }
-        byte[] a = new byte[bytes.size()];
-        for (int i = 0; i < bytes.size(); ++i) {
-            a[i] = bytes.get(i);
-        }
-        return new String(a, Charset.forName("UTF-8"));
     }
 
 }
