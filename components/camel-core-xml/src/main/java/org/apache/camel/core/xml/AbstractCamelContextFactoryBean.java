@@ -85,6 +85,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -1024,6 +1025,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (streamCachingStrategy != null) {
             LOG.info("Using custom StreamCachingStrategy: {}", streamCachingStrategy);
             getContext().setStreamCachingStrategy(streamCachingStrategy);
+        }
+        MessageHistoryFactory messageHistoryFactory = getBeanForType(MessageHistoryFactory.class);
+        if (messageHistoryFactory != null) {
+            LOG.info("Using custom MessageHistoryFactory: {}", messageHistoryFactory);
+            getContext().setMessageHistoryFactory(messageHistoryFactory);
         }
     }
 }
