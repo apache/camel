@@ -150,7 +150,6 @@
     <module>camel-juel</module>
     <module>camel-jxpath</module>
     <module>camel-kafka</module>
-    <module>camel-kinesis</module>
     <module>camel-kestrel</module>
     <module>camel-krati</module>
     <module>camel-kubernetes</module>
@@ -210,7 +209,6 @@
     <module>camel-slack</module>
     <module>camel-soap</module>
     <module>camel-solr</module>
-    <module>camel-spark</module>
     <module>camel-spark-rest</module>
     <module>camel-splunk</module>
     <module>camel-spring-batch</module>
