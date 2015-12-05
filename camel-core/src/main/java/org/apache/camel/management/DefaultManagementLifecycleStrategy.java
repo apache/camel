@@ -37,6 +37,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
@@ -413,6 +414,11 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     private Object getManagedObjectForService(CamelContext context, Service service, Route route) {
         // skip channel, UoW and dont double wrap instrumentation
         if (service instanceof Channel || service instanceof UnitOfWork || service instanceof InstrumentationProcessor) {
+            return null;
+        }
+
+        // skip non managed services
+        if (service instanceof NonManagedService) {
             return null;
         }
 

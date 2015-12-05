@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.ServiceSupport;
@@ -33,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A factory to setup and use {@link MetricsMessageHistory} as message history implementation.
  */
-public class MetricsMessageHistoryFactory extends ServiceSupport implements CamelContextAware, StaticService, MessageHistoryFactory {
+public class MetricsMessageHistoryFactory extends ServiceSupport implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
 
     private CamelContext camelContext;
     private MetricsMessageHistoryService messageHistoryService;

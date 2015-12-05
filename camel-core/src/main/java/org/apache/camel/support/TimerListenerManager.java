@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.StaticService;
 import org.apache.camel.TimerListener;
 import org.apache.camel.util.ObjectHelper;
