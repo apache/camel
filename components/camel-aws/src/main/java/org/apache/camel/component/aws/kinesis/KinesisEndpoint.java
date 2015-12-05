@@ -62,14 +62,13 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
         return new KinesisConsumer(this, processor);
     }
 
-    Exchange createExchange(Record record) {
-        Exchange ex = super.createExchange();
-        ex.getIn().setBody(record, Record.class);
-        ex.setProperty(KinesisConstants.APPROX_ARRIVAL_TIME, record.getApproximateArrivalTimestamp());
-        ex.setProperty(KinesisConstants.PARTITION_KEY, record.getPartitionKey());
-        ex.setProperty(KinesisConstants.SEQUENCE_NUMBER, record.getSequenceNumber());
-
-        return ex;
+    public Exchange createExchange(Record record) {
+        Exchange exchange = super.createExchange();
+        exchange.getIn().setBody(record);
+        exchange.getIn().setHeader(KinesisConstants.APPROX_ARRIVAL_TIME, record.getApproximateArrivalTimestamp());
+        exchange.getIn().setHeader(KinesisConstants.PARTITION_KEY, record.getPartitionKey());
+        exchange.getIn().setHeader(KinesisConstants.SEQUENCE_NUMBER, record.getSequenceNumber());
+        return exchange;
     }
 
     @Override
