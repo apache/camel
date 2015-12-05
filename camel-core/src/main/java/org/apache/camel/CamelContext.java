@@ -1384,14 +1384,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @return the factory
      */
-    public MessageHistoryFactory getMessageHistoryFactory();
+    MessageHistoryFactory getMessageHistoryFactory();
 
     /**
      * Sets a custom {@link org.apache.camel.spi.MessageHistoryFactory}
      *
      * @param messageHistoryFactory the custom factory
      */
-    public void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory);
+    void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory);
 
     /**
      * Gets the current {@link Debugger}
