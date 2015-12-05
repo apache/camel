@@ -26,4 +26,7 @@ public interface MetricsMessageHistoryMBean {
     @ManagedOperation(description = "Dumps the statistics as json using seconds for time units")
     String dumpStatisticsAsJsonTimeUnitSeconds();
 
+    @ManagedOperation(description = "Reset all counters")
+    void reset();
+
 }

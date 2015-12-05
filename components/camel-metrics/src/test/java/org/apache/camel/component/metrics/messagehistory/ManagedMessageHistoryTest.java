@@ -95,6 +95,24 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         assertTrue(json.contains("foo.history"));
         assertTrue(json.contains("bar.history"));
         assertTrue(json.contains("baz.history"));
+
+        // reset
+        getMBeanServer().invoke(on, "reset", null, null);
+
+        resetMocks();
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+
+        template.sendBody("seda:foo", "Hello Again");
+
+        assertMockEndpointsSatisfied();
+
+        json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        assertNotNull(json);
+        log.info(json);
+
+        assertTrue(json.contains("foo.history"));
+        assertFalse(json.contains("bar.history"));
+        assertFalse(json.contains("baz.history"));
     }
 
     @Override

@@ -20,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 
 import com.codahale.metrics.JmxReporter;
+import com.codahale.metrics.Metric;
+import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,7 +32,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.metrics.MetricsComponent;
-import org.apache.camel.component.metrics.routepolicy.MetricsRegistryMBean;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ServiceSupport;
@@ -40,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  * Service holding the {@link MetricsMessageHistory} which registers all message history metrics.
  */
 @ManagedResource(description = "MetricsMessageHistory")
-public final class MetricsMessageHistoryService extends ServiceSupport implements CamelContextAware, StaticService, MetricsRegistryMBean {
+public final class MetricsMessageHistoryService extends ServiceSupport implements CamelContextAware, StaticService, MetricsMessageHistoryMBean {
 
     private CamelContext camelContext;
     private MetricRegistry metricsRegistry;
@@ -176,4 +177,13 @@ public final class MetricsMessageHistoryService extends ServiceSupport implement
         }
     }
 
+    public void reset() {
+        // remove all
+        metricsRegistry.removeMatching(new MetricFilter() {
+            @Override
+            public boolean matches(String name, Metric metric) {
+                return true;
+            }
+        });
+    }
 }
