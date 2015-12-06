@@ -83,7 +83,8 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
                 LOG.info("Joining ElasticSearch cluster " + configuration.getClusterName());
             }
             if (configuration.getIp() != null) {
-                this.client = TransportClient.builder().settings(getSettings()).build().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
+                this.client = TransportClient.builder().settings(getSettings()).build()
+                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
             } else if (configuration.getTransportAddressesList() != null
                     && !configuration.getTransportAddressesList().isEmpty()) {
                 List<TransportAddress> addresses = new ArrayList(configuration.getTransportAddressesList().size());

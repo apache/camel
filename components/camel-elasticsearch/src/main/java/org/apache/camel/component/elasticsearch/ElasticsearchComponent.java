@@ -84,7 +84,7 @@ public class ElasticsearchComponent extends UriEndpointComponent {
                 throw new IllegalArgumentException();
             }
             Integer port = split.length > 1 ? Integer.parseInt(split[1]) : ElasticsearchConstants.DEFAULT_PORT;
-			addressesTrAd.add(new InetSocketTransportAddress(InetAddress.getByName(hostname), port));
+            addressesTrAd.add(new InetSocketTransportAddress(InetAddress.getByName(hostname), port));
         }
         return addressesTrAd;
     }
