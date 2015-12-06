@@ -116,8 +116,8 @@ public final class JettySolrFactory {
 
     public static JettySolrRunner createJettyTestFixture(boolean useSsl) throws Exception {
         String solrHome = "src/test/resources/solr";
-        String configFile = null;
-        String schemaFile = null;
+        String configFile = solrHome + "/solr-no-core.xml";
+        String schemaFile = solrHome + "/collection1/conf/schema.xml";
         String context = "/solr";
         boolean stopAtShutdown = true;
         SortedMap<ServletHolder, String> extraServlets = null;
