@@ -33,7 +33,6 @@ import static org.hamcrest.Matchers.containsString;
 /**
  */
 public class CamelOperatorTest extends RxTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(CamelOperatorTest.class);
 
     @Test
     public void testCamelOperator() throws Exception {
