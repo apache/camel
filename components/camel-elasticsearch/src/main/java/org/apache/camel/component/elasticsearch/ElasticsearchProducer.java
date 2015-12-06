@@ -55,7 +55,6 @@ public class ElasticsearchProducer extends DefaultProducer {
         // header, the configuration is used.
         // In the event we can't discover the operation from a, b or c we throw
         // an error.
-
         Object request = exchange.getIn().getBody();
         if (request instanceof IndexRequest) {
             return ElasticsearchConstants.OPERATION_INDEX;
@@ -123,13 +122,6 @@ public class ElasticsearchProducer extends DefaultProducer {
             configConsistencyLevel = true;
         }
 
-        boolean configReplicationType = false;
-        String replicationType = message.getHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE, String.class);
-        if (replicationType == null) {
-            message.setHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE, getEndpoint().getConfig().getReplicationType());
-            configReplicationType = true;
-        }
-
         Client client = getEndpoint().getClient();
         if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
@@ -178,10 +170,6 @@ public class ElasticsearchProducer extends DefaultProducer {
 
         if (configConsistencyLevel) {
             message.removeHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL);
-        }
-
-        if (configReplicationType) {
-            message.removeHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE);
         }
 
     }

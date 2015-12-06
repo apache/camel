@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -83,20 +83,16 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
                 LOG.info("Joining ElasticSearch cluster " + configuration.getClusterName());
             }
             if (configuration.getIp() != null) {
-                this.client = new TransportClient(getSettings())
-                        .addTransportAddress(new InetSocketTransportAddress(configuration.getIp(), configuration.getPort()));
-
+                this.client = TransportClient.builder().settings(getSettings()).build().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
             } else if (configuration.getTransportAddressesList() != null
                     && !configuration.getTransportAddressesList().isEmpty()) {
                 List<TransportAddress> addresses = new ArrayList(configuration.getTransportAddressesList().size());
                 for (TransportAddress address : configuration.getTransportAddressesList()) {
                     addresses.add(address);
                 }
-                this.client = new TransportClient(getSettings())
-                        .addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
+                this.client = TransportClient.builder().settings(getSettings()).build().addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
             } else {
                 NodeBuilder builder = nodeBuilder().local(configuration.isLocal()).data(configuration.getData());
-                builder.getSettings().classLoader(Settings.class.getClassLoader());
                 if (configuration.isLocal()) {
                     builder.getSettings().put("http.enabled", false);
                 }
@@ -110,12 +106,11 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     }
 
     private Settings getSettings() {
-        return ImmutableSettings.settingsBuilder()
+        return Settings.settingsBuilder()
                 // setting the classloader here will allow the underlying elasticsearch-java
                 // class to find its names.txt in an OSGi environment (otherwise the thread
                 // classloader is used, which won't be able to see the file causing a startup
                 // exception).
-                .classLoader(Settings.class.getClassLoader())
                 .put("cluster.name", configuration.getClusterName())
                 .put("client.transport.ignore_cluster_name", false)
                 .put("node.client", true)

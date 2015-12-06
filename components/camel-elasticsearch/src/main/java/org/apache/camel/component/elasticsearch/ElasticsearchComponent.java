@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,7 +69,7 @@ public class ElasticsearchComponent extends UriEndpointComponent {
         return endpoint;
     }
     
-    private List<InetSocketTransportAddress> parseTransportAddresses(String ipsString, ElasticsearchConfiguration config) {
+    private List<InetSocketTransportAddress> parseTransportAddresses(String ipsString, ElasticsearchConfiguration config) throws UnknownHostException {
         if (ipsString == null || ipsString.isEmpty()) {
             return null;
         }
@@ -82,7 +84,7 @@ public class ElasticsearchComponent extends UriEndpointComponent {
                 throw new IllegalArgumentException();
             }
             Integer port = split.length > 1 ? Integer.parseInt(split[1]) : ElasticsearchConstants.DEFAULT_PORT;
-            addressesTrAd.add(new InetSocketTransportAddress(hostname, port));
+			addressesTrAd.add(new InetSocketTransportAddress(InetAddress.getByName(hostname), port));
         }
         return addressesTrAd;
     }

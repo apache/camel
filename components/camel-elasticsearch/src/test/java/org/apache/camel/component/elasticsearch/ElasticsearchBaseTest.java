@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -40,7 +40,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
 
         // create an embedded node to resue
         node = nodeBuilder().local(true)
-                .settings(ImmutableSettings.settingsBuilder().put("http.enabled", false).put("path.data", "target/data"))
+                .settings(Settings.settingsBuilder().put("http.enabled", false).put("path.data", "target/data").put("path.home", "target/home"))
                 .node();
 
         client = node.client();

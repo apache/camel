@@ -28,7 +28,6 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.support.replication.ReplicationType;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
@@ -56,8 +55,6 @@ public final class ElasticsearchActionRequestConverter {
         return updateRequest
                 .consistencyLevel(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, WriteConsistencyLevel.class))
-                .replicationType(exchange.getIn().getHeader(
-                        ElasticsearchConstants.PARAM_REPLICATION_TYPE, ReplicationType.class))
                 .parent(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARENT, String.class))
                 .index(exchange.getIn().getHeader(
@@ -88,8 +85,6 @@ public final class ElasticsearchActionRequestConverter {
         return indexRequest
                 .consistencyLevel(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, WriteConsistencyLevel.class))
-                .replicationType(exchange.getIn().getHeader(
-                        ElasticsearchConstants.PARAM_REPLICATION_TYPE, ReplicationType.class))
                 .parent(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARENT, String.class))
                 .index(exchange.getIn().getHeader(

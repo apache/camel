@@ -18,7 +18,6 @@
 package org.apache.camel.component.elasticsearch;
 
 import org.elasticsearch.action.WriteConsistencyLevel;
-import org.elasticsearch.action.support.replication.ReplicationType;
 
 public interface ElasticsearchConstants {
 
@@ -35,7 +34,6 @@ public interface ElasticsearchConstants {
     String PARAM_INDEX_NAME = "indexName";
     String PARAM_INDEX_TYPE = "indexType";
     String PARAM_CONSISTENCY_LEVEL = "consistencyLevel";
-    String PARAM_REPLICATION_TYPE = "replicationType";
     String PARENT = "parent";
     String TRANSPORT_ADDRESSES = "transportAddresses";
     String PROTOCOL = "elasticsearch";
@@ -44,7 +42,6 @@ public interface ElasticsearchConstants {
     String PORT = "port";
     Integer DEFAULT_PORT = 9300;
     WriteConsistencyLevel DEFAULT_CONSISTENCY_LEVEL = WriteConsistencyLevel.DEFAULT;
-    ReplicationType DEFAULT_REPLICATION_TYPE = ReplicationType.DEFAULT;
     String TRANSPORT_ADDRESSES_SEPARATOR_REGEX = ",";
     String IP_PORT_SEPARATOR_REGEX = ":";
 }
