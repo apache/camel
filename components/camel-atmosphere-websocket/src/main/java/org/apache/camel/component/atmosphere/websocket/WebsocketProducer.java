@@ -112,23 +112,25 @@ public class WebsocketProducer extends DefaultProducer {
     }
 
     private void sendMessage(final WebSocket websocket, final Object message) {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (message instanceof String) {
-                        websocket.write((String) message);
-                    } else if (message instanceof byte[]) {
-                        websocket.write((byte[]) message, 0, ((byte[]) message).length);
-                    } else {
-                        // this should not happen unless one of the supported types is missing above.
-                        LOG.error("unexpected message type {}", message == null ? null : message.getClass());
+        if (websocket != null && message != null) {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (message instanceof String) {
+                            websocket.write((String) message);
+                        } else if (message instanceof byte[]) {
+                            websocket.write((byte[]) message, 0, ((byte[]) message).length);
+                        } else {
+                            // this should not happen unless one of the supported types is missing above.
+                            LOG.error("unexpected message type {}", message == null ? null : message.getClass());
+                        }
+                    } catch (Exception e) {
+                        LOG.error("Error when writing to websocket", e);
                     }
-                } catch (Exception e) {
-                    LOG.error("Error when writing to websocket", e);
                 }
-            }
-        });
+            });
+        }
     }
 
     private WebSocket getWebSocket(final String connectionKey) {
