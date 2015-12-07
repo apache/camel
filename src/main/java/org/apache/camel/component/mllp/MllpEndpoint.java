@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.mllp;
 
 import org.apache.camel.Consumer;
@@ -26,41 +42,40 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @UriPath @Metadata(required = "false", defaultValue = "0.0.0.0")
+    // TODO:  Need to update the TCP Server code to use this if it set - helps with multihomed systems
+    @UriPath() @Metadata(required = "false", defaultValue = "0.0.0.0", description = "Hostname or IP for connection")
     String hostname = "0.0.0.0";
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = "true", description = "TCP Port to listen on (TCP Server) or connect to (TCP Client)")
     int port = -1;
 
-    @UriParam( defaultValue = "5")
+    @UriParam( defaultValue = "5", description = "TCP Server only - The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused.")
+            @Metadata( title = "backlog", description = "some description")
     int backlog = 5;
 
-    @UriParam( defaultValue = "30000")
+    @UriParam( defaultValue = "30000", description = "TCP Client only - timeout value while waiting for a tcp connection (milliseconds)")
     int connectTimeout = 30000;
 
-    @UriParam( defaultValue = "5000")
+    @UriParam( defaultValue = "5000", description = "Timeout value (milliseconds) used when reading a message from an external" )
     int responseTimeout = 5000;
 
-    @UriParam( defaultValue = "true")
+    @UriParam( defaultValue = "true", description = "Enable/disable the SO_KEEPALIVE socket option.")
     boolean keepAlive = true;
 
-    @UriParam( defaultValue = "true")
+    @UriParam( defaultValue = "true", description = "Enable/disable the TCP_NODELAY socket option." )
     boolean tcpNoDelay = true;
 
-    @UriParam( defaultValue = "false")
+    @UriParam( defaultValue = "false", description = "Enable/disable the SO_REUSEADDR socket option.")
     boolean reuseAddress = false;
 
-    @UriParam( defaultValue = "65535")
+    @UriParam( defaultValue = "65535", description = "Sets the SO_RCVBUF option to the specified value")
     int receiveBufferSize = 65535;
 
-    @UriParam( defaultValue = "65535")
+    @UriParam( defaultValue = "65535", description = "Sets the SO_SNDBUF option to the specified value")
     int sendBufferSize = 65535;
 
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", description = "MLLP Consumers only - Automatically generate and send an MLLP Acknowledgement")
     boolean autoAck = true;
-
-    @UriParam(defaultValue = "true")
-    boolean waitForAck = true;
 
     Charset charset = Charset.defaultCharset();
 
@@ -168,35 +183,34 @@ public class MllpEndpoint extends DefaultEndpoint {
         return singleton;
     }
 
-    public void setHostname(String hostname) {
-        log.trace( "({}).setHostname(String: {})", this.getEndpointKey(), hostname );
-
-        this.hostname = hostname;
-    }
-
-    public String getHostname() {
-        log.trace( "({}).getHostname() -> {}", this.getEndpointKey(), hostname );
-
-        return hostname;
-    }
-
-    public int getPort() {
-        log.trace( "({}).getPort() -> {}", this.getEndpointKey(), port );
-
-        return port;
-    }
-
-    public void setPort(int port) {
-        log.trace( "({}).setPort(int: {})", this.getEndpointKey(), port );
-        this.port = port;
-    }
-
     public Charset getCharset() {
         return charset;
     }
 
     public void setCharset(Charset charset) {
         this.charset = charset;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     * The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused.
+     */
+    public int getBacklog() {
+        return backlog;
+    }
+
+    /**
+     * The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused.
+     */
+    public void setBacklog(int backlog) {
+        this.backlog = backlog;
     }
 
     public int getConnectTimeout() {
@@ -266,18 +280,5 @@ public class MllpEndpoint extends DefaultEndpoint {
 
         this.autoAck = autoAck;
     }
-
-    public boolean isWaitForAck() {
-        log.trace( "({}).isWaitForAck() -> {}", this.getEndpointKey(), waitForAck );
-
-        return waitForAck;
-    }
-
-    public void setWaitForAck(boolean waitForAck) {
-        log.trace( "({}).setWaitForAck(boolean: {})", this.getEndpointKey(), waitForAck );
-
-        this.waitForAck = waitForAck;
-    }
-
 
 }
