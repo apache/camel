@@ -18,6 +18,6 @@ package org.apache.camel.component.spark;
 
 public enum EndpointType {
 
-    rdd, dataframe
+    rdd, dataframe, hive
 
 }

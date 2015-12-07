@@ -49,6 +49,8 @@ public class SparkProducerTest extends CamelTestSupport {
 
     String sparkDataFrameUri = "spark:dataframe?dataFrame=#jsonCars";
 
+    String sparkHiveUri = "spark:hive";
+
     // Routes fixtures
 
     @Override
@@ -57,6 +59,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
         registry.bind("pomRdd", sparkContext.textFile("testrdd.txt"));
 
+        registry.bind("hiveContext", hiveContext);
         DataFrame jsonCars = hiveContext.read().json("src/test/resources/cars.json");
         jsonCars.registerTempTable("cars");
         registry.bind("jsonCars", jsonCars);
@@ -80,7 +83,7 @@ public class SparkProducerTest extends CamelTestSupport {
                 return rdd.count();
             }
         }, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(17);
+        Truth.assertThat(pomLinesCount).isEqualTo(19);
     }
 
     @Test
@@ -91,7 +94,7 @@ public class SparkProducerTest extends CamelTestSupport {
                 return rdd.count() * (int) payloads[0];
             }
         }, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(170);
+        Truth.assertThat(pomLinesCount).isEqualTo(190);
     }
 
     @Test
@@ -102,7 +105,7 @@ public class SparkProducerTest extends CamelTestSupport {
                 return rdd.count() * (int) payloads[0] * (int) payloads[1];
             }
         }, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(1700);
+        Truth.assertThat(pomLinesCount).isEqualTo(1900);
     }
 
     @Test
@@ -114,7 +117,7 @@ public class SparkProducerTest extends CamelTestSupport {
             }
         };
         long pomLinesCount = template.requestBodyAndHeader(sparkUri, asList("10", "10"), SPARK_RDD_CALLBACK_HEADER, rddCallback, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(1700);
+        Truth.assertThat(pomLinesCount).isEqualTo(1900);
     }
 
     @Test
@@ -150,7 +153,7 @@ public class SparkProducerTest extends CamelTestSupport {
             }
         });
         long pomLinesCount = template.requestBodyAndHeader(sparkUri, null, SPARK_RDD_CALLBACK_HEADER, rddCallback, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(17);
+        Truth.assertThat(pomLinesCount).isEqualTo(19);
     }
 
     @Test
@@ -177,13 +180,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteHiveQuery() {
-        DataFrameCallback callback = new DataFrameCallback<Long>() {
-            @Override
-            public Long onDataFrame(DataFrame dataFrame, Object... payloads) {
-                return hiveContext.sql("SELECT * FROM cars").count();
-            }
-        };
-        long tablesCount = template.requestBodyAndHeader(sparkDataFrameUri, null, SPARK_DATAFRAME_CALLBACK_HEADER, callback, Long.class);
+        long tablesCount = template.requestBody(sparkHiveUri + "?collect=false", "SELECT * FROM cars", Long.class);
         Truth.assertThat(tablesCount).isEqualTo(2);
     }
 

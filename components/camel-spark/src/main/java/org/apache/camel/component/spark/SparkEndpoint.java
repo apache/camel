@@ -53,7 +53,13 @@ public class SparkEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return endpointType == EndpointType.rdd ? new RddSparkProducer(this) : new DataFrameSparkProducer(this);
+        if (endpointType == EndpointType.rdd) {
+            return new RddSparkProducer(this);
+        } else if (endpointType == EndpointType.dataframe) {
+            return new DataFrameSparkProducer(this);
+        } else {
+            return new HiveSparkProducer(this);
+        }
     }
 
     @Override
