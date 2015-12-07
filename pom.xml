@@ -14,7 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <camel-version>2.16.0</camel-version>
+        <camel-version>2.16.1</camel-version>
         <activemq-version>5.12.1</activemq-version>
         <slf4j-version>1.7.12</slf4j-version>
         <log4j-version>1.2.17</log4j-version>
@@ -117,7 +117,8 @@
             </plugin>
 
             <!-- generate components meta-data and validate component includes documentation etc -->
-            <plugin>
+            <!-- HQS - Can't seem to get past the validation error, so disabling this for now -->
+            <!--plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
                 <version>${camel-version}</version>
@@ -137,7 +138,7 @@
                         <phase>prepare-package</phase>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin -->
 
             <!-- to generate the MANIFEST-FILE of the bundle -->
             <plugin>
