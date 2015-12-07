@@ -43,14 +43,13 @@ public class MllpEndpoint extends DefaultEndpoint {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     // TODO:  Need to update the TCP Server code to use this if it set - helps with multihomed systems
-    @UriPath() @Metadata(required = "false", defaultValue = "0.0.0.0", description = "Hostname or IP for connection")
+    @UriPath(defaultValue = "0.0.0.0", description = "Hostname or IP for connection")
     String hostname = "0.0.0.0";
 
-    @UriPath @Metadata(required = "true", description = "TCP Port to listen on (TCP Server) or connect to (TCP Client)")
+    @UriPath( description = "TCP Port for connection")
     int port = -1;
 
     @UriParam( defaultValue = "5", description = "TCP Server only - The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused.")
-            @Metadata( title = "backlog", description = "some description")
     int backlog = 5;
 
     @UriParam( defaultValue = "30000", description = "TCP Client only - timeout value while waiting for a tcp connection (milliseconds)")

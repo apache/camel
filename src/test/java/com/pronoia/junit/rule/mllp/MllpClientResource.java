@@ -70,8 +70,9 @@ public class MllpClientResource extends ExternalResource {
             inputStream = clientSocket.getInputStream();
             outputStream = new BufferedOutputStream(clientSocket.getOutputStream(), 2048);
         } catch (IOException e) {
-            log.error("Unable to establish connection to {}:{}\n{}", mllpHost, mllpPort, e);
-            throw new RuntimeException("Unable to establish Connection", e);
+            String errorMessage = String.format("Unable to establish connection to {}:{}", mllpHost, mllpPort);
+            log.error(errorMessage, e);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -81,7 +82,7 @@ public class MllpClientResource extends ExternalResource {
                 clientSocket.close();
             }
         } catch (IOException e) {
-            log.warn("Exception encountered closing connection to {}:{}\n{}", mllpHost, mllpPort, e);
+            log.warn(String.format("Exception encountered closing connection to {}:{}", mllpHost, mllpPort), e);
         } finally {
             inputStream = null;
             outputStream = null;
