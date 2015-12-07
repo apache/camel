@@ -17,6 +17,7 @@
 package org.apache.camel.component.mllp;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.mllp.impl.MllpSocketUtil;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +31,10 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 /**
- * The mllp producer.
+ * The MLLP producer.
  */
 public class MllpTcpClientProducer extends DefaultProducer {
-
-    // Logger log = LoggerFactory.getLogger(this.getClass());
-
-    private MllpEndpoint endpoint;
+    MllpEndpoint endpoint;
 
     Socket socket;
     BufferedOutputStream outputStream;
@@ -138,60 +136,12 @@ public class MllpTcpClientProducer extends DefaultProducer {
             log.debug("Processing message from 'outputStream' message");
         }
 
-        byte[] hl7Bytes = hl7Message.getBytes(endpoint.charset);
+        MllpSocketUtil.writeEnvelopedMessage(hl7Message, endpoint.charset, socket, outputStream);
 
-        outputStream.write(MllpEndpoint.START_OF_BLOCK);
-        outputStream.write(hl7Bytes, 0, hl7Bytes.length);
-        outputStream.write(MllpEndpoint.END_OF_BLOCK);
-        outputStream.write(MllpEndpoint.END_OF_DATA);
-        outputStream.flush();
-
-        StringBuilder acknowledgementBuilder = new StringBuilder();
-
-        try {
-            int inByte = inputStream.read();
-            if ( inByte != MllpEndpoint.START_OF_BLOCK) {
-                // We have out-of-band data
-                StringBuilder outOfBandData = new StringBuilder();
-                do {
-                    outOfBandData.append((char)inByte);
-                    inByte = inputStream.read();
-                } while ( MllpEndpoint.START_OF_BLOCK != inByte );
-                log.warn( "Eating out-of-band data: {}", outOfBandData.toString());
-            }
-
-            if (MllpEndpoint.START_OF_BLOCK != inByte) {
-                throw new MllpEnvelopeException("Message did not start with START_OF_BLOCK");
-            }
-            boolean readingMessage = true;
-            while (readingMessage) {
-                int nextByte = inputStream.read();
-                switch (nextByte) {
-                    case -1:
-                        throw new MllpEnvelopeException("Reached end of stream before END_OF_BLOCK");
-                    case MllpEndpoint.START_OF_BLOCK:
-                        throw new MllpEnvelopeException("Received START_OF_BLOCK before END_OF_BLOCK");
-                    case MllpEndpoint.END_OF_BLOCK:
-                        if (MllpEndpoint.END_OF_DATA != inputStream.read()) {
-                            throw new MllpEnvelopeException("END_OF_BLOCK was not followed by END_OF_DATA");
-                        }
-                        readingMessage = false;
-                        break;
-                    default:
-                        acknowledgementBuilder.append((char) nextByte);
-                }
-            }
-        } catch (SocketTimeoutException timeoutEx ) {
-            log.error( "Timout reading response");
-            throw new MllpResponseTimeoutException( "Timeout reading response", timeoutEx);
-        } catch (IOException e) {
-            log.error("Unable to read HL7 acknowledgement", e);
-            throw new MllpEnvelopeException("Unable to read HL7 acknowledgement", e);
-        }
-
+        String acknowledgement = MllpSocketUtil.readEnvelopedAcknowledgement(endpoint.charset, socket, inputStream);
         log.debug("Populating the exchange");
 
-        exchange.getIn().setBody(acknowledgementBuilder.toString(), String.class);
+        exchange.getIn().setBody(acknowledgement, String.class);
     }
 
     void checkConnection() throws IOException {

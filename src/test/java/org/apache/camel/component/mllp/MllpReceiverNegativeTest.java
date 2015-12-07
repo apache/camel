@@ -1,6 +1,22 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.mllp;
 
-import org.apache.test.junit.rule.mllp.MllpClientResource;
+import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
@@ -10,9 +26,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.junit.Test;
 
-import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
 public class MllpReceiverNegativeTest extends CamelTestSupport {
@@ -25,7 +41,7 @@ public class MllpReceiverNegativeTest extends CamelTestSupport {
     MockEndpoint request;
 
     int connectTimeout = 500;
-    int responseTimeout = 500;
+    int responseTimeout = 5000;
 
     @Override
     public void setUp() throws Exception {
@@ -83,75 +99,6 @@ public class MllpReceiverNegativeTest extends CamelTestSupport {
         };
     }
 
-    @Test
-    public void testMessageBodiesWithOpenMllpEnvelopeWithoutReset() throws Exception {
-        request.expectedMessageCount(4);
-
-        mllpClient.sendMessage(TEST_MESSAGE_1);
-        mllpClient.receiveAcknowledgement();
-
-        mllpClient.sendMessage(TEST_MESSAGE_2);
-        mllpClient.receiveAcknowledgement();
-
-        mllpClient.setSendEndOfBlock(false);
-        mllpClient.setSendEndOfData(false);
-        mllpClient.sendMessage(TEST_MESSAGE_3);
-        // Acknowledgement won't come here
-        try {
-            mllpClient.receiveAcknowledgement();
-        } catch (SocketTimeoutException timeoutEx ) {
-            log.info( "Expected Timeout reading response");
-        }
-
-        mllpClient.setSendEndOfBlock(true);
-        mllpClient.setSendEndOfData(true);
-        mllpClient.sendMessage(TEST_MESSAGE_4);
-        mllpClient.receiveAcknowledgement();
-
-        mllpClient.sendMessage(TEST_MESSAGE_5);
-        mllpClient.receiveAcknowledgement();
-
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
-    }
-
-    @Test
-    public void testAcknowledgementsWithOpenMllpEnvelopeWithoutReset() throws Exception {
-        request.expectedMessageCount(4);
-
-        mllpClient.sendMessage(TEST_MESSAGE_1);
-        String acknowledgement1 = mllpClient.receiveAcknowledgement();
-
-        mllpClient.sendMessage(TEST_MESSAGE_2);
-        String acknowledgement2 = mllpClient.receiveAcknowledgement();
-
-        mllpClient.setSendEndOfBlock(false);
-        mllpClient.setSendEndOfData(false);
-        mllpClient.sendMessage(TEST_MESSAGE_3);
-        // Acknowledgement won't come here
-        try {
-            mllpClient.receiveAcknowledgement();
-        } catch (SocketTimeoutException timeoutEx ) {
-            log.info( "Expected Timeout reading response");
-        }
-
-        mllpClient.setSendEndOfBlock(true);
-        mllpClient.setSendEndOfData(true);
-        mllpClient.sendMessage(TEST_MESSAGE_4);
-        String acknowledgement4 = mllpClient.receiveAcknowledgement();
-
-        mllpClient.sendMessage(TEST_MESSAGE_5);
-        String acknowledgement5 = mllpClient.receiveAcknowledgement();
-
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
-
-        assertTrue("Should be acknowledgment for message 1", acknowledgement1.contains("MSA|AA|10001"));
-        assertTrue("Should be acknowledgment for message 2", acknowledgement2.contains("MSA|AA|10002"));
-        // assertTrue("Should be acknowledgment for message 3", acknowledgement3.contains("MSA|AA|10003"));
-        assertTrue("Should be acknowledgment for message 4", acknowledgement4.contains("MSA|AA|10004"));
-        assertTrue("Should be acknowledgment for message 5", acknowledgement5.contains("MSA|AA|10005"));
-
-    }
-
     @Test(timeout = 15000)
     public void testOpenMllpEnvelopeWithReset() throws Exception {
         request.expectedMessageCount(4);
@@ -168,7 +115,7 @@ public class MllpReceiverNegativeTest extends CamelTestSupport {
         // Acknowledgement won't come here
         try {
             mllpClient.receiveAcknowledgement();
-        } catch (SocketTimeoutException timeoutEx ) {
+        } catch (MllpJUnitResourceException timeoutEx ) {
             log.info( "Expected Timeout reading response");
         }
         mllpClient.disconnect();
@@ -183,14 +130,13 @@ public class MllpReceiverNegativeTest extends CamelTestSupport {
         mllpClient.sendMessage(TEST_MESSAGE_5);
         String acknowledgement5 = mllpClient.receiveAcknowledgement();
 
+        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+
         assertTrue("Should be acknowledgment for message 1", acknowledgement1.contains("MSA|AA|10001"));
         assertTrue("Should be acknowledgment for message 2", acknowledgement2.contains("MSA|AA|10002"));
         // assertTrue("Should be acknowledgment for message 3", acknowledgement3.contains("MSA|AA|10003"));
         assertTrue("Should be acknowledgment for message 4", acknowledgement4.contains("MSA|AA|10004"));
         assertTrue("Should be acknowledgment for message 5", acknowledgement5.contains("MSA|AA|10005"));
-
-
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
     }
 
     static final String TEST_MESSAGE_1 =

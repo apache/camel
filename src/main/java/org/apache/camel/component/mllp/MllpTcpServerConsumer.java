@@ -19,6 +19,7 @@ package org.apache.camel.component.mllp;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.component.mllp.impl.MllpSocketUtil;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultExchange;
 import org.slf4j.Logger;
@@ -124,6 +125,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         ServerSocket serverSocket;
 
         AcceptThread( ServerSocket serverSocket ) {
+            log.info("Creating new AcceptThread");
+
             this.serverSocket = serverSocket;
         }
 
@@ -164,6 +167,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         BufferedOutputStream outputStream;
 
         ClientSocketThread(Socket clientSocket) throws IOException {
+            log.info("Creating new ClientSocketThread");
             this.clientSocket = clientSocket;
             this.clientSocket.setKeepAlive(endpoint.keepAlive);
             this.clientSocket.setTcpNoDelay(endpoint.tcpNoDelay);
@@ -185,71 +189,16 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 // create the exchange
                 Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
 
-                // Read the HL7 Message
-                StringBuilder hl7MessageBuilder = new StringBuilder();
-
-                try {
-                    int inByte = inputStream.read();
-                    if (inByte != MllpEndpoint.START_OF_BLOCK) {
-                        // We have out-of-band data
-                        StringBuilder outOfBandData = new StringBuilder();
-                        do {
-                            if ( -1 == inByte ) {
-                                log.warn("End of buffer reached before START_OF_BLOCK Found", outOfBandData.toString());
-                                return;
-                            } else {
-                                outOfBandData.append((char) inByte);
-                                inByte = inputStream.read();
-                            }
-                        } while (MllpEndpoint.START_OF_BLOCK != inByte );
-                        log.warn("Eating out-of-band data: {}", outOfBandData.toString());
-
-                    }
-
-
-                    if (MllpEndpoint.START_OF_BLOCK != inByte) {
-                        exchange.setException(new MllpEnvelopeException("Message did not start with START_OF_BLOCK"));
-                        return;
-                    }
-
-                    boolean readingMessage = true;
-                    while (readingMessage) {
-                        int nextByte = inputStream.read();
-                        switch (nextByte) {
-                            case -1:
-                                exchange.setException(new MllpEnvelopeException("Reached end of stream before END_OF_BLOCK"));
-                                return;
-                            case MllpEndpoint.START_OF_BLOCK:
-                                exchange.setException(new MllpEnvelopeException("Received START_OF_BLOCK before END_OF_BLOCK"));
-                                return;
-                            case MllpEndpoint.END_OF_BLOCK:
-                                if (MllpEndpoint.END_OF_DATA != inputStream.read()) {
-                                    exchange.setException(new MllpEnvelopeException("END_OF_BLOCK was not followed by END_OF_DATA"));
-                                    return;
-                                }
-                                readingMessage = false;
-                                break;
-                            default:
-                                hl7MessageBuilder.append((char) nextByte);
-                        }
-                    }
-                } catch ( SocketTimeoutException timeoutEx ) {
-                    exchange.setException( new MllpRequestTimeoutException("Timeout reading message", timeoutEx));
-                    if ( hl7MessageBuilder.length() > 0 ) {
-                        log.error( "Timeout reading message after receiveing partial payload:\n{}", hl7MessageBuilder.toString().replace('\r', '\n'));
-                    } else {
-                        log.error( "Timout reading message - no data received");
-                    }
-
-                } catch (IOException e) {
-                    log.error("Unable to read HL7 message", e);
-                    exchange.setException( new MllpException("Unable to read HL7 message", e) );
-                    return;
-                }
-
                 // Send the message on for processing and wait for the response
                 log.debug("Populating the exchange");
-                String hl7Message = hl7MessageBuilder.toString();
+                String hl7Message = null;
+                try {
+                    hl7Message = MllpSocketUtil.readEnvelopedMessage(endpoint.charset, clientSocket, inputStream);
+                } catch (MllpException mllpEx) {
+                    log.error( "Exception encountered reading enveloped message", mllpEx);
+                    exchange.setException( mllpEx );
+                    return;
+                }
 
                 exchange.getIn().setBody(hl7Message, String.class);
                 try {
@@ -257,9 +206,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     // Got the response - send the acknowledgement
 
                     // Find the acknowledgement body
-                    byte[] acknowledgementBytes;
+                    String acknowledgementMessage;
                     if ( endpoint.autoAck ) {
-                        acknowledgementBytes = generateAcknowledgementMessage(hl7Message).getBytes(endpoint.charset);
+                        acknowledgementMessage = generateAcknowledgementMessage(hl7Message);
                     } else {
                         Object exchangeBody = exchange.getOut().getBody();
                         if ( null == exchangeBody ) {
@@ -270,10 +219,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                             exchange.setException(new IllegalArgumentException( "Null Exchange Body sent for acknowledgement"));
                             return;
                         } else {
-                            if ( exchangeBody instanceof byte[] ) {
-                                acknowledgementBytes = (byte[])exchangeBody;
-                            } else if ( exchangeBody instanceof String ) {
-                                acknowledgementBytes = ((String)exchangeBody).getBytes(endpoint.charset);
+                            if ( exchangeBody instanceof String ) {
+                                acknowledgementMessage = ((String)exchangeBody);
                             } else {
                                 exchange.setException( new IllegalArgumentException( "Exchange Body must be String or byte[] for acknowledgement"));
                                 return;
@@ -281,18 +228,14 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         }
                     }
 
-                    // Now we have the acknowledgement, send the response
-                    outputStream.write( MllpEndpoint.START_OF_BLOCK );
-                    outputStream.write( acknowledgementBytes, 0, acknowledgementBytes.length );
-                    outputStream.write( MllpEndpoint.END_OF_BLOCK );
-                    outputStream.write( MllpEndpoint.END_OF_DATA );
-                    outputStream.flush();
-
+                    MllpSocketUtil.writeEnvelopedMessage(acknowledgementMessage, endpoint.charset, clientSocket, outputStream);
                 } catch (Exception e) {
                     exchange.setException( e );
                 }
 
             }
+            log.info("ClientSocketThread exiting");
+
         }
 
         private String generateAcknowledgementMessage(String hl7Message) {
