@@ -1,13 +1,12 @@
 package org.apache.camel.component.mllp;
 
-import com.pronoia.junit.rule.mllp.MllpClientResource;
+import org.apache.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;

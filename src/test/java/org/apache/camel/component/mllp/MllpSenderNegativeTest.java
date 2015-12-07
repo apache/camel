@@ -1,8 +1,7 @@
 package org.apache.camel.component.mllp;
 
-import com.pronoia.junit.rule.mllp.MllpServerResource;
+import org.apache.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.NotifyBuilder;
@@ -12,11 +11,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.net.ConnectException;
-import java.util.concurrent.TimeUnit;
 
 import java.util.concurrent.TimeUnit;
 

@@ -1,4 +1,4 @@
-package com.pronoia.junit.rule.mllp;
+package org.apache.test.junit.rule.mllp;
 
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
