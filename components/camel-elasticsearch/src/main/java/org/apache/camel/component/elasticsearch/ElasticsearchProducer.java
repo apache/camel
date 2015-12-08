@@ -26,6 +26,7 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -55,12 +56,13 @@ public class ElasticsearchProducer extends DefaultProducer {
         // header, the configuration is used.
         // In the event we can't discover the operation from a, b or c we throw
         // an error.
-
         Object request = exchange.getIn().getBody();
         if (request instanceof IndexRequest) {
             return ElasticsearchConstants.OPERATION_INDEX;
         } else if (request instanceof GetRequest) {
             return ElasticsearchConstants.OPERATION_GET_BY_ID;
+        } else if (request instanceof MultiGetRequest) {
+            return ElasticsearchConstants.OPERATION_MULTIGET;
         } else if (request instanceof UpdateRequest) {
             return ElasticsearchConstants.OPERATION_UPDATE;
         } else if (request instanceof BulkRequest) {
@@ -123,13 +125,6 @@ public class ElasticsearchProducer extends DefaultProducer {
             configConsistencyLevel = true;
         }
 
-        boolean configReplicationType = false;
-        String replicationType = message.getHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE, String.class);
-        if (replicationType == null) {
-            message.setHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE, getEndpoint().getConfig().getReplicationType());
-            configReplicationType = true;
-        }
-
         Client client = getEndpoint().getClient();
         if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
@@ -140,6 +135,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
             GetRequest getRequest = message.getBody(GetRequest.class);
             message.setBody(client.get(getRequest));
+        } else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {
+            MultiGetRequest multiGetRequest = message.getBody(MultiGetRequest.class);
+            message.setBody(client.multiGet(multiGetRequest));
         } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
             message.setBody(client.bulk(bulkRequest).actionGet());
@@ -178,10 +176,6 @@ public class ElasticsearchProducer extends DefaultProducer {
 
         if (configConsistencyLevel) {
             message.removeHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL);
-        }
-
-        if (configReplicationType) {
-            message.removeHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE);
         }
 
     }

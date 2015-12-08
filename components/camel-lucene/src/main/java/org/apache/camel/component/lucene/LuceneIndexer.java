@@ -50,9 +50,9 @@ public class LuceneIndexer {
             if (!indexDirectory.exists()) {
                 indexDirectory.mkdir();
             }   
-            this.setNiofsDirectory(new NIOFSDirectory(indexDirectory));
+            this.setNiofsDirectory(new NIOFSDirectory(indexDirectory.toPath()));
         } else {
-            this.setNiofsDirectory(new NIOFSDirectory(new File("./indexDirectory")));
+            this.setNiofsDirectory(new NIOFSDirectory(new File("./indexDirectory").toPath()));
         }
 
         this.setAnalyzer(analyzer);
@@ -143,7 +143,7 @@ public class LuceneIndexer {
     private void openIndexWriter() throws IOException {
         IndexWriterConfig indexWriterConfig;
         // use create or append so we can reuse existing index if already exists
-        indexWriterConfig = new IndexWriterConfig(LuceneConstants.LUCENE_VERSION, getAnalyzer()).setOpenMode(OpenMode.CREATE_OR_APPEND);
+        indexWriterConfig = new IndexWriterConfig(getAnalyzer()).setOpenMode(OpenMode.CREATE_OR_APPEND);
         indexWriter = new IndexWriter(niofsDirectory, indexWriterConfig);
     }
 
@@ -154,7 +154,7 @@ public class LuceneIndexer {
 
     private static FieldType createFieldType(boolean tokenized) {
         FieldType answer = new FieldType();
-        answer.setIndexed(true);
+        //answer.setIndexed(true);
         answer.setStored(true);
         answer.setTokenized(tokenized);
 

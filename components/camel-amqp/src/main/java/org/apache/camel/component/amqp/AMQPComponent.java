@@ -17,6 +17,7 @@
 package org.apache.camel.component.amqp;
 
 import java.net.MalformedURLException;
+import java.util.Set;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -28,6 +29,8 @@ import org.apache.qpid.jms.JmsConnectionFactory;
  * This component supports the AMQP protocol using the Client API of the Apache Qpid project.
  */
 public class AMQPComponent extends JmsComponent {
+
+    // Constructors
 
     public AMQPComponent() {
         super(AMQPEndpoint.class);
@@ -45,6 +48,22 @@ public class AMQPComponent extends JmsComponent {
         setConnectionFactory(connectionFactory);
     }
 
+    // Life-cycle
+
+    @Override
+    protected void doStart() throws Exception {
+        Set<AMQPConnectionDetails> connectionDetails = getCamelContext().getRegistry().findByType(AMQPConnectionDetails.class);
+        if (connectionDetails.size() == 1) {
+            AMQPConnectionDetails details = connectionDetails.iterator().next();
+            JmsConnectionFactory connectionFactory = new JmsConnectionFactory(details.username(), details.password(), details.uri());
+            connectionFactory.setTopicPrefix("topic://");
+            setConnectionFactory(connectionFactory);
+        }
+        super.doStart();
+    }
+
+    // Factory methods
+
     /**
      * Use {@code amqpComponent(String uri)} instead.
      */
@@ -57,6 +76,12 @@ public class AMQPComponent extends JmsComponent {
 
     public static AMQPComponent amqpComponent(String uri) {
         JmsConnectionFactory connectionFactory = new JmsConnectionFactory(uri);
+        connectionFactory.setTopicPrefix("topic://");
+        return new AMQPComponent(connectionFactory);
+    }
+
+    public static AMQPComponent amqpComponent(String uri, String username, String password) {
+        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(username, password, uri);
         connectionFactory.setTopicPrefix("topic://");
         return new AMQPComponent(connectionFactory);
     }

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,6 +26,9 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.get.MultiGetItemResponse;
+import org.elasticsearch.action.get.MultiGetRequest.Item;
+import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Test;
@@ -118,6 +123,47 @@ public class ElasticsearchGetSearchDeleteUpdateTest extends ElasticsearchBaseTes
         GetResponse response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
+    }
+    
+    @Test
+    public void testMultiGet() throws Exception {
+        //first, INDEX two values
+        Map<String, String> map = createIndexedData();
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "1");
+
+        template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        
+        headers.clear();
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "facebook");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "status");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "2");
+        
+        template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        headers.clear();
+
+        //now, verify MULTIGET
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_MULTIGET);
+        Item item1 = new Item("twitter", "tweet", "1");
+        Item item2 = new Item("facebook", "status", "2");
+        Item item3 = new Item("instagram", "latest", "3");
+        List<Item> list = new ArrayList<Item>();
+        list.add(item1);
+        list.add(item2);
+        list.add(item3);
+        MultiGetResponse response = template.requestBodyAndHeaders("direct:start", list, headers, MultiGetResponse.class);
+        MultiGetItemResponse[] responses = response.getResponses();
+        assertNotNull("response should not be null", response);
+        assertEquals("response should contains three multiGetResponse object", 3, response.getResponses().length);
+        assertEquals("response 1 should contains tweet as type", "tweet", responses[0].getResponse().getType().toString());
+        assertEquals("response 2 should contains status as type", "status", responses[1].getResponse().getType().toString());
+        assertFalse("response 1 should be ok", responses[0].isFailed());
+        assertFalse("response 2 should be ok", responses[1].isFailed());
+        assertTrue("response 3 should be failed", responses[2].isFailed());
     }
 
     @Test
@@ -215,6 +261,7 @@ public class ElasticsearchGetSearchDeleteUpdateTest extends ElasticsearchBaseTes
                 from("direct:start").to("elasticsearch://local");
                 from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
                 from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
+                from("direct:multiget").to("elasticsearch://local?operation=MULTIGET&indexName=twitter&indexType=tweet");
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
                 from("direct:search").to("elasticsearch://local?operation=SEARCH&indexName=twitter&indexType=tweet");
                 from("direct:update").to("elasticsearch://local?operation=UPDATE&indexName=twitter&indexType=tweet");

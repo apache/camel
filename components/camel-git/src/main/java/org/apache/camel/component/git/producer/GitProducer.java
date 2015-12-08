@@ -29,6 +29,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -154,7 +155,12 @@ public class GitProducer extends DefaultProducer {
         try {
             File localRepo = new File(endpoint.getLocalPath(), "");
             if (!localRepo.exists()) {
-                result = git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
+                    UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                    result = git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                } else {
+                    result = git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                }
             } else {
                 throw new IllegalArgumentException("The local repository directory already exists");
             }
@@ -219,16 +225,27 @@ public class GitProducer extends DefaultProducer {
 
     protected void doCommit(Exchange exchange, String operation) throws Exception {
         String commitMessage = null;
+        String username = null;
+        String email = null;
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_MESSAGE))) {
             commitMessage = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_MESSAGE, String.class);
         } else {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME)) 
+                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
+            username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
+            email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
+        }
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
-            git.commit().setMessage(commitMessage).call();
+            if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
+                git.commit().setCommitter(username, email).setMessage(commitMessage).call();
+            } else {
+                git.commit().setMessage(commitMessage).call();
+            }
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
@@ -237,16 +254,27 @@ public class GitProducer extends DefaultProducer {
 
     protected void doCommitAll(Exchange exchange, String operation) throws Exception {
         String commitMessage = null;
+        String username = null;
+        String email = null;
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_MESSAGE))) {
             commitMessage = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_MESSAGE, String.class);
         } else {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME)) 
+                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
+            username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
+            email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
+        }
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
-            git.commit().setAll(true).setMessage(commitMessage).call();
+            if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
+                git.commit().setAll(true).setCommitter(username, email).setMessage(commitMessage).call();
+            } else {
+                git.commit().setAll(true).setMessage(commitMessage).call();
+            }
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;

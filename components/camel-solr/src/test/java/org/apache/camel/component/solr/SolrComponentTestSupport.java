@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.solr;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -69,10 +71,10 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
         template.sendBodyAndHeader("direct:start", "", SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
     }
 
-    protected QueryResponse executeSolrQuery(String query) throws SolrServerException {
+    protected QueryResponse executeSolrQuery(String query) throws SolrServerException, IOException {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(query);
-        SolrServer solrServer = solrFixtures.getServer();
+        SolrClient solrServer = solrFixtures.getServer();
         return solrServer.query(solrQuery);
     }
 

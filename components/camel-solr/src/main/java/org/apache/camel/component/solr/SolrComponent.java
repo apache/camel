@@ -16,16 +16,17 @@
  */
 package org.apache.camel.component.solr;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
-import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,31 +41,31 @@ public class SolrComponent extends UriEndpointComponent {
     protected static final class SolrServerReference {
 
         private final AtomicInteger referenceCounter = new AtomicInteger();
-        private HttpSolrServer solrServer;
-        private ConcurrentUpdateSolrServer updateSolrServer;
-        private CloudSolrServer cloudSolrServer;
+        private HttpSolrClient solrServer;
+        private ConcurrentUpdateSolrClient updateSolrServer;
+        private CloudSolrClient cloudSolrServer;
 
-        public HttpSolrServer getSolrServer() {
+        public HttpSolrClient getSolrServer() {
             return solrServer;
         }
 
-        public void setSolrServer(HttpSolrServer solrServer) {
+        public void setSolrServer(HttpSolrClient solrServer) {
             this.solrServer = solrServer;
         }
 
-        public ConcurrentUpdateSolrServer getUpdateSolrServer() {
+        public ConcurrentUpdateSolrClient getUpdateSolrServer() {
             return updateSolrServer;
         }
 
-        public void setUpdateSolrServer(ConcurrentUpdateSolrServer updateSolrServer) {
+        public void setUpdateSolrServer(ConcurrentUpdateSolrClient updateSolrServer) {
             this.updateSolrServer = updateSolrServer;
         }
         
-        public CloudSolrServer getCloudSolrServer() {
+        public CloudSolrClient getCloudSolrServer() {
             return cloudSolrServer;
         }
 
-        public void setCloudSolrServer(CloudSolrServer cloudServer) {
+        public void setCloudSolrServer(CloudSolrClient cloudServer) {
             cloudSolrServer = cloudServer;
         }
 
@@ -108,10 +109,10 @@ public class SolrComponent extends UriEndpointComponent {
         shutdownServers(ref, false);
     }
     
-    private void shutdownServer(SolrServer server) {
+    private void shutdownServer(SolrClient server) throws IOException {
         if (server != null) {
             LOG.info("Shutting down solr server: {}", server);
-            server.shutdown();
+            server.close();
         }
     }
 

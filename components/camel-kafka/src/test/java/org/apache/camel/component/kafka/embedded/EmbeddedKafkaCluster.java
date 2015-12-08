@@ -26,7 +26,8 @@ import java.util.Properties;
 import kafka.admin.AdminUtils;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
-import org.I0Itec.zkclient.ZkClient;
+import kafka.utils.ZkUtils;
+import scala.Option;
 
 public class EmbeddedKafkaCluster {
     private final List<Integer> ports;
@@ -56,16 +57,16 @@ public class EmbeddedKafkaCluster {
         this.brokerList = constructBrokerList(this.ports);
     }
 
-    public ZkClient getZkClient() {
+    public ZkUtils getZkUtils() {
         for (KafkaServer server : brokers) {
-            return server.zkClient();
+            return server.zkUtils();
         }
         return null;
     }
 
     public void createTopics(String...topics) {
         for (String topic : topics) {
-            AdminUtils.createTopic(getZkClient(), topic, 2, 1, new Properties());
+            AdminUtils.createTopic(getZkUtils(), topic, 2, 1, new Properties());
         }
     }
 
@@ -121,7 +122,7 @@ public class EmbeddedKafkaCluster {
 
 
     private KafkaServer startBroker(Properties props) {
-        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime());
+        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String>empty());
         server.startup();
         return server;
     }

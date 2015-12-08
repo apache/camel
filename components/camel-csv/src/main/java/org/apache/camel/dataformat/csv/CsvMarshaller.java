@@ -22,7 +22,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -130,17 +129,14 @@ abstract class CsvMarshaller {
      * This marshaller adapts the columns but always keep them in the same order
      */
     private static final class DynamicColumnsMarshaller extends CsvMarshaller {
-        private final LinkedHashSet<Object> columns = new LinkedHashSet<Object>();
-
         private DynamicColumnsMarshaller(CSVFormat format) {
             super(format);
         }
 
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
-            columns.addAll(map.keySet());
-            List<Object> result = new ArrayList<Object>(columns.size());
-            for (Object key : columns) {
+            List<Object> result = new ArrayList<Object>(map.size());
+            for (Object key : map.keySet()) {
                 result.add(map.get(key));
             }
             return result;

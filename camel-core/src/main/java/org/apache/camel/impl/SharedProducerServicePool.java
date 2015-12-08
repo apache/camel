@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.NonManagedService;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.StaticService;
 
@@ -25,7 +26,7 @@ import org.apache.camel.StaticService;
  *
  * @version 
  */
-public class SharedProducerServicePool extends DefaultProducerServicePool implements ShutdownableService, StaticService {
+public class SharedProducerServicePool extends DefaultProducerServicePool implements ShutdownableService, StaticService, NonManagedService {
 
     public SharedProducerServicePool() {
     }

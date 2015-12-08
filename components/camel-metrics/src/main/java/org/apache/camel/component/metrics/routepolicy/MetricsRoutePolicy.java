@@ -22,6 +22,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
@@ -31,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * The metrics is reported in JMX by default, but this can be configured.
  */
-public class MetricsRoutePolicy extends RoutePolicySupport {
+public class MetricsRoutePolicy extends RoutePolicySupport implements NonManagedService {
 
     private MetricRegistry metricsRegistry;
     private MetricsRegistryService registryService;
@@ -164,7 +165,6 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         answer = answer.replaceFirst("##name##", name);
         answer = answer.replaceFirst("##routeId##", route.getId());
         answer = answer.replaceFirst("##type##", type);
-        // use dot to separate context from route, and dot for the type name
         return answer;
     }
 
