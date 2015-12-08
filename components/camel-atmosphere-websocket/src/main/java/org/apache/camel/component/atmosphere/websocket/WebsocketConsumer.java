@@ -50,6 +50,8 @@ public class WebsocketConsumer extends ServletConsumer {
         framework.addInitParameter(ApplicationConfig.WEBSOCKET_SUPPORT, "true");
         framework.addInitParameter(ApplicationConfig.WEBSOCKET_PROTOCOL, 
             endpoint.isUseStreaming() ? WebsocketStreamHandler.class.getName() : WebsocketHandler.class.getName());
+        //REVISIT we need to disable JSR356 detection for now when using jetty-9.3 when using atmosphere-2.4.x
+        framework.addInitParameter("org.atmosphere.suppressDetectingJSR356", "true");
         framework.init();
         
         WebSocketProtocol wsp = framework.getWebSocketProtocol();
