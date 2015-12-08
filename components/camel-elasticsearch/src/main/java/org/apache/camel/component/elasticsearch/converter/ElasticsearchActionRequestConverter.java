@@ -123,9 +123,9 @@ public final class ElasticsearchActionRequestConverter {
         MultiGetRequest multiGetRequest = new MultiGetRequest();
         Iterator<Item> it = items.iterator();
         while (it.hasNext()) {
-			MultiGetRequest.Item item = (MultiGetRequest.Item) it.next();
-			multiGetRequest.add(item);
-		}
+            MultiGetRequest.Item item = (MultiGetRequest.Item) it.next();
+            multiGetRequest.add(item);
+        }
         return multiGetRequest;
     }
 
