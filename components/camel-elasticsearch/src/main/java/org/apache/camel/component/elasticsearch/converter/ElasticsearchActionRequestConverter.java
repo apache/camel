@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.elasticsearch.converter;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,8 @@ import org.elasticsearch.action.WriteConsistencyLevel;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.MultiGetRequest;
+import org.elasticsearch.action.get.MultiGetRequest.Item;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -112,6 +115,18 @@ public final class ElasticsearchActionRequestConverter {
                 .type(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_INDEX_TYPE,
                         String.class)).id(id);
+    }
+    
+    @Converter
+    public static MultiGetRequest toMultiGetRequest(Object document, Exchange exchange) {
+        List<Item> items = (List<Item>) document;
+        MultiGetRequest multiGetRequest = new MultiGetRequest();
+        Iterator<Item> it = items.iterator();
+        while (it.hasNext()) {
+			MultiGetRequest.Item item = (MultiGetRequest.Item) it.next();
+			multiGetRequest.add(item);
+		}
+        return multiGetRequest;
     }
 
     @Converter

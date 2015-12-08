@@ -26,6 +26,7 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -60,6 +61,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             return ElasticsearchConstants.OPERATION_INDEX;
         } else if (request instanceof GetRequest) {
             return ElasticsearchConstants.OPERATION_GET_BY_ID;
+        } else if (request instanceof MultiGetRequest) {
+            return ElasticsearchConstants.OPERATION_MULTIGET;
         } else if (request instanceof UpdateRequest) {
             return ElasticsearchConstants.OPERATION_UPDATE;
         } else if (request instanceof BulkRequest) {
@@ -132,6 +135,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
             GetRequest getRequest = message.getBody(GetRequest.class);
             message.setBody(client.get(getRequest));
+        } else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {
+            MultiGetRequest multiGetRequest = message.getBody(MultiGetRequest.class);
+            message.setBody(client.multiGet(multiGetRequest));
         } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
             message.setBody(client.bulk(bulkRequest).actionGet());
