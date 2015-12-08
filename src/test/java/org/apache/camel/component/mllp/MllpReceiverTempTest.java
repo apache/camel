@@ -16,43 +16,30 @@
  */
 package org.apache.camel.component.mllp;
 
+import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-public class MllpLoopbackTest extends CamelTestSupport {
+public class MllpReceiverTempTest extends CamelTestSupport {
+    int MLLP_PORT = AvailablePortFinder.getNextAvailable();
 
     @EndpointInject( uri = "mock://result")
     MockEndpoint result;
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
-        RouteBuilder[] builders = new RouteBuilder[2];
-
-        builders[0] = new RouteBuilder() {
-            String routeId = "mllp-sender";
-
-            String host = "0.0.0.0";
-            int port = 7777;
-
-            public void configure() {
-                fromF( "direct://trigger").routeId(routeId)
-                        .log(LoggingLevel.INFO, routeId, "Sending: ${body}" )
-                        .toF( "mllp://%s:%d", host, port)
-                ;
-            }
-        };
-
-        builders[1]  = new RouteBuilder() {
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
             String routeId = "mllp-receiver";
 
             String host = "0.0.0.0";
-            int port = 7777;
+            int port = MLLP_PORT;
 
             public void configure() {
 //                fromF("mllp:%s:%d?autoAck=false", host, port)
@@ -64,20 +51,20 @@ public class MllpLoopbackTest extends CamelTestSupport {
             }
         };
 
-        return builders;
     }
 
     @Test
-    public void testLoopbackWithOneMessage() throws Exception {
+    public void testReceiveSingleMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBody( "direct://trigger", TEST_MESSAGE_1);
+        MllpClientResource client = new MllpClientResource(MLLP_PORT);
+        client.sendMessage( TEST_MESSAGE );
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }
 
-    static final String TEST_MESSAGE_1 =
+    static final String TEST_MESSAGE =
             "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20150107161440|RISTECH|ADT^A08|10001|D|2.3^^|||||||" + '\r' +
                     "EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC||" + '\r' +
                     "PID|1|2100355^^^MRN^MRN|2100355^^^MRN^MRN||MDCLS9^MC9||19700109|F||U|111 HOVER STREET^^LOS ANGELES^CA^90032^USA^P^^LOS ANGELE|LOS ANGELE|(310)725-6952^P^PH^^^310^7256952||ENGLISH|U||60000013647|565-33-2222|||U||||||||N||" + '\r' +
