@@ -14,7 +14,9 @@ This example shows how you can embed Apache ActiveMQ Broker and Camel in a web a
 You will need to build this example first:
 
 	mvn install
-  
+
+## Run 
+
 Which will create a `.war` file in the target directly.
 
 You can then deploy this `.war` file in any web container such as
@@ -25,11 +27,15 @@ which will continuously send a message per second to an inbox queue.
 Then another Camel route will route messages from the inbox
 to the outbox queue.
 
-This example is documented at
-	[http://camel.apache.org/activemq-camel-tomcat.html](http://camel.apache.org/activemq-camel-tomcat.html)
+## Configuration
 
 The ActiveMQ broker is configured in the `src/main/resources/broker.xml` file.
 And the Camel application in the `src/main/resources/camel-context.xml` file.
+
+## Documentation
+
+This example is documented at
+	[http://camel.apache.org/activemq-camel-tomcat.html](http://camel.apache.org/activemq-camel-tomcat.html)
 
 ## Forum, Help, etc 
 
