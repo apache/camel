@@ -10,13 +10,13 @@ View the individual example READMEs for details.
 
 ### Documentation
 
-They are described in detail here [http://camel.apache.org/examples.html](http://camel.apache.org/examples.html)
+They are described in detail here <http://camel.apache.org/examples.html>
 
-Before you start we recommend you install a recent distribution of Maven, which we use to run our examples [http://maven.apache.org/](http://maven.apache.org/)
+Before you start we recommend you install a recent distribution of Maven, which we use to run our examples <http://maven.apache.org/>
 
 ### Forum, Help, etc 
 
-If you hit an problems please let us know on the Camel Forums [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

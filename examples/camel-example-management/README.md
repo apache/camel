@@ -1,5 +1,6 @@
-Camel JMX Management
-====================
+# Camel JMX Management
+
+### Introduction
 
 This example shows how to manage Camel using JMX (with jconsole)
 
@@ -34,36 +35,43 @@ the JMS consumer is restarted. So do a stop and start operation.
 What you should see is that Camel should be able to process the files much faster now and the logger should
 output a higher throughput.
 
+### Build
+
 You will need to compile this example first:
-  mvn compile
+
+	mvn compile
+
+
+### Run
 
 To run the example type
-  mvn camel:run
+
+	mvn camel:run
 
 To use jconsole type
-  jconsole
+
+	jconsole
 
 And you should be able to see a process id in the connect to agent tab.
 If its there then click in and you should be connected to the Camel application.
 If its missing you can click on the advanced tab and type in JMX URL:
-  service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel
+  `service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel`
   (some older versions of Java does not list the local processes)
 
 You can see the routing rules by looking at the java code in the
-src/main/java directory and the Spring XML configuration lives in
-src/main/resources/META-INF/spring
+`src/main/java directory` and the Spring XML configuration lives in
+`src/main/resources/META-INF/spring`
 
-To stop the example hit ctrl + c
+To stop the example hit `ctrl + c`
 
+### Documentation
 
 This example is documented at
-  http://camel.apache.org/management-example.html
+  <http://camel.apache.org/management-example.html>
 
-If you hit any problems please talk to us on the Camel Forums
-  http://camel.apache.org/discussion-forums.html
+### Forum, Help, etc 
 
-Please help us make Apache Camel better - we appreciate any feedback you
-may have.  Enjoy!
+If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
 
-------------------------
-The Camel riders!
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!

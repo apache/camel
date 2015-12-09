@@ -1,5 +1,6 @@
-Camel MyBatis Example
-=====================
+# Camel MyBatis Example
+
+### Introduction
 
 This example shows how to exchange data using a shared database table.
 
@@ -10,35 +11,43 @@ The second route pickup the newly inserted rows from the table,
 process the row(s), and mark the row(s) as processed when done;
 to avoid picking up the same rows again.
 
+### Build
+
 You will need to install this example first to your local maven repository with:
-  mvn install
+
+	mvn install
+
+### Run
 
 This example requires running in Apache Karaf / ServiceMix
 
-You can install this example from the shell using this example's "features.xml"
+You can install this example from the shell using this example's `features.xml`
 for easy provisioning.
 
-  features:addUrl mvn:org.apache.camel/camel-example-mybatis/${version}/xml/features
-  features:install camel-example-mybatis
+	features:addUrl mvn:org.apache.camel/camel-example-mybatis/${version}/xml/features
+	features:install camel-example-mybatis
 
 And you can see the application running by tailing the logs
 
-  log:tail
+	log:tail
 
-And you can use ctrl + c to stop tailing the log.
+And you can use `ctrl + c` to stop tailing the log.
+
+### Configuration
 
 This example uses OSGi Blueprint to setup and configure the database,
 as well the CamelContext. You can see this in the following file:
-In the src/main/resources/OSGI-INF/blueprint/camel-mybatis.xml
+In the `src/main/resources/OSGI-INF/blueprint/camel-mybatis.xml`
+
+
+### Documentation
 
 This example is documented at
-  http://camel.apache.org/mybatis-example.html
+  <http://camel.apache.org/mybatis-example.html>
 
-If you hit any problems please talk to us on the Camel Forums
-  http://camel.apache.org/discussion-forums.html
+### Forum, Help, etc 
 
-Please help us make Apache Camel better - we appreciate any feedback you
-may have.  Enjoy!
+If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
 
-------------------------
-The Camel riders!
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!
