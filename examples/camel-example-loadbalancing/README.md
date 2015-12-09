@@ -1,5 +1,7 @@
-Load balancing with MINA Example
-================================
+# Load balancing with MINA Example
+
+
+### Introduction
 
 This example shows how you can easily use the Camel-MINA component to design a solution
 allowing for distributing message workload onto several servers.
@@ -17,34 +19,37 @@ server to the client, which then logs the reply on the console.
 If any of the two MINA servers is not running, then the load balancer will automatic failover
 to the next server.
 
-Running the example
-===================
+### Build
 
 To compile and install the project in your maven repo, execute the following 
 command on the root of the project
 
-mvn clean install 
+	mvn clean install 
+
+### Run
 
 To run the example, then execute the following command in the respective folder:
 
 >mina1
-mvn exec:java -Pmina1
+
+	mvn exec:java -Pmina1
 
 >mina2
-mvn exec:java -Pmina2 
+
+	mvn exec:java -Pmina2 
 
 >loadbalancing
-mvn exec:java -Ploadbalancer
 
+	mvn exec:java -Ploadbalancer
+
+### Documentation
 
 This example is documented at
-  http://camel.apache.org/loadbalancing-mina-example.html
+  <http://camel.apache.org/loadbalancing-mina-example.html>
 
-If you hit any problems please let us know on the Camel Forums
-  http://camel.apache.org/discussion-forums.html
+### Forum, Help, etc 
+
+If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
-
-------------------------
-The Camel Riders!
