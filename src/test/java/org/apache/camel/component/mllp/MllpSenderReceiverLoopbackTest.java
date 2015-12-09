@@ -56,7 +56,7 @@ public class MllpSenderReceiverLoopbackTest extends CamelTestSupport {
 
             public void configure() {
 //                fromF("mllp:%s:%d?autoAck=false", host, port)
-                fromF("mllp:%d?autoAck=false", port)
+                fromF("mllp:%d?autoAck=true", port)
                         .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
                         .to("mock:result")
                         .setBody().constant("Got It")

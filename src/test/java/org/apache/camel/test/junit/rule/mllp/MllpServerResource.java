@@ -49,8 +49,11 @@ public class MllpServerResource extends ExternalResource {
     int disconnectBeforeAcknowledgementModulus = 0;
     int disconnectAfterAcknowledgementModulus = 0;
 
-    Pattern sendApplicationRejectAcknowledgementPattern;
-    Pattern sendApplicationErrorAcknowledgementPattern;
+    int sendApplicationRejectAcknowledgementModulus = 0;
+    int sendApplicationErrorAcknowledgementModulus = 0;
+
+    Pattern sendApplicationRejectAcknowledgementPattern = null;
+    Pattern sendApplicationErrorAcknowledgementPattern = null;
 
     ServerSocketThread serverSocketThread;
 
@@ -118,6 +121,15 @@ public class MllpServerResource extends ExternalResource {
     public boolean sendApplicationErrorAcknowledgement(String hl7Message) {
         return evaluatePatten(hl7Message, this.sendApplicationRejectAcknowledgementPattern);
     }
+
+    public boolean sendApplicationRejectAcknowledgement(int messageCount) {
+        return evaluateModulus(messageCount, this.sendApplicationRejectAcknowledgementModulus);
+    }
+
+    public boolean sendApplicationErrorAcknowledgement(int messageCount) {
+        return evaluateModulus(messageCount, this.sendApplicationErrorAcknowledgementModulus);
+    }
+
 
     public boolean excludeStartOfBlock(int messageCount) {
         return evaluateModulus(messageCount, excludeStartOfBlockModulus);
@@ -331,6 +343,30 @@ public class MllpServerResource extends ExternalResource {
         }
     }
 
+    public int getSendApplicationRejectAcknowledgementModulus() {
+        return sendApplicationRejectAcknowledgementModulus;
+    }
+
+    public void setSendApplicationRejectAcknowledgementModulus(int sendApplicationRejectAcknowledgementModulus) {
+        if ( 0 > sendApplicationRejectAcknowledgementModulus ) {
+            this.sendApplicationRejectAcknowledgementModulus = 0;
+        } else {
+            this.sendApplicationRejectAcknowledgementModulus = sendApplicationRejectAcknowledgementModulus;
+        }
+    }
+
+    public int getSendApplicationErrorAcknowledgementModulus() {
+        return sendApplicationErrorAcknowledgementModulus;
+    }
+
+    public void setSendApplicationErrorAcknowledgementModulus(int sendApplicationErrorAcknowledgementModulus) {
+        if ( 0 > sendApplicationErrorAcknowledgementModulus ) {
+            this.sendApplicationErrorAcknowledgementModulus = 0;
+        } else {
+            this.sendApplicationErrorAcknowledgementModulus = sendApplicationErrorAcknowledgementModulus;
+        }
+    }
+
     public Pattern getSendApplicationRejectAcknowledgementPattern() {
         return sendApplicationRejectAcknowledgementPattern;
     }
@@ -453,9 +489,9 @@ public class MllpServerResource extends ExternalResource {
 
                         String acknowledgmentMessage;
 
-                        if (sendApplicationErrorAcknowledgement(parsedHL7Message)) {
+                        if ( sendApplicationErrorAcknowledgement(messageCounter) || sendApplicationErrorAcknowledgement(parsedHL7Message) ) {
                             acknowledgmentMessage = generateAcknowledgementMessage(parsedHL7Message, "AE");
-                        } else if (sendApplicationRejectAcknowledgement(parsedHL7Message)) {
+                        } else if ( sendApplicationRejectAcknowledgement(messageCounter) || sendApplicationRejectAcknowledgement(parsedHL7Message) ) {
                             acknowledgmentMessage = generateAcknowledgementMessage(parsedHL7Message, "AR");
                         } else {
                             acknowledgmentMessage = generateAcknowledgementMessage(parsedHL7Message);

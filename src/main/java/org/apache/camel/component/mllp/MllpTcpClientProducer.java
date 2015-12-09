@@ -17,6 +17,7 @@
 package org.apache.camel.component.mllp;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.mllp.impl.MllpConstants;
 import org.apache.camel.component.mllp.impl.MllpSocketUtil;
 import org.apache.camel.impl.DefaultProducer;
 
@@ -149,6 +150,58 @@ public class MllpTcpClientProducer extends DefaultProducer {
                     exchange.getOut().setBody(new String(acknowledgementBytes, endpoint.charset), String.class);
                 } else {
                     exchange.getOut().setBody(acknowledgementBytes, byte[].class);
+                }
+                // Now, check for a NACK
+                byte fieldDelim = acknowledgementBytes[3];
+                // First, find the beginning of the MSA segment - should be the second segment
+                int msaStartIndex = -1;
+                for ( int i = 0; i<acknowledgementBytes.length; ++i ) {
+                    if (MllpConstants.SEGMENT_DELIMITER == acknowledgementBytes[i]) {
+                        final byte M = 77;
+                        final byte S = 83;
+                        final byte A = 65;
+                        final byte E = 69;
+                        final byte R = 82;
+                        /* We've found the start of a new segment - make sure peeking ahead
+                           won't run off the end of the array - we need at least 7 more bytes
+                         */
+                        if ( acknowledgementBytes.length > i + 7 ) {
+                            // We can safely peek ahead
+                            if ( M == acknowledgementBytes[i+1] && S == acknowledgementBytes[i+2] && A == acknowledgementBytes[i+3] && fieldDelim == acknowledgementBytes[i+4]) {
+                                // Found the beginning of the MSA - the next two bytes should be our acknowledgement code
+                                msaStartIndex = i+1;
+                                if ( A != acknowledgementBytes[i+5] ) {
+                                    exchange.setException( new MllpInvalidAcknowledgementException( new String( acknowledgementBytes)));
+                                } else {
+                                    switch ( acknowledgementBytes[i+6] ) {
+                                        case A:
+                                            // We have an AA - make sure that's the end of the field
+                                            if ( fieldDelim != acknowledgementBytes[i+7] ) {
+                                                exchange.setException( new MllpInvalidAcknowledgementException( new String( acknowledgementBytes)));
+                                            }
+                                            break;
+                                        case E:
+                                            // We have an AE
+                                            exchange.setException( new MllpApplicationErrorAcknowledgementException( new String( acknowledgementBytes) ) );
+                                            break;
+                                        case R:
+                                            exchange.setException( new MllpApplicationRejectAcknowledgementException( new String( acknowledgementBytes) ) );
+                                            break;
+                                        default:
+                                            exchange.setException( new MllpInvalidAcknowledgementException( new String( acknowledgementBytes)));
+                                            // Oh boy ....
+                                    }
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+
+                }
+                if ( -1 == msaStartIndex ) {
+                    // Didn't find an MSA
+                    exchange.setException( new MllpInvalidAcknowledgementException( new String( acknowledgementBytes)));
                 }
             }
         } else {
