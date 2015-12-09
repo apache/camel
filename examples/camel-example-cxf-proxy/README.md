@@ -49,6 +49,8 @@ Then make SOAP requests of this format:
 	   </soapenv:Body>
 	</soapenv:Envelope>
 
+### Documentation
+
 This example is documented at [http://camel.apache.org/cxf-proxy-example.html](http://camel.apache.org/cxf-proxy-example.html)
 
 ### Forum, Help, etc 
