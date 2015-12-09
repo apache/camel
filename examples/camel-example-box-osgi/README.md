@@ -1,25 +1,29 @@
 # Box.com OSGi Example
 
-## Introduction
+### Introduction
 
 A simple example which sets up a camel route to upload files
 found in an `inbox` directory to a box.com account.
 
+#### Camel component used in this example
 
-## Build
+* camel-code
+* camel-bom
+
+### Build
 
 First you will need to compile the example:
   mvn install
 
-## Run
+### Run
 
 To run the example on Apache Karaf 2.3.x
 
-## Step 1 
+#### Step 1 
 
 Launch karaf
 
-## Step 2 
+#### Step 2 
 
 Add features required
 
@@ -27,7 +31,7 @@ Add features required
 	features:install camel-spring
 	features:install camel-box
 
-## Step 3
+#### Step 3
 
 Create a `box.properties` file in the Karaf base directory with the following properties
 set to your box account credentials.
@@ -37,21 +41,21 @@ set to your box account credentials.
         box.clientId=
         box.clientSecret=
 
-## Step 4
+#### Step 4
 
 Deploy the example
 	
 	osgi:install -s mvn:org.apache.camel/camel-example-box-osgi/${version}
 
-## Step 5
+#### Step 5
 
 Copy files to the `inbox` directory in the Karaf base directory.
 
-## Step 6
+#### Step 6
 
 Watch them get transferred to your box.com account.
 
-## Forum, Help, etc 
+### Forum, Help, etc 
 
 If you hit an problems please let us know on the Camel Forums
   [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)

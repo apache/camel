@@ -1,17 +1,17 @@
 # Camel BAM Example
 
-## Introduction 
+### Introduction 
 
 This example shows how to perform Business Activity Monitoring (BAM)
 with Camel. 
 
-### Camel component used in this example
+#### Camel component used in this example
 
 * camel-bam
 * camel-jaxb
 * camel-juel
 
-## Build
+### Build
 
 You will need to compile this example first:
   mvn compile
@@ -19,7 +19,7 @@ You will need to compile this example first:
 For a background in BAM see
   http://camel.apache.org/bam.html
 
-## Run
+### Run
 
 To run the example with Maven, type
   mvn camel:run
@@ -29,12 +29,12 @@ You can see the BAM activies defined in
   
 To stop the example hit ctrl + c
 
-## Documentation
+### Documentation
 
 This example is documented at
   http://camel.apache.org/bam-example.html
 
-## Forum, Help, etc 
+### Forum, Help, etc 
 
 If you hit an problems please let us know on the Camel Forums
   [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)

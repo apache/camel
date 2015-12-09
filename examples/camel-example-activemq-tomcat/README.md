@@ -1,21 +1,21 @@
 # Embedded ActiveMQ Broker with Camel running in Apache Tomcat
 
-## Introduction 
+### Introduction 
 This example shows how you can embed Apache ActiveMQ Broker and Camel in a web application, which can run on Apache Tomcat or other web containers.
 
-### Camel component used in this example
+#### Camel component used in this example
 
 * camel-core
 * camel-jms
 * camel-spring
 
-## Build 
+### Build 
 
 You will need to build this example first:
 
 	mvn install
 
-## Run 
+### Run 
 
 Which will create a `.war` file in the target directly.
 
@@ -27,17 +27,17 @@ which will continuously send a message per second to an inbox queue.
 Then another Camel route will route messages from the inbox
 to the outbox queue.
 
-## Configuration
+### Configuration
 
 The ActiveMQ broker is configured in the `src/main/resources/broker.xml` file.
 And the Camel application in the `src/main/resources/camel-context.xml` file.
 
-## Documentation
+### Documentation
 
 This example is documented at
 	[http://camel.apache.org/activemq-camel-tomcat.html](http://camel.apache.org/activemq-camel-tomcat.html)
 
-## Forum, Help, etc 
+### Forum, Help, etc 
 
 If you hit an problems please let us know on the Camel Forums
   [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
