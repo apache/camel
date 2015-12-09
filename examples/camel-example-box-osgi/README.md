@@ -13,7 +13,8 @@ found in an `inbox` directory to a box.com account.
 ### Build
 
 First you will need to compile the example:
-  mvn install
+
+	mvn install
 
 ### Run
 
@@ -25,7 +26,7 @@ Launch karaf
 
 #### Step 2 
 
-Add features required
+Add features required into Karak
 
 	features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
 	features:install camel-spring
@@ -43,7 +44,7 @@ set to your box account credentials.
 
 #### Step 4
 
-Deploy the example
+Deploy the example into Karak
 	
 	osgi:install -s mvn:org.apache.camel/camel-example-box-osgi/${version}
 
