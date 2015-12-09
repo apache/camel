@@ -1,5 +1,4 @@
 # CXF OSGI Example
-================
 
 ### Introduction
 
@@ -63,7 +62,9 @@ port `8181` for http. If you would like to use another port or https, change the
 the below URL) is configured via the org.apache.cxf.osgi.cfg file (Please see 
 [http://team.ops4j.org/wiki//display/paxweb/Pax+Web](http://team.ops4j.org/wiki//display/paxweb/Pax+Web) for more information on PAX Web).
   
-	[http://localhost:8181/cxf/camel-example-cxf-osgi/webservices/incident?wsdl](http://localhost:8181/cxf/camel-example-cxf-osgi/webservices/incident?wsdl)
+	http://localhost:8181/cxf/camel-example-cxf-osgi/webservices/incident?wsdl
+	
+[http://localhost:8181/cxf/camel-example-cxf-osgi/webservices/incident?wsdl](http://localhost:8181/cxf/camel-example-cxf-osgi/webservices/incident?wsdl)
                                 
 
 #### Step 5: Start SOAPUI (2.x or later)

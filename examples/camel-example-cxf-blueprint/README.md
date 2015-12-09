@@ -46,7 +46,9 @@ Deploy the example
 
 We assume you're using Karaf's default PAX Web configuration which uses port `8181` for http. If you would like to use another port or https, change the configuration in `${KARAF_HOME}/etc/org.ops4j.pax.web.cfg`. The immediate extension after the hostname and port ("cxf" in the below URL) is configured via the org.apache.cxf.osgi.cfg file (Please see [http://team.ops4j.org/wiki//display/paxweb/Pax+Web](http://team.ops4j.org/wiki//display/paxweb/Pax+Web) for more information on PAX Web).
    
-	[http://localhost:8181/cxf/camel-example-cxf-blueprint/webservices/incident?wsdl](http://localhost:8181/cxf/camel-example-cxf-blueprint/webservices/incident?wsdl)
+	http://localhost:8181/cxf/camel-example-cxf-blueprint/webservices/incident?wsdl
+
+[http://localhost:8181/cxf/camel-example-cxf-blueprint/webservices/incident?wsdl](http://localhost:8181/cxf/camel-example-cxf-blueprint/webservices/incident?wsdl)
   
 #### Step 5: Start SOAPUI (2.x or later)
 
