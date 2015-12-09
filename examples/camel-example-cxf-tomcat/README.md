@@ -22,7 +22,9 @@ to install the WAR file.
 
 The webservice is located at
 
-	[http://localhost:8080/camel-example-cxf-tomcat/webservices/incident?wsdl](http://localhost:8080/camel-example-cxf-tomcat/webservices/incident?wsdl)
+	http://localhost:8080/camel-example-cxf-tomcat/webservices/incident?wsdl
+
+[http://localhost:8080/camel-example-cxf-tomcat/webservices/incident?wsdl](http://localhost:8080/camel-example-cxf-tomcat/webservices/incident?wsdl)
 
 You can run a sample client using the "mvn exec:java" command, or, within
 soapUI, making sample SOAP requests such as the following:
