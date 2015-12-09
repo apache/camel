@@ -27,12 +27,14 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
 public class MllpSenderTest extends CamelTestSupport {
-    MllpServerResource mllpServer = new MllpServerResource();
+    @Rule
+    public MllpServerResource mllpServer = new MllpServerResource( AvailablePortFinder.getNextAvailable() );
 
     String targetURI = "direct://mllp-sender";
     int deliveryDelay = 25;
@@ -42,20 +44,6 @@ public class MllpSenderTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock://timeout-ex")
     MockEndpoint timeout;
-
-    @Override
-    public void setUp() throws Exception {
-        mllpServer.setListenPort(AvailablePortFinder.getNextAvailable());
-        mllpServer.startup();
-
-        super.setUp();
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-        mllpServer.shutdown();
-    }
 
     @Override
     public String isMockEndpoints() {
@@ -83,6 +71,9 @@ public class MllpSenderTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
+            int connectTimeout = 1000;
+            int responseTimeout = 1000;
+
             @Override
             public void configure() throws Exception {
                 errorHandler(
@@ -113,7 +104,7 @@ public class MllpSenderTest extends CamelTestSupport {
                 ;
                 */
 
-                onException(MllpResponseTimeoutException.class)
+                onException(MllpTimeoutException.class)
                         .handled(true)
                         .logHandled(false)
                         .to("mock://timeout-ex")
@@ -124,8 +115,8 @@ public class MllpSenderTest extends CamelTestSupport {
                 from(targetURI)
                         .routeId("mllp-sender-test-route")
                         .log(LoggingLevel.INFO, "Sending Message: $simple{header[CamelHL7MessageControl]}")
-                        .toF("mllp://%s:%d?connectTimeout=500&responseTimeout=500",
-                                "0.0.0.0", mllpServer.getListenPort())
+                        .toF("mllp://%s:%d?connectTimeout=%d&responseTimeout=%d",
+                                "0.0.0.0", mllpServer.getListenPort(), connectTimeout, responseTimeout)
                         .to("mock://response")
                 ;
 
@@ -156,7 +147,7 @@ public class MllpSenderTest extends CamelTestSupport {
         response.setExpectedMessageCount(messageCount);
         timeout.setExpectedMessageCount(0);
 
-        for (int i=0; i<messageCount; ++i) {
+        for (int i = 0; i < messageCount; ++i) {
             template.sendBody(targetURI, Data.TEST_MESSAGE);
             Thread.sleep(deliveryDelay);
         }

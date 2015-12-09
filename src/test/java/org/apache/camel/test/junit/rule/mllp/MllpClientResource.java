@@ -24,6 +24,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -41,17 +42,25 @@ public class MllpClientResource extends ExternalResource {
     InputStream inputStream;
     OutputStream outputStream;
 
-    String mllpHost = "localhost";
-    int mllpPort = 7777;
+    String mllpHost = "0.0.0.0";
+    int mllpPort = -1;
 
     boolean sendStartOfBlock = true;
     boolean sendEndOfBlock = true;
     boolean sendEndOfData = true;
 
-    int soTimeout = 15000;
+    int connectTimeout = 5000;
+    int soTimeout = 5000;
     boolean reuseAddress = false;
     boolean tcpNoDelay = true;
 
+
+    /**
+     * Use this constructor to avoid having the connection started by JUnit (since the port is still -1)
+     */
+    public MllpClientResource() {
+
+    }
 
     public MllpClientResource(int port) {
         this.mllpPort = port;
@@ -64,7 +73,10 @@ public class MllpClientResource extends ExternalResource {
 
     @Override
     protected void before() throws Throwable {
-        this.connect();
+        if ( 0 < mllpPort ) {
+            this.connect();
+        }
+
         super.before();
     }
 
@@ -74,10 +86,15 @@ public class MllpClientResource extends ExternalResource {
         this.disconnect();
     }
 
-
     public void connect() {
+        this.connect(this.connectTimeout);
+    }
+
+    public void connect(int connectTimeout) {
         try {
-            clientSocket = new Socket(mllpHost, mllpPort);
+            clientSocket = new Socket();
+
+            clientSocket.connect(new InetSocketAddress(mllpHost, mllpPort), connectTimeout);
 
             clientSocket.setSoTimeout(soTimeout);
             clientSocket.setSoLinger(false, -1);
@@ -190,12 +207,17 @@ public class MllpClientResource extends ExternalResource {
             if (START_OF_BLOCK != firstByte) {
                 if ( isConnected() ) {
                     if ( END_OF_STREAM == firstByte ) {
-                        String errorMessage = "END_OF_STREAM reached while waiting for START_OF_BLOCK";
-                        log.warn( errorMessage);
-                        throw new MllpJUnitResourceEnvelopeException(errorMessage);
+                        log.warn( "END_OF_STREAM reached while waiting for START_OF_BLOCK - closing socket");
+                        try {
+                            clientSocket.close();
+                        } catch (Exception ex) {
+                            log.warn( "Exception encountered closing socket after receiving END_OF_STREAM while waiting for START_OF_BLOCK");
+                        }
+                        return "";
+                    } else {
+                        log.error("Acknowledgement did not start with START_OF_BLOCK: {}", firstByte);
+                        throw new MllpJUnitResourceEnvelopeException("Message did not start with START_OF_BLOCK");
                     }
-                    log.error("Acknowledgement did not start with START_OF_BLOCK: {}", firstByte);
-                    throw new MllpJUnitResourceEnvelopeException("Message did not start with START_OF_BLOCK");
                 } else {
                     throw new MllpJUnitResourceException( "Connection terminated");
                 }
@@ -272,6 +294,22 @@ public class MllpClientResource extends ExternalResource {
         return availableInput.toString();
     }
 
+    public String getMllpHost() {
+        return mllpHost;
+    }
+
+    public void setMllpHost(String mllpHost) {
+        this.mllpHost = mllpHost;
+    }
+
+    public int getMllpPort() {
+        return mllpPort;
+    }
+
+    public void setMllpPort(int mllpPort) {
+        this.mllpPort = mllpPort;
+    }
+
     public boolean isSendStartOfBlock() {
         return sendStartOfBlock;
     }
@@ -294,6 +332,14 @@ public class MllpClientResource extends ExternalResource {
 
     public void setSendEndOfData(boolean sendEndOfData) {
         this.sendEndOfData = sendEndOfData;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
     }
 
     public int getSoTimeout() {

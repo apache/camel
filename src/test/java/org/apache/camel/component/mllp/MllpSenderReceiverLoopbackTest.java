@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MllpSenderReceiverLoopbackTest extends CamelTestSupport {
 
-    @EndpointInject( uri = "mock://result")
+    @EndpointInject(uri = "mock://result")
     MockEndpoint result;
 
     @Override
@@ -41,14 +41,14 @@ public class MllpSenderReceiverLoopbackTest extends CamelTestSupport {
             int port = 7777;
 
             public void configure() {
-                fromF( "direct://trigger").routeId(routeId)
-                        .log(LoggingLevel.INFO, routeId, "Sending: ${body}" )
-                        .toF( "mllp://%s:%d", host, port)
+                fromF("direct://trigger").routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Sending: ${body}")
+                        .toF("mllp://%s:%d", host, port)
                 ;
             }
         };
 
-        builders[1]  = new RouteBuilder() {
+        builders[1] = new RouteBuilder() {
             String routeId = "mllp-receiver";
 
             String host = "0.0.0.0";
@@ -57,9 +57,9 @@ public class MllpSenderReceiverLoopbackTest extends CamelTestSupport {
             public void configure() {
 //                fromF("mllp:%s:%d?autoAck=false", host, port)
                 fromF("mllp:%d?autoAck=false", port)
-                        .log(LoggingLevel.INFO, routeId, "Receiving: ${body}" )
+                        .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
                         .to("mock:result")
-                        .setBody().constant( "Got It")
+                        .setBody().constant("Got It")
                 ;
             }
         };
@@ -72,7 +72,7 @@ public class MllpSenderReceiverLoopbackTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBody( "direct://trigger", Data.TEST_MESSAGE_1);
+        template.sendBody("direct://trigger", Data.TEST_MESSAGE_1);
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }

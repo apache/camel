@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,8 +19,6 @@ package org.apache.camel.component.mllp;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mllp.impl.MllpSocketUtil;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -28,7 +26,6 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 
 /**
  * The MLLP producer.
@@ -128,30 +125,45 @@ public class MllpTcpClientProducer extends DefaultProducer {
 
         checkConnection();
 
-        String hl7Message = exchange.getOut().getBody(String.class);
-        if (null == hl7Message) {
-            hl7Message = exchange.getIn().getBody(String.class);
-            log.debug("Processing message from 'inputStream' message");
+        byte[] hl7MessageBytes = null;
+
+        Object messageBody;
+        if ( exchange.hasOut() ) {
+            messageBody = exchange.getOut().getBody();
         } else {
-            log.debug("Processing message from 'outputStream' message");
+            messageBody = exchange.getIn().getBody();
         }
 
-        MllpSocketUtil.writeEnvelopedMessage(hl7Message, endpoint.charset, socket, outputStream);
-
-        String acknowledgement = MllpSocketUtil.readEnvelopedAcknowledgement(endpoint.charset, socket, inputStream);
-        log.debug("Populating the exchange");
-
-        exchange.getIn().setBody(acknowledgement, String.class);
+        if (null != messageBody) {
+            log.debug("Sending message to external system");
+            if (messageBody instanceof byte[]) {
+                MllpSocketUtil.writeEnvelopedMessageBytes(socket, (byte[]) messageBody);
+            } else if (messageBody instanceof String) {
+                MllpSocketUtil.writeEnvelopedMessageBytes(socket, ((String) messageBody).getBytes(endpoint.charset));
+            }
+            log.debug("Reading acknowledgement from external system");
+            byte[] acknowledgementBytes = MllpSocketUtil.readEnvelopedAcknowledgementBytes(socket);
+            if (null != acknowledgementBytes) {
+                log.debug("Populating the exchange out body");
+                if (endpoint.useString) {
+                    exchange.getOut().setBody(new String(acknowledgementBytes, endpoint.charset), String.class);
+                } else {
+                    exchange.getOut().setBody(acknowledgementBytes, byte[].class);
+                }
+            }
+        } else {
+            log.error("Null Body - ignoring");
+        }
     }
 
     void checkConnection() throws IOException {
-        if (null == socket || socket.isClosed() || ! socket.isConnected() ) {
+        if (null == socket || socket.isClosed() || !socket.isConnected()) {
             socket = new Socket();
 
             socket.setKeepAlive(endpoint.keepAlive);
             socket.setTcpNoDelay(endpoint.tcpNoDelay);
-            socket.setReceiveBufferSize( endpoint.receiveBufferSize );
-            socket.setSendBufferSize( endpoint.sendBufferSize );
+            socket.setReceiveBufferSize(endpoint.receiveBufferSize);
+            socket.setSendBufferSize(endpoint.sendBufferSize);
             socket.setReuseAddress(endpoint.reuseAddress);
             socket.setSoLinger(false, -1);
 
@@ -160,8 +172,6 @@ public class MllpTcpClientProducer extends DefaultProducer {
 
             log.debug("Connecting to socket on {}:{}", endpoint.getHostname(), endpoint.getPort());
             socket.connect(new InetSocketAddress(endpoint.getHostname(), endpoint.getPort()), endpoint.connectTimeout);
-            outputStream = new BufferedOutputStream(socket.getOutputStream(), endpoint.sendBufferSize);
-            inputStream = socket.getInputStream();
         }
 
     }

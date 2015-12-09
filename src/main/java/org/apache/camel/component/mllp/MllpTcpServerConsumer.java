@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,20 +19,20 @@ package org.apache.camel.component.mllp;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.component.mllp.impl.MllpConstants;
 import org.apache.camel.component.mllp.impl.MllpSocketUtil;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultExchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerator;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * The mllp consumer.
@@ -61,16 +61,16 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         log.debug("doStart() - creating acceptor thread");
 
         ServerSocket serverSocket = new ServerSocket();
-        serverSocket.setReceiveBufferSize( endpoint.receiveBufferSize );
+        serverSocket.setReceiveBufferSize(endpoint.receiveBufferSize);
         serverSocket.setReuseAddress(endpoint.reuseAddress);
 
         // Read Timeout
         serverSocket.setSoTimeout(endpoint.responseTimeout);
 
-        InetSocketAddress socketAddress = new InetSocketAddress( endpoint.getHostname(), endpoint.getPort());
+        InetSocketAddress socketAddress = new InetSocketAddress(endpoint.getHostname(), endpoint.getPort());
         serverSocket.bind(socketAddress, endpoint.backlog);
 
-        acceptThread = new AcceptThread( serverSocket );
+        acceptThread = new AcceptThread(serverSocket);
         acceptThread.start();
 
         super.doStart();
@@ -80,7 +80,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         log.debug("doStop()");
 
-        switch ( acceptThread.getState() ) {
+        switch (acceptThread.getState()) {
             case NEW:
             case RUNNABLE:
             case BLOCKED:
@@ -124,36 +124,51 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         // TODO:  Need to set thread name
         ServerSocket serverSocket;
 
-        AcceptThread( ServerSocket serverSocket ) {
+        AcceptThread(ServerSocket serverSocket) {
             log.info("Creating new AcceptThread");
+            this.setName(String.format("mllp://%s:%d - AcceptThread", endpoint.getHostname(), endpoint.getPort()));
 
             this.serverSocket = serverSocket;
         }
 
         public void run() {
-            log.debug( "Starting acceptor thread for socket {}:{}", endpoint.getHostname(), endpoint.getPort());
+            log.debug("Starting acceptor thread for socket {}:{}", endpoint.getHostname(), endpoint.getPort());
 
-            while (serverSocket.isBound() && ! serverSocket.isClosed()) {
+            while (serverSocket.isBound() && !serverSocket.isClosed()) {
                 try {
                     /* ? set this here ? */
                     // serverSocket.setSoTimeout( 10000 );
                     // TODO: Need to check maxConnections and figure outputStream what to do when exceeded
-                    ClientSocketThread clientThread = new ClientSocketThread(serverSocket.accept());
-                    clientThreads.add(clientThread);
-                    clientThread.start();
-                } catch ( SocketTimeoutException timeoutEx ) {
+                    Socket clientSocket = serverSocket.accept();
+                    // Check and see if the socket is really there.  It could be a load balancer pinging the port
+                    Thread.sleep(100);
+                    if (clientSocket.isConnected() && !clientSocket.isClosed()) {
+                        log.info("Socket appears to be there - get the input stream and see");
+                        InputStream inputStream = clientSocket.getInputStream();
+                        clientSocket.setSoTimeout(100);
+                        try {
+                            int tmpByte = inputStream.read();
+                            if (-1 == tmpByte) {
+                                log.debug("Socket closed before read - possible load balancer probe");
+                            } else {
+                                ClientSocketThread clientThread = new ClientSocketThread(clientSocket, tmpByte);
+                                clientThreads.add(clientThread);
+                                clientThread.start();
+                            }
+                        } catch (SocketTimeoutException timeoutEx) {
+                            // No data, but the socket is there
+                            log.debug("No Data - but the socket is there.  Starting ClientSocketThread");
+                            ClientSocketThread clientThread = new ClientSocketThread(clientSocket);
+                            clientThreads.add(clientThread);
+                            clientThread.start();
+                        }
+                    }
+                } catch (SocketTimeoutException timeoutEx) {
                     // No new clients - check existing ones
                     // TODO:  Check existing clients
-
-                } catch (Exception e) {
-                    Exchange exchange = endpoint.createExchange( ExchangePattern.InOut );
-                    exchange.setException(e);
-                    try {
-                        getProcessor().process(exchange);
-                    } catch (Exception e1) {
-                        // TODO: Figure outputStream what to do here
-                        e1.printStackTrace();
-                    }
+                    // log.debug( "SocketTimeoutException waiting for new connections");
+                } catch (Exception ex) {
+                    log.error("Exception waiting for new connections", ex);
                 }
             }
         }
@@ -162,25 +177,42 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     class ClientSocketThread extends Thread {
         Socket clientSocket;
+        Hl7AcknowledgementGenerator acknowledgementGenerator = new Hl7AcknowledgementGenerator();
 
-        InputStream inputStream;
-        BufferedOutputStream outputStream;
+        Integer initialByte = null;
 
         ClientSocketThread(Socket clientSocket) throws IOException {
             log.info("Creating new ClientSocketThread");
+            this.setName(String.format("mllp://%s:%d - Client Socket Thread", endpoint.getHostname(), endpoint.getPort()));
             this.clientSocket = clientSocket;
             this.clientSocket.setKeepAlive(endpoint.keepAlive);
             this.clientSocket.setTcpNoDelay(endpoint.tcpNoDelay);
-            this.clientSocket.setReceiveBufferSize( endpoint.receiveBufferSize );
-            this.clientSocket.setSendBufferSize( endpoint.sendBufferSize );
+            this.clientSocket.setReceiveBufferSize(endpoint.receiveBufferSize);
+            this.clientSocket.setSendBufferSize(endpoint.sendBufferSize);
             this.clientSocket.setReuseAddress(endpoint.reuseAddress);
             this.clientSocket.setSoLinger(false, -1);
 
             // Read Timeout
             this.clientSocket.setSoTimeout(endpoint.responseTimeout);
 
-            this.inputStream = clientSocket.getInputStream();
-            this.outputStream = new BufferedOutputStream(clientSocket.getOutputStream(), endpoint.sendBufferSize);
+            acknowledgementGenerator.setCharset( endpoint.charset );
+        }
+
+        ClientSocketThread(Socket clientSocket, int initialByte) throws IOException {
+            log.info("Creating new ClientSocketThread");
+            this.initialByte = initialByte;
+            this.setName(String.format("mllp://%s:%d - Client Socket Thread", endpoint.getHostname(), endpoint.getPort()));
+            this.clientSocket = clientSocket;
+            this.clientSocket.setKeepAlive(endpoint.keepAlive);
+            this.clientSocket.setTcpNoDelay(endpoint.tcpNoDelay);
+            this.clientSocket.setReceiveBufferSize(endpoint.receiveBufferSize);
+            this.clientSocket.setSendBufferSize(endpoint.sendBufferSize);
+            this.clientSocket.setReuseAddress(endpoint.reuseAddress);
+            this.clientSocket.setSoLinger(false, -1);
+
+            // Read Timeout
+            this.clientSocket.setSoTimeout(endpoint.responseTimeout);
+
         }
 
         @Override
@@ -189,127 +221,83 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 // create the exchange
                 Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
 
+                byte[] hl7MessageBytes = null;
                 // Send the message on for processing and wait for the response
-                log.debug("Populating the exchange");
-                String hl7Message = null;
+                log.debug("Reading data ....");
                 try {
-                    hl7Message = MllpSocketUtil.readEnvelopedMessage(endpoint.charset, clientSocket, inputStream);
+                    if (null != initialByte && MllpConstants.START_OF_BLOCK == initialByte) {
+                        initialByte = null;
+                        hl7MessageBytes = MllpSocketUtil.readThroughEndOfBlock(MllpSocketUtil.getInputStream(clientSocket));
+                    } else {
+                        initialByte = null;
+                        hl7MessageBytes = MllpSocketUtil.readEnvelopedMessageBytes(clientSocket);
+                    }
                 } catch (MllpException mllpEx) {
-                    log.error( "Exception encountered reading enveloped message", mllpEx);
-                    exchange.setException( mllpEx );
-                    return;
+                    log.error("Exception encountered reading enveloped message", mllpEx);
+                    exchange.setException(mllpEx);
+                    // TODO:  Is this correct?
+                    continue;
                 }
 
-                exchange.getIn().setBody(hl7Message, String.class);
+                if (null != hl7MessageBytes) {
+                    log.debug("Populating the exchange with received data");
+                    if (endpoint.useString) {
+                        String hl7Message = new String(hl7MessageBytes, endpoint.charset);
+                        exchange.getIn().setBody(hl7Message, String.class);
+                    } else {
+                        exchange.getIn().setBody(hl7MessageBytes, byte[].class);
+                    }
+                } else {
+                    continue;
+                }
+
+                log.debug("Calling processor");
                 try {
                     getProcessor().process(exchange);
                     // Got the response - send the acknowledgement
 
                     // Find the acknowledgement body
-                    String acknowledgementMessage;
-                    if ( endpoint.autoAck ) {
-                        acknowledgementMessage = generateAcknowledgementMessage(hl7Message);
+                    byte[] acknowledgementMessageBytes;
+                    if (endpoint.autoAck) {
+                        if (null == exchange.getException()) {
+                            acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationAcceptAcknowledgementMessage(hl7MessageBytes);
+                        } else {
+                            acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationErrorAcknowledgementMessage(hl7MessageBytes);
+                        }
                     } else {
-                        Object exchangeBody = exchange.getOut().getBody();
-                        if ( null == exchangeBody ) {
+                        Object exchangeBody;
+                        if ( exchange.hasOut() ) {
+                            exchangeBody = exchange.getOut().getBody();
+                        } else {
                             exchangeBody = exchange.getIn().getBody();
                         }
-                        if ( null == exchangeBody ) {
+                        if (null == exchangeBody) {
                             // TODO:  Probably need to do more here
-                            exchange.setException(new IllegalArgumentException( "Null Exchange Body sent for acknowledgement"));
-                            return;
+                            exchange.setException(new IllegalArgumentException("Null Exchange Body sent for acknowledgement"));
+                            continue;
                         } else {
-                            if ( exchangeBody instanceof String ) {
-                                acknowledgementMessage = ((String)exchangeBody);
+                            if (exchangeBody instanceof byte[]) {
+                                acknowledgementMessageBytes = (byte[]) exchangeBody;
+                            } else if (exchangeBody instanceof String) {
+                                acknowledgementMessageBytes = ((String) exchangeBody).getBytes(endpoint.charset);
                             } else {
-                                exchange.setException( new IllegalArgumentException( "Exchange Body must be String or byte[] for acknowledgement"));
-                                return;
+                                exchange.setException(new IllegalArgumentException("Exchange Body must be String or byte[] for acknowledgement"));
+                                continue;
                             }
                         }
                     }
 
-                    MllpSocketUtil.writeEnvelopedMessage(acknowledgementMessage, endpoint.charset, clientSocket, outputStream);
+                    MllpSocketUtil.writeEnvelopedMessageBytes(clientSocket, acknowledgementMessageBytes);
                 } catch (Exception e) {
-                    exchange.setException( e );
+                    exchange.setException(e);
                 }
 
             }
+
             log.info("ClientSocketThread exiting");
 
         }
 
-        private String generateAcknowledgementMessage(String hl7Message) {
-            return generateAcknowledgementMessage(hl7Message, "AA");
-        }
-
-        private String generateAcknowledgementMessage(String hl7Message, String acknowledgementCode) {
-            final String DEFAULT_NACK_MESSAGE =
-                    "MSH|^~\\&|||||||NACK||P|2.2" + MllpEndpoint.SEGMENT_DELIMITER
-                            + "MSA|AR|" + MllpEndpoint.SEGMENT_DELIMITER
-                            + MllpEndpoint.MESSAGE_TERMINATOR;
-
-            if (hl7Message == null) {
-                log.error("Invalid HL7 message for parsing operation. Please check your inputs");
-                return DEFAULT_NACK_MESSAGE;
-            }
-
-            String messageControlId;
-
-            int endOfMshSegment = hl7Message.indexOf(MllpEndpoint.SEGMENT_DELIMITER);
-            if (-1 != endOfMshSegment) {
-                String mshSegment = hl7Message.substring(0, endOfMshSegment);
-                char fieldSeparator = mshSegment.charAt(3);
-                String fieldSeparatorPattern = Pattern.quote("" + fieldSeparator);
-                String[] mshFields = mshSegment.split(fieldSeparatorPattern);
-                if (null == mshFields || 0 == mshFields.length) {
-                    log.error("Failed to split MSH Segment into fields");
-                } else {
-                    StringBuilder ackBuilder = new StringBuilder(mshSegment.length() + 25);
-                    // Build the MSH Segment
-                    ackBuilder
-                            .append(mshFields[0]).append(fieldSeparator)
-                            .append(mshFields[1]).append(fieldSeparator)
-                            .append(mshFields[4]).append(fieldSeparator)
-                            .append(mshFields[5]).append(fieldSeparator)
-                            .append(mshFields[2]).append(fieldSeparator)
-                            .append(mshFields[3]).append(fieldSeparator)
-                            .append(mshFields[6]).append(fieldSeparator)
-                            .append(mshFields[7]).append(fieldSeparator)
-                            .append("ACK").append(mshFields[8].substring(3))
-                    ;
-                    for (int i = 9; i < mshFields.length; ++i) {
-                        ackBuilder.append(fieldSeparator).append(mshFields[i]);
-                    }
-                    // Empty fields at the end are not preserved by String.split, so preserve them
-                    int emptyFieldIndex = mshSegment.length() - 1;
-                    if (fieldSeparator == mshSegment.charAt(mshSegment.length() - 1)) {
-                        ackBuilder.append(fieldSeparator);
-                        while (emptyFieldIndex >= 1 && mshSegment.charAt(emptyFieldIndex) == mshSegment.charAt(emptyFieldIndex - 1)) {
-                            ackBuilder.append(fieldSeparator);
-                            --emptyFieldIndex;
-                        }
-                    }
-                    ackBuilder.append(MllpEndpoint.SEGMENT_DELIMITER);
-
-                    // Build the MSA Segment
-                    ackBuilder
-                            .append("MSA").append(fieldSeparator)
-                            .append(acknowledgementCode).append(fieldSeparator)
-                            .append(mshFields[9]).append(fieldSeparator)
-                            .append(MllpEndpoint.SEGMENT_DELIMITER)
-                    ;
-
-                    // Terminate the message
-                    ackBuilder.append(MllpEndpoint.MESSAGE_TERMINATOR);
-
-                    return ackBuilder.toString();
-                }
-            } else {
-                log.error("Failed to find the end of the  MSH Segment while attempting to generate response");
-            }
-
-            return null;
-        }
 
     }
 }
