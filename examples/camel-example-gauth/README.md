@@ -1,8 +1,7 @@
-# GAE Example
+# GAuth Example
 
 ### Introduction
-
-Building, deplyoing and running this example is described in detail at [http://camel.apache.org/tutorial-for-camel-on-google-app-engine.html](http://camel.apache.org/tutorial-for-camel-on-google-app-engine.html)
+Building, deploying and running this example is described in detail at [http://camel.apache.org/tutorial-oauth.html](http://camel.apache.org/tutorial-oauth.html)
 
 ### Forum, Help, etc 
 
