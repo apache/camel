@@ -37,9 +37,9 @@ import org.slf4j.LoggerFactory;
 public class WebsocketProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(WebsocketProducer.class);
 
-    private List<String> notValidConnectionKeys = new ArrayList<>();
-
     private static ExecutorService executor = Executors.newSingleThreadExecutor();
+    
+    private List<String> notValidConnectionKeys = new ArrayList<>();
     
     public WebsocketProducer(WebsocketEndpoint endpoint) {
         super(endpoint);

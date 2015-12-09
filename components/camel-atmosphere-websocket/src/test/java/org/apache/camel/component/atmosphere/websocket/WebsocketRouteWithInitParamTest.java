@@ -16,21 +16,22 @@
  */
 package org.apache.camel.component.atmosphere.websocket;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+
+import org.junit.Test;
+
 public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithInitParamTestSupport {
 
     private static final String[] EXISTED_USERS = {"Kim", "Pavlo", "Peter"};
-    private static String[] BROADCAST_MESSAGE_TO = {};
-    private static Map<String,String> connectionKeyUserMap = new HashMap<>();
+    private static String[] broadcastMessageTo = {};
+    private static Map<String, String> connectionKeyUserMap = new HashMap<String, String>();
 
     @Test
     public void testWebsocketEventsResendingEnabled() throws Exception {
@@ -48,7 +49,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
 
     @Test
     public void testWebsocketSingleClientBroadcastMultipleClients() throws Exception {
-        final int AWAIT_TIME = 5;
+        final int awaitTime = 5;
         connectionKeyUserMap.clear();
 
         TestClient wsclient1 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
@@ -56,33 +57,33 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         TestClient wsclient3 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
 
         wsclient1.connect();
-        wsclient1.await(AWAIT_TIME);
+        wsclient1.await(awaitTime);
 
         wsclient2.connect();
-        wsclient2.await(AWAIT_TIME);
+        wsclient2.await(awaitTime);
 
         wsclient3.connect();
-        wsclient3.await(AWAIT_TIME);
+        wsclient3.await(awaitTime);
 
         //all connections were registered in external store
         assertTrue(connectionKeyUserMap.size() == EXISTED_USERS.length);
 
-        BROADCAST_MESSAGE_TO = new String[]{EXISTED_USERS[0], EXISTED_USERS[1]};
+        broadcastMessageTo = new String[]{EXISTED_USERS[0], EXISTED_USERS[1]};
 
         wsclient1.sendTextMessage("Gambas");
-        wsclient1.await(AWAIT_TIME);
+        wsclient1.await(awaitTime);
 
         List<String> received1 = wsclient1.getReceived(String.class);
         assertEquals(1, received1.size());
 
-        for (int i = 0; i < BROADCAST_MESSAGE_TO.length; i++) {
-            assertTrue(received1.get(0).contains(BROADCAST_MESSAGE_TO[i]));
+        for (int i = 0; i < broadcastMessageTo.length; i++) {
+            assertTrue(received1.get(0).contains(broadcastMessageTo[i]));
         }
 
         List<String> received2 = wsclient2.getReceived(String.class);
         assertEquals(1, received2.size());
-        for (int i = 0; i < BROADCAST_MESSAGE_TO.length; i++) {
-            assertTrue(received2.get(0).contains(BROADCAST_MESSAGE_TO[i]));
+        for (int i = 0; i < broadcastMessageTo.length; i++) {
+            assertTrue(received2.get(0).contains(broadcastMessageTo[i]));
         }
 
         List<String> received3 = wsclient3.getReceived(String.class);
@@ -95,7 +96,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
 
     @Test
     public void testWebsocketSingleClientBroadcastMultipleClientsGuaranteeDelivery() throws Exception {
-        final int AWAIT_TIME = 5;
+        final int awaitTime = 5;
         connectionKeyUserMap.clear();
 
         TestClient wsclient1 = new TestClient("ws://localhost:" + PORT + "/hola3", 2);
@@ -103,30 +104,30 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         TestClient wsclient3 = new TestClient("ws://localhost:" + PORT + "/hola3", 2);
 
         wsclient1.connect();
-        wsclient1.await(AWAIT_TIME);
+        wsclient1.await(awaitTime);
 
         wsclient2.connect();
-        wsclient2.await(AWAIT_TIME);
+        wsclient2.await(awaitTime);
 
         wsclient3.connect();
-        wsclient3.await(AWAIT_TIME);
+        wsclient3.await(awaitTime);
 
         //all connections were registered in external store
         assertTrue(connectionKeyUserMap.size() == EXISTED_USERS.length);
 
         wsclient2.close();
-        wsclient2.await(AWAIT_TIME);
+        wsclient2.await(awaitTime);
 
-        BROADCAST_MESSAGE_TO = new String[]{EXISTED_USERS[0], EXISTED_USERS[1]};
+        broadcastMessageTo = new String[]{EXISTED_USERS[0], EXISTED_USERS[1]};
 
         wsclient1.sendTextMessage("Gambas");
-        wsclient1.await(AWAIT_TIME);
+        wsclient1.await(awaitTime);
 
         List<String> received1 = wsclient1.getReceived(String.class);
         assertEquals(1, received1.size());
 
-        for (int i = 0; i < BROADCAST_MESSAGE_TO.length; i++) {
-            assertTrue(received1.get(0).contains(BROADCAST_MESSAGE_TO[i]));
+        for (int i = 0; i < broadcastMessageTo.length; i++) {
+            assertTrue(received1.get(0).contains(broadcastMessageTo[i]));
         }
 
         List<String> received2 = wsclient2.getReceived(String.class);
@@ -225,7 +226,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
     private static void handleNotDeliveredMessage(Exchange exchange) {
         List<String> connectionKeyList = exchange.getIn().getHeader(WebsocketConstants.CONNECTION_KEY_LIST, List.class);
         assertEquals(1, connectionKeyList.size());
-        assertEquals(connectionKeyList.get(0), connectionKeyUserMap.get(BROADCAST_MESSAGE_TO[1]));
+        assertEquals(connectionKeyList.get(0), connectionKeyUserMap.get(broadcastMessageTo[1]));
     }
 
     private static void createExternalConnectionRegister(Exchange exchange) {
@@ -251,9 +252,9 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         String additionalMessage = "";
 
         //send the message only to selected connections
-        for (int i = 0; i < BROADCAST_MESSAGE_TO.length; i++) {
-            connectionKeyList.add(connectionKeyUserMap.get(BROADCAST_MESSAGE_TO[i]));
-            additionalMessage += BROADCAST_MESSAGE_TO[i] + " ";
+        for (int i = 0; i < broadcastMessageTo.length; i++) {
+            connectionKeyList.add(connectionKeyUserMap.get(broadcastMessageTo[i]));
+            additionalMessage += broadcastMessageTo[i] + " ";
         }
 
         additionalMessage += " Received the message: ";
