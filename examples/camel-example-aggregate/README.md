@@ -21,14 +21,16 @@ The user can then enter more numbers to do another aggregation.
 The example is run using Maven.
 
 First compile the example by entering:
-  mvn compile
+	
+	mvn compile
   
 ### Run
 
 To run the example type:
-  mvn camel:run
 
-To stop the example hit Ctrl-C.  If you restart it and resume entering numbers
+	mvn camel:run
+
+To stop the example hit `Ctrl-C`.  If you restart it and resume entering numbers
 you should see that it remembered previously entered values, as it
 uses a persistent store.
 

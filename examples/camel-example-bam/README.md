@@ -14,25 +14,27 @@ with Camel.
 ### Build
 
 You will need to compile this example first:
-  mvn compile
+
+	mvn compile
   
 For a background in BAM see
-  http://camel.apache.org/bam.html
+  [http://camel.apache.org/bam.html](http://camel.apache.org/bam.html)
 
 ### Run
 
 To run the example with Maven, type
-  mvn camel:run
+
+	mvn camel:run
 
 You can see the BAM activies defined in
-  src/main/java/org/apache/camel/example/bam/MyActivites.java
+  `src/main/java/org/apache/camel/example/bam/MyActivites.java`
   
 To stop the example hit ctrl + c
 
 ### Documentation
 
 This example is documented at
-  http://camel.apache.org/bam-example.html
+  [http://camel.apache.org/bam-example.html](http://camel.apache.org/bam-example.html)
 
 ### Forum, Help, etc 
 
