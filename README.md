@@ -1,8 +1,9 @@
-Welcome to Apache Camel
-=============================================================================== 
+# Welcome to Apache Camel
 
-Apache Camel is a powerful open source integration framework based on known
+[Apache Camel](http://camel.apache.org/) is a powerful open source integration framework based on known
 Enterprise Integration Patterns with powerful Bean Integration.
+
+### Introduction
 
 Camel lets you create the Enterprise Integration Patterns to implement routing
 and mediation rules in either a Java based Domain Specific Language (or Fluent API),
@@ -27,49 +28,51 @@ unit test your routes.
 Apache Camel can be used as a routing and mediation engine for the
 following projects:
 
-  * Apache ServiceMix which is the most popular and powerful distributed
-    open source ESB, JBI and OSGi container
-  * Apache ActiveMQ which is the most popular and powerful open
-    source message broker
-  * Apache CXF which is a smart web services suite (JAX-WS and JAX-RS)
-  * Apache Karaf which is a small OSGi based runtime which applications
-    can be deployed
-  * Apache MINA a networking framework
+* Apache ServiceMix which is the most popular and powerful distributed open source ESB, JBI and OSGi container
+* Apache ActiveMQ which is the most popular and powerful open source message broker
+* Apache CXF which is a smart web services suite (JAX-WS and JAX-RS)
+* Apache Karaf which is a small OSGi based runtime which applications can be deployed
+* Apache MINA a networking framework
 
 
-Getting Started
-=============================================================================== 
+## Getting Started
 
 To help you get started, try the following links:
 
-Getting Started
-  http://camel.apache.org/getting-started.html
+**Getting Started**
+  
+<http://camel.apache.org/getting-started.html>
 
-Building
-  http://camel.apache.org/building.html
+**Building**
+  
+<http://camel.apache.org/building.html>
+
+**Contributions**
 
 We welcome contributions of all kinds, for details of how you can help
-  http://camel.apache.org/contributing.html
+  
+<http://camel.apache.org/contributing.html>
 
 Please refer to the website for details of finding the issue tracker, 
 email lists, wiki or IRC channel
+  
+Wiki: <http://camel.apache.org/>
 
-Wiki: 
-  http://camel.apache.org/
+IRC: <http://camel.apache.org/irc-room.html>
 
-IRC: 
-  http://camel.apache.org/irc-room.html
+Mailing list: <http://camel.apache.org/mailing-lists.html>
 
-Mailing list:
-  http://camel.apache.org/mailing-lists.html
+**Support**
 
-Support
 If you need support or help then read this page first
-  http://camel.apache.org/support.html
+  
+<http://camel.apache.org/support.html>
 
-Forum
+**Forum**
+
 If you hit any problems please talk to us on the Camel Forums
-  http://camel.apache.org/discussion-forums.html
+  
+<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback 
 you may have.
@@ -79,11 +82,10 @@ Enjoy!
 -----------------
 The Camel riders!
 
-Licensing
-=============================================================================== 
+# Licensing
 
 This software is licensed under the terms you may find in the file
-named "LICENSE.txt" in this directory.
+named `LICENSE.txt` in this directory.
    
 This distribution includes cryptographic software.  The country in
 which you currently reside may have restrictions on the import,
@@ -106,18 +108,19 @@ code and source code.
 
 The following provides more details on the included cryptographic
 software:
-   * camel-ahc can be configured to use https
-   * camel-crypto can be used for secure communications
-   * camel-cxf can be configured for secure communications
-   * camel-ftp can be configured for secure communications
-   * camel-gae can be configured for secure communications
-   * camel-http can be configured to use https
-   * camel-http4 can be configured to use https
-   * camel-jasypt can be used for secure communications
-   * camel-jetty can be configured to use https
-   * camel-mail can be configured for secure communications
-   * camel-nagios can be configured for secure communications
-   * camel-netty-http can be configured to use https
-   * camel-netty4-http can be configured to use https
-   * camel-undertow can be configured to use https
-   * camel-xmlsecurity can be configured for secure communications
+
+* **camel-ahc** can be configured to use https
+* **camel-crypto** can be used for secure communications
+* **camel-cxf** can be configured for secure communications
+* **camel-ftp** can be configured for secure communications
+* **camel-gae** can be configured for secure communications
+* **camel-http** can be configured to use https
+* **camel-http4** can be configured to use https
+* **camel-jasypt** can be used for secure communications
+* **camel-jetty** can be configured to use https
+* **camel-mail** can be configured for secure communications
+* **camel-nagios** can be configured for secure communications
+* **camel-netty-http** can be configured to use https
+* **camel-netty4-http** can be configured to use https
+* **camel-undertow** can be configured to use https
+* **camel-xmlsecurity** can be configured for secure communications
