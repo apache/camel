@@ -130,6 +130,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -243,6 +244,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool = new SharedPollingConsumerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
     private ProcessorFactory processorFactory;
+    private MessageHistoryFactory messageHistoryFactory = new DefaultMessageHistoryFactory();
     private InterceptStrategy defaultTracer;
     private InterceptStrategy defaultBacklogTracer;
     private InterceptStrategy defaultBacklogDebugger;
@@ -2953,6 +2955,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(shutdownStrategy);
         addService(packageScanClassResolver);
         addService(restRegistry);
+        addService(messageHistoryFactory);
 
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier) {
@@ -4010,6 +4013,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setProcessorFactory(ProcessorFactory processorFactory) {
         this.processorFactory = processorFactory;
+    }
+
+    public MessageHistoryFactory getMessageHistoryFactory() {
+        return messageHistoryFactory;
+    }
+
+    public void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
+        this.messageHistoryFactory = messageHistoryFactory;
     }
 
     public Debugger getDebugger() {

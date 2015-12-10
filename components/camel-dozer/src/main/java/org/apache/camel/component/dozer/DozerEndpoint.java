@@ -126,7 +126,7 @@ public class DozerEndpoint extends DefaultEndpoint {
         try {
             LOG.info("Loading Dozer mapping file {}.", configuration.getMappingFile());
             // create the mapper instance and add the mapping file
-            mapStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configuration.getMappingFile());
+            mapStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configuration.getMappingFile());
             answer.addMapping(mapStream);
         } finally {
             IOHelper.close(mapStream);

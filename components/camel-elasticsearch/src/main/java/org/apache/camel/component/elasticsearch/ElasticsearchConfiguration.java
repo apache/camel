@@ -16,24 +16,14 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.elasticsearch.action.WriteConsistencyLevel;
-import org.elasticsearch.action.support.replication.ReplicationType;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
-
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 @UriParams
 public class ElasticsearchConfiguration {
@@ -43,7 +33,7 @@ public class ElasticsearchConfiguration {
 
     @UriPath @Metadata(required = "true")
     private String clusterName;
-    @UriParam(enums = "INDEX,BULK,BULK_INDEX,GET_BY_ID,DELETE") @Metadata(required = "true")
+    @UriParam(enums = "INDEX,UPDATE,BULK,BULK_INDEX,GET_BY_ID,MULTIGET,DELETE") @Metadata(required = "true")
     private String operation;
     @UriParam
     private String indexName;
@@ -51,8 +41,6 @@ public class ElasticsearchConfiguration {
     private String indexType;
     @UriParam(defaultValue = "DEFAULT")
     private WriteConsistencyLevel consistencyLevel = ElasticsearchConstants.DEFAULT_CONSISTENCY_LEVEL;
-    @UriParam(defaultValue = "DEFAULT")
-    private ReplicationType replicationType = ElasticsearchConstants.DEFAULT_REPLICATION_TYPE;
     @UriParam
     private Boolean data;
     @UriParam
@@ -115,17 +103,6 @@ public class ElasticsearchConfiguration {
 
     public void setConsistencyLevel(WriteConsistencyLevel consistencyLevel) {
         this.consistencyLevel = consistencyLevel;
-    }
-
-    /**
-     * The replication type to use with INDEX and BULK operations (can be any of SYNC, ASYNC or DEFAULT)
-     */
-    public ReplicationType getReplicationType() {
-        return replicationType;
-    }
-
-    public void setReplicationType(ReplicationType replicationType) {
-        this.replicationType = replicationType;
     }
     
     /**

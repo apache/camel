@@ -15,4 +15,4 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-org.apache.camel.component.aws.kinesis
+org.apache.camel.component.aws.kinesis.RecordStringConverter

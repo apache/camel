@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.elasticsearch.converter;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +27,11 @@ import org.elasticsearch.action.WriteConsistencyLevel;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.MultiGetRequest;
+import org.elasticsearch.action.get.MultiGetRequest.Item;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.support.replication.ReplicationType;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 @Converter
@@ -36,6 +39,36 @@ public final class ElasticsearchActionRequestConverter {
 
     private ElasticsearchActionRequestConverter() {
     }
+
+    // Update requests
+    private static UpdateRequest createUpdateRequest(Object document, Exchange exchange) {
+        UpdateRequest updateRequest = new UpdateRequest();
+        if (document instanceof byte[]) {
+            updateRequest.doc((byte[]) document);
+        } else if (document instanceof Map) {
+            updateRequest.doc((Map<String, Object>) document);
+        } else if (document instanceof String) {
+            updateRequest.doc((String) document);
+        } else if (document instanceof XContentBuilder) {
+            updateRequest.doc((XContentBuilder) document);
+        } else {
+            return null;
+        }
+
+        return updateRequest
+                .consistencyLevel(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, WriteConsistencyLevel.class))
+                .parent(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARENT, String.class))
+                .index(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
+                .type(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_INDEX_TYPE, String.class))
+                .id(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+    }
+
+
 
     // Index requests
     private static IndexRequest createIndexRequest(Object document, Exchange exchange) {
@@ -55,8 +88,6 @@ public final class ElasticsearchActionRequestConverter {
         return indexRequest
                 .consistencyLevel(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, WriteConsistencyLevel.class))
-                .replicationType(exchange.getIn().getHeader(
-                        ElasticsearchConstants.PARAM_REPLICATION_TYPE, ReplicationType.class))
                 .parent(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARENT, String.class))
                 .index(exchange.getIn().getHeader(
@@ -72,12 +103,30 @@ public final class ElasticsearchActionRequestConverter {
     }
 
     @Converter
+    public static UpdateRequest toUpdateRequest(Object document, Exchange exchange) {
+        return createUpdateRequest(document, exchange)
+                .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+    }
+
+    @Converter
     public static GetRequest toGetRequest(String id, Exchange exchange) {
         return new GetRequest(exchange.getIn().getHeader(
                 ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
                 .type(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_INDEX_TYPE,
                         String.class)).id(id);
+    }
+    
+    @Converter
+    public static MultiGetRequest toMultiGetRequest(Object document, Exchange exchange) {
+        List<Item> items = (List<Item>) document;
+        MultiGetRequest multiGetRequest = new MultiGetRequest();
+        Iterator<Item> it = items.iterator();
+        while (it.hasNext()) {
+            MultiGetRequest.Item item = (MultiGetRequest.Item) it.next();
+            multiGetRequest.add(item);
+        }
+        return multiGetRequest;
     }
 
     @Converter

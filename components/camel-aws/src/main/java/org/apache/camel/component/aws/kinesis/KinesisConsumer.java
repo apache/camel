@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.aws.kinesis;
 
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.Queue;
+
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.DescribeStreamRequest;
 import com.amazonaws.services.kinesis.model.DescribeStreamResult;
@@ -24,9 +28,6 @@ import com.amazonaws.services.kinesis.model.GetRecordsResult;
 import com.amazonaws.services.kinesis.model.GetShardIteratorRequest;
 import com.amazonaws.services.kinesis.model.GetShardIteratorResult;
 import com.amazonaws.services.kinesis.model.Record;
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.Queue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -39,21 +40,17 @@ import org.slf4j.LoggerFactory;
 public class KinesisConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(KinesisConsumer.class);
 
-    private String currentShardIterator = null;
+    private String currentShardIterator;
 
     public KinesisConsumer(KinesisEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
-    /*
-     * Returns the number of messages polled.
-     */
     @Override
     protected int poll() throws Exception {
         GetRecordsRequest req = new GetRecordsRequest()
                 .withShardIterator(getShardItertor())
-                .withLimit(getEndpoint().getMaxResultsPerRequest())
-                ;
+                .withLimit(getEndpoint().getMaxResultsPerRequest());
         GetRecordsResult result = getClient().getRecords(req);
 
         Queue<Exchange> exchanges = createExchanges(result.getRecords());
@@ -61,8 +58,8 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
 
         // May cache the last successful sequence number, and pass it to the
         // getRecords request. That way, on the next poll, we start from where
-        // we left off, however, I don't know what happens to subsiquent
-        // exchanges when an earlier echange fails.
+        // we left off, however, I don't know what happens to subsequent
+        // exchanges when an earlier echangee fails.
 
         currentShardIterator = result.getNextShardIterator();
 
@@ -100,15 +97,13 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
         // either return a cached one or get a new one via a GetShardIterator request.
         if (currentShardIterator == null) {
             DescribeStreamRequest req1 = new DescribeStreamRequest()
-                    .withStreamName(getEndpoint().getStreamName())
-                    ;
+                    .withStreamName(getEndpoint().getStreamName());
             DescribeStreamResult res1 = getClient().describeStream(req1);
 
             GetShardIteratorRequest req = new GetShardIteratorRequest()
                     .withStreamName(getEndpoint().getStreamName())
                     .withShardId(res1.getStreamDescription().getShards().get(0).getShardId()) // XXX only uses the first shard
-                    .withShardIteratorType(getEndpoint().getIteratorType())
-                    ;
+                    .withShardIteratorType(getEndpoint().getIteratorType());
             GetShardIteratorResult result = getClient().getShardIterator(req);
             currentShardIterator = result.getShardIterator();
         }

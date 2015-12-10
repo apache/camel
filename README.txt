@@ -53,11 +53,21 @@ We welcome contributions of all kinds, for details of how you can help
 
 Please refer to the website for details of finding the issue tracker, 
 email lists, wiki or IRC channel
+
+Wiki: 
   http://camel.apache.org/
 
+IRC: 
+  http://camel.apache.org/irc-room.html
+
+Mailing list:
+  http://camel.apache.org/mailing-lists.html
+
+Support
 If you need support or help then read this page first
   http://camel.apache.org/support.html
 
+Forum
 If you hit any problems please talk to us on the Camel Forums
   http://camel.apache.org/discussion-forums.html
 

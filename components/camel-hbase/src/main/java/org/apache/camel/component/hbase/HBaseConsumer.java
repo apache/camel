@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategy;
@@ -33,7 +34,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HTableInterface;
-import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
@@ -50,22 +50,18 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(HBaseConsumer.class);
 
-    private String tableName;
     private final HBaseEndpoint endpoint;
-    private HTablePool tablePool;
     private HBaseRow rowModel;
 
-    public HBaseConsumer(HBaseEndpoint endpoint, Processor processor, HTablePool tablePool, String tableName) {
+    public HBaseConsumer(HBaseEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.tableName = tableName;
-        this.tablePool = tablePool;
         this.rowModel = endpoint.getRowModel();
     }
 
     @Override
     protected int poll() throws Exception {
-        HTableInterface table = tablePool.getTable(tableName);
+        HTableInterface table = endpoint.getTable();
         try {
             shutdownRunningTask = null;
             pendingExchanges = 0;
@@ -192,7 +188,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
      * Delegates to the {@link HBaseRemoveHandler}.
      */
     private void remove(byte[] row) throws IOException {
-        HTableInterface table = tablePool.getTable(tableName);
+        HTableInterface table = endpoint.getTable();
         try {
             endpoint.getRemoveHandler().remove(table, row);
         } finally {

@@ -28,9 +28,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
-import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 /**
  * Represents a Solr endpoint.
@@ -104,10 +104,10 @@ public class SolrEndpoint extends DefaultEndpoint {
         return (SolrComponent) super.getComponent();
     }
     
-    private CloudSolrServer getCloudServer() {
-        CloudSolrServer rVal = null;
+    private CloudSolrClient getCloudServer() {
+    	CloudSolrClient rVal = null;
         if (this.getZkHost() != null && this.getCollection() != null) {
-            rVal = new CloudSolrServer(zkHost);
+            rVal = new CloudSolrClient(zkHost);
             rVal.setDefaultCollection(this.getCollection());
         }
         return rVal;
@@ -120,10 +120,10 @@ public class SolrEndpoint extends DefaultEndpoint {
         if (ref == null) {
             // no then create new servers
             ref = new SolrComponent.SolrServerReference();
-            CloudSolrServer cloudServer = getCloudServer();
+            CloudSolrClient cloudServer = getCloudServer();
             if (cloudServer == null) {
-                HttpSolrServer solrServer = new HttpSolrServer(url);
-                ConcurrentUpdateSolrServer solrStreamingServer = new ConcurrentUpdateSolrServer(url, streamingQueueSize, streamingThreadCount);
+                HttpSolrClient solrServer = new HttpSolrClient(url);
+                ConcurrentUpdateSolrClient solrStreamingServer = new ConcurrentUpdateSolrClient(url, streamingQueueSize, streamingThreadCount);
 
                 // set the properties on the solr server
                 if (maxRetries != null) {

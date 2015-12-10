@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 
 /**
  *
@@ -36,7 +37,7 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), "file:src/test/resources/log4j.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:src/test/resources/log4j.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -54,7 +55,7 @@ public class ResourceHelperTest extends TestSupport {
         createDirectory("target/my space");
         FileUtil.copyFile(new File("src/test/resources/log4j.properties"), new File("target/my space/log4j.properties"));
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), "file:target/my%20space/log4j.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:target/my%20space/log4j.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -69,7 +70,7 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), "classpath:log4j.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "classpath:log4j.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -80,11 +81,28 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    public void testLoadRegistry() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("myBean", "This is a log4j logging configuation file");
+
+        CamelContext context = new DefaultCamelContext(registry);
+        context.start();
+
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "ref:myBean");
+        assertNotNull(is);
+
+        String text = context.getTypeConverter().convertTo(String.class, is);
+        assertNotNull(text);
+        assertTrue(text.contains("log4j"));
+        is.close();
+
+        context.stop();
+    }
     public void testLoadClasspathDefault() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), "log4j.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "log4j.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -100,7 +118,7 @@ public class ResourceHelperTest extends TestSupport {
         context.start();
 
         try {
-            ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), "file:src/test/resources/notfound.txt");
+            ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:src/test/resources/notfound.txt");
             fail("Should not find file");
         } catch (FileNotFoundException e) {
             assertTrue(e.getMessage().contains("notfound.txt"));
@@ -114,7 +132,7 @@ public class ResourceHelperTest extends TestSupport {
         context.start();
 
         try {
-            ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), "classpath:notfound.txt");
+            ResourceHelper.resolveMandatoryResourceAsInputStream(context, "classpath:notfound.txt");
             fail("Should not find file");
         } catch (FileNotFoundException e) {
             assertEquals("Cannot find resource: classpath:notfound.txt in classpath for URI: classpath:notfound.txt", e.getMessage());

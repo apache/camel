@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.integration.MessageChannel;
+import org.springframework.messaging.MessageChannel;
 
 /**
  * Defines the <a href="http://camel.apache.org/springIntergration.html">Spring Integration Endpoint</a>

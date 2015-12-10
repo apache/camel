@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.kinesis;
 
 import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.aws.kinesis;
 
-import com.amazonaws.services.kinesis.model.Record;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import static org.hamcrest.CoreMatchers.is;
+
+import com.amazonaws.services.kinesis.model.Record;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class RecordStringConverterTest {
 
@@ -29,8 +31,7 @@ public class RecordStringConverterTest {
     public void convertRecordToString() throws Exception {
         Record record = new Record()
                 .withSequenceNumber("1")
-                .withData(ByteBuffer.wrap("this is a String".getBytes(Charset.forName("UTF-8"))))
-                ;
+                .withData(ByteBuffer.wrap("this is a String".getBytes(Charset.forName("UTF-8"))));
 
         String result = RecordStringConverter.toString(record);
         assertThat(result, is("this is a String"));

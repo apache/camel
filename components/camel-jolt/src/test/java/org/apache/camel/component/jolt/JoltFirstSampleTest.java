@@ -33,15 +33,13 @@ public class JoltFirstSampleTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived(
             IOHelper.loadText(
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
-                    context.getClassResolver() ,
-                    "org/apache/camel/component/jolt/firstSample/output.json")
+                    context, "org/apache/camel/component/jolt/firstSample/output.json")
             ).trim() // Remove the last newline added by IOHelper.loadText()
         );
         
         sendBody("direct://start", 
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
-                        context.getClassResolver(),
-                        "org/apache/camel/component/jolt/firstSample/input.json"));
+                        context, "org/apache/camel/component/jolt/firstSample/input.json"));
         
         assertMockEndpointsSatisfied();
     }

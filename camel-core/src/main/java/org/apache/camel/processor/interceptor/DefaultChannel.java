@@ -27,6 +27,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultMessageHistoryFactory;
 import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -38,6 +39,7 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.ServiceHelper;
@@ -242,7 +244,8 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
         if (routeContext.isMessageHistory()) {
             // add message history advice
-            addAdvice(new MessageHistoryAdvice(targetOutputDef));
+            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
+            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
         }
 
         // the regular tracer is not a task on internalProcessor as this is not really needed

@@ -18,12 +18,13 @@ package org.apache.camel.component.aws.kinesis;
 
 public interface KinesisConstants {
 
-    public static final String SEQUENCE_NUMBER = "KinesisSequenceNumber";
-    public static final String APPROX_ARRIVAL_TIME = "KinesisApproximateArrivalTimestamp";
-    public static final String PARTITION_KEY = "KinesisPartitionKey";
+    String SEQUENCE_NUMBER = "CamelAwsKinesisSequenceNumber";
+    String APPROX_ARRIVAL_TIME = "CamelAwsKinesisApproximateArrivalTimestamp";
+    String PARTITION_KEY = "CamelAwsKinesisPartitionKey";
+
     /**
      * in a Kinesis Record object, the shard ID is obtained from the getPartitionKey method.
      */
-    public static final String SHARD_ID = "KinesisPartitionKey";
+    String SHARD_ID = "CamelAwsKinesisPartitionKey";
 
 }

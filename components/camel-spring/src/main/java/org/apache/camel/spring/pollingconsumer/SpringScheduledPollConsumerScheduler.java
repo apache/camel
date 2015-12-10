@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spring.util.CamelThreadPoolTaskScheduler;
 import org.apache.camel.support.ServiceSupport;
@@ -34,7 +35,7 @@ import org.springframework.scheduling.support.CronTrigger;
  * A Spring based {@link ScheduledPollConsumerScheduler} which uses a {@link CronTrigger} to define when the
  * poll should be triggered.
  */
-public class SpringScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler {
+public class SpringScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler, NonManagedService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringScheduledPollConsumerScheduler.class);
     private CamelContext camelContext;

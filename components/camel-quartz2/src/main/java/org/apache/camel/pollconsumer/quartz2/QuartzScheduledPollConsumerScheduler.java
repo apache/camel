@@ -20,6 +20,7 @@ import java.util.TimeZone;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.component.quartz2.QuartzConstants;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * A quartz based {@link ScheduledPollConsumerScheduler} which uses a {@link CronTrigger} to define when the
  * poll should be triggered.
  */
-public class QuartzScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler {
+public class QuartzScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler, NonManagedService {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerScheduler.class);
     private Scheduler quartzScheduler;

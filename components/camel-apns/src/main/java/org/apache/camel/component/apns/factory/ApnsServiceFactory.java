@@ -202,7 +202,7 @@ public class ApnsServiceFactory implements CamelContextAware {
 
         InputStream certificateInputStream = null;
         try {
-            certificateInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), getCertificatePath());
+            certificateInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, getCertificatePath());
             builder.withCert(certificateInputStream, getCertificatePassword());
         } finally {
             ResourceUtils.close(certificateInputStream);

@@ -417,7 +417,7 @@ public abstract class CamelServletContextListener<R extends Registry> implements
                             // XML resource from classpath or file system
                             InputStream is = null;
                             try {
-                                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), value);
+                                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, value);
                                 target = camelContext.loadRoutesDefinition(is);
                             } catch (Exception e) {
                                 throw new RuntimeException("Error loading routes from resource: " + value, e);

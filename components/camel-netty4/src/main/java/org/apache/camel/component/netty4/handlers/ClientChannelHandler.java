@@ -24,6 +24,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.netty4.NettyCamelState;
+import org.apache.camel.component.netty4.NettyConfiguration;
 import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.NettyPayloadHelper;
@@ -47,12 +48,14 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) {
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Channel open: {}", ctx.channel());
         }
         // to keep track of open sockets
         producer.getAllChannels().add(ctx.channel());
+        
+        super.channelActive(ctx);
     }
 
     @Override
@@ -94,7 +97,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Channel closed: {}", ctx.channel());
         }
@@ -108,18 +111,23 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         // to keep track of open sockets
         producer.getAllChannels().remove(ctx.channel());
 
-        if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
+        NettyConfiguration configuration = producer.getConfiguration();
+        if (configuration.isSync() && !exceptionHandled) {
             // To avoid call the callback.done twice
             exceptionHandled = true;
             // session was closed but no message received. This could be because the remote server had an internal error
-            // and could not return a response. We should count down to stop waiting for a response
+            // and could not return a response. We should count down to stop waiting for a response            
+            String address = configuration != null ? configuration.getAddress() : "";
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Channel closed but no message received from address: {}", producer.getConfiguration().getAddress());
+                LOG.debug("Channel closed but no message received from address: {}", address);
             }
-            exchange.setException(new CamelExchangeException("No response received from remote server: " + producer.getConfiguration().getAddress(), exchange));
+            exchange.setException(new CamelExchangeException("No response received from remote server: " + address, exchange));
             // signal callback
             callback.done(false);
         }
+        
+        // make sure the event can be processed by other handlers
+        super.channelInactive(ctx);
     }
 
     @Override
@@ -202,7 +210,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
      * @throws Exception is thrown if error getting the response message
      */
     protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message) throws Exception {
-
         Object body = message;
 
         if (LOG.isDebugEnabled()) {

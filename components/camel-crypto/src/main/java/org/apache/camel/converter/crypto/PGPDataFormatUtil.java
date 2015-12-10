@@ -185,7 +185,7 @@ public final class PGPDataFormatUtil {
         if (keyRing != null) {
             is = new ByteArrayInputStream(keyRing);
         } else {
-            is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), filename);
+            is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, filename);
         }
         return is;
     }

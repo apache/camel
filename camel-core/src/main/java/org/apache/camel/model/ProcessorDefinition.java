@@ -2250,6 +2250,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other using {@link ExchangePattern#InOnly}.
      *
+     * @param endpoint  the endpoint to wiretap to
+     * @return the builder
+     */
+    public WireTapDefinition<Type> wireTap(Endpoint endpoint) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setUri(endpoint.getEndpointUri());
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
+     * Sends messages to all its child outputs; so that each processor and
+     * destination gets a copy of the original message to avoid the processors
+     * interfering with each other using {@link ExchangePattern#InOnly}.
+     *
      * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @return the builder
      */
@@ -3253,7 +3269,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
      * @return the builder
      * @see org.apache.camel.processor.Enricher
+     * @deprecated use enrich with a <tt>ref:id</tt> as the resourceUri parameter.
      */
+    @Deprecated
     public Type enrichRef(String resourceRef, String aggregationStrategyRef) {
         return enrichRef(resourceRef, aggregationStrategyRef, false);
     }
@@ -3271,7 +3289,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                               an exception was thrown.
      * @return the builder
      * @see org.apache.camel.processor.Enricher
+     * @deprecated use enrich with a <tt>ref:id</tt> as the resourceUri parameter.
      */
+    @Deprecated
     public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException) {
         return enrichRef(resourceRef, aggregationStrategyRef, false, false);
     }
@@ -3290,7 +3310,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param shareUnitOfWork        whether to share unit of work
      * @return the builder
      * @see org.apache.camel.processor.Enricher
+     * @deprecated use enrich with a <tt>ref:id</tt> as the resourceUri parameter.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichDefinition answer = new EnrichDefinition();
@@ -3452,7 +3474,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
+     * @deprecated use pollEnrich with a <tt>ref:id</tt> as the resourceUri parameter.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
@@ -3482,7 +3506,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                               an exception was thrown.
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
+     * @deprecated use pollEnrich with a <tt>ref:id</tt> as the resourceUri parameter.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();

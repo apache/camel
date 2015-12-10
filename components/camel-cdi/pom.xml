@@ -47,8 +47,7 @@
     </camel.osgi.provide.capability>
     <camel.osgi.require.capability>
       osgi.extender;filter:="(osgi.extender=pax.cdi)",
-      org.ops4j.pax.cdi.extension;filter:="(extension=deltaspike-core-api)",
-      org.ops4j.pax.cdi.extension;filter:="(extension=camel-cdi-extension)"
+      org.ops4j.pax.cdi.extension;filter:="(extension=deltaspike-core-api)"
     </camel.osgi.require.capability>
   </properties>
 

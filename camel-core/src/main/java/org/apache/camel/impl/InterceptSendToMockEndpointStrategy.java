@@ -30,7 +30,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 /**
  * A {@link EndpointStrategy} which is capable of mocking endpoints.
  * <p/>
- * This strategy will only apply when new endpoints is being created. If you want to apply
+ * This strategy will only apply when new endpoints are being created. If you want to replace
  * existing endpoints, you will have to remove them from the {@link org.apache.camel.CamelContext} beforehand.
  *
  * @version 
