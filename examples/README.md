@@ -26,7 +26,7 @@ All examples have been sort by type/category
 * [camel-example-etl](camel-example-etl/README.md)
 * [camel-example-loadbalancing](camel-example-loadbalancing/README.md)
 
-##### Easy 
+##### Easy
 
 * [camel-example-cdi](camel-example-cdi/README.md)
 * [camel-example-console](camel-example-console/README.md)
@@ -74,7 +74,7 @@ All examples have been sort by type/category
 * [camel-example-twitter-websocket](camel-example-twitter-websocket/README.md)
 * [camel-example-twitter-websocket-blueprint](camel-example-twitter-websocket-blueprint/README.md)
 
-##### Spring 
+##### Spring
 
 * [camel-example-spring](camel-example-spring/README.md)
 * [camel-example-spring-boot](camel-example-spring-boot/README.md)
@@ -87,7 +87,6 @@ All examples have been sort by type/category
 
 ##### Miscellaneous
 
-* [camel-example-servlet-rest-tomcat](camel-example-servlet-rest-tomcat/README.md)
 * [camel-example-servlet-tomcat](camel-example-servlet-tomcat/README.md)
 * [camel-example-servlet-tomcat-no-spring](camel-example-servlet-tomcat-no-spring/README.md)
 * [camel-example-swagger-cdi](camel-example-swagger-cdi/README.md)
@@ -95,7 +94,7 @@ All examples have been sort by type/category
 * [camel-example-netty-http](camel-example-netty-http/README.md)
 * [camel-example-management](camel-example-management/README.md)
 
-##### WS-SOAP 
+##### WS-SOAP
 
 * [camel-example-cxf](camel-example-cxf/README.md)
 * [camel-example-cxf-blueprint](camel-example-cxf-blueprint/README.md)
@@ -109,7 +108,7 @@ They are described in detail here <http://camel.apache.org/examples.html>
 
 Before you start we recommend you install a recent distribution of Maven, which we use to run our examples <http://maven.apache.org/>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
 
