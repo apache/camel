@@ -29,6 +29,76 @@
   <description>Camel Maven Plugins</description>
   <packaging>pom</packaging>
 
+  <properties>
+    <maven-version>2.2.1</maven-version>
+    <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
+    <maven-project-version>2.2.1</maven-project-version>
+    <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
+    <maven-reporting-impl-version>2.4</maven-reporting-impl-version>
+    <plexus-build-api-version>0.0.7</plexus-build-api-version>
+    <plexus-container-default-version>1.6</plexus-container-default-version>
+    <plexus-utils-version>3.0.22</plexus-utils-version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${maven-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact</artifactId>
+      <version>${maven-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${maven-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-descriptor</artifactId>
+      <version>${maven-maven-plugin-descriptor-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>${maven-project-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>${maven-reporting-api-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>${maven-reporting-impl-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <version>${plexus-container-default-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>${plexus-utils-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.plexus</groupId>
+      <artifactId>plexus-build-api</artifactId>
+      <version>${plexus-build-api-version}</version>
+    </dependency>
+  </dependencies>
+
   <modules>
     <module>camel-package-maven-plugin</module>
     <module>camel-maven-plugin</module>

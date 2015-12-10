@@ -35,7 +35,7 @@
     <dependencies>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>tooling</artifactId>
+        <artifactId>maven-plugins</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
