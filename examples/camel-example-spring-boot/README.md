@@ -1,6 +1,7 @@
-Spring Example
-==============
+# Spring Boot Example
 
+
+### Introduction
 This example shows how to work with the simple Camel application based on the Spring Boot.
 
 The example generates messages using timer trigger, writes them to the standard output and the mock
@@ -14,28 +15,35 @@ We recommend to package your application as a fat WAR. Fat WARs can be executed 
 deploy them to the servlet containers like Tomcat. Fat WAR approach gives you the deployment flexibility, so we highly
 recommend it.
 
+### Build
 You will need to compile this example first:
-  mvn install
+	
+	mvn install
 
+### Run
 To run the example type
-  mvn spring-boot:run
+	
+	mvn spring-boot:run
 
 You can also execute the fat WAR directly:
 
-  java -jar target/camel-example-spring-boot.war
+	java -jar target/camel-example-spring-boot.war
 
 You will see the message printed to the console every second.
 
-To stop the example hit ctrl + c
+To stop the example hit `ctrl + c`
 
-This example is documented at
-  http://camel.apache.org/spring-boot-example.html
+### Documentation
 
-If you hit any problems please talk to us on the Camel Forums
-  http://camel.apache.org/discussion-forums.html
+This example is documented at <http://camel.apache.org/spring-boot-example.html>
 
-Please help us make Apache Camel better - we appreciate any feedback you
-may have.  Enjoy!
+### Forum, Help, etc 
+
+If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!
+
 
 ------------------------
 The Camel riders!

@@ -3,7 +3,6 @@
 ### Introduction
 
 This example shows how to use Camel as an ETL tool
-  [http://camel.apache.org/etl.html](http://camel.apache.org/etl.html)
 
 ### Build
 
@@ -29,7 +28,7 @@ To stop the example hit `ctrl + c`
 #### Build
 
 You will need to compile and install this example first:
-	
+
 	mvn install
 
 #### Install
@@ -46,17 +45,17 @@ removed and you don't see the logs anymore written into the console, e.g. in cas
 again using:
 
 	karaf clean
-  
+
 ### Documentation
 
 For a full description of this example please see
-  [http://camel.apache.org/etl-example.html](http://camel.apache.org/etl-example.html)
+  <http://camel.apache.org/etl-example.html>
 
+<http://camel.apache.org/etl.html>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums
-  [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
