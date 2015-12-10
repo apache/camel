@@ -46,7 +46,7 @@ public class HiveSparkProducer extends DefaultProducer {
 
     protected HiveContext resolveHiveContext() {
         Set<HiveContext> hiveContexts = getEndpoint().getComponent().getCamelContext().getRegistry().findByType(HiveContext.class);
-        if(hiveContexts.size() == 1) {
+        if (hiveContexts.size() == 1) {
             return hiveContexts.iterator().next();
         }
         return null;
