@@ -27,11 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.integration.Message;
-import org.springframework.integration.MessageChannel;
-import org.springframework.integration.MessageHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.core.MessageHandler;
+import org.springframework.messaging.MessageHandler;
 
 /**
  * A CamelContext will be injected into CameSourceAdapter which will
@@ -62,7 +62,7 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
 
     protected class ConsumerProcessor implements Processor {
         public void process(final Exchange exchange) throws Exception {
-            org.springframework.integration.Message<?> request = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
+            org.springframework.messaging.Message<?> request = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
             if (exchange.getPattern().isOutCapable()) {
                 exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL , replyChannel);
