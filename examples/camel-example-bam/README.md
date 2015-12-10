@@ -34,7 +34,7 @@ To stop the example hit ctrl + c
 ### Documentation
 
 This example is documented at
-  [http://camel.apache.org/bam-example.html](http://camel.apache.org/bam-example.html)
+  <http://camel.apache.org/bam-example.html>
 
 ### Forum, Help, etc 
 
