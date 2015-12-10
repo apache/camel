@@ -1,6 +1,6 @@
-Spring XQuery Example
-=====================
+# Spring XQuery Example
 
+### Introduction
 This example shows how to
 
  * work with files and JMS
@@ -10,25 +10,32 @@ This example shows how to
 The example consumes messages from a directory, transforms them, then sends
 them to a queue. 
 
+### Build
 You will need to compile this example first:
-  mvn compile
+  
+	mvn compile
 
+### Run
 To run the example using Maven, type
-  mvn camel:run
+
+	mvn camel:run
 
 You can see the routing rules by looking at the the Spring XML configuration
-at src/main/resources/META-INF/spring
+at `src/main/resources/META-INF/spring`
 
-To stop the example hit ctrl + c
+To stop the example hit `ctrl + c`
 
-This example is documented at
-  http://camel.apache.org/spring-xquery-example.html
+### Documentation
+This example is documented at <http://camel.apache.org/spring-xquery-example.html>
 
-If you hit any problems please let us know on the Camel Forums
-  http://camel.apache.org/discussion-forums.html
+
+### Forum, Help, etc 
+
+If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
+
 
 ------------------------
 The Camel riders!
