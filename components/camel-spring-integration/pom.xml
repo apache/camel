@@ -31,12 +31,11 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.spring.integration.*</camel.osgi.export.pkg>
-        <camel.osgi.import.before.defaults>org.springframework.integration.*;version="[4"
-        org.springframework.messaging.*;version="[4"</camel.osgi.import.before.defaults>
+        <camel.osgi.import.before.defaults>
+            org.springframework.integration.*;version="[4.2,5)",
+            org.springframework.messaging.*;version="[4.2,5)"
+        </camel.osgi.import.before.defaults>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=spring-integration</camel.osgi.export.service>
-
-        <!-- must use older spring version -->
-        <spring-version>${spring41-version}</spring-version>
     </properties>
 
     <dependencies>
