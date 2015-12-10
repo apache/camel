@@ -1,1 +1,0 @@
-This example has been replaced with [camel-example-swagger-java](../camel-example-swagger-java)
