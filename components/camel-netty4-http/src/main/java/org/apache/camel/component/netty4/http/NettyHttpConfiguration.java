@@ -36,6 +36,10 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     @UriPath(enums = "http,https", defaultValue = "http") @Metadata(required = "true")
     private String protocol;
     @UriPath @Metadata(required = "true")
+    private String host;
+    @UriPath
+    private int port;
+    @UriPath @Metadata(required = "true")
     private String path;
     @UriParam(label = "consumer,advanced")
     private boolean urlDecodeHeaders;
@@ -97,6 +101,37 @@ public class NettyHttpConfiguration extends NettyConfiguration {
      */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    @Override
+    public String getHost() {
+        // override to setup better documentation for netty-http
+        return super.getHost();
+    }
+
+    /**
+     * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
+     * The remote HTTP server hostname when using producer.
+     */
+    @Override
+    public void setHost(String host) {
+        // override to setup better documentation for netty-http
+        super.setHost(host);
+    }
+
+    @Override
+    public int getPort() {
+        // override to setup better documentation for netty-http
+        return super.getPort();
+    }
+
+    /**
+     * The port number. Is default 80 for http and 443 for https.
+     */
+    @Override
+    public void setPort(int port) {
+        // override to setup better documentation for netty-http
+        super.setPort(port);
     }
 
     public boolean isCompression() {
