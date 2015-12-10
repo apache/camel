@@ -3,7 +3,7 @@
 ### Introduction
 
 This example shows how to use Camel as an ETL tool
-  [http://camel.apache.org/etl.html](http://camel.apache.org/etl.html)
+  <http://camel.apache.org/etl.html>
 
 ### Build
 
