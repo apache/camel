@@ -91,6 +91,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         NettyHttpSecurityConfiguration securityConfiguration = resolveAndRemoveReferenceParameter(parameters, "securityConfiguration", NettyHttpSecurityConfiguration.class);
         Map<String, Object> securityOptions = IntrospectionSupport.extractProperties(parameters, "securityConfiguration.");
 
+        NettyHttpBinding bindingFromUri = resolveAndRemoveReferenceParameter(parameters, "nettyHttpBinding", NettyHttpBinding.class);
+
         // are we using a shared http server?
         int sharedPort = -1;
         NettySharedHttpServer shared = resolveAndRemoveReferenceParameter(parameters, "nettySharedHttpServer", NettySharedHttpServer.class);
@@ -100,15 +102,31 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             sharedPort = shared.getPort();
         }
 
-        // configure configuration
-        config = parseConfiguration(config, remaining, parameters);
+        // we must include the protocol in the remaining
+        boolean hasProtocol = remaining.startsWith("http://") || remaining.startsWith("http:")
+                || remaining.startsWith("https://") || remaining.startsWith("https:");
+        if (!hasProtocol) {
+            // http is the default protocol
+            remaining = "http://" + remaining;
+        }
+        boolean hasSlash = remaining.startsWith("http://") || remaining.startsWith("https://");
+        if (!hasSlash) {
+            // must have double slash after protocol
+            if (remaining.startsWith("http:")) {
+                remaining = "http://" + remaining.substring(5);
+            } else {
+                remaining = "https://" + remaining.substring(6);
+            }
+        }
+        LOG.debug("Netty http url: {}", remaining);
+
         // set port on configuration which is either shared or using default values
         if (sharedPort != -1) {
             config.setPort(sharedPort);
         } else if (config.getPort() == -1) {
-            if ("http".equals(config.getProtocol())) {
+            if (remaining.startsWith("http:")) {
                 config.setPort(80);
-            } else if ("https".equals(config.getProtocol())) {
+            } else if (remaining.startsWith("https:")) {
                 config.setPort(443);
             }
         }
@@ -116,12 +134,12 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             throw new IllegalArgumentException("Port number must be configured");
         }
 
+        // configure configuration
+        config = parseConfiguration(config, remaining, parameters);
         setProperties(config, parameters);
 
         // validate config
         config.validateConfiguration();
-
-        NettyHttpBinding bindingFromUri = resolveAndRemoveReferenceParameter(parameters, "nettyHttpBinding", NettyHttpBinding.class);
 
         // create the address uri which includes the remainder parameters (which
         // is not configuration parameters for this component)
