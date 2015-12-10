@@ -7,30 +7,33 @@ This is an example that uses the rest-dsl to define a rest services which provid
 - PUT user          - Updates or create a user
 - GET user/findAll  - Find all users
 
-
-
 ### Build
 You will need to compile this example first:
-  mvn compile
+
+	mvn compile
 
 ### Run
 To run the example type
-  mvn camel:run
+  
+	mvn camel:run
 
 The rest service can be accessed from the following url
 
 	curl http://localhost:8080/user
+	
 <http://localhost:8080/user>
 
 For example to get a user with id 123
 
-   curl http://localhost:8080/user/123
+	curl http://localhost:8080/user/123
+   
 <http://localhost:8080/user/123>
 
 The rest services provides Swagger API which can be accessed from the following url
 
-    http://localhost:8080/api-docs
-<http://localhost:8080/api-docs>
+    curl http://localhost:8080/api-doc
+    
+<http://localhost:8080/api-doc>
 
 To stop the example hit `ctrl + c`
 
