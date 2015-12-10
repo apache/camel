@@ -32,6 +32,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>parent</module>
     <module>spi-annotations</module>
     <module>apt</module>
     <module>maven</module>
