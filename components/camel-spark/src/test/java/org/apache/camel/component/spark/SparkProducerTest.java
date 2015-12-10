@@ -19,6 +19,7 @@ package org.apache.camel.component.spark;
 import java.io.File;
 import java.io.IOException;
 
+import static java.lang.Runtime.getRuntime;
 import static java.util.Arrays.asList;
 
 import com.google.common.truth.Truth;
@@ -30,12 +31,14 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.hive.HiveContext;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.apache.camel.component.spark.SparkConstants.SPARK_DATAFRAME_CALLBACK_HEADER;
 import static org.apache.camel.component.spark.SparkConstants.SPARK_RDD_CALLBACK_HEADER;
 import static org.apache.camel.component.spark.Sparks.createLocalSparkContext;
 import static org.apache.camel.component.spark.annotations.AnnotatedRddCallback.annotatedRddCallback;
+import static org.junit.Assume.assumeTrue;
 
 public class SparkProducerTest extends CamelTestSupport {
 
@@ -43,13 +46,22 @@ public class SparkProducerTest extends CamelTestSupport {
 
     static JavaSparkContext sparkContext = createLocalSparkContext();
 
-    static HiveContext hiveContext = new HiveContext(sparkContext.sc());
+    static boolean shouldRunHive = getRuntime().maxMemory() > 1024 * 1024 * 1024;
+
+    static HiveContext hiveContext;
 
     String sparkUri = "spark:rdd?rdd=#pomRdd";
 
     String sparkDataFrameUri = "spark:dataframe?dataFrame=#jsonCars";
 
     String sparkHiveUri = "spark:hive";
+
+    @BeforeClass
+    public static void beforeClass() {
+        if (shouldRunHive) {
+            hiveContext = new HiveContext(sparkContext.sc());
+        }
+    }
 
     // Routes fixtures
 
@@ -59,10 +71,12 @@ public class SparkProducerTest extends CamelTestSupport {
 
         registry.bind("pomRdd", sparkContext.textFile("testrdd.txt"));
 
-        registry.bind("hiveContext", hiveContext);
-        DataFrame jsonCars = hiveContext.read().json("src/test/resources/cars.json");
-        jsonCars.registerTempTable("cars");
-        registry.bind("jsonCars", jsonCars);
+        if (shouldRunHive) {
+            registry.bind("hiveContext", hiveContext);
+            DataFrame jsonCars = hiveContext.read().json("src/test/resources/cars.json");
+            jsonCars.registerTempTable("cars");
+            registry.bind("jsonCars", jsonCars);
+        }
 
         registry.bind("countLinesTransformation", new org.apache.camel.component.spark.RddCallback() {
             @Override
@@ -180,6 +194,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteHiveQuery() {
+        assumeTrue(shouldRunHive);
         long tablesCount = template.requestBody(sparkHiveUri + "?collect=false", "SELECT * FROM cars", Long.class);
         Truth.assertThat(tablesCount).isEqualTo(2);
     }
@@ -188,6 +203,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldCountFrame() {
+        assumeTrue(shouldRunHive);
         DataFrameCallback callback = new DataFrameCallback<Long>() {
             @Override
             public Long onDataFrame(DataFrame dataFrame, Object... payloads) {
@@ -200,6 +216,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteConditionalFrameCount() {
+        assumeTrue(shouldRunHive);
         DataFrameCallback callback = new DataFrameCallback<Long>() {
             @Override
             public Long onDataFrame(DataFrame dataFrame, Object... payloads) {
