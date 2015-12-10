@@ -58,9 +58,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     private HeaderFilterStrategy headerFilterStrategy;
     private NettyHttpSecurityConfiguration securityConfiguration;
 
-    // If the port is not specified Netty set it to -1, we need to set it on a default port in this case
-    private int defaultPortIfNotProvided = 80;
-
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
         super(NettyHttpEndpoint.class);
@@ -94,19 +91,35 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         NettyHttpSecurityConfiguration securityConfiguration = resolveAndRemoveReferenceParameter(parameters, "securityConfiguration", NettyHttpSecurityConfiguration.class);
         Map<String, Object> securityOptions = IntrospectionSupport.extractProperties(parameters, "securityConfiguration.");
 
-        config = parseConfiguration(config, remaining, parameters);
-        setProperties(config, parameters);
-
-        // validate config
-        config.validateConfiguration();
-
         // are we using a shared http server?
+        int sharedPort = -1;
         NettySharedHttpServer shared = resolveAndRemoveReferenceParameter(parameters, "nettySharedHttpServer", NettySharedHttpServer.class);
         if (shared != null) {
             // use port number from the shared http server
             LOG.debug("Using NettySharedHttpServer: {} with port: {}", shared, shared.getPort());
-            config.setPort(shared.getPort());
+            sharedPort = shared.getPort();
         }
+
+        // configure configuration
+        config = parseConfiguration(config, remaining, parameters);
+        // set port on configuration which is either shared or using default values
+        if (sharedPort != -1) {
+            config.setPort(sharedPort);
+        } else if (config.getPort() == -1) {
+            if ("http".equals(config.getProtocol())) {
+                config.setPort(80);
+            } else if ("https".equals(config.getProtocol())) {
+                config.setPort(443);
+            }
+        }
+        if (config.getPort() == -1) {
+            throw new IllegalArgumentException("Port number must be configured");
+        }
+
+        setProperties(config, parameters);
+
+        // validate config
+        config.validateConfiguration();
 
         // create the address uri which includes the remainder parameters (which is not configuration parameters for this component)
         URI u = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
@@ -169,9 +182,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             ((NettyHttpConfiguration) configuration).setPath(uri.getPath());
         }
 
-        if (configuration.getPort() == -1) {
-            configuration.setPort(defaultPortIfNotProvided);
-        }
         return configuration;
     }
 
