@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.spark.annotations;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.spark.RddCallback;
 
+/**
+ * Provides facade for working with annotated RDD callbacks i.e. POJO classes with an appropriate annotations on
+ * selected methods.
+ */
 public final class AnnotatedRddCallback {
 
     private AnnotatedRddCallback() {
@@ -25,6 +30,10 @@ public final class AnnotatedRddCallback {
 
     public static RddCallback annotatedRddCallback(Object objectWithCallback) {
         return new AnnotatedRddCallbackProxy(objectWithCallback);
+    }
+
+    public static RddCallback annotatedRddCallback(Object objectWithCallback, CamelContext camelContext) {
+        return new AnnotatedRddCallbackProxy(objectWithCallback, camelContext);
     }
 
 }

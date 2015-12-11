@@ -23,6 +23,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.spark.RddCallback;
 import org.apache.spark.api.java.AbstractJavaRDDLike;
 
@@ -34,12 +35,19 @@ class AnnotatedRddCallbackProxy implements RddCallback {
 
     private final List<Method> rddCallbacks;
 
-    public AnnotatedRddCallbackProxy(Object objectWithCallback) {
+    private final CamelContext camelContext;
+
+    public AnnotatedRddCallbackProxy(Object objectWithCallback, CamelContext camelContext) {
         this.objectWithCallback = objectWithCallback;
+        this.camelContext = camelContext;
         this.rddCallbacks = findMethodsWithAnnotation(objectWithCallback.getClass(), org.apache.camel.component.spark.annotations.RddCallback.class);
         if (rddCallbacks.size() == 0) {
             throw new UnsupportedOperationException("Can't find methods annotated with @RddCallback.");
         }
+    }
+
+    public AnnotatedRddCallbackProxy(Object objectWithCallback) {
+        this(objectWithCallback, null);
     }
 
     @Override
@@ -54,6 +62,13 @@ class AnnotatedRddCallbackProxy implements RddCallback {
 
             Method callbackMethod = rddCallbacks.get(0);
             callbackMethod.setAccessible(true);
+
+            if (camelContext != null) {
+                for (int i = 1; i < arguments.size(); i++) {
+                    arguments.set(i, camelContext.getTypeConverter().convertTo(callbackMethod.getParameterTypes()[i], arguments.get(i)));
+                }
+            }
+
             return callbackMethod.invoke(objectWithCallback, arguments.toArray(new Object[arguments.size()]));
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);

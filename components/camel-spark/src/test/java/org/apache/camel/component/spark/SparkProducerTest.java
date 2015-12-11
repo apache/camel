@@ -104,24 +104,24 @@ public class SparkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteRddCallbackWithSinglePayload() {
-        long pomLinesCount = template.requestBodyAndHeader(sparkUri, 10, SPARK_RDD_CALLBACK_HEADER, new org.apache.camel.component.spark.RddCallback() {
+        long linesCount = template.requestBodyAndHeader(sparkUri, 10, SPARK_RDD_CALLBACK_HEADER, new org.apache.camel.component.spark.RddCallback() {
             @Override
             public Long onRdd(AbstractJavaRDDLike rdd, Object... payloads) {
                 return rdd.count() * (int) payloads[0];
             }
         }, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10);
+        Truth.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile * 10);
     }
 
     @Test
     public void shouldExecuteRddCallbackWithPayloads() {
-        long pomLinesCount = template.requestBodyAndHeader(sparkUri, asList(10, 10), SPARK_RDD_CALLBACK_HEADER, new org.apache.camel.component.spark.RddCallback() {
+        long linesCount = template.requestBodyAndHeader(sparkUri, asList(10, 10), SPARK_RDD_CALLBACK_HEADER, new org.apache.camel.component.spark.RddCallback() {
             @Override
             public Long onRdd(AbstractJavaRDDLike rdd, Object... payloads) {
                 return rdd.count() * (int) payloads[0] * (int) payloads[1];
             }
         }, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
+        Truth.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
     }
 
     @Test
@@ -132,14 +132,14 @@ public class SparkProducerTest extends CamelTestSupport {
                 return rdd.count() * (int) payloads[0] * (int) payloads[1];
             }
         };
-        long pomLinesCount = template.requestBodyAndHeader(sparkUri, asList("10", "10"), SPARK_RDD_CALLBACK_HEADER, rddCallback, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(1900);
+        long linesCount = template.requestBodyAndHeader(sparkUri, asList("10", "10"), SPARK_RDD_CALLBACK_HEADER, rddCallback, Long.class);
+        Truth.assertThat(linesCount).isEqualTo(1900);
     }
 
     @Test
     public void shouldUseTransformationFromRegistry() {
-        long pomLinesCount = template.requestBody(sparkUri + "&rddCallback=#countLinesTransformation", null, Long.class);
-        Truth.assertThat(pomLinesCount).isGreaterThan(0L);
+        long linesCount = template.requestBody(sparkUri + "&rddCallback=#countLinesTransformation", null, Long.class);
+        Truth.assertThat(linesCount).isGreaterThan(0L);
     }
 
     @Test
@@ -201,6 +201,18 @@ public class SparkProducerTest extends CamelTestSupport {
             }
         });
         long pomLinesCount = template.requestBodyAndHeader(sparkUri, asList(10, 10), SPARK_RDD_CALLBACK_HEADER, rddCallback, Long.class);
+        Truth.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
+    }
+
+    @Test
+    public void shouldExecuteAnnotatedCallbackWithConversions() {
+        org.apache.camel.component.spark.RddCallback rddCallback = annotatedRddCallback(new Object() {
+            @RddCallback
+            long countLines(JavaRDD<String> textFile, int first, int second) {
+                return textFile.count() * first * second;
+            }
+        }, context);
+        long pomLinesCount = template.requestBodyAndHeader(sparkUri, asList(10, "10"), SPARK_RDD_CALLBACK_HEADER, rddCallback, Long.class);
         Truth.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
     }
 
