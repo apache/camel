@@ -196,6 +196,7 @@
     <google-api-services-drive-version>v2-rev151-1.19.0</google-api-services-drive-version>
     <google-api-services-calendar-version>v3-rev99-1.19.0</google-api-services-calendar-version>
     <google-api-services-mail-version>v1-rev15-1.19.0</google-api-services-mail-version>
+    <google-truth-version>0.27</google-truth-version>
     <grizzly-websockets-version>2.3.23</grizzly-websockets-version>
     <groovy-version>2.4.5</groovy-version>
     <gson-version>2.5</gson-version>
@@ -2236,6 +2237,16 @@
         <version>${testng-version}</version>
       </dependency>
       <dependency>
+        <groupId>com.google.truth</groupId>
+        <artifactId>truth</artifactId>
+        <version>${google-truth-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.jayway.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>${awaitility.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
         <version>${easymock-version}</version>
@@ -2254,11 +2265,6 @@
         <groupId>httpunit</groupId>
         <artifactId>httpunit</artifactId>
         <version>${httpunit-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.jayway.awaitility</groupId>
-        <artifactId>awaitility</artifactId>
-        <version>${awaitility.version}</version>
       </dependency>
 
       <!-- default JPA support -->

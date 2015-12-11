@@ -37,7 +37,6 @@ limitations under the License.
         <!-- Spark 1.5.1 requires Jackson 2.4.4 -->
         <jackson-version>2.4.4</jackson-version>
 
-        <google-truth-version>0.27</google-truth-version>
         <hadoop.version>2.2.0</hadoop.version>
         <mongo-hadoop-core.version>1.4.2</mongo-hadoop-core.version>
         <spark-version>1.5.1</spark-version>
@@ -98,7 +97,6 @@ limitations under the License.
         <dependency>
             <groupId>com.google.truth</groupId>
             <artifactId>truth</artifactId>
-            <version>${google-truth-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
