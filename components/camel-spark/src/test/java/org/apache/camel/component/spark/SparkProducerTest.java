@@ -124,7 +124,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteRddCallbackWithTypedPayloads() {
-        TypedRddCallback rddCallback = new TypedRddCallback<Long>(context, new Class[]{int.class, int.class}) {
+        ConvertingRddCallback rddCallback = new ConvertingRddCallback<Long>(context, int.class, int.class) {
             @Override
             public Long doOnRdd(AbstractJavaRDDLike rdd, Object... payloads) {
                 return rdd.count() * (int) payloads[0] * (int) payloads[1];
