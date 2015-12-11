@@ -200,7 +200,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         List<Object> detailList = fault.getDetail().getAny();
         StringBuilder sb = new StringBuilder();
         for (Reasontext text : fault.getReason().getText()) {
-            sb.append(text);
+            sb.append(text.getValue());
         }
         String message = sb.toString();
 
