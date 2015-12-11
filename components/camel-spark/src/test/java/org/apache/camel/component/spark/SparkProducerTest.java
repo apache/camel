@@ -56,6 +56,8 @@ public class SparkProducerTest extends CamelTestSupport {
 
     String sparkHiveUri = "spark:hive";
 
+    int numberOfLinesInTestFile = 19;
+
     @BeforeClass
     public static void beforeClass() {
         if (shouldRunHive) {
@@ -97,7 +99,7 @@ public class SparkProducerTest extends CamelTestSupport {
                 return rdd.count();
             }
         }, Long.class);
-        Truth.assertThat(linesCount).isEqualTo(19);
+        Truth.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile);
     }
 
     @Test
@@ -108,7 +110,7 @@ public class SparkProducerTest extends CamelTestSupport {
                 return rdd.count() * (int) payloads[0];
             }
         }, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(190);
+        Truth.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10);
     }
 
     @Test
@@ -119,7 +121,7 @@ public class SparkProducerTest extends CamelTestSupport {
                 return rdd.count() * (int) payloads[0] * (int) payloads[1];
             }
         }, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(1900);
+        Truth.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
     }
 
     @Test
@@ -188,6 +190,18 @@ public class SparkProducerTest extends CamelTestSupport {
 
             // Then
         Truth.assertThat(output.length()).isGreaterThan(0L);
+    }
+
+    @Test
+    public void shouldExecuteAnnotatedCallbackWithParameters() {
+        org.apache.camel.component.spark.RddCallback rddCallback = annotatedRddCallback(new Object() {
+            @RddCallback
+            long countLines(JavaRDD<String> textFile, int first, int second) {
+                return textFile.count() * first * second;
+            }
+        });
+        long pomLinesCount = template.requestBodyAndHeader(sparkUri, asList(10, 10), SPARK_RDD_CALLBACK_HEADER, rddCallback, Long.class);
+        Truth.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
     }
 
     // Hive tests
