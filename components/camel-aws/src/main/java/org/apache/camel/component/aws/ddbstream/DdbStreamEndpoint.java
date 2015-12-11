@@ -42,10 +42,10 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     private AmazonDynamoDBStreams amazonDynamoDbStreamsClient;
 
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll")
-    private int maxResultsPerRequest = 1;
+    private int maxResultsPerRequest = 100;
 
-    @UriParam(label = "consumer", description = "Defines where in the DynaboDB stream to start getting records")
-    private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;
+    @UriParam(label = "consumer", description = "Defines where in the DynaboDB stream to start getting records", defaultValue = "LATEST")
+    private ShardIteratorType iteratorType = ShardIteratorType.LATEST;
 
     public DdbStreamEndpoint(String uri, String tableName, DdbStreamComponent component) {
         super(uri, component);
