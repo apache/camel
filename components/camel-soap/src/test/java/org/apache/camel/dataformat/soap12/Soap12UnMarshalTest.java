@@ -19,7 +19,8 @@ package org.apache.camel.dataformat.soap12;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.example.customerservice.GetCustomersByName;
+import javax.xml.ws.soap.SOAPFaultException;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -28,6 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
+import com.example.customerservice.GetCustomersByName;
 
 /**
  * Checks that a static soap request is unmarshalled to the correct java
@@ -54,6 +57,17 @@ public class Soap12UnMarshalTest extends CamelTestSupport {
         assertEquals(GetCustomersByName.class, body.getClass());
         GetCustomersByName request = (GetCustomersByName) body;
         assertEquals("Smith", request.getName());
+    }
+    
+    @Test
+    public void testUnMarshalSoapFaultWithoutDetail() throws IOException, InterruptedException {
+        try {
+            InputStream in = this.getClass().getResourceAsStream("faultWithoutDetail.xml");
+            producer.sendBody(in);
+            fail("Should have thrown an Exception.");
+        } catch (Exception e) {
+            assertEquals(SOAPFaultException.class, e.getCause().getClass());
+        }
     }
 
     @Override

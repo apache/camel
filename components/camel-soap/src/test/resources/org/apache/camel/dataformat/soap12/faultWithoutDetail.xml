@@ -1,0 +1,15 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+	<env:Body>
+		<env:Fault>
+			<env:Code>
+				<env:Value>Sender</env:Value>
+				<env:Subcode>
+					<env:Value>Timeout</env:Value>
+				</env:Subcode>
+			</env:Code>
+			<env:Reason>
+				<env:Text xml:lang="en">Timeout</env:Text>
+			</env:Reason>
+		</env:Fault>
+	</env:Body>
+</env:Envelope>
