@@ -26,6 +26,7 @@ import com.amazonaws.services.dynamodbv2.model.GetShardIteratorResult;
 import com.amazonaws.services.dynamodbv2.model.ListStreamsRequest;
 import com.amazonaws.services.dynamodbv2.model.ListStreamsResult;
 import com.amazonaws.services.dynamodbv2.model.Record;
+import com.amazonaws.services.dynamodbv2.model.Shard;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
@@ -42,6 +43,8 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(DdbStreamConsumer.class);
 
     private String currentShardIterator = null;
+    private Shard currentShard;
+    private ShardList shardList = new ShardList();
 
     public DdbStreamConsumer(DdbStreamEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -105,10 +108,20 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
                     .withStreamArn(streamArn)
                     ;
             DescribeStreamResult res1 = getClient().describeStream(req1);
+            shardList.addAll(res1.getStreamDescription().getShards());
+
+            LOG.trace("Current shard is: {} (in {})", currentShard, shardList);
+            if (currentShard == null) {
+                currentShard = shardList.first();
+            } else {
+                currentShard = shardList.nextAfter(currentShard);
+            }
+            shardList.removeOlderThan(currentShard);
+            LOG.trace("Next shard is: {} (in {})", currentShard, shardList);
 
             GetShardIteratorRequest req = new GetShardIteratorRequest()
                     .withStreamArn(streamArn)
-                    .withShardId(res1.getStreamDescription().getShards().get(0).getShardId()) // XXX only uses the first shard
+                    .withShardId(currentShard.getShardId())
                     .withShardIteratorType(getEndpoint().getIteratorType())
                     ;
             GetShardIteratorResult result = getClient().getShardIterator(req);

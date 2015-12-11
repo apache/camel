@@ -4,8 +4,11 @@ import com.amazonaws.services.dynamodbv2.model.Shard;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ShardList {
+    private final Logger LOG = LoggerFactory.getLogger(ShardList.class);
 
     private final Map<String, Shard> shards = new HashMap<>();
 
@@ -45,13 +48,21 @@ class ShardList {
     void removeOlderThan(Shard removeBefore) {
         String current = removeBefore.getParentShardId();
 
+        int removedShards = 0;
         while (current != null) {
             Shard s = shards.remove(current);
             if (s == null) {
                 current = null;
             } else {
+                removedShards++;
                 current = s.getParentShardId();
             }
         }
+        LOG.trace("removed {} shards from the store, new size is {}", removedShards, shards.size());
+    }
+
+    @Override
+    public String toString() {
+        return "ShardList{" + "shards=" + shards + '}';
     }
 }
