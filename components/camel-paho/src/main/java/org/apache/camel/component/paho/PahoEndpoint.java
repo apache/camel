@@ -40,16 +40,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.paho.PahoPersistence.MEMORY;
+import static org.apache.camel.component.paho.PahoConstants.DEFAULT_BROKER_URL;
+import static org.apache.camel.component.paho.PahoConstants.DEFAULT_QOS_STRING;
+import static org.apache.camel.component.paho.PahoConstants.DEFAULT_QOS;
+import static org.apache.camel.component.paho.PahoConstants.DEFAULT_RETAINED_STRING;
+
 
 @UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
-
-    // Constants
-    private static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
-    private static final int DEFAULT_QOS = 2;
-    private static final String DEFAULT_QOS_STRING = DEFAULT_QOS + "";
 
     // Configuration members
     @UriPath @Metadata(required = "true")
@@ -60,6 +60,8 @@ public class PahoEndpoint extends DefaultEndpoint {
     private String brokerUrl = DEFAULT_BROKER_URL;
     @UriParam(defaultValue = DEFAULT_QOS_STRING)
     private int qos = DEFAULT_QOS;
+    @UriParam(defaultValue = DEFAULT_RETAINED_STRING)
+    private boolean retained = false;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = MEMORY;
     @UriParam(description = "Base directory used by file persistence.", defaultValue = "Current directory")
@@ -199,6 +201,18 @@ public class PahoEndpoint extends DefaultEndpoint {
     public void setQos(int qos) {
         this.qos = qos;
     }
+   
+    public boolean isRetained() {
+		return retained;
+	}
+
+    /**
+     * Retain option
+     * @param retained true/false
+     */
+	public void setRetained(boolean retained) {
+		this.retained = retained;
+	}
 
     // Auto-configuration getters & setters
 

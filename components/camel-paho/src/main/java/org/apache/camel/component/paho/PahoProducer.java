@@ -32,10 +32,12 @@ public class PahoProducer extends DefaultProducer {
         MqttClient client = getEndpoint().getClient();
         String topic = getEndpoint().getTopic();
         int qos = getEndpoint().getQos();
+        boolean retained = getEndpoint().isRetained();
         byte[] payload = exchange.getIn().getBody(byte[].class);
 
         MqttMessage message = new MqttMessage(payload);
         message.setQos(qos);
+        message.setRetained(retained);
         client.publish(topic, message);
     }
 
