@@ -45,6 +45,9 @@ public class MllpSenderTest extends CamelTestSupport {
     @EndpointInject(uri = "mock://timeout-ex")
     MockEndpoint timeout;
 
+    @EndpointInject(uri = "mock://frame-ex")
+    MockEndpoint frame;
+
     @Override
     public String isMockEndpoints() {
         return "log://netty-mllp-sender-throughput*";
@@ -104,6 +107,12 @@ public class MllpSenderTest extends CamelTestSupport {
                 ;
                 */
 
+                onException(MllpFrameException.class)
+                        .handled(true)
+                        .logHandled(false)
+                        .to("mock://frame-ex")
+                ;
+
                 onException(MllpTimeoutException.class)
                         .handled(true)
                         .logHandled(false)
@@ -134,6 +143,7 @@ public class MllpSenderTest extends CamelTestSupport {
     public void testSendSingleMessage() throws Exception {
         response.setExpectedMessageCount(1);
         timeout.setExpectedMessageCount(0);
+        frame.setExpectedMessageCount(0);
 
         template.sendBody(targetURI, Data.TEST_MESSAGE);
 
@@ -146,6 +156,7 @@ public class MllpSenderTest extends CamelTestSupport {
         int messageCount = 5;
         response.setExpectedMessageCount(messageCount);
         timeout.setExpectedMessageCount(0);
+        frame.setExpectedMessageCount(0);
 
         for (int i = 0; i < messageCount; ++i) {
             template.sendBody(targetURI, Data.TEST_MESSAGE);
@@ -161,6 +172,7 @@ public class MllpSenderTest extends CamelTestSupport {
         int sendMessageCount = 5;
         response.setExpectedMessageCount(sendMessageCount - 1);
         timeout.expectedMessageCount(1);
+        frame.setExpectedMessageCount(0);
 
         NotifyBuilder notify1 = new NotifyBuilder(context).whenDone(1).create();
         NotifyBuilder notify2 = new NotifyBuilder(context).whenDone(sendMessageCount).create();
@@ -186,6 +198,7 @@ public class MllpSenderTest extends CamelTestSupport {
         int sendMessageCount = 3;
         response.setExpectedMessageCount(sendMessageCount - 1);
         timeout.expectedMessageCount(1);
+        frame.setExpectedMessageCount(0);
 
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(sendMessageCount).create();
 

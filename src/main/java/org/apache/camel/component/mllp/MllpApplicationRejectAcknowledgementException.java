@@ -21,15 +21,15 @@ public class MllpApplicationRejectAcknowledgementException extends MllpAcknowled
         super(message);
     }
 
+    public MllpApplicationRejectAcknowledgementException(String message, byte[] mllpPayload) {
+        super(message, mllpPayload);
+    }
+
     public MllpApplicationRejectAcknowledgementException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public MllpApplicationRejectAcknowledgementException(Throwable cause) {
-        super(cause);
-    }
-
-    public MllpApplicationRejectAcknowledgementException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public MllpApplicationRejectAcknowledgementException(String message, byte[] mllpPayload, Throwable cause) {
+        super(message, mllpPayload, cause);
     }
 }

@@ -17,19 +17,31 @@
 package org.apache.camel.component.mllp;
 
 public class MllpException extends Exception {
+    private byte[] mllpPayload = null;
+
     public MllpException(String message) {
         super(message);
+    }
+
+    public MllpException(String message, byte[] mllpPayload) {
+        super(message);
+        this.mllpPayload = mllpPayload;
     }
 
     public MllpException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public MllpException(Throwable cause) {
-        super(cause);
+    public MllpException(String message, byte[] mllpPayload, Throwable cause) {
+        super(message, cause);
     }
 
-    public MllpException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public byte[] getMllpPayload() {
+        return mllpPayload;
     }
+
+    public void setMllpPayload(byte[] mllpPayload) {
+        this.mllpPayload = mllpPayload;
+    }
+
 }

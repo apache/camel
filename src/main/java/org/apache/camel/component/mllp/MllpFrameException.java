@@ -16,20 +16,21 @@
  */
 package org.apache.camel.component.mllp;
 
-public class MllpInvalidAcknowledgementException extends MllpAcknowledgementException {
-    public MllpInvalidAcknowledgementException(String message) {
+public class MllpFrameException extends MllpException {
+    public MllpFrameException(String message) {
         super(message);
     }
 
-    public MllpInvalidAcknowledgementException(String message, byte[] mllpPayload) {
+    public MllpFrameException(String message, byte[] mllpPayload) {
         super(message, mllpPayload);
     }
 
-    public MllpInvalidAcknowledgementException(String message, Throwable cause) {
+    public MllpFrameException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public MllpInvalidAcknowledgementException(String message, byte[] mllpPayload, Throwable cause) {
+    public MllpFrameException(String message, byte[] mllpPayload, Throwable cause) {
         super(message, mllpPayload, cause);
     }
+
 }

@@ -29,7 +29,14 @@ import org.slf4j.LoggerFactory;
 import java.nio.charset.Charset;
 
 /**
- * Represents a mllp endpoint.
+ * Represents a MLLP endpoint.
+ *
+ * NOTE: MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI
+ * into the log files.  Logging of PHI can be globally disabled by setting the org.apache.camel.mllp.logPHI system
+ * property to false.
+ * <p/>
+ * TODO:  Implement checking the org.apache.camel.mllp.logPHI system property before logging PHI
+
  */
 @UriEndpoint(scheme = "mllp", title = "mllp", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
 public class MllpEndpoint extends DefaultEndpoint {
@@ -51,7 +58,10 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "5", description = "TCP Server only - The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused.")
     int backlog = 5;
 
-    @UriParam(defaultValue = "30000", description = "TCP Client only - timeout value while waiting for a tcp connection (milliseconds)")
+    @UriParam(defaultValue = "30000", description = "TCP Server only - timeout value while waiting for a tcp connection (milliseconds)")
+    int acceptTimeout = 30000;
+
+    @UriParam(defaultValue = "30000", description = "TCP Client only - timeout value while establishing for a tcp connection (milliseconds)")
     int connectTimeout = 30000;
 
     @UriParam(defaultValue = "5000", description = "Timeout value (milliseconds) used when reading a message from an external")
@@ -110,6 +120,7 @@ public class MllpEndpoint extends DefaultEndpoint {
 
         log.trace("MllpEndpoint(uri, component)");
     }
+
 
     @Override
     protected void doStart() throws Exception {
@@ -212,6 +223,14 @@ public class MllpEndpoint extends DefaultEndpoint {
      */
     public void setBacklog(int backlog) {
         this.backlog = backlog;
+    }
+
+    public int getAcceptTimeout() {
+        return acceptTimeout;
+    }
+
+    public void setAcceptTimeout(int acceptTimeout) {
+        this.acceptTimeout = acceptTimeout;
     }
 
     public int getConnectTimeout() {

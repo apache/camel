@@ -20,12 +20,14 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
 public class MllpSenderReceiverLoopbackTest extends CamelTestSupport {
+    int mllpPort = AvailablePortFinder.getNextAvailable();
 
     @EndpointInject(uri = "mock://result")
     MockEndpoint result;
@@ -38,12 +40,11 @@ public class MllpSenderReceiverLoopbackTest extends CamelTestSupport {
             String routeId = "mllp-sender";
 
             String host = "0.0.0.0";
-            int port = 7777;
 
             public void configure() {
                 fromF("direct://trigger").routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Sending: ${body}")
-                        .toF("mllp://%s:%d", host, port)
+                        .toF("mllp://%s:%d", host, mllpPort)
                 ;
             }
         };
@@ -51,12 +52,8 @@ public class MllpSenderReceiverLoopbackTest extends CamelTestSupport {
         builders[1] = new RouteBuilder() {
             String routeId = "mllp-receiver";
 
-            String host = "0.0.0.0";
-            int port = 7777;
-
             public void configure() {
-//                fromF("mllp:%s:%d?autoAck=false", host, port)
-                fromF("mllp:%d?autoAck=true", port)
+                fromF("mllp:%d?autoAck=true", mllpPort)
                         .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
                         .to("mock:result")
                         .setBody().constant("Got It")

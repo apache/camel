@@ -65,6 +65,7 @@ public class MllpReceiverTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
 
+        mllpClient.setMllpHost( "localhost");
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
 
         return new RouteBuilder() {

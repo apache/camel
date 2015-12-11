@@ -16,20 +16,21 @@
  */
 package org.apache.camel.component.mllp;
 
-public class MllpEnvelopeException extends MllpException {
-    public MllpEnvelopeException(String message) {
+public class MllpWriteException extends MllpException {
+    public MllpWriteException(String message) {
         super(message);
     }
 
-    public MllpEnvelopeException(String message, Throwable cause) {
+    public MllpWriteException(String message, byte[] mllpPayload) {
+        super(message, mllpPayload);
+    }
+
+    public MllpWriteException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public MllpEnvelopeException(Throwable cause) {
-        super(cause);
+    public MllpWriteException(String message, byte[] mllpPayload, Throwable cause) {
+        super(message, mllpPayload, cause);
     }
 
-    public MllpEnvelopeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

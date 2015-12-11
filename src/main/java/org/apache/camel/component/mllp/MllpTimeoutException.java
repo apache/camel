@@ -21,15 +21,16 @@ public class MllpTimeoutException extends MllpException {
         super(message);
     }
 
+    public MllpTimeoutException(String message, byte[] mllpPayload) {
+        super(message, mllpPayload);
+    }
+
     public MllpTimeoutException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public MllpTimeoutException(Throwable cause) {
-        super(cause);
+    public MllpTimeoutException(String message, byte[] mllpPayload, Throwable cause) {
+        super(message, mllpPayload, cause);
     }
 
-    public MllpTimeoutException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

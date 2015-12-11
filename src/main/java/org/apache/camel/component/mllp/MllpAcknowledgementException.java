@@ -21,15 +21,16 @@ public class MllpAcknowledgementException extends MllpException {
         super(message);
     }
 
+    public MllpAcknowledgementException(String message, byte[] mllpPayload) {
+        super(message, mllpPayload);
+    }
+
     public MllpAcknowledgementException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public MllpAcknowledgementException(Throwable cause) {
-        super(cause);
+    public MllpAcknowledgementException(String message, byte[] mllpPayload, Throwable cause) {
+        super(message, mllpPayload, cause);
     }
 
-    public MllpAcknowledgementException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }
