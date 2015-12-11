@@ -58,6 +58,20 @@ public class SparkEndpoint extends DefaultEndpoint {
         this.endpointType = endpointType;
     }
 
+    // Life-cycle
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (rdd == null) {
+            rdd = getComponent().getRdd();
+        }
+        if (rddCallback == null) {
+            rddCallback = getComponent().getRddCallback();
+        }
+    }
+
     // Overridden
 
     @Override
