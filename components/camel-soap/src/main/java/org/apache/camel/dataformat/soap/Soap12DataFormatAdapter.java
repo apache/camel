@@ -203,7 +203,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
     private Exception createExceptionFromFault(Fault fault) {
         StringBuilder sb = new StringBuilder();
         for (Reasontext text : fault.getReason().getText()) {
-            sb.append(text);
+            sb.append(text.getValue());
         }
         String message = sb.toString();
 
