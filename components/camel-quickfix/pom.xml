@@ -39,11 +39,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-    </dependency>
+    </dependency>    
     <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.quickfix</artifactId>
-      <version>${quickfix-bundle-version}</version>
+      <groupId>quickfixj</groupId>
+      <artifactId>quickfixj-all</artifactId>
+      <version>${quickfix-version}</version>
     </dependency>
 
     <!-- test dependencies -->
@@ -103,5 +103,15 @@
       </build>
     </profile>
   </profiles>
+
+  <repositories>
+    <repository>
+      <id>marketcetera</id>
+      <url>http://repo.marketcetera.org/maven</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>
