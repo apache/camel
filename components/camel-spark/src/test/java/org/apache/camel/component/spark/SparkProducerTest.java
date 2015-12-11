@@ -50,7 +50,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
     static HiveContext hiveContext;
 
-    String sparkUri = "spark:rdd?rdd=#pomRdd";
+    String sparkUri = "spark:rdd?rdd=#testFileRdd";
 
     String sparkDataFrameUri = "spark:dataframe?dataFrame=#jsonCars";
 
@@ -69,7 +69,7 @@ public class SparkProducerTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        registry.bind("pomRdd", sparkContext.textFile("testrdd.txt"));
+        registry.bind("testFileRdd", sparkContext.textFile("testrdd.txt"));
 
         if (shouldRunHive) {
             registry.bind("hiveContext", hiveContext);
@@ -91,13 +91,13 @@ public class SparkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteRddCallback() {
-        long pomLinesCount = template.requestBodyAndHeader(sparkUri, null, SPARK_RDD_CALLBACK_HEADER, new org.apache.camel.component.spark.RddCallback() {
+        long linesCount = template.requestBodyAndHeader(sparkUri, null, SPARK_RDD_CALLBACK_HEADER, new org.apache.camel.component.spark.RddCallback() {
             @Override
             public Long onRdd(AbstractJavaRDDLike rdd, Object... payloads) {
                 return rdd.count();
             }
         }, Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(19);
+        Truth.assertThat(linesCount).isEqualTo(19);
     }
 
     @Test

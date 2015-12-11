@@ -23,8 +23,17 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.spark.api.java.AbstractJavaRDDLike;
 import org.apache.spark.sql.DataFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.spi.LoggerFactoryBinder;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class SparkEndpoint extends DefaultEndpoint {
+
+    // Logger
+
+    private static final Logger LOG = getLogger(SparkEndpoint.class);
 
     // Endpoint collaborators
 
@@ -53,6 +62,7 @@ public class SparkEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
+        LOG.debug("Creating {} Spark producer.", endpointType);
         if (endpointType == EndpointType.rdd) {
             return new RddSparkProducer(this);
         } else if (endpointType == EndpointType.dataframe) {
