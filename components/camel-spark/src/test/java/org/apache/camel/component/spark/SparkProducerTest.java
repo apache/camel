@@ -46,7 +46,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
     static JavaSparkContext sparkContext = createLocalSparkContext();
 
-    static boolean shouldRunHive = getRuntime().maxMemory() > 1024 * 1024 * 1024;
+    static boolean shouldRunHive = getRuntime().maxMemory() > 2 * 1024 * 1024 * 1024;
 
     static HiveContext hiveContext;
 
