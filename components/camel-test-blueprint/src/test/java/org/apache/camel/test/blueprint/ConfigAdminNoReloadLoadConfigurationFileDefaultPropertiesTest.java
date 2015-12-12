@@ -19,13 +19,13 @@ package org.apache.camel.test.blueprint;
 import org.junit.Test;
 
 /**
- * Same as {@link ConfigAdminNoReloadLoadConfigurationFileTest} except this time Blueprint container will reloaded
+ * {@link #loadConfigAdminConfigurationFile()} will override properties set by <code>&lt;cm:default-properties&gt;</code>
  */
-public class ConfigAdminLoadConfigurationFileTest extends CamelBlueprintTestSupport {
+public class ConfigAdminNoReloadLoadConfigurationFileDefaultPropertiesTest extends CamelBlueprintTestSupport {
 
     @Override
     protected String getBlueprintDescriptor() {
-        return "org/apache/camel/test/blueprint/configadmin-loadfile.xml";
+        return "org/apache/camel/test/blueprint/configadmin-no-reload-loadfile-default-properties.xml";
     }
 
     // START SNIPPET: e1

@@ -15,7 +15,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<!-- START SNIPPET: e1 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
@@ -23,32 +22,21 @@
              http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
              http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
-  <!-- blueprint property placeholders, that will use etc/stuff.cfg as the properties file -->
-  <cm:property-placeholder persistent-id="stuff" update-strategy="reload">
-    <cm:default-properties>
-      <cm:property name="greeting" value="Hello" />
-      <cm:property name="echo" value="Hey" />
-      <cm:property name="destination" value="mock:original" />
-    </cm:default-properties>
-  </cm:property-placeholder>
+  <!-- blueprint property placeholders which we can configure from outside -->
+  <cm:property-placeholder persistent-id="stuff" update-strategy="none"/>
 
   <!-- a bean that uses a blueprint property placeholder -->
   <bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
     <property name="say" value="${greeting}"/>
-    <property name="echo" value="${echo}"/>
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
-    <route>
+     <route>
       <from uri="direct:start"/>
       <bean ref="myCoolBean" method="saySomething"/>
-      <to uri="{{destination}}"/>
-      <bean ref="myCoolBean" method="echoSomething"/>
       <to uri="{{destination}}"/>
     </route>
 
   </camelContext>
 
 </blueprint>
-<!-- END SNIPPET: e1 -->
