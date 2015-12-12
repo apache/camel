@@ -103,7 +103,7 @@ public class Main extends MainSupport {
             LOG.debug("Starting Blueprint XML file: " + descriptors);
             if (configAdminPid != null && configAdminFileName != null) {
                 // pid/file is used to set INITIAL content of ConfigAdmin to be used when blueprint container is started
-                bundleContext = createBundleContext(bundleName, new String[] { configAdminFileName, configAdminPid });
+                bundleContext = createBundleContext(bundleName, new String[] {configAdminFileName, configAdminPid});
             } else {
                 bundleContext = createBundleContext(bundleName);
             }

@@ -167,7 +167,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             if (currentProperties == null) {
                 currentProperties = newProps;
             }
-            for (Enumeration<String> ek = currentProperties.keys(); ek.hasMoreElements(); ) {
+            for (Enumeration<String> ek = currentProperties.keys(); ek.hasMoreElements();) {
                 String k = ek.nextElement();
                 newProps.put(k, currentProperties.get(k));
             }
