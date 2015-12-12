@@ -145,7 +145,8 @@ public final class CamelBlueprintHelper {
 
         List<BundleDescriptor> bundleDescriptors = getBundleDescriptors(bundleFilter);
         // let's put configadmin before blueprint.core
-        int idx1=-1, idx2=-1;
+        int idx1 = -1;
+        int idx2 = -1;
         for (int i = 0; i < bundleDescriptors.size(); i++) {
             BundleDescriptor bd = bundleDescriptors.get(i);
             if ("org.apache.felix.configadmin".equals(bd.getHeaders().get("Bundle-SymbolicName"))) {
