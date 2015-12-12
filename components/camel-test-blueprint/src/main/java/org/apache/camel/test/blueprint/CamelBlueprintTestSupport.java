@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -93,9 +94,20 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     protected BundleContext createBundleContext() throws Exception {
         System.setProperty("org.apache.aries.blueprint.synchronous", Boolean.toString(!useAsynchronousBlueprintStartup()));
 
+        // load configuration file
+        String[] file = loadConfigAdminConfigurationFile();
+        if (file != null) {
+            if (file.length != 2) {
+                throw new IllegalArgumentException("The returned String[] from loadConfigAdminConfigurationFile must be of length 2, was " + file.length);
+            }
+            if (!new File(file[0]).exists()) {
+                throw new IllegalArgumentException("The provided file \"" + file[0] + "\" from loadConfigAdminConfigurationFile doesn't exist");
+            }
+        }
+
         final String symbolicName = getClass().getSimpleName();
         final BundleContext answer = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
-            includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives());
+            includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives(), file);
 
         boolean expectReload = expectBlueprintContainerReloadOnConfigAdminUpdate();
 
@@ -126,15 +138,6 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             }
         }
 
-        // must reuse props as we can do both load from .cfg file and override afterwards
-        final Dictionary props = new Properties();
-
-        // load configuration file
-        String[] file = loadConfigAdminConfigurationFile();
-        if (file != null && file.length != 2) {
-            throw new IllegalArgumentException("The returned String[] from loadConfigAdminConfigurationFile must be of length 2, was " + file.length);
-        }
-
         // if blueprint XML uses <cm:property-placeholder> (any update-strategy and any default properties)
         // - org.apache.aries.blueprint.compendium.cm.ManagedObjectManager.register() is called
         // - ManagedServiceUpdate is scheduled in felix.cm
@@ -153,12 +156,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, null);
 
-        if (file != null) {
-            if (!new File(file[0]).exists()) {
-                throw new IllegalArgumentException("The provided file \"" + file[0] + "\" from loadConfigAdminConfigurationFile doesn't exist");
-            }
-            CamelBlueprintHelper.setPersistentFileForConfigAdmin(answer, file[1], file[0], props, symbolicName, bpEvents, expectReload);
-        }
+        // must reuse props as we can do both load from .cfg file and override afterwards
+        final Dictionary props = new Properties();
 
         // allow end user to override properties
         String pid = useOverridePropertiesWithConfigAdmin(props);
@@ -172,20 +171,34 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             if (config == null) {
                 throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");
             }
-            log.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
+            // lets merge configurations
+            Dictionary<String, Object> currentProperties = config.getProperties();
+            final Dictionary newProps = new Properties();
+            if (currentProperties == null) {
+                currentProperties = newProps;
+            }
+            for (Enumeration<String> ek = currentProperties.keys(); ek.hasMoreElements(); ) {
+                String k = ek.nextElement();
+                newProps.put(k, currentProperties.get(k));
+            }
+            for (String p : ((Properties) props).stringPropertyNames()) {
+                newProps.put(p, ((Properties) props).getProperty(p));
+            }
+
+            log.info("Updating ConfigAdmin {} by overriding properties {}", config, newProps);
             if (expectReload) {
                 CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            config.update(props);
+                            config.update(newProps);
                         } catch (IOException e) {
                             throw new RuntimeException(e.getMessage(), e);
                         }
                     }
                 });
             } else {
-                config.update(props);
+                config.update(newProps);
             }
         }
 
@@ -309,7 +322,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     }
 
     /**
-     * Override this method to override config admin properties.
+     * Override this method to override config admin properties. Overriden properties will be passed to
+     * {@link Configuration#update(Dictionary)} and may or may not lead to reload of Blueprint container - this
+     * depends on <code>update-strategy="reload|none"</code> in <code>&lt;cm:property-placeholder&gt;</code>
      *
      * @param props properties where you add the properties to override
      * @return the PID of the OSGi {@link ConfigurationAdmin} which are defined in the Blueprint XML file.
@@ -320,7 +335,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
     /**
      * Override this method and provide the name of the .cfg configuration file to use for
-     * Blueprint ConfigAdmin service.
+     * ConfigAdmin service. Provided file will be used to initialize ConfigAdmin configuration before Blueprint
+     * container is loaded.
      *
      * @return the name of the path for the .cfg file to load, and the persistence-id of the property placeholder.
      */
