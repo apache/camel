@@ -107,7 +107,7 @@ public class Main extends MainSupport {
             } else {
                 bundleContext = createBundleContext(bundleName);
             }
-            Set<Long> eventHistory = new HashSet<>();
+            Set<Long> eventHistory = new HashSet<Long>();
 
             CamelBlueprintHelper.waitForBlueprintContainer(eventHistory, bundleContext, bundleName, BlueprintEvent.CREATED, null);
 
