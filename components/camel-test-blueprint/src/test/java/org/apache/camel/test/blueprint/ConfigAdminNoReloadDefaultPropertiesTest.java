@@ -19,27 +19,18 @@ package org.apache.camel.test.blueprint;
 import org.junit.Test;
 
 /**
- * Same as {@link ConfigAdminNoReloadLoadConfigurationFileTest} except this time Blueprint container will reloaded
+ *
  */
-public class ConfigAdminLoadConfigurationFileTest extends CamelBlueprintTestSupport {
+public class ConfigAdminNoReloadDefaultPropertiesTest extends CamelBlueprintTestSupport {
 
     @Override
     protected String getBlueprintDescriptor() {
-        return "org/apache/camel/test/blueprint/configadmin-loadfile.xml";
+        return "org/apache/camel/test/blueprint/configadmin-no-reload-default-properties.xml";
     }
-
-    // START SNIPPET: e1
-    @Override
-    protected String[] loadConfigAdminConfigurationFile() {
-        // String[0] = tell Camel the path of the .cfg file to use for OSGi ConfigAdmin in the blueprint XML file
-        // String[1] = tell Camel the persistence-id of the cm:property-placeholder in the blueprint XML file
-        return new String[]{"src/test/resources/etc/stuff.cfg", "stuff"};
-    }
-    // END SNIPPET: e1
 
     @Test
     public void testConfigAdmin() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Good morning World");
 
         template.sendBody("direct:start", "World");
 
