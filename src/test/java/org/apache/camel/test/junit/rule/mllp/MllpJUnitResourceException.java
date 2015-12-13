@@ -16,6 +16,9 @@
  */
 package org.apache.camel.test.junit.rule.mllp;
 
+/**
+ * Base Exception for MLLP JUnit Rules
+ */
 public class MllpJUnitResourceException extends RuntimeException {
     public MllpJUnitResourceException(String message) {
         super(message);

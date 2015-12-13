@@ -1,5 +1,8 @@
 package org.apache.camel.component.mllp;
 
+/**
+ * Raised when a MLLP Producer does not receive a HL7 acknowledgement within the configured timespan
+ */
 public class MllpAcknowledgementTimoutException extends MllpTimeoutException {
     public MllpAcknowledgementTimoutException(String message) {
         super(message);

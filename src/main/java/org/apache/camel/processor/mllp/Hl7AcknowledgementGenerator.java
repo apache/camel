@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
+/**
+ * A Camel Processor for generating HL7 Acknowledgements
+ */
 public class Hl7AcknowledgementGenerator implements Processor {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -26,13 +29,22 @@ public class Hl7AcknowledgementGenerator implements Processor {
             messageBody = exchange.getIn().getBody();
         }
 
+        byte[] hl7Bytes;
+
         if (messageBody instanceof String) {
-
+            hl7Bytes = ((String)messageBody).getBytes(charset);
         } else if (messageBody instanceof byte[]) {
-
+            hl7Bytes = (byte[])messageBody;
         } else {
             log.warn("Cannot generate an HL7 Acknowledgement from type {}", messageBody.getClass().getName());
             return;
+        }
+
+        byte[] acknowledgementBytes = null;
+        if ( null == exchange.getException() ) {
+            acknowledgementBytes = generateApplicationAcceptAcknowledgementMessage(hl7Bytes);
+        } else {
+            acknowledgementBytes = generateApplicationErrorAcknowledgementMessage(hl7Bytes);
         }
 
     }

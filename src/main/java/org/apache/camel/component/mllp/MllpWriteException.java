@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mllp;
 
+/**
+ * Raised when a MLLP Producer or consumer encounter an error transmitting data
+ */
 public class MllpWriteException extends MllpException {
     public MllpWriteException(String message) {
         super(message);

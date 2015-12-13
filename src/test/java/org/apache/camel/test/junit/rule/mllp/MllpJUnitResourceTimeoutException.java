@@ -16,6 +16,9 @@
  */
 package org.apache.camel.test.junit.rule.mllp;
 
+/**
+ * Thrown when one of the MLLP JUnit Rules encounters an unexpected timeout
+ */
 public class MllpJUnitResourceTimeoutException extends MllpJUnitResourceException {
     public MllpJUnitResourceTimeoutException(String message) {
         super(message);

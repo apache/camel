@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.mllp;
 
+/**
+ * Raised when a MLLP Producer or consumer encounters a corrupt MLLP Frame while attempting
+ * to read or write a MLLP payload.
+ */
 public class MllpFrameException extends MllpException {
     public MllpFrameException(String message) {
         super(message);

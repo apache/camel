@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.mllp;
 
-public class MllpAcknowledgementException extends MllpException {
+/**
+ * Base class for HL7 Application Acknowledgement Exceptions
+ */
+public abstract class MllpAcknowledgementException extends MllpException {
     public MllpAcknowledgementException(String message) {
         super(message);
     }

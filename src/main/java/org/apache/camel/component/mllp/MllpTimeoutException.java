@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mllp;
 
+/**
+ * Raised when a MLLP Producer or Consumer encounter a timeout reading a message
+ */
 public class MllpTimeoutException extends MllpException {
     public MllpTimeoutException(String message) {
         super(message);

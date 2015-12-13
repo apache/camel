@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mllp;
 
+/**
+ * Base class for all MLLP Exceptions, and also used as a generic MLLP exception
+ */
 public class MllpException extends Exception {
     private byte[] mllpPayload = null;
 

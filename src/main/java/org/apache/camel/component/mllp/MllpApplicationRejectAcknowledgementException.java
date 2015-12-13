@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mllp;
 
+/**
+ * Raised when a MLLP Producer receives a HL7 Application Reject Acknowledgement
+ */
 public class MllpApplicationRejectAcknowledgementException extends MllpAcknowledgementException {
     public MllpApplicationRejectAcknowledgementException(String message) {
         super(message);

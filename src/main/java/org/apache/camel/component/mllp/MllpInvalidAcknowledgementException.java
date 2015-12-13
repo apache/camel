@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mllp;
 
+/**
+ * Raised when a MLLP Producer receives a HL7 Acknowledgement for which the HL7 Acknowledgement type cannot be determined.
+ */
 public class MllpInvalidAcknowledgementException extends MllpAcknowledgementException {
     public MllpInvalidAcknowledgementException(String message) {
         super(message);

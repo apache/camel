@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,15 +23,19 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 import java.util.regex.Pattern;
 
+/**
+ * MLLP Test Server packaged as a JUnit Rule
+ *
+ * The server can be configured to simulate a large number
+ * of error conditions.
+ */
 public class MllpServerResource extends ExternalResource {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-    int listenPort = 7777;
+    int listenPort = 0;
     int backlog = 5;
 
     int counter = 1;
@@ -85,9 +89,12 @@ public class MllpServerResource extends ExternalResource {
         this.backlog = backlog;
     }
 
-    public void startup() {
+    public void startup() throws IOException {
         this.active = true;
         serverSocketThread = new ServerSocketThread(listenPort, backlog);
+        if (0 >= listenPort) {
+            listenPort = serverSocketThread.listenPort;
+        }
         serverSocketThread.start();
     }
 
@@ -299,7 +306,7 @@ public class MllpServerResource extends ExternalResource {
     }
 
     public void setExcludeAcknowledgementModulus(int excludeAcknowledgementModulus) {
-        if (0 > excludeAcknowledgementModulus ) {
+        if (0 > excludeAcknowledgementModulus) {
             this.excludeAcknowledgementModulus = 0;
         } else {
             this.excludeAcknowledgementModulus = excludeAcknowledgementModulus;
@@ -348,7 +355,7 @@ public class MllpServerResource extends ExternalResource {
     }
 
     public void setSendApplicationRejectAcknowledgementModulus(int sendApplicationRejectAcknowledgementModulus) {
-        if ( 0 > sendApplicationRejectAcknowledgementModulus ) {
+        if (0 > sendApplicationRejectAcknowledgementModulus) {
             this.sendApplicationRejectAcknowledgementModulus = 0;
         } else {
             this.sendApplicationRejectAcknowledgementModulus = sendApplicationRejectAcknowledgementModulus;
@@ -360,7 +367,7 @@ public class MllpServerResource extends ExternalResource {
     }
 
     public void setSendApplicationErrorAcknowledgementModulus(int sendApplicationErrorAcknowledgementModulus) {
-        if ( 0 > sendApplicationErrorAcknowledgementModulus ) {
+        if (0 > sendApplicationErrorAcknowledgementModulus) {
             this.sendApplicationErrorAcknowledgementModulus = 0;
         } else {
             this.sendApplicationErrorAcknowledgementModulus = sendApplicationErrorAcknowledgementModulus;
@@ -391,56 +398,149 @@ public class MllpServerResource extends ExternalResource {
         this.serverSocketThread = serverSocketThread;
     }
 
+    /**
+     * Nested class to accept TCP connections
+     */
     class ServerSocketThread extends Thread {
         Logger log = LoggerFactory.getLogger(this.getClass());
 
-        int backlog = 5;
-        int listenPort = 7777;
-
         ServerSocket serverSocket;
 
-        public ServerSocketThread(int listenPort) {
-            this.listenPort = listenPort;
+        String listenHost = "0.0.0.0";
+        int listenPort = 0;
+        int backlog = 5;
+
+        int acceptTimeout = 5000;
+
+        boolean raiseExceptionOnAcceptTimeout = false;
+
+        public ServerSocketThread() throws IOException {
+            bind();
         }
 
-        public ServerSocketThread(int listenPort, int backlog) {
+        public ServerSocketThread(int listenPort) throws IOException {
+            this.listenPort = listenPort;
+            bind();
+        }
+
+        public ServerSocketThread(int listenPort, int backlog) throws IOException {
             this.listenPort = listenPort;
             this.backlog = backlog;
+            bind();
         }
 
-        public void run() {
-            try {
-                serverSocket = new ServerSocket(listenPort, backlog);
-            } catch (IOException e) {
-                log.error("Exception creating Server Socket", e);
-                throw new MllpJUnitResourceException("IOException creating ServerSocket", e);
+        public ServerSocketThread(String listenHost, int listenPort, int backlog) throws IOException {
+            this.listenHost = listenHost;
+            this.listenPort = listenPort;
+            this.backlog = backlog;
+            bind();
+        }
+
+        /**
+         * Open the TCP Listener
+         *
+         * @throws IOException
+         */
+        private void bind() throws IOException {
+            serverSocket = new ServerSocket();
+
+            if (0 >= listenPort) {
+                serverSocket.bind(null, backlog);
+            } else {
+                serverSocket.bind(new InetSocketAddress(this.listenHost, this.listenPort), backlog);
             }
 
-            while ( isActive() && serverSocket.isBound()) {
+            if (0 >= this.listenPort) {
+                this.listenPort = serverSocket.getLocalPort();
+            }
+
+            // Set TCP Parameters
+            serverSocket.setSoTimeout(acceptTimeout);
+            serverSocket.setReuseAddress(false);
+
+            log.info("Opened TCP Listener on port {}", serverSocket.getLocalPort());
+        }
+
+        /**
+         * Accept TCP connections and create ClientSocketThreads for them
+         */
+        public void run() {
+            log.info("Accepting connections on port {}", serverSocket.getLocalPort());
+            this.setName("MllpServerResource$ServerSocketThread - " + serverSocket.getLocalSocketAddress().toString());
+            while (isActive() && serverSocket.isBound()) {
                 try {
                     Socket clientSocket = serverSocket.accept();
                     ClientSocketThread clientSocketThread = new ClientSocketThread(clientSocket);
                     clientSocketThread.start();
+                } catch (SocketTimeoutException timeoutEx) {
+                    if (raiseExceptionOnAcceptTimeout) {
+                        throw new MllpJUnitResourceTimeoutException("Timeout Accepting client connection", timeoutEx);
+                    }
+                    continue;
                 } catch (IOException e) {
                     log.warn("IOException creating Client Socket");
                     throw new MllpJUnitResourceException("IOException creating Socket", e);
                 }
             }
-
+            log.info("No longer accepting connections - closing TCP Listener on port {}", serverSocket.getLocalPort());
             try {
                 serverSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            log.info("Closed TCP Listener on port {}", serverSocket.getLocalPort());
         }
 
         public void shutdown() {
             this.interrupt();
         }
 
+        public String getListenHost() {
+            return listenHost;
+        }
+
+        public int getListenPort() {
+            return listenPort;
+        }
+
+        public int getBacklog() {
+            return backlog;
+        }
+
+        public int getAcceptTimeout() {
+            return acceptTimeout;
+        }
+
+        /**
+         * Enable/disable a timeout while waiting for a TCP connection, in milliseconds. With this option set to a
+         * non-zero timeout, the ServerSocketThread will block for only this amount of time while waiting for a tcp
+         * connection. If the timeout expires and raiseExceptionOnAcceptTimeout is set to true, a MllpJUnitResourceTimeoutException
+         * is raised. Otherwise, the ServerSocketThread will continue to poll for new TCP connections.
+         *
+         * @param acceptTimeout the timeout in milliseconds - zero is interpreted as an infinite timeout
+         */
+        public void setAcceptTimeout(int acceptTimeout) {
+            this.acceptTimeout = acceptTimeout;
+        }
+
+        public boolean isRaiseExceptionOnAcceptTimeout() {
+            return raiseExceptionOnAcceptTimeout;
+        }
+
+        /**
+         * Enable/Disable the generation of MllpJUnitResourceTimeoutException if the ServerSocket.accept()
+         * call raises a SocketTimeoutException.
+         *
+         * @param raiseExceptionOnAcceptTimeout true enables exceptions on an accept timeout
+         */
+        public void setRaiseExceptionOnAcceptTimeout(boolean raiseExceptionOnAcceptTimeout) {
+            this.raiseExceptionOnAcceptTimeout = raiseExceptionOnAcceptTimeout;
+        }
     }
 
+    /**
+     * Nested class that handles the established TCP connections
+     */
     class ClientSocketThread extends Thread {
         final char VERTICAL_TAB = 11;
         final char FILE_SEPARATOR = 28;
@@ -461,10 +561,16 @@ public class MllpServerResource extends ExternalResource {
 
         int messageCounter = 0;
 
-        public ClientSocketThread(Socket clientSocket) {
+        ClientSocketThread(Socket clientSocket) {
             this.clientSocket = clientSocket;
         }
 
+        /**
+         * Receives HL7 messages and replies with HL7 Acknowledgements.
+         *
+         * The exact behaviour of this method is very configurable, allowing simulation of varies
+         * error conditions.
+         */
         public void run() {
             try {
                 log.info("Handling client at {} on port {}",
@@ -473,7 +579,7 @@ public class MllpServerResource extends ExternalResource {
                 );
 
 
-                while (isActive() && clientSocket.isConnected() && ! clientSocket.isClosed() ) {
+                while (clientSocket.isConnected() && !clientSocket.isClosed()) {
                     InputStream instream = clientSocket.getInputStream();
                     String parsedHL7Message = getMessage(instream);
 
@@ -489,9 +595,9 @@ public class MllpServerResource extends ExternalResource {
 
                         String acknowledgmentMessage;
 
-                        if ( sendApplicationErrorAcknowledgement(messageCounter) || sendApplicationErrorAcknowledgement(parsedHL7Message) ) {
+                        if (sendApplicationErrorAcknowledgement(messageCounter) || sendApplicationErrorAcknowledgement(parsedHL7Message)) {
                             acknowledgmentMessage = generateAcknowledgementMessage(parsedHL7Message, "AE");
-                        } else if ( sendApplicationRejectAcknowledgement(messageCounter) || sendApplicationRejectAcknowledgement(parsedHL7Message) ) {
+                        } else if (sendApplicationRejectAcknowledgement(messageCounter) || sendApplicationRejectAcknowledgement(parsedHL7Message)) {
                             acknowledgmentMessage = generateAcknowledgementMessage(parsedHL7Message, "AR");
                         } else {
                             acknowledgmentMessage = generateAcknowledgementMessage(parsedHL7Message);
@@ -510,7 +616,7 @@ public class MllpServerResource extends ExternalResource {
                             outstream.write(MLLP_ENVELOPE_START_OF_BLOCK);
                         }
 
-                        if ( excludeAcknowledgement(messageCounter) ) {
+                        if (excludeAcknowledgement(messageCounter)) {
                             log.info("NOT sending Acknowledgement body");
                         } else {
                             log.debug("Buffering Acknowledgement\n\t{}", acknowledgmentMessage.replace('\r', '\n'));
@@ -557,10 +663,14 @@ public class MllpServerResource extends ExternalResource {
             }
         }
 
-    /*
-       TODO:  Enhance this to detect non-HL7 data (i.e. look for MSH after MLLP_ENVELOPE_START_OF_BLOCK)
-     */
-
+        /**
+         * Read a MLLP-Framed message
+         *
+         * @param anInputStream source input stream
+         * @return the MLLP payload
+         * @throws IOException when the underlying Java Socket calls raise these exceptions
+         */
+        // TODO:  Enhance this to detect non-HL7 data (i.e. look for MSH after MLLP_ENVELOPE_START_OF_BLOCK)
         public String getMessage(InputStream anInputStream) throws IOException {
             try {
                 // TODO:  Enhance this to read a bunch of characters and log, rather than log them one at a time
@@ -611,10 +721,23 @@ public class MllpServerResource extends ExternalResource {
             return parsedMessage.toString();
         }
 
+        /**
+         * Generates a HL7 Application Accept Acknowledgement
+         *
+         * @param hl7Message HL7 message that is being acknowledged
+         * @return a HL7 Application Accept Acknowlegdement
+         */
         private String generateAcknowledgementMessage(String hl7Message) {
             return generateAcknowledgementMessage(hl7Message, "AA");
         }
 
+        /**
+         * Generates a HL7 Application Acknowledgement
+         *
+         * @param hl7Message HL7 message that is being acknowledged
+         * @param acknowledgementCode AA, AE or AR
+         * @return a HL7 Application Acknowledgement
+         */
         private String generateAcknowledgementMessage(String hl7Message, String acknowledgementCode) {
             final String DEFAULT_NACK_MESSAGE =
                     "MSH|^~\\&|||||||NACK||P|2.2" + SEGMENT_DELIMITER
@@ -624,6 +747,10 @@ public class MllpServerResource extends ExternalResource {
             if (hl7Message == null) {
                 log.error("Invalid HL7 message for parsing operation. Please check your inputs");
                 return DEFAULT_NACK_MESSAGE;
+            }
+
+            if ( ! ("AA".equals(acknowledgementCode) || "AE".equals(acknowledgementCode) || "AR".equals(acknowledgementCode)) ) {
+                throw new IllegalArgumentException("Acknowledgemnt Code must be AA, AE or AR: " + acknowledgementCode);
             }
 
             String messageControlId;

@@ -32,7 +32,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-public class MllpSenderTest extends CamelTestSupport {
+public class MllpTcpClientProducerTest extends CamelTestSupport {
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource( AvailablePortFinder.getNextAvailable() );
 

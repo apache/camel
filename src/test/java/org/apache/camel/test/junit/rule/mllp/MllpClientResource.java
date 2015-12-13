@@ -29,6 +29,12 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+/**
+ * MLLP Test Client packaged as a JUnit Rule
+ *
+ * The client can be configured to simulate a large number
+ * of error conditions.
+ */
 public class MllpClientResource extends ExternalResource {
 
     static final char START_OF_BLOCK = 0x0b;
@@ -128,12 +134,12 @@ public class MllpClientResource extends ExternalResource {
         return clientSocket.isConnected() && !clientSocket.isClosed();
     }
 
-    public void sendRaw(String data) {
+    public void sendData(String data) {
         boolean disconnectAfterSend = false;
-        this.sendRaw(data, disconnectAfterSend);
+        this.sendData(data, disconnectAfterSend);
     }
 
-    public void sendRaw(String data, boolean disconnectAfterSend) {
+    public void sendData(String data, boolean disconnectAfterSend) {
         byte[] payloadBytes = data.getBytes();
 
         try {
@@ -142,14 +148,19 @@ public class MllpClientResource extends ExternalResource {
             log.error("Unable to send raw string", e);
             throw new MllpJUnitResourceException("Unable to send raw string", e);
         }
+
+        if (disconnectAfterSend ) {
+            log.warn( "Closing TCP connection");
+            disconnect();
+        }
     }
 
-    public void sendMessage(String hl7Message) {
+    public void sendFramedData(String hl7Message) {
         boolean disconnectAfterSend = false;
-        this.sendMessage(hl7Message, disconnectAfterSend);
+        this.sendFramedData(hl7Message, disconnectAfterSend);
     }
 
-    public void sendMessage(String hl7Message, boolean disconnectAfterSend) {
+    public void sendFramedData(String hl7Message, boolean disconnectAfterSend) {
         if (null == clientSocket) {
             this.connect();
         }
@@ -179,20 +190,22 @@ public class MllpClientResource extends ExternalResource {
                 log.warn("Not sending END_OF_DATA");
             }
             outputStream.flush();
-            if (disconnectAfterSend) {
-                this.disconnect();
-            }
         } catch (IOException e) {
             log.error("Unable to send HL7 message", e);
             throw new MllpJUnitResourceException("Unable to send HL7 message", e);
         }
+
+        if (disconnectAfterSend ) {
+            log.warn( "Closing TCP connection");
+            disconnect();
+        }
     }
 
-    public String receiveAcknowledgement() throws SocketException, SocketTimeoutException {
-        return receiveAcknowledgement(soTimeout);
+    public String receiveFramedData() throws SocketException, SocketTimeoutException {
+        return receiveFramedData(soTimeout);
     }
 
-    public String receiveAcknowledgement(int timout) throws SocketException, SocketTimeoutException {
+    public String receiveFramedData(int timout) throws SocketException, SocketTimeoutException {
         if (!isConnected()) {
             throw new MllpJUnitResourceException("Cannot receive acknowledgement - client is not connected");
         }
@@ -216,7 +229,7 @@ public class MllpClientResource extends ExternalResource {
                         return "";
                     } else {
                         log.error("Acknowledgement did not start with START_OF_BLOCK: {}", firstByte);
-                        throw new MllpJUnitResourceEnvelopeException("Message did not start with START_OF_BLOCK");
+                        throw new MllpJUnitResourceFrameException("Message did not start with START_OF_BLOCK");
                     }
                 } else {
                     throw new MllpJUnitResourceException( "Connection terminated");
@@ -227,12 +240,12 @@ public class MllpClientResource extends ExternalResource {
                 int nextByte = inputStream.read();
                 switch (nextByte) {
                     case -1:
-                        throw new MllpJUnitResourceEnvelopeException("Reached end of stream before END_OF_BLOCK");
+                        throw new MllpJUnitResourceFrameException("Reached end of stream before END_OF_BLOCK");
                     case START_OF_BLOCK:
-                        throw new MllpJUnitResourceEnvelopeException("Received START_OF_BLOCK before END_OF_BLOCK");
+                        throw new MllpJUnitResourceFrameException("Received START_OF_BLOCK before END_OF_BLOCK");
                     case END_OF_BLOCK:
                         if (END_OF_DATA != inputStream.read()) {
-                            throw new MllpJUnitResourceEnvelopeException("END_OF_BLOCK was not followed by END_OF_DATA");
+                            throw new MllpJUnitResourceFrameException("END_OF_BLOCK was not followed by END_OF_DATA");
                         }
                         readingMessage = false;
                         break;
@@ -251,11 +264,11 @@ public class MllpClientResource extends ExternalResource {
         return acknowledgement.toString();
     }
 
-    public String receiveAvailableInput() throws SocketException, SocketTimeoutException {
-        return receiveAvailableInput(soTimeout);
+    public String receiveData() throws SocketException, SocketTimeoutException {
+        return receiveData(soTimeout);
     }
 
-    public String receiveAvailableInput(int timeout) throws SocketException, SocketTimeoutException {
+    public String receiveData(int timeout) throws SocketException, SocketTimeoutException {
         clientSocket.setSoTimeout(timeout);
         StringBuilder availableInput = new StringBuilder();
 
@@ -274,11 +287,11 @@ public class MllpClientResource extends ExternalResource {
         return availableInput.toString();
     }
 
-    public String eatAvailableInput() throws SocketException, SocketTimeoutException {
-        return eatAvailableInput(soTimeout);
+    public String eatData() throws SocketException, SocketTimeoutException {
+        return eatData(soTimeout);
     }
 
-    public String eatAvailableInput(int timeout) throws SocketException {
+    public String eatData(int timeout) throws SocketException {
         clientSocket.setSoTimeout(timeout);
 
         StringBuilder availableInput = new StringBuilder();

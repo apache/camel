@@ -33,7 +33,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-public class MllpReceiverTest extends CamelTestSupport {
+public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
@@ -98,7 +98,7 @@ public class MllpReceiverTest extends CamelTestSupport {
 
         mllpClient.connect();
 
-        mllpClient.sendMessage(Data.TEST_MESSAGE_1);
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_1);
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
@@ -110,7 +110,7 @@ public class MllpReceiverTest extends CamelTestSupport {
         mllpClient.connect();
 
         Thread.sleep(5000);
-        mllpClient.sendMessage(Data.TEST_MESSAGE_1);
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_1);
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
@@ -121,11 +121,11 @@ public class MllpReceiverTest extends CamelTestSupport {
 
         mllpClient.connect();
 
-        mllpClient.sendMessage(Data.TEST_MESSAGE_1);
-        mllpClient.sendMessage(Data.TEST_MESSAGE_2);
-        mllpClient.sendMessage(Data.TEST_MESSAGE_3);
-        mllpClient.sendMessage(Data.TEST_MESSAGE_4);
-        mllpClient.sendMessage(Data.TEST_MESSAGE_5);
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_1);
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_2);
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_3);
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_4);
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_5);
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
@@ -140,22 +140,22 @@ public class MllpReceiverTest extends CamelTestSupport {
         mllpClient.setSoTimeout(0);
 
         log.info("Sending TEST_MESSAGE_1");
-        mllpClient.sendMessage(Data.TEST_MESSAGE_1);
-        String acknowledgement1 = mllpClient.receiveAcknowledgement();
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_1);
+        String acknowledgement1 = mllpClient.receiveFramedData();
 
         log.info("Sending TEST_MESSAGE_2");
-        mllpClient.sendMessage(Data.TEST_MESSAGE_2);
-        String acknowledgement2 = mllpClient.receiveAcknowledgement();
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_2);
+        String acknowledgement2 = mllpClient.receiveFramedData();
 
         assertTrue("First two normal exchanges did not complete", notify1.matches(10, TimeUnit.SECONDS));
 
         log.info("Sending TEST_MESSAGE_3");
         mllpClient.setSendEndOfBlock(false);
         mllpClient.setSendEndOfData(false);
-        mllpClient.sendMessage(Data.TEST_MESSAGE_3);
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_3);
         // Acknowledgement won't come here
         try {
-            mllpClient.receiveAcknowledgement();
+            mllpClient.receiveFramedData();
         } catch (MllpJUnitResourceTimeoutException timeoutEx) {
             log.info("Expected Timeout reading response");
         }
@@ -166,12 +166,12 @@ public class MllpReceiverTest extends CamelTestSupport {
         log.info("Sending TEST_MESSAGE_4");
         mllpClient.setSendEndOfBlock(true);
         mllpClient.setSendEndOfData(true);
-        mllpClient.sendMessage(Data.TEST_MESSAGE_4);
-        String acknowledgement4 = mllpClient.receiveAcknowledgement();
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_4);
+        String acknowledgement4 = mllpClient.receiveFramedData();
 
         log.info("Sending TEST_MESSAGE_5");
-        mllpClient.sendMessage(Data.TEST_MESSAGE_5);
-        String acknowledgement5 = mllpClient.receiveAcknowledgement();
+        mllpClient.sendFramedData(Data.TEST_MESSAGE_5);
+        String acknowledgement5 = mllpClient.receiveFramedData();
 
         assertTrue("Remaining exchanges did not complete", notify2.matches(10, TimeUnit.SECONDS));
 

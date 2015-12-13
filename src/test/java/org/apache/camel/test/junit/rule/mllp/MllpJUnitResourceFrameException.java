@@ -16,20 +16,23 @@
  */
 package org.apache.camel.test.junit.rule.mllp;
 
-public class MllpJUnitResourceEnvelopeException extends MllpJUnitResourceException {
-    public MllpJUnitResourceEnvelopeException(String message) {
+/**
+ * Thrown when one of the MLLP JUnit Rules encounters a corrupt MLLP Frame
+ */
+public class MllpJUnitResourceFrameException extends MllpJUnitResourceException {
+    public MllpJUnitResourceFrameException(String message) {
         super(message);
     }
 
-    public MllpJUnitResourceEnvelopeException(String message, Throwable cause) {
+    public MllpJUnitResourceFrameException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public MllpJUnitResourceEnvelopeException(Throwable cause) {
+    public MllpJUnitResourceFrameException(Throwable cause) {
         super(cause);
     }
 
-    public MllpJUnitResourceEnvelopeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public MllpJUnitResourceFrameException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

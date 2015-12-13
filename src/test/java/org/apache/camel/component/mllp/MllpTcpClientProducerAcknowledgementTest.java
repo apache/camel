@@ -29,7 +29,7 @@ import org.junit.Test;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-public class MllpSenderAcknowledgementTest extends CamelTestSupport {
+public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource(AvailablePortFinder.getNextAvailable());
     @EndpointInject(uri = "mock://complete")

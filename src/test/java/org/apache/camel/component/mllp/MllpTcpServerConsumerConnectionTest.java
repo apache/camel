@@ -29,8 +29,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-@Ignore(value = "Used for Socket behaviour verification")
-public class MllpReceiverConnectionTest extends CamelTestSupport {
+public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     static final String TEST_MESSAGE =
             "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20150107161440|RISTECH|ADT^A08|10001|D|2.3^^|||||||" + '\r' +
                     "EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC||" + '\r' +

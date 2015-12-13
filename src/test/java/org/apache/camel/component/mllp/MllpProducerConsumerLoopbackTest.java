@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-public class MllpSenderReceiverLoopbackTest extends CamelTestSupport {
+public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     int mllpPort = AvailablePortFinder.getNextAvailable();
 
     @EndpointInject(uri = "mock://result")
