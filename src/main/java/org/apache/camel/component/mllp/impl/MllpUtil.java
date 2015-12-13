@@ -17,7 +17,7 @@
 package org.apache.camel.component.mllp.impl;
 
 import org.apache.camel.component.mllp.MllpException;
-import org.apache.camel.component.mllp.MllpFrameException;
+import org.apache.camel.component.mllp.MllpCorruptFrameException;
 import org.apache.camel.component.mllp.MllpTimeoutException;
 import org.apache.camel.component.mllp.MllpWriteException;
 import org.slf4j.Logger;
@@ -54,10 +54,10 @@ public class MllpUtil {
      * @param socket the Socket to read
      * @throws SocketTimeoutException thrown if a timeout occurs while looking for the beginning of the MLLP frame, but
      *                                nothing is yet available - this is NOT an error condition
-     * @throws MllpFrameException     if the MLLP Frame is corrupted in some way
+     * @throws MllpCorruptFrameException     if the MLLP Frame is corrupted in some way
      * @throws MllpException          for other unexpected error conditions
      */
-    static public void openFrame(Socket socket) throws SocketTimeoutException, MllpFrameException, MllpException {
+    static public void openFrame(Socket socket) throws SocketTimeoutException, MllpCorruptFrameException, MllpException {
         if (socket.isConnected() && !socket.isClosed()) {
             InputStream socketInputStream = MllpUtil.getInputStream(socket);
 
@@ -105,7 +105,7 @@ public class MllpUtil {
                                 log.warn("Exception encountered closing Socket after read attempt looking for the beginning of the MLLP frame returned END_OF_STREAM", closeEx);
                             }
 
-                            throw new MllpFrameException("END_OF_STREAM read while looking for the beginning of the MLLP frame", outOfFrameData.toByteArray());
+                            throw new MllpCorruptFrameException("END_OF_STREAM read while looking for the beginning of the MLLP frame", outOfFrameData.toByteArray());
                         case START_OF_BLOCK:
                             if (isLogPHIEnabled(log)) {
                                 log.warn("The beginning of the MLLP frame was preceded by out-of-frame data - eating data: {}", outOfFrameData.toString().replace('\r', '\n'));
@@ -113,7 +113,7 @@ public class MllpUtil {
                                 log.warn("The beginning of the MLLP frame was preceded by out-of-frame data - eating data");
                             }
 
-                            throw new MllpFrameException("The beginning of the MLLP frame was preceded by out-of-frame data", outOfFrameData.toByteArray());
+                            throw new MllpCorruptFrameException("The beginning of the MLLP frame was preceded by out-of-frame data", outOfFrameData.toByteArray());
                         default:
                             // still reading out-of-frame data
                             outOfFrameData.write(readByte);
@@ -133,7 +133,7 @@ public class MllpUtil {
                     log.warn("Exception encountered closing socket after Timeout looking for the beginning of the MLLP frame, and out-of-frame data had been read", closeEx);
                 }
 
-                throw new MllpFrameException("Timeout looking for the beginning of the MLLP frame, and out-of-frame data had been read", outOfFrameData.toByteArray());
+                throw new MllpCorruptFrameException("Timeout looking for the beginning of the MLLP frame, and out-of-frame data had been read", outOfFrameData.toByteArray());
             } catch (IOException e) {
                 if (isLogPHIEnabled(log)) {
                     log.error("Exception encountered looking for the beginning of the MLLP frame, and out-of-frame data had been read - closing socket and eating out-of-frame data: {}", outOfFrameData.toString().replace('\r', '\n'));
@@ -147,7 +147,7 @@ public class MllpUtil {
                     log.warn("Exception encountered closing socket after exception was encountered looking for the beginning of the MLLP frame", closeEx);
                 }
 
-                throw new MllpFrameException("Exception encountered looking for the beginning of the MLLP frame, and out-of-frame data had been read", outOfFrameData.toByteArray());
+                throw new MllpCorruptFrameException("Exception encountered looking for the beginning of the MLLP frame, and out-of-frame data had been read", outOfFrameData.toByteArray());
             }
         }
     }
@@ -166,10 +166,10 @@ public class MllpUtil {
      * @param socket the Socket to be read
      * @return the payload of the MLLP-Enveloped message as a byte[]
      * @throws MllpTimeoutException thrown if a timeout occurs while closing the MLLP frame
-     * @throws MllpFrameException   if the MLLP Frame is corrupted in some way
+     * @throws MllpCorruptFrameException   if the MLLP Frame is corrupted in some way
      * @throws MllpException        for other unexpected error conditions
      */
-    static public byte[] closeFrame(Socket socket) throws MllpTimeoutException, MllpFrameException, MllpException {
+    static public byte[] closeFrame(Socket socket) throws MllpTimeoutException, MllpCorruptFrameException, MllpException {
         if (socket.isConnected() && !socket.isClosed()) {
             InputStream socketInputStream = MllpUtil.getInputStream(socket);
             // TODO:  Come up with an intelligent way to size this stream
@@ -191,7 +191,7 @@ public class MllpUtil {
                                 log.warn("Exception encountered closing Socket after read attempt looking for the end of the MLLP frame returned END_OF_STREAM", closeEx);
                             }
 
-                            throw new MllpFrameException("END_OF_STREAM read while looking for the end of the MLLP frame", payload.size() > 0 ? payload.toByteArray() : null);
+                            throw new MllpCorruptFrameException("END_OF_STREAM read while looking for the end of the MLLP frame", payload.size() > 0 ? payload.toByteArray() : null);
                         case START_OF_BLOCK:
                             if (isLogPHIEnabled(log)) {
                                 log.error("A new MLLP frame was opened before the previous frame was closed - closing socket and eating data: {}", payload.toString().replace('\r', '\n'));
@@ -205,7 +205,7 @@ public class MllpUtil {
                                 log.warn("Exception encountered closing Socket after a new MLLP frame was opened before the previous frame was closed", closeEx);
                             }
 
-                            throw new MllpFrameException("A new MLLP frame was opened before the previous frame was closed", payload.size() > 0 ? payload.toByteArray() : null);
+                            throw new MllpCorruptFrameException("A new MLLP frame was opened before the previous frame was closed", payload.size() > 0 ? payload.toByteArray() : null);
                         case END_OF_BLOCK:
                             if (END_OF_DATA != socketInputStream.read()) {
                                 if (isLogPHIEnabled(log)) {
@@ -220,7 +220,7 @@ public class MllpUtil {
                                     log.warn("Exception encountered closing Socket after the MLLP frame was partially closed - END_OF_BLOCK was not followed by END_OF_DATA", closeEx);
                                 }
 
-                                throw new MllpFrameException("The MLLP frame was partially closed - END_OF_BLOCK was not followed by END_OF_DATA", payload.size() > 0 ? payload.toByteArray() : null);
+                                throw new MllpCorruptFrameException("The MLLP frame was partially closed - END_OF_BLOCK was not followed by END_OF_DATA", payload.size() > 0 ? payload.toByteArray() : null);
                             }
                             return payload.toByteArray();
                         default:
@@ -242,7 +242,7 @@ public class MllpUtil {
                 } catch (IOException closeEx) {
                     log.warn("Exception encountered closing socket after Timeout looking for the end of the MLLP frame", closeEx);
                 }
-                throw new MllpFrameException("Timeout looking for the end of the MLLP frame", payload.size() > 0 ? payload.toByteArray() : null, timeoutEx);
+                throw new MllpCorruptFrameException("Timeout looking for the end of the MLLP frame", payload.size() > 0 ? payload.toByteArray() : null, timeoutEx);
             } catch (IOException ioEx) {
                 if (0 < payload.size()) {
                     if (isLogPHIEnabled(log)) {

@@ -32,6 +32,8 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.apache.camel.test.Data.*;
+
 public class MllpTcpClientProducerTest extends CamelTestSupport {
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource( AvailablePortFinder.getNextAvailable() );
@@ -107,7 +109,7 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
                 ;
                 */
 
-                onException(MllpFrameException.class)
+                onException(MllpCorruptFrameException.class)
                         .handled(true)
                         .logHandled(false)
                         .to("mock://frame-ex")
@@ -145,7 +147,7 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         timeout.setExpectedMessageCount(0);
         frame.setExpectedMessageCount(0);
 
-        template.sendBody(targetURI, Data.TEST_MESSAGE);
+        template.sendBody(targetURI, TEST_MESSAGE_1);
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
@@ -159,7 +161,7 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         frame.setExpectedMessageCount(0);
 
         for (int i = 0; i < messageCount; ++i) {
-            template.sendBody(targetURI, Data.TEST_MESSAGE);
+            template.sendBody(targetURI, TEST_MESSAGE_1);
             Thread.sleep(deliveryDelay);
         }
 
@@ -180,14 +182,22 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         mllpServer.disableResponse();
 
         template.setDefaultEndpointUri(targetURI);
-        template.sendBody(Data.TEST_MESSAGE);
+        template.sendBody(TEST_MESSAGE_1);
         assertTrue("Notify not completed", notify1.matches(10, TimeUnit.SECONDS));
         mllpServer.enableResponse();
 
-        for (int i = 2; i <= sendMessageCount; ++i) {
-            template.sendBody(Data.TEST_MESSAGE);
-            Thread.sleep(deliveryDelay);
-        }
+        template.sendBody(TEST_MESSAGE_2);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_3);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_4);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_5);
+        Thread.sleep(deliveryDelay);
+
         assertTrue("Notify not completed", notify2.matches(10, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
@@ -205,10 +215,14 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         mllpServer.disableResponse(sendMessageCount);
 
         template.setDefaultEndpointUri(targetURI);
-        for (int i = 0; i < sendMessageCount; ++i) {
-            template.sendBody(Data.TEST_MESSAGE);
-            Thread.sleep(deliveryDelay);
-        }
+        template.sendBody(TEST_MESSAGE_1);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_2);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_3);
+        Thread.sleep(deliveryDelay);
 
         assertTrue("Notify not completed", notify.matches(sendMessageCount, TimeUnit.SECONDS));
 
@@ -225,10 +239,14 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         mllpServer.setExcludeEndOfDataModulus(sendMessageCount);
 
         template.setDefaultEndpointUri(targetURI);
-        for (int i = 0; i < sendMessageCount; ++i) {
-            template.sendBody(Data.TEST_MESSAGE);
-            Thread.sleep(deliveryDelay);
-        }
+        template.sendBody(TEST_MESSAGE_1);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_2);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_3);
+        Thread.sleep(deliveryDelay);
 
         assertTrue("Notify not completed", notify.matches(sendMessageCount, TimeUnit.SECONDS));
 
@@ -245,10 +263,14 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         mllpServer.setExcludeEndOfBlockModulus(sendMessageCount);
 
         template.setDefaultEndpointUri(targetURI);
-        for (int i = 0; i < sendMessageCount; ++i) {
-            template.sendBody(Data.TEST_MESSAGE);
-            Thread.sleep(deliveryDelay);
-        }
+        template.sendBody(TEST_MESSAGE_1);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_2);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_3);
+        Thread.sleep(deliveryDelay);
 
         assertTrue("Notify not completed", notify.matches(sendMessageCount, TimeUnit.SECONDS));
 
@@ -263,30 +285,24 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(messageCount).create();
 
         template.setDefaultEndpointUri(targetURI);
-        for (int i = 0; i < messageCount; ++i) {
-            template.sendBody(Data.TEST_MESSAGE);
-            Thread.sleep(deliveryDelay);
-        }
+        template.sendBody(TEST_MESSAGE_1);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_2);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_3);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_4);
+        Thread.sleep(deliveryDelay);
+
+        template.sendBody(TEST_MESSAGE_5);
+        Thread.sleep(deliveryDelay);
 
         assertTrue("Notify not completed", notify.matches(5, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
 
-    static class Data {
-        static final String TEST_MESSAGE =
-                "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20150107161440|RISTECH|ADT^A08|10001|D|2.3^^|||||||" + '\r' +
-                        "EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC||" + '\r' +
-                        "PID|1|2100355^^^MRN^MRN|2100355^^^MRN^MRN||MDCLS9^MC9||19700109|F||U|111 HOVER STREET^^LOS ANGELES^CA^90032^USA^P^^LOS ANGELE|LOS ANGELE|(310)725-6952^P^PH^^^310^7256952||ENGLISH|U||60000013647|565-33-2222|||U||||||||N||" + '\r' +
-                        "PD1|||UCLA HEALTH SYSTEM^^10|10002116^ADAMS^JOHN^D^^^^^EPIC^^^^PROVID||||||||||||||" + '\r' +
-                        "NK1|1|DOE^MC9^^|OTH|^^^^^USA|(310)888-9999^^^^^310^8889999|(310)999-2222^^^^^310^9992222|Emergency Contact 1|||||||||||||||||||||||||||" + '\r' +
-                        "PV1|1|OUTPATIENT|RR CT^^^1000^^^^^^^DEPID|EL|||017511^TOBIAS^JONATHAN^^^^^^EPIC^^^^PROVID|017511^TOBIAS^JONATHAN^^^^^^EPIC^^^^PROVID||||||CLR|||||60000013647|SELF|||||||||||||||||||||HOV_CONF|^^^1000^^^^^^^||20150107161438||||||||||" + '\r' +
-                        "PV2||||||||20150107161438||||CT BRAIN W WO CONTRAST||||||||||N|||||||||||||||||||||||||||" + '\r' +
-                        "ZPV||||||||||||20150107161438|||||||||" + '\r' +
-                        "AL1|1||33361^NO KNOWN ALLERGIES^^NOTCOMPUTRITION^NO KNOWN ALLERGIES^EXTELG||||||" + '\r' +
-                        "DG1|1|DX|784.0^Headache^DX|Headache||VISIT" + '\r' +
-                        "GT1|1|1000235129|MDCLS9^MC9^^||111 HOVER STREET^^LOS ANGELES^CA^90032^USA^^^LOS ANGELE|(310)725-6952^^^^^310^7256952||19700109|F|P/F|SLF|565-33-2222|||||^^^^^USA|||UNKNOWN|||||||||||||||||||||||||||||" + '\r' +
-                        "UB2||||||||" + '\r' +
-                        '\r' + '\n';
-    }
 }

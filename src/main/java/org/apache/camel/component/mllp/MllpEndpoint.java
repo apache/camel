@@ -36,7 +36,7 @@ import java.nio.charset.Charset;
  * property to false.
  * <p/>
  * TODO:  Implement checking the org.apache.camel.mllp.logPHI system property before logging PHI
-
+ * TODO:  Move the @UriPath and @UriParam elements to a separate configuration class
  */
 @UriEndpoint(scheme = "mllp", title = "mllp", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
 public class MllpEndpoint extends DefaultEndpoint {
@@ -75,11 +75,19 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "false", description = "Enable/disable the SO_REUSEADDR socket option.")
     boolean reuseAddress = false;
 
+    // TODO: Make the default value come from the system
     @UriParam(defaultValue = "65535", description = "Sets the SO_RCVBUF option to the specified value")
     int receiveBufferSize = 65535;
 
+    // TODO: Make the default value come from the system
     @UriParam(defaultValue = "65535", description = "Sets the SO_SNDBUF option to the specified value")
     int sendBufferSize = 65535;
+
+    @UriParam(defaultValue = "0", description = "The amount of time a TCP connection can remain idle before it is closed")
+    int idleTimeout = 0;
+
+    @UriParam(description = "The TCP mode of the endpoint (client or server).  Defaults to client for Producers and server for Consumers")
+    String tcpMode;
 
     @UriParam(defaultValue = "true", description = "MLLP Consumers only - Automatically generate and send an MLLP Acknowledgement")
     boolean autoAck = true;

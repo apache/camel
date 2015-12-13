@@ -16,25 +16,21 @@
  */
 package org.apache.camel.component.mllp;
 
-/**
- * Raised when a MLLP Producer or consumer encounters a corrupt MLLP Frame while attempting
- * to read or write a MLLP payload.
- */
-public class MllpFrameException extends MllpException {
-    public MllpFrameException(String message) {
-        super(message);
-    }
+import org.apache.camel.EndpointInject;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Ignore;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-    public MllpFrameException(String message, byte[] mllpPayload) {
-        super(message, mllpPayload);
-    }
+@Ignore( value = "Not Yet Implemented")
+// TODO: Implement this
+public class MllpTcpServerConsumerSpringTest extends CamelSpringTestSupport{
+    @EndpointInject( uri = "mock://target")
+    MockEndpoint target;
 
-    public MllpFrameException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("classpath:META-INF/spring/mllp-tcp-server-consumer-test.xml");
     }
-
-    public MllpFrameException(String message, byte[] mllpPayload, Throwable cause) {
-        super(message, mllpPayload, cause);
-    }
-
 }

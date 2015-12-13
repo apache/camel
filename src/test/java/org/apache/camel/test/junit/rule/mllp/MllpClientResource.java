@@ -229,7 +229,7 @@ public class MllpClientResource extends ExternalResource {
                         return "";
                     } else {
                         log.error("Acknowledgement did not start with START_OF_BLOCK: {}", firstByte);
-                        throw new MllpJUnitResourceFrameException("Message did not start with START_OF_BLOCK");
+                        throw new MllpJUnitResourceCorruptFrameException("Message did not start with START_OF_BLOCK");
                     }
                 } else {
                     throw new MllpJUnitResourceException( "Connection terminated");
@@ -240,12 +240,12 @@ public class MllpClientResource extends ExternalResource {
                 int nextByte = inputStream.read();
                 switch (nextByte) {
                     case -1:
-                        throw new MllpJUnitResourceFrameException("Reached end of stream before END_OF_BLOCK");
+                        throw new MllpJUnitResourceCorruptFrameException("Reached end of stream before END_OF_BLOCK");
                     case START_OF_BLOCK:
-                        throw new MllpJUnitResourceFrameException("Received START_OF_BLOCK before END_OF_BLOCK");
+                        throw new MllpJUnitResourceCorruptFrameException("Received START_OF_BLOCK before END_OF_BLOCK");
                     case END_OF_BLOCK:
                         if (END_OF_DATA != inputStream.read()) {
-                            throw new MllpJUnitResourceFrameException("END_OF_BLOCK was not followed by END_OF_DATA");
+                            throw new MllpJUnitResourceCorruptFrameException("END_OF_BLOCK was not followed by END_OF_DATA");
                         }
                         readingMessage = false;
                         break;
