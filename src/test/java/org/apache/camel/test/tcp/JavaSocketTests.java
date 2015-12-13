@@ -24,8 +24,6 @@ public class JavaSocketTests {
     @Before
     public void setUp() throws Exception {
         serverSocket = new ServerSocket(0);
-
-
     }
 
     @After
@@ -41,7 +39,7 @@ public class JavaSocketTests {
 
     @Test
     public void testSocketReadOnClosedConnection() throws Exception {
-        Thread acceptThread = new Thread() {
+        final Thread acceptThread = new Thread() {
             Logger log = LoggerFactory.getLogger( "acceptThread");
             @Override
             public void run() {
@@ -60,12 +58,16 @@ public class JavaSocketTests {
 
                         do {
                             int readByte = -1;
+                            int available = -1;
                             try {
+                                available = reader.available();
+                                log.info( "InputStream.available returned {}", available);
                                 readByte = reader.read();
-                                log.info( "Processing byte: {}", readByte);
+                                log.trace( "Processing byte: {}", readByte);
                                 switch (readByte ) {
                                     case -1:
                                         if ( echoSocket.isConnected() && !echoSocket.isClosed() ) {
+                                            log.info( "Available returned {}", reader.available());
                                             log.warn( "Socket claims to still be open, but END_OF_STREAM received - closing echoSocket");
                                             try {
                                                 echoSocket.close();
@@ -78,6 +80,7 @@ public class JavaSocketTests {
                                     case 10:
                                         log.info( "Complete Message - Sending Response");
                                         byte[] response = responseBuilder.toString().getBytes();
+                                        responseBuilder.setLength(0);
                                         writer.write( response, 0, response.length );
                                         writer.write( '\n');
                                         break;
@@ -85,7 +88,7 @@ public class JavaSocketTests {
                                         responseBuilder.append( (char) readByte );
                                 }
                             } catch (SocketTimeoutException timeoutEx ) {
-                                log.info( "Timeout reading data");
+                                log.info( "Timeout reading data - available returned {}", available);
                             }
                         } while (echoSocket.isConnected() && !echoSocket.isClosed() );
                     }
@@ -111,14 +114,19 @@ public class JavaSocketTests {
         clientSocket = new Socket();
         clientSocket.setSoTimeout( 1000 );
         clientSocket.connect( serverSocket.getLocalSocketAddress(), 10000);
+        clientSocket.setTcpNoDelay(true);
         log.info( "Begining message send loop ");
         byte[] message = "Hello World".getBytes();
         BufferedReader reader;
         for (int i=1; i<=messageCount; ++i) {
             reader = new BufferedReader( new InputStreamReader(clientSocket.getInputStream()));
             OutputStream writer = clientSocket.getOutputStream();
+            log.info( "Sending payload");
             writer.write(message, 0, message.length);
+            writer.flush();
+            log.info( "Sending terminator");
             writer.write( '\n' );
+            writer.flush();
             log.info( "Received Response #{}: {}", i, reader.readLine());
             Thread.sleep(1000);
         }
@@ -131,7 +139,7 @@ public class JavaSocketTests {
             clientSocket.close();
         }
         log.info( "Sleeping ...");
-        Thread.sleep(60000);
+        Thread.sleep(5000);
 
     }
 }

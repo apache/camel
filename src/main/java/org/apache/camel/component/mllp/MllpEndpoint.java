@@ -48,7 +48,6 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-    // TODO:  Need to update the TCP Server code to use this if it set - helps with multihomed systems
     @UriPath(defaultValue = "0.0.0.0", description = "Hostname or IP for connection")
     String hostname = "0.0.0.0";
 

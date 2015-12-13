@@ -119,7 +119,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
      * Nested Class to handle the ServerSocket.accept requests
      */
     class AcceptThread extends Thread {
-        // TODO:  Need to set thread name
         ServerSocket serverSocket;
 
         AcceptThread(ServerSocket serverSocket) {
@@ -170,11 +169,38 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     // serverSocket.setSoTimeout( 10000 );
                     // TODO: Need to check maxConnections and figure out what to do when exceeded
                     Socket socket = serverSocket.accept();
-                    // Check and see if the socket is really there - it could be a load balancer pinging the port
+
+                    /* Wait a bit and then check and see if the socket is really there - it could be a load balancer
+                     pinging the port
+                      */
                     Thread.sleep(100);
                     if (socket.isConnected() && !socket.isClosed()) {
-                        log.debug("Socket appears to be there - get the input stream and see");
-                        InputStream inputStream = socket.getInputStream();
+                        log.debug("Socket appears to be there - check for available data");
+                        InputStream inputStream;
+                        try {
+                            inputStream = socket.getInputStream();
+                        } catch (IOException ioEx) {
+                            // Bad Socket -
+                            log.warn( "Failed to retrieve the InputStream for socket after the initial connection was accepted");
+                            // TODO: Log something here
+                            try {
+                                socket.close();
+                            } catch (Exception closeEx) {
+                                log.warn( "Exception encountered closing socket after a failed attempt to retrieve the InputStream for socket after the initial connection was accepted");
+                                // TODO: Log something here
+                            }
+                            continue;
+                        }
+
+                        if (0 < inputStream.available()) {
+                            // Something is there - start the client thread
+                            ClientSocketThread clientThread = new ClientSocketThread(socket, null);
+                            clientThreads.add(clientThread);
+                            clientThread.start();
+                            continue;
+                        }
+
+                        // The easy check failed - so trigger a blocking read
                         socket.setSoTimeout(100);
                         try {
                             int tmpByte = inputStream.read();
@@ -262,7 +288,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            // TODO:  Maybe checking socket.ava
 
             while (clientSocket.isConnected() && !clientSocket.isClosed()) {
                 // create the exchange
@@ -281,7 +306,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         hl7MessageBytes = MllpUtil.closeFrame(clientSocket);
                     }
                 } catch (MllpException mllpEx) {
-                    exchange.setException( mllpEx);
+                    exchange.setException(mllpEx);
                     return;
                 } catch (SocketTimeoutException timeoutEx) {
                     // When thrown by openFrame, it indicates that no data was available - but no error
