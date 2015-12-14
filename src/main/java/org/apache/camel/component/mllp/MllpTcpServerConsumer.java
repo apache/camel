@@ -181,7 +181,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                             inputStream = socket.getInputStream();
                         } catch (IOException ioEx) {
                             // Bad Socket -
-                            log.warn( "Failed to retrieve the InputStream for socket after the initial connection was accepted");
+                            log.warn( "Failed to retrieve the InputStream for socket after the initial connection was acceptedf");
                             // TODO: Log something here
                             try {
                                 socket.close();
@@ -335,6 +335,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                             acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationErrorAcknowledgementMessage(hl7MessageBytes);
                         }
                     } else {
+                        // TODO:  Change this to use a message property (for the acknowledgement )
                         Object exchangeBody;
                         if (exchange.hasOut()) {
                             exchangeBody = exchange.getOut().getBody();
@@ -357,6 +358,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         }
                     }
                     MllpUtil.writeFramedPayload(clientSocket, acknowledgementMessageBytes);
+                    // TODO: Populate a header with the acknowledgement written
                 } catch (Exception e) {
                     exchange.setException(e);
                 }
