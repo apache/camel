@@ -52,16 +52,6 @@ public class ThrottlerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-//    public void testNoNestedProcessor() throws Exception {
-//        if (!canTest()) {
-//            return;
-//        }
-//
-//        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-//        long elapsed = sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:noNestedProcessor", MESSAGE_COUNT, resultEndpoint);
-//        assertThrottlerTiming(elapsed, 1, INTERVAL, MESSAGE_COUNT);
-//    }
-    
     public void testSendLotsOfMessagesWithRejectExecution() throws Exception {
         if (!canTest()) {
             return;
@@ -246,9 +236,6 @@ public class ThrottlerTest extends ContextTestSupport {
                 from("direct:start").throttle(2).timePeriodMillis(10000).rejectExecution(true).to("log:result", "mock:result");
 
                 from("direct:highThrottleRate").throttle(1000).timePeriodMillis(INTERVAL).to("mock:result");
-
-//                from("direct:noNestedProcessor").throttle(1).timePeriodMillis(INTERVAL).end().to("log:result", "mock:result");
-
             }
         };
     }
