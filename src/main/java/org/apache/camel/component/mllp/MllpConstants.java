@@ -14,14 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mllp.impl;
+package org.apache.camel.component.mllp;
 
 public class MllpConstants {
-    public static final int END_OF_STREAM = -1;
-
-    public static final char START_OF_BLOCK = 0x0b;      // VT (vertical tab)        - decimal 11, octal 013
-    public static final char END_OF_BLOCK = 0x1c;        // FS (file separator)      - decimal 28, octal 034
-    public static final char END_OF_DATA = 0x0d;         // CR (carriage return)     - decimal 13, octal 015
-    public static final char SEGMENT_DELIMITER = 0x0d;   // CR (carriage return)     - decimal 13, octal 015
-    public static final char MESSAGE_TERMINATOR = 0x0a;  // LF (line feed, new line) - decimal 10, octal 012
+    public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
+    public static final String MLLP_ACKNOWLEDGEMENT_CODE = "CamelMllpAcknowledgementCode";
+    public static final String MLLP_CHARSET = "CamelMllpCharset";
 }

@@ -32,6 +32,8 @@ import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.apache.camel.component.mllp.MllpFrameConstants.*;
+
 /**
  * The MLLP consumer.
  */
@@ -297,7 +299,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 // Send the message on for processing and wait for the response
                 log.debug("Reading data ....");
                 try {
-                    if (null != initialByte && MllpConstants.START_OF_BLOCK == initialByte) {
+                    if (null != initialByte && START_OF_BLOCK == initialByte) {
                         initialByte = null;
                         hl7MessageBytes = MllpUtil.closeFrame(clientSocket);
                     } else {

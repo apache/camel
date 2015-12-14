@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 
+import static org.apache.camel.component.mllp.MllpFrameConstants.*;
+
 /**
  * The MLLP producer.
  */
@@ -201,7 +203,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
             // First, find the beginning of the MSA segment - should be the second segment
             int msaStartIndex = -1;
             for (int i = 0; i < acknowledgementBytes.length; ++i) {
-                if (MllpConstants.SEGMENT_DELIMITER == acknowledgementBytes[i]) {
+                if (SEGMENT_DELIMITER == acknowledgementBytes[i]) {
                     final byte M = 77;
                     final byte S = 83;
                     final byte A = 65;

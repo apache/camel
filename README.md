@@ -25,17 +25,23 @@ received (i.e. a HL7 Application Reject Acknowledgement or a HL7 Application Err
 the use of Camel Redelivery Policies to configure redelivery attempts and routing erroneous messages to alternate
 endpoints for analysis.
 
-MLLP-Consumers will, by default, automatically generate an acknowledgement (a HL7 Application Accept Acknowledgment for 
-successfully processed messages, or a HL7 Application Error Acknowledgement for messages where an exception is
-generated).  This behaviour can be disabled with the autoAck=false URI parameter, which allows the user to generated 
-their own HL7 Acknowledgment.  
+MLLP-Consumers will, by default, automatically generate an acknowledgement.  A HL7 Application Accept Acknowledgment 
+will be generated for successfully processed messages, or a HL7 Application Error Acknowledgement for messages where an 
+exception is raised during the processing of the exchange.  The HL7 acknowledgement can also be specified by setting the 
+CamelMllpAcknowledgement property on the exchange - if present, the value of this property will be used for the HL7
+acknowledgment.  The automatic generation of an HL7 acknowledgment can be completely disabled by setting the autoAck
+URI parameter to false.  If autoAck=false and the CamelMllpAcknowledgment property is not set on the exchange, and 
+exception will be raised.  
 
 The component also provides a Camel Processor that is capable of generating HL7 Acknowledgements.  Therefore, the HAPI 
 is not required to generate HL7 Acknowledgements - however, it can be used if desired.  
 By default, the processor will generate a HL7 Application Accept Acknowledgement if there is not an exception on the 
 Camel Exchange - otherwise it will generate a HL7 Application Error Acknowledgement.  The generated acknowledgement 
-is placed in the "Out" Message of the Exchange by default in order to preserve the original HL7 message for later 
-processing (i.e. log the HL7 message and the acknowledgment together).
+is placed in the CamelMllpAcknowledgment property on the Exchange.
+
+Regardless of whether the HL7 Acknowledgment is generated or specified using the CamelMllpAcknowledgement Exchange property,
+the MLLP-Consumer will set the CamelHllpAcknowledgement and CamelHllpAcknowledgementCode headers on the Message after the
+acknowledgment is successfully transmitted to the external system. 
 
 Since the MLLP protocol does not typically use a large number of concurrent connections, the camel-mllp component uses
 a simple thread-per-connection model based an standard Java Sockets.  This keeps the implementation simple, and also
