@@ -52,9 +52,9 @@ public class PahoEndpoint extends DefaultEndpoint {
     private String clientId = "camel-" + System.nanoTime();
     @UriParam(defaultValue = PahoConstants.DEFAULT_BROKER_URL)
     private String brokerUrl = PahoConstants.DEFAULT_BROKER_URL;
-    @UriParam(defaultValue = PahoConstants.DEFAULT_QOS_STRING)
+    @UriParam(defaultValue = "2")
     private int qos = PahoConstants.DEFAULT_QOS;
-    @UriParam(defaultValue = PahoConstants.DEFAULT_RETAINED_STRING)
+    @UriParam(defaultValue = "false")
     private boolean retained;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = PahoPersistence.MEMORY;

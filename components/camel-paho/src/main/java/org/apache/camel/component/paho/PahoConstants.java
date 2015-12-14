@@ -27,8 +27,6 @@ public final class PahoConstants {
     public static final String MQTT_TOPIC = "CamelMqttTopic";
     public static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
     public static final int DEFAULT_QOS = 2;
-    public static final String DEFAULT_QOS_STRING = DEFAULT_QOS + "";
-    public static final String DEFAULT_RETAINED_STRING = "false";
 
     @Deprecated
     public static final String HEADER_ORIGINAL_MESSAGE = "PahoOriginalMessage";
