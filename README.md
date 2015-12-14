@@ -120,3 +120,4 @@ To help simplify bringing Camel-MLLP into Apache Camel, we have take care to bui
 into Camel.
 
 features.xml is a diff file that will add Camel-MLLP to the camel features list when on Apache Karaf.
+parent-pom.xml is a diff file that contains an update to Camel's Parent pom.
