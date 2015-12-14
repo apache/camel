@@ -19,7 +19,7 @@ package org.apache.camel.component.spark;
 import java.io.File;
 import java.io.IOException;
 
-import static java.lang.Runtime.getRuntime;
+import static java.lang.Boolean.parseBoolean;
 import static java.util.Arrays.asList;
 
 import com.google.common.truth.Truth;
@@ -46,7 +46,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
     static JavaSparkContext sparkContext = createLocalSparkContext();
 
-    static boolean shouldRunHive = getRuntime().maxMemory() > 2 * 1024 * 1024 * 1024;
+    static boolean shouldRunHive = parseBoolean(System.getenv("CAMEL_SPARK_HIVE_TESTS"));
 
     static HiveContext hiveContext;
 
