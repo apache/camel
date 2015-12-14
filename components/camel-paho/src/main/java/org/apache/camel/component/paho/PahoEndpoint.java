@@ -18,8 +18,6 @@ package org.apache.camel.component.paho;
 
 import java.util.Set;
 
-import static java.lang.System.nanoTime;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -39,11 +37,6 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.paho.PahoPersistence.MEMORY;
-import static org.apache.camel.component.paho.PahoConstants.DEFAULT_BROKER_URL;
-import static org.apache.camel.component.paho.PahoConstants.DEFAULT_QOS_STRING;
-import static org.apache.camel.component.paho.PahoConstants.DEFAULT_QOS;
-import static org.apache.camel.component.paho.PahoConstants.DEFAULT_RETAINED_STRING;
 
 
 @UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
@@ -52,18 +45,19 @@ public class PahoEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
 
     // Configuration members
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     private String topic;
     @UriParam
-    private String clientId = "camel-" + nanoTime();
-    @UriParam(defaultValue = DEFAULT_BROKER_URL)
-    private String brokerUrl = DEFAULT_BROKER_URL;
-    @UriParam(defaultValue = DEFAULT_QOS_STRING)
-    private int qos = DEFAULT_QOS;
-    @UriParam(defaultValue = DEFAULT_RETAINED_STRING)
-    private boolean retained = false;
+    private String clientId = "camel-" + System.nanoTime();
+    @UriParam(defaultValue = PahoConstants.DEFAULT_BROKER_URL)
+    private String brokerUrl = PahoConstants.DEFAULT_BROKER_URL;
+    @UriParam(defaultValue = PahoConstants.DEFAULT_QOS_STRING)
+    private int qos = PahoConstants.DEFAULT_QOS;
+    @UriParam(defaultValue = PahoConstants.DEFAULT_RETAINED_STRING)
+    private boolean retained;
     @UriParam(defaultValue = "MEMORY")
-    private PahoPersistence persistence = MEMORY;
+    private PahoPersistence persistence = PahoPersistence.MEMORY;
     @UriParam(description = "Base directory used by file persistence.", defaultValue = "Current directory")
     private String filePersistenceDirectory;
 
@@ -112,13 +106,13 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     @Override
     public PahoComponent getComponent() {
-        return (PahoComponent) super.getComponent();
+        return (PahoComponent)super.getComponent();
     }
 
     // Resolvers
 
     protected MqttClientPersistence resolvePersistence() {
-        if (persistence == MEMORY) {
+        if (persistence ==  PahoPersistence.MEMORY) {
             return new MemoryPersistence();
         } else {
             if (filePersistenceDirectory != null) {
@@ -139,8 +133,7 @@ public class PahoEndpoint extends DefaultEndpoint {
             return connectOptions.iterator().next();
         } else if (connectOptions.size() > 1) {
             LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
-                            + "Please use 'connectOptions' endpoint option to select one.",
-                    connectOptions.size());
+                     + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
         }
         return new MqttConnectOptions();
     }
@@ -201,18 +194,19 @@ public class PahoEndpoint extends DefaultEndpoint {
     public void setQos(int qos) {
         this.qos = qos;
     }
-   
+
     public boolean isRetained() {
-		return retained;
-	}
+        return retained;
+    }
 
     /**
      * Retain option
+     * 
      * @param retained true/false
      */
-	public void setRetained(boolean retained) {
-		this.retained = retained;
-	}
+    public void setRetained(boolean retained) {
+        this.retained = retained;
+    }
 
     // Auto-configuration getters & setters
 
