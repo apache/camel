@@ -120,3 +120,9 @@ A MLLP-Producer endpoint should only have a single TCP connection at any given t
 than one connection to an external system, it oftentimes causes issues with the external system.  Additionally, since FIFO
 must be maintained, only 
 
+# CamelPatches
+
+To help simplify bringing Camel-MLLP into Apache Camel, we have take care to build a set of patches that help integrate the component
+into Camel.
+
+features.xml is a diff file that will add Camel-MLLP to the camel features list when on Apache Karaf.

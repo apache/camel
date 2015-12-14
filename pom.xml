@@ -33,7 +33,7 @@
     <description>Camel MLLP Component</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.mllp.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.component.mllp.*,org.apache.camel.processor.mllp.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=mllp</camel.osgi.export.service>
     </properties>
 
