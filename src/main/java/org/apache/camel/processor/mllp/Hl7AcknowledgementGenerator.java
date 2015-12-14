@@ -19,7 +19,7 @@ package org.apache.camel.processor.mllp;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mllp.MllpEndpoint;
-import org.apache.camel.component.mllp.impl.MllpConstants;
+import org.apache.camel.component.mllp.MllpFrameConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +96,7 @@ public class Hl7AcknowledgementGenerator implements Processor {
         // Find the MSH
         String mshSegment = null;
         for (int i = 0; i < hl7MessageBytes.length; ++i) {
-            if (MllpConstants.SEGMENT_DELIMITER == hl7MessageBytes[i]) {
+            if (MllpFrameConstants.SEGMENT_DELIMITER == hl7MessageBytes[i]) {
                 mshSegment = new String(hl7MessageBytes, 0, i, charset);
                 break;
             }

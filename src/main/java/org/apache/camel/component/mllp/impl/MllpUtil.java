@@ -27,7 +27,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-import static org.apache.camel.component.mllp.impl.MllpConstants.*;
+import static org.apache.camel.component.mllp.MllpFrameConstants.*;
 
 /**
  * Supplies methods to read and write messages in a MLLP Frame.
