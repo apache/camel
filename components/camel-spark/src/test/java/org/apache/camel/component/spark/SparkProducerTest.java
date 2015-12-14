@@ -18,6 +18,7 @@ package org.apache.camel.component.spark;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static java.lang.Boolean.parseBoolean;
 import static java.util.Arrays.asList;
@@ -30,6 +31,7 @@ import org.apache.spark.api.java.AbstractJavaRDDLike;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Row;
 import org.apache.spark.sql.hive.HiveContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -221,8 +223,15 @@ public class SparkProducerTest extends CamelTestSupport {
     @Test
     public void shouldExecuteHiveQuery() {
         assumeTrue(shouldRunHive);
-        long tablesCount = template.requestBody(sparkHiveUri + "?collect=false", "SELECT * FROM cars", Long.class);
-        Truth.assertThat(tablesCount).isEqualTo(2);
+        List<Row> cars = template.requestBody(sparkHiveUri, "SELECT * FROM cars", List.class);
+        Truth.assertThat(cars.get(0).getString(1)).isEqualTo("X-trail");
+    }
+
+    @Test
+    public void shouldExecuteHiveCountQuery() {
+        assumeTrue(shouldRunHive);
+        long carsCount = template.requestBody(sparkHiveUri + "?collect=false", "SELECT * FROM cars", Long.class);
+        Truth.assertThat(carsCount).isEqualTo(2);
     }
 
     // Data frames tests
