@@ -16,9 +16,11 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.builder.RouteBuilder;
@@ -155,6 +157,60 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         
         Thread.sleep(5000);
         assertTrue(context.getRouteStatus("test") == ServiceStatus.Stopped);
+    }
+
+    @Test
+    public void testScheduledStartAndStopRoutePolicy() throws Exception {
+        MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
+        success.expectedMessageCount(1);
+
+        final CountDownLatch startedLatch = new CountDownLatch(1);
+        final CountDownLatch stoppedLatch = new CountDownLatch(1);
+
+        context.getComponent("quartz2", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz2/myquartz.properties");
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy() {
+
+                    @Override
+                    public void onStart(final Route route) {
+                        super.onStart(route);
+
+                        startedLatch.countDown();
+                    }
+
+                    @Override
+                    public void onStop(final Route route) {
+                        super.onStop(route);
+
+                        stoppedLatch.countDown();
+                    }
+                };
+                policy.setRouteStartTime("*/3 * * * * ?");
+                policy.setRouteStopTime("*/6 * * * * ?");
+                policy.setRouteStopGracePeriod(0);
+
+                from("direct:start")
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .noAutoStartup()
+                        .to("mock:success");
+            }
+        });
+        context.start();
+
+        startedLatch.await(5000, TimeUnit.SECONDS);
+
+        ServiceStatus startedStatus = context.getRouteStatus("test");
+        assertTrue(startedStatus == ServiceStatus.Started || startedStatus == ServiceStatus.Starting);
+        template.sendBody("direct:start", "Ready or not, Here, I come");
+
+        stoppedLatch.await(5000, TimeUnit.SECONDS);
+
+        ServiceStatus stoppedStatus = context.getRouteStatus("test");
+        assertTrue(stoppedStatus == ServiceStatus.Stopped || stoppedStatus == ServiceStatus.Stopping);
+
+        success.assertIsSatisfied();
     }
     
     @Test
