@@ -72,8 +72,7 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(headerName, "headerName");
         Expression expr = getExpression().createExpression(routeContext);
-        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(getHeaderName(),
-                routeContext.getCamelContext());
+        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(getHeaderName(), routeContext.getCamelContext());
         return new SetHeaderProcessor(nameExpr, expr);
     }
 
@@ -88,6 +87,9 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
 
     /**
      * Name of message header to set a new value
+     * <p/>
+     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used.
+     * Otherwise a constant name will be used.
      */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;

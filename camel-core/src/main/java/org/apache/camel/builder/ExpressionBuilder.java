@@ -1879,8 +1879,7 @@ public final class ExpressionBuilder {
     }
 
     /**
-     * Returns Simple expression or fallbacks to Constant expression
-     * if expression str is not Simple expression.
+     * Returns Simple expression or fallback to Constant expression if expression str is not Simple expression.
      */
     public static Expression parseSimpleOrFallbackToConstantExpression(String str, CamelContext camelContext) {
         if (StringHelper.hasStartToken(str, "simple")) {

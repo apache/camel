@@ -18,14 +18,13 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the property on the exchange with an {@link org.apache.camel.Expression}
@@ -38,6 +37,8 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
     public SetPropertyProcessor(Expression propertyName, Expression expression) {
         this.propertyName = propertyName;
         this.expression = expression;
+        ObjectHelper.notNull(propertyName, "propertyName");
+        ObjectHelper.notNull(expression, "expression");
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -55,17 +56,14 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
                 return true;
             }
 
-            exchange.setProperty(resolvePropertyNameByExchange(exchange), newProperty);
+            String key = propertyName.evaluate(exchange, String.class);
+            exchange.setProperty(key, newProperty);
         } catch (Throwable e) {
             exchange.setException(e);
         }
 
         callback.done(true);
         return true;
-    }
-
-    private String resolvePropertyNameByExchange(Exchange exchange) {
-        return this.propertyName.evaluate(exchange, String.class);
     }
 
     @Override
@@ -93,10 +91,9 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
         return expression;
     }
 
-
     @Override
     protected void doStart() throws Exception {
-        //noop
+        // noop
     }
 
     @Override

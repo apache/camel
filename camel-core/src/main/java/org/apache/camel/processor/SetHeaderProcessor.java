@@ -18,8 +18,6 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -27,6 +25,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the header on the IN or OUT message with an {@link org.apache.camel.Expression}
@@ -39,6 +38,8 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
     public SetHeaderProcessor(Expression headerName, Expression expression) {
         this.headerName = headerName;
         this.expression = expression;
+        ObjectHelper.notNull(headerName, "headerName");
+        ObjectHelper.notNull(expression, "expression");
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -59,7 +60,8 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
             boolean out = exchange.hasOut();
             Message old = out ? exchange.getOut() : exchange.getIn();
 
-            old.setHeader(resolveHeaderNameByExchange(exchange), newHeader);
+            String key = headerName.evaluate(exchange, String.class);
+            old.setHeader(key, newHeader);
 
         } catch (Throwable e) {
             exchange.setException(e);
@@ -67,10 +69,6 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
 
         callback.done(true);
         return true;
-    }
-
-    private String resolveHeaderNameByExchange(Exchange exchange) {
-        return this.headerName.evaluate(exchange, String.class);
     }
 
     @Override
