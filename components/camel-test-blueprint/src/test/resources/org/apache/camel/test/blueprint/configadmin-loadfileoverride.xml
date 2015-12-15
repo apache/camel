@@ -26,7 +26,9 @@
   <!-- blueprint property placeholders, that will use etc/stuff.cfg as the properties file -->
   <cm:property-placeholder persistent-id="stuff" update-strategy="reload">
     <cm:default-properties>
-      <cm:property name="destination" value="to-be-replaced" />
+      <cm:property name="greeting" value="Hello" />
+      <cm:property name="echo" value="Hey" />
+      <cm:property name="destination" value="mock:original" />
     </cm:default-properties>
   </cm:property-placeholder>
 

@@ -20,8 +20,13 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.spark.api.java.AbstractJavaRDDLike;
 
 public class SparkComponent extends UriEndpointComponent {
+
+    private AbstractJavaRDDLike rdd;
+
+    private RddCallback rddCallback;
 
     public SparkComponent() {
         super(SparkEndpoint.class);
@@ -30,6 +35,22 @@ public class SparkComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         return new SparkEndpoint(uri, this, EndpointType.valueOf(remaining));
+    }
+
+    public AbstractJavaRDDLike getRdd() {
+        return rdd;
+    }
+
+    public void setRdd(AbstractJavaRDDLike rdd) {
+        this.rdd = rdd;
+    }
+
+    public RddCallback getRddCallback() {
+        return rddCallback;
+    }
+
+    public void setRddCallback(RddCallback rddCallback) {
+        this.rddCallback = rddCallback;
     }
 
 }

@@ -492,7 +492,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // clip the scheme from the syntax
         syntax = after(syntax, ":");
 
-        // parse the syntax and find the same group in the uri
+        // clip the scheme from the uri
+        uri = after(uri, ":");
+        String uriPath = stripQuery(uri);
+
+        // parse the syntax and find the names of each option
         Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
         List<String> word = new ArrayList<String>();
         while (matcher.find()) {
@@ -501,30 +505,39 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 word.add(s);
             }
         }
+        // parse the syntax and find each token between each option
+        String[] tokens = SYNTAX_PATTERN.split(syntax);
 
-        // clip the scheme from the uri
-        uri = after(uri, ":");
-        String uriPath = stripQuery(uri);
-
-        // if there is only one, then use uriPath as is
+        // find the position where each option start/end
         List<String> word2 = new ArrayList<String>();
+        int prev = 0;
+        for (String token : tokens) {
+            if (token.isEmpty()) {
+                continue;
+            }
 
-        if (word.size() == 1) {
-            String s = uriPath;
-            s = URISupport.stripPrefix(s, scheme);
-            // strip any leading : or / after the scheme
-            while (s.startsWith(":") || s.startsWith("/")) {
-                s = s.substring(1);
+            // special for some tokens where :// can be used also, eg http://foo
+            int idx = -1;
+            int len = 0;
+            if (":".equals(token)) {
+                idx = uriPath.indexOf("://", prev);
+                len = 3;
             }
-            word2.add(s);
-        } else {
-            Matcher matcher2 = SYNTAX_PATTERN.matcher(uriPath);
-            while (matcher2.find()) {
-                String s = matcher2.group(1);
-                if (!scheme.equals(s)) {
-                    word2.add(s);
-                }
+            if (idx == -1) {
+                idx = uriPath.indexOf(token, prev);
+                len = token.length();
             }
+
+            if (idx > 0) {
+                String option = uriPath.substring(prev, idx);
+                word2.add(option);
+                prev = idx + len;
+            }
+        }
+        // special for last or if we did not add anyone
+        if (prev > 0 || word2.isEmpty()) {
+            String option = uriPath.substring(prev);
+            word2.add(option);
         }
 
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
@@ -551,11 +564,15 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 // we have a little problem as we do not not have all options
                 if (!required) {
                     String value = defaultValue;
-                    options.put(key, value);
-                    defaultValueAdded = true;
+                    if (value != null) {
+                        options.put(key, value);
+                        defaultValueAdded = true;
+                    }
                 } else {
-                    String value = it.next();
-                    options.put(key, value);
+                    String value = it.hasNext() ? it.next() : null;
+                    if (value != null) {
+                        options.put(key, value);
+                    }
                 }
             }
         }

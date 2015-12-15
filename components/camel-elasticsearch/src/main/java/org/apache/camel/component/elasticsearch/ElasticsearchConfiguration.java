@@ -49,6 +49,8 @@ public class ElasticsearchConfiguration {
     private String transportAddresses;
     @UriParam(defaultValue = "9300")
     private int port = ElasticsearchConstants.DEFAULT_PORT;
+    @UriParam(defaultValue = "true")
+    private Boolean clientTransportSniff = true;
 
     /**
      * Name of cluster or use local for local mode
@@ -149,7 +151,18 @@ public class ElasticsearchConfiguration {
     public void setPort(int port) {
         this.port = port;
     }
-       
+
+    /**
+     * Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the <tt>client.transport.sniff</tt> setting.
+     */
+    public Boolean getClientTransportSniff() {
+        return clientTransportSniff;
+    }
+
+    public void setClientTransportSniff(Boolean clientTransportSniff) {
+        this.clientTransportSniff = clientTransportSniff;
+    }
+
     public boolean isLocal() {
         return local;
     }
