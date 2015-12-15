@@ -194,8 +194,12 @@ public class MllpTcpClientProducer extends DefaultProducer {
             try {
                 socket.setKeepAlive(endpoint.keepAlive);
                 socket.setTcpNoDelay(endpoint.tcpNoDelay);
-                socket.setReceiveBufferSize(endpoint.receiveBufferSize);
-                socket.setSendBufferSize(endpoint.sendBufferSize);
+                if ( null != endpoint.receiveBufferSize ) {
+                    socket.setReceiveBufferSize(endpoint.receiveBufferSize);
+                }
+                if (null != endpoint.sendBufferSize) {
+                    socket.setSendBufferSize(endpoint.sendBufferSize);
+                }
                 socket.setReuseAddress(endpoint.reuseAddress);
                 socket.setSoLinger(false, -1);
 

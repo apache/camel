@@ -34,8 +34,6 @@ import java.nio.charset.Charset;
  * into the log files.  Logging of PHI can be globally disabled by setting the org.apache.camel.mllp.logPHI system
  * property to false.
  * <p/>
- * TODO:  Implement checking the org.apache.camel.mllp.logPHI system property before logging PHI
- * TODO:  Move the @UriPath and @UriParam elements to a separate configuration class
  */
 @UriEndpoint(scheme = "mllp", title = "mllp", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
 public class MllpEndpoint extends DefaultEndpoint {
@@ -75,13 +73,11 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "false", description = "Enable/disable the SO_REUSEADDR socket option.")
     boolean reuseAddress = false;
 
-    // TODO: Make the default value come from the system
-    @UriParam(defaultValue = "65535", description = "Sets the SO_RCVBUF option to the specified value")
-    int receiveBufferSize = 65535;
+    @UriParam(description = "Sets the SO_RCVBUF option to the specified value")
+    Integer receiveBufferSize = null;
 
-    // TODO: Make the default value come from the system
-    @UriParam(defaultValue = "65535", description = "Sets the SO_SNDBUF option to the specified value")
-    int sendBufferSize = 65535;
+    @UriParam(description = "Sets the SO_SNDBUF option to the specified value")
+    Integer sendBufferSize = null;
 
     @UriParam(defaultValue = "0", description = "The amount of time a TCP connection can remain idle before it is closed")
     int idleTimeout = 0;
@@ -94,10 +90,6 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     @UriParam(description = "Set the CamelCharsetName property on the exchange")
     String charsetName;
-
-    public MllpEndpoint() {
-        log.trace("MllpEndpoint()");
-    }
 
     public MllpEndpoint(String uri, MllpComponent component) {
         super(uri, component);
@@ -122,45 +114,8 @@ public class MllpEndpoint extends DefaultEndpoint {
             // No host specified - leave the default host and set the port
             port = Integer.parseInt(hostPort);
         }
-
-        log.trace("MllpEndpoint(uri, component)");
     }
 
-
-    @Override
-    protected void doStart() throws Exception {
-        log.trace("({}).doStart()", this.getEndpointKey());
-
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        log.trace("({}).doStop()", this.getEndpointKey());
-
-        super.doStop();
-    }
-
-    @Override
-    protected void doSuspend() throws Exception {
-        log.trace("({}).doSuspend()", this.getEndpointKey());
-
-        super.doSuspend();
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        log.trace("({}).doResume()", this.getEndpointKey());
-
-        super.doSuspend();
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        log.trace("({}).doShutdown()", this.getEndpointKey());
-
-        super.doShutdown();
-    }
 
     @Override
     public ExchangePattern getExchangePattern() {
@@ -206,30 +161,13 @@ public class MllpEndpoint extends DefaultEndpoint {
         return new MllpTcpServerConsumer(this, processor);
     }
 
-    public boolean isLenientProperties() {
-        // default should be false for most components
-        boolean lenientProperties = false;
-
-        log.trace("(??).isLenientProperties(hostname): {}", lenientProperties);
-
-        return lenientProperties;
-    }
-
     @Override
     public boolean isSynchronous() {
-        boolean synchronous = true;
-
-        log.trace("({}).isSynchronous() -> {}", this.getEndpointKey(), synchronous);
-
-        return synchronous;
+        return true;
     }
 
     public boolean isSingleton() {
-        boolean singleton = true;
-
-        log.trace("({}).isSingleton() -> {}", this.getEndpointKey(), singleton);
-
-        return singleton;
+        return true;
     }
 
     public String getCharsetName() {
@@ -327,14 +265,10 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     public boolean isAutoAck() {
-        log.trace("({}).isAutoAck() -> {}", this.getEndpointKey(), autoAck);
-
         return autoAck;
     }
 
     public void setAutoAck(boolean autoAck) {
-        log.trace("({}).setAutoAck(boolean: {})", this.getEndpointKey(), autoAck);
-
         this.autoAck = autoAck;
     }
 

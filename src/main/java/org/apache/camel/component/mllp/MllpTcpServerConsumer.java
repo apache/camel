@@ -59,7 +59,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         log.debug("doStart() - creating acceptor thread");
 
         ServerSocket serverSocket = new ServerSocket();
-        serverSocket.setReceiveBufferSize(endpoint.receiveBufferSize);
+        if ( null != endpoint.receiveBufferSize ) {
+            serverSocket.setReceiveBufferSize(endpoint.receiveBufferSize);
+        }
+
         serverSocket.setReuseAddress(endpoint.reuseAddress);
 
         // Accept Timeout
@@ -254,8 +257,12 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             this.clientSocket = clientSocket;
             this.clientSocket.setKeepAlive(endpoint.keepAlive);
             this.clientSocket.setTcpNoDelay(endpoint.tcpNoDelay);
-            this.clientSocket.setReceiveBufferSize(endpoint.receiveBufferSize);
-            this.clientSocket.setSendBufferSize(endpoint.sendBufferSize);
+            if ( null != endpoint.receiveBufferSize ) {
+                this.clientSocket.setReceiveBufferSize(endpoint.receiveBufferSize);
+            }
+            if ( null != endpoint.sendBufferSize ) {
+                this.clientSocket.setSendBufferSize(endpoint.sendBufferSize);
+            }
             this.clientSocket.setReuseAddress(endpoint.reuseAddress);
             this.clientSocket.setSoLinger(false, -1);
 
