@@ -32,14 +32,14 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.camel.test.Data.*;
+import static org.apache.camel.test.Hl7MessageGenerator.*;
 
 public class MllpTcpClientProducerTest extends CamelTestSupport {
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource( AvailablePortFinder.getNextAvailable() );
 
     String targetURI = "direct://mllp-sender";
-    int deliveryDelay = 25;
+    // int deliveryDelay = 25;
 
     @EndpointInject(uri = "mock://response")
     MockEndpoint response;
@@ -85,29 +85,6 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
                         defaultErrorHandler()
                                 .allowRedeliveryWhileStopping(false)
                 );
-                /*
-                onException(ReadTimeoutException.class, ConnectException.class)
-                        .redeliveryDelay(2500)
-//                .maximumRedeliveryDelay(15000)
-//                .backOffMultiplier(2)
-                        .maximumRedeliveries(-1)
-                        .logContinued(true)
-                        .logExhausted(true)
-                        .logExhaustedMessageHistory(false)
-                        .logHandled(true)
-                        .logRetryAttempted(true)
-                        .retryAttemptedLogLevel(LoggingLevel.WARN)
-                        .toF("log:%s-connect-ex?level=WARN", routeId)
-                ;
-                */
-
-                /*
-                onException(ReadTimeoutException.class)
-                        .logHandled(true)
-                        .handled(true)
-                        .to("direct://handle-timeout")
-                ;
-                */
 
                 onException(MllpCorruptFrameException.class)
                         .handled(true)
@@ -160,9 +137,14 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         timeout.setExpectedMessageCount(0);
         frame.setExpectedMessageCount(0);
 
+        NotifyBuilder[] complete= new NotifyBuilder[messageCount];
+        for (int i=0; i<messageCount; ++i ) {
+            complete[i] = new NotifyBuilder(context).whenDone(i+1).create();
+        }
+
         for (int i = 0; i < messageCount; ++i) {
             template.sendBody(targetURI, TEST_MESSAGE_1);
-            Thread.sleep(deliveryDelay);
+            assertTrue( "Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS) );
         }
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
@@ -176,29 +158,24 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         timeout.expectedMessageCount(1);
         frame.setExpectedMessageCount(0);
 
-        NotifyBuilder notify1 = new NotifyBuilder(context).whenDone(1).create();
-        NotifyBuilder notify2 = new NotifyBuilder(context).whenDone(sendMessageCount).create();
+        NotifyBuilder[] complete= new NotifyBuilder[sendMessageCount];
+        for (int i=0; i<sendMessageCount; ++i ) {
+            complete[i] = new NotifyBuilder(context).whenDone(i+1).create();
+        }
+
+        template.setDefaultEndpointUri(targetURI);
 
         mllpServer.disableResponse();
 
-        template.setDefaultEndpointUri(targetURI);
-        template.sendBody(TEST_MESSAGE_1);
-        assertTrue("Notify not completed", notify1.matches(10, TimeUnit.SECONDS));
+        template.sendBody(generateMessage(1));
+        assertTrue("Messege 1 not completed", complete[0].matches(1, TimeUnit.SECONDS));
+
         mllpServer.enableResponse();
 
-        template.sendBody(TEST_MESSAGE_2);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_3);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_4);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_5);
-        Thread.sleep(deliveryDelay);
-
-        assertTrue("Notify not completed", notify2.matches(10, TimeUnit.SECONDS));
+        for (int i = 1; i < sendMessageCount; ++i) {
+            template.sendBody(targetURI, generateMessage(i+1) );
+            assertTrue( "Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS) );
+        }
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
@@ -210,21 +187,19 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         timeout.expectedMessageCount(1);
         frame.setExpectedMessageCount(0);
 
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(sendMessageCount).create();
+        NotifyBuilder[] complete= new NotifyBuilder[sendMessageCount];
+        for (int i=0; i<sendMessageCount; ++i ) {
+            complete[i] = new NotifyBuilder(context).whenDone(i+1).create();
+        }
+
+        template.setDefaultEndpointUri(targetURI);
 
         mllpServer.disableResponse(sendMessageCount);
 
-        template.setDefaultEndpointUri(targetURI);
-        template.sendBody(TEST_MESSAGE_1);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_2);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_3);
-        Thread.sleep(deliveryDelay);
-
-        assertTrue("Notify not completed", notify.matches(sendMessageCount, TimeUnit.SECONDS));
+        for (int i = 0; i < sendMessageCount; ++i) {
+            template.sendBody(targetURI, generateMessage(i+1) );
+            assertTrue( "Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS) );
+        }
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
@@ -234,21 +209,19 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         int sendMessageCount = 3;
         response.setExpectedMessageCount(sendMessageCount - 1);
 
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(sendMessageCount).create();
+        NotifyBuilder[] complete= new NotifyBuilder[sendMessageCount];
+        for (int i=0; i<sendMessageCount; ++i ) {
+            complete[i] = new NotifyBuilder(context).whenDone(i+1).create();
+        }
+
+        template.setDefaultEndpointUri(targetURI);
 
         mllpServer.setExcludeEndOfDataModulus(sendMessageCount);
 
-        template.setDefaultEndpointUri(targetURI);
-        template.sendBody(TEST_MESSAGE_1);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_2);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_3);
-        Thread.sleep(deliveryDelay);
-
-        assertTrue("Notify not completed", notify.matches(sendMessageCount, TimeUnit.SECONDS));
+        for (int i = 0; i < sendMessageCount; ++i) {
+            template.sendBody(targetURI, generateMessage(i+1) );
+            assertTrue( "Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS) );
+        }
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
@@ -258,49 +231,39 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         int sendMessageCount = 3;
         response.setExpectedMessageCount(sendMessageCount - 1);
 
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(sendMessageCount).create();
+        NotifyBuilder[] complete= new NotifyBuilder[sendMessageCount];
+        for (int i=0; i<sendMessageCount; ++i ) {
+            complete[i] = new NotifyBuilder(context).whenDone(i+1).create();
+        }
+
+        template.setDefaultEndpointUri(targetURI);
 
         mllpServer.setExcludeEndOfBlockModulus(sendMessageCount);
 
-        template.setDefaultEndpointUri(targetURI);
-        template.sendBody(TEST_MESSAGE_1);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_2);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_3);
-        Thread.sleep(deliveryDelay);
-
-        assertTrue("Notify not completed", notify.matches(sendMessageCount, TimeUnit.SECONDS));
+        for (int i = 0; i < sendMessageCount; ++i) {
+            template.sendBody(targetURI, generateMessage(i+1) );
+            assertTrue( "Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS) );
+        }
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
 
     @Test
     public void testApplicationAcceptAcknowledgement() throws Exception {
-        int messageCount = 5;
-        response.setExpectedMessageCount(messageCount);
+        int sendMessageCount = 5;
+        response.setExpectedMessageCount(sendMessageCount);
 
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(messageCount).create();
+        NotifyBuilder[] complete= new NotifyBuilder[sendMessageCount];
+        for (int i=0; i<sendMessageCount; ++i ) {
+            complete[i] = new NotifyBuilder(context).whenDone(i+1).create();
+        }
 
         template.setDefaultEndpointUri(targetURI);
-        template.sendBody(TEST_MESSAGE_1);
-        Thread.sleep(deliveryDelay);
 
-        template.sendBody(TEST_MESSAGE_2);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_3);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_4);
-        Thread.sleep(deliveryDelay);
-
-        template.sendBody(TEST_MESSAGE_5);
-        Thread.sleep(deliveryDelay);
-
-        assertTrue("Notify not completed", notify.matches(5, TimeUnit.SECONDS));
+        for (int i = 0; i < sendMessageCount; ++i) {
+            template.sendBody(targetURI, generateMessage(i+1) );
+            assertTrue( "Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS) );
+        }
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }

@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.camel.test.Data.TEST_MESSAGE_1;
+import static org.apache.camel.test.Hl7MessageGenerator.TEST_MESSAGE_1;
 
 
 public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {

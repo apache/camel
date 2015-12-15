@@ -27,9 +27,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
-import static org.apache.camel.test.Data.TEST_MESSAGE_1;
+import static org.apache.camel.test.Hl7MessageGenerator.TEST_MESSAGE_1;
 
 
 public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {

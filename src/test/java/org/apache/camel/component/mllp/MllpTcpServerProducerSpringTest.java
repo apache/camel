@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.Data.TEST_MESSAGE_1;
+import static org.apache.camel.test.Hl7MessageGenerator.TEST_MESSAGE_1;
 
 @Ignore( value = "Not Yet Implemented")
 // TODO: Implement this

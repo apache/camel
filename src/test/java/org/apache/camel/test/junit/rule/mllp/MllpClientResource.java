@@ -311,6 +311,16 @@ public class MllpClientResource extends ExternalResource {
         return availableInput.toString();
     }
 
+    public String sendMessageAndWaitForAcknowledgement( String hl7Data ) throws SocketException, SocketTimeoutException {
+        sendFramedData( hl7Data );
+        return receiveFramedData();
+    }
+
+    public String sendMessageAndWaitForAcknowledgement( String hl7Data, int acknwoledgementTimeout ) throws SocketException, SocketTimeoutException {
+        sendFramedData( hl7Data );
+        return receiveFramedData(acknwoledgementTimeout);
+    }
+
     public String getMllpHost() {
         return mllpHost;
     }

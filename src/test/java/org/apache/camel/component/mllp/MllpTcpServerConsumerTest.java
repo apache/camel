@@ -33,7 +33,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.camel.test.Data.*;
+import static org.apache.camel.test.Hl7MessageGenerator.*;
 
 public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Rule
@@ -124,11 +124,11 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
 
         mllpClient.connect();
 
-        mllpClient.sendFramedData(TEST_MESSAGE_1);
-        mllpClient.sendFramedData(TEST_MESSAGE_2);
-        mllpClient.sendFramedData(TEST_MESSAGE_3);
-        mllpClient.sendFramedData(TEST_MESSAGE_4);
-        mllpClient.sendFramedData(TEST_MESSAGE_5);
+        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_1);
+        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_2);
+        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_3);
+        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_4);
+        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_5);
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
@@ -155,10 +155,9 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
         log.info("Sending TEST_MESSAGE_3");
         mllpClient.setSendEndOfBlock(false);
         mllpClient.setSendEndOfData(false);
-        mllpClient.sendFramedData(TEST_MESSAGE_3);
         // Acknowledgement won't come here
         try {
-            mllpClient.receiveFramedData();
+            mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_3);
         } catch (MllpJUnitResourceTimeoutException timeoutEx) {
             log.info("Expected Timeout reading response");
         }
@@ -169,12 +168,10 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
         log.info("Sending TEST_MESSAGE_4");
         mllpClient.setSendEndOfBlock(true);
         mllpClient.setSendEndOfData(true);
-        mllpClient.sendFramedData(TEST_MESSAGE_4);
-        String acknowledgement4 = mllpClient.receiveFramedData();
+        String acknowledgement4 = mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_4);
 
         log.info("Sending TEST_MESSAGE_5");
-        mllpClient.sendFramedData(TEST_MESSAGE_5);
-        String acknowledgement5 = mllpClient.receiveFramedData();
+        String acknowledgement5 = mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_5);
 
         assertTrue("Remaining exchanges did not complete", notify2.matches(10, TimeUnit.SECONDS));
 

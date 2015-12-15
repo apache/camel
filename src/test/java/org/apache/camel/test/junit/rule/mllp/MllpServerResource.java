@@ -606,7 +606,7 @@ public class MllpServerResource extends ExternalResource {
                         BufferedOutputStream outstream = new BufferedOutputStream(clientSocket.getOutputStream());
 
                         if (sendOutOfBandData(messageCounter)) {
-                            byte[] outOfBandDataBytes = "Out Of Band Data".getBytes();
+                            byte[] outOfBandDataBytes = "Out Of Band Hl7MessageGenerator".getBytes();
                             outstream.write(outOfBandDataBytes, 0, outOfBandDataBytes.length);
 
                         }
@@ -707,7 +707,7 @@ public class MllpServerResource extends ExternalResource {
                     case MLLP_ENVELOPE_END_OF_BLOCK:
                         characterReceived = anInputStream.read();
                         if (characterReceived != MLLP_ENVELOPE_END_OF_DATA) {
-                            log.error("Received {} when expecting MLLP_ENVELOPE_END_OF_DATA after MLLP_ENVELOPE_END_OF_BLOCK.  Discarding Data: {}", characterReceived, parsedMessage.toString());
+                            log.error("Received {} when expecting MLLP_ENVELOPE_END_OF_DATA after MLLP_ENVELOPE_END_OF_BLOCK.  Discarding Hl7MessageGenerator: {}", characterReceived, parsedMessage.toString());
                             return null;
                         }
                         end_of_message = true;
