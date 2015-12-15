@@ -334,8 +334,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 Message message = exchange.getIn();
                 message.setBody(hl7MessageBytes, byte[].class);
 
-                // TODO:  Populate Headers with same values the camel-hl7 DataFormat does
-
                 // Find the end of the MSH and indexes of the fields in the MSH to populate message headers
                 final byte fieldSeparator = hl7MessageBytes[3];
                 final byte componentSeparator = hl7MessageBytes[4];

@@ -100,8 +100,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
 
         mllpClient.connect();
 
-        mllpClient.sendFramedData(generateMessage());
-        mllpClient.receiveFramedData( 10000 );
+        mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(), 10000);
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
@@ -113,7 +112,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
         mllpClient.connect();
 
         Thread.sleep(5000);
-        mllpClient.sendFramedData(generateMessage());
+        mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(), 10000);
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
