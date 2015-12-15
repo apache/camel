@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.camel.test.Hl7MessageGenerator.TEST_MESSAGE_1;
+import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 
 
 public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
@@ -72,7 +72,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBody("direct://trigger", TEST_MESSAGE_1);
+        template.sendBody("direct://trigger", generateMessage());
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }

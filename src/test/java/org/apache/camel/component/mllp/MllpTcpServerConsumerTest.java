@@ -100,7 +100,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
 
         mllpClient.connect();
 
-        mllpClient.sendFramedData(TEST_MESSAGE_1);
+        mllpClient.sendFramedData(generateMessage());
         mllpClient.receiveFramedData( 10000 );
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
@@ -113,22 +113,21 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
         mllpClient.connect();
 
         Thread.sleep(5000);
-        mllpClient.sendFramedData(TEST_MESSAGE_1);
+        mllpClient.sendFramedData(generateMessage());
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
 
     @Test
     public void testReceiveMultipleMessages() throws Exception {
+        int sendMessageCount = 5;
         request.expectedMinimumMessageCount(5);
 
         mllpClient.connect();
 
-        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_1);
-        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_2);
-        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_3);
-        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_4);
-        mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_5);
+        for ( int i=1; i<=sendMessageCount; ++i ) {
+            mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(i));
+        }
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
@@ -143,12 +142,10 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
         mllpClient.setSoTimeout(10000);
 
         log.info("Sending TEST_MESSAGE_1");
-        mllpClient.sendFramedData(TEST_MESSAGE_1);
-        String acknowledgement1 = mllpClient.receiveFramedData();
+        String acknowledgement1 = mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(1));
 
         log.info("Sending TEST_MESSAGE_2");
-        mllpClient.sendFramedData(TEST_MESSAGE_2);
-        String acknowledgement2 = mllpClient.receiveFramedData();
+        String acknowledgement2 = mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(2));
 
         assertTrue("First two normal exchanges did not complete", notify1.matches(10, TimeUnit.SECONDS));
 
@@ -157,7 +154,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
         mllpClient.setSendEndOfData(false);
         // Acknowledgement won't come here
         try {
-            mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_3);
+            mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(3));
         } catch (MllpJUnitResourceTimeoutException timeoutEx) {
             log.info("Expected Timeout reading response");
         }
@@ -168,20 +165,20 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
         log.info("Sending TEST_MESSAGE_4");
         mllpClient.setSendEndOfBlock(true);
         mllpClient.setSendEndOfData(true);
-        String acknowledgement4 = mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_4);
+        String acknowledgement4 = mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(4));
 
         log.info("Sending TEST_MESSAGE_5");
-        String acknowledgement5 = mllpClient.sendMessageAndWaitForAcknowledgement(TEST_MESSAGE_5);
+        String acknowledgement5 = mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(5));
 
         assertTrue("Remaining exchanges did not complete", notify2.matches(10, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
 
-        assertTrue("Should be acknowledgment for message 1", acknowledgement1.contains("MSA|AA|10001"));
-        assertTrue("Should be acknowledgment for message 2", acknowledgement2.contains("MSA|AA|10002"));
-        // assertTrue("Should be acknowledgment for message 3", acknowledgement3.contains("MSA|AA|10003"));
-        assertTrue("Should be acknowledgment for message 4", acknowledgement4.contains("MSA|AA|10004"));
-        assertTrue("Should be acknowledgment for message 5", acknowledgement5.contains("MSA|AA|10005"));
+        assertTrue("Should be acknowledgment for message 1", acknowledgement1.contains("MSA|AA|00001"));
+        assertTrue("Should be acknowledgment for message 2", acknowledgement2.contains("MSA|AA|00002"));
+        // assertTrue("Should be acknowledgment for message 3", acknowledgement3.contains("MSA|AA|00003"));
+        assertTrue("Should be acknowledgment for message 4", acknowledgement4.contains("MSA|AA|00004"));
+        assertTrue("Should be acknowledgment for message 5", acknowledgement5.contains("MSA|AA|00005"));
     }
 
 }

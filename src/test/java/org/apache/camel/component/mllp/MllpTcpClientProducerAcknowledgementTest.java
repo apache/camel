@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.camel.test.Hl7MessageGenerator.TEST_MESSAGE_1;
+import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 
 
 public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
@@ -85,7 +85,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
         reject.setExpectedMessageCount(0);
         error.setExpectedMessageCount(0);
 
-        template.sendBody("direct://trigger", TEST_MESSAGE_1);
+        template.sendBody("direct://trigger", generateMessage());
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
@@ -99,7 +99,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
 
         mllpServer.setSendApplicationRejectAcknowledgementModulus( 1 );
 
-        template.sendBody("direct://trigger", TEST_MESSAGE_1);
+        template.sendBody("direct://trigger", generateMessage());
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
@@ -113,7 +113,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
 
         mllpServer.setSendApplicationErrorAcknowledgementModulus( 1 );
 
-        template.sendBody("direct://trigger", TEST_MESSAGE_1);
+        template.sendBody("direct://trigger", generateMessage());
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }

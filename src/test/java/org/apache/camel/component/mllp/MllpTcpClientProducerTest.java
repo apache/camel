@@ -124,7 +124,7 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         timeout.setExpectedMessageCount(0);
         frame.setExpectedMessageCount(0);
 
-        template.sendBody(targetURI, TEST_MESSAGE_1);
+        template.sendBody(targetURI, generateMessage());
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
@@ -143,7 +143,7 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
         }
 
         for (int i = 0; i < messageCount; ++i) {
-            template.sendBody(targetURI, TEST_MESSAGE_1);
+            template.sendBody(targetURI, generateMessage(i+1));
             assertTrue( "Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS) );
         }
 

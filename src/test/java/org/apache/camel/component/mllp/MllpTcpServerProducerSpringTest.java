@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.Hl7MessageGenerator.TEST_MESSAGE_1;
+import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 
 @Ignore( value = "Not Yet Implemented")
 // TODO: Implement this
@@ -41,7 +41,7 @@ public class MllpTcpServerProducerSpringTest extends CamelSpringTestSupport {
     public void test() throws Exception {
         target.setExpectedMessageCount(1);
 
-        template.sendBody( "direct://source", TEST_MESSAGE_1);
+        template.sendBody( "direct://source", generateMessage());
 
         assertMockEndpointsSatisfied();
     }
