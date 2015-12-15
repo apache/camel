@@ -18,19 +18,24 @@ package org.apache.camel.component.mllp;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mllp.impl.*;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerator;
+import org.apache.camel.util.IOHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -326,8 +331,54 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 }
 
                 log.debug("Populating the exchange with received message");
-                exchange.getIn().setBody(hl7MessageBytes, byte[].class);
+                Message message = exchange.getIn();
+                message.setBody(hl7MessageBytes, byte[].class);
+
                 // TODO:  Populate Headers with same values the camel-hl7 DataFormat does
+
+                // Find the end of the MSH and indexes of the fields in the MSH to populate message headers
+                final byte fieldSeparator = hl7MessageBytes[3];
+                final byte componentSeparator = hl7MessageBytes[4];
+                int endOfMSH = -1;
+                List<Integer> fieldSeparatorIndexes = new ArrayList<>(10);  // We need at least 10 fields to create the acknowledgment
+
+                for (int i = 0; i < hl7MessageBytes.length; ++i) {
+                    if ( fieldSeparator == hl7MessageBytes[i] ) {
+                        fieldSeparatorIndexes.add(i);
+                    } else if (SEGMENT_DELIMITER == hl7MessageBytes[i]) {
+                        endOfMSH = i;
+                        break;
+                    }
+                }
+
+                if ( -1 == endOfMSH ) {
+                    // TODO:  May want to throw some sort of an Exception here
+                    log.error( "Population of message headers failed - unable to find the end of the MSH segment");
+                } else {
+                    log.debug("Populating the message headers");
+                    Charset charset = Charset.forName( IOHelper.getCharsetName(exchange) );
+
+                    message.setHeader( MLLP_SENDING_APPLICATION, new String(hl7MessageBytes, fieldSeparatorIndexes.get(1)+1, fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1) - 1, charset)); // MSH-3
+                    message.setHeader( MLLP_SENDING_FACILITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(2)+1, fieldSeparatorIndexes.get(3) - fieldSeparatorIndexes.get(2) - 1, charset)); // MSH-4
+                    message.setHeader( MLLP_RECEIVING_APPLICATION, new String(hl7MessageBytes, fieldSeparatorIndexes.get(3)+1, fieldSeparatorIndexes.get(4) - fieldSeparatorIndexes.get(3) - 1, charset)); // MSH-5
+                    message.setHeader( MLLP_RECEIVING_FACILITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(4)+1, fieldSeparatorIndexes.get(5) - fieldSeparatorIndexes.get(4) - 1, charset)); // MSH-6
+                    message.setHeader( MLLP_TIMESTAMP, new String(hl7MessageBytes, fieldSeparatorIndexes.get(5)+1, fieldSeparatorIndexes.get(6) - fieldSeparatorIndexes.get(5) - 1, charset)); // MSH-7
+                    message.setHeader( MLLP_SECURITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(6)+1, fieldSeparatorIndexes.get(7) - fieldSeparatorIndexes.get(6) - 1, charset)); // MSH-8
+                    message.setHeader( MLLP_MESSAGE_TYPE, new String(hl7MessageBytes, fieldSeparatorIndexes.get(7)+1, fieldSeparatorIndexes.get(8) - fieldSeparatorIndexes.get(7) - 1, charset)); // MSH-9
+                    message.setHeader( MLLP_MESSAGE_CONTROL, new String(hl7MessageBytes, fieldSeparatorIndexes.get(8)+1, fieldSeparatorIndexes.get(9) - fieldSeparatorIndexes.get(8) - 1, charset)); // MSH-10
+                    message.setHeader( MLLP_PROCESSING_ID, new String(hl7MessageBytes, fieldSeparatorIndexes.get(9)+1, fieldSeparatorIndexes.get(10) - fieldSeparatorIndexes.get(9) - 1, charset)); // MSH-11
+                    message.setHeader( MLLP_VERSION_ID, new String(hl7MessageBytes, fieldSeparatorIndexes.get(10)+1, fieldSeparatorIndexes.get(11) - fieldSeparatorIndexes.get(10) - 1, charset)); // MSH-12
+                    message.setHeader( MLLP_CHARSET, new String(hl7MessageBytes, fieldSeparatorIndexes.get(16)+1, fieldSeparatorIndexes.get(17) - fieldSeparatorIndexes.get(16) - 1, charset)); // MSH-18
+
+                    for (int i= fieldSeparatorIndexes.get(7) + 1; i < fieldSeparatorIndexes.get(8); ++i ) {
+                        if ( componentSeparator == hl7MessageBytes[i] ) {
+                            message.setHeader( MLLP_EVENT_TYPE, new String(hl7MessageBytes, fieldSeparatorIndexes.get(7)+1, i - fieldSeparatorIndexes.get(7) - 1, charset)); // MSH-9.1
+                            message.setHeader( MLLP_TRIGGER_EVENT, new String(hl7MessageBytes, i+1, fieldSeparatorIndexes.get(8) - i - 1, charset)); // MSH-9.2
+                            break;
+                        }
+                    }
+                }
+
 
                 log.debug("Calling processor");
                 try {
@@ -383,7 +434,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         final byte E = 69;
                         final byte R = 82;
                         // Acknowledgment is specified in exchange property - determine the acknowledgement type
-                        byte fieldSeparator = hl7MessageBytes[3];
                         for (int i = 0; i < hl7MessageBytes.length; ++i) {
                             if (SEGMENT_DELIMITER == i) {
                                 if (i + 7 < hl7MessageBytes.length // Make sure we don't run off the end of the message
