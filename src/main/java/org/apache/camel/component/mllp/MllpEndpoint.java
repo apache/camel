@@ -120,7 +120,7 @@ public class MllpEndpoint extends DefaultEndpoint {
             port = Integer.parseInt(hostPort.substring(colonIndex + 1));
         } else {
             // No host specified - leave the default host and set the port
-            port = Integer.valueOf(hostPort);
+            port = Integer.parseInt(hostPort);
         }
 
         log.trace("MllpEndpoint(uri, component)");
