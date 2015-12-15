@@ -262,8 +262,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    @Ignore("TODO: fix me later")
-    public void testEndpointPropertiesNetty4http() throws Exception {
+    public void testEndpointPropertiesNetty4Http() throws Exception {
         Map<String, String> map = catalog.endpointProperties("netty4-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
@@ -271,8 +270,48 @@ public class CamelCatalogTest {
         assertEquals("http", map.get("protocol"));
         assertEquals("localhost", map.get("host"));
         assertEquals("8080", map.get("port"));
-        // TODO: fix me later
-        //assertEquals("foo/bar", map.get("path"));
+        assertEquals("foo/bar", map.get("path"));
+        assertEquals("true", map.get("disconnect"));
+        assertEquals("false", map.get("keepAlive"));
+    }
+
+    @Test
+    public void testEndpointPropertiesNetty4HttpDefaultPort() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("netty4-http:http:localhost/foo/bar?disconnect=true&keepAlive=false");
+        assertNotNull(map);
+        assertEquals(5, map.size());
+
+        assertEquals("http", map.get("protocol"));
+        assertEquals("localhost", map.get("host"));
+        assertEquals("foo/bar", map.get("path"));
+        assertEquals("true", map.get("disconnect"));
+        assertEquals("false", map.get("keepAlive"));
+    }
+
+    @Test
+    public void testEndpointPropertiesNetty4HttpPlaceholder() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("netty4-http:http:{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false");
+        assertNotNull(map);
+        assertEquals(6, map.size());
+
+        assertEquals("http", map.get("protocol"));
+        assertEquals("{{myhost}}", map.get("host"));
+        assertEquals("{{myport}}", map.get("port"));
+        assertEquals("foo/bar", map.get("path"));
+        assertEquals("true", map.get("disconnect"));
+        assertEquals("false", map.get("keepAlive"));
+    }
+
+    @Test
+    public void testEndpointPropertiesNetty4HttpWithDoubleSlash() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("netty4-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false");
+        assertNotNull(map);
+        assertEquals(6, map.size());
+
+        assertEquals("http", map.get("protocol"));
+        assertEquals("localhost", map.get("host"));
+        assertEquals("8080", map.get("port"));
+        assertEquals("foo/bar", map.get("path"));
         assertEquals("true", map.get("disconnect"));
         assertEquals("false", map.get("keepAlive"));
     }
