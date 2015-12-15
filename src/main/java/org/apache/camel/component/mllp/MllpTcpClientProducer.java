@@ -36,8 +36,6 @@ public class MllpTcpClientProducer extends DefaultProducer {
     MllpEndpoint endpoint;
 
     Socket socket;
-    BufferedOutputStream outputStream;
-    InputStream inputStream;
 
     public MllpTcpClientProducer(MllpEndpoint endpoint) throws SocketException {
         super(endpoint);
@@ -56,24 +54,6 @@ public class MllpTcpClientProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         log.trace("doStop()");
-
-        if (null != outputStream) {
-            try {
-                outputStream.close();
-            } finally {
-                outputStream = null;
-            }
-        }
-
-        if (null != inputStream) {
-            try {
-                inputStream.close();
-            } catch (IOException ioEx) {
-                log.warn("Exception encountered closing the input stream for the client socket", ioEx);
-            } finally {
-                inputStream = null;
-            }
-        }
 
         if (null != socket) {
             if (!socket.isClosed()) {
@@ -102,61 +82,14 @@ public class MllpTcpClientProducer extends DefaultProducer {
     }
 
     @Override
-    protected void doSuspend() throws Exception {
-        log.trace("doSuspend()");
-
-        super.doSuspend();
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        log.trace("doResume()");
-
-        super.doSuspend();
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        log.trace("doShutdown()");
-
-        super.doShutdown();
-    }
-
-    @Override
     public void process(Exchange exchange) throws Exception {
         log.trace("process(exchange)");
 
-        Exception connectException = checkConnection();
-        if (null == socket || socket.isClosed() || !socket.isConnected()) {
-            socket = new Socket();
+        Exception connectionException = checkConnection();
+        if ( null != connectionException ) {
+            exchange.setException(connectionException);
+            return;
 
-            try {
-                socket.setKeepAlive(endpoint.keepAlive);
-                socket.setTcpNoDelay(endpoint.tcpNoDelay);
-                socket.setReceiveBufferSize(endpoint.receiveBufferSize);
-                socket.setSendBufferSize(endpoint.sendBufferSize);
-                socket.setReuseAddress(endpoint.reuseAddress);
-                socket.setSoLinger(false, -1);
-
-                // Read Timeout
-                socket.setSoTimeout(endpoint.responseTimeout);
-            } catch (SocketException e) {
-                exchange.setException(e);
-                return;
-            }
-
-
-            SocketAddress address = new InetSocketAddress(endpoint.getHostname(), endpoint.getPort());
-            log.debug("Connecting to socket on {}", address);
-            try {
-                socket.connect(address, endpoint.connectTimeout);
-            } catch (SocketTimeoutException e) {
-                exchange.setException(e);
-                return;
-            } catch (IOException e) {
-                exchange.setException(e);
-                return;
-            }
         }
 
         Message message;
@@ -249,7 +182,12 @@ public class MllpTcpClientProducer extends DefaultProducer {
         }
     }
 
-    Exception checkConnection() { // throws IOException {
+    /**
+     * Validate the TCP Connection
+     *
+     * @return null if the connection is valid, otherwise the Exception encounted checking the connection
+     */
+    Exception checkConnection() {
         if (null == socket || socket.isClosed() || !socket.isConnected()) {
             socket = new Socket();
 
