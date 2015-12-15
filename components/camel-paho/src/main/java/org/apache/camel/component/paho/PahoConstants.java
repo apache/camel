@@ -30,6 +30,10 @@ public final class PahoConstants {
 
     @Deprecated
     public static final String HEADER_ORIGINAL_MESSAGE = "PahoOriginalMessage";
+    public static final String CAMEL_PAHO = "CamelPaho";
+    public static final String CAMEL_PAHO_MSG_QOS = CAMEL_PAHO + ".qos";
+    public static final String CAMEL_PAHO_MSG_RETAINED = CAMEL_PAHO + ".retained";
+
 
     private PahoConstants() {
     }
