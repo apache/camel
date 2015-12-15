@@ -72,7 +72,9 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getPropertyName(), "propertyName", this);
         Expression expr = getExpression().createExpression(routeContext);
-        return new SetPropertyProcessor(getPropertyName(), expr);
+        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(getPropertyName(),
+                routeContext.getCamelContext());
+        return new SetPropertyProcessor(nameExpr, expr);
     }
 
     /**
