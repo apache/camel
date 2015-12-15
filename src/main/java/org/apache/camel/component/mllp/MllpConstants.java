@@ -19,4 +19,19 @@ package org.apache.camel.component.mllp;
 public class MllpConstants {
     public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
     public static final String MLLP_ACKNOWLEDGEMENT_TYPE = "CamelMllpAcknowledgementType";
+
+    public static final String MLLP_SENDING_APPLICATION = "CamelMllpSendingApplication";
+    public static final String MLLP_SENDING_FACILITY = "CamelMllpSendingFacility";
+    public static final String MLLP_RECEIVING_APPLICATION = "CamelMllpReceivingApplication";
+    public static final String MLLP_RECEIVING_FACILITY = "CamelMllpReceivingFacility";
+    public static final String MLLP_TIMESTAMP = "CamelMllpTimestamp";
+    public static final String MLLP_SECURITY = "CamelMllpSecurity";
+    public static final String MLLP_MESSAGE_TYPE = "CamelMllpMessageType";
+    public static final String MLLP_TRIGGER_EVENT = "CamelMllpTriggerEvent";
+    public static final String MLLP_MESSAGE_CONTROL = "CamelMllpMessageControl";
+    public static final String MLLP_PROCESSING_ID = "CamelMllpProcessingId";
+    public static final String MLLP_VERSION_ID = "CamelMllpVersionId";
+    public static final String MLLP_CONTEXT = "CamelMllpContext";
+    public static final String MLLP_CHARSET = "CamelMllpCharset";
+
 }

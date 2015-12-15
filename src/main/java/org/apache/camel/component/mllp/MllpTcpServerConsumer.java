@@ -20,7 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mllp.impl.*;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerator;
 
 import java.io.IOException;
@@ -43,7 +45,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     AcceptThread acceptThread;
 
-    List<ClientSocketThread> clientThreads = new LinkedList<ClientSocketThread>();
+    List<ClientSocketThread> clientThreads = new LinkedList<>();
 
     public MllpTcpServerConsumer(MllpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -59,7 +61,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         log.debug("doStart() - creating acceptor thread");
 
         ServerSocket serverSocket = new ServerSocket();
-        if ( null != endpoint.receiveBufferSize ) {
+        if (null != endpoint.receiveBufferSize) {
             serverSocket.setReceiveBufferSize(endpoint.receiveBufferSize);
         }
 
@@ -188,12 +190,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         } catch (IOException ioEx) {
                             // Bad Socket -
                             log.warn("Failed to retrieve the InputStream for socket after the initial connection was acceptedf");
-                            // TODO: Log something here
                             try {
                                 socket.close();
                             } catch (Exception closeEx) {
                                 log.warn("Exception encountered closing socket after a failed attempt to retrieve the InputStream for socket after the initial connection was accepted");
-                                // TODO: Log something here
                             }
                             continue;
                         }
@@ -257,10 +257,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             this.clientSocket = clientSocket;
             this.clientSocket.setKeepAlive(endpoint.keepAlive);
             this.clientSocket.setTcpNoDelay(endpoint.tcpNoDelay);
-            if ( null != endpoint.receiveBufferSize ) {
+            if (null != endpoint.receiveBufferSize) {
                 this.clientSocket.setReceiveBufferSize(endpoint.receiveBufferSize);
             }
-            if ( null != endpoint.sendBufferSize ) {
+            if (null != endpoint.sendBufferSize) {
                 this.clientSocket.setSendBufferSize(endpoint.sendBufferSize);
             }
             this.clientSocket.setReuseAddress(endpoint.reuseAddress);
@@ -276,7 +276,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
          * <p/>
          * The String will in the format <class name>[endpoint key] - [local socket address] -> [remote socket address]
          *
-         * @return
+         * @return the thread name
          */
         String createThreadName(Socket socket) {
             // Get the classname without the package.  This is a nested class, so we want the parent class name included
@@ -335,36 +335,96 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     // processed the message - send the acknowledgement
 
                     // Find the acknowledgement body
-                    byte[] acknowledgementMessageBytes;
-                    Object acknowledgement = exchange.getProperty(MLLP_ACKNOWLEDGEMENT);
-                    if (null == acknowledgement) {
+                    byte[] acknowledgementMessageBytes = exchange.getProperty(MLLP_ACKNOWLEDGEMENT, byte[].class);
+                    String acknowledgementMessageType = null;
+                    if (null == acknowledgementMessageBytes) {
                         if (!endpoint.autoAck) {
                             exchange.setException(new MllpInvalidAcknowledgementException("Automatic Acknowledgement is disabled and the "
-                                    + MLLP_ACKNOWLEDGEMENT + " exchange property is null"));
+                                    + MLLP_ACKNOWLEDGEMENT + " exchange property is null or cannot be converted to byte[]"));
                             return;
                         }
 
-                        // TODO: Check for acknowledgement generation failure
-                        if (null == exchange.getException()) {
-                            acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationAcceptAcknowledgementMessage(hl7MessageBytes);
-                        } else {
-                            acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationErrorAcknowledgementMessage(hl7MessageBytes);
+                        String acknowledgmentTypeProperty = exchange.getProperty(MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
+                        try {
+                            if (null == acknowledgmentTypeProperty) {
+                                if (null == exchange.getException()) {
+                                    acknowledgementMessageType = "AA";
+                                    acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationAcceptAcknowledgementMessage(hl7MessageBytes);
+                                } else {
+                                    acknowledgementMessageType = "AE";
+                                    acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationErrorAcknowledgementMessage(hl7MessageBytes);
+                                }
+                            } else {
+                                switch (acknowledgmentTypeProperty) {
+                                    case "AA":
+                                        acknowledgementMessageType = "AA";
+                                        acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationAcceptAcknowledgementMessage(hl7MessageBytes);
+                                        break;
+                                    case "AE":
+                                        acknowledgementMessageType = "AE";
+                                        acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationErrorAcknowledgementMessage(hl7MessageBytes);
+                                        break;
+                                    case "AR":
+                                        acknowledgementMessageType = "AR";
+                                        acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationRejectAcknowledgementMessage(hl7MessageBytes);
+                                        break;
+                                    default:
+                                        exchange.setException(new Hl7AcknowledgementGenerationException("Unsupported acknowledgment type: " + acknowledgmentTypeProperty));
+                                        return;
+                                }
+                            }
+                        } catch (Hl7AcknowledgementGenerationException ackGenerationException) {
+                            exchange.setException(ackGenerationException);
                         }
-                    } else if (acknowledgement instanceof String) {
-                        acknowledgementMessageBytes = ((String) acknowledgement).getBytes(endpoint.charsetName);
-                    } else if (acknowledgement instanceof byte[]) {
-                        acknowledgementMessageBytes = (byte[]) acknowledgement;
                     } else {
-                        exchange.setException(new MllpInvalidAcknowledgementException("Unsupported acknowledgement type: "
-                                + acknowledgement.getClass().getName() + " - only byte[] and String are supported"));
-                        return;
+                        final byte M = 77;
+                        final byte S = 83;
+                        final byte A = 65;
+                        final byte E = 69;
+                        final byte R = 82;
+                        // Acknowledgment is specified in exchange property - determine the acknowledgement type
+                        byte fieldSeparator = hl7MessageBytes[3];
+                        for (int i = 0; i < hl7MessageBytes.length; ++i) {
+                            if (SEGMENT_DELIMITER == i) {
+                                if (i + 7 < hl7MessageBytes.length // Make sure we don't run off the end of the message
+                                        && M == hl7MessageBytes[i + 1] && S == hl7MessageBytes[i + 2] && A == hl7MessageBytes[i + 3] && fieldSeparator == hl7MessageBytes[i + 4]) {
+                                    if (fieldSeparator != hl7MessageBytes[i + 7]) {
+                                        log.warn("MSA-1 is longer than 2-bytes - ignoring trailing bytes");
+                                    }
+                                    // Found MSA - pull acknowledgement bytes
+                                    byte[] acknowledgmentTypeBytes = new byte[2];
+                                    acknowledgmentTypeBytes[0] = hl7MessageBytes[i + 5];
+                                    acknowledgmentTypeBytes[1] = hl7MessageBytes[i + 6];
+                                    acknowledgementMessageType = IOConverter.toString(acknowledgmentTypeBytes, exchange);
+
+                                    // Verify it's a valid acknowledgement code
+                                    if (A != acknowledgmentTypeBytes[0]) {
+                                        switch (acknowledgementMessageBytes[1]) {
+                                            case A:
+                                            case R:
+                                            case E:
+                                                break;
+                                            default:
+                                                log.warn("Invalid acknowledgement type [" + acknowledgementMessageType + "] found in message - should be AA, AE or AR");
+                                        }
+                                    }
+
+                                    // if the MLLP_ACKNOWLEDGEMENT_TYPE property is set on the exchange, make sure it matches
+                                    String acknowledgementTypeProperty = exchange.getProperty(MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
+                                    if (null != acknowledgementTypeProperty && !acknowledgementTypeProperty.equals(acknowledgementMessageType)) {
+                                        log.warn("Acknowledgement type found in message [" + acknowledgementMessageType + "] does not match "
+                                                + MLLP_ACKNOWLEDGEMENT_TYPE + " exchange property value [" + acknowledgementTypeProperty + "] - using value found in message");
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     // Send the acknowledgement
                     log.debug("Writing Acknowledgement");
                     MllpUtil.writeFramedPayload(clientSocket, acknowledgementMessageBytes);
-                    exchange.getIn().setHeader( MLLP_ACKNOWLEDGEMENT, acknowledgementMessageBytes);
-                    // TODO: Populate a header with the acknowledgement written
+                    exchange.getIn().setHeader(MLLP_ACKNOWLEDGEMENT, acknowledgementMessageBytes);
+                    exchange.getIn().setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, acknowledgementMessageType);
                 } catch (Exception e) {
                     exchange.setException(e);
                 }

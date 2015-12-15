@@ -166,7 +166,6 @@ public class MllpTcpClientProducer extends DefaultProducer {
                                     break;
                                 default:
                                     exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
-                                    // Oh boy ....
                             }
                         }
 
