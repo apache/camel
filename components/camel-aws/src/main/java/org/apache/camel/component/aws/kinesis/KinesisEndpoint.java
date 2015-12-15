@@ -59,7 +59,9 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KinesisConsumer(this, processor);
+        final KinesisConsumer consumer = new KinesisConsumer(this, processor);
+        consumer.setSchedulerProperties(getSchedulerProperties());
+        return consumer;
     }
 
     public Exchange createExchange(Record record) {
