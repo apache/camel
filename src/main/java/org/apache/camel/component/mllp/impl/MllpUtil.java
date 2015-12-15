@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.mllp.impl;
 
-import org.apache.camel.component.mllp.MllpException;
-import org.apache.camel.component.mllp.MllpCorruptFrameException;
-import org.apache.camel.component.mllp.MllpTimeoutException;
-import org.apache.camel.component.mllp.MllpWriteException;
+import org.apache.camel.component.mllp.*;
+import org.apache.camel.component.properties.SysPropertiesFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +36,8 @@ import static org.apache.camel.component.mllp.MllpEndpoint.*;
  * <p/>
  * NOTE: MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI
  * into the log files.  Logging of PHI can be globally disabled by setting the org.apache.camel.mllp.logPHI system
- * property to false.
+ * property.  The property is evaluated using Boolean.parseBoolean.
  * <p/>
- * TODO:  Implement checking the org.apache.camel.mllp.logPHI system property before logging PHI
  */
 public class MllpUtil {
     static Logger log = LoggerFactory.getLogger(MllpUtil.class);
@@ -337,9 +334,11 @@ public class MllpUtil {
 
 
     static private boolean isLogPHIEnabled(Logger targetLogger) {
-        // TODO:  Make this check for the system property org.apache.camel.mllp.logPHI
+        String logPHIProperty = System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
         if (targetLogger.isDebugEnabled()) {
-            return true;
+            if ( Boolean.parseBoolean( System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true")) ){
+                return true;
+            }
         }
 
         return false;

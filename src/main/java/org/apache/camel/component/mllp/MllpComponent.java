@@ -28,6 +28,8 @@ import java.util.Map;
  * Represents the component that manages {@link MllpEndpoint}.
  */
 public class MllpComponent extends UriEndpointComponent {
+    public static final String MLLP_LOG_PHI_PROPERTY = "org.apache.camel.mllp.logPHI";
+
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     public MllpComponent() {

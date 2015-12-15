@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.mllp;
 
-public class MllpTcpServerConsumerMulitpleTcpPacketTest {
-    // TODO: Implement this
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
+
+@Ignore(value = "Not Yet Implemented")
+// TODO: Implement this
+public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport{
 }
