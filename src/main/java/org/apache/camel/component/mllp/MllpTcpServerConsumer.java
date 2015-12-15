@@ -32,7 +32,8 @@ import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.apache.camel.component.mllp.MllpFrameConstants.*;
+import static org.apache.camel.component.mllp.MllpConstants.*;
+import static org.apache.camel.component.mllp.MllpEndpoint.*;
 
 /**
  * The MLLP consumer.
@@ -183,12 +184,12 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                             inputStream = socket.getInputStream();
                         } catch (IOException ioEx) {
                             // Bad Socket -
-                            log.warn( "Failed to retrieve the InputStream for socket after the initial connection was acceptedf");
+                            log.warn("Failed to retrieve the InputStream for socket after the initial connection was acceptedf");
                             // TODO: Log something here
                             try {
                                 socket.close();
                             } catch (Exception closeEx) {
-                                log.warn( "Exception encountered closing socket after a failed attempt to retrieve the InputStream for socket after the initial connection was accepted");
+                                log.warn("Exception encountered closing socket after a failed attempt to retrieve the InputStream for socket after the initial connection was accepted");
                                 // TODO: Log something here
                             }
                             continue;
@@ -300,66 +301,62 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.debug("Reading data ....");
                 try {
                     if (null != initialByte && START_OF_BLOCK == initialByte) {
-                        initialByte = null;
                         hl7MessageBytes = MllpUtil.closeFrame(clientSocket);
                     } else {
-                        initialByte = null;
-                        MllpUtil.openFrame(clientSocket);
+                        try {
+                            MllpUtil.openFrame(clientSocket);
+                        } catch (SocketTimeoutException timeoutEx) {
+                            // When thrown by openFrame, it indicates that no data was available - but no error
+                            continue;
+                        }
                         hl7MessageBytes = MllpUtil.closeFrame(clientSocket);
                     }
                 } catch (MllpException mllpEx) {
                     exchange.setException(mllpEx);
                     return;
-                } catch (SocketTimeoutException timeoutEx) {
-                    // When thrown by openFrame, it indicates that no data was available - but no error
-                    continue;
+                } finally {
+                    initialByte = null;
                 }
 
-                log.debug("Populating the exchange with received data");
-                if (endpoint.useString) {
-                    String hl7Message = new String(hl7MessageBytes, endpoint.charset);
-                    exchange.getIn().setBody(hl7Message, String.class);
-                } else {
-                    exchange.getIn().setBody(hl7MessageBytes, byte[].class);
-                }
+                log.debug("Populating the exchange with received message");
+                exchange.getIn().setBody(hl7MessageBytes, byte[].class);
+                // TODO:  Populate Headers with same values the camel-hl7 DataFormat does
 
                 log.debug("Calling processor");
                 try {
                     getProcessor().process(exchange);
-                    // Got the response - send the acknowledgement
+                    // processed the message - send the acknowledgement
 
                     // Find the acknowledgement body
                     byte[] acknowledgementMessageBytes;
-                    if (endpoint.autoAck) {
+                    Object acknowledgement = exchange.getProperty(MLLP_ACKNOWLEDGEMENT);
+                    if (null == acknowledgement) {
+                        if (!endpoint.autoAck) {
+                            exchange.setException(new MllpInvalidAcknowledgementException("Automatic Acknowledgement is disabled and the "
+                                    + MLLP_ACKNOWLEDGEMENT + " exchange property is null"));
+                            return;
+                        }
+
+                        // TODO: Check for acknowledgement generation failure
                         if (null == exchange.getException()) {
                             acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationAcceptAcknowledgementMessage(hl7MessageBytes);
                         } else {
                             acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationErrorAcknowledgementMessage(hl7MessageBytes);
                         }
+                    } else if (acknowledgement instanceof String) {
+                        acknowledgementMessageBytes = ((String) acknowledgement).getBytes(endpoint.charsetName);
+                    } else if (acknowledgement instanceof byte[]) {
+                        acknowledgementMessageBytes = (byte[]) acknowledgement;
                     } else {
-                        // TODO:  Change this to use a message property (for the acknowledgement )
-                        Object exchangeBody;
-                        if (exchange.hasOut()) {
-                            exchangeBody = exchange.getOut().getBody();
-                        } else {
-                            exchangeBody = exchange.getIn().getBody();
-                        }
-                        if (null == exchangeBody) {
-                            // TODO:  Probably need to do more here
-                            exchange.setException(new IllegalArgumentException("Null Exchange Body sent for acknowledgement"));
-                            continue;
-                        } else {
-                            if (exchangeBody instanceof byte[]) {
-                                acknowledgementMessageBytes = (byte[]) exchangeBody;
-                            } else if (exchangeBody instanceof String) {
-                                acknowledgementMessageBytes = ((String) exchangeBody).getBytes(endpoint.charset);
-                            } else {
-                                exchange.setException(new IllegalArgumentException("Exchange Body must be String or byte[] for acknowledgement"));
-                                continue;
-                            }
-                        }
+                        exchange.setException(new MllpInvalidAcknowledgementException("Unsupported acknowledgement type: "
+                                + acknowledgement.getClass().getName() + " - only byte[] and String are supported"));
+                        return;
                     }
+
+                    // Send the acknowledgement
+                    log.debug("Writing Acknowledgement");
                     MllpUtil.writeFramedPayload(clientSocket, acknowledgementMessageBytes);
+                    exchange.getIn().setHeader( MLLP_ACKNOWLEDGEMENT, acknowledgementMessageBytes);
                     // TODO: Populate a header with the acknowledgement written
                 } catch (Exception e) {
                     exchange.setException(e);

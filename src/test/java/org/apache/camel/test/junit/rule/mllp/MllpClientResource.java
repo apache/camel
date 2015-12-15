@@ -254,7 +254,11 @@ public class MllpClientResource extends ExternalResource {
                 }
             }
         }catch (SocketTimeoutException timeoutEx) {
-            log.error( "Timeout while reading acknowledgement", timeoutEx);
+            if ( 0 < acknowledgement.length() ) {
+                log.error("Timeout waiting for acknowledgement", timeoutEx);
+            } else {
+                log.error("Timeout while reading acknowledgement\n" + acknowledgement.toString().replace('\r', '\n'), timeoutEx);
+            }
             throw new MllpJUnitResourceTimeoutException("Timeout while reading acknowledgement", timeoutEx);
         } catch (IOException e) {
             log.error("Unable to read HL7 acknowledgement", e);

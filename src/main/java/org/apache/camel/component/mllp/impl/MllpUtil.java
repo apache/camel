@@ -27,7 +27,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-import static org.apache.camel.component.mllp.MllpFrameConstants.*;
+import static org.apache.camel.component.mllp.MllpEndpoint.*;
 
 /**
  * Supplies methods to read and write messages in a MLLP Frame.
@@ -61,7 +61,7 @@ public class MllpUtil {
         if (socket.isConnected() && !socket.isClosed()) {
             InputStream socketInputStream = MllpUtil.getInputStream(socket);
 
-            int readByte = END_OF_STREAM;
+            int readByte;
             try {
                 readByte = socketInputStream.read();
                 if (START_OF_BLOCK == readByte) {

@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
+import org.apache.camel.*;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.tools.apt.helper.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +42,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     public static final char START_OF_BLOCK = 0x0b;      // VT (vertical tab)        - decimal 11, octal 013
     public static final char END_OF_BLOCK = 0x1c;        // FS (file separator)      - decimal 28, octal 034
     public static final char END_OF_DATA = 0x0d;         // CR (carriage return)     - decimal 13, octal 015
+    public static final int END_OF_STREAM = -1;          //
     public static final char SEGMENT_DELIMITER = 0x0d;   // CR (carriage return)     - decimal 13, octal 015
     public static final char MESSAGE_TERMINATOR = 0x0a;  // LF (line feed, new line) - decimal 10, octal 012
 
@@ -92,10 +92,8 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "true", description = "MLLP Consumers only - Automatically generate and send an MLLP Acknowledgement")
     boolean autoAck = true;
 
-    @UriParam(defaultValue = "true", description = "Produce a String instead of a byte[]")
-    boolean useString = true;
-
-    Charset charset = Charset.defaultCharset();
+    @UriParam(description = "Set the CamelCharsetName property on the exchange")
+    String charsetName;
 
     public MllpEndpoint() {
         log.trace("MllpEndpoint()");
@@ -164,6 +162,38 @@ public class MllpEndpoint extends DefaultEndpoint {
         super.doShutdown();
     }
 
+    @Override
+    public ExchangePattern getExchangePattern() {
+        return ExchangePattern.InOut;
+    }
+
+    @Override
+    public Exchange createExchange() {
+        return this.createExchange(getExchangePattern());
+    }
+
+    @Override
+    public Exchange createExchange( ExchangePattern exchangePattern ) {
+        Exchange mllpExchange = super.createExchange(exchangePattern);
+        setExchangeProperties(mllpExchange);
+
+        return mllpExchange;
+    }
+
+    @Override
+    public Exchange createExchange(Exchange exchange) {
+        Exchange mllpExchange = super.createExchange(exchange);
+        setExchangeProperties(mllpExchange);
+
+        return mllpExchange;
+    }
+
+    private void setExchangeProperties( Exchange mllpExchange ) {
+        if ( null != charsetName ) {
+            mllpExchange.setProperty(Exchange.CHARSET_NAME, charsetName);
+        }
+    }
+
     public Producer createProducer() throws Exception {
         log.trace("({}).createProducer()", this.getEndpointKey());
 
@@ -202,12 +232,12 @@ public class MllpEndpoint extends DefaultEndpoint {
         return singleton;
     }
 
-    public Charset getCharset() {
-        return charset;
+    public String getCharsetName() {
+        return charsetName;
     }
 
-    public void setCharset(Charset charset) {
-        this.charset = charset;
+    public void setCharsetName(String charsetName) {
+        this.charsetName = charsetName;
     }
 
     public String getHostname() {

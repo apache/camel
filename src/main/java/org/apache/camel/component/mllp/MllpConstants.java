@@ -18,6 +18,5 @@ package org.apache.camel.component.mllp;
 
 public class MllpConstants {
     public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
-    public static final String MLLP_ACKNOWLEDGEMENT_CODE = "CamelMllpAcknowledgementCode";
-    public static final String MLLP_CHARSET = "CamelMllpCharset";
+    public static final String MLLP_ACKNOWLEDGEMENT_TYPE = "CamelMllpAcknowledgementType";
 }
