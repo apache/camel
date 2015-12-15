@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.aws.ddbstream;
 
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.Queue;
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
 import com.amazonaws.services.dynamodbv2.model.DescribeStreamRequest;
 import com.amazonaws.services.dynamodbv2.model.DescribeStreamResult;
@@ -27,9 +31,6 @@ import com.amazonaws.services.dynamodbv2.model.ListStreamsRequest;
 import com.amazonaws.services.dynamodbv2.model.ListStreamsResult;
 import com.amazonaws.services.dynamodbv2.model.Record;
 import com.amazonaws.services.dynamodbv2.model.Shard;
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.Queue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -42,23 +43,19 @@ import org.slf4j.LoggerFactory;
 public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(DdbStreamConsumer.class);
 
-    private String currentShardIterator = null;
+    private String currentShardIterator;
     private Shard currentShard;
-    private ShardList shardList = new ShardList();
+    private final ShardList shardList = new ShardList();
 
     public DdbStreamConsumer(DdbStreamEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
-    /*
-     * Returns the number of messages polled.
-     */
     @Override
     protected int poll() throws Exception {
         GetRecordsRequest req = new GetRecordsRequest()
                 .withShardIterator(getShardItertor())
-                .withLimit(getEndpoint().getMaxResultsPerRequest())
-                ;
+                .withLimit(getEndpoint().getMaxResultsPerRequest());
         GetRecordsResult result = getClient().getRecords(req);
 
         Queue<Exchange> exchanges = createExchanges(result.getRecords());
@@ -100,13 +97,11 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
         // either return a cached one or get a new one via a GetShardIterator request.
         if (currentShardIterator == null) {
             ListStreamsRequest req0 = new ListStreamsRequest()
-                    .withTableName(getEndpoint().getTableName())
-                    ;
+                    .withTableName(getEndpoint().getTableName());
             ListStreamsResult res0 = getClient().listStreams(req0);
             final String streamArn = res0.getStreams().get(0).getStreamArn(); // XXX assumes there is only one stream
             DescribeStreamRequest req1 = new DescribeStreamRequest()
-                    .withStreamArn(streamArn)
-                    ;
+                    .withStreamArn(streamArn);
             DescribeStreamResult res1 = getClient().describeStream(req1);
             shardList.addAll(res1.getStreamDescription().getShards());
 
@@ -122,8 +117,7 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
             GetShardIteratorRequest req = new GetShardIteratorRequest()
                     .withStreamArn(streamArn)
                     .withShardId(currentShard.getShardId())
-                    .withShardIteratorType(getEndpoint().getIteratorType())
-                    ;
+                    .withShardIteratorType(getEndpoint().getIteratorType());
             GetShardIteratorResult result = getClient().getShardIterator(req);
             currentShardIterator = result.getShardIterator();
         }

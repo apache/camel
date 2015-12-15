@@ -73,7 +73,6 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public boolean isSingleton() {
-        // probably right.
         return true;
     }
 
@@ -81,7 +80,6 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
         return amazonDynamoDbStreamsClient;
     }
 
-    // required for injection.
     public AmazonDynamoDBStreams getAmazonDynamoDBStreamsClient() {
         return amazonDynamoDbStreamsClient;
     }
