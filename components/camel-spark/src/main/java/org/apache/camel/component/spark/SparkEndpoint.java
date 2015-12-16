@@ -21,14 +21,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.spark.api.java.AbstractJavaRDDLike;
 import org.apache.spark.sql.DataFrame;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.spi.LoggerFactoryBinder;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+// @UriEndpoint(scheme = "spark", producerOnly = true, title = "Apache Spark", syntax = "spark:jobType", label = "bigdata,iot")
 public class SparkEndpoint extends DefaultEndpoint {
 
     // Logger
@@ -37,18 +37,24 @@ public class SparkEndpoint extends DefaultEndpoint {
 
     // Endpoint collaborators
 
+    @UriParam(name = "rdd", description = "RDD to compute against.")
     private AbstractJavaRDDLike rdd;
 
+    @UriParam(name = "rddCallback", description = "Function performing action against an RDD.")
     private RddCallback rddCallback;
 
+    @UriParam(name = "dataFrame", description = "DataFrame to compute against.")
     private DataFrame dataFrame;
 
+    @UriParam(name = "dataFrameCallback", description = "Function performing action against an DataFrame.")
     private DataFrameCallback dataFrameCallback;
 
     // Endpoint configuration
 
+    @UriParam(name = "endpointType", description = "Type of the endpoint (rdd, dataframe, hive).")
     private final EndpointType endpointType;
 
+    @UriParam(name = "collect", description = "Indicates if results should be collected or counted.")
     private boolean collect = true;
 
     // Constructors
