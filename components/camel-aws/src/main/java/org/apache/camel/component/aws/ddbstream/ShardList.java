@@ -57,6 +57,19 @@ class ShardList {
         throw new IllegalStateException("Unable to find an unparented shard in " + shards);
     }
 
+    Shard last() {
+        Map<String, Shard> shardsByParent = new HashMap<>();
+        for (Shard shard : shards.values()) {
+            shardsByParent.put(shard.getParentShardId(), shard);
+        }
+        for (Shard shard : shards.values()) {
+            if (!shardsByParent.containsKey(shard.getShardId())) {
+                return shard;
+            }
+        }
+        throw new IllegalStateException("Unable to find a shard with no children " + shards);
+    }
+
     /**
      * Removes shards that are older than the provided shard.
      * Does not remove the provided shard.
