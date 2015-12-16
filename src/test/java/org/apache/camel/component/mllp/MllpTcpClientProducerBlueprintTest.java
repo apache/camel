@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSupport {
+
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource();
 
