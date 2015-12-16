@@ -600,7 +600,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * For additional configuration options on data format level
+     * For configuring an api property, such as <tt>api.title</tt>, or <tt>api.version</tt>.
      */
     public RestConfigurationDefinition apiProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();

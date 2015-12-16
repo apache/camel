@@ -50,7 +50,9 @@ public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
         }
         // and context path is the base.path
         String path = configuration.getContextPath();
-        options.put("base.path", path);
+        if (path != null) {
+            options.put("base.path", path);
+        }
 
         return new RestSwaggerProcessor(contextIdPattern, contextIdListing, options);
     }
