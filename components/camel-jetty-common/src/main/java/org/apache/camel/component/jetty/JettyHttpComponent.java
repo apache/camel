@@ -52,6 +52,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
@@ -93,7 +94,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory {
+public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory {
     public static final String TMP_DIR = "CamelJettyTempDir";
     
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
@@ -1004,6 +1005,18 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration, parameters, false);
+    }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
+        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
+    }
+
+    Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                              String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -1066,7 +1079,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         String query = URISupport.createQueryString(map);
 
-        String url = "jetty:%s://%s:%s/%s?httpMethodRestrict=%s";
+        String url;
+        if (api) {
+            url = "jetty:%s://%s:%s/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
+        } else {
+            url = "jetty:%s://%s:%s/%s?httpMethodRestrict=%s";
+        }
+
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
         // get the endpoint
