@@ -19,14 +19,18 @@ package org.apache.camel.component.mllp;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultComponentResolver;
+import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
+import org.apache.camel.util.KeyValueHolder;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Dictionary;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
@@ -58,6 +62,13 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
         props.put("mllp.port", mllpServer.getListenPort() );
 
         return "MllpTcpClientProducer";
+    }
+
+    @Override
+    protected void addServicesOnStartup(Map<String, KeyValueHolder<Object, Dictionary>> services) {
+        ComponentResolver testResolver = new DefaultComponentResolver();
+
+        services.put(ComponentResolver.class.getName(), asService( testResolver, "component", "mllp"));
     }
 
     @Test()

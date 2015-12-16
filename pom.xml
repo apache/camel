@@ -70,21 +70,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Explicit test scope for mllp component -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mllp</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-
-        <!-- It seems if I don't add this dependency, Blueprint tests fail intermittently -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-osgi</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- test logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
