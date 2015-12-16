@@ -28,6 +28,10 @@ import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+
+/**
+ * Spark endpoint can be used to create various type of producers, including RDD-, DataFrame- and Hive-based.
+ */
 // @UriEndpoint(scheme = "spark", producerOnly = true, title = "Apache Spark", syntax = "spark:jobType", label = "bigdata,iot")
 public class SparkEndpoint extends DefaultEndpoint {
 
@@ -84,10 +88,13 @@ public class SparkEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         LOG.debug("Creating {} Spark producer.", endpointType);
         if (endpointType == EndpointType.rdd) {
+            LOG.debug("About to create RDD producer.");
             return new RddSparkProducer(this);
         } else if (endpointType == EndpointType.dataframe) {
+            LOG.debug("About to create DataFrame producer.");
             return new DataFrameSparkProducer(this);
         } else {
+            LOG.debug("About to create Hive producer.");
             return new HiveSparkProducer(this);
         }
     }
@@ -103,7 +110,6 @@ public class SparkEndpoint extends DefaultEndpoint {
     }
 
     // Setters & getters
-
 
     @Override
     public SparkComponent getComponent() {
