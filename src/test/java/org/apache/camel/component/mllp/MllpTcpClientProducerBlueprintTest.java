@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 
+// TODO:  This is leaving processes around on Jamie's workstation - track that down
 public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSupport {
 
     @Rule

@@ -444,6 +444,10 @@ public class MllpServerResource extends ExternalResource {
         private void bind() throws IOException {
             serverSocket = new ServerSocket();
 
+            // Set TCP Parameters
+            serverSocket.setSoTimeout(acceptTimeout);
+            serverSocket.setReuseAddress(false);
+
             if (0 >= listenPort) {
                 serverSocket.bind(null, backlog);
             } else {
@@ -454,9 +458,6 @@ public class MllpServerResource extends ExternalResource {
                 this.listenPort = serverSocket.getLocalPort();
             }
 
-            // Set TCP Parameters
-            serverSocket.setSoTimeout(acceptTimeout);
-            serverSocket.setReuseAddress(false);
 
             log.info("Opened TCP Listener on port {}", serverSocket.getLocalPort());
         }
@@ -468,8 +469,13 @@ public class MllpServerResource extends ExternalResource {
             log.info("Accepting connections on port {}", serverSocket.getLocalPort());
             this.setName("MllpServerResource$ServerSocketThread - " + serverSocket.getLocalSocketAddress().toString());
             while (isActive() && serverSocket.isBound()) {
+                Socket clientSocket = null;
                 try {
-                    Socket clientSocket = serverSocket.accept();
+                    clientSocket = serverSocket.accept();
+                    clientSocket.setKeepAlive(true);
+                    clientSocket.setTcpNoDelay(false);
+                    clientSocket.setSoLinger(false, -1);
+                    clientSocket.setSoTimeout( 5000 );
                     ClientSocketThread clientSocketThread = new ClientSocketThread(clientSocket);
                     clientSocketThread.start();
                 } catch (SocketTimeoutException timeoutEx) {
@@ -479,6 +485,11 @@ public class MllpServerResource extends ExternalResource {
                     continue;
                 } catch (IOException e) {
                     log.warn("IOException creating Client Socket");
+                    try {
+                        clientSocket.close();
+                    } catch (IOException e1) {
+                        log.warn( "Exceptiong encountered closing client socket after attempting to accept connection");
+                    }
                     throw new MllpJUnitResourceException("IOException creating Socket", e);
                 }
             }
