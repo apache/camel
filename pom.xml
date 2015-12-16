@@ -84,4 +84,18 @@
 
     </dependencies>
 
+  <!-- Ensure that test runs do no leave running JVMs -->
+   <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19</version>
+        <configuration>
+          <shutdown>kill</shutdown>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
