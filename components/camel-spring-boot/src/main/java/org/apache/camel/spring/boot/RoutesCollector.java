@@ -17,6 +17,7 @@
 package org.apache.camel.spring.boot;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,11 +67,17 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             if (camelContext.getStatus().isStopped()) {
                 LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
                 for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
-                    try {
-                        LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
-                        camelContext.addRoutes(routesBuilder);
-                    } catch (Exception e) {
-                        throw new CamelSpringBootInitializationException(e);
+                    // filter out abstract classes
+                    boolean abs = Modifier.isAbstract(routesBuilder.getClass().getModifiers());
+                    // filter out FatJarRouter which can be in the spring app context
+                    boolean farJarRouter = FatJarRouter.class.equals(routesBuilder.getClass());
+                    if (!abs && !farJarRouter) {
+                        try {
+                            LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
+                            camelContext.addRoutes(routesBuilder);
+                        } catch (Exception e) {
+                            throw new CamelSpringBootInitializationException(e);
+                        }
                     }
                 }
 
