@@ -22,7 +22,6 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
@@ -314,6 +313,21 @@ public class CamelCatalogTest {
         assertEquals("foo/bar", map.get("path"));
         assertEquals("true", map.get("disconnect"));
         assertEquals("false", map.get("keepAlive"));
+    }
+
+    @Test
+    public void testAsEndpointUriLog() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("loggerName", "foo");
+        map.put("loggerLevel", "WARN");
+        map.put("multiline", "true");
+        map.put("showAll", "true");
+        map.put("showBody", "false");
+        map.put("showBodyType", "false");
+        map.put("showExchangePattern", "false");
+        map.put("style", "Tab");
+
+        assertEquals("log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab", catalog.asEndpointUri("log", map, false));
     }
 
     @Test
