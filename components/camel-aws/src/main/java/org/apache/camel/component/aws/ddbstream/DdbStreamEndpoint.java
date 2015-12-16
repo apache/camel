@@ -29,10 +29,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "aws-ddbstream", title = "AWS Kinesis", syntax = "aws-ddbstream:tableName", consumerClass = DdbStreamConsumer.class, label = "cloud,messaging,streams")
+@UriEndpoint(scheme = "aws-ddbstream", title = "AWS DynamoDB Streams", consumerOnly = true, syntax = "aws-ddbstream:tableName", consumerClass = DdbStreamConsumer.class, label = "cloud,messaging,streams")
 public class DdbStreamEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath(label = "consumer,producer", description = "Name of the dynamodb table")
+    @UriPath(label = "consumer", description = "Name of the dynamodb table")
     @Metadata(required = "true")
     private String tableName;
 
@@ -44,8 +44,18 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll")
     private int maxResultsPerRequest = 100;
 
-    @UriParam(label = "consumer", description = "Defines where in the DynaboDB stream to start getting records", defaultValue = "LATEST")
+    @UriParam(label = "consumer", description = "Defines where in the DynaboDB stream"
+            + " to start getting records. Note that using TRIM_HORIZON can cause a"
+            + " significant delay before the stream has caught up to real-time."
+            + " Currently only LATEST and TRIM_HORIZON are supported.",
+            defaultValue = "LATEST")
     private ShardIteratorType iteratorType = ShardIteratorType.LATEST;
+    // TODO add the ability to use ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER
+    // by specifying either a sequence number itself or a bean to fetch the
+    // sequence number from persistant storage or somewhere else.
+    // This can be done by having the type of the parameter an interface
+    // and supplying a default implementation and a converter from a long/String
+    // to an instance of this interface.
 
     public DdbStreamEndpoint(String uri, String tableName, DdbStreamComponent component) {
         super(uri, component);
