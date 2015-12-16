@@ -21,6 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.model.Shard;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +75,35 @@ class ShardList {
         throw new IllegalStateException("Unable to find a shard with no children " + shards);
     }
 
+    Shard afterSeq(String sequenceNumber) {
+        return atAfterSeq(sequenceNumber, After.INSTANCE);
+    }
+
+    Shard atSeq(String sequenceNumber) {
+        return atAfterSeq(sequenceNumber, At.INSTANCE);
+    }
+
+    Shard atAfterSeq(String sequenceNumber, AtAfterCondition condition) {
+        BigInteger atAfter = new BigInteger(sequenceNumber);
+        List<Shard> sorted = new ArrayList<>();
+        sorted.addAll(shards.values());
+        Collections.sort(sorted, StartingSequenceNumberComparator.INSTANCE);
+        for (Shard shard : sorted) {
+            if (shard.getSequenceNumberRange().getEndingSequenceNumber() != null) {
+                BigInteger end = new BigInteger(shard.getSequenceNumberRange().getEndingSequenceNumber());
+                // essentially: after < end or after <= end
+                if (condition.matches(atAfter, end)) {
+                    return shard;
+                }
+
+            }
+        }
+        if (shards.size() > 0) {
+            return sorted.get(sorted.size()-1);
+        }
+        throw new IllegalStateException("Unable to find a shard with appropriate sequence numbers for " + sequenceNumber + " in " + shards);
+    }
+
     /**
      * Removes shards that are older than the provided shard.
      * Does not remove the provided shard.
@@ -94,5 +128,38 @@ class ShardList {
     @Override
     public String toString() {
         return "ShardList{" + "shards=" + shards + '}';
+    }
+
+    private interface AtAfterCondition {
+        boolean matches(BigInteger sequenceNumber, BigInteger option);
+    }
+
+    private static enum After implements AtAfterCondition {
+        INSTANCE() {
+            @Override
+            public boolean matches(BigInteger providedSequenceNumber, BigInteger shardSequenceNumber) {
+                return providedSequenceNumber.compareTo(shardSequenceNumber) < 0;
+            }
+        }
+    }
+
+    private static enum At implements AtAfterCondition {
+        INSTANCE() {
+            @Override
+            public boolean matches(BigInteger providedSequenceNumber, BigInteger shardSequenceNumber) {
+                return providedSequenceNumber.compareTo(shardSequenceNumber) <= 0;
+            }
+        }
+    }
+
+    private static enum StartingSequenceNumberComparator implements Comparator<Shard> {
+        INSTANCE() {
+            @Override
+            public int compare(Shard o1, Shard o2) {
+                BigInteger i1 = new BigInteger(o1.getSequenceNumberRange().getStartingSequenceNumber());
+                BigInteger i2 = new BigInteger(o2.getSequenceNumberRange().getStartingSequenceNumber());
+                return i1.compareTo(i2);
+            }
+        }
     }
 }
