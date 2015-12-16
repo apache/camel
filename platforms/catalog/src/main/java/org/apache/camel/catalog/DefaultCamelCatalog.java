@@ -698,6 +698,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
+        // do any properties filtering which can be needed for some special components
+        properties = filterProperties(scheme, properties);
+
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
         // clip the scheme from the syntax
@@ -796,6 +799,30 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Special logic for log endpoints to deal when showAll=true
+     */
+    private Map<String, String> filterProperties(String scheme, Map<String, String> options) {
+        if ("log".equals(scheme)) {
+            Map<String, String> answer = new LinkedHashMap<String, String>();
+            String showAll = options.get("showAll");
+            if ("true".equals(showAll)) {
+                // remove all the other showXXX options when showAll=true
+                for (Map.Entry<String, String> entry : options.entrySet()) {
+                    String key = entry.getKey();
+                    boolean skip = key.startsWith("show") && !key.equals("showAll");
+                    if (!skip) {
+                        answer.put(key, entry.getValue());
+                    }
+                }
+            }
+            return answer;
+        } else {
+            // use as-is
+            return options;
+        }
     }
 
     @Override
