@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+                http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
+                http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+    <property-placeholder persistent-id="MllpTcpServerConsumerBlueprintTest" update-strategy="reload" xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0" >
+        <default-properties>
+            <property name="mllp.port" value="17777" />
+        </default-properties>
+    </property-placeholder>
+
+
 
     <!-- TODO: Make port a property so it's easy to test -->
-    <camelContext id="tcp-server-consumer-context" useMDCLogging="true" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="tcp-server-consumer-context" useMDCLogging="true" xmlns="http://camel.apache.org/schema/blueprint">
         <!-- TODO:  Add exception handlers -->
         <route>
             <from uri="mllp://7777" />
@@ -14,4 +23,4 @@
         </route>
     </camelContext>
 
-</beans>
+</blueprint>
