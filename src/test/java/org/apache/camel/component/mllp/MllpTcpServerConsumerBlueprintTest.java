@@ -18,31 +18,17 @@ package org.apache.camel.component.mllp;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
-
-@Ignore(value = "Not Yet Implemented")
+@Ignore( value = "Not Yet Implemented")
 // TODO: Implement this
-public class MllpTcpClientProducerSpringTest extends CamelSpringTestSupport {
+public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSupport {
     @EndpointInject( uri = "mock://target")
     MockEndpoint target;
 
     @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("classpath:META-INF/spring/mllp-tcp-client-producer-test.xml");
-    }
-
-    @Test
-    public void test() throws Exception {
-        target.setExpectedMessageCount(1);
-
-        template.sendBody( "direct://source", generateMessage());
-
-        assertMockEndpointsSatisfied();
+    protected String getBlueprintDescriptor() {
+        return "OSGI-INF/blueprint/mllp-tcp-server-consumer.xml";
     }
 }

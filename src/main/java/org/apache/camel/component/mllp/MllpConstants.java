@@ -29,7 +29,7 @@ public class MllpConstants {
     public static final String MLLP_MESSAGE_TYPE = "CamelMllpMessageType"; // MSH-9
     public static final String MLLP_EVENT_TYPE = "CamelMllpEventType"; // MSH-9.1
     public static final String MLLP_TRIGGER_EVENT = "CamelMllpTriggerEvent"; // MSH-9.2
-    public static final String MLLP_MESSAGE_CONTROL = "CamelMllpMessageControl"; // MSH-10
+    public static final String MLLP_MESSAGE_CONTROL = "CamelMllpMessageControlId"; // MSH-10
     public static final String MLLP_PROCESSING_ID = "CamelMllpProcessingId"; // MSH-11
     public static final String MLLP_VERSION_ID = "CamelMllpVersionId"; // MSH-12
     public static final String MLLP_CHARSET = "CamelMllpCharset"; // MSH-18

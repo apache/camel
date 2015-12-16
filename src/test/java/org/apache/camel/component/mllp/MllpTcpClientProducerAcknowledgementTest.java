@@ -60,12 +60,12 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
                 onException(MllpApplicationErrorAcknowledgementException.class)
                         .handled(true)
                         .to("mock://ae-nack")
-                        .log(LoggingLevel.ERROR, routeId, "AE Acknowledgemnet")
+                        .log(LoggingLevel.ERROR, routeId, "AE Acknowledgement")
                 ;
                 onCompletion()
                         .onCompleteOnly()
                         .to("mock://complete")
-                        .log(LoggingLevel.ERROR, routeId, "AA Acknowledgemnet")
+                        .log(LoggingLevel.ERROR, routeId, "AA Acknowledgement")
                 ;
 
                 fromF("direct://trigger").routeId(routeId)
