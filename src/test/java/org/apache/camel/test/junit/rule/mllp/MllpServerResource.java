@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
  *
  * The server can be configured to simulate a large number
  * of error conditions.
+ *
+ * TODO:  This needs to be looked at - it may be orphaning threads
  */
 public class MllpServerResource extends ExternalResource {
     Logger log = LoggerFactory.getLogger(this.getClass());
@@ -95,6 +97,7 @@ public class MllpServerResource extends ExternalResource {
         if (0 >= listenPort) {
             listenPort = serverSocketThread.listenPort;
         }
+        serverSocketThread.setDaemon(true);
         serverSocketThread.start();
     }
 
@@ -442,6 +445,7 @@ public class MllpServerResource extends ExternalResource {
          * @throws IOException
          */
         private void bind() throws IOException {
+            this.setDaemon(true);
             serverSocket = new ServerSocket();
 
             // Set TCP Parameters
@@ -477,6 +481,7 @@ public class MllpServerResource extends ExternalResource {
                     clientSocket.setSoLinger(false, -1);
                     clientSocket.setSoTimeout( 5000 );
                     ClientSocketThread clientSocketThread = new ClientSocketThread(clientSocket);
+                    clientSocketThread.setDaemon(true);
                     clientSocketThread.start();
                 } catch (SocketTimeoutException timeoutEx) {
                     if (raiseExceptionOnAcceptTimeout) {
