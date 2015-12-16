@@ -102,6 +102,14 @@ public class ShardListTest {
     }
 
     @Test
+    public void lastShardGetsTheShardWithNoChildren() throws Exception {
+        ShardList shards = new ShardList();
+        shards.addAll(createShards("a", "b", "c", "d"));
+
+        assertThat(shards.last().getShardId(), is("d"));
+    }
+
+    @Test
     public void removingShards() throws Exception {
         ShardList shards = new ShardList();
         shards.addAll(createShards(null, "a", "b", "c", "d"));

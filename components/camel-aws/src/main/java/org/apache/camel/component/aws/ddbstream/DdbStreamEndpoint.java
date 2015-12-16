@@ -29,7 +29,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "aws-ddbstream", title = "AWS DynamoDB Streams", consumerOnly = true, syntax = "aws-ddbstream:tableName", consumerClass = DdbStreamConsumer.class, label = "cloud,messaging,streams")
+@UriEndpoint(scheme = "aws-ddbstream", title = "AWS DynamoDB Streams",
+        consumerOnly = true, syntax = "aws-ddbstream:tableName",
+        consumerClass = DdbStreamConsumer.class, label = "cloud,messaging,streams")
 public class DdbStreamEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(label = "consumer", description = "Name of the dynamodb table")
@@ -56,6 +58,8 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     // This can be done by having the type of the parameter an interface
     // and supplying a default implementation and a converter from a long/String
     // to an instance of this interface.
+    // Note that the shard list needs to have the ability to start at the shard
+    // that includes the supplied sequence number
 
     public DdbStreamEndpoint(String uri, String tableName, DdbStreamComponent component) {
         super(uri, component);
@@ -84,6 +88,16 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "DdbStreamEndpoint{"
+                + "tableName=" + tableName
+                + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest=" + maxResultsPerRequest
+                + ", iteratorType="
+                + iteratorType + ", uri=" + getEndpointUri()
+                + '}';
     }
 
     AmazonDynamoDBStreams getClient() {

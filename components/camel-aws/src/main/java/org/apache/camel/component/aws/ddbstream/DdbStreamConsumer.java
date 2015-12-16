@@ -107,7 +107,15 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
 
             LOG.trace("Current shard is: {} (in {})", currentShard, shardList);
             if (currentShard == null) {
-                currentShard = shardList.first();
+                switch(getEndpoint().getIteratorType()) {
+                case TRIM_HORIZON:
+                    currentShard = shardList.first();
+                    break;
+                default:
+                case LATEST:
+                    currentShard = shardList.last();
+                    break;
+                }
             } else {
                 currentShard = shardList.nextAfter(currentShard);
             }
