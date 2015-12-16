@@ -27,29 +27,13 @@ public class PahoProducer extends DefaultProducer {
         super(endpoint);
     }
 
-    private int retrieveQos(Exchange exchange) {
-        if (exchange.getIn().getHeaders().containsKey(PahoConstants.CAMEL_PAHO_MSG_QOS)) {
-            return exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_QOS, Integer.class);
-        } else {
-            return getEndpoint().getQos();
-        }
-    }
-    
-    private boolean retrieveRetained(Exchange exchange) {
-        if (exchange.getIn().getHeaders().containsKey(PahoConstants.CAMEL_PAHO_MSG_RETAINED)) {
-            return exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_RETAINED, Boolean.class);
-        } else {
-            return getEndpoint().isRetained();
-        }
-    }
-
     @Override
     public void process(Exchange exchange) throws Exception {
         MqttClient client = getEndpoint().getClient();
         String topic = getEndpoint().getTopic();
         
-        int qos = retrieveQos(exchange);
-        boolean retained = retrieveRetained(exchange);
+        int qos = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_QOS, getEndpoint().getQos(), Integer.class);
+        boolean retained = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_RETAINED, getEndpoint().isRetained(), Boolean.class);
         
         byte[] payload = exchange.getIn().getBody(byte[].class);
 
