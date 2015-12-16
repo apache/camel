@@ -2498,7 +2498,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RestConfiguration config = restConfigurations.get(component);
         if (config == null && defaultIfNotExist) {
             config = getRestConfiguration();
-            if (config != null && config.getComponent() != null && !component.equals(component)) {
+            if (config != null && config.getComponent() != null && !config.getComponent().equals(component)) {
                 config = new RestConfiguration();
                 restConfigurations.put(component, config);
             }
