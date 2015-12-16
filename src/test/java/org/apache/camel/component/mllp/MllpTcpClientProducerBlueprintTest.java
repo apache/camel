@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 
+@Ignore( value = "Diagnosing intermittent Context startup/timeout errors - Bundle MllpTcpClientProducerBlueprintTest/1.0.0 is waiting for dependencies [(&(component=mllp)(objectClass=org.apache.camel.spi.ComponentResolver))]")
 public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSupport {
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource();
