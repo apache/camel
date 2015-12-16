@@ -39,7 +39,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>io.reactivex</groupId>
       <artifactId>rxjava</artifactId>
@@ -50,6 +50,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-restlet</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
