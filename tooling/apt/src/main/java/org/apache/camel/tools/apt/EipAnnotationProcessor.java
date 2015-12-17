@@ -102,7 +102,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
                 }
             }
         } catch (Throwable e) {
-            // ignore
+            dumpExceptionToErrorFile("camel-apt-error.log", "Error processing EIP model", e);
         }
         return true;
     }
