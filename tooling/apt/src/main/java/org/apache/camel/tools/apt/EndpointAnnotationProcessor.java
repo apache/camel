@@ -79,7 +79,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 }
             }
         } catch (Throwable e) {
-            // ignore
+            dumpExceptionToErrorFile("camel-apt-error.log", "Error processing @UriEndpoint", e);
         }
         return true;
     }
