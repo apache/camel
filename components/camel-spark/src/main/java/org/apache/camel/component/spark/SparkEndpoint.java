@@ -24,7 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.spark.api.java.AbstractJavaRDDLike;
+import org.apache.spark.api.java.JavaRDDLike;
 import org.apache.spark.sql.DataFrame;
 import org.slf4j.Logger;
 
@@ -46,7 +46,7 @@ public class SparkEndpoint extends DefaultEndpoint {
     @UriPath @Metadata(required = "true")
     private EndpointType endpointType;
     @UriParam
-    private AbstractJavaRDDLike rdd;
+    private JavaRDDLike rdd;
     @UriParam
     private RddCallback rddCallback;
     @UriParam
@@ -125,14 +125,14 @@ public class SparkEndpoint extends DefaultEndpoint {
         this.endpointType = endpointType;
     }
 
-    public AbstractJavaRDDLike getRdd() {
+    public JavaRDDLike getRdd() {
         return rdd;
     }
 
     /**
      * RDD to compute against.
      */
-    public void setRdd(AbstractJavaRDDLike rdd) {
+    public void setRdd(JavaRDDLike rdd) {
         this.rdd = rdd;
     }
 

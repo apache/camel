@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.spark;
 
-import org.apache.spark.api.java.AbstractJavaRDDLike;
+import org.apache.spark.api.java.JavaRDDLike;
 
 public abstract class VoidRddCallback implements RddCallback<Void> {
 
-    public abstract void doOnRdd(AbstractJavaRDDLike rdd, Object... payloads);
+    public abstract void doOnRdd(JavaRDDLike rdd, Object... payloads);
 
     @Override
-    public Void onRdd(AbstractJavaRDDLike rdd, Object... payloads) {
+    public Void onRdd(JavaRDDLike rdd, Object... payloads) {
         doOnRdd(rdd, payloads);
         return null;
     }

@@ -21,12 +21,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.spark.RddCallback;
-import org.apache.spark.api.java.AbstractJavaRDDLike;
+import org.apache.spark.api.java.JavaRDDLike;
 
+import static java.util.Arrays.asList;
 import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 
 class AnnotatedRddCallbackProxy implements RddCallback {
@@ -51,7 +50,7 @@ class AnnotatedRddCallbackProxy implements RddCallback {
     }
 
     @Override
-    public Object onRdd(AbstractJavaRDDLike rdd, Object... payloads) {
+    public Object onRdd(JavaRDDLike rdd, Object... payloads) {
         try {
             List<Object> arguments = new ArrayList<>(payloads.length + 1);
             arguments.add(rdd);

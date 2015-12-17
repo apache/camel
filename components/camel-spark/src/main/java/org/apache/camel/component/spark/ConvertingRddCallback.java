@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.spark;
 
-import static java.lang.String.format;
-
 import org.apache.camel.CamelContext;
-import org.apache.spark.api.java.AbstractJavaRDDLike;
+import org.apache.spark.api.java.JavaRDDLike;
+
+import static java.lang.String.format;
 
 public abstract class ConvertingRddCallback<T> implements RddCallback<T> {
 
@@ -33,7 +33,7 @@ public abstract class ConvertingRddCallback<T> implements RddCallback<T> {
     }
 
     @Override
-    public T onRdd(AbstractJavaRDDLike rdd, Object... payloads) {
+    public T onRdd(JavaRDDLike rdd, Object... payloads) {
         if (payloads.length != payloadsTypes.length) {
             String message = format("Received %d payloads, but expected %d.", payloads.length, payloadsTypes.length);
             throw new IllegalArgumentException(message);
@@ -44,6 +44,6 @@ public abstract class ConvertingRddCallback<T> implements RddCallback<T> {
         return doOnRdd(rdd, payloads);
     }
 
-    public abstract T doOnRdd(AbstractJavaRDDLike rdd, Object... payloads);
+    public abstract T doOnRdd(JavaRDDLike rdd, Object... payloads);
 
 }
