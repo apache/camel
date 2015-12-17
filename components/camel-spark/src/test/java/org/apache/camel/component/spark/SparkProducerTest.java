@@ -73,7 +73,7 @@ public class SparkProducerTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        registry.bind("testFileRdd", sparkContext.textFile("testrdd.txt"));
+        registry.bind("testFileRdd", sparkContext.textFile("src/test/resources/testrdd.txt"));
 
         if (shouldRunHive) {
             registry.bind("hiveContext", hiveContext);
