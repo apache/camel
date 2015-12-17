@@ -65,7 +65,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
                 onCompletion()
                         .onCompleteOnly()
                         .to("mock://complete")
-                        .log(LoggingLevel.ERROR, routeId, "AA Acknowledgement")
+                        .log(LoggingLevel.DEBUG, routeId, "AA Acknowledgement")
                 ;
 
                 fromF("direct://trigger").routeId(routeId)

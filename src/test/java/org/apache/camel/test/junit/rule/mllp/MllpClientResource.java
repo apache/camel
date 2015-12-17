@@ -110,7 +110,7 @@ public class MllpClientResource extends ExternalResource {
             inputStream = clientSocket.getInputStream();
             outputStream = new BufferedOutputStream(clientSocket.getOutputStream(), 2048);
         } catch (IOException e) {
-            String errorMessage = String.format("Unable to establish connection to {}:{}", mllpHost, mllpPort);
+            String errorMessage = String.format("Unable to establish connection to %s:%s", mllpHost, mllpPort);
             log.error(errorMessage, e);
             throw new MllpJUnitResourceException(errorMessage, e);
         }
