@@ -20,18 +20,31 @@ public class MllpConstants {
     public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
     public static final String MLLP_ACKNOWLEDGEMENT_TYPE = "CamelMllpAcknowledgementType";
 
-    public static final String MLLP_SENDING_APPLICATION = "CamelMllpSendingApplication"; // MSH-3
-    public static final String MLLP_SENDING_FACILITY = "CamelMllpSendingFacility"; // MSH-4
-    public static final String MLLP_RECEIVING_APPLICATION = "CamelMllpReceivingApplication"; // MSH-5
-    public static final String MLLP_RECEIVING_FACILITY = "CamelMllpReceivingFacility"; // MSH-6
-    public static final String MLLP_TIMESTAMP = "CamelMllpTimestamp"; // MSH-7
-    public static final String MLLP_SECURITY = "CamelMllpSecurity"; // MSH-8
-    public static final String MLLP_MESSAGE_TYPE = "CamelMllpMessageType"; // MSH-9
-    public static final String MLLP_EVENT_TYPE = "CamelMllpEventType"; // MSH-9.1
-    public static final String MLLP_TRIGGER_EVENT = "CamelMllpTriggerEvent"; // MSH-9.2
-    public static final String MLLP_MESSAGE_CONTROL = "CamelMllpMessageControlId"; // MSH-10
-    public static final String MLLP_PROCESSING_ID = "CamelMllpProcessingId"; // MSH-11
-    public static final String MLLP_VERSION_ID = "CamelMllpVersionId"; // MSH-12
-    public static final String MLLP_CHARSET = "CamelMllpCharset"; // MSH-18
+    // MSH-3
+    public static final String MLLP_SENDING_APPLICATION = "CamelMllpSendingApplication";
+    // MSH-4
+    public static final String MLLP_SENDING_FACILITY = "CamelMllpSendingFacility";
+    // MSH-5
+    public static final String MLLP_RECEIVING_APPLICATION = "CamelMllpReceivingApplication";
+    // MSH-6
+    public static final String MLLP_RECEIVING_FACILITY = "CamelMllpReceivingFacility";
+    // MSH-7
+    public static final String MLLP_TIMESTAMP = "CamelMllpTimestamp";
+    // MSH-8
+    public static final String MLLP_SECURITY = "CamelMllpSecurity";
+    // MSH-9
+    public static final String MLLP_MESSAGE_TYPE = "CamelMllpMessageType";
+    // MSH-9.1
+    public static final String MLLP_EVENT_TYPE = "CamelMllpEventType";
+    // MSH-9.2
+    public static final String MLLP_TRIGGER_EVENT = "CamelMllpTriggerEvent";
+    // MSH-10
+    public static final String MLLP_MESSAGE_CONTROL = "CamelMllpMessageControlId";
+    // MSH-11
+    public static final String MLLP_PROCESSING_ID = "CamelMllpProcessingId";
+    // MSH-12
+    public static final String MLLP_VERSION_ID = "CamelMllpVersionId";
+    // MSH-18
+    public static final String MLLP_CHARSET = "CamelMllpCharset";
 
 }
