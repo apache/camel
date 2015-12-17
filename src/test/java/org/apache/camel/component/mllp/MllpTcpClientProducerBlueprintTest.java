@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import java.util.Dictionary;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
@@ -58,18 +59,30 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
     }
 
     @Override
-    protected String useOverridePropertiesWithConfigAdmin(Dictionary props) throws Exception {
+    protected Properties useOverridePropertiesWithPropertiesComponent() {
+        Properties props = new Properties();
 
-        props.put("mllp.port", mllpServer.getListenPort() );
+        props.setProperty( "mllp.port", Integer.toString( mllpServer.getListenPort() ) );
 
-        return "MllpTcpClientProducer";
+        return props;
     }
+
+    /*
+        This doesn't seem to work
+        @Override
+        protected String useOverridePropertiesWithConfigAdmin(Dictionary props) throws Exception {
+
+            props.put("mllp.port", mllpServer.getListenPort() );
+
+            return "MllpTcpClientProducer";
+        }
+    */
 
     @Override
     protected void addServicesOnStartup(Map<String, KeyValueHolder<Object, Dictionary>> services) {
         ComponentResolver testResolver = new DefaultComponentResolver();
 
-        services.put(ComponentResolver.class.getName(), asService( testResolver, "component", "mllp"));
+        services.put(ComponentResolver.class.getName(), asService(testResolver, "component", "mllp"));
     }
 
     @Test()
@@ -84,7 +97,7 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
         // mllpServer.setSendApplicationErrorAcknowledgementModulus(10);
 
         for (int i = 0; i < messageCount; ++i) {
-            log.debug( "Triggering message {}", i);
+            log.debug("Triggering message {}", i);
             Object response = template.requestBodyAndHeader(targetURI, generateMessage(i), "CamelMllpMessageControlId", String.format("%05d", i));
             log.debug("response {}\n{}", i, response);
         }

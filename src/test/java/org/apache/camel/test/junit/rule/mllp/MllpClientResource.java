@@ -116,6 +116,21 @@ public class MllpClientResource extends ExternalResource {
         }
     }
 
+    public void close() {
+        this.disconnect();
+        return;
+    }
+
+    public void reset() {
+        try {
+            clientSocket.setSoLinger(true, 0);
+        } catch (SocketException socketEx) {
+            log.warn("Exception encountered setting set SO_LINGER to force a TCP reset", socketEx);
+        }
+        this.disconnect();
+        return;
+    }
+
     public void disconnect() {
         try {
             if (null != inputStream) {
@@ -392,4 +407,5 @@ public class MllpClientResource extends ExternalResource {
     public void setTcpNoDelay(boolean tcpNoDelay) {
         this.tcpNoDelay = tcpNoDelay;
     }
+
 }

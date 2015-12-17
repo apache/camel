@@ -30,11 +30,11 @@ import org.junit.Test;
 
 import java.util.Dictionary;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 
-// TODO: In progess
 public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSupport {
     // int mllpPort = AvailablePortFinder.getNextAvailable();
 
@@ -65,11 +65,18 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
 
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected Properties useOverridePropertiesWithPropertiesComponent() {
+        mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
 
-        super.doPreSetup();
+        Properties props = new Properties();
+
+        props.setProperty( "mllp.port", Integer.toString( mllpClient.getMllpPort() ) );
+
+        return props;
     }
 
+    /*
+        This doesn't seem to work
     @Override
     protected String useOverridePropertiesWithConfigAdmin(Dictionary props) throws Exception {
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
@@ -78,6 +85,7 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
 
         return "MllpTcpServerConsumerBlueprintTest";
     }
+    */
 
     @Test
     public void testReceiveMultipleMessages() throws Exception {
@@ -89,6 +97,8 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
         for ( int i=1; i<=sendMessageCount; ++i ) {
             mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(i));
         }
+
+        mllpClient.close();
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
