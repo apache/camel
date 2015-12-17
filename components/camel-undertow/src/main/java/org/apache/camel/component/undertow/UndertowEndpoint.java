@@ -32,6 +32,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -54,7 +55,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     private SSLContext sslContext;
     private OptionMap optionMap;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private URI httpURI;
     @UriParam
     private UndertowHttpBinding undertowHttpBinding;
