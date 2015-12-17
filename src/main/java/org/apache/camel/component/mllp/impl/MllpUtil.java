@@ -61,8 +61,16 @@ public class MllpUtil {
             int readByte;
             try {
                 readByte = socketInputStream.read();
-                if (START_OF_BLOCK == readByte) {
-                    return;
+                switch( readByte ) {
+                    case START_OF_BLOCK:
+                        return;
+                    case END_OF_STREAM:
+                        try {
+                            socket.close();
+                        } catch (Exception closeEx) {
+                            log.warn("Exception encountered closing socket after reading END_OF_STREAM while opening frame");
+                        }
+                        return;
                 }
             } catch (SocketTimeoutException normaTimeoutEx) {
                 // Just pass this on - the caller will wrap it in a MllpTimeoutException
