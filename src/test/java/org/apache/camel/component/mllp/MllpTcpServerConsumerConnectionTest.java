@@ -79,10 +79,10 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         int connectTimeout = 5000;
         try {
             for (int i = 1; i <= connectionCount; ++i) {
-                log.info("Creating connection #{}", i);
+                log.debug("Creating connection #{}", i);
                 dummyLoadBalancerSocket = new Socket();
                 dummyLoadBalancerSocket.connect(address, connectTimeout);
-                log.info("Closing connection #{}", i);
+                log.debug("Closing connection #{}", i);
                 dummyLoadBalancerSocket.close();
                 Thread.sleep(1000);
             }
@@ -91,7 +91,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
                 try {
                     dummyLoadBalancerSocket.close();
                 } catch (Exception ex) {
-                    log.warn("Exception encountered closing dummy socket", ex);
+                    log.warn("Exception encountered closing dummy load balancer socket", ex);
                 }
             }
         }

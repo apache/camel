@@ -17,6 +17,9 @@
 package org.apache.camel.component.mllp;
 
 public class MllpConstants {
+    public static final String MLLP_LOCAL_ADDRESS = "CamelMllpLocalAddress";
+    public static final String MLLP_REMOTE_ADDRESS = "CamelMllpRemoteAddress";
+
     public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
     public static final String MLLP_ACKNOWLEDGEMENT_TYPE = "CamelMllpAcknowledgementType";
 

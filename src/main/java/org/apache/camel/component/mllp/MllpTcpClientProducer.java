@@ -125,6 +125,9 @@ public class MllpTcpClientProducer extends DefaultProducer {
         log.debug("Populating the exchange with the acknowledgement from the external system");
         message.setHeader( MLLP_ACKNOWLEDGEMENT, acknowledgementBytes );
 
+        message.setHeader(MLLP_LOCAL_ADDRESS, socket.getLocalAddress().toString());
+        message.setHeader(MLLP_REMOTE_ADDRESS, socket.getRemoteSocketAddress());
+
         // Now, extract the acknowledgement type and check for a NACK
         byte fieldDelim = acknowledgementBytes[3];
         // First, find the beginning of the MSA segment - should be the second segment

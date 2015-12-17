@@ -336,6 +336,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 Message message = exchange.getIn();
                 message.setBody(hl7MessageBytes, byte[].class);
 
+                message.setHeader(MLLP_LOCAL_ADDRESS, clientSocket.getLocalAddress().toString());
+                message.setHeader(MLLP_REMOTE_ADDRESS, clientSocket.getRemoteSocketAddress());
+
                 // Find the end of the MSH and indexes of the fields in the MSH to populate message headers
                 final byte fieldSeparator = hl7MessageBytes[3];
                 final byte componentSeparator = hl7MessageBytes[4];
@@ -357,6 +360,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 } else {
                     log.debug("Populating the message headers");
                     Charset charset = Charset.forName( IOHelper.getCharsetName(exchange) );
+
 
                     message.setHeader( MLLP_SENDING_APPLICATION, new String(hl7MessageBytes, fieldSeparatorIndexes.get(1)+1, fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1) - 1, charset)); // MSH-3
                     message.setHeader( MLLP_SENDING_FACILITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(2)+1, fieldSeparatorIndexes.get(3) - fieldSeparatorIndexes.get(2) - 1, charset)); // MSH-4
