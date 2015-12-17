@@ -21,11 +21,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.spark.RddCallback;
 import org.apache.spark.api.java.JavaRDDLike;
 
-import static java.util.Arrays.asList;
 import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 
 class AnnotatedRddCallbackProxy implements RddCallback {
