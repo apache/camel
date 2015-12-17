@@ -121,7 +121,10 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Channel closed but no message received from address: {}", address);
             }
-            exchange.setException(new CamelExchangeException("No response received from remote server: " + address, exchange));
+            // don't fail the exchange if we actually specify to disconnect
+            if (!configuration.isDisconnect()) {
+                exchange.setException(new CamelExchangeException("No response received from remote server: " + address, exchange));
+            }
             // signal callback
             callback.done(false);
         }
