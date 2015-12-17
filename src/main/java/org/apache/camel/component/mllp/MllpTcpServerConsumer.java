@@ -44,6 +44,8 @@ import static org.apache.camel.component.mllp.MllpEndpoint.*;
 
 /**
  * The MLLP consumer.
+ *
+ * TODO:  Make all close() calls RST (i.e. set SO_LINGER before close
  */
 public class MllpTcpServerConsumer extends DefaultConsumer {
     private final MllpEndpoint endpoint;
