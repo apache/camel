@@ -21,9 +21,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.mllp.impl.*;
 import org.apache.camel.impl.DefaultProducer;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.*;
 
 import static org.apache.camel.component.mllp.MllpEndpoint.*;
@@ -55,28 +53,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         log.trace("doStop()");
 
-        if (null != socket) {
-            if (!socket.isClosed()) {
-                try {
-                    socket.shutdownInput();
-                } catch (IOException ioEx) {
-                    log.warn("Exception encountered shutting down the input stream on the client socket", ioEx);
-                }
-
-                try {
-                    socket.shutdownOutput();
-                } catch (IOException ioEx) {
-                    log.warn("Exception encountered shutting down the output stream on the client socket", ioEx);
-                }
-
-                try {
-                    socket.close();
-                } catch (IOException ioEx) {
-                    log.warn("Exception encountered closing the client socket", ioEx);
-                }
-            }
-            socket = null;
-        }
+        MllpUtil.closeConnection(socket);
 
         super.doStop();
     }
@@ -226,4 +203,5 @@ public class MllpTcpClientProducer extends DefaultProducer {
         return null;
 
     }
+
 }

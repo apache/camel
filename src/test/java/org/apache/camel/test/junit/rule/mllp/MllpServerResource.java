@@ -588,14 +588,13 @@ public class MllpServerResource extends ExternalResource {
          * error conditions.
          */
         public void run() {
+            String localAddress = clientSocket.getLocalAddress().toString();
+            String remoteAddress = clientSocket.getRemoteSocketAddress().toString();
+
+            log.info( "Handling Connection: {} -> {}", localAddress, remoteAddress);
+
             try {
-                log.info("Handling client at {} on port {}",
-                        clientSocket.getInetAddress().getHostAddress(),
-                        clientSocket.getPort()
-                );
-
-
-                while (clientSocket.isConnected() && !clientSocket.isClosed()) {
+                while (null != clientSocket && clientSocket.isConnected() && !clientSocket.isClosed()) {
                     InputStream instream = clientSocket.getInputStream();
                     String parsedHL7Message = getMessage(instream);
 
@@ -677,6 +676,8 @@ public class MllpServerResource extends ExternalResource {
                     throw new MllpJUnitResourceException(errorMessage, e);
                 }
             }
+
+            log.info( "Connection Finished: {} -> {}", localAddress, remoteAddress);
         }
 
         /**
@@ -704,7 +705,8 @@ public class MllpServerResource extends ExternalResource {
                     }
                 }
             } catch (SocketException socketEx) {
-                log.error("Unable to read from socket stream when expected MLLP_ENVELOPE_START_OF_BLOCK. Connection may have been closed: ", socketEx);
+                log.error("Unable to read from socket stream when expected MLLP_ENVELOPE_START_OF_BLOCK - resetting connection ", socketEx);
+                resetConnection(clientSocket);
                 return null;
             }
 
@@ -827,4 +829,43 @@ public class MllpServerResource extends ExternalResource {
             return null;
         }
     }
+
+    void closeConnection(Socket socket ) {
+        if (null != socket) {
+            if (!socket.isClosed()) {
+                try {
+                    socket.shutdownInput();
+                } catch (Exception ex) {
+                    log.warn("Exception encountered shutting down the input stream on the client socket", ex);
+                }
+
+                try {
+                    socket.shutdownOutput();
+                } catch (Exception ex) {
+                    log.warn("Exception encountered shutting down the output stream on the client socket", ex);
+                }
+
+                try {
+                    socket.close();
+                } catch (Exception ex) {
+                    log.warn("Exception encountered closing the client socket", ex);
+                }
+            }
+        }
+    }
+
+    void resetConnection(Socket socket ) {
+        if ( null != socket ) {
+            try {
+                socket.setSoLinger(true, 0);
+            } catch (Exception ex) {
+                log.warn("Exception encountered setting SO_LINGER to 0 on the socket to force a reset", ex);
+            } finally {
+                closeConnection(socket);
+            }
+        }
+
+    }
+
+
 }

@@ -29,7 +29,6 @@ import org.apache.camel.util.IOHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -45,7 +44,6 @@ import static org.apache.camel.component.mllp.MllpEndpoint.*;
 /**
  * The MLLP consumer.
  *
- * TODO:  Make all close() calls RST (i.e. set SO_LINGER before close
  */
 public class MllpTcpServerConsumer extends DefaultConsumer {
     private final MllpEndpoint endpoint;
@@ -178,7 +176,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         public void run() {
             log.debug("Starting acceptor thread");
 
-            while (serverSocket.isBound() && !serverSocket.isClosed()) {
+            while (null != serverSocket && serverSocket.isBound() && !serverSocket.isClosed()) {
                 try {
                     /* ? set this here ? */
                     // serverSocket.setSoTimeout( 10000 );
@@ -196,12 +194,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                             inputStream = socket.getInputStream();
                         } catch (IOException ioEx) {
                             // Bad Socket -
-                            log.warn("Failed to retrieve the InputStream for socket after the initial connection was acceptedf");
-                            try {
-                                socket.close();
-                            } catch (Exception closeEx) {
-                                log.warn("Exception encountered closing socket after a failed attempt to retrieve the InputStream for socket after the initial connection was accepted");
-                            }
+                            log.warn("Failed to retrieve the InputStream for socket after the initial connection was accepted");
+                            MllpUtil.resetConnection(socket);
                             continue;
                         }
 
@@ -219,8 +213,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                             int tmpByte = inputStream.read();
                             socket.setSoTimeout(endpoint.responseTimeout);
                             if (-1 == tmpByte) {
-                                log.debug("Socket.read() returned END_OF_STREAM - closing Socket");
-                                socket.close();
+                                log.debug("Socket.read() returned END_OF_STREAM - resetting connection");
+                                MllpUtil.resetConnection(socket);
                             } else {
                                 ClientSocketThread clientThread = new ClientSocketThread(socket, tmpByte);
                                 clientThreads.add(clientThread);
@@ -306,7 +300,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         @Override
         public void run() {
 
-            while (clientSocket.isConnected() && !clientSocket.isClosed()) {
+            while (null != clientSocket && clientSocket.isConnected() && !clientSocket.isClosed()) {
                 // create the exchange
                 Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
 
