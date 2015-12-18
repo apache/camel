@@ -22,6 +22,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
@@ -31,7 +33,12 @@ import static org.junit.Assert.assertTrue;
 
 public class CamelCatalogTest {
 
-    private CamelCatalog catalog = new DefaultCamelCatalog();
+    static CamelCatalog catalog;
+
+    @BeforeClass
+    public static void createCamelCatalog() {
+        catalog = new DefaultCamelCatalog();
+    }
 
     @Test
     public void testGetVersion() throws Exception {
