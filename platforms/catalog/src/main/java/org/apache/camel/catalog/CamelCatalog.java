@@ -29,6 +29,13 @@ import javax.management.MXBean;
 public interface CamelCatalog {
 
     /**
+     * Enables caching of the resources which makes the catalog faster, but keeps data in memory during caching.
+     * <p/>
+     * The catalog does not cache by default.
+     */
+    void enableCache();
+
+    /**
      * The version of this Camel Catalog
      */
     String getCatalogVersion();

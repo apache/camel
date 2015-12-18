@@ -67,66 +67,123 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     private final VersionHelper version = new VersionHelper();
 
+    // cache of operation -> result
+    private final Map<String, Object> cache = new HashMap<String, Object>();
+
+    private boolean caching;
+
+    public DefaultCamelCatalog() {
+    }
+
+    public DefaultCamelCatalog(boolean caching) {
+        this.caching = caching;
+    }
+
+    @Override
+    public void enableCache() {
+        caching = true;
+    }
+
     @Override
     public String getCatalogVersion() {
         return version.getVersion();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> findComponentNames() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = null;
+        if (caching) {
+            names = (List<String>) cache.get("findComponentNames");
+        }
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(COMPONENTS_CATALOG);
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+        if (names == null) {
+            names = new ArrayList<String>();
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(COMPONENTS_CATALOG);
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put("findComponentNames", names);
             }
         }
         return names;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> findDataFormatNames() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = null;
+        if (caching) {
+            names = (List<String>) cache.get("findDataFormatNames");
+        }
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(DATA_FORMATS_CATALOG);
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+        if (names == null) {
+            names = new ArrayList<String>();
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(DATA_FORMATS_CATALOG);
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put("findDataFormatNames", names);
             }
         }
         return names;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> findLanguageNames() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = null;
+        if (caching) {
+            names = (List<String>) cache.get("findLanguageNames");
+        }
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(LANGUAGE_CATALOG);
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+        if (names == null) {
+            names = new ArrayList<String>();
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(LANGUAGE_CATALOG);
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put("findLanguageNames", names);
             }
         }
         return names;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> findModelNames() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = null;
+        if (caching) {
+            names = (List<String>) cache.get("findModelNames");
+        }
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(MODELS_CATALOG);
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+        if (names == null) {
+            names = new ArrayList<String>();
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(MODELS_CATALOG);
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put("findModelNames", names);
             }
         }
         return names;
@@ -134,6 +191,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public List<String> findModelNames(String filter) {
+        // should not cache when filter parameter can by any kind of value
         List<String> answer = new ArrayList<String>();
 
         List<String> names = findModelNames();
@@ -164,6 +222,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public List<String> findComponentNames(String filter) {
+        // should not cache when filter parameter can by any kind of value
         List<String> answer = new ArrayList<String>();
 
         List<String> names = findComponentNames();
@@ -194,6 +253,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public List<String> findDataFormatNames(String filter) {
+        // should not cache when filter parameter can by any kind of value
         List<String> answer = new ArrayList<String>();
 
         List<String> names = findDataFormatNames();
@@ -224,6 +284,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public List<String> findLanguageNames(String filter) {
+        // should not cache when filter parameter can by any kind of value
         List<String> answer = new ArrayList<String>();
 
         List<String> names = findLanguageNames();
@@ -256,84 +317,134 @@ public class DefaultCamelCatalog implements CamelCatalog {
     public String modelJSonSchema(String name) {
         String file = MODEL_JSON + "/" + name + ".json";
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                return CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get(file);
+        }
+
+        if (answer == null) {
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put(file, answer);
             }
         }
 
-        return null;
+        return answer;
     }
 
     @Override
     public String componentJSonSchema(String name) {
         String file = COMPONENTS_JSON + "/" + name + ".json";
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                return CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get(file);
+        }
+
+        if (answer == null) {
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put(file, answer);
             }
         }
 
-        return null;
+        return answer;
     }
 
     @Override
     public String dataFormatJSonSchema(String name) {
         String file = DATA_FORMATS_JSON + "/" + name + ".json";
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                return CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get(file);
+        }
+
+        if (answer == null) {
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put(file, answer);
             }
         }
 
-        return null;
+        return answer;
     }
 
     @Override
     public String languageJSonSchema(String name) {
         String file = LANGUAGE_JSON + "/" + name + ".json";
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                return CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get(file);
+        }
+
+        if (answer == null) {
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put(file, answer);
             }
         }
 
-        return null;
+        return answer;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Set<String> findModelLabels() {
-        SortedSet<String> answer = new TreeSet<String>();
+        SortedSet<String> answer = null;
+        if (caching) {
+            answer = (TreeSet<String>) cache.get("findModelLabels");
+        }
 
-        List<String> names = findModelNames();
-        for (String name : names) {
-            String json = modelJSonSchema(name);
-            if (json != null) {
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-                for (Map<String, String> row : rows) {
-                    if (row.containsKey("label")) {
-                        String label = row.get("label");
-                        String[] parts = label.split(",");
-                        for (String part : parts) {
-                            answer.add(part);
+        if (answer == null) {
+            answer = new TreeSet<String>();
+            List<String> names = findModelNames();
+            for (String name : names) {
+                String json = modelJSonSchema(name);
+                if (json != null) {
+                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+                    for (Map<String, String> row : rows) {
+                        if (row.containsKey("label")) {
+                            String label = row.get("label");
+                            String[] parts = label.split(",");
+                            for (String part : parts) {
+                                answer.add(part);
+                            }
                         }
                     }
                 }
+            }
+            if (caching) {
+                cache.put("findModelLabels", answer);
             }
         }
 
@@ -341,23 +452,33 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Set<String> findComponentLabels() {
-        SortedSet<String> answer = new TreeSet<String>();
+        SortedSet<String> answer = null;
+        if (caching) {
+            answer = (TreeSet<String>) cache.get("findComponentLabels");
+        }
 
-        List<String> names = findComponentNames();
-        for (String name : names) {
-            String json = componentJSonSchema(name);
-            if (json != null) {
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-                for (Map<String, String> row : rows) {
-                    if (row.containsKey("label")) {
-                        String label = row.get("label");
-                        String[] parts = label.split(",");
-                        for (String part : parts) {
-                            answer.add(part);
+        if (answer == null) {
+            answer = new TreeSet<String>();
+            List<String> names = findComponentNames();
+            for (String name : names) {
+                String json = componentJSonSchema(name);
+                if (json != null) {
+                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+                    for (Map<String, String> row : rows) {
+                        if (row.containsKey("label")) {
+                            String label = row.get("label");
+                            String[] parts = label.split(",");
+                            for (String part : parts) {
+                                answer.add(part);
+                            }
                         }
                     }
                 }
+            }
+            if (caching) {
+                cache.put("findComponentLabels", answer);
             }
         }
 
@@ -365,23 +486,33 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Set<String> findDataFormatLabels() {
-        SortedSet<String> answer = new TreeSet<String>();
+        SortedSet<String> answer = null;
+        if (caching) {
+            answer = (TreeSet<String>) cache.get("findDataFormatLabels");
+        }
 
-        List<String> names = findDataFormatNames();
-        for (String name : names) {
-            String json = dataFormatJSonSchema(name);
-            if (json != null) {
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
-                for (Map<String, String> row : rows) {
-                    if (row.containsKey("label")) {
-                        String label = row.get("label");
-                        String[] parts = label.split(",");
-                        for (String part : parts) {
-                            answer.add(part);
+        if (answer == null) {
+            answer = new TreeSet<String>();
+            List<String> names = findDataFormatNames();
+            for (String name : names) {
+                String json = dataFormatJSonSchema(name);
+                if (json != null) {
+                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
+                    for (Map<String, String> row : rows) {
+                        if (row.containsKey("label")) {
+                            String label = row.get("label");
+                            String[] parts = label.split(",");
+                            for (String part : parts) {
+                                answer.add(part);
+                            }
                         }
                     }
                 }
+            }
+            if (caching) {
+                cache.put("findDataFormatLabels", answer);
             }
         }
 
@@ -389,23 +520,33 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Set<String> findLanguageLabels() {
-        SortedSet<String> answer = new TreeSet<String>();
+        SortedSet<String> answer = null;
+        if (caching) {
+            answer = (TreeSet<String>) cache.get("findLanguageLabels");
+        }
 
-        List<String> names = findLanguageNames();
-        for (String name : names) {
-            String json = languageJSonSchema(name);
-            if (json != null) {
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
-                for (Map<String, String> row : rows) {
-                    if (row.containsKey("label")) {
-                        String label = row.get("label");
-                        String[] parts = label.split(",");
-                        for (String part : parts) {
-                            answer.add(part);
+        if (answer == null) {
+            answer = new TreeSet<String>();
+            List<String> names = findLanguageNames();
+            for (String name : names) {
+                String json = languageJSonSchema(name);
+                if (json != null) {
+                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+                    for (Map<String, String> row : rows) {
+                        if (row.containsKey("label")) {
+                            String label = row.get("label");
+                            String[] parts = label.split(",");
+                            for (String part : parts) {
+                                answer.add(part);
+                            }
                         }
                     }
                 }
+            }
+            if (caching) {
+                cache.put("findLanguageLabels", answer);
             }
         }
 
@@ -416,48 +557,78 @@ public class DefaultCamelCatalog implements CamelCatalog {
     public String archetypeCatalogAsXml() {
         String file = ARCHETYPES_CATALOG;
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                return CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get(file);
+        }
+
+        if (answer == null) {
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put(file, answer);
             }
         }
 
-        return null;
+        return answer;
     }
 
     @Override
     public String springSchemaAsXml() {
         String file = SCHEMAS_XML + "/camel-spring.xsd";
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                return CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get(file);
+        }
+
+        if (answer == null) {
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put(file, answer);
             }
         }
 
-        return null;
+        return answer;
     }
 
     @Override
     public String blueprintSchemaAsXml() {
         String file = SCHEMAS_XML + "/camel-blueprint.xsd";
 
-        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                return CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get(file);
+        }
+
+        if (answer == null) {
+            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put(file, answer);
             }
         }
 
-        return null;
+        return answer;
     }
 
     @Override
@@ -713,7 +884,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue() != null ? entry.getValue() : "";
-            if (syntax.contains(key)) {
+            if (syntax != null && syntax.contains(key)) {
                 syntax = syntax.replace(key, value);
             } else {
                 copy.put(key, value);
@@ -835,7 +1006,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
             String json = componentJSonSchema(scheme);
             // skip first line
             json = CatalogHelper.between(json, "\"component\": {", "\"componentProperties\": {");
-            json = json.trim();
+            json = json != null ? json.trim() : "";
             // skip last comma if not the last
             if (i == names.size() - 1) {
                 json = json.substring(0, json.length() - 1);
@@ -852,101 +1023,146 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String listDataFormatsAsJson() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        List<String> names = findDataFormatNames();
-        for (int i = 0; i < names.size(); i++) {
-            String scheme = names.get(i);
-            String json = dataFormatJSonSchema(scheme);
-            // skip first line
-            json = CatalogHelper.between(json, "\"dataformat\": {", "\"properties\": {");
-            json = json.trim();
-            // skip last comma if not the last
-            if (i == names.size() - 1) {
-                json = json.substring(0, json.length() - 1);
-            }
-            sb.append("\n");
-            sb.append("  {\n");
-            sb.append("    ");
-            sb.append(json);
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("listDataFormatsAsJson");
         }
 
-        sb.append("\n]");
-        return sb.toString();
+        if (answer == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+            List<String> names = findDataFormatNames();
+            for (int i = 0; i < names.size(); i++) {
+                String scheme = names.get(i);
+                String json = dataFormatJSonSchema(scheme);
+                // skip first line
+                json = CatalogHelper.between(json, "\"dataformat\": {", "\"properties\": {");
+                json = json != null ? json.trim() : "";
+                // skip last comma if not the last
+                if (i == names.size() - 1) {
+                    json = json.substring(0, json.length() - 1);
+                }
+                sb.append("\n");
+                sb.append("  {\n");
+                sb.append("    ");
+                sb.append(json);
+            }
+            sb.append("\n]");
+            answer = sb.toString();
+            if (caching) {
+                cache.put("listDataFormatsAsJson", answer);
+            }
+        }
+
+        return answer;
     }
 
     @Override
     public String listLanguagesAsJson() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        List<String> names = findLanguageNames();
-        for (int i = 0; i < names.size(); i++) {
-            String scheme = names.get(i);
-            String json = languageJSonSchema(scheme);
-            // skip first line
-            json = CatalogHelper.between(json, "\"language\": {", "\"properties\": {");
-            json = json.trim();
-            // skip last comma if not the last
-            if (i == names.size() - 1) {
-                json = json.substring(0, json.length() - 1);
-            }
-            sb.append("\n");
-            sb.append("  {\n");
-            sb.append("    ");
-            sb.append(json);
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("listLanguagesAsJson");
         }
 
-        sb.append("\n]");
-        return sb.toString();
+        if (answer == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+            List<String> names = findLanguageNames();
+            for (int i = 0; i < names.size(); i++) {
+                String scheme = names.get(i);
+                String json = languageJSonSchema(scheme);
+                // skip first line
+                json = CatalogHelper.between(json, "\"language\": {", "\"properties\": {");
+                json = json != null ? json.trim() : "";
+                // skip last comma if not the last
+                if (i == names.size() - 1) {
+                    json = json.substring(0, json.length() - 1);
+                }
+                sb.append("\n");
+                sb.append("  {\n");
+                sb.append("    ");
+                sb.append(json);
+            }
+            sb.append("\n]");
+            answer = sb.toString();
+            if (caching) {
+                cache.put("listLanguagesAsJson", answer);
+            }
+        }
+
+        return answer;
     }
 
     @Override
     public String listModelsAsJson() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        List<String> names = findModelNames();
-        for (int i = 0; i < names.size(); i++) {
-            String scheme = names.get(i);
-            String json = modelJSonSchema(scheme);
-            // skip first line
-            json = CatalogHelper.between(json, "\"model\": {", "\"properties\": {");
-            json = json.trim();
-            // skip last comma if not the last
-            if (i == names.size() - 1) {
-                json = json.substring(0, json.length() - 1);
-            }
-            sb.append("\n");
-            sb.append("  {\n");
-            sb.append("    ");
-            sb.append(json);
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("listModelsAsJson");
         }
 
-        sb.append("\n]");
-        return sb.toString();
+        if (answer == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+            List<String> names = findModelNames();
+            for (int i = 0; i < names.size(); i++) {
+                String scheme = names.get(i);
+                String json = modelJSonSchema(scheme);
+                // skip first line
+                json = CatalogHelper.between(json, "\"model\": {", "\"properties\": {");
+                json = json != null ? json.trim() : "";
+                // skip last comma if not the last
+                if (i == names.size() - 1) {
+                    json = json.substring(0, json.length() - 1);
+                }
+                sb.append("\n");
+                sb.append("  {\n");
+                sb.append("    ");
+                sb.append(json);
+            }
+            sb.append("\n]");
+            answer = sb.toString();
+            if (caching) {
+                cache.put("listModelsAsJson", answer);
+            }
+        }
+
+        return answer;
     }
 
     @Override
     public String summaryAsJson() {
-        int archetypes = 0;
-        try {
-            String xml = archetypeCatalogAsXml();
-            Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
-            Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom, XPathConstants.NUMBER);
-            double num = (double) val;
-            archetypes = (int) num;
-        } catch (Exception e) {
-            // ignore
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("summaryAsJson");
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        sb.append("  \"version\": \"" + getCatalogVersion() + "\",\n");
-        sb.append("  \"eips\": " + findModelNames().size() + ",\n");
-        sb.append("  \"components\": " + findComponentNames().size() + ",\n");
-        sb.append("  \"dataformats\": " + findDataFormatNames().size() + ",\n");
-        sb.append("  \"languages\": " + findLanguageNames().size() + ",\n");
-        sb.append("  \"archetypes\": " + archetypes + "\n");
-        sb.append("}");
-        return sb.toString();
+        if (answer == null) {
+            int archetypes = 0;
+            try {
+                String xml = archetypeCatalogAsXml();
+                Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
+                Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom, XPathConstants.NUMBER);
+                double num = (double) val;
+                archetypes = (int) num;
+            } catch (Exception e) {
+                // ignore
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("{\n");
+            sb.append("  \"version\": \"").append(getCatalogVersion()).append("\",\n");
+            sb.append("  \"eips\": ").append(findModelNames().size()).append(",\n");
+            sb.append("  \"components\": ").append(findComponentNames().size()).append(",\n");
+            sb.append("  \"dataformats\": ").append(findDataFormatNames().size()).append(",\n");
+            sb.append("  \"languages\": ").append(findLanguageNames().size()).append(",\n");
+            sb.append("  \"archetypes\": ").append(archetypes).append("\n");
+            sb.append("}");
+            answer = sb.toString();
+            if (caching) {
+                cache.put("summaryAsJson", answer);
+            }
+        }
+
+        return answer;
     }
 }
