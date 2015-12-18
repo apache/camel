@@ -48,7 +48,7 @@ import static org.apache.camel.component.mllp.MllpEndpoint.*;
 public class MllpTcpServerConsumer extends DefaultConsumer {
     private final MllpEndpoint endpoint;
 
-    AcceptThread acceptThread;
+    ServerSocketThread serverSocketThread;
 
     List<ClientSocketThread> clientThreads = new LinkedList<>();
 
@@ -78,8 +78,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         InetSocketAddress socketAddress = new InetSocketAddress(endpoint.getHostname(), endpoint.getPort());
         serverSocket.bind(socketAddress, endpoint.backlog);
 
-        acceptThread = new AcceptThread(serverSocket);
-        acceptThread.start();
+        serverSocketThread = new ServerSocketThread(serverSocket);
+        serverSocketThread.start();
 
         super.doStart();
     }
@@ -88,20 +88,20 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         log.debug("doStop()");
 
-        switch (acceptThread.getState()) {
+        switch (serverSocketThread.getState()) {
             case NEW:
             case RUNNABLE:
             case BLOCKED:
             case WAITING:
             case TIMED_WAITING:
-                acceptThread.interrupt();
+                serverSocketThread.interrupt();
                 break;
             case TERMINATED:
                 // This is what we hope for
                 break;
         }
 
-        acceptThread = null;
+        serverSocketThread = null;
 
         super.doStop();
     }
@@ -131,10 +131,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     /**
      * Nested Class to handle the ServerSocket.accept requests
      */
-    class AcceptThread extends Thread {
+    class ServerSocketThread extends Thread {
         ServerSocket serverSocket;
 
-        AcceptThread(ServerSocket serverSocket) {
+        ServerSocketThread(ServerSocket serverSocket) {
             this.setName(createThreadName(serverSocket));
 
             this.serverSocket = serverSocket;
@@ -231,6 +231,14 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 } catch (SocketTimeoutException timeoutEx) {
                     // No new clients
                     log.trace("SocketTimeoutException waiting for new connections - no new connections");
+
+                    // TODO: cleanup clientThreads
+                    for (int i=clientThreads.size()-1; i>=0; --i) {
+                        ClientSocketThread thread = clientThreads.get(i);
+                        if ( ! thread.isAlive() ) {
+                            clientThreads.remove(i);
+                        }
+                    }
                 } catch (InterruptedException interruptEx) {
                     log.info("accept loop interrupted - closing ServerSocket");
                     try {
@@ -299,11 +307,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
+            // create the exchange
+            Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
 
             while (null != clientSocket && clientSocket.isConnected() && !clientSocket.isClosed()) {
-                // create the exchange
-                Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
-
                 byte[] hl7MessageBytes = null;
                 // Send the message on for processing and wait for the response
                 log.debug("Reading data ....");
@@ -324,6 +331,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     return;
                 } finally {
                     initialByte = null;
+                }
+
+                if ( null == hl7MessageBytes ) {
+                    continue;
                 }
 
                 log.debug("Populating the exchange with received message");
