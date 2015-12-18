@@ -62,11 +62,18 @@ public class MllpTcpClientProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         log.trace("process(exchange)");
 
+        // Check BEFORE_SEND Properties
+        if ( exchange.getProperty(MLLP_RESET_CONNECTION_BEFORE_SEND, boolean.class) ) {
+            MllpUtil.resetConnection(socket);
+            return;
+        } else if ( exchange.getProperty(MLLP_CLOSE_CONNECTION_BEFORE_SEND, boolean.class) ) {
+            MllpUtil.closeConnection(socket);
+        }
+
         Exception connectionException = checkConnection();
         if ( null != connectionException ) {
             exchange.setException(connectionException);
             return;
-
         }
 
         Message message;
@@ -158,6 +165,13 @@ public class MllpTcpClientProducer extends DefaultProducer {
         if (-1 == msaStartIndex) {
             // Didn't find an MSA
             exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
+        }
+        // Check AFTER_SEND Properties
+        if ( exchange.getProperty(MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class) ) {
+            MllpUtil.resetConnection(socket);
+            return;
+        } else if ( exchange.getProperty(MLLP_CLOSE_CONNECTION_AFTER_SEND, boolean.class) ) {
+            MllpUtil.closeConnection(socket);
         }
     }
 

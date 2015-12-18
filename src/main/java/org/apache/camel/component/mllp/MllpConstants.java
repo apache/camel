@@ -24,12 +24,14 @@ public class MllpConstants {
     public static final String MLLP_ACKNOWLEDGEMENT_TYPE = "CamelMllpAcknowledgementType";
 
     /*
-        Exchange Properties for connections
-         - For Consumers, performs the action when the exchange is completing
-         - For Producers, performs the action immediately
-     */
-    public static final String MLLP_CLOSE_CONNECTION = "CamelMllpCloseConnection";
-    public static final String MLLP_RESET_CONNECTION = "CamelMllpResetConnection";
+     Connection Control Exchange Properties
+      - For Consumers, "SEND" => ACKNOWLEDGEMENT
+      - For Producers, "SEND" => MESSAGE
+      */
+    public static final String MLLP_CLOSE_CONNECTION_BEFORE_SEND = "CamelMllpCloseConnectionBeforeSend";
+    public static final String MLLP_RESET_CONNECTION_BEFORE_SEND = "CamelMllpResetConnectionBeforeSend";
+    public static final String MLLP_CLOSE_CONNECTION_AFTER_SEND = "CamelMllpCloseConnectionAfterSend";
+    public static final String MLLP_RESET_CONNECTION_AFTER_SEND = "CamelMllpResetConnectionAfterSend";
 
     // MSH-3
     public static final String MLLP_SENDING_APPLICATION = "CamelMllpSendingApplication";

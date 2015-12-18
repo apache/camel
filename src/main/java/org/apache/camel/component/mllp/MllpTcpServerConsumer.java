@@ -394,6 +394,14 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     getProcessor().process(exchange);
                     // processed the message - send the acknowledgement
 
+                    // Check BEFORE_SEND Properties
+                    if ( exchange.getProperty(MLLP_RESET_CONNECTION_BEFORE_SEND, boolean.class) ) {
+                        MllpUtil.resetConnection(clientSocket);
+                        return;
+                    } else if ( exchange.getProperty(MLLP_CLOSE_CONNECTION_BEFORE_SEND, boolean.class) ) {
+                        MllpUtil.closeConnection(clientSocket);
+                    }
+
                     // Find the acknowledgement body
                     byte[] acknowledgementMessageBytes = exchange.getProperty(MLLP_ACKNOWLEDGEMENT, byte[].class);
                     String acknowledgementMessageType = null;
@@ -484,6 +492,15 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     MllpUtil.writeFramedPayload(clientSocket, acknowledgementMessageBytes);
                     exchange.getIn().setHeader(MLLP_ACKNOWLEDGEMENT, acknowledgementMessageBytes);
                     exchange.getIn().setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, acknowledgementMessageType);
+
+                    // Check AFTER_SEND Properties
+                    if ( exchange.getProperty(MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class) ) {
+                        MllpUtil.resetConnection(clientSocket);
+                        return;
+                    } else if ( exchange.getProperty(MLLP_CLOSE_CONNECTION_AFTER_SEND, boolean.class) ) {
+                        MllpUtil.closeConnection(clientSocket);
+                    }
+
                 } catch (Exception e) {
                     exchange.setException(e);
                 }
