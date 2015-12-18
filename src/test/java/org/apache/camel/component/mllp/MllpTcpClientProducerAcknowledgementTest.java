@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.mllp;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -34,14 +37,30 @@ import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource(AvailablePortFinder.getNextAvailable());
+
+    @EndpointInject( uri="direct://source" )
+    ProducerTemplate source;
+
     @EndpointInject(uri = "mock://complete")
     MockEndpoint complete;
+
     @EndpointInject(uri = "mock://aa-ack")
     MockEndpoint accept;
     @EndpointInject(uri = "mock://ae-nack")
     MockEndpoint error;
     @EndpointInject(uri = "mock://ar-nack")
     MockEndpoint reject;
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
+
+        context.setUseMDCLogging(true);
+        context.setName(this.getClass().getSimpleName());
+
+        return context;
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -54,25 +73,25 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
             public void configure() {
                 onException(MllpApplicationRejectAcknowledgementException.class)
                         .handled(true)
-                        .to("mock://ar-nack")
+                        .to(reject)
                         .log(LoggingLevel.ERROR, routeId, "AR Acknowledgemnet")
                 ;
                 onException(MllpApplicationErrorAcknowledgementException.class)
                         .handled(true)
-                        .to("mock://ae-nack")
+                        .to(error)
                         .log(LoggingLevel.ERROR, routeId, "AE Acknowledgement")
                 ;
                 onCompletion()
                         .onCompleteOnly()
-                        .to("mock://complete")
+                        .to(complete)
                         .log(LoggingLevel.DEBUG, routeId, "AA Acknowledgement")
                 ;
 
-                fromF("direct://trigger").routeId(routeId)
+                from(source.getDefaultEndpoint()).routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Sending Message")
                         .toF("mllp://%s:%d", host, port)
                         .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
-                        .to( "mock://aa-ack")
+                        .to( accept )
                 ;
             }
         };
@@ -85,7 +104,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
         reject.setExpectedMessageCount(0);
         error.setExpectedMessageCount(0);
 
-        template.sendBody("direct://trigger", generateMessage());
+        source.sendBody(generateMessage());
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
@@ -99,7 +118,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
 
         mllpServer.setSendApplicationRejectAcknowledgementModulus( 1 );
 
-        template.sendBody("direct://trigger", generateMessage());
+        source.sendBody(generateMessage());
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
@@ -113,7 +132,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
 
         mllpServer.setSendApplicationErrorAcknowledgementModulus( 1 );
 
-        template.sendBody("direct://trigger", generateMessage());
+        source.sendBody(generateMessage());
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }

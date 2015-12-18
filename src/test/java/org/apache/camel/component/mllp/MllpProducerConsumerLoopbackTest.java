@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.mllp;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.TestProcessor;
+import org.apache.camel.test.mllp.PassthroughProcessor;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -37,11 +39,22 @@ import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     int mllpPort = AvailablePortFinder.getNextAvailable();
 
-    @EndpointInject( uri="direct://trigger" )
+    @EndpointInject( uri="direct://source" )
     ProducerTemplate source;
 
-    @EndpointInject(uri = "mock://result")
-    MockEndpoint result;
+    @EndpointInject(uri = "mock://acknowledged")
+    MockEndpoint acknowledged;
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
+
+        context.setUseMDCLogging(true);
+        context.setName(this.getClass().getSimpleName());
+
+        return context;
+    }
+
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
@@ -54,9 +67,9 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
             public void configure() {
                 fromF("mllp:%d?autoAck=true", mllpPort)
-                        .process( new TestProcessor("before send to result") )
-                        .to(result)
-                        .process( new TestProcessor("after send to result") )
+                        .process( new PassthroughProcessor("before send to result") )
+                        .to(acknowledged)
+                        .process( new PassthroughProcessor("after send to result") )
                         .log(LoggingLevel.DEBUG, routeId, "Receiving: ${body}")
                         .toF( "log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval, groupActiveOnly)
                 ;
@@ -83,7 +96,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
     @Test
     public void testLoopbackWithOneMessage() throws Exception {
-        result.expectedMessageCount(1);
+        acknowledged.expectedMessageCount(1);
 
         String acknowledgement = source.requestBody( (Object)generateMessage(), String.class);
         Assert.assertThat("Should be acknowledgment for message 1", acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|00001")));
@@ -94,7 +107,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     @Test
     public void testLoopbackMultipleMessages() throws Exception {
         int messageCount = 1000;
-        result.expectedMessageCount(messageCount);
+        acknowledged.expectedMessageCount(messageCount);
 
         for (int i=1; i<=messageCount; ++i) {
             String testMessage = generateMessage(i);

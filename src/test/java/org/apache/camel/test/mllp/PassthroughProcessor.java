@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test;
+package org.apache.camel.test.mllp;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,19 +26,22 @@ import org.slf4j.LoggerFactory;
  *
  * Used to set breakpoints and diagnose what is going on in test routes
  */
-public class TestProcessor implements Processor {
+public class PassthroughProcessor implements Processor {
     String id = null;
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public TestProcessor(String id) {
+    public PassthroughProcessor(String id) {
         this.id = id;
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         String message = exchange.getIn().getBody(String.class);
-        String msh = message.substring( 0, message.indexOf('\r'));
+        if (null != message ) {
+            String msh = message.substring(0, message.indexOf('\r'));
+            log.debug( "Processing MSH {}: \n{}\n", id, msh);
+        }
 
-        log.debug( "Processing MSH {}: \n{}\n", id, msh);
+        log.debug( "Null inbound message body");
     }
 }

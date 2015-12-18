@@ -194,6 +194,7 @@ public class MllpUtil {
                             }
                             return payload.toByteArray();
                         default:
+                            // log.trace( "Read Character: {}", (char)readByte );
                             payload.write(readByte);
                     }
                 }

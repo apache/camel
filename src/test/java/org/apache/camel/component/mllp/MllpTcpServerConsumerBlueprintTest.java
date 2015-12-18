@@ -36,19 +36,12 @@ import java.util.concurrent.TimeUnit;
 import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSupport {
-    // int mllpPort = AvailablePortFinder.getNextAvailable();
-
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
-    @EndpointInject(uri = "mock://received")
+    final String receivedUri = "mock://received";
+    @EndpointInject(uri = receivedUri)
     MockEndpoint received;
-
-    @EndpointInject(uri = "mock://timeout-ex")
-    MockEndpoint timeout;
-
-    @EndpointInject(uri = "mock://frame-ex")
-    MockEndpoint frame;
 
 
     @Override
@@ -60,7 +53,7 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
     protected void addServicesOnStartup(Map<String, KeyValueHolder<Object, Dictionary>> services) {
         ComponentResolver testResolver = new DefaultComponentResolver();
 
-        services.put(ComponentResolver.class.getName(), asService( testResolver, "component", "mllp"));
+        services.put(ComponentResolver.class.getName(), asService(testResolver, "component", "mllp"));
     }
 
 
@@ -70,7 +63,8 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
 
         Properties props = new Properties();
 
-        props.setProperty( "mllp.port", Integer.toString( mllpClient.getMllpPort() ) );
+        props.setProperty("receivedUri", receivedUri);
+        props.setProperty("mllp.port", Integer.toString(mllpClient.getMllpPort()));
 
         return props;
     }
@@ -94,7 +88,7 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
 
         mllpClient.connect();
 
-        for ( int i=1; i<=sendMessageCount; ++i ) {
+        for (int i = 1; i <= sendMessageCount; ++i) {
             mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(i));
         }
 

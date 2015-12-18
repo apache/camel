@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.mllp;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.test.AvailablePortFinder;
@@ -36,21 +39,32 @@ import java.util.concurrent.TimeUnit;
 
 import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
 
-// TODO:  This is leaving processes around on Jamie's workstation - track that down
 public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSupport {
-
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource();
 
-    String targetURI = "direct://source";
+    final String sourceUri = "direct://source";
+    @EndpointInject( uri=sourceUri )
+    ProducerTemplate source;
 
-    @EndpointInject(uri = "mock://acknowledged")
+    final String mockAcknowledgedUri = "mock://acknowledged";
+    @EndpointInject(uri = mockAcknowledgedUri )
     MockEndpoint acknowledged;
 
-    @EndpointInject(uri = "mock://timeout-ex")
+    final String mockTimeoutUri = "mock://timeout-ex";
+    @EndpointInject(uri = mockTimeoutUri)
     MockEndpoint timeout;
 
-    @EndpointInject(uri = "mock://frame-ex")
+    final String mockAeExUri = "mock://ae-ack";
+    @EndpointInject(uri = mockAeExUri)
+    MockEndpoint ae;
+
+    final String mockArExUri = "mock://ar-ack";
+    @EndpointInject(uri = mockArExUri)
+    MockEndpoint ar;
+
+    final String mockFrameExUri = "mock://frame-ex";
+    @EndpointInject(uri = mockFrameExUri)
     MockEndpoint frame;
 
     @Override
@@ -61,6 +75,13 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
     @Override
     protected Properties useOverridePropertiesWithPropertiesComponent() {
         Properties props = new Properties();
+
+        props.setProperty("sourceUri",  sourceUri);
+        props.setProperty("acknowledgedUri", mockAcknowledgedUri);
+        props.setProperty("timeoutUri", mockTimeoutUri);
+        props.setProperty("frameErrorUri", mockFrameExUri);
+        props.setProperty("errorAcknowledgementUri", mockAeExUri);
+        props.setProperty("rejectAcknowledgementUri", mockArExUri);
 
         props.setProperty( "mllp.port", Integer.toString( mllpServer.getListenPort() ) );
 
@@ -91,6 +112,8 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
         acknowledged.setExpectedMessageCount(messageCount);
         timeout.setExpectedMessageCount(0);
         frame.setExpectedMessageCount(0);
+        ae.setExpectedMessageCount(0);
+        ar.setExpectedMessageCount(0);
 
         // Uncomment one of these lines to see the NACKs handled
         // mllpServer.setSendApplicationRejectAcknowledgementModulus(10);
@@ -98,7 +121,7 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
 
         for (int i = 0; i < messageCount; ++i) {
             log.debug("Triggering message {}", i);
-            Object response = template.requestBodyAndHeader(targetURI, generateMessage(i), "CamelMllpMessageControlId", String.format("%05d", i));
+            Object response = source.requestBodyAndHeader(generateMessage(i), "CamelMllpMessageControlId", String.format("%05d", i));
             log.debug("response {}\n{}", i, response);
         }
 

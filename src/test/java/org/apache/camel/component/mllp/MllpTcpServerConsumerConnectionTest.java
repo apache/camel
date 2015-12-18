@@ -28,6 +28,7 @@ import org.junit.Test;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.concurrent.TimeUnit;
 
 public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     int mllpPort;
@@ -47,8 +48,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             public void configure() {
                 fromF("mllp:%d?autoAck=false", port)
                         .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
-                        .to("mock:result")
-                        .setBody().constant("Got It")
+                        .to(result)
                 ;
             }
         };
@@ -72,6 +72,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
      */
     @Test
     public void testConnectWithoutData() throws Exception {
+        result.setExpectedCount(0);
         int connectionCount = 10;
 
         Socket dummyLoadBalancerSocket = null;
@@ -96,6 +97,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             }
         }
 
+        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }
 
 

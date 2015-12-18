@@ -26,6 +26,12 @@
 
     <property-placeholder persistent-id="MllpTcpClientProducer" update-strategy="reload" xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0" >
         <default-properties>
+            <property name="sourceUri" value="direct://source" />
+            <property name="acknowledgedUri" value="mock://acknowledged" />
+            <property name="timeoutUri" value="mock://timeout-ex" />
+            <property name="frameErrorUri" value="mock://frame-ex" />
+            <property name="errorAcknowledgementUri" value="mock://ae-ack" />
+            <property name="rejectAcknowledgementUri" value="mock://ar-ack" />
             <property name="mllp.port" value="7777" />
         </default-properties>
     </property-placeholder>
@@ -59,7 +65,7 @@
             <handled>
                 <constant>true</constant>
             </handled>
-            <to uri="mock://frame-ex"/>
+            <to uri="{{frameErrorUri}}"/>
         </onException>
 
         <onException>
@@ -68,7 +74,7 @@
             <handled>
                 <constant>true</constant>
             </handled>
-            <to uri="mock://timeout-ex"/>
+            <to uri="{{timeoutUri}}"/>
         </onException>
 
         <onException>
@@ -83,7 +89,7 @@
             <handled>
                 <constant>true</constant>
             </handled>
-            <to uri="mock://ae-ack" />
+            <to uri="{{errorAcknowledgementUri}}" />
         </onException>
 
         <onException>
@@ -92,14 +98,14 @@
             <handled>
                 <constant>true</constant>
             </handled>
-            <to uri="mock://ar-ack" />
+            <to uri="{{rejectAcknowledgementUri}}" />
         </onException>
 
         <route id="direct-to-mllp">
-            <from uri="direct://source"/>
+            <from uri="{{sourceUri}}" />
             <log loggingLevel="DEBUG" message="sending message: $simple{header[CamelMllpMessageControlId]}" />
             <to uri="mllp://{{mllp.port}}"/>
-            <to uri="mock://acknowledged"/>
+            <to uri="{{acknowledgedUri}}"/>
             <log loggingLevel="DEBUG" message="message sent: $simple{header[CamelMllpMessageControlId]}" />
             <to uri="log:direct-to-mllp?level=INFO&amp;groupSize=50" />
         </route>

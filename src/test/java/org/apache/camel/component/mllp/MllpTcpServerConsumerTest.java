@@ -27,7 +27,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
-import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceTimeoutException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,20 +39,8 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
-    @EndpointInject(uri = "mock://request")
-    MockEndpoint request;
-
-    @Override
-    public String isMockEndpoints() {
-        return "log:*";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        return registry;
-    }
+    @EndpointInject(uri = "mock://result")
+    MockEndpoint result;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -88,7 +75,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
                         .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Test route received message")
-                        .to("mock://request")
+                        .to(result)
                 ;
 
             }
@@ -97,7 +84,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReceiveSingleMessage() throws Exception {
-        request.expectedMinimumMessageCount(1);
+        result.expectedMessageCount(1);
 
         mllpClient.connect();
 
@@ -108,7 +95,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReceiveSingleMessageWithDelayAfterConnection() throws Exception {
-        request.expectedMinimumMessageCount(1);
+        result.expectedMinimumMessageCount(1);
 
         mllpClient.connect();
 
@@ -121,7 +108,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Test
     public void testReceiveMultipleMessages() throws Exception {
         int sendMessageCount = 5;
-        request.expectedMinimumMessageCount(5);
+        result.expectedMinimumMessageCount(5);
 
         mllpClient.connect();
 
@@ -134,7 +121,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
 
     @Test
     public void testOpenMllpEnvelopeWithReset() throws Exception {
-        request.expectedMessageCount(4);
+        result.expectedMessageCount(4);
         NotifyBuilder notify1 = new NotifyBuilder(context).whenDone(2).create();
         NotifyBuilder notify2 = new NotifyBuilder(context).whenDone(5).create();
 
