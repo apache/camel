@@ -52,13 +52,17 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriPath(description = "TCP Port for connection")
     int port = -1;
 
+    // TODO:  Move URI Params to a MllpConfiguration class
     @UriParam(defaultValue = "5", description = "TCP Server only - The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused.")
     int backlog = 5;
 
-    @UriParam(defaultValue = "30000", description = "TCP Server only - timeout value while waiting for a tcp connection (milliseconds)")
+    @UriParam(defaultValue = "30000", description = "TCP Server only - timeout value while waiting for a TCP listener to start (milliseconds)")
+    int bindTimeout = 30000;
+
+    @UriParam(defaultValue = "30000", description = "TCP Server only - timeout value while waiting for a TCP connection (milliseconds)")
     int acceptTimeout = 30000;
 
-    @UriParam(defaultValue = "30000", description = "TCP Client only - timeout value while establishing for a tcp connection (milliseconds)")
+    @UriParam(defaultValue = "30000", description = "TCP Client only - timeout value while establishing for a TCP connection (milliseconds)")
     int connectTimeout = 30000;
 
     @UriParam(defaultValue = "5000", description = "Timeout value (milliseconds) used when reading a message from an external")

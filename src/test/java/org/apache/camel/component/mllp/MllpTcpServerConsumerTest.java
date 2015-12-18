@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
+import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceTimeoutException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;
@@ -154,8 +155,8 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
         // Acknowledgement won't come here
         try {
             mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(3));
-        } catch (MllpJUnitResourceTimeoutException timeoutEx) {
-            log.info("Expected Timeout reading response");
+        } catch (MllpJUnitResourceException resourceEx) {
+            log.info("Expected exception reading response");
         }
         mllpClient.disconnect();
         Thread.sleep(1000);

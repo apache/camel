@@ -301,9 +301,14 @@ public class MllpUtil {
                 socket.setSoLinger(true, 0);
             } catch (Exception ex) {
                 log.warn("Exception encountered setting SO_LINGER to 0 on the socket to force a reset", ex);
-            } finally {
-                closeConnection(socket);
             }
+
+            try {
+                socket.close();
+            } catch (Exception ex) {
+                log.warn("Exception encountered closing the client socket", ex);
+            }
+
         }
 
     }

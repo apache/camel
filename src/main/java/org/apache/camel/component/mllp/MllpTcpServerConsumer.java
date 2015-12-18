@@ -232,7 +232,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     // No new clients
                     log.trace("SocketTimeoutException waiting for new connections - no new connections");
 
-                    // TODO: cleanup clientThreads
                     for (int i=clientThreads.size()-1; i>=0; --i) {
                         ClientSocketThread thread = clientThreads.get(i);
                         if ( ! thread.isAlive() ) {
