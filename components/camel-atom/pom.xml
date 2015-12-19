@@ -76,8 +76,8 @@
       <version>${abdera-version}</version>
       <exclusions>
           <exclusion>
-              <groupId>javax.mail</groupId>
-              <artifactId>mail</artifactId>
+              <groupId>com.sun.mail</groupId>
+              <artifactId>javax.mail</artifactId>
           </exclusion>
           <exclusion>
               <groupId>xml-apis</groupId>
@@ -118,8 +118,8 @@
         <artifactId>axiom-api</artifactId>
         <exclusions>
             <exclusion>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
             </exclusion>
             <exclusion>
                 <groupId>xml-apis</groupId>
@@ -160,8 +160,8 @@
         <artifactId>axiom-impl</artifactId>
         <exclusions>
             <exclusion>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
             </exclusion>
             <exclusion>
                 <groupId>xml-apis</groupId>

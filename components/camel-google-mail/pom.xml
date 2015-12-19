@@ -69,8 +69,8 @@
     </dependency>
 
     <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
+        <groupId>com.sun.mail</groupId>
+        <artifactId>javax.mail</artifactId>
         <version>${javax-mail-version}</version>
         <exclusions>
           <!-- javax activation is part of the JDK now -->
