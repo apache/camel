@@ -173,12 +173,9 @@ public interface CamelCatalog {
      * Parses and validates the endpoint uri and constructs a key/value properties of each option
      *
      * @param uri  the endpoint uri
-     * @return invalid properties as key/value properties of each invalid option, returns an empty map if no validation errors
+     * @return validation result
      */
-    Map<String, String> validateProperties(String uri) throws URISyntaxException;
-
-    // TODO: json with error instead of map
-    // with description of the error, index, etc
+    ValidationResult validateProperties(String uri) throws URISyntaxException;
 
     /**
      * Returns the component name from the given endpoint uri

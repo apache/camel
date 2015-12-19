@@ -646,8 +646,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
-    public Map<String, String> validateProperties(String uri) throws URISyntaxException {
-        Map<String, String> answer = new LinkedHashMap<String, String>();
+    public ValidationResult validateProperties(String uri) throws URISyntaxException {
+        ValidationResult result = new ValidationResult();
 
         // parse the uri
         URI u = normalizeUri(uri);
@@ -665,14 +665,14 @@ public class DefaultCamelCatalog implements CamelCatalog {
             Map<String, String> row = getRow(rows, name);
             // unknown option
             if (row == null) {
-                answer.put(name, property.getValue());
+                result.addUnknown(name);
             } else {
                 // invalid value/type
 
                 // is required but the value is empty
                 boolean required = isPropertyRequired(rows, name);
                 if (required && isEmpty(value)) {
-                    answer.put(name, value);
+                    result.addRequired(name);
                 }
 
                 // is enum but the value is not within the enum range
@@ -687,7 +687,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         }
                     }
                     if (!found) {
-                        answer.put(name, value);
+                        result.addInvalidEnum(name);
                     }
                 }
 
@@ -696,7 +696,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     // value must be a boolean
                     boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
                     if (!bool) {
-                        answer.put(name, value);
+                        result.addInvalidBoolean(name);
                     }
                 }
 
@@ -710,7 +710,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         // ignore
                     }
                     if (!valid) {
-                        answer.put(name, value);
+                        result.addInvalidInteger(name);
                     }
                 }
 
@@ -719,12 +719,12 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     // value must be an number
                     boolean valid = false;
                     try {
-                        valid = Double.valueOf(value).isNaN() == false || Float.valueOf(value).isNaN() == false;
+                        valid = !Double.valueOf(value).isNaN() || !Float.valueOf(value).isNaN();
                     } catch (Exception e) {
                         // ignore
                     }
                     if (!valid) {
-                        answer.put(name, value);
+                        result.addInvalidNumber(name);
                     }
                 }
             }
@@ -740,12 +740,12 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     value = getPropertyDefaultValue(rows, name);
                 }
                 if (isEmpty(value)) {
-                    answer.put(name, value);
+                    result.addRequired(name);
                 }
             }
         }
 
-        return answer;
+        return result;
     }
 
     @Override
