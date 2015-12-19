@@ -22,7 +22,6 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -385,6 +384,50 @@ public class CamelCatalogTest {
         assertEquals("file:src/test/data/feed.atom", map.get("feedUri"));
         assertEquals("false", map.get("splitEntries"));
         assertEquals("5000", map.get("delay"));
+    }
+
+    @Test
+    public void validateProperties() throws Exception {
+        // valid
+        Map<String, String> map = catalog.validateProperties("log:mylog");
+        assertNotNull(map);
+        assertEquals(0, map.size());
+
+        // unknown
+        map = catalog.validateProperties("log:mylog?level=WARN&foo=bar");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+        assertEquals("bar", map.get("foo"));
+
+        // enum
+        map = catalog.validateProperties("jms:unknown:myqueue");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+
+        // okay
+        map = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
+        assertNotNull(map);
+        assertEquals(0, map.size());
+
+        // required / boolean / integer
+        map = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
+        assertNotNull(map);
+        assertEquals(4, map.size());
+        assertEquals(null, map.get("consumerKey"));
+        assertEquals(null, map.get("consumerSecret"));
+        assertEquals("no", map.get("useJson"));
+        assertEquals("five", map.get("initialDelay"));
+
+        // okay
+        map = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=2.5");
+        assertNotNull(map);
+        assertEquals(0, map.size());
+
+        // number
+        map = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=five");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+        assertEquals("five", map.get("reconnectBackOffMultiplier"));
     }
 
     @Test
