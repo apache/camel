@@ -86,7 +86,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
         if (usingIterator) {
-            return new TarIterator(exchange.getIn(), stream);
+            return new TarIterator(exchange, stream);
         } else {
             BufferedInputStream bis = new BufferedInputStream(stream);
             TarArchiveInputStream tis = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, bis);
