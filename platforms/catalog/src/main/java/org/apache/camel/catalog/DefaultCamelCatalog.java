@@ -42,8 +42,14 @@ import org.w3c.dom.Document;
 
 import static org.apache.camel.catalog.CatalogHelper.after;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
+import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyEnum;
+import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyNumber;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
 import static org.apache.camel.catalog.URISupport.createQueryString;
+import static org.apache.camel.catalog.URISupport.isEmpty;
 import static org.apache.camel.catalog.URISupport.normalizeUri;
 import static org.apache.camel.catalog.URISupport.stripQuery;
 
@@ -72,9 +78,17 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     private boolean caching;
 
+    /**
+     * Creates the {@link CamelCatalog} without caching enabled.
+     */
     public DefaultCamelCatalog() {
     }
 
+    /**
+     * Creates the {@link CamelCatalog}
+     *
+     * @param caching  whether to use cache
+     */
     public DefaultCamelCatalog(boolean caching) {
         this.caching = caching;
     }
@@ -625,6 +639,109 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
             if (caching) {
                 cache.put(file, answer);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public Map<String, String> validateProperties(String uri) throws URISyntaxException {
+        Map<String, String> answer = new LinkedHashMap<String, String>();
+
+        // parse the uri
+        URI u = normalizeUri(uri);
+        String scheme = u.getScheme();
+        String json = componentJSonSchema(scheme);
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+
+        // parse into a map of properties of the uri, and look for options that are invalid
+        Map<String, String> properties = endpointProperties(uri);
+        for (Map.Entry<String, String> property : properties.entrySet()) {
+            String name = property.getKey();
+            String value = property.getValue();
+            boolean placeholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
+
+            Map<String, String> row = getRow(rows, name);
+            // unknown option
+            if (row == null) {
+                answer.put(name, property.getValue());
+            } else {
+                // invalid value/type
+
+                // is required but the value is empty
+                boolean required = isPropertyRequired(rows, name);
+                if (required && isEmpty(value)) {
+                    answer.put(name, value);
+                }
+
+                // is enum but the value is not within the enum range
+                // but we can only check if the value is not a placeholder
+                String enums = getPropertyEnum(rows, name);
+                if (!placeholder && enums != null) {
+                    boolean found = false;
+                    for (String s : enums.split(",")) {
+                        if (value.equalsIgnoreCase(s)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        answer.put(name, value);
+                    }
+                }
+
+                // is boolean
+                if (!placeholder && isPropertyBoolean(rows, name)) {
+                    // value must be a boolean
+                    boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
+                    if (!bool) {
+                        answer.put(name, value);
+                    }
+                }
+
+                // is integer
+                if (!placeholder && isPropertyInteger(rows, name)) {
+                    // value must be an integer
+                    boolean valid = false;
+                    try {
+                        valid = Integer.valueOf(value) != null;
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    if (!valid) {
+                        answer.put(name, value);
+                    }
+                }
+
+                // is number
+                if (!placeholder && isPropertyNumber(rows, name)) {
+                    // value must be an number
+                    boolean valid = false;
+                    try {
+                        valid = Double.valueOf(value).isNaN() == false || Float.valueOf(value).isNaN() == false;
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    if (!valid) {
+                        answer.put(name, value);
+                    }
+                }
+            }
+        }
+
+        // now check if all required values are there, and that a default value does not exists
+        for (Map<String, String> row : rows) {
+            String name = row.get("name");
+            boolean required = isPropertyRequired(rows, name);
+            if (required) {
+                String value = properties.get(name);
+                if (isEmpty(value)) {
+                    value = getPropertyDefaultValue(rows, name);
+                }
+                if (isEmpty(value)) {
+                    answer.put(name, value);
+                }
             }
         }
 

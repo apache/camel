@@ -129,6 +129,57 @@ public final class JSonSchemaHelper {
         return false;
     }
 
+    public static boolean isPropertyBoolean(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return "boolean".equals(type);
+            }
+        }
+        return false;
+    }
+
+    public static boolean isPropertyInteger(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return "integer".equals(type);
+            }
+        }
+        return false;
+    }
+
+    public static boolean isPropertyNumber(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return "number".equals(type);
+            }
+        }
+        return false;
+    }
+
     public static String getPropertyDefaultValue(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             String defaultValue = null;
@@ -141,6 +192,33 @@ public final class JSonSchemaHelper {
             }
             if (found) {
                 return defaultValue;
+            }
+        }
+        return null;
+    }
+
+    public static String getPropertyEnum(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String enums = null;
+            String defaultValue = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("enum")) {
+                enums = row.get("enum");
+            }
+            if (found) {
+                return enums;
+            }
+        }
+        return null;
+    }
+
+    public static Map<String, String> getRow(List<Map<String, String>> rows, String key) {
+        for (Map<String, String> row : rows) {
+            if (key.equals(row.get("name"))) {
+                return row;
             }
         }
         return null;
