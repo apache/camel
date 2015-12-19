@@ -76,10 +76,6 @@
       <version>${abdera-version}</version>
       <exclusions>
           <exclusion>
-              <groupId>com.sun.mail</groupId>
-              <artifactId>javax.mail</artifactId>
-          </exclusion>
-          <exclusion>
               <groupId>xml-apis</groupId>
               <artifactId>xml-apis</artifactId>
           </exclusion>
@@ -118,8 +114,8 @@
         <artifactId>axiom-api</artifactId>
         <exclusions>
             <exclusion>
-                <groupId>com.sun.mail</groupId>
-                <artifactId>javax.mail</artifactId>
+                <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                <groupId>org.apache.geronimo.specs</groupId>
             </exclusion>
             <exclusion>
                 <groupId>xml-apis</groupId>
@@ -160,8 +156,8 @@
         <artifactId>axiom-impl</artifactId>
         <exclusions>
             <exclusion>
-                <groupId>com.sun.mail</groupId>
-                <artifactId>javax.mail</artifactId>
+                <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                <groupId>org.apache.geronimo.specs</groupId>
             </exclusion>
             <exclusion>
                 <groupId>xml-apis</groupId>
