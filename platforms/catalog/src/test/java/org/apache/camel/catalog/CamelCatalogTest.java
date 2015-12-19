@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -389,45 +390,39 @@ public class CamelCatalogTest {
     @Test
     public void validateProperties() throws Exception {
         // valid
-        Map<String, String> map = catalog.validateProperties("log:mylog");
-        assertNotNull(map);
-        assertEquals(0, map.size());
+        ValidationResult result = catalog.validateProperties("log:mylog");
+        assertTrue(result.isSuccess());
 
         // unknown
-        map = catalog.validateProperties("log:mylog?level=WARN&foo=bar");
-        assertNotNull(map);
-        assertEquals(1, map.size());
-        assertEquals("bar", map.get("foo"));
+        result = catalog.validateProperties("log:mylog?level=WARN&foo=bar");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("foo"));
 
         // enum
-        map = catalog.validateProperties("jms:unknown:myqueue");
-        assertNotNull(map);
-        assertEquals(1, map.size());
+        result = catalog.validateProperties("jms:unknown:myqueue");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getInvalidEnum().contains("destinationType"));
 
         // okay
-        map = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
-        assertNotNull(map);
-        assertEquals(0, map.size());
+        result = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
+        assertTrue(result.isSuccess());
 
         // required / boolean / integer
-        map = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
-        assertNotNull(map);
-        assertEquals(4, map.size());
-        assertEquals(null, map.get("consumerKey"));
-        assertEquals(null, map.get("consumerSecret"));
-        assertEquals("no", map.get("useJson"));
-        assertEquals("five", map.get("initialDelay"));
+        result = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getRequired().contains("consumerKey"));
+        assertTrue(result.getRequired().contains("consumerSecret"));
+        assertTrue(result.getInvalidBoolean().contains("useJson"));
+        assertTrue(result.getInvalidInteger().contains("initialDelay"));
 
         // okay
-        map = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=2.5");
-        assertNotNull(map);
-        assertEquals(0, map.size());
+        result = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=2.5");
+        assertTrue(result.isSuccess());
 
         // number
-        map = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=five");
-        assertNotNull(map);
-        assertEquals(1, map.size());
-        assertEquals("five", map.get("reconnectBackOffMultiplier"));
+        result = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=five");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getInvalidNumber().contains("reconnectBackOffMultiplier"));
     }
 
     @Test
