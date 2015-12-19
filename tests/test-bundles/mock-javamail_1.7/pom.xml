@@ -60,13 +60,13 @@
             <version>${pkgVersion}</version>
             <exclusions>
                  <exclusion>
-                     <groupId>com.sun.mail</groupId>
-                     <artifactId>javax.mail</artifactId>
+                     <groupId>javax.mail</groupId>
+                     <artifactId>mail</artifactId>
                  </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-	    <groupId>com.sun.mail</groupId>
+            <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
             <version>${javax-mail-version}</version>
         </dependency>
