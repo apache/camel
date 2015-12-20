@@ -423,6 +423,11 @@ public class CamelCatalogTest {
         result = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=five");
         assertFalse(result.isSuccess());
         assertTrue(result.getInvalidNumber().contains("reconnectBackOffMultiplier"));
+
+        // unknown component
+        result = catalog.validateProperties("foo:bar?me=you");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknownComponent().equals("foo"));
     }
 
     @Test
