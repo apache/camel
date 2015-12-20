@@ -20,6 +20,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.sql.sspt.ProducerSSPTHelper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -61,7 +62,9 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
 
     public Producer createProducer() throws Exception {
         SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
-        SqlProducer result = new SqlProducer(this, query, getJdbcTemplate(), prepareStrategy, isBatch(), isAlwaysPopulateStatement(), isUseMessageBodyForSql());
+        ProducerSSPTHelper producerSSPTHelper = new ProducerSSPTHelper(getJdbcTemplate().getDataSource());
+        SqlProducer result = new SqlProducer(this, query, getJdbcTemplate(), prepareStrategy, isBatch(),
+                isAlwaysPopulateStatement(), isUseMessageBodyForSql(),producerSSPTHelper);
         result.setParametersCount(getParametersCount());
         return result;
     }

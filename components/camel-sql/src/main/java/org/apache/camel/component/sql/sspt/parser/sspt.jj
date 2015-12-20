@@ -1,0 +1,136 @@
+//Using some token definions from: http://kiwwito.com/build-a-lexical-analyzer-with-javacc/
+
+options {
+    STATIC = false;
+}
+
+
+PARSER_BEGIN(SSPTParser)
+
+package org.apache.camel.component.sql.sspt.parser;
+
+import org.apache.camel.component.sql.sspt.ast.*;
+
+public class SSPTParser {
+   int paramaterNameCounter = 0;
+
+   String createNextParameterName() {
+      return "_"+(paramaterNameCounter++);
+   }
+}
+
+PARSER_END(SSPTParser)
+
+public Template parse() :
+{   Token procudureName;
+    Template template = new Template();
+    Object parameter = null;
+}
+{
+  (procudureName = <IDENTIFIER> "(" (parameter = Parameter() { template.addParameter(parameter);}) (","
+  parameter
+  = Parameter(){template.addParameter(parameter);})*  ")" <EOF>)
+  {
+   template.setProcedureName(procudureName.toString());
+   return template;
+  }
+}
+
+Object Parameter() :
+{
+    Object param;
+}
+{
+     (param = InputParameter() {return param;}) | (param = OutParameter(){return param;})
+}
+
+InputParameter InputParameter() :
+{
+     String sqlTypeAsStr;
+     String name;
+     String valueSrcAsStr;
+}
+{
+    (sqlTypeAsStr = ParameterSqlType() " " valueSrcAsStr =
+    InputParameterSrc())
+    {
+        int sqlType = ParseHelper.parseSqlType(sqlTypeAsStr);
+        return new InputParameter(createNextParameterName(),sqlType,valueSrcAsStr,ParseHelper.sqlTypeToJavaType(sqlType,sqlTypeAsStr));
+    }
+}
+
+OutParameter OutParameter() :
+{
+     String sqlType;
+     String name;
+     String outHeader;
+}
+{
+    ("OUT" " " sqlType = ParameterSqlType() " " outHeader =
+    OutHeader())
+    {
+        return new OutParameter(createNextParameterName(),ParseHelper.parseSqlType(sqlType),outHeader);
+    }
+}
+
+String ParameterSqlType():
+{
+    Token t;
+}
+{
+    (t = <IDENTIFIER>)
+    {
+        return t.toString();
+    }
+}
+
+String OutHeader():
+{
+ Token token;
+}
+{
+    (token = <IDENTIFIER>)
+    {
+        return token.toString();
+    }
+}
+
+String InputParameterSrc():
+{
+    String ret;
+}
+{
+    (ret = SimpleExpression())
+    {
+        return ret;
+    }
+}
+
+String SimpleExpression() :
+{
+ Token t = null;
+}
+{
+    (t = <SIMPLE_EXP_TOKEN>)
+    {
+    return t.toString();
+    }
+}
+
+TOKEN: {
+    <#DIGIT: (["0"-"9"])>
+}
+
+TOKEN: {
+    <#LETTER: (["a"-"z","A"-"Z"])>
+}
+
+TOKEN : {
+    <SIMPLE_EXP_TOKEN: "${"(<LETTER>|<DIGIT> | " " | "'" | "." )* "}">
+}
+
+
+TOKEN : {
+    <IDENTIFIER: <LETTER>( <LETTER> | <DIGIT> | ".") *>
+}
+

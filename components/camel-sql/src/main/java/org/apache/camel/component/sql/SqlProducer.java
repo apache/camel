@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+
+import org.apache.camel.component.sql.sspt.ProducerSSPTHelper;
 import org.apache.camel.impl.DefaultProducer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
@@ -42,9 +44,11 @@ public class SqlProducer extends DefaultProducer {
     private final SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
     private final boolean useMessageBodyForSql;
     private int parametersCount;
+    private final ProducerSSPTHelper producerSSPTHelper;
 
     public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate, SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
-                       boolean batch, boolean alwaysPopulateStatement, boolean useMessageBodyForSql) {
+                       boolean batch, boolean alwaysPopulateStatement, boolean useMessageBodyForSql,
+                       ProducerSSPTHelper producerSSPTHelper) {
         super(endpoint);
         this.jdbcTemplate = jdbcTemplate;
         this.sqlPrepareStatementStrategy = sqlPrepareStatementStrategy;
@@ -52,6 +56,7 @@ public class SqlProducer extends DefaultProducer {
         this.batch = batch;
         this.alwaysPopulateStatement = alwaysPopulateStatement;
         this.useMessageBodyForSql = useMessageBodyForSql;
+        this.producerSSPTHelper = producerSSPTHelper;
     }
 
     @Override
@@ -61,12 +66,20 @@ public class SqlProducer extends DefaultProducer {
 
     public void process(final Exchange exchange) throws Exception {
         final String sql;
+
         if (useMessageBodyForSql) {
             sql = exchange.getIn().getBody(String.class);
         } else {
             String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
             sql = queryHeader != null ? queryHeader : query;
         }
+
+        if(producerSSPTHelper.isSSPTQuery(sql)) {
+            producerSSPTHelper.handleSstpQuery(sql,exchange);
+            return;
+        }
+
+
         final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters());
 
         // CAMEL-7313 - check whether to return generated keys
@@ -207,6 +220,8 @@ public class SqlProducer extends DefaultProducer {
             }
         });
     }
+
+
 
     public void setParametersCount(int parametersCount) {
         this.parametersCount = parametersCount;
