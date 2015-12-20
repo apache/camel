@@ -699,7 +699,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         }
                     }
                     if (!found) {
-                        result.addInvalidEnum(name);
+                        result.addInvalidEnum(name, value);
                     }
                 }
 
@@ -708,7 +708,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     // value must be a boolean
                     boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
                     if (!bool) {
-                        result.addInvalidBoolean(name);
+                        result.addInvalidBoolean(name, value);
                     }
                 }
 
@@ -722,7 +722,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         // ignore
                     }
                     if (!valid) {
-                        result.addInvalidInteger(name);
+                        result.addInvalidInteger(name, value);
                     }
                 }
 
@@ -736,7 +736,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         // ignore
                     }
                     if (!valid) {
-                        result.addInvalidNumber(name);
+                        result.addInvalidNumber(name, value);
                     }
                 }
             }

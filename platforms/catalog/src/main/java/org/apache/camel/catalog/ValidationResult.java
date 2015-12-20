@@ -17,7 +17,9 @@
 package org.apache.camel.catalog;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class ValidationResult implements Serializable {
@@ -29,10 +31,10 @@ public class ValidationResult implements Serializable {
     // options
     private Set<String> unknown;
     private Set<String> required;
-    private Set<String> invalidEnum;
-    private Set<String> invalidBoolean;
-    private Set<String> invalidInteger;
-    private Set<String> invalidNumber;
+    private Map<String, String> invalidEnum;
+    private Map<String, String> invalidBoolean;
+    private Map<String, String> invalidInteger;
+    private Map<String, String> invalidNumber;
 
     public boolean isSuccess() {
         return syntaxError == null && unknownComponent == null
@@ -62,32 +64,32 @@ public class ValidationResult implements Serializable {
         required.add(name);
     }
 
-    public void addInvalidEnum(String name) {
+    public void addInvalidEnum(String name, String value) {
         if (invalidEnum == null) {
-            invalidEnum = new LinkedHashSet<String>();
+            invalidEnum = new LinkedHashMap<String, String>();
         }
-        invalidEnum.add(name);
+        invalidEnum.put(name, value);
     }
 
-    public void addInvalidBoolean(String name) {
+    public void addInvalidBoolean(String name, String value) {
         if (invalidBoolean == null) {
-            invalidBoolean = new LinkedHashSet<String>();
+            invalidBoolean = new LinkedHashMap<String, String>();;
         }
-        invalidBoolean.add(name);
+        invalidBoolean.put(name, value);
     }
 
-    public void addInvalidInteger(String name) {
+    public void addInvalidInteger(String name, String value) {
         if (invalidInteger == null) {
-            invalidInteger = new LinkedHashSet<String>();
+            invalidInteger = new LinkedHashMap<String, String>();;
         }
-        invalidInteger.add(name);
+        invalidInteger.put(name, value);
     }
 
-    public void addInvalidNumber(String name) {
+    public void addInvalidNumber(String name, String value) {
         if (invalidNumber == null) {
-            invalidNumber = new LinkedHashSet<String>();
+            invalidNumber = new LinkedHashMap<String, String>();;
         }
-        invalidNumber.add(name);
+        invalidNumber.put(name, value);
     }
 
     public String getSyntaxError() {
@@ -106,19 +108,19 @@ public class ValidationResult implements Serializable {
         return required;
     }
 
-    public Set<String> getInvalidEnum() {
+    public Map<String, String> getInvalidEnum() {
         return invalidEnum;
     }
 
-    public Set<String> getInvalidBoolean() {
+    public Map<String, String> getInvalidBoolean() {
         return invalidBoolean;
     }
 
-    public Set<String> getInvalidInteger() {
+    public Map<String, String> getInvalidInteger() {
         return invalidInteger;
     }
 
-    public Set<String> getInvalidNumber() {
+    public Map<String, String> getInvalidNumber() {
         return invalidNumber;
     }
 }

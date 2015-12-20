@@ -401,7 +401,7 @@ public class CamelCatalogTest {
         // enum
         result = catalog.validateProperties("jms:unknown:myqueue");
         assertFalse(result.isSuccess());
-        assertTrue(result.getInvalidEnum().contains("destinationType"));
+        assertEquals("unknown", result.getInvalidEnum().get("destinationType"));
 
         // okay
         result = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
@@ -412,8 +412,8 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertTrue(result.getRequired().contains("consumerKey"));
         assertTrue(result.getRequired().contains("consumerSecret"));
-        assertTrue(result.getInvalidBoolean().contains("useJson"));
-        assertTrue(result.getInvalidInteger().contains("initialDelay"));
+        assertEquals("no", result.getInvalidBoolean().get("useJson"));
+        assertEquals("five", result.getInvalidInteger().get("initialDelay"));
 
         // okay
         result = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=2.5");
@@ -422,7 +422,7 @@ public class CamelCatalogTest {
         // number
         result = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=five");
         assertFalse(result.isSuccess());
-        assertTrue(result.getInvalidNumber().contains("reconnectBackOffMultiplier"));
+        assertEquals("five", result.getInvalidNumber().get("reconnectBackOffMultiplier"));
 
         // unknown component
         result = catalog.validateProperties("foo:bar?me=you");
