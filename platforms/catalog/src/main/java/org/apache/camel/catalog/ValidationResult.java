@@ -17,11 +17,15 @@
 package org.apache.camel.catalog;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Details result of validating endpoint uri.
+ */
 public class ValidationResult implements Serializable {
 
     private final String uri;
@@ -34,6 +38,7 @@ public class ValidationResult implements Serializable {
     private Set<String> unknown;
     private Set<String> required;
     private Map<String, String> invalidEnum;
+    private Map<String, String[]> invalidEnumChoices;
     private Map<String, String> invalidBoolean;
     private Map<String, String> invalidInteger;
     private Map<String, String> invalidNumber;
@@ -44,7 +49,7 @@ public class ValidationResult implements Serializable {
 
     public boolean isSuccess() {
         return syntaxError == null && unknownComponent == null
-                && unknown == null && required == null && invalidEnum == null
+                && unknown == null && required == null && invalidEnum == null && invalidEnumChoices == null
                 && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
     }
 
@@ -75,6 +80,13 @@ public class ValidationResult implements Serializable {
             invalidEnum = new LinkedHashMap<String, String>();
         }
         invalidEnum.put(name, value);
+    }
+
+    public void addInvalidEnumChoices(String name, String[] choices) {
+        if (invalidEnumChoices == null) {
+            invalidEnumChoices = new LinkedHashMap<String, String[]>();
+        }
+        invalidEnumChoices.put(name, choices);
     }
 
     public void addInvalidBoolean(String name, String value) {
@@ -160,7 +172,9 @@ public class ValidationResult implements Serializable {
         }
         if (invalidEnum != null) {
             for (Map.Entry<String, String> entry : invalidEnum.entrySet()) {
-                options.put(entry.getKey(), "Invalid enum value: " + entry.getValue());
+                String[] choices = invalidEnumChoices.get(entry.getKey());
+                String str = Arrays.asList(choices).toString();
+                options.put(entry.getKey(), "Invalid enum value: " + entry.getValue() + ". Possible values: " + str);
             }
         }
         if (invalidBoolean != null) {
