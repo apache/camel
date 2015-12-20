@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
 import static org.junit.Assert.assertEquals;
@@ -32,6 +34,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class CamelCatalogTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelCatalogTest.class);
 
     static CamelCatalog catalog;
 
@@ -428,6 +432,19 @@ public class CamelCatalogTest {
         result = catalog.validateProperties("foo:bar?me=you");
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknownComponent().equals("foo"));
+    }
+
+    @Test
+    public void validatePropertiesSummary() throws Exception {
+        ValidationResult result = catalog.validateProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
+        assertFalse(result.isSuccess());
+        String reason = result.summaryErrorMessage();
+        LOG.info(reason);
+
+        result = catalog.validateProperties("jms:unknown:myqueue");
+        assertFalse(result.isSuccess());
+        reason = result.summaryErrorMessage();
+        LOG.info(reason);
     }
 
     @Test

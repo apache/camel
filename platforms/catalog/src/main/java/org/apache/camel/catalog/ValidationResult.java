@@ -24,6 +24,8 @@ import java.util.Set;
 
 public class ValidationResult implements Serializable {
 
+    private final String uri;
+
     // component
     private String syntaxError;
     private String unknownComponent;
@@ -35,6 +37,10 @@ public class ValidationResult implements Serializable {
     private Map<String, String> invalidBoolean;
     private Map<String, String> invalidInteger;
     private Map<String, String> invalidNumber;
+
+    public ValidationResult(String uri) {
+        this.uri = uri;
+    }
 
     public boolean isSuccess() {
         return syntaxError == null && unknownComponent == null
@@ -122,5 +128,76 @@ public class ValidationResult implements Serializable {
 
     public Map<String, String> getInvalidNumber() {
         return invalidNumber;
+    }
+
+    /**
+     * A human readable summary of the validation errors.
+     *
+     * @return the summary, or <tt>null</tt> if no validation errors
+     */
+    public String summaryErrorMessage() {
+        if (isSuccess()) {
+            return null;
+        }
+
+        if (syntaxError != null) {
+            return "Syntax error " + syntaxError;
+        } else if (unknownComponent != null) {
+            return "Unknown component " + unknownComponent;
+        }
+
+        // for each invalid option build a reason message
+        Map<String, String> options = new LinkedHashMap<String, String>();
+        if (unknown != null) {
+            for (String name : unknown) {
+                options.put(name, "Unknown field");
+            }
+        }
+        if (required != null) {
+            for (String name : required) {
+                options.put(name, "Missing required field");
+            }
+        }
+        if (invalidEnum != null) {
+            for (Map.Entry<String, String> entry : invalidEnum.entrySet()) {
+                options.put(entry.getKey(), "Invalid enum value: " + entry.getValue());
+            }
+        }
+        if (invalidBoolean != null) {
+            for (Map.Entry<String, String> entry : invalidBoolean.entrySet()) {
+                options.put(entry.getKey(), "Invalid boolean value: " + entry.getValue());
+            }
+        }
+        if (invalidInteger != null) {
+            for (Map.Entry<String, String> entry : invalidInteger.entrySet()) {
+                options.put(entry.getKey(), "Invalid integer value: " + entry.getValue());
+            }
+        }
+        if (invalidNumber != null) {
+            for (Map.Entry<String, String> entry : invalidNumber.entrySet()) {
+                options.put(entry.getKey(), "Invalid number value: " + entry.getValue());
+            }
+        }
+
+        // build a table with the error summary nicely formatted
+        // lets use 24 as min length
+        int maxLen = 24;
+        for (String key : options.keySet()) {
+            maxLen = Math.max(maxLen, key.length());
+        }
+        String format = "%" + maxLen + "s    %s";
+
+        // build the human error summary
+        StringBuilder sb = new StringBuilder();
+        sb.append("Endpoint validator error\n");
+        sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
+        sb.append("\n\t").append(uri).append("\n");
+        for (Map.Entry<String, String> option : options.entrySet()) {
+            String out = String.format(format, option.getKey(), option.getValue());
+            sb.append("\n\t").append(out);
+        }
+        sb.append("\n\n");
+
+        return sb.toString();
     }
 }
