@@ -691,8 +691,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 // but we can only check if the value is not a placeholder
                 String enums = getPropertyEnum(rows, name);
                 if (!placeholder && enums != null) {
+                    String[] choices = enums.split(",");
                     boolean found = false;
-                    for (String s : enums.split(",")) {
+                    for (String s : choices) {
                         if (value.equalsIgnoreCase(s)) {
                             found = true;
                             break;
@@ -700,6 +701,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     }
                     if (!found) {
                         result.addInvalidEnum(name, value);
+                        result.addInvalidEnumChoices(name, choices);
                     }
                 }
 
