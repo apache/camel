@@ -647,7 +647,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public ValidationResult validateProperties(String uri) {
-        ValidationResult result = new ValidationResult();
+        ValidationResult result = new ValidationResult(uri);
 
         Map<String, String> properties;
         List<Map<String, String>> rows;
