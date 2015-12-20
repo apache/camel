@@ -646,17 +646,29 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
-    public ValidationResult validateProperties(String uri) throws URISyntaxException {
+    public ValidationResult validateProperties(String uri) {
         ValidationResult result = new ValidationResult();
 
-        // parse the uri
-        URI u = normalizeUri(uri);
-        String scheme = u.getScheme();
-        String json = componentJSonSchema(scheme);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        Map<String, String> properties;
+        List<Map<String, String>> rows;
 
-        // parse into a map of properties of the uri, and look for options that are invalid
-        Map<String, String> properties = endpointProperties(uri);
+        try {
+            // parse the uri
+            URI u = normalizeUri(uri);
+            String scheme = u.getScheme();
+            String json = componentJSonSchema(scheme);
+            if (json == null) {
+                result.addUnknownComponent(scheme);
+                return result;
+            }
+            rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+            properties = endpointProperties(uri);
+        } catch (URISyntaxException e) {
+            result.addSyntaxError(e.getMessage());
+            return result;
+        }
+
+        // validate all the options
         for (Map.Entry<String, String> property : properties.entrySet()) {
             String name = property.getKey();
             String value = property.getValue();

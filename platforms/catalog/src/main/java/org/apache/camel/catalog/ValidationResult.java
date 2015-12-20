@@ -22,6 +22,11 @@ import java.util.Set;
 
 public class ValidationResult implements Serializable {
 
+    // component
+    private String syntaxError;
+    private String unknownComponent;
+
+    // options
     private Set<String> unknown;
     private Set<String> required;
     private Set<String> invalidEnum;
@@ -30,8 +35,17 @@ public class ValidationResult implements Serializable {
     private Set<String> invalidNumber;
 
     public boolean isSuccess() {
-        return unknown == null && required == null && invalidEnum == null
+        return syntaxError == null && unknownComponent == null
+                && unknown == null && required == null && invalidEnum == null
                 && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
+    }
+
+    public void addSyntaxError(String syntaxError) {
+        this.syntaxError = syntaxError;
+    }
+
+    public void addUnknownComponent(String name) {
+        this.unknownComponent = name;
     }
 
     public void addUnknown(String name) {
@@ -76,8 +90,16 @@ public class ValidationResult implements Serializable {
         invalidNumber.add(name);
     }
 
+    public String getSyntaxError() {
+        return syntaxError;
+    }
+
     public Set<String> getUnknown() {
         return unknown;
+    }
+
+    public String getUnknownComponent() {
+        return unknownComponent;
     }
 
     public Set<String> getRequired() {
