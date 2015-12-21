@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.ddbstream;
 
+import java.math.BigInteger;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
@@ -31,6 +32,7 @@ import com.amazonaws.services.dynamodbv2.model.ListStreamsRequest;
 import com.amazonaws.services.dynamodbv2.model.ListStreamsResult;
 import com.amazonaws.services.dynamodbv2.model.Record;
 import com.amazonaws.services.dynamodbv2.model.Shard;
+import com.amazonaws.services.dynamodbv2.model.ShardIteratorType;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -132,6 +134,30 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
                     .withStreamArn(streamArn)
                     .withShardId(currentShard.getShardId())
                     .withShardIteratorType(getEndpoint().getIteratorType());
+            switch(getEndpoint().getIteratorType()) {
+            case AFTER_SEQUENCE_NUMBER:
+            case AT_SEQUENCE_NUMBER:
+                // if you request with a sequence number that is LESS than the
+                // start of the shard, you get a HTTP 400 from AWS.
+                // So only add the sequence number if the endpoints
+                // sequence number is AT or AFTER the starting sequence for
+                // the shard.
+                // Otherwise change the shart iterator type to trim_horizon
+                // because we get a 400 when we use one of the
+                // {at,after}_sequence_number iterator types and don't supply
+                // a sequence number.
+                if (AtAfterCondition.Conditions.AT.matches(
+                        new BigInteger(currentShard.getSequenceNumberRange().getStartingSequenceNumber()),
+                        new BigInteger(getEndpoint().getSequenceNumber())
+                )) {
+                    req = req.withSequenceNumber(getEndpoint().getSequenceNumber())
+                        .withShardIteratorType(getEndpoint().getIteratorType());
+                } else {
+                    req = req.withShardIteratorType(ShardIteratorType.TRIM_HORIZON);
+                }
+                break;
+            default:
+            }
             GetShardIteratorResult result = getClient().getShardIterator(req);
             currentShardIterator = result.getShardIterator();
         }
@@ -141,8 +167,25 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
 
     private Queue<Exchange> createExchanges(List<Record> records) {
         Queue<Exchange> exchanges = new ArrayDeque<>();
+        AtAfterCondition condition;
+        BigInteger providedSeqNum = null;
+        switch(getEndpoint().getIteratorType()) {
+        case AFTER_SEQUENCE_NUMBER:
+            condition = AtAfterCondition.Conditions.AFTER;
+            providedSeqNum = new BigInteger(getEndpoint().getSequenceNumberProvider().getSequenceNumber());
+            break;
+        case AT_SEQUENCE_NUMBER:
+            condition = AtAfterCondition.Conditions.AT;
+            providedSeqNum = new BigInteger(getEndpoint().getSequenceNumberProvider().getSequenceNumber());
+            break;
+        default:
+            condition = null;
+        }
         for (Record record : records) {
-            exchanges.add(getEndpoint().createExchange(record));
+            BigInteger recordSeqNum = new BigInteger(record.getDynamodb().getSequenceNumber());
+            if (condition == null || condition.matches(providedSeqNum, recordSeqNum)) {
+                exchanges.add(getEndpoint().createExchange(record));
+            }
         }
         return exchanges;
     }

@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.aws.ddbstream;
 
 import java.util.ArrayList;
@@ -110,12 +126,15 @@ public class DdbStreamConsumerTest {
             @Override
             public GetRecordsResult answer(InvocationOnMock invocation) throws Throwable {
                 final String shardIterator = ((GetRecordsRequest) invocation.getArguments()[0]).getShardIterator();
-                String nextShardIterator = shardIterators.get(shardIterator); // note that HashMap returns null when there is no entry in the map. A null 'nextShardIterator' indicates that the shard has finished and we should move onto the next shard.
+                // note that HashMap returns null when there is no entry in the map.
+                // A null 'nextShardIterator' indicates that the shard has finished
+                // and we should move onto the next shard.
+                String nextShardIterator = shardIterators.get(shardIterator);
                 Matcher m = Pattern.compile("shard_iterator_d_0*(\\d+)").matcher(shardIterator);
                 Collection<Record> ans = answers.get(shardIterator);
                 if (nextShardIterator == null && m.matches()) { // last shard iterates forever.
                     Integer num = Integer.parseInt(m.group(1));
-                    nextShardIterator = "shard_iterator_d_" + pad(Integer.toString(num+1), 3);
+                    nextShardIterator = "shard_iterator_d_" + pad(Integer.toString(num + 1), 3);
                 }
                 if (null == ans) { // default to an empty list of records.
                     ans = createRecords();
@@ -225,6 +244,39 @@ public class DdbStreamConsumerTest {
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
         assertThat(getIteratorCaptor.getValue().getShardId(), is("c"));
+    }
+
+    @Test
+    public void atSeqNumber35GivesFirstRecordWithSeq35() throws Exception {
+        endpoint.setIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
+        endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
+        undertest = new DdbStreamConsumer(endpoint, processor);
+
+        for (int i = 0; i < 10; ++i) { // poll lots.
+            undertest.poll();
+        }
+
+        ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
+        verify(processor, times(2)).process(exchangeCaptor.capture(), any(AsyncCallback.class));
+
+        assertThat(exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("35"));
+        assertThat(exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("40"));
+    }
+
+    @Test
+    public void afterSeqNumber35GivesFirstRecordWithSeq40() throws Exception {
+        endpoint.setIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
+        endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
+        undertest = new DdbStreamConsumer(endpoint, processor);
+
+        for (int i = 0; i < 10; ++i) { // poll lots.
+            undertest.poll();
+        }
+
+        ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
+        verify(processor, times(1)).process(exchangeCaptor.capture(), any(AsyncCallback.class));
+
+        assertThat(exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("40"));
     }
 
     private static Collection<Record> createRecords(String... sequenceNumbers) {

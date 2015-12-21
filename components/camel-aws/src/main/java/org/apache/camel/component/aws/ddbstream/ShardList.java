@@ -79,11 +79,11 @@ class ShardList {
     }
 
     Shard afterSeq(String sequenceNumber) {
-        return atAfterSeq(sequenceNumber, After.INSTANCE);
+        return atAfterSeq(sequenceNumber, AtAfterCondition.Conditions.AFTER);
     }
 
     Shard atSeq(String sequenceNumber) {
-        return atAfterSeq(sequenceNumber, At.INSTANCE);
+        return atAfterSeq(sequenceNumber, AtAfterCondition.Conditions.AT);
     }
 
     Shard atAfterSeq(String sequenceNumber, AtAfterCondition condition) {
@@ -134,27 +134,9 @@ class ShardList {
         return "ShardList{" + "shards=" + shards + '}';
     }
 
-    private interface AtAfterCondition {
-        boolean matches(BigInteger sequenceNumber, BigInteger option);
-    }
 
-    private static enum After implements AtAfterCondition {
-        INSTANCE() {
-            @Override
-            public boolean matches(BigInteger providedSequenceNumber, BigInteger shardSequenceNumber) {
-                return providedSequenceNumber.compareTo(shardSequenceNumber) < 0;
-            }
-        }
-    }
 
-    private static enum At implements AtAfterCondition {
-        INSTANCE() {
-            @Override
-            public boolean matches(BigInteger providedSequenceNumber, BigInteger shardSequenceNumber) {
-                return providedSequenceNumber.compareTo(shardSequenceNumber) <= 0;
-            }
-        }
-    }
+
 
     private static enum StartingSequenceNumberComparator implements Comparator<Shard> {
         INSTANCE() {
