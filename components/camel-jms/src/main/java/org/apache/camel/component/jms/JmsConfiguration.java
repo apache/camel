@@ -122,7 +122,7 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private int replyToMaxConcurrentConsumers;
     // JmsTemplate only
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", defaultValue = "false")
     private Boolean explicitQosEnabled;
     @UriParam(defaultValue = "true", label = "producer")
     private boolean deliveryPersistent = true;
