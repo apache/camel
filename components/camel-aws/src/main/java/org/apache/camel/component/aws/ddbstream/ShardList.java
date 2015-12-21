@@ -79,14 +79,14 @@ class ShardList {
     }
 
     Shard afterSeq(String sequenceNumber) {
-        return atAfterSeq(sequenceNumber, AtAfterCondition.Conditions.AFTER);
+        return atAfterSeq(sequenceNumber, BigIntComparisons.Conditions.LT);
     }
 
     Shard atSeq(String sequenceNumber) {
-        return atAfterSeq(sequenceNumber, AtAfterCondition.Conditions.AT);
+        return atAfterSeq(sequenceNumber, BigIntComparisons.Conditions.LTEQ);
     }
 
-    Shard atAfterSeq(String sequenceNumber, AtAfterCondition condition) {
+    Shard atAfterSeq(String sequenceNumber, BigIntComparisons condition) {
         BigInteger atAfter = new BigInteger(sequenceNumber);
         List<Shard> sorted = new ArrayList<>();
         sorted.addAll(shards.values());

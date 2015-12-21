@@ -30,15 +30,15 @@ import static org.junit.Assert.assertThat;
 
 
 @RunWith(Parameterized.class)
-public class AtAfterConditionTest {
+public class BigIntComparisonsTest {
 
 
-    private final AtAfterCondition condition;
+    private final BigIntComparisons condition;
     private final int smaller;
     private final int bigger;
     private final boolean result;
 
-    public AtAfterConditionTest(AtAfterCondition condition, int smaller, int bigger, boolean result) {
+    public BigIntComparisonsTest(BigIntComparisons condition, int smaller, int bigger, boolean result) {
         this.condition = condition;
         this.smaller = smaller;
         this.bigger = bigger;
@@ -49,12 +49,12 @@ public class AtAfterConditionTest {
     public static Collection<Object[]> parameters() {
         List<Object[]> results = new ArrayList<>();
 
-        results.add(new Object[]{AtAfterCondition.Conditions.AFTER, 1, 5, true});
-        results.add(new Object[]{AtAfterCondition.Conditions.AT   , 1, 5, true});
-        results.add(new Object[]{AtAfterCondition.Conditions.AFTER, 1, 1, false});
-        results.add(new Object[]{AtAfterCondition.Conditions.AT   , 1, 1, true});
-        results.add(new Object[]{AtAfterCondition.Conditions.AFTER, 5, 1, false});
-        results.add(new Object[]{AtAfterCondition.Conditions.AT   , 5, 1, false});
+        results.add(new Object[]{BigIntComparisons.Conditions.LT  , 1, 5, true});
+        results.add(new Object[]{BigIntComparisons.Conditions.LTEQ, 1, 5, true});
+        results.add(new Object[]{BigIntComparisons.Conditions.LT  , 1, 1, false});
+        results.add(new Object[]{BigIntComparisons.Conditions.LTEQ, 1, 1, true});
+        results.add(new Object[]{BigIntComparisons.Conditions.LT  , 5, 1, false});
+        results.add(new Object[]{BigIntComparisons.Conditions.LTEQ, 5, 1, false});
 
         return results;
     }

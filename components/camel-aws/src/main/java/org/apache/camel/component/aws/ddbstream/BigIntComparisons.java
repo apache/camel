@@ -18,27 +18,27 @@ package org.apache.camel.component.aws.ddbstream;
 
 import java.math.BigInteger;
 
-interface AtAfterCondition {
+interface BigIntComparisons {
 
     /**
-     * @return true if sequenceNumber is (at,after) the endpointSequenceNumber.
+     * @return true if the first parameter is LT/LTEQ/EQ/GTEQ/GT the second
      */
-    boolean matches(BigInteger endpointSequenceNumber, BigInteger sequenceNumber);
+    boolean matches(BigInteger first, BigInteger second);
 
-    static enum Conditions implements AtAfterCondition {
-        AFTER() {
+    static enum Conditions implements BigIntComparisons {
+        LT() {
             @Override
-            public boolean matches(BigInteger endpointSequenceNumber, BigInteger sequenceNumber) {
-                return endpointSequenceNumber.compareTo(sequenceNumber) < 0;
+            public boolean matches(BigInteger first, BigInteger second) {
+                return first.compareTo(second) < 0;
             }
         },
 
-        AT() {
+        LTEQ() {
             @Override
-            public boolean matches(BigInteger endpointSequenceNumber, BigInteger sequenceNumber) {
-                return endpointSequenceNumber.compareTo(sequenceNumber) <= 0;
+            public boolean matches(BigInteger first, BigInteger second) {
+                return first.compareTo(second) <= 0;
             }
         }
-        // TODO rename to LT/LTEQ/EQ/GTEQ/GT
+        // TODO Add EQ/GTEQ/GT as needed, but note that GTEQ == !LT and GT == !LTEQ and EQ == (!LT && !GT)
     }
 }

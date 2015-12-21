@@ -140,18 +140,17 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
                 // if you request with a sequence number that is LESS than the
                 // start of the shard, you get a HTTP 400 from AWS.
                 // So only add the sequence number if the endpoints
-                // sequence number is AT or AFTER the starting sequence for
-                // the shard.
+                // sequence number is less than or equal to the starting
+                // sequence for the shard.
                 // Otherwise change the shart iterator type to trim_horizon
                 // because we get a 400 when we use one of the
                 // {at,after}_sequence_number iterator types and don't supply
                 // a sequence number.
-                if (AtAfterCondition.Conditions.AT.matches(
+                if (BigIntComparisons.Conditions.LTEQ.matches(
                         new BigInteger(currentShard.getSequenceNumberRange().getStartingSequenceNumber()),
                         new BigInteger(getEndpoint().getSequenceNumber())
                 )) {
-                    req = req.withSequenceNumber(getEndpoint().getSequenceNumber())
-                        .withShardIteratorType(getEndpoint().getIteratorType());
+                    req = req.withSequenceNumber(getEndpoint().getSequenceNumber());
                 } else {
                     req = req.withShardIteratorType(ShardIteratorType.TRIM_HORIZON);
                 }
@@ -167,15 +166,15 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
 
     private Queue<Exchange> createExchanges(List<Record> records) {
         Queue<Exchange> exchanges = new ArrayDeque<>();
-        AtAfterCondition condition;
+        BigIntComparisons condition;
         BigInteger providedSeqNum = null;
         switch(getEndpoint().getIteratorType()) {
         case AFTER_SEQUENCE_NUMBER:
-            condition = AtAfterCondition.Conditions.AFTER;
+            condition = BigIntComparisons.Conditions.LT;
             providedSeqNum = new BigInteger(getEndpoint().getSequenceNumberProvider().getSequenceNumber());
             break;
         case AT_SEQUENCE_NUMBER:
-            condition = AtAfterCondition.Conditions.AT;
+            condition = BigIntComparisons.Conditions.LTEQ;
             providedSeqNum = new BigInteger(getEndpoint().getSequenceNumberProvider().getSequenceNumber());
             break;
         default:
