@@ -49,7 +49,8 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "consumer", description = "Defines where in the DynaboDB stream"
             + " to start getting records. Note that using TRIM_HORIZON can cause a"
             + " significant delay before the stream has caught up to real-time."
-            + " Currently only LATEST and TRIM_HORIZON are supported.",
+            + " if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider"
+            + " MUST be supplied.",
             defaultValue = "LATEST")
     private ShardIteratorType iteratorType = ShardIteratorType.LATEST;
     // TODO add the ability to use ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER
@@ -60,6 +61,11 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     // to an instance of this interface.
     // Note that the shard list needs to have the ability to start at the shard
     // that includes the supplied sequence number
+
+    @UriParam(label = "consumer", description = "Provider for the sequence number when"
+            + " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
+            + " iterator types. Can be a registry reference or a literal sequence number.")
+    private SequenceNumberProvider sequenceNumberProvider;
 
     public DdbStreamEndpoint(String uri, String tableName, DdbStreamComponent component) {
         super(uri, component);
@@ -90,13 +96,30 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
         return true;
     }
 
+    public String getSequenceNumber() {
+        switch (getIteratorType()) {
+        case AFTER_SEQUENCE_NUMBER:
+        case AT_SEQUENCE_NUMBER:
+            if (null == getSequenceNumberProvider()) {
+                throw new IllegalStateException("sequenceNumberProvider must be"
+                        + " provided, either as an implementation of"
+                        + " SequenceNumberProvider or a literal String.");
+            } else {
+                return getSequenceNumberProvider().getSequenceNumber();
+            }
+        default:
+            return "";
+        }
+    }
+
     @Override
     public String toString() {
         return "DdbStreamEndpoint{"
                 + "tableName=" + tableName
                 + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest=" + maxResultsPerRequest
-                + ", iteratorType="
-                + iteratorType + ", uri=" + getEndpointUri()
+                + ", iteratorType=" + iteratorType
+                + ", sequenceNumberProvider=" + sequenceNumberProvider
+                + ", uri=" + getEndpointUri()
                 + '}';
     }
 
@@ -135,5 +158,12 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     public void setIteratorType(ShardIteratorType iteratorType) {
         this.iteratorType = iteratorType;
     }
-    
+
+    public SequenceNumberProvider getSequenceNumberProvider() {
+        return sequenceNumberProvider;
+    }
+
+    public void setSequenceNumberProvider(SequenceNumberProvider sequenceNumberProvider) {
+        this.sequenceNumberProvider = sequenceNumberProvider;
+    }
 }

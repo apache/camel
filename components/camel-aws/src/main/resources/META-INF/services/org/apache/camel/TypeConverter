@@ -16,3 +16,4 @@
 ## ---------------------------------------------------------------------------
 
 org.apache.camel.component.aws.kinesis.RecordStringConverter
+org.apache.camel.component.aws.ddbstream.StringSequenceNumberConverter
