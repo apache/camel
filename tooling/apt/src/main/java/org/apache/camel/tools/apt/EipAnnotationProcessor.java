@@ -90,15 +90,19 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (roundEnv.processingOver()) {
-            return true;
-        }
-
-        Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(XmlRootElement.class);
-        for (Element element : elements) {
-            if (element instanceof TypeElement) {
-                processModelClass(roundEnv, (TypeElement) element);
+        try {
+            if (roundEnv.processingOver()) {
+                return true;
             }
+
+            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(XmlRootElement.class);
+            for (Element element : elements) {
+                if (element instanceof TypeElement) {
+                    processModelClass(roundEnv, (TypeElement) element);
+                }
+            }
+        } catch (Throwable e) {
+            dumpExceptionToErrorFile("camel-apt-error.log", "Error processing EIP model", e);
         }
         return true;
     }

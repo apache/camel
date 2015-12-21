@@ -72,10 +72,14 @@ public class RestSwaggerSupport {
         if (s != null) {
             cors = "true".equalsIgnoreCase(s);
         }
-        s = (String) config.get("schemas");
+        s = (String) config.get("schemes");
+        if (s == null) {
+            // deprecated due typo
+            s = (String) config.get("schemas");
+        }
         if (s != null) {
-            String[] schemas = s.split(",");
-            swaggerConfig.setSchemes(schemas);
+            String[] schemes = s.split(",");
+            swaggerConfig.setSchemes(schemes);
         } else {
             // assume http by default
             swaggerConfig.setSchemes(new String[]{"http"});

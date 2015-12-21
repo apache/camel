@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.spark.api.java.AbstractJavaRDDLike;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaRDDLike;
 
 import static org.apache.camel.component.spark.SparkConstants.SPARK_RDD_CALLBACK_HEADER;
 import static org.apache.camel.component.spark.SparkConstants.SPARK_RDD_HEADER;
@@ -34,7 +34,7 @@ public class RddSparkProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        AbstractJavaRDDLike rdd = resolveRdd(exchange);
+        JavaRDDLike rdd = resolveRdd(exchange);
         RddCallback rddCallback = resolveRddCallback(exchange);
         Object body = exchange.getIn().getBody();
         Object result = body instanceof List ? rddCallback.onRdd(rdd, ((List) body).toArray(new Object[0])) : rddCallback.onRdd(rdd, body);
@@ -62,7 +62,7 @@ public class RddSparkProducer extends DefaultProducer {
         }
     }
 
-    protected AbstractJavaRDDLike resolveRdd(Exchange exchange) {
+    protected JavaRDDLike resolveRdd(Exchange exchange) {
         if (exchange.getIn().getHeader(SPARK_RDD_HEADER) != null) {
             return (JavaRDD) exchange.getIn().getHeader(SPARK_RDD_HEADER);
         } else if (getEndpoint().getRdd() != null) {

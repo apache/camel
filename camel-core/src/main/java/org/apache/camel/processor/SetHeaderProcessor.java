@@ -25,18 +25,21 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the header on the IN or OUT message with an {@link org.apache.camel.Expression}
  */
 public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
     private String id;
-    private final String headerName;
+    private final Expression headerName;
     private final Expression expression;
 
-    public SetHeaderProcessor(String headerName, Expression expression) {
+    public SetHeaderProcessor(Expression headerName, Expression expression) {
         this.headerName = headerName;
         this.expression = expression;
+        ObjectHelper.notNull(headerName, "headerName");
+        ObjectHelper.notNull(expression, "expression");
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -57,7 +60,8 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
             boolean out = exchange.hasOut();
             Message old = out ? exchange.getOut() : exchange.getIn();
 
-            old.setHeader(headerName, newHeader);
+            String key = headerName.evaluate(exchange, String.class);
+            old.setHeader(key, newHeader);
 
         } catch (Throwable e) {
             exchange.setException(e);
@@ -85,7 +89,7 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     public String getHeaderName() {
-        return headerName;
+        return headerName.toString();
     }
 
     public Expression getExpression() {
@@ -94,7 +98,7 @@ public class SetHeaderProcessor extends ServiceSupport implements AsyncProcessor
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        //noop
     }
 
     @Override

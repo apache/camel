@@ -19,7 +19,7 @@ package org.apache.camel.test.blueprint;
 import org.junit.Test;
 
 /**
- *
+ * Same as {@link ConfigAdminNoReloadLoadConfigurationFileTest} except this time Blueprint container will reloaded
  */
 public class ConfigAdminLoadConfigurationFileTest extends CamelBlueprintTestSupport {
 

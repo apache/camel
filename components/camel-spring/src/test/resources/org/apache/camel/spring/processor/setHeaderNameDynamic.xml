@@ -17,33 +17,20 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:cxf="http://camel.apache.org/schema/cxf"
-
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
-
-   <import resource="classpath:META-INF/cxf/cxf.xml"/>
-
-   <cxf:cxfEndpoint id="producerEndpoint" address="http://localhost:9001/SoapContext/SoapPort"
-    		serviceClass="org.apache.hello_world_soap_http.Greeter"
-    		endpointName="s:SoapPort"
-    		serviceName="s:SOAPService"
-    	xmlns:s="http://apache.org/hello_world_soap_http" >
-    	<cxf:serviceFactory>
-    	    <bean class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean">
-    			<property name="wrapped" value="true"/>
-   			</bean>
-    	</cxf:serviceFactory>
-   </cxf:cxfEndpoint>
-    	
-    	
-  
-
-  
-
+  <!-- START SNIPPET: example -->
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <from uri="direct:start"/>
+      <setHeader headerName="$simple{type:org.apache.camel.spring.processor.SpringSetPropertyNameDynamicTest$TestConstans.EXCHANGE_PROP_TX_FAILED}">
+        <simple>${type:java.lang.Boolean.TRUE}</simple>
+      </setHeader>
+      <to uri="mock:end"/>     
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: example -->
 </beans>

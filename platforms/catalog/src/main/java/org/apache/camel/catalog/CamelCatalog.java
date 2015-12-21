@@ -29,6 +29,13 @@ import javax.management.MXBean;
 public interface CamelCatalog {
 
     /**
+     * Enables caching of the resources which makes the catalog faster, but keeps data in memory during caching.
+     * <p/>
+     * The catalog does not cache by default.
+     */
+    void enableCache();
+
+    /**
      * The version of this Camel Catalog
      */
     String getCatalogVersion();
@@ -161,6 +168,14 @@ public interface CamelCatalog {
      * @return properties as key value pairs of each endpoint option
      */
     Map<String, String> endpointProperties(String uri) throws URISyntaxException;
+
+    /**
+     * Parses and validates the endpoint uri and constructs a key/value properties of each option
+     *
+     * @param uri  the endpoint uri
+     * @return validation result
+     */
+    ValidationResult validateProperties(String uri);
 
     /**
      * Returns the component name from the given endpoint uri

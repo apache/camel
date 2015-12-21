@@ -22,17 +22,27 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class CamelCatalogTest {
 
-    private CamelCatalog catalog = new DefaultCamelCatalog();
+    private static final Logger LOG = LoggerFactory.getLogger(CamelCatalogTest.class);
+
+    static CamelCatalog catalog;
+
+    @BeforeClass
+    public static void createCamelCatalog() {
+        catalog = new DefaultCamelCatalog();
+    }
 
     @Test
     public void testGetVersion() throws Exception {
@@ -262,8 +272,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    @Ignore("TODO: fix me later")
-    public void testEndpointPropertiesNetty4http() throws Exception {
+    public void testEndpointPropertiesNetty4Http() throws Exception {
         Map<String, String> map = catalog.endpointProperties("netty4-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
@@ -271,10 +280,65 @@ public class CamelCatalogTest {
         assertEquals("http", map.get("protocol"));
         assertEquals("localhost", map.get("host"));
         assertEquals("8080", map.get("port"));
-        // TODO: fix me later
-        //assertEquals("foo/bar", map.get("path"));
+        assertEquals("foo/bar", map.get("path"));
         assertEquals("true", map.get("disconnect"));
         assertEquals("false", map.get("keepAlive"));
+    }
+
+    @Test
+    public void testEndpointPropertiesNetty4HttpDefaultPort() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("netty4-http:http:localhost/foo/bar?disconnect=true&keepAlive=false");
+        assertNotNull(map);
+        assertEquals(5, map.size());
+
+        assertEquals("http", map.get("protocol"));
+        assertEquals("localhost", map.get("host"));
+        assertEquals("foo/bar", map.get("path"));
+        assertEquals("true", map.get("disconnect"));
+        assertEquals("false", map.get("keepAlive"));
+    }
+
+    @Test
+    public void testEndpointPropertiesNetty4HttpPlaceholder() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("netty4-http:http:{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false");
+        assertNotNull(map);
+        assertEquals(6, map.size());
+
+        assertEquals("http", map.get("protocol"));
+        assertEquals("{{myhost}}", map.get("host"));
+        assertEquals("{{myport}}", map.get("port"));
+        assertEquals("foo/bar", map.get("path"));
+        assertEquals("true", map.get("disconnect"));
+        assertEquals("false", map.get("keepAlive"));
+    }
+
+    @Test
+    public void testEndpointPropertiesNetty4HttpWithDoubleSlash() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("netty4-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false");
+        assertNotNull(map);
+        assertEquals(6, map.size());
+
+        assertEquals("http", map.get("protocol"));
+        assertEquals("localhost", map.get("host"));
+        assertEquals("8080", map.get("port"));
+        assertEquals("foo/bar", map.get("path"));
+        assertEquals("true", map.get("disconnect"));
+        assertEquals("false", map.get("keepAlive"));
+    }
+
+    @Test
+    public void testAsEndpointUriLog() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("loggerName", "foo");
+        map.put("loggerLevel", "WARN");
+        map.put("multiline", "true");
+        map.put("showAll", "true");
+        map.put("showBody", "false");
+        map.put("showBodyType", "false");
+        map.put("showExchangePattern", "false");
+        map.put("style", "Tab");
+
+        assertEquals("log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab", catalog.asEndpointUri("log", map, false));
     }
 
     @Test
@@ -325,6 +389,62 @@ public class CamelCatalogTest {
         assertEquals("file:src/test/data/feed.atom", map.get("feedUri"));
         assertEquals("false", map.get("splitEntries"));
         assertEquals("5000", map.get("delay"));
+    }
+
+    @Test
+    public void validateProperties() throws Exception {
+        // valid
+        ValidationResult result = catalog.validateProperties("log:mylog");
+        assertTrue(result.isSuccess());
+
+        // unknown
+        result = catalog.validateProperties("log:mylog?level=WARN&foo=bar");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("foo"));
+
+        // enum
+        result = catalog.validateProperties("jms:unknown:myqueue");
+        assertFalse(result.isSuccess());
+        assertEquals("unknown", result.getInvalidEnum().get("destinationType"));
+
+        // okay
+        result = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
+        assertTrue(result.isSuccess());
+
+        // required / boolean / integer
+        result = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getRequired().contains("consumerKey"));
+        assertTrue(result.getRequired().contains("consumerSecret"));
+        assertEquals("no", result.getInvalidBoolean().get("useJson"));
+        assertEquals("five", result.getInvalidInteger().get("initialDelay"));
+
+        // okay
+        result = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=2.5");
+        assertTrue(result.isSuccess());
+
+        // number
+        result = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=five");
+        assertFalse(result.isSuccess());
+        assertEquals("five", result.getInvalidNumber().get("reconnectBackOffMultiplier"));
+
+        // unknown component
+        result = catalog.validateProperties("foo:bar?me=you");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknownComponent().equals("foo"));
+    }
+
+    @Test
+    public void validatePropertiesSummary() throws Exception {
+        ValidationResult result = catalog.validateProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
+        assertFalse(result.isSuccess());
+        String reason = result.summaryErrorMessage();
+        LOG.info(reason);
+
+        result = catalog.validateProperties("jms:unknown:myqueue");
+        assertFalse(result.isSuccess());
+        reason = result.summaryErrorMessage();
+        LOG.info(reason);
     }
 
     @Test

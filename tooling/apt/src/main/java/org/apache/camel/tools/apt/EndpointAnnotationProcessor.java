@@ -68,14 +68,18 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     private static final String HEADER_FILTER_STRATEGY_JAVADOC = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
 
     public boolean process(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        if (roundEnv.processingOver()) {
-            return true;
-        }
-        Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(UriEndpoint.class);
-        for (Element element : elements) {
-            if (element instanceof TypeElement) {
-                processEndpointClass(roundEnv, (TypeElement) element);
+        try {
+            if (roundEnv.processingOver()) {
+                return true;
             }
+            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(UriEndpoint.class);
+            for (Element element : elements) {
+                if (element instanceof TypeElement) {
+                    processEndpointClass(roundEnv, (TypeElement) element);
+                }
+            }
+        } catch (Throwable e) {
+            dumpExceptionToErrorFile("camel-apt-error.log", "Error processing @UriEndpoint", e);
         }
         return true;
     }

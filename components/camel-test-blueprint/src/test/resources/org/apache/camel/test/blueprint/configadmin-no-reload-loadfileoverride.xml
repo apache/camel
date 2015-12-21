@@ -26,7 +26,7 @@
   <!-- blueprint property placeholders, that will use etc/stuff.cfg as the properties file -->
   <cm:property-placeholder persistent-id="stuff" update-strategy="none">
     <cm:default-properties>
-      <cm:property name="say" value="Hello" />
+      <cm:property name="greeting" value="Hello" />
       <cm:property name="echo" value="Hey" />
       <cm:property name="destination" value="mock:original" />
     </cm:default-properties>
@@ -34,7 +34,7 @@
 
   <!-- a bean that uses a blueprint property placeholder -->
   <bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
-    <property name="say" value="${say}"/>
+    <property name="say" value="${greeting}"/>
     <property name="echo" value="${echo}"/>
   </bean>
 

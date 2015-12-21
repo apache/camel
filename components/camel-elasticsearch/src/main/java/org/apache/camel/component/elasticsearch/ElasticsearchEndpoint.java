@@ -108,14 +108,10 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private Settings getSettings() {
         return Settings.settingsBuilder()
-                // setting the classloader here will allow the underlying elasticsearch-java
-                // class to find its names.txt in an OSGi environment (otherwise the thread
-                // classloader is used, which won't be able to see the file causing a startup
-                // exception).
                 .put("cluster.name", configuration.getClusterName())
                 .put("client.transport.ignore_cluster_name", false)
                 .put("node.client", true)
-                .put("client.transport.sniff", true)
+                .put("client.transport.sniff", configuration.getClientTransportSniff())
                 .put("http.enabled", false)
                 .build();
     }

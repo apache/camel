@@ -16,28 +16,34 @@
  */
 package org.apache.camel.component.spark;
 
-import org.apache.camel.CamelContext;
-import org.apache.spark.api.java.AbstractJavaRDDLike;
+import static java.lang.String.format;
 
-public abstract class TypedRddCallback<T> implements RddCallback<T> {
+import org.apache.camel.CamelContext;
+import org.apache.spark.api.java.JavaRDDLike;
+
+public abstract class ConvertingRddCallback<T> implements RddCallback<T> {
 
     private final CamelContext camelContext;
 
     private final Class[] payloadsTypes;
 
-    public TypedRddCallback(CamelContext camelContext, Class[] payloadsTypes) {
+    public ConvertingRddCallback(CamelContext camelContext, Class... payloadsTypes) {
         this.camelContext = camelContext;
         this.payloadsTypes = payloadsTypes;
     }
 
     @Override
-    public T onRdd(AbstractJavaRDDLike rdd, Object... payloads) {
+    public T onRdd(JavaRDDLike rdd, Object... payloads) {
+        if (payloads.length != payloadsTypes.length) {
+            String message = format("Received %d payloads, but expected %d.", payloads.length, payloadsTypes.length);
+            throw new IllegalArgumentException(message);
+        }
         for (int i = 0; i < payloads.length; i++) {
             payloads[i] = camelContext.getTypeConverter().convertTo(payloadsTypes[i], payloads[i]);
         }
         return doOnRdd(rdd, payloads);
     }
 
-    public abstract T doOnRdd(AbstractJavaRDDLike rdd, Object... payloads);
+    public abstract T doOnRdd(JavaRDDLike rdd, Object... payloads);
 
 }

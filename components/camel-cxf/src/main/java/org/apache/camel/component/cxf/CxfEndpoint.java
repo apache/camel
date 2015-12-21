@@ -1356,6 +1356,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.serviceFactoryBean = serviceFactoryBean;
     }
 
+    public void setServiceFactory(Object serviceFactoryBean) {
+        // needed a setter with this name as the cxf namespace parser expects this name
+        this.serviceFactoryBean = serviceFactoryBean;
+    }
+
     public CxfEndpointConfigurer getCxfEndpointConfigurer() {
         return cxfEndpointConfigurer;
     }

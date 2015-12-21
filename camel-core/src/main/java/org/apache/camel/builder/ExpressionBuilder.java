@@ -57,6 +57,8 @@ import org.apache.camel.util.GroupIterator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.StringHelper;
+
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
@@ -1874,6 +1876,16 @@ public final class ExpressionBuilder {
                 return "file:modified";
             }
         };
+    }
+
+    /**
+     * Returns Simple expression or fallback to Constant expression if expression str is not Simple expression.
+     */
+    public static Expression parseSimpleOrFallbackToConstantExpression(String str, CamelContext camelContext) {
+        if (StringHelper.hasStartToken(str, "simple")) {
+            return camelContext.resolveLanguage("simple").createExpression(str);
+        }
+        return constantExpression(str);
     }
 
     public static Expression propertiesComponentExpression(final String key, final String locations) {

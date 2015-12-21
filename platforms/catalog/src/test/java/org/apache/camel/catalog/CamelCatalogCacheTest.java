@@ -14,10 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.spark;
+package org.apache.camel.catalog;
 
-public enum  SparkTransformation {
+import org.junit.BeforeClass;
 
-    FILTER, MAP
+public class CamelCatalogCacheTest extends CamelCatalogTest {
+
+    @BeforeClass
+    public static void createCamelCatalog() {
+        catalog = new DefaultCamelCatalog(true);
+    }
 
 }
