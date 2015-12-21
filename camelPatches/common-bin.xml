@@ -1,0 +1,12 @@
+diff --git a/apache-camel/src/main/descriptors/common-bin.xml b/apache-camel/src/main/descriptors/common-bin.xml
+index 3b7aa4b..9f7bba4 100644
+--- a/apache-camel/src/main/descriptors/common-bin.xml
++++ b/apache-camel/src/main/descriptors/common-bin.xml
+@@ -141,6 +141,7 @@
+         <include>org.apache.camel:camel-mail</include>
+         <include>org.apache.camel:camel-mina</include>
+         <include>org.apache.camel:camel-mina2</include>
++        <include>org.apache.camel:camel-mllp</include>
+         <include>org.apache.camel:camel-mongodb</include>
+         <include>org.apache.camel:camel-mqtt</include>
+         <include>org.apache.camel:camel-msv</include>
