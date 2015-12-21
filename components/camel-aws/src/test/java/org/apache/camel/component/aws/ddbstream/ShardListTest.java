@@ -17,15 +17,15 @@
 package org.apache.camel.component.aws.ddbstream;
 
 
-import com.amazonaws.services.dynamodbv2.model.SequenceNumberRange;
 import java.util.ArrayList;
 import java.util.List;
-import com.amazonaws.services.dynamodbv2.model.Shard;
 
+import com.amazonaws.services.dynamodbv2.model.SequenceNumberRange;
+import com.amazonaws.services.dynamodbv2.model.Shard;
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import org.junit.Ignore;
 
 public class ShardListTest {
 
@@ -125,8 +125,8 @@ public class ShardListTest {
         List<Shard> result = new ArrayList<>();
         for (int i = 0; i < shardIdsAndSeqNos.length; i += 3) {
             String id = shardIdsAndSeqNos[i];
-            String seqStart = shardIdsAndSeqNos[i+1];
-            String seqEnd = shardIdsAndSeqNos[i+2];
+            String seqStart = shardIdsAndSeqNos[i + 1];
+            String seqEnd = shardIdsAndSeqNos[i + 2];
             result.add(new Shard()
                     .withShardId(id)
                     .withParentShardId(previous)
