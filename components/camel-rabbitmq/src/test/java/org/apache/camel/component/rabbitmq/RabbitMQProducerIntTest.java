@@ -35,7 +35,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class RabbitMQProducerIntTest extends CamelTestSupport {
     private static final String EXCHANGE = "ex1";
     private static final String ROUTE = "route1";
@@ -49,13 +48,13 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
 
     @Produce(uri = "direct:start-with-confirms")
     protected ProducerTemplate templateWithConfirms;
-    
+
     @Produce(uri = "direct:start-with-confirms-bad-route")
     protected ProducerTemplate templateWithConfirmsAndBadRoute;
 
     private Connection connection;
     private Channel channel;
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         context().setTracing(true);
@@ -96,7 +95,7 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
 
     private void assertThatBodiesReceivedIn(final List<String> received, final String... expected) throws InterruptedException {
         Thread.sleep(500);
-        
+
         assertListSize(received, expected.length);
         for (String body : expected) {
             assertEquals(body, received.get(0));
@@ -117,9 +116,9 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
     public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed() throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
-        
+
         templateWithConfirmsAndBadRoute.sendBody("publisher ack message");
-        
+
         assertThatBodiesReceivedIn(received);
     }
 
@@ -141,13 +140,13 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
             this.received = received;
         }
 
-            @Override
-            public void handleDelivery(String consumerTag,
-                                       Envelope envelope,
-                                       AMQP.BasicProperties properties,
-                                       byte[] body) throws IOException {
+        @Override
+        public void handleDelivery(String consumerTag,
+                                   Envelope envelope,
+                                   AMQP.BasicProperties properties,
+                                   byte[] body) throws IOException {
             received.add(new String(body));
-            }
+        }
     }
 }
 
