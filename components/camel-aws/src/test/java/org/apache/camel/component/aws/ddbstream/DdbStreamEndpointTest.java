@@ -20,29 +20,29 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import org.junit.Test;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DdbStreamEndpointTest {
+    @Rule public ExpectedException expectedException = ExpectedException.none();
 
     private CamelContext context;
 
     @Mock private SequenceNumberProvider sequenceNumberProvider;
     @Mock private AmazonDynamoDBStreams amazonDynamoDBStreams;
-
-    @Rule public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setup() throws Exception {

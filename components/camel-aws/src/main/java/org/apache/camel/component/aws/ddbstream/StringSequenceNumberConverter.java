@@ -19,7 +19,7 @@ package org.apache.camel.component.aws.ddbstream;
 import org.apache.camel.Converter;
 
 @Converter
-public class StringSequenceNumberConverter {
+public final class StringSequenceNumberConverter {
 
     private StringSequenceNumberConverter() {
     }

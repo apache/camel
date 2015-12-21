@@ -16,20 +16,21 @@
  */
 package org.apache.camel.component.aws.ddbstream;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.model.Shard;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class ShardList {
+
     private final Logger log = LoggerFactory.getLogger(ShardList.class);
 
     private final Map<String, Shard> shards = new HashMap<>();
@@ -54,6 +55,8 @@ class ShardList {
     }
 
     Shard first() {
+        // Potential optimisation: if the two provided sequence numbers are the
+        // same then we can skip the shard entirely. Need to confirm this with AWS.
         for (Shard shard : shards.values()) {
             if (!shards.containsKey(shard.getParentShardId())) {
                 return shard;
@@ -99,14 +102,15 @@ class ShardList {
             }
         }
         if (shards.size() > 0) {
-            return sorted.get(sorted.size()-1);
+            return sorted.get(sorted.size() - 1);
         }
         throw new IllegalStateException("Unable to find a shard with appropriate sequence numbers for " + sequenceNumber + " in " + shards);
     }
 
     /**
-     * Removes shards that are older than the provided shard.
-     * Does not remove the provided shard.
+     * Removes shards that are older than the provided shard. Does not remove
+     * the provided shard.
+     *
      * @param removeBefore
      */
     void removeOlderThan(Shard removeBefore) {
