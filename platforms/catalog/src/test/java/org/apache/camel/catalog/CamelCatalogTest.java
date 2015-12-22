@@ -35,9 +35,9 @@ import static org.junit.Assert.assertTrue;
 
 public class CamelCatalogTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelCatalogTest.class);
-
     static CamelCatalog catalog;
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelCatalogTest.class);
 
     @BeforeClass
     public static void createCamelCatalog() {

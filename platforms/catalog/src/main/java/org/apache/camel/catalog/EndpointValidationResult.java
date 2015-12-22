@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,9 +49,13 @@ public class EndpointValidationResult implements Serializable {
     }
 
     public boolean isSuccess() {
-        return syntaxError == null && unknownComponent == null
-                && unknown == null && required == null && invalidEnum == null && invalidEnumChoices == null
-                && invalidReference == null && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
+        boolean ok = syntaxError == null && unknownComponent == null
+                && unknown == null && required == null;
+        if (ok) {
+            ok = invalidEnum == null && invalidEnumChoices == null && invalidReference == null
+                && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
+        }
+        return ok;
     }
 
     public void addSyntaxError(String syntaxError) {
@@ -99,21 +103,21 @@ public class EndpointValidationResult implements Serializable {
 
     public void addInvalidBoolean(String name, String value) {
         if (invalidBoolean == null) {
-            invalidBoolean = new LinkedHashMap<String, String>();;
+            invalidBoolean = new LinkedHashMap<String, String>();
         }
         invalidBoolean.put(name, value);
     }
 
     public void addInvalidInteger(String name, String value) {
         if (invalidInteger == null) {
-            invalidInteger = new LinkedHashMap<String, String>();;
+            invalidInteger = new LinkedHashMap<String, String>();
         }
         invalidInteger.put(name, value);
     }
 
     public void addInvalidNumber(String name, String value) {
         if (invalidNumber == null) {
-            invalidNumber = new LinkedHashMap<String, String>();;
+            invalidNumber = new LinkedHashMap<String, String>();
         }
         invalidNumber.put(name, value);
     }
