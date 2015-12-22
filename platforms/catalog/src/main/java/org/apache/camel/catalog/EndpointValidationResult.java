@@ -48,6 +48,10 @@ public class EndpointValidationResult implements Serializable {
         this.uri = uri;
     }
 
+    public String getUri() {
+        return uri;
+    }
+
     public boolean isSuccess() {
         boolean ok = syntaxError == null && unknownComponent == null
                 && unknown == null && required == null;
