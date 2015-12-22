@@ -38,11 +38,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.catalog.util.CatalogHelper;
 import org.apache.camel.catalog.util.JSonSchemaHelper;
 import org.apache.camel.catalog.util.URISupport;
 import org.apache.camel.catalog.util.VersionHelper;
-import org.w3c.dom.Document;
 
 import static org.apache.camel.catalog.util.CatalogHelper.after;
 import static org.apache.camel.catalog.util.JSonSchemaHelper.getPropertyDefaultValue;
