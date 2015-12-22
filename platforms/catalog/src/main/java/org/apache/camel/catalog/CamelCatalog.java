@@ -175,7 +175,7 @@ public interface CamelCatalog {
      * @param uri  the endpoint uri
      * @return validation result
      */
-    ValidationResult validateProperties(String uri);
+    EndpointValidationResult validateEndpointProperties(String uri);
 
     /**
      * Returns the component name from the given endpoint uri
