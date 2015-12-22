@@ -156,7 +156,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             message.setBody(client.delete(deleteRequest).actionGet());
         } else if (ElasticsearchConstants.OPERATION_EXISTS.equals(operation)) {
             ExistsRequest existsRequest = message.getBody(ExistsRequest.class);
-            message.setBody(client.exists(existsRequest).actionGet());
+            message.setBody(client.admin().indices().prepareExists(existsRequest.indices()).get().isExists());
         } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
             message.setBody(client.search(searchRequest).actionGet());

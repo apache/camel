@@ -139,9 +139,10 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
 
         //now, verify GET
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_EXISTS);
-        ExistsResponse response = template.requestBodyAndHeaders("direct:exists", "", headers, ExistsResponse.class);
-        assertNotNull("response should not be null", response);
-        assertNotNull("response source should not be null", response.exists());
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        Boolean exists = template.requestBodyAndHeaders("direct:exists", "", headers, Boolean.class);
+        assertNotNull("response should not be null", exists);
+        assertTrue("Index should exists", exists);
     }
     
     @Test
