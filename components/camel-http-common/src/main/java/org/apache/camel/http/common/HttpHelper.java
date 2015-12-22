@@ -311,8 +311,12 @@ public final class HttpHelper {
      */
     public static URI createURI(Exchange exchange, String url, HttpCommonEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
-        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        // is a query string provided in the endpoint URI or in a header
+        // (header overrules endpoint, raw query header overrules query header)
+        String queryString = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        if (queryString == null) {
+            queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        }
         if (queryString == null) {
             queryString = endpoint.getHttpUri().getRawQuery();
         }
