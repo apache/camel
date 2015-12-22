@@ -401,20 +401,24 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("log:mylog?level=WARN&foo=bar");
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknown().contains("foo"));
+        assertEquals(1, result.getNumberOfErrors());
 
         // enum
         result = catalog.validateEndpointProperties("jms:unknown:myqueue");
         assertFalse(result.isSuccess());
         assertEquals("unknown", result.getInvalidEnum().get("destinationType"));
+        assertEquals(1, result.getNumberOfErrors());
 
         // reference okay
         result = catalog.validateEndpointProperties("jms:queue:myqueue?jmsKeyFormatStrategy=#key");
         assertTrue(result.isSuccess());
+        assertEquals(0, result.getNumberOfErrors());
 
         // reference
         result = catalog.validateEndpointProperties("jms:queue:myqueue?jmsKeyFormatStrategy=key");
         assertFalse(result.isSuccess());
         assertEquals("key", result.getInvalidReference().get("jmsKeyFormatStrategy"));
+        assertEquals(1, result.getNumberOfErrors());
 
         // okay
         result = catalog.validateEndpointProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
@@ -423,6 +427,7 @@ public class CamelCatalogTest {
         // required / boolean / integer
         result = catalog.validateEndpointProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
         assertFalse(result.isSuccess());
+        assertEquals(4, result.getNumberOfErrors());
         assertTrue(result.getRequired().contains("consumerKey"));
         assertTrue(result.getRequired().contains("consumerSecret"));
         assertEquals("no", result.getInvalidBoolean().get("useJson"));
@@ -431,21 +436,25 @@ public class CamelCatalogTest {
         // okay
         result = catalog.validateEndpointProperties("mqtt:myqtt?reconnectBackOffMultiplier=2.5");
         assertTrue(result.isSuccess());
+        assertEquals(0, result.getNumberOfErrors());
 
         // number
         result = catalog.validateEndpointProperties("mqtt:myqtt?reconnectBackOffMultiplier=five");
         assertFalse(result.isSuccess());
         assertEquals("five", result.getInvalidNumber().get("reconnectBackOffMultiplier"));
+        assertEquals(1, result.getNumberOfErrors());
 
         // unknown component
         result = catalog.validateEndpointProperties("foo:bar?me=you");
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknownComponent().equals("foo"));
+        assertEquals(1, result.getNumberOfErrors());
 
         // invalid boolean but default value
         result = catalog.validateEndpointProperties("log:output?showAll=ggg");
         assertFalse(result.isSuccess());
         assertEquals("ggg", result.getInvalidBoolean().get("showAll"));
+        assertEquals(1, result.getNumberOfErrors());
     }
 
     @Test
