@@ -180,6 +180,23 @@ public final class JSonSchemaHelper {
         return false;
     }
 
+    public static boolean isPropertyObject(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return "object".equals(type);
+            }
+        }
+        return false;
+    }
+
     public static String getPropertyDefaultValue(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             String defaultValue = null;
