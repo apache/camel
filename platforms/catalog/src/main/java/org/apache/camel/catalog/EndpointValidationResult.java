@@ -29,6 +29,7 @@ import java.util.Set;
 public class EndpointValidationResult implements Serializable {
 
     private final String uri;
+    private int errors;
 
     // component
     private String syntaxError;
@@ -52,6 +53,10 @@ public class EndpointValidationResult implements Serializable {
         return uri;
     }
 
+    public int getNumberOfErrors() {
+        return errors;
+    }
+
     public boolean isSuccess() {
         boolean ok = syntaxError == null && unknownComponent == null
                 && unknown == null && required == null;
@@ -64,31 +69,42 @@ public class EndpointValidationResult implements Serializable {
 
     public void addSyntaxError(String syntaxError) {
         this.syntaxError = syntaxError;
+        errors++;
     }
 
     public void addUnknownComponent(String name) {
         this.unknownComponent = name;
+        errors++;
     }
 
     public void addUnknown(String name) {
         if (unknown == null) {
             unknown = new LinkedHashSet<String>();
         }
-        unknown.add(name);
+        if (!unknown.contains(name)) {
+            unknown.add(name);
+            errors++;
+        }
     }
 
     public void addRequired(String name) {
         if (required == null) {
             required = new LinkedHashSet<String>();
         }
-        required.add(name);
+        if (!required.contains(name)) {
+            required.add(name);
+            errors++;
+        }
     }
 
     public void addInvalidEnum(String name, String value) {
         if (invalidEnum == null) {
             invalidEnum = new LinkedHashMap<String, String>();
         }
-        invalidEnum.put(name, value);
+        if (!invalidEnum.containsKey(name)) {
+            invalidEnum.put(name, value);
+            errors++;
+        }
     }
 
     public void addInvalidEnumChoices(String name, String[] choices) {
@@ -102,28 +118,40 @@ public class EndpointValidationResult implements Serializable {
         if (invalidReference == null) {
             invalidReference = new LinkedHashMap<String, String>();
         }
-        invalidReference.put(name, value);
+        if (!invalidReference.containsKey(name)) {
+            invalidReference.put(name, value);
+            errors++;
+        }
     }
 
     public void addInvalidBoolean(String name, String value) {
         if (invalidBoolean == null) {
             invalidBoolean = new LinkedHashMap<String, String>();
         }
-        invalidBoolean.put(name, value);
+        if (!invalidBoolean.containsKey(name)) {
+            invalidBoolean.put(name, value);
+            errors++;
+        }
     }
 
     public void addInvalidInteger(String name, String value) {
         if (invalidInteger == null) {
             invalidInteger = new LinkedHashMap<String, String>();
         }
-        invalidInteger.put(name, value);
+        if (!invalidInteger.containsKey(name)) {
+            invalidInteger.put(name, value);
+            errors++;
+        }
     }
 
     public void addInvalidNumber(String name, String value) {
         if (invalidNumber == null) {
             invalidNumber = new LinkedHashMap<String, String>();
         }
-        invalidNumber.put(name, value);
+        if (!invalidNumber.containsKey(name)) {
+            invalidNumber.put(name, value);
+            errors++;
+        }
     }
 
     public String getSyntaxError() {
