@@ -394,25 +394,25 @@ public class CamelCatalogTest {
     @Test
     public void validateProperties() throws Exception {
         // valid
-        ValidationResult result = catalog.validateProperties("log:mylog");
+        EndpointValidationResult result = catalog.validateEndpointProperties("log:mylog");
         assertTrue(result.isSuccess());
 
         // unknown
-        result = catalog.validateProperties("log:mylog?level=WARN&foo=bar");
+        result = catalog.validateEndpointProperties("log:mylog?level=WARN&foo=bar");
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknown().contains("foo"));
 
         // enum
-        result = catalog.validateProperties("jms:unknown:myqueue");
+        result = catalog.validateEndpointProperties("jms:unknown:myqueue");
         assertFalse(result.isSuccess());
         assertEquals("unknown", result.getInvalidEnum().get("destinationType"));
 
         // okay
-        result = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
+        result = catalog.validateEndpointProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
         assertTrue(result.isSuccess());
 
         // required / boolean / integer
-        result = catalog.validateProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
+        result = catalog.validateEndpointProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
         assertFalse(result.isSuccess());
         assertTrue(result.getRequired().contains("consumerKey"));
         assertTrue(result.getRequired().contains("consumerSecret"));
@@ -420,28 +420,28 @@ public class CamelCatalogTest {
         assertEquals("five", result.getInvalidInteger().get("initialDelay"));
 
         // okay
-        result = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=2.5");
+        result = catalog.validateEndpointProperties("mqtt:myqtt?reconnectBackOffMultiplier=2.5");
         assertTrue(result.isSuccess());
 
         // number
-        result = catalog.validateProperties("mqtt:myqtt?reconnectBackOffMultiplier=five");
+        result = catalog.validateEndpointProperties("mqtt:myqtt?reconnectBackOffMultiplier=five");
         assertFalse(result.isSuccess());
         assertEquals("five", result.getInvalidNumber().get("reconnectBackOffMultiplier"));
 
         // unknown component
-        result = catalog.validateProperties("foo:bar?me=you");
+        result = catalog.validateEndpointProperties("foo:bar?me=you");
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknownComponent().equals("foo"));
     }
 
     @Test
     public void validatePropertiesSummary() throws Exception {
-        ValidationResult result = catalog.validateProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
+        EndpointValidationResult result = catalog.validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
         assertFalse(result.isSuccess());
         String reason = result.summaryErrorMessage();
         LOG.info(reason);
 
-        result = catalog.validateProperties("jms:unknown:myqueue");
+        result = catalog.validateEndpointProperties("jms:unknown:myqueue");
         assertFalse(result.isSuccess());
         reason = result.summaryErrorMessage();
         LOG.info(reason);

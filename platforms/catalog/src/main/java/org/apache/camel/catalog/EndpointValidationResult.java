@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * Details result of validating endpoint uri.
  */
-public class ValidationResult implements Serializable {
+public class EndpointValidationResult implements Serializable {
 
     private final String uri;
 
@@ -43,7 +43,7 @@ public class ValidationResult implements Serializable {
     private Map<String, String> invalidInteger;
     private Map<String, String> invalidNumber;
 
-    public ValidationResult(String uri) {
+    public EndpointValidationResult(String uri) {
         this.uri = uri;
     }
 
