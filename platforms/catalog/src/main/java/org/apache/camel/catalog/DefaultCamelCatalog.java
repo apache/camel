@@ -40,24 +40,19 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 
-import org.apache.camel.catalog.util.CatalogHelper;
-import org.apache.camel.catalog.util.JSonSchemaHelper;
-import org.apache.camel.catalog.util.URISupport;
-import org.apache.camel.catalog.util.VersionHelper;
-
-import static org.apache.camel.catalog.util.CatalogHelper.after;
-import static org.apache.camel.catalog.util.JSonSchemaHelper.getPropertyDefaultValue;
-import static org.apache.camel.catalog.util.JSonSchemaHelper.getPropertyEnum;
-import static org.apache.camel.catalog.util.JSonSchemaHelper.getRow;
-import static org.apache.camel.catalog.util.JSonSchemaHelper.isPropertyBoolean;
-import static org.apache.camel.catalog.util.JSonSchemaHelper.isPropertyInteger;
-import static org.apache.camel.catalog.util.JSonSchemaHelper.isPropertyNumber;
-import static org.apache.camel.catalog.util.JSonSchemaHelper.isPropertyObject;
-import static org.apache.camel.catalog.util.JSonSchemaHelper.isPropertyRequired;
-import static org.apache.camel.catalog.util.URISupport.createQueryString;
-import static org.apache.camel.catalog.util.URISupport.isEmpty;
-import static org.apache.camel.catalog.util.URISupport.normalizeUri;
-import static org.apache.camel.catalog.util.URISupport.stripQuery;
+import static org.apache.camel.catalog.CatalogHelper.after;
+import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
+import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyEnum;
+import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyNumber;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyObject;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
+import static org.apache.camel.catalog.URISupport.createQueryString;
+import static org.apache.camel.catalog.URISupport.isEmpty;
+import static org.apache.camel.catalog.URISupport.normalizeUri;
+import static org.apache.camel.catalog.URISupport.stripQuery;
 
 /**
  * Default {@link CamelCatalog}.
