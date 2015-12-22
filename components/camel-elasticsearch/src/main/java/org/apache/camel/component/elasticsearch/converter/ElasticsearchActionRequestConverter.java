@@ -120,7 +120,7 @@ public final class ElasticsearchActionRequestConverter {
     
     @Converter
     public static ExistsRequest toExistsRequest(String id, Exchange exchange) {
-       return new ExistsRequest(exchange.getIn().getHeader(
+        return new ExistsRequest(exchange.getIn().getHeader(
                 ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
     }
     

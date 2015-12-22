@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import static org.codelibs.elasticsearch.runner.ElasticsearchClusterRunner.newConfigs;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +27,8 @@ import org.elasticsearch.common.settings.Settings.Builder;
 import org.elasticsearch.node.Node;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
+import static org.codelibs.elasticsearch.runner.ElasticsearchClusterRunner.newConfigs;
 
 public class ElasticsearchClusterBaseTest extends CamelTestSupport {
 
