@@ -42,4 +42,4 @@ public class BasicRawQueryValidationHandler extends BasicValidationHandler {
         }
         return true;
     }
-    }
+}
