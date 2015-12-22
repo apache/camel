@@ -441,6 +441,11 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("foo:bar?me=you");
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknownComponent().equals("foo"));
+
+        // invalid boolean but default value
+        result = catalog.validateEndpointProperties("log:output?showAll=ggg");
+        assertFalse(result.isSuccess());
+        assertEquals("ggg", result.getInvalidBoolean().get("showAll"));
     }
 
     @Test
