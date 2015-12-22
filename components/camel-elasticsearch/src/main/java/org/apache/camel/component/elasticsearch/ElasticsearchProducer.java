@@ -25,6 +25,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.exists.ExistsRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -74,6 +75,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
         } else if (request instanceof DeleteRequest) {
             return ElasticsearchConstants.OPERATION_DELETE;
+        } else if (request instanceof ExistsRequest) {
+            return ElasticsearchConstants.OPERATION_EXISTS;
         } else if (request instanceof SearchRequest) {
             return ElasticsearchConstants.OPERATION_SEARCH;
         }
@@ -151,6 +154,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
             message.setBody(client.delete(deleteRequest).actionGet());
+        } else if (ElasticsearchConstants.OPERATION_EXISTS.equals(operation)) {
+            ExistsRequest existsRequest = message.getBody(ExistsRequest.class);
+            message.setBody(client.exists(existsRequest).actionGet());
         } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
             message.setBody(client.search(searchRequest).actionGet());

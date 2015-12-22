@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.exists.ExistsResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.get.MultiGetItemResponse;
@@ -36,7 +37,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-public class ElasticsearchGetSearchDeleteUpdateTest extends ElasticsearchBaseTest {
+public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchBaseTest {
 
     @Test
     public void testGet() throws Exception {
@@ -123,6 +124,24 @@ public class ElasticsearchGetSearchDeleteUpdateTest extends ElasticsearchBaseTes
         GetResponse response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
+    }
+    
+    @Test
+    public void testExistsWithHeaders() throws Exception {
+        //first, INDEX a value
+        Map<String, String> map = createIndexedData();
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
+
+        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+
+        //now, verify GET
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_EXISTS);
+        ExistsResponse response = template.requestBodyAndHeaders("direct:exists", "", headers, ExistsResponse.class);
+        assertNotNull("response should not be null", response);
+        assertNotNull("response source should not be null", response.exists());
     }
     
     @Test
@@ -265,6 +284,7 @@ public class ElasticsearchGetSearchDeleteUpdateTest extends ElasticsearchBaseTes
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
                 from("direct:search").to("elasticsearch://local?operation=SEARCH&indexName=twitter&indexType=tweet");
                 from("direct:update").to("elasticsearch://local?operation=UPDATE&indexName=twitter&indexType=tweet");
+                from("direct:exists").to("elasticsearch://local?operation=EXISTS");
             }
         };
     }

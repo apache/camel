@@ -30,6 +30,7 @@ public interface ElasticsearchConstants {
     String OPERATION_MULTIGET = "MULTIGET";
     String OPERATION_DELETE = "DELETE";
     String OPERATION_SEARCH = "SEARCH";
+    String OPERATION_EXISTS = "EXISTS";
     String PARAM_INDEX_ID = "indexId";
     String PARAM_DATA = "data";
     String PARAM_INDEX_NAME = "indexName";
