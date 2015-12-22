@@ -407,6 +407,15 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertEquals("unknown", result.getInvalidEnum().get("destinationType"));
 
+        // reference okay
+        result = catalog.validateEndpointProperties("jms:queue:myqueue?jmsKeyFormatStrategy=#key");
+        assertTrue(result.isSuccess());
+
+        // reference
+        result = catalog.validateEndpointProperties("jms:queue:myqueue?jmsKeyFormatStrategy=key");
+        assertFalse(result.isSuccess());
+        assertEquals("key", result.getInvalidReference().get("jmsKeyFormatStrategy"));
+
         // okay
         result = catalog.validateEndpointProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
         assertTrue(result.isSuccess());
@@ -436,7 +445,7 @@ public class CamelCatalogTest {
 
     @Test
     public void validatePropertiesSummary() throws Exception {
-        EndpointValidationResult result = catalog.validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
+        EndpointValidationResult result = catalog.validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
         assertFalse(result.isSuccess());
         String reason = result.summaryErrorMessage();
         LOG.info(reason);

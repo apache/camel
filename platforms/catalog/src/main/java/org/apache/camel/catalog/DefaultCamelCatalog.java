@@ -47,6 +47,7 @@ import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyNumber;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyObject;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
 import static org.apache.camel.catalog.URISupport.createQueryString;
 import static org.apache.camel.catalog.URISupport.isEmpty;
@@ -675,12 +676,10 @@ public class DefaultCamelCatalog implements CamelCatalog {
             boolean placeholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
 
             Map<String, String> row = getRow(rows, name);
-            // unknown option
             if (row == null) {
+                // unknown option
                 result.addUnknown(name);
             } else {
-                // invalid value/type
-
                 // is required but the value is empty
                 boolean required = isPropertyRequired(rows, name);
                 if (required && isEmpty(value)) {
@@ -702,6 +701,14 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     if (!found) {
                         result.addInvalidEnum(name, value);
                         result.addInvalidEnumChoices(name, choices);
+                    }
+                }
+
+                // is reference lookup of bean
+                if (isPropertyObject(rows, name)) {
+                    // must start with # and be at least 2 characters
+                    if (!value.startsWith("#") || value.length() <= 1) {
+                        result.addInvalidReference(name, value);
                     }
                 }
 

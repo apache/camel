@@ -39,6 +39,7 @@ public class EndpointValidationResult implements Serializable {
     private Set<String> required;
     private Map<String, String> invalidEnum;
     private Map<String, String[]> invalidEnumChoices;
+    private Map<String, String> invalidReference;
     private Map<String, String> invalidBoolean;
     private Map<String, String> invalidInteger;
     private Map<String, String> invalidNumber;
@@ -50,7 +51,7 @@ public class EndpointValidationResult implements Serializable {
     public boolean isSuccess() {
         return syntaxError == null && unknownComponent == null
                 && unknown == null && required == null && invalidEnum == null && invalidEnumChoices == null
-                && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
+                && invalidReference == null && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
     }
 
     public void addSyntaxError(String syntaxError) {
@@ -87,6 +88,13 @@ public class EndpointValidationResult implements Serializable {
             invalidEnumChoices = new LinkedHashMap<String, String[]>();
         }
         invalidEnumChoices.put(name, choices);
+    }
+
+    public void addInvalidReference(String name, String value) {
+        if (invalidReference == null) {
+            invalidReference = new LinkedHashMap<String, String>();
+        }
+        invalidReference.put(name, value);
     }
 
     public void addInvalidBoolean(String name, String value) {
@@ -128,6 +136,10 @@ public class EndpointValidationResult implements Serializable {
 
     public Map<String, String> getInvalidEnum() {
         return invalidEnum;
+    }
+
+    public Map<String, String> getInvalidReference() {
+        return invalidReference;
     }
 
     public Map<String, String> getInvalidBoolean() {
@@ -175,6 +187,15 @@ public class EndpointValidationResult implements Serializable {
                 String[] choices = invalidEnumChoices.get(entry.getKey());
                 String str = Arrays.asList(choices).toString();
                 options.put(entry.getKey(), "Invalid enum value: " + entry.getValue() + ". Possible values: " + str);
+            }
+        }
+        if (invalidReference != null) {
+            for (Map.Entry<String, String> entry : invalidReference.entrySet()) {
+                if (!entry.getValue().startsWith("#")) {
+                    options.put(entry.getKey(), "Invalid reference value: " + entry.getValue() + " must start with #");
+                } else {
+                    options.put(entry.getKey(), "Invalid reference value: " + entry.getValue() + " must not be empty");
+                }
             }
         }
         if (invalidBoolean != null) {
