@@ -20,7 +20,7 @@ import java.io.StringReader;
 import java.util.Set;
 
 import org.apache.camel.catalog.SuggestionStrategy;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.spell.PlainTextDictionary;
 import org.apache.lucene.search.spell.SpellChecker;
@@ -33,7 +33,7 @@ import org.apache.lucene.store.RAMDirectory;
  */
 public class LuceneSuggestionStrategy implements SuggestionStrategy {
 
-    private int maxSuggestions = 5;
+    private int maxSuggestions = 3;
 
     @Override
     public String[] suggestEndpointOptions(Set<String> names, String unknownOption) {
@@ -51,9 +51,8 @@ public class LuceneSuggestionStrategy implements SuggestionStrategy {
             // use in-memory lucene spell checker to make the suggestions
             RAMDirectory dir = new RAMDirectory();
             SpellChecker checker = new SpellChecker(dir);
-            checker.indexDictionary(words, new IndexWriterConfig(new StandardAnalyzer()), false);
+            checker.indexDictionary(words, new IndexWriterConfig(new KeywordAnalyzer()), false);
 
-            // suggest up to 5 names
             return checker.suggestSimilar(unknownOption, maxSuggestions);
         } catch (Exception e) {
             // ignore
