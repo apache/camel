@@ -229,15 +229,15 @@ public class EndpointValidationResult implements Serializable {
                 if (unknownSuggestions != null && unknownSuggestions.containsKey(name)) {
                     String[] suggestions = unknownSuggestions.get(name);
                     String str = Arrays.asList(suggestions).toString();
-                    options.put(name, "Unknown field. Did you mean: " + str);
+                    options.put(name, "Unknown option. Did you mean: " + str);
                 } else {
-                    options.put(name, "Unknown field.");
+                    options.put(name, "Unknown option.");
                 }
             }
         }
         if (required != null) {
             for (String name : required) {
-                options.put(name, "Missing required field");
+                options.put(name, "Missing required option");
             }
         }
         if (invalidEnum != null) {
