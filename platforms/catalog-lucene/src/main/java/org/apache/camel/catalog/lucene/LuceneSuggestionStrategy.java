@@ -28,11 +28,16 @@ import org.apache.lucene.store.RAMDirectory;
 
 /**
  * Apache Lucene based {@link SuggestionStrategy}.
+ * <p/>
+ * This is a simple implementation using in-memory directory and no state.
  */
 public class LuceneSuggestionStrategy implements SuggestionStrategy {
 
+    private int maxSuggestions = 5;
+
     @Override
-    public String[] suggestEndpointOptions(Set<String> names, String option) {
+    public String[] suggestEndpointOptions(Set<String> names, String unknownOption) {
+        // each option must be on a separate line in a String
         StringBuilder sb = new StringBuilder();
         for (String name : names) {
             sb.append(name);
@@ -43,12 +48,13 @@ public class LuceneSuggestionStrategy implements SuggestionStrategy {
         try {
             PlainTextDictionary words = new PlainTextDictionary(reader);
 
+            // use in-memory lucene spell checker to make the suggestions
             RAMDirectory dir = new RAMDirectory();
             SpellChecker checker = new SpellChecker(dir);
             checker.indexDictionary(words, new IndexWriterConfig(new StandardAnalyzer()), false);
 
             // suggest up to 5 names
-            return checker.suggestSimilar(option, 5);
+            return checker.suggestSimilar(unknownOption, maxSuggestions);
         } catch (Exception e) {
             // ignore
         }
