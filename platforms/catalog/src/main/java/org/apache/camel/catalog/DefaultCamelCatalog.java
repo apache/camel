@@ -41,6 +41,7 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 
 import static org.apache.camel.catalog.CatalogHelper.after;
+import static org.apache.camel.catalog.JSonSchemaHelper.getNames;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyEnum;
 import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
@@ -78,6 +79,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
     private final Map<String, Object> cache = new HashMap<String, Object>();
 
     private boolean caching;
+    private Suggestion suggestion;
 
     /**
      * Creates the {@link CamelCatalog} without caching enabled.
@@ -97,6 +99,17 @@ public class DefaultCamelCatalog implements CamelCatalog {
     @Override
     public void enableCache() {
         caching = true;
+    }
+
+    @Override
+    public void enableLuceneSuggestion() {
+        // must be optional so create the class using forName
+        try {
+            Class clazz = Class.forName("org.apache.camel.catalog.lucene.LuceneSuggestion");
+            suggestion = (Suggestion) clazz.newInstance();
+        } catch (Throwable e) {
+            // ignore
+        }
     }
 
     @Override
@@ -679,6 +692,12 @@ public class DefaultCamelCatalog implements CamelCatalog {
             if (row == null) {
                 // unknown option
                 result.addUnknown(name);
+                if (suggestion != null) {
+                    String[] suggestions = suggestion.suggestEndpointOptions(getNames(rows), name);
+                    if (suggestions != null) {
+                        result.addUnknownSuggestions(name, suggestions);
+                    }
+                }
             } else {
                 // is required but the value is empty
                 boolean required = isPropertyRequired(rows, name);

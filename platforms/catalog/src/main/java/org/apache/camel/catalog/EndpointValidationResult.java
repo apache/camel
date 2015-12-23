@@ -37,6 +37,7 @@ public class EndpointValidationResult implements Serializable {
 
     // options
     private Set<String> unknown;
+    private Map<String, String[]> unknownSuggestions;
     private Set<String> required;
     private Map<String, String> invalidEnum;
     private Map<String, String[]> invalidEnumChoices;
@@ -85,6 +86,13 @@ public class EndpointValidationResult implements Serializable {
             unknown.add(name);
             errors++;
         }
+    }
+
+    public void addUnknownSuggestions(String name, String[] suggestions) {
+        if (unknownSuggestions == null) {
+            unknownSuggestions = new LinkedHashMap<String, String[]>();
+        }
+        unknownSuggestions.put(name, suggestions);
     }
 
     public void addRequired(String name) {
@@ -162,6 +170,10 @@ public class EndpointValidationResult implements Serializable {
         return unknown;
     }
 
+    public Map<String, String[]> getUnknownSuggestions() {
+        return unknownSuggestions;
+    }
+
     public String getUnknownComponent() {
         return unknownComponent;
     }
@@ -172,6 +184,10 @@ public class EndpointValidationResult implements Serializable {
 
     public Map<String, String> getInvalidEnum() {
         return invalidEnum;
+    }
+
+    public Map<String, String[]> getInvalidEnumChoices() {
+        return invalidEnumChoices;
     }
 
     public Map<String, String> getInvalidReference() {
@@ -210,7 +226,13 @@ public class EndpointValidationResult implements Serializable {
         Map<String, String> options = new LinkedHashMap<String, String>();
         if (unknown != null) {
             for (String name : unknown) {
-                options.put(name, "Unknown field");
+                if (unknownSuggestions != null && unknownSuggestions.containsKey(unknown)) {
+                    String[] suggestions = unknownSuggestions.get(unknown);
+                    String str = Arrays.asList(suggestions).toString();
+                    options.put(name, "Unknown field. Did you mean: " + str);
+                } else {
+                    options.put(name, "Unknown field.");
+                }
             }
         }
         if (required != null) {
