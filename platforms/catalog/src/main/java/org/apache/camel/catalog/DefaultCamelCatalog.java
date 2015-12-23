@@ -79,7 +79,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
     private final Map<String, Object> cache = new HashMap<String, Object>();
 
     private boolean caching;
-    private Suggestion suggestion;
+    private SuggestionStrategy suggestionStrategy;
 
     /**
      * Creates the {@link CamelCatalog} without caching enabled.
@@ -102,14 +102,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
-    public void enableLuceneSuggestion() {
-        // must be optional so create the class using forName
-        try {
-            Class clazz = Class.forName("org.apache.camel.catalog.lucene.LuceneSuggestion");
-            suggestion = (Suggestion) clazz.newInstance();
-        } catch (Throwable e) {
-            // ignore
-        }
+    public void setSuggestion(SuggestionStrategy suggestionStrategy) {
+        this.suggestionStrategy = suggestionStrategy;
     }
 
     @Override
@@ -692,8 +686,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
             if (row == null) {
                 // unknown option
                 result.addUnknown(name);
-                if (suggestion != null) {
-                    String[] suggestions = suggestion.suggestEndpointOptions(getNames(rows), name);
+                if (suggestionStrategy != null) {
+                    String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
                     if (suggestions != null) {
                         result.addUnknownSuggestions(name, suggestions);
                     }

@@ -19,7 +19,7 @@ package org.apache.camel.catalog.lucene;
 import java.io.StringReader;
 import java.util.Set;
 
-import org.apache.camel.catalog.Suggestion;
+import org.apache.camel.catalog.SuggestionStrategy;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.spell.PlainTextDictionary;
@@ -27,9 +27,9 @@ import org.apache.lucene.search.spell.SpellChecker;
 import org.apache.lucene.store.RAMDirectory;
 
 /**
- * Apache Lucene based {@link Suggestion}.
+ * Apache Lucene based {@link SuggestionStrategy}.
  */
-public class LuceneSuggestion implements Suggestion {
+public class LuceneSuggestionStrategy implements SuggestionStrategy {
 
     @Override
     public String[] suggestEndpointOptions(Set<String> names, String option) {

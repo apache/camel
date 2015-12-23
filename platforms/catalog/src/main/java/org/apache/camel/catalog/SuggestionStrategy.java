@@ -19,9 +19,9 @@ package org.apache.camel.catalog;
 import java.util.Set;
 
 /**
- * To provide suggestions for unknown endpoint options
+ * Strategy to provide suggestions for unknown endpoint options
  */
-public interface Suggestion {
+public interface SuggestionStrategy {
 
     /**
      * Provides a list of valid option names for a did you mean function.

@@ -33,7 +33,7 @@ public class CamelCatalogLuceneTest {
     @Before
     public void createCamelCatalog() {
         catalog = new DefaultCamelCatalog();
-        catalog.enableLuceneSuggestion();
+        catalog.setSuggestion(new LuceneSuggestionStrategy());
     }
 
     @Test
