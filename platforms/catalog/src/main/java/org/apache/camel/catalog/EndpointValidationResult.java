@@ -226,8 +226,8 @@ public class EndpointValidationResult implements Serializable {
         Map<String, String> options = new LinkedHashMap<String, String>();
         if (unknown != null) {
             for (String name : unknown) {
-                if (unknownSuggestions != null && unknownSuggestions.containsKey(unknown)) {
-                    String[] suggestions = unknownSuggestions.get(unknown);
+                if (unknownSuggestions != null && unknownSuggestions.containsKey(name)) {
+                    String[] suggestions = unknownSuggestions.get(name);
                     String str = Arrays.asList(suggestions).toString();
                     options.put(name, "Unknown field. Did you mean: " + str);
                 } else {
