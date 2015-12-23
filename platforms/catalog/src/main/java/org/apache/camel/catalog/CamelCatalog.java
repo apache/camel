@@ -36,10 +36,9 @@ public interface CamelCatalog {
     void enableCache();
 
     /**
-     * Enables did you mean functionality using Apache Lucene to provide a list of suggested option names
-     * when {@link #validateEndpointProperties(String)} fails due unknown or mistyped option names.
+     * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options
      */
-    void enableLuceneSuggestion();
+    void setSuggestion(SuggestionStrategy suggestionStrategy);
 
     /**
      * The version of this Camel Catalog

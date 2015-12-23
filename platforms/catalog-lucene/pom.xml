@@ -24,20 +24,34 @@
     <version>2.17-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-catalog</artifactId>
+  <artifactId>camel-catalog-lucene</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Platforms :: Catalog</name>
-  <description>Camel Catalog</description>
+  <name>Camel :: Platforms :: Catalog :: Lucene</name>
+  <description>Camel Catalog Lucene</description>
 
   <properties>
     <camel.osgi.export.pkg>
-      org.apache.camel.catalog*
+      org.apache.camel.catalog.lucene
     </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
 
-    <!-- no dependency -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>${lucene-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-suggest</artifactId>
+      <version>${lucene-version}</version>
+    </dependency>
 
     <!-- testing -->
     <dependency>
@@ -62,21 +76,6 @@
 
   <build>
     <plugins>
-
-      <!-- generate and include all components in the catalog -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>prepare-catalog</goal>
-            </goals>
-            <phase>process-resources</phase>
-          </execution>
-        </executions>
-      </plugin>
 
       <plugin>
         <groupId>org.apache.felix</groupId>
