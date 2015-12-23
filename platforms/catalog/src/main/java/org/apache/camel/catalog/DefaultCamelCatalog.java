@@ -102,7 +102,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
-    public void setSuggestion(SuggestionStrategy suggestionStrategy) {
+    public void setSuggestionStrategy(SuggestionStrategy suggestionStrategy) {
         this.suggestionStrategy = suggestionStrategy;
     }
 

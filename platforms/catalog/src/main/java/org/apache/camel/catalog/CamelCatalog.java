@@ -38,7 +38,7 @@ public interface CamelCatalog {
     /**
      * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options
      */
-    void setSuggestion(SuggestionStrategy suggestionStrategy);
+    void setSuggestionStrategy(SuggestionStrategy suggestionStrategy);
 
     /**
      * The version of this Camel Catalog
