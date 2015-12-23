@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.ignite.messaging;
 
+/**
+ * Enum for Ignite Messaging send modes.
+ */
 public enum IgniteMessagingSendMode {
 
     ORDERED, UNORDERED

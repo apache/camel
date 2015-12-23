@@ -31,7 +31,11 @@ import org.apache.camel.spi.UriParam;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteMessaging;
 
-@UriEndpoint(scheme = "ignite:messaging", title = "Ignite Messaging", syntax = "ignite:messaging:[topic]", label = "nosql,cache,messaging")
+/**
+ * Ignite Messaging endpoint.
+ */
+@UriEndpoint(scheme = "ignite:messaging", title = "Ignite Messaging", syntax = "ignite:messaging:[topic]", label = "nosql,cache,messaging", 
+    consumerClass = IgniteMessagingConsumer.class)
 public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     @UriParam

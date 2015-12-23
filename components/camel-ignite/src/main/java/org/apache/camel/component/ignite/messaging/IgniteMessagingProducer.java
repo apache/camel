@@ -28,6 +28,9 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteMessaging;
 
+/**
+ * Ignite Messaging producer.
+ */
 public class IgniteMessagingProducer extends DefaultAsyncProducer {
 
     private IgniteMessagingEndpoint endpoint;

@@ -33,7 +33,7 @@ import org.apache.ignite.IgniteCompute;
 /**
  * Ignite Compute endpoint.
  */
-@UriEndpoint(scheme = "ignite:compute", title = "Ignite Compute", syntax = "ignite:compute:endpointId", label = "nosql,cache,compute", producerOnly = true)
+@UriEndpoint(scheme = "ignite:compute", title = "Ignite Compute", syntax = "ignite:compute:[endpointId]", label = "nosql,cache,compute", producerOnly = true)
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
     @UriParam

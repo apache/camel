@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ignite.events;
 
+import java.util.Arrays;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -48,6 +50,9 @@ public class IgniteEventsConsumer extends DefaultConsumer {
             Message in = exchange.getIn();
             in.setBody(event);
             try {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing Ignite Event: {}.", event);
+                }
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
@@ -80,6 +85,8 @@ public class IgniteEventsConsumer extends DefaultConsumer {
         }
 
         events.localListen(predicate, eventTypes);
+        
+        LOG.info("Started local Ignite Events consumer for events: {}.", Arrays.asList(eventTypes));
     }
 
     @Override
@@ -87,6 +94,8 @@ public class IgniteEventsConsumer extends DefaultConsumer {
         super.doStop();
 
         events.stopLocalListen(predicate, eventTypes);
+        
+        LOG.info("Stopped local Ignite Events consumer for events: {}.", Arrays.asList(eventTypes));
     }
 
 }

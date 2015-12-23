@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Ignite Events endpoint. Only supports consumers.
  */
-@UriEndpoint(scheme = "ignite:events", title = "Ignite Events", syntax = "ignite:events:endpointId", label = "nosql,cache,compute,messaging,data", 
+@UriEndpoint(scheme = "ignite:events", title = "Ignite Events", syntax = "ignite:events:[endpointId]", label = "nosql,cache,compute,messaging,data", 
     consumerOnly = true, consumerClass = IgniteEventsConsumer.class)
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 

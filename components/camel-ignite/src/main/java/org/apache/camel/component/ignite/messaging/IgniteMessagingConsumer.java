@@ -29,6 +29,9 @@ import org.apache.ignite.lang.IgniteBiPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Ignite Messaging consumer.
+ */
 public class IgniteMessagingConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteMessagingConsumer.class);
@@ -47,6 +50,9 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
             in.setHeader(IgniteConstants.IGNITE_MESSAGING_TOPIC, endpoint.getTopic());
             in.setHeader(IgniteConstants.IGNITE_MESSAGING_UUID, uuid);
             try {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing Ignite message for subscription {} with payload {}.", uuid, payload);
+                }
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 LOG.error(String.format("Exception while processing Ignite Message from topic %s", endpoint.getTopic()), e);
@@ -66,6 +72,8 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
         super.doStart();
 
         messaging.localListen(endpoint.getTopic(), predicate);
+        
+        LOG.info("Started Ignite Messaging consumer for topic {}.", endpoint.getTopic());
     }
 
     @Override
@@ -73,6 +81,8 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
         super.doStop();
 
         messaging.stopLocalListen(endpoint.getTopic(), predicate);
+        
+        LOG.info("Stopped Ignite Messaging consumer for topic {}.", endpoint.getTopic());
     }
 
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ignite.cache;
 
+import java.util.Arrays;
+
 import javax.cache.Cache.Entry;
 import javax.cache.event.CacheEntryEvent;
 import javax.cache.event.CacheEntryListenerException;
@@ -59,6 +61,8 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
         launchContinuousQuery();
 
+        LOG.info("Started Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(), endpoint.getQuery());
+
         maybeFireExistingQueryResults();
     }
 
@@ -96,6 +100,10 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
         continuousQuery.setLocalListener(new CacheEntryUpdatedListener<Object, Object>() {
             @Override
             public void onUpdated(Iterable<CacheEntryEvent<? extends Object, ? extends Object>> events) throws CacheEntryListenerException {
+                if (LOG.isTraceEnabled()) {
+                    LOG.info("Processing Continuous Query event(s): {}.", events);
+                }
+
                 if (!endpoint.isOneExchangePerUpdate()) {
                     fireGroupedExchange(events);
                     return;
@@ -119,6 +127,8 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
         super.doStop();
 
         cursor.close();
+        
+        LOG.info("Stopped Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(), endpoint.getQuery());
     }
 
     private void fireSingleExchange(CacheEntryEvent<? extends Object, ? extends Object> entry) {
