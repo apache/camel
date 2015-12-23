@@ -39,6 +39,20 @@
 
     <!-- no dependency -->
 
+    <!-- lucene optional dependency for did you mean -->
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>${lucene-version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-suggest</artifactId>
+      <version>${lucene-version}</version>
+      <optional>true</optional>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
