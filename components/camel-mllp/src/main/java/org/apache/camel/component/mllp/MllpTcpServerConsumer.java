@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,17 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mllp;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.component.mllp.impl.*;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
-import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerator;
-import org.apache.camel.util.IOHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,19 +27,30 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.component.mllp.impl.MllpUtil;
+import org.apache.camel.converter.IOConverter;
+import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
+import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerator;
+import org.apache.camel.util.IOHelper;
+
 import static org.apache.camel.component.mllp.MllpConstants.*;
-import static org.apache.camel.component.mllp.MllpEndpoint.*;
+import static org.apache.camel.component.mllp.MllpEndpoint.SEGMENT_DELIMITER;
+import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 
 /**
  * The MLLP consumer.
- *
  */
 public class MllpTcpServerConsumer extends DefaultConsumer {
-    private final MllpEndpoint endpoint;
-
     ServerSocketThread serverSocketThread;
 
     List<ClientSocketThread> clientThreads = new LinkedList<>();
+
+    private final MllpEndpoint endpoint;
 
     public MllpTcpServerConsumer(MllpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -89,16 +89,17 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         log.debug("doStop()");
 
         switch (serverSocketThread.getState()) {
-            case NEW:
-            case RUNNABLE:
-            case BLOCKED:
-            case WAITING:
-            case TIMED_WAITING:
-                serverSocketThread.interrupt();
-                break;
-            case TERMINATED:
-                // This is what we hope for
-                break;
+        case TERMINATED:
+            // This is what we hope for
+            break;
+        case NEW:
+        case RUNNABLE:
+        case BLOCKED:
+        case WAITING:
+        case TIMED_WAITING:
+        default:
+            serverSocketThread.interrupt();
+            break;
         }
 
         serverSocketThread = null;
@@ -232,9 +233,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     // No new clients
                     log.trace("SocketTimeoutException waiting for new connections - no new connections");
 
-                    for (int i=clientThreads.size()-1; i>=0; --i) {
+                    for (int i = clientThreads.size() - 1; i >= 0; --i) {
                         ClientSocketThread thread = clientThreads.get(i);
-                        if ( ! thread.isAlive() ) {
+                        if (!thread.isAlive()) {
                             clientThreads.remove(i);
                         }
                     }
@@ -257,7 +258,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         Socket clientSocket;
         Hl7AcknowledgementGenerator acknowledgementGenerator = new Hl7AcknowledgementGenerator();
 
-        Integer initialByte = null;
+        Integer initialByte;
 
         ClientSocketThread(Socket clientSocket, Integer initialByte) throws IOException {
             this.initialByte = initialByte;
@@ -306,8 +307,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            // create the exchange
-            Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
 
             while (null != clientSocket && clientSocket.isConnected() && !clientSocket.isClosed()) {
                 byte[] hl7MessageBytes = null;
@@ -326,66 +325,26 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         hl7MessageBytes = MllpUtil.closeFrame(clientSocket);
                     }
                 } catch (MllpException mllpEx) {
+                    Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
                     exchange.setException(mllpEx);
                     return;
                 } finally {
                     initialByte = null;
                 }
 
-                if ( null == hl7MessageBytes ) {
+                if (null == hl7MessageBytes) {
                     continue;
                 }
 
                 log.debug("Populating the exchange with received message");
+                Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
                 Message message = exchange.getIn();
                 message.setBody(hl7MessageBytes, byte[].class);
 
                 message.setHeader(MLLP_LOCAL_ADDRESS, clientSocket.getLocalAddress().toString());
                 message.setHeader(MLLP_REMOTE_ADDRESS, clientSocket.getRemoteSocketAddress());
 
-                // Find the end of the MSH and indexes of the fields in the MSH to populate message headers
-                final byte fieldSeparator = hl7MessageBytes[3];
-                final byte componentSeparator = hl7MessageBytes[4];
-                int endOfMSH = -1;
-                List<Integer> fieldSeparatorIndexes = new ArrayList<>(10);  // We need at least 10 fields to create the acknowledgment
-
-                for (int i = 0; i < hl7MessageBytes.length; ++i) {
-                    if ( fieldSeparator == hl7MessageBytes[i] ) {
-                        fieldSeparatorIndexes.add(i);
-                    } else if (SEGMENT_DELIMITER == hl7MessageBytes[i]) {
-                        endOfMSH = i;
-                        break;
-                    }
-                }
-
-                if ( -1 == endOfMSH ) {
-                    // TODO:  May want to throw some sort of an Exception here
-                    log.error( "Population of message headers failed - unable to find the end of the MSH segment");
-                } else {
-                    log.debug("Populating the message headers");
-                    Charset charset = Charset.forName( IOHelper.getCharsetName(exchange) );
-
-
-                    message.setHeader( MLLP_SENDING_APPLICATION, new String(hl7MessageBytes, fieldSeparatorIndexes.get(1)+1, fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1) - 1, charset)); // MSH-3
-                    message.setHeader( MLLP_SENDING_FACILITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(2)+1, fieldSeparatorIndexes.get(3) - fieldSeparatorIndexes.get(2) - 1, charset)); // MSH-4
-                    message.setHeader( MLLP_RECEIVING_APPLICATION, new String(hl7MessageBytes, fieldSeparatorIndexes.get(3)+1, fieldSeparatorIndexes.get(4) - fieldSeparatorIndexes.get(3) - 1, charset)); // MSH-5
-                    message.setHeader( MLLP_RECEIVING_FACILITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(4)+1, fieldSeparatorIndexes.get(5) - fieldSeparatorIndexes.get(4) - 1, charset)); // MSH-6
-                    message.setHeader( MLLP_TIMESTAMP, new String(hl7MessageBytes, fieldSeparatorIndexes.get(5)+1, fieldSeparatorIndexes.get(6) - fieldSeparatorIndexes.get(5) - 1, charset)); // MSH-7
-                    message.setHeader( MLLP_SECURITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(6)+1, fieldSeparatorIndexes.get(7) - fieldSeparatorIndexes.get(6) - 1, charset)); // MSH-8
-                    message.setHeader( MLLP_MESSAGE_TYPE, new String(hl7MessageBytes, fieldSeparatorIndexes.get(7)+1, fieldSeparatorIndexes.get(8) - fieldSeparatorIndexes.get(7) - 1, charset)); // MSH-9
-                    message.setHeader( MLLP_MESSAGE_CONTROL, new String(hl7MessageBytes, fieldSeparatorIndexes.get(8)+1, fieldSeparatorIndexes.get(9) - fieldSeparatorIndexes.get(8) - 1, charset)); // MSH-10
-                    message.setHeader( MLLP_PROCESSING_ID, new String(hl7MessageBytes, fieldSeparatorIndexes.get(9)+1, fieldSeparatorIndexes.get(10) - fieldSeparatorIndexes.get(9) - 1, charset)); // MSH-11
-                    message.setHeader( MLLP_VERSION_ID, new String(hl7MessageBytes, fieldSeparatorIndexes.get(10)+1, fieldSeparatorIndexes.get(11) - fieldSeparatorIndexes.get(10) - 1, charset)); // MSH-12
-                    message.setHeader( MLLP_CHARSET, new String(hl7MessageBytes, fieldSeparatorIndexes.get(16)+1, fieldSeparatorIndexes.get(17) - fieldSeparatorIndexes.get(16) - 1, charset)); // MSH-18
-
-                    for (int i= fieldSeparatorIndexes.get(7) + 1; i < fieldSeparatorIndexes.get(8); ++i ) {
-                        if ( componentSeparator == hl7MessageBytes[i] ) {
-                            message.setHeader( MLLP_EVENT_TYPE, new String(hl7MessageBytes, fieldSeparatorIndexes.get(7)+1, i - fieldSeparatorIndexes.get(7) - 1, charset)); // MSH-9.1
-                            message.setHeader( MLLP_TRIGGER_EVENT, new String(hl7MessageBytes, i+1, fieldSeparatorIndexes.get(8) - i - 1, charset)); // MSH-9.2
-                            break;
-                        }
-                    }
-                }
+                populateHl7DataHeaders(exchange, message, hl7MessageBytes);
 
 
                 log.debug("Calling processor");
@@ -394,10 +353,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     // processed the message - send the acknowledgement
 
                     // Check BEFORE_SEND Properties
-                    if ( exchange.getProperty(MLLP_RESET_CONNECTION_BEFORE_SEND, boolean.class) ) {
+                    if (exchange.getProperty(MLLP_RESET_CONNECTION_BEFORE_SEND, boolean.class)) {
                         MllpUtil.resetConnection(clientSocket);
                         return;
-                    } else if ( exchange.getProperty(MLLP_CLOSE_CONNECTION_BEFORE_SEND, boolean.class) ) {
+                    } else if (exchange.getProperty(MLLP_CLOSE_CONNECTION_BEFORE_SEND, boolean.class)) {
                         MllpUtil.closeConnection(clientSocket);
                     }
 
@@ -423,37 +382,39 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                                 }
                             } else {
                                 switch (acknowledgmentTypeProperty) {
-                                    case "AA":
-                                        acknowledgementMessageType = "AA";
-                                        acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationAcceptAcknowledgementMessage(hl7MessageBytes);
-                                        break;
-                                    case "AE":
-                                        acknowledgementMessageType = "AE";
-                                        acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationErrorAcknowledgementMessage(hl7MessageBytes);
-                                        break;
-                                    case "AR":
-                                        acknowledgementMessageType = "AR";
-                                        acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationRejectAcknowledgementMessage(hl7MessageBytes);
-                                        break;
-                                    default:
-                                        exchange.setException(new Hl7AcknowledgementGenerationException("Unsupported acknowledgment type: " + acknowledgmentTypeProperty));
-                                        return;
+                                case "AA":
+                                    acknowledgementMessageType = "AA";
+                                    acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationAcceptAcknowledgementMessage(hl7MessageBytes);
+                                    break;
+                                case "AE":
+                                    acknowledgementMessageType = "AE";
+                                    acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationErrorAcknowledgementMessage(hl7MessageBytes);
+                                    break;
+                                case "AR":
+                                    acknowledgementMessageType = "AR";
+                                    acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationRejectAcknowledgementMessage(hl7MessageBytes);
+                                    break;
+                                default:
+                                    exchange.setException(new Hl7AcknowledgementGenerationException("Unsupported acknowledgment type: " + acknowledgmentTypeProperty));
+                                    return;
                                 }
                             }
                         } catch (Hl7AcknowledgementGenerationException ackGenerationException) {
                             exchange.setException(ackGenerationException);
                         }
                     } else {
-                        final byte M = 77;
-                        final byte S = 83;
-                        final byte A = 65;
-                        final byte E = 69;
-                        final byte R = 82;
+                        final byte bM = 77;
+                        final byte bS = 83;
+                        final byte bA = 65;
+                        final byte bE = 69;
+                        final byte bR = 82;
+
+                        final byte fieldSeparator = hl7MessageBytes[3];
                         // Acknowledgment is specified in exchange property - determine the acknowledgement type
                         for (int i = 0; i < hl7MessageBytes.length; ++i) {
                             if (SEGMENT_DELIMITER == i) {
                                 if (i + 7 < hl7MessageBytes.length // Make sure we don't run off the end of the message
-                                        && M == hl7MessageBytes[i + 1] && S == hl7MessageBytes[i + 2] && A == hl7MessageBytes[i + 3] && fieldSeparator == hl7MessageBytes[i + 4]) {
+                                        && bM == hl7MessageBytes[i + 1] && bS == hl7MessageBytes[i + 2] && bA == hl7MessageBytes[i + 3] && fieldSeparator == hl7MessageBytes[i + 4]) {
                                     if (fieldSeparator != hl7MessageBytes[i + 7]) {
                                         log.warn("MSA-1 is longer than 2-bytes - ignoring trailing bytes");
                                     }
@@ -464,14 +425,14 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                                     acknowledgementMessageType = IOConverter.toString(acknowledgmentTypeBytes, exchange);
 
                                     // Verify it's a valid acknowledgement code
-                                    if (A != acknowledgmentTypeBytes[0]) {
+                                    if (bA != acknowledgmentTypeBytes[0]) {
                                         switch (acknowledgementMessageBytes[1]) {
-                                            case A:
-                                            case R:
-                                            case E:
-                                                break;
-                                            default:
-                                                log.warn("Invalid acknowledgement type [" + acknowledgementMessageType + "] found in message - should be AA, AE or AR");
+                                        case bA:
+                                        case bR:
+                                        case bE:
+                                            break;
+                                        default:
+                                            log.warn("Invalid acknowledgement type [" + acknowledgementMessageType + "] found in message - should be AA, AE or AR");
                                         }
                                     }
 
@@ -493,10 +454,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     exchange.getIn().setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, acknowledgementMessageType);
 
                     // Check AFTER_SEND Properties
-                    if ( exchange.getProperty(MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class) ) {
+                    if (exchange.getProperty(MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class)) {
                         MllpUtil.resetConnection(clientSocket);
                         return;
-                    } else if ( exchange.getProperty(MLLP_CLOSE_CONNECTION_AFTER_SEND, boolean.class) ) {
+                    } else if (exchange.getProperty(MLLP_CLOSE_CONNECTION_AFTER_SEND, boolean.class)) {
                         MllpUtil.closeConnection(clientSocket);
                     }
 
@@ -508,6 +469,79 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             log.info("ClientSocketThread exiting");
 
+        }
+
+        private void populateHl7DataHeaders(Exchange exchange, Message message, byte[] hl7MessageBytes) {
+            // Find the end of the MSH and indexes of the fields in the MSH to populate message headers
+            final byte fieldSeparator = hl7MessageBytes[3];
+            final byte componentSeparator = hl7MessageBytes[4];
+            int endOfMSH = -1;
+            List<Integer> fieldSeparatorIndexes = new ArrayList<>(10);  // We need at least 10 fields to create the acknowledgment
+
+            for (int i = 0; i < hl7MessageBytes.length; ++i) {
+                if (fieldSeparator == hl7MessageBytes[i]) {
+                    fieldSeparatorIndexes.add(i);
+                } else if (SEGMENT_DELIMITER == hl7MessageBytes[i]) {
+                    endOfMSH = i;
+                    break;
+                }
+            }
+
+            if (-1 == endOfMSH) {
+                // TODO:  May want to throw some sort of an Exception here
+                log.error("Population of message headers failed - unable to find the end of the MSH segment");
+            } else {
+                log.debug("Populating the message headers");
+                Charset charset = Charset.forName(IOHelper.getCharsetName(exchange));
+
+                // MSH-3
+                message.setHeader(MLLP_SENDING_APPLICATION, new String(hl7MessageBytes, fieldSeparatorIndexes.get(1) + 1,
+                        fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1) - 1, charset));
+                // MSH-4
+                message.setHeader(MLLP_SENDING_FACILITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(2) + 1,
+                        fieldSeparatorIndexes.get(3) - fieldSeparatorIndexes.get(2) - 1, charset));
+                // MSH-5
+                message.setHeader(MLLP_RECEIVING_APPLICATION, new String(hl7MessageBytes, fieldSeparatorIndexes.get(3) + 1,
+                        fieldSeparatorIndexes.get(4) - fieldSeparatorIndexes.get(3) - 1,
+                        charset));
+                // MSH-6
+                message.setHeader(MLLP_RECEIVING_FACILITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(4) + 1,
+                        fieldSeparatorIndexes.get(5) - fieldSeparatorIndexes.get(4) - 1,
+                        charset));
+                // MSH-7
+                message.setHeader(MLLP_TIMESTAMP, new String(hl7MessageBytes, fieldSeparatorIndexes.get(5) + 1,
+                        fieldSeparatorIndexes.get(6) - fieldSeparatorIndexes.get(5) - 1, charset));
+                // MSH-8
+                message.setHeader(MLLP_SECURITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(6) + 1,
+                        fieldSeparatorIndexes.get(7) - fieldSeparatorIndexes.get(6) - 1, charset));
+                // MSH-9
+                message.setHeader(MLLP_MESSAGE_TYPE, new String(hl7MessageBytes, fieldSeparatorIndexes.get(7) + 1,
+                        fieldSeparatorIndexes.get(8) - fieldSeparatorIndexes.get(7) - 1, charset));
+                // MSH-10
+                message.setHeader(MLLP_MESSAGE_CONTROL, new String(hl7MessageBytes, fieldSeparatorIndexes.get(8) + 1,
+                        fieldSeparatorIndexes.get(9) - fieldSeparatorIndexes.get(8) - 1, charset));
+                // MSH-11
+                message.setHeader(MLLP_PROCESSING_ID, new String(hl7MessageBytes, fieldSeparatorIndexes.get(9) + 1,
+                        fieldSeparatorIndexes.get(10) - fieldSeparatorIndexes.get(9) - 1, charset));
+                // MSH-12
+                message.setHeader(MLLP_VERSION_ID, new String(hl7MessageBytes, fieldSeparatorIndexes.get(10) + 1,
+                        fieldSeparatorIndexes.get(11) - fieldSeparatorIndexes.get(10) - 1, charset));
+                // MSH-18
+                message.setHeader(MLLP_CHARSET, new String(hl7MessageBytes, fieldSeparatorIndexes.get(16) + 1,
+                        fieldSeparatorIndexes.get(17) - fieldSeparatorIndexes.get(16) - 1, charset));
+
+                for (int i = fieldSeparatorIndexes.get(7) + 1; i < fieldSeparatorIndexes.get(8); ++i) {
+                    if (componentSeparator == hl7MessageBytes[i]) {
+                        // MSH-9.1
+                        message.setHeader(MLLP_EVENT_TYPE, new String(hl7MessageBytes, fieldSeparatorIndexes.get(7) + 1,
+                                i - fieldSeparatorIndexes.get(7) - 1, charset));
+                        // MSH-9.2
+                        message.setHeader(MLLP_TRIGGER_EVENT, new String(hl7MessageBytes, i + 1,
+                                fieldSeparatorIndexes.get(8) - i - 1, charset));
+                        break;
+                    }
+                }
+            }
         }
 
 

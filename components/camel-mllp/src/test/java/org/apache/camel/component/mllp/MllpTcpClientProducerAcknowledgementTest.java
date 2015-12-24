@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mllp;
+
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
@@ -29,16 +31,14 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
+import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 
 public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource(AvailablePortFinder.getNextAvailable());
 
-    @EndpointInject( uri="direct://source" )
+    @EndpointInject(uri = "direct://source")
     ProducerTemplate source;
 
     @EndpointInject(uri = "mock://complete")
@@ -74,25 +74,23 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
                 onException(MllpApplicationRejectAcknowledgementException.class)
                         .handled(true)
                         .to(reject)
-                        .log(LoggingLevel.ERROR, routeId, "AR Acknowledgemnet")
-                ;
+                        .log(LoggingLevel.ERROR, routeId, "AR Acknowledgemnet");
+
                 onException(MllpApplicationErrorAcknowledgementException.class)
                         .handled(true)
                         .to(error)
-                        .log(LoggingLevel.ERROR, routeId, "AE Acknowledgement")
-                ;
+                        .log(LoggingLevel.ERROR, routeId, "AE Acknowledgement");
+
                 onCompletion()
                         .onCompleteOnly()
                         .to(complete)
-                        .log(LoggingLevel.DEBUG, routeId, "AA Acknowledgement")
-                ;
+                        .log(LoggingLevel.DEBUG, routeId, "AA Acknowledgement");
 
                 from(source.getDefaultEndpoint()).routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Sending Message")
                         .toF("mllp://%s:%d", host, port)
                         .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
-                        .to( accept )
-                ;
+                        .to(accept);
             }
         };
     }
@@ -116,7 +114,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
         reject.setExpectedMessageCount(1);
         error.setExpectedMessageCount(0);
 
-        mllpServer.setSendApplicationRejectAcknowledgementModulus( 1 );
+        mllpServer.setSendApplicationRejectAcknowledgementModulus(1);
 
         source.sendBody(generateMessage());
 
@@ -130,7 +128,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
         reject.setExpectedMessageCount(0);
         error.setExpectedMessageCount(1);
 
-        mllpServer.setSendApplicationErrorAcknowledgementModulus( 1 );
+        mllpServer.setSendApplicationErrorAcknowledgementModulus(1);
 
         source.sendBody(generateMessage());
 

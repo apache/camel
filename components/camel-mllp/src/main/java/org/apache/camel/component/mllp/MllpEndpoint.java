@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,16 +16,17 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.apache.camel.*;
+import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.tools.apt.helper.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.charset.Charset;
 
 /**
  * Represents a MLLP endpoint.
@@ -53,7 +54,8 @@ public class MllpEndpoint extends DefaultEndpoint {
     int port = -1;
 
     // TODO:  Move URI Params to a MllpConfiguration class
-    @UriParam(defaultValue = "5", description = "TCP Server only - The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused.")
+    @UriParam(defaultValue = "5", description = "TCP Server only - The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a "
+            + "connection indication arrives when the queue is full, the connection is refused.")
     int backlog = 5;
 
     @UriParam(defaultValue = "30000", description = "TCP Server only - timeout value while waiting for a TCP listener to start (milliseconds)")
@@ -75,16 +77,16 @@ public class MllpEndpoint extends DefaultEndpoint {
     boolean tcpNoDelay = true;
 
     @UriParam(defaultValue = "false", description = "Enable/disable the SO_REUSEADDR socket option.")
-    boolean reuseAddress = false;
+    boolean reuseAddress;
 
     @UriParam(description = "Sets the SO_RCVBUF option to the specified value")
-    Integer receiveBufferSize = null;
+    Integer receiveBufferSize;
 
     @UriParam(description = "Sets the SO_SNDBUF option to the specified value")
-    Integer sendBufferSize = null;
+    Integer sendBufferSize;
 
     @UriParam(defaultValue = "0", description = "The amount of time a TCP connection can remain idle before it is closed")
-    int idleTimeout = 0;
+    int idleTimeout;
 
     @UriParam(description = "The TCP mode of the endpoint (client or server).  Defaults to client for Producers and server for Consumers")
     String tcpMode;
@@ -132,7 +134,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Exchange createExchange( ExchangePattern exchangePattern ) {
+    public Exchange createExchange(ExchangePattern exchangePattern) {
         Exchange mllpExchange = super.createExchange(exchangePattern);
         setExchangeProperties(mllpExchange);
 
@@ -147,8 +149,8 @@ public class MllpEndpoint extends DefaultEndpoint {
         return mllpExchange;
     }
 
-    private void setExchangeProperties( Exchange mllpExchange ) {
-        if ( null != charsetName ) {
+    private void setExchangeProperties(Exchange mllpExchange) {
+        if (null != charsetName) {
             mllpExchange.setProperty(Exchange.CHARSET_NAME, charsetName);
         }
     }
@@ -191,14 +193,16 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused.
+     * The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection
+     * is refused.
      */
     public int getBacklog() {
         return backlog;
     }
 
     /**
-     * The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused.
+     * The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection
+     * is refused.
      */
     public void setBacklog(int backlog) {
         this.backlog = backlog;

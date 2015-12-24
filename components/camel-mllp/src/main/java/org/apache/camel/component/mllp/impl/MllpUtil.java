@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,15 +16,27 @@
  */
 package org.apache.camel.component.mllp.impl;
 
-import org.apache.camel.component.mllp.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-import static org.apache.camel.component.mllp.MllpEndpoint.*;
+import org.apache.camel.component.mllp.MllpComponent;
+import org.apache.camel.component.mllp.MllpCorruptFrameException;
+import org.apache.camel.component.mllp.MllpException;
+import org.apache.camel.component.mllp.MllpTimeoutException;
+import org.apache.camel.component.mllp.MllpWriteException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_BLOCK;
+import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_DATA;
+import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_STREAM;
+import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
+
 
 /**
  * Supplies methods to read and write messages in a MLLP Frame.
@@ -38,8 +50,11 @@ import static org.apache.camel.component.mllp.MllpEndpoint.*;
  * property.  The property is evaluated using Boolean.parseBoolean.
  * <p/>
  */
-public class MllpUtil {
+public final class MllpUtil {
     static Logger log = LoggerFactory.getLogger(MllpUtil.class);
+
+    private MllpUtil() {
+    }
 
     /**
      * Open the MLLP frame by reading from the Socket until the begging of the frame is found.
@@ -48,24 +63,26 @@ public class MllpUtil {
      * Exception will be thrown.
      *
      * @param socket the Socket to read
-     * @throws SocketTimeoutException thrown if a timeout occurs while looking for the beginning of the MLLP frame, but
-     *                                nothing is yet available - this is NOT an error condition
-     * @throws MllpCorruptFrameException     if the MLLP Frame is corrupted in some way
-     * @throws MllpException          for other unexpected error conditions
+     * @throws SocketTimeoutException    thrown if a timeout occurs while looking for the beginning of the MLLP frame, but
+     *                                   nothing is yet available - this is NOT an error condition
+     * @throws MllpCorruptFrameException if the MLLP Frame is corrupted in some way
+     * @throws MllpException             for other unexpected error conditions
      */
-    static public void openFrame(Socket socket) throws SocketTimeoutException, MllpCorruptFrameException, MllpException {
+    public static void openFrame(Socket socket) throws SocketTimeoutException, MllpCorruptFrameException, MllpException {
         if (socket.isConnected() && !socket.isClosed()) {
             InputStream socketInputStream = MllpUtil.getInputStream(socket);
 
             int readByte;
             try {
                 readByte = socketInputStream.read();
-                switch( readByte ) {
-                    case START_OF_BLOCK:
-                        return;
-                    case END_OF_STREAM:
-                        resetConnection(socket);
-                        return;
+                switch (readByte) {
+                case START_OF_BLOCK:
+                    return;
+                case END_OF_STREAM:
+                    resetConnection(socket);
+                    return;
+                default:
+                    // Continue on and process the out-of-frame data
                 }
             } catch (SocketTimeoutException normaTimeoutEx) {
                 // Just pass this on - the caller will wrap it in a MllpTimeoutException
@@ -87,32 +104,35 @@ public class MllpUtil {
                 while (true) {
                     readByte = socketInputStream.read();
                     switch (readByte) {
-                        case END_OF_STREAM:
-                            if (isLogPHIEnabled(log)) {
-                                log.error("END_OF_STREAM read while looking for the beginning of the MLLP frame, and out-of-frame data had been read - resetting connection and eating out-of-frame data: {}", outOfFrameData.toString().replace('\r', '\n'));
-                            } else {
-                                log.error("END_OF_STREAM read while looking for the beginning of the MLLP frame, and out-of-frame data had been read - resetting connection and eating out-of-frame data");
-                            }
-                            resetConnection(socket);
+                    case END_OF_STREAM:
+                        if (isLogPHIEnabled(log)) {
+                            log.error("END_OF_STREAM read while looking for the beginning of the MLLP frame, and "
+                                            + "out-of-frame data had been read - resetting connection and eating out-of-frame data: {}",
+                                    outOfFrameData.toString().replace('\r', '\n'));
+                        } else {
+                            log.error("END_OF_STREAM read while looking for the beginning of the MLLP frame, and out-of-frame data had been read - resetting connection and eating out-of-frame data");
+                        }
+                        resetConnection(socket);
 
-                            throw new MllpCorruptFrameException("END_OF_STREAM read while looking for the beginning of the MLLP frame", outOfFrameData.toByteArray());
-                        case START_OF_BLOCK:
-                            if (isLogPHIEnabled(log)) {
-                                log.warn("The beginning of the MLLP frame was preceded by out-of-frame data - eating data: {}", outOfFrameData.toString().replace('\r', '\n'));
-                            } else {
-                                log.warn("The beginning of the MLLP frame was preceded by out-of-frame data - eating data");
-                            }
+                        throw new MllpCorruptFrameException("END_OF_STREAM read while looking for the beginning of the MLLP frame", outOfFrameData.toByteArray());
+                    case START_OF_BLOCK:
+                        if (isLogPHIEnabled(log)) {
+                            log.warn("The beginning of the MLLP frame was preceded by out-of-frame data - eating data: {}", outOfFrameData.toString().replace('\r', '\n'));
+                        } else {
+                            log.warn("The beginning of the MLLP frame was preceded by out-of-frame data - eating data");
+                        }
 
-                            throw new MllpCorruptFrameException("The beginning of the MLLP frame was preceded by out-of-frame data", outOfFrameData.toByteArray());
-                        default:
-                            // still reading out-of-frame data
-                            outOfFrameData.write(readByte);
-                            break;
+                        throw new MllpCorruptFrameException("The beginning of the MLLP frame was preceded by out-of-frame data", outOfFrameData.toByteArray());
+                    default:
+                        // still reading out-of-frame data
+                        outOfFrameData.write(readByte);
+                        break;
                     }
                 }
             } catch (SocketTimeoutException timeoutEx) {
                 if (isLogPHIEnabled(log)) {
-                    log.error("Timeout looking for the beginning of the MLLP frame, and out-of-frame data had been read - resetting connection and eating out-of-frame data: {}", outOfFrameData.toString().replace('\r', '\n'));
+                    log.error("Timeout looking for the beginning of the MLLP frame, and out-of-frame data had been read - resetting connection and eating out-of-frame data: {}",
+                            outOfFrameData.toString().replace('\r', '\n'));
                 } else {
                     log.error("Timeout looking for the beginning of the MLLP frame, and out-of-frame data had been read - resetting connection and eating out-of-frame data");
                 }
@@ -122,7 +142,8 @@ public class MllpUtil {
                 throw new MllpCorruptFrameException("Timeout looking for the beginning of the MLLP frame, and out-of-frame data had been read", outOfFrameData.toByteArray());
             } catch (IOException e) {
                 if (isLogPHIEnabled(log)) {
-                    log.error("Exception encountered looking for the beginning of the MLLP frame, and out-of-frame data had been read - resetting connection and eating out-of-frame data: {}", outOfFrameData.toString().replace('\r', '\n'));
+                    log.error("Exception encountered looking for the beginning of the MLLP frame, and out-of-frame data had been read - resetting connection and eating out-of-frame data: {}",
+                            outOfFrameData.toString().replace('\r', '\n'));
                 } else {
                     log.error("Exception encountered looking for the beginning of the MLLP frame, and out-of-frame data had been read - resetting connection and eating out-of-frame data");
                 }
@@ -147,11 +168,11 @@ public class MllpUtil {
      *
      * @param socket the Socket to be read
      * @return the payload of the MLLP-Enveloped message as a byte[]
-     * @throws MllpTimeoutException thrown if a timeout occurs while closing the MLLP frame
-     * @throws MllpCorruptFrameException   if the MLLP Frame is corrupted in some way
-     * @throws MllpException        for other unexpected error conditions
+     * @throws MllpTimeoutException      thrown if a timeout occurs while closing the MLLP frame
+     * @throws MllpCorruptFrameException if the MLLP Frame is corrupted in some way
+     * @throws MllpException             for other unexpected error conditions
      */
-    static public byte[] closeFrame(Socket socket) throws MllpTimeoutException, MllpCorruptFrameException, MllpException {
+    public static byte[] closeFrame(Socket socket) throws MllpTimeoutException, MllpCorruptFrameException, MllpException {
         if (socket.isConnected() && !socket.isClosed()) {
             InputStream socketInputStream = MllpUtil.getInputStream(socket);
             // TODO:  Come up with an intelligent way to size this stream
@@ -160,42 +181,44 @@ public class MllpUtil {
                 while (true) {
                     int readByte = socketInputStream.read();
                     switch (readByte) {
-                        case END_OF_STREAM:
+                    case END_OF_STREAM:
+                        if (isLogPHIEnabled(log)) {
+                            log.error("END_OF_STREAM read while looking for the end of the MLLP frame - resetting connection and eating data: {}", payload.toString().replace('\r', '\n'));
+                        } else {
+                            log.error("END_OF_STREAM read while looking for the end of the MLLP frame - resetting connection and eating data");
+                        }
+
+                        resetConnection(socket);
+
+                        throw new MllpCorruptFrameException("END_OF_STREAM read while looking for the end of the MLLP frame", payload.size() > 0 ? payload.toByteArray() : null);
+                    case START_OF_BLOCK:
+                        if (isLogPHIEnabled(log)) {
+                            log.error("A new MLLP frame was opened before the previous frame was closed - resetting connection and eating data: {}", payload.toString().replace('\r', '\n'));
+                        } else {
+                            log.error("A new MLLP frame was opened before the previous frame was closed - resetting connection and eating data");
+                        }
+
+                        resetConnection(socket);
+
+                        throw new MllpCorruptFrameException("A new MLLP frame was opened before the previous frame was closed", payload.size() > 0 ? payload.toByteArray() : null);
+                    case END_OF_BLOCK:
+                        if (END_OF_DATA != socketInputStream.read()) {
                             if (isLogPHIEnabled(log)) {
-                                log.error("END_OF_STREAM read while looking for the end of the MLLP frame - resetting connection and eating data: {}", payload.toString().replace('\r', '\n'));
+                                log.error("The MLLP frame was partially closed - END_OF_BLOCK was not followed by END_OF_DATA - resetting connection and eating data: {}",
+                                        payload.toString().replace('\r', '\n'));
                             } else {
-                                log.error("END_OF_STREAM read while looking for the end of the MLLP frame - resetting connection and eating data");
+                                log.error("The MLLP frame was partially closed - END_OF_BLOCK was not followed by END_OF_DATA - resetting connection and eating data");
                             }
 
                             resetConnection(socket);
 
-                            throw new MllpCorruptFrameException("END_OF_STREAM read while looking for the end of the MLLP frame", payload.size() > 0 ? payload.toByteArray() : null);
-                        case START_OF_BLOCK:
-                            if (isLogPHIEnabled(log)) {
-                                log.error("A new MLLP frame was opened before the previous frame was closed - resetting connection and eating data: {}", payload.toString().replace('\r', '\n'));
-                            } else {
-                                log.error("A new MLLP frame was opened before the previous frame was closed - resetting connection and eating data");
-                            }
-
-                            resetConnection(socket);
-
-                            throw new MllpCorruptFrameException("A new MLLP frame was opened before the previous frame was closed", payload.size() > 0 ? payload.toByteArray() : null);
-                        case END_OF_BLOCK:
-                            if (END_OF_DATA != socketInputStream.read()) {
-                                if (isLogPHIEnabled(log)) {
-                                    log.error("The MLLP frame was partially closed - END_OF_BLOCK was not followed by END_OF_DATA - resetting connection and eating data: {}", payload.toString().replace('\r', '\n'));
-                                } else {
-                                    log.error("The MLLP frame was partially closed - END_OF_BLOCK was not followed by END_OF_DATA - resetting connection and eating data");
-                                }
-
-                                resetConnection(socket);
-
-                                throw new MllpCorruptFrameException("The MLLP frame was partially closed - END_OF_BLOCK was not followed by END_OF_DATA", payload.size() > 0 ? payload.toByteArray() : null);
-                            }
-                            return payload.toByteArray();
-                        default:
-                            // log.trace( "Read Character: {}", (char)readByte );
-                            payload.write(readByte);
+                            throw new MllpCorruptFrameException("The MLLP frame was partially closed - END_OF_BLOCK was not followed by END_OF_DATA",
+                                    payload.size() > 0 ? payload.toByteArray() : null);
+                        }
+                        return payload.toByteArray();
+                    default:
+                        // log.trace( "Read Character: {}", (char)readByte );
+                        payload.write(readByte);
                     }
                 }
             } catch (SocketTimeoutException timeoutEx) {
@@ -241,7 +264,7 @@ public class MllpUtil {
      * @throws MllpWriteException if the write fails
      * @throws MllpException      for other unexpected error conditions
      */
-    static public void writeFramedPayload(Socket socket, byte[] payload) throws MllpException {
+    public static void writeFramedPayload(Socket socket, byte[] payload) throws MllpException {
         if (socket.isConnected() && !socket.isClosed()) {
             OutputStream outputStream = null;
             try {
@@ -272,7 +295,7 @@ public class MllpUtil {
         }
     }
 
-    static public void closeConnection(Socket socket ) {
+    public static void closeConnection(Socket socket) {
         if (null != socket) {
             if (!socket.isClosed()) {
                 try {
@@ -296,8 +319,8 @@ public class MllpUtil {
         }
     }
 
-    static public void resetConnection(Socket socket ) {
-        if ( null != socket ) {
+    public static void resetConnection(Socket socket) {
+        if (null != socket) {
             try {
                 socket.setSoLinger(true, 0);
             } catch (Exception ex) {
@@ -323,7 +346,7 @@ public class MllpUtil {
      * @return the InputStream for the Socket
      * @throws MllpException when unexpected conditions occur
      */
-    static private InputStream getInputStream(Socket socket) throws MllpException {
+    private static InputStream getInputStream(Socket socket) throws MllpException {
         InputStream socketInputStream = null;
         try {
             socketInputStream = socket.getInputStream();
@@ -334,11 +357,10 @@ public class MllpUtil {
         return socketInputStream;
     }
 
-
-    static private boolean isLogPHIEnabled(Logger targetLogger) {
+    private static boolean isLogPHIEnabled(Logger targetLogger) {
         String logPHIProperty = System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
         if (targetLogger.isDebugEnabled()) {
-            if ( Boolean.parseBoolean( System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true")) ){
+            if (Boolean.parseBoolean(System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true"))) {
                 return true;
             }
         }

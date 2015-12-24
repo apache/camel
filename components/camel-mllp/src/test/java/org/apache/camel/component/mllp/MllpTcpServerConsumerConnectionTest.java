@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,19 +16,18 @@
  */
 package org.apache.camel.component.mllp;
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.util.concurrent.TimeUnit;
 
 public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     int mllpPort;
@@ -48,8 +47,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             public void configure() {
                 fromF("mllp:%d?autoAck=false", port)
                         .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
-                        .to(result)
-                ;
+                        .to(result);
             }
         };
 
@@ -76,7 +74,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         int connectionCount = 10;
 
         Socket dummyLoadBalancerSocket = null;
-        SocketAddress address = new InetSocketAddress( "localhost", mllpPort);
+        SocketAddress address = new InetSocketAddress("localhost", mllpPort);
         int connectTimeout = 5000;
         try {
             for (int i = 1; i <= connectionCount; ++i) {
@@ -88,7 +86,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
                 Thread.sleep(1000);
             }
         } finally {
-            if ( null != dummyLoadBalancerSocket ) {
+            if (null != dummyLoadBalancerSocket) {
                 try {
                     dummyLoadBalancerSocket.close();
                 } catch (Exception ex) {

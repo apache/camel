@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,54 +16,45 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.NotifyBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultComponentResolver;
-import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
-import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
-import org.apache.camel.util.KeyValueHolder;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-
 import java.util.Dictionary;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultComponentResolver;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
+import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
+import org.apache.camel.util.KeyValueHolder;
+import org.junit.Rule;
+import org.junit.Test;
+
+import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSupport {
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource();
 
     final String sourceUri = "direct://source";
-    @EndpointInject( uri=sourceUri )
-    ProducerTemplate source;
-
     final String mockAcknowledgedUri = "mock://acknowledged";
-    @EndpointInject(uri = mockAcknowledgedUri )
-    MockEndpoint acknowledged;
-
     final String mockTimeoutUri = "mock://timeout-ex";
+    final String mockAeExUri = "mock://ae-ack";
+    final String mockArExUri = "mock://ar-ack";
+    final String mockFrameExUri = "mock://frame-ex";
+
+    @EndpointInject(uri = sourceUri)
+    ProducerTemplate source;
+    @EndpointInject(uri = mockAcknowledgedUri)
+    MockEndpoint acknowledged;
     @EndpointInject(uri = mockTimeoutUri)
     MockEndpoint timeout;
-
-    final String mockAeExUri = "mock://ae-ack";
     @EndpointInject(uri = mockAeExUri)
     MockEndpoint ae;
-
-    final String mockArExUri = "mock://ar-ack";
     @EndpointInject(uri = mockArExUri)
     MockEndpoint ar;
-
-    final String mockFrameExUri = "mock://frame-ex";
     @EndpointInject(uri = mockFrameExUri)
     MockEndpoint frame;
 
@@ -76,14 +67,14 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
     protected Properties useOverridePropertiesWithPropertiesComponent() {
         Properties props = new Properties();
 
-        props.setProperty("sourceUri",  sourceUri);
+        props.setProperty("sourceUri", sourceUri);
         props.setProperty("acknowledgedUri", mockAcknowledgedUri);
         props.setProperty("timeoutUri", mockTimeoutUri);
         props.setProperty("frameErrorUri", mockFrameExUri);
         props.setProperty("errorAcknowledgementUri", mockAeExUri);
         props.setProperty("rejectAcknowledgementUri", mockArExUri);
 
-        props.setProperty( "mllp.port", Integer.toString( mllpServer.getListenPort() ) );
+        props.setProperty("mllp.port", Integer.toString(mllpServer.getListenPort()));
 
         return props;
     }

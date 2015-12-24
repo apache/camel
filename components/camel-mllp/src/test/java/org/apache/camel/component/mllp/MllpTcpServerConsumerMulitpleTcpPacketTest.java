@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,26 +16,24 @@
  */
 package org.apache.camel.component.mllp;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.mllp.PassthroughProcessor;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.apache.camel.test.Hl7MessageGenerator.generateMessage;
+import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport {
     @Rule
@@ -70,17 +68,15 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
             public void configure() throws Exception {
 
                 onCompletion()
-                        .log(LoggingLevel.DEBUG, routeId, "Test route complete")
-                ;
+                        .log(LoggingLevel.DEBUG, routeId, "Test route complete");
 
                 fromF("mllp://%s:%d",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort())
                         .routeId(routeId)
-                        .process( new PassthroughProcessor("Before send to result"))
+                        .process(new PassthroughProcessor("Before send to result"))
                         .to(result)
-                        .toF( "log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval, groupActiveOnly)
-                        .log(LoggingLevel.DEBUG, routeId, "Test route received message")
-                ;
+                        .toF("log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval, groupActiveOnly)
+                        .log(LoggingLevel.DEBUG, routeId, "Test route received message");
 
             }
         };
@@ -111,8 +107,7 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
 
         for (int i = 1; i <= sendMessageCount; ++i) {
             String testMessage = generateMessage(i);
-            // TODO: Uncomment once MockEndpoint issue is resolved
-            // result.message(i-1).body().isEqualTo( testMessage );
+            result.message(i - 1).body().isEqualTo(testMessage);
             mllpClient.sendFramedDataInMultiplePackets(testMessage, (byte) '\r');
             String acknowledgement = mllpClient.receiveFramedData();
             Assert.assertThat("Should be acknowledgment for message " + i, acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
