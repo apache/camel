@@ -16,17 +16,20 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.LongString;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +156,7 @@ public class RabbitMQMessageConverter {
         }
 
         final Map<String, Object> headers = msg.getHeaders();
-        Map<String, Object> filteredHeaders = new HashMap<String, Object>();
+        Map<String, Object> filteredHeaders = new HashMap<>();
 
         // TODO: Add support for a HeaderFilterStrategy. See: org.apache.camel.component.jms.JmsBinding#shouldOutputHeader
         for (Map.Entry<String, Object> header : headers.entrySet()) {
@@ -166,9 +169,7 @@ public class RabbitMQMessageConverter {
                     LOG.debug("Ignoring header: {} with null value", header.getKey());
                 } else {
                     LOG.debug("Ignoring header: {} of class: {} with value: {}",
-                                    new Object[] {
-                                                    header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue()
-                                    });
+                              header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue());
                 }
             }
         }
@@ -191,8 +192,6 @@ public class RabbitMQMessageConverter {
     private Object getValidRabbitMQHeaderValue(Object headerValue) {
         if (headerValue instanceof String) {
             return headerValue;
-        } else if (headerValue instanceof BigDecimal) {
-            return headerValue;
         } else if (headerValue instanceof Number) {
             return headerValue;
         } else if (headerValue instanceof Boolean) {
@@ -203,18 +202,96 @@ public class RabbitMQMessageConverter {
             return headerValue;
         } else if (headerValue instanceof LongString) {
             return headerValue;
-        } else if (headerValue instanceof Timestamp) {
-            return headerValue;
-        } else if (headerValue instanceof Byte) {
-            return headerValue;
-        } else if (headerValue instanceof Double) {
-            return headerValue;
-        } else if (headerValue instanceof Float) {
-            return headerValue;
-        } else if (headerValue instanceof Long) {
-            return headerValue;
         }
 
         return null;
+    }
+
+    public void populateRabbitExchange(Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body, final boolean out) {
+        Message message = resolveMessageFrom(camelExchange, out);
+        populateMessageHeaders(message, envelope, properties);
+        populateMessageBody(message, camelExchange, properties, body);
+    }
+
+    private Message resolveMessageFrom(final Exchange camelExchange, final boolean out) {
+        Message message;
+        if (out) {
+            // use OUT message
+            message = camelExchange.getOut();
+        }  else {
+            if (camelExchange.getIn() != null) {
+                // Use the existing message so we keep the headers
+                message = camelExchange.getIn();
+            } else {
+                message = new DefaultMessage();
+                camelExchange.setIn(message);
+            }
+        }
+        return message;
+    }
+
+    private void populateMessageHeaders(final Message message, final Envelope envelope, final AMQP.BasicProperties properties) {
+        populateRoutingInfoHeaders(message, envelope);
+        populateMessageHeadersFromRabbitMQHeaders(message, properties);
+    }
+
+    private void populateRoutingInfoHeaders(final Message message, final Envelope envelope) {
+        if (envelope != null) {
+            message.setHeader(RabbitMQConstants.ROUTING_KEY, envelope.getRoutingKey());
+            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, envelope.getExchange());
+            message.setHeader(RabbitMQConstants.DELIVERY_TAG, envelope.getDeliveryTag());
+        }
+    }
+
+    private void populateMessageHeadersFromRabbitMQHeaders(final Message message, final AMQP.BasicProperties properties) {
+        Map<String, Object> headers = properties.getHeaders();
+        if (headers != null) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                // Convert LongStrings to String.
+                if (entry.getValue() instanceof LongString) {
+                    message.setHeader(entry.getKey(), entry.getValue().toString());
+                } else {
+                    message.setHeader(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+    }
+
+    private void populateMessageBody(final Message message, final Exchange camelExchange, final AMQP.BasicProperties properties, final byte[] body) {
+        if (hasSerializeHeader(properties)) {
+            deserializeBody(camelExchange, message, body);
+        } else {
+            // Set the body as a byte[] and let the type converter deal with it
+            message.setBody(body);
+        }
+    }
+
+    private void deserializeBody(final Exchange camelExchange, final Message message, final byte[] body) {
+        Object messageBody = null;
+        try (InputStream b = new ByteArrayInputStream(body);
+             ObjectInputStream o = new ObjectInputStream(b)) {
+            messageBody = o.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            LOG.warn("Could not deserialize the object");
+            camelExchange.setException(e);
+        }
+        if (messageBody instanceof Throwable) {
+            LOG.debug("Reply was an Exception. Setting the Exception on the Exchange");
+            camelExchange.setException((Throwable) messageBody);
+        } else {
+            message.setBody(messageBody);
+        }
+    }
+
+    private boolean hasSerializeHeader(AMQP.BasicProperties properties) {
+        return hasHeaders(properties) && Boolean.TRUE.equals(isSerializeHeaderEnabled(properties));
+    }
+
+    private boolean hasHeaders(final AMQP.BasicProperties properties) {
+        return properties != null && properties.getHeaders() != null;
+    }
+
+    private Object isSerializeHeaderEnabled(final AMQP.BasicProperties properties) {
+        return properties.getHeaders().get(RabbitMQEndpoint.SERIALIZE_HEADER);
     }
 }

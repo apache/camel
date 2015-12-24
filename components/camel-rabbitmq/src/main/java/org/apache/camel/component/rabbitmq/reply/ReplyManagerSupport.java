@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
+import org.apache.camel.component.rabbitmq.RabbitMQMessageConverter;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -37,19 +38,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class ReplyManagerSupport extends ServiceSupport implements ReplyManager {
+    private static final int CLOSE_TIMEOUT = 30 * 1000;
+    
     protected final Logger log = LoggerFactory.getLogger(ReplyManagerSupport.class);
     protected final CamelContext camelContext;
     protected final CountDownLatch replyToLatch = new CountDownLatch(1);
     protected final long replyToTimeout = 1000;
-
+    
     protected ScheduledExecutorService executorService;
     protected RabbitMQEndpoint endpoint;
     protected String replyTo;
+
     protected Connection listenerContainer;
-
     protected CorrelationTimeoutMap correlation;
-
-    private int closeTimeout = 30 * 1000;
+    
+    private final RabbitMQMessageConverter messageConverter = new RabbitMQMessageConverter();
 
     public ReplyManagerSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -133,14 +136,15 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     if (log.isWarnEnabled()) {
                         log.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
                                 + " Setting ExchangeTimedOutException on {} and continue routing.",
-                                new Object[]{holder.getRequestTimeout(), holder.getCorrelationId(), replyTo, ExchangeHelper.logIds(exchange)});
+                                 holder.getRequestTimeout(), holder.getCorrelationId(), replyTo, ExchangeHelper.logIds(exchange));
                     }
 
                     // no response, so lets set a timed out exception
                     String msg = "reply message with correlationID: " + holder.getCorrelationId() + " not received on destination: " + replyTo;
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
-                    endpoint.setRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage(), true);
+                    
+                    messageConverter.populateRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage(), true);
 
                     // restore correlation id in case the remote server messed with it
                     if (holder.getOriginalCorrelationId() != null) {
@@ -198,7 +202,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             if (answer != null) {
                 if (log.isTraceEnabled()) {
                     log.trace("Early reply with correlationID [{}] has been matched after {} attempts and can be processed using handler: {}",
-                            new Object[]{correlationID, counter, answer});
+                              correlationID, counter, answer);
                 }
             }
         }
@@ -229,8 +233,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         ServiceHelper.stopService(correlation);
 
         if (listenerContainer != null) {
-            log.debug("Closing connection: {} with timeout: {} ms.", listenerContainer, closeTimeout);
-            listenerContainer.close(closeTimeout);
+            log.debug("Closing connection: {} with timeout: {} ms.", listenerContainer, CLOSE_TIMEOUT);
+            listenerContainer.close(CLOSE_TIMEOUT);
             listenerContainer = null;
         }
 
