@@ -26,6 +26,7 @@ import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
 import org.elasticsearch.action.WriteConsistencyLevel;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.exists.ExistsRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetRequest.Item;
@@ -115,6 +116,12 @@ public final class ElasticsearchActionRequestConverter {
                 .type(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_INDEX_TYPE,
                         String.class)).id(id);
+    }
+    
+    @Converter
+    public static ExistsRequest toExistsRequest(String id, Exchange exchange) {
+        return new ExistsRequest(exchange.getIn().getHeader(
+                ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
     }
     
     @Converter

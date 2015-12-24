@@ -33,7 +33,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
-
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.AMQP;
@@ -43,7 +42,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.LongString;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -159,6 +157,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private long requestTimeoutCheckerInterval = 1000;
     @UriParam
     private boolean transferException;
+    @UriParam(label = "producer")
+    private boolean publisherAcknowledgements;
+    @UriParam(label = "producer")
+    private long publisherAcknowledgementsTimeout;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
@@ -166,7 +168,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private String replyTo;
 
-    private RabbitMQMessageConverter messageConverter = new RabbitMQMessageConverter();
+    private final RabbitMQMessageConverter messageConverter = new RabbitMQMessageConverter();
     
 
     public RabbitMQEndpoint() {
@@ -305,7 +307,16 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         Boolean immediate = camelExchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE, isImmediate(), Boolean.class);
 
         LOG.debug("Sending message to exchange: {} with CorrelationId = {}", rabbitExchange, properties.getCorrelationId());
+
+        if (isPublisherAcknowledgements()) {
+            channel.confirmSelect();
+        }
+        
         channel.basicPublish(rabbitExchange, routingKey, mandatory, immediate, properties, body);
+
+        if (isPublisherAcknowledgements()) {
+            waitForConfirmationFor(channel, camelExchange);
+        }
     }
 
     /**
@@ -318,6 +329,16 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
             exchangeName = getExchangeName();
         }
         return exchangeName;
+    }      
+    
+    private void waitForConfirmationFor(final Channel channel, final Exchange camelExchange) throws IOException {
+        try {
+            LOG.debug("Waiting for publisher acknowledgements for {}ms", getPublisherAcknowledgementsTimeout());
+            channel.waitForConfirmsOrDie(getPublisherAcknowledgementsTimeout());
+        } catch (InterruptedException | TimeoutException e) {
+            LOG.warn("Acknowledgement error for {}", camelExchange);
+            throw new RuntimeCamelException(e);
+        }
     }
 
     @Override
@@ -975,6 +996,28 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     public boolean isTransferException() {
         return transferException;
+    }
+
+    /**
+     * When true, the message will be published with <a href="https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a> turned on
+     */
+    public boolean isPublisherAcknowledgements() {
+        return publisherAcknowledgements;
+    }
+
+    public void setPublisherAcknowledgements(final boolean publisherAcknowledgements) {
+        this.publisherAcknowledgements = publisherAcknowledgements;
+    }
+
+    /**
+     * The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server
+     */
+    public long getPublisherAcknowledgementsTimeout() {
+        return publisherAcknowledgementsTimeout;
+    }
+
+    public void setPublisherAcknowledgementsTimeout(final long publisherAcknowledgementsTimeout) {
+        this.publisherAcknowledgementsTimeout = publisherAcknowledgementsTimeout;
     }
 
     /**

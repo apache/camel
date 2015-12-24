@@ -233,6 +233,8 @@
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>
+    <ignite-version>1.5.0-b1</ignite-version>
+    <ignite-version-range>[1.5.0-b1,1.6)</ignite-version-range>
     <infinispan-version>8.1.0.Final</infinispan-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
@@ -375,7 +377,7 @@
     <metrics-version>3.1.2</metrics-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
-    <mina2-version>2.0.9</mina2-version>
+    <mina2-version>2.0.10</mina2-version>
     <minimal-json-version>0.9.4</minimal-json-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockito-version>1.9.5</mockito-version>
@@ -1697,6 +1699,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-lucene</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

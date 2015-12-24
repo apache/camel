@@ -99,7 +99,7 @@ requestBodyAndHeaders("direct://${model.UniqueName}", null, headers);
 #set ( $args = $model.Arguments )
                 // test route for $model.Name
                 from("direct://${model.UniqueName}")
-                  .to("${scheme}://" + PATH_PREFIX + "/${model.Name}#if ( $args.size() == 1 )?inBody=${args.get(0).Name}#end");
+                    .to("${scheme}://" + PATH_PREFIX + "/${model.Name}#if ( $args.size() == 1 )?inBody=${args.get(0).Name}#end");
 
 #end
             }

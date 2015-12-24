@@ -18,8 +18,10 @@ package org.apache.camel.catalog;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -180,6 +182,23 @@ public final class JSonSchemaHelper {
         return false;
     }
 
+    public static boolean isPropertyObject(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return "object".equals(type);
+            }
+        }
+        return false;
+    }
+
     public static String getPropertyDefaultValue(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             String defaultValue = null;
@@ -200,7 +219,6 @@ public final class JSonSchemaHelper {
     public static String getPropertyEnum(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             String enums = null;
-            String defaultValue = null;
             boolean found = false;
             if (row.containsKey("name")) {
                 found = name.equals(row.get("name"));
@@ -222,6 +240,16 @@ public final class JSonSchemaHelper {
             }
         }
         return null;
+    }
+
+    public static Set<String> getNames(List<Map<String, String>> rows) {
+        Set<String> answer = new LinkedHashSet<String>();
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("name")) {
+                answer.add(row.get("name"));
+            }
+        }
+        return answer;
     }
 
 }

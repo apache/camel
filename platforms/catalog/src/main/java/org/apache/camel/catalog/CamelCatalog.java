@@ -36,6 +36,11 @@ public interface CamelCatalog {
     void enableCache();
 
     /**
+     * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options
+     */
+    void setSuggestionStrategy(SuggestionStrategy suggestionStrategy);
+
+    /**
      * The version of this Camel Catalog
      */
     String getCatalogVersion();
@@ -175,7 +180,7 @@ public interface CamelCatalog {
      * @param uri  the endpoint uri
      * @return validation result
      */
-    ValidationResult validateProperties(String uri);
+    EndpointValidationResult validateEndpointProperties(String uri);
 
     /**
      * Returns the component name from the given endpoint uri
