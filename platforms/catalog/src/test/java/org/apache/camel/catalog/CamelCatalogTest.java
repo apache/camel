@@ -407,6 +407,7 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("jms:unknown:myqueue");
         assertFalse(result.isSuccess());
         assertEquals("unknown", result.getInvalidEnum().get("destinationType"));
+        assertEquals("queue", result.getDefaultValues().get("destinationType"));
         assertEquals(1, result.getNumberOfErrors());
 
         // reference okay
