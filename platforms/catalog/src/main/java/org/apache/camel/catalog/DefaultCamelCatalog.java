@@ -693,6 +693,12 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     }
                 }
             } else {
+                // default value
+                String defaultValue = getPropertyDefaultValue(rows, name);
+                if (defaultValue != null) {
+                    result.addDefaultValue(name, defaultValue);
+                }
+
                 // is required but the value is empty
                 boolean required = isPropertyRequired(rows, name);
                 if (required && isEmpty(value)) {

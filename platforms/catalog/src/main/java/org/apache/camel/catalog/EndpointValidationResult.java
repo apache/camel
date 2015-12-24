@@ -45,6 +45,7 @@ public class EndpointValidationResult implements Serializable {
     private Map<String, String> invalidBoolean;
     private Map<String, String> invalidInteger;
     private Map<String, String> invalidNumber;
+    private Map<String, String> defaultValues;
 
     public EndpointValidationResult(String uri) {
         this.uri = uri;
@@ -162,6 +163,13 @@ public class EndpointValidationResult implements Serializable {
         }
     }
 
+    public void addDefaultValue(String name, String value)  {
+        if (defaultValues == null) {
+            defaultValues = new LinkedHashMap<String, String>();
+        }
+        defaultValues.put(name, value);
+    }
+
     public String getSyntaxError() {
         return syntaxError;
     }
@@ -206,6 +214,10 @@ public class EndpointValidationResult implements Serializable {
         return invalidNumber;
     }
 
+    public Map<String, String> getDefaultValues() {
+        return defaultValues;
+    }
+
     /**
      * A human readable summary of the validation errors.
      *
@@ -243,8 +255,13 @@ public class EndpointValidationResult implements Serializable {
         if (invalidEnum != null) {
             for (Map.Entry<String, String> entry : invalidEnum.entrySet()) {
                 String[] choices = invalidEnumChoices.get(entry.getKey());
+                String defaultValue = defaultValues != null ? defaultValues.get(entry.getKey()) : null;
                 String str = Arrays.asList(choices).toString();
-                options.put(entry.getKey(), "Invalid enum value: " + entry.getValue() + ". Possible values: " + str);
+                String msg = "Invalid enum value: " + entry.getValue() + ". Possible values: " + str;
+                if (defaultValue != null) {
+                    msg += ". Default value: " + defaultValue;
+                }
+                options.put(entry.getKey(), msg);
             }
         }
         if (invalidReference != null) {
