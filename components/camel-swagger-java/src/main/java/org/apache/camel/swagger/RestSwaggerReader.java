@@ -206,6 +206,9 @@ public class RestSwaggerReader {
                         if (param.getDataType() != null) {
                             sp.setType(param.getDataType());
                         }
+                        if (param.getAllowableValues() != null) {
+                            sp.setEnum(param.getAllowableValues());
+                        }
                     }
 
                     // set schema on body parameter
