@@ -48,7 +48,11 @@ public class RestSwaggerReaderDayOfWeekTest extends CamelTestSupport {
 
                     .get("/week").description("Day of week")
                         .param().name("day").type(RestParamType.query).description("Day of week")
-                        .dataType("string").allowableValues("monday", "tuesday", "wednesday", "thursday", "friday").endParam()
+                            .dataType("string").allowableValues("monday", "tuesday", "wednesday", "thursday", "friday")
+                        .endParam()
+                        .responseMessage()
+                            .code(200).responseModel(DayResponse.class)
+                        .endResponseMessage()
                         .to("log:week");
             }
         };
@@ -77,6 +81,8 @@ public class RestSwaggerReaderDayOfWeekTest extends CamelTestSupport {
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"enum\" : [ \"monday\", \"tuesday\", \"wednesday\", \"thursday\", \"friday\" ]"));
+        assertTrue(json.contains("\"$ref\" : \"#/definitions/DayResponse\""));
+        assertTrue(json.contains("\"format\" : \"org.apache.camel.swagger.DayResponse\""));
 
         context.stop();
     }

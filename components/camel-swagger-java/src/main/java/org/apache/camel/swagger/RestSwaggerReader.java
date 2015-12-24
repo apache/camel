@@ -109,18 +109,30 @@ public class RestSwaggerReader {
         Set<String> types = new LinkedHashSet<>();
         for (VerbDefinition verb : verbs) {
             String type = verb.getType();
-            if (type != null) {
+            if (ObjectHelper.isNotEmpty(type)) {
                 if (type.endsWith("[]")) {
                     type = type.substring(0, type.length() - 2);
                 }
                 types.add(type);
             }
             type = verb.getOutType();
-            if (type != null) {
+            if (ObjectHelper.isNotEmpty(type)) {
                 if (type.endsWith("[]")) {
                     type = type.substring(0, type.length() - 2);
                 }
                 types.add(type);
+            }
+            // there can also be types in response messages
+            if (verb.getResponseMsgs() != null) {
+                for (RestOperationResponseMsgDefinition def : verb.getResponseMsgs()) {
+                    type = def.getResponseModel();
+                    if (ObjectHelper.isNotEmpty(type)) {
+                        if (type.endsWith("[]")) {
+                            type = type.substring(0, type.length() - 2);
+                        }
+                        types.add(type);
+                    }
+                }
             }
         }
 
@@ -245,6 +257,10 @@ public class RestSwaggerReader {
                 if (response == null) {
                     response = new Response();
                 }
+                if (ObjectHelper.isNotEmpty(msg.getResponseModel())) {
+                    Property prop = modelTypeAsProperty(msg.getResponseModel(), swagger);
+                    response.setSchema(prop);
+                }
                 response.setDescription(msg.getMessage());
                 op.addResponse(msg.getCode(), response);
             }
@@ -260,10 +276,12 @@ public class RestSwaggerReader {
             typeName = typeName.substring(0, typeName.length() - 2);
         }
 
-        for (Model model : swagger.getDefinitions().values()) {
-            StringProperty modelType = (StringProperty) model.getVendorExtensions().get("x-className");
-            if (modelType != null && typeName.equals(modelType.getFormat())) {
-                return model;
+        if (swagger.getDefinitions() != null) {
+            for (Model model : swagger.getDefinitions().values()) {
+                StringProperty modelType = (StringProperty) model.getVendorExtensions().get("x-className");
+                if (modelType != null && typeName.equals(modelType.getFormat())) {
+                    return model;
+                }
             }
         }
         return null;
