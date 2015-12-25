@@ -487,9 +487,9 @@
     <spring-version>${spring4-version}</spring-version>
     <spring32-version>3.2.15.RELEASE</spring32-version>
     <spring40-version>4.0.9.RELEASE</spring40-version>
-    <spring41-version>4.1.8.RELEASE</spring41-version>
-    <spring42-version>4.2.3.RELEASE</spring42-version>
-    <spring4-version>4.2.3.RELEASE</spring4-version>
+    <spring41-version>4.1.9.RELEASE</spring41-version>
+    <spring42-version>4.2.4.RELEASE</spring42-version>
+    <spring4-version>4.2.4.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.2.8.RELEASE</spring-security-version>
     <spring-ws-bundle-version>2.2.2.RELEASE_1</spring-ws-bundle-version>
