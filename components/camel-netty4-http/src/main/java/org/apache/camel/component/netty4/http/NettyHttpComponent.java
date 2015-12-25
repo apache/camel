@@ -370,6 +370,17 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        RestConfiguration config = getCamelContext().getRestConfiguration("netty4-http", true);
+        // configure additional options on netty4-http configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(this, config.getComponentProperties());
+        }
+    }
+
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
 

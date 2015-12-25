@@ -195,6 +195,12 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        RestConfiguration config = getCamelContext().getRestConfiguration("undertow", true);
+        // configure additional options on undertow configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(this, config.getComponentProperties());
+        }
     }
 
     @Override
