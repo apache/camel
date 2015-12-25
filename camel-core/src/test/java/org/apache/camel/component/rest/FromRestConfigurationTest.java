@@ -17,8 +17,19 @@
 package org.apache.camel.component.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.FooBar;
+import org.apache.camel.impl.JndiRegistry;
 
 public class FromRestConfigurationTest extends FromRestGetTest {
+
+    private Object myDummy = new FooBar();
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myDummy", myDummy);
+        return jndi;
+    }
 
     @Override
     public void testFromRestModel() throws Exception {
@@ -31,6 +42,10 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         assertEquals("stuff", context.getRestConfiguration().getComponentProperties().get("other"));
         assertEquals("200", context.getRestConfiguration().getEndpointProperties().get("size"));
         assertEquals("1000", context.getRestConfiguration().getConsumerProperties().get("pollTimeout"));
+        assertEquals("#myDummy", context.getRestConfiguration().getConsumerProperties().get("dummy"));
+
+        DummyRestConsumerFactory factory = (DummyRestConsumerFactory) context.getRegistry().lookupByName("dummy-rest");
+        assertSame(myDummy, factory.getDummy());
     }
 
     @Override
@@ -43,10 +58,10 @@ public class FromRestConfigurationTest extends FromRestGetTest {
                     .componentProperty("foo", "bar")
                     .componentProperty("other", "stuff")
                     .endpointProperty("size", "200")
-                    .consumerProperty("pollTimeout", "1000");
+                    .consumerProperty("pollTimeout", "1000")
+                    .consumerProperty("dummy", "#myDummy");
 
                 includeRoutes(lowerR);
-
             }
         };
     }
