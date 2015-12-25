@@ -123,7 +123,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     }
 
     public void processReply(ReplyHolder holder) {
-        log.info("in processReply");
         if (holder != null && isRunAllowed()) {
             try {
                 Exchange exchange = holder.getExchange();
@@ -141,8 +140,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     String msg = "reply message with correlationID: " + holder.getCorrelationId() + " not received on destination: " + replyTo;
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
-                    
-                    endpoint.setRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage());
+                    endpoint.setRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage(), true);
 
                     // restore correlation id in case the remote server messed with it
                     if (holder.getOriginalCorrelationId() != null) {
@@ -224,7 +222,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         listenerContainer = createListenerContainer();
         
         log.debug("Using executor {}", executorService);
-        
     }
 
     @Override

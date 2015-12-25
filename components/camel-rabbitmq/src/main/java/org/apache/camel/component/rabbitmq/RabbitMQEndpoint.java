@@ -185,7 +185,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     public Exchange createRabbitExchange(Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
         Exchange exchange = super.createExchange();
-        setRabbitExchange(exchange, envelope, properties, body);
+        setRabbitExchange(exchange, envelope, properties, body, false);
         return exchange;
     }
 
@@ -196,14 +196,19 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         return messageConverter;
     }
 
-    public void setRabbitExchange(Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
+    public void setRabbitExchange(Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body, boolean out) {
         Message message;
-        if (camelExchange.getIn() != null) {
-            // Use the existing message so we keep the headers
-            message = camelExchange.getIn();
-        } else {
-            message = new DefaultMessage();
-            camelExchange.setIn(message);
+        if (out) {
+            // use OUT message
+            message = camelExchange.getOut();
+        }  else {
+            if (camelExchange.getIn() != null) {
+                // Use the existing message so we keep the headers
+                message = camelExchange.getIn();
+            } else {
+                message = new DefaultMessage();
+                camelExchange.setIn(message);
+            }
         }
 
         if (envelope != null) {
