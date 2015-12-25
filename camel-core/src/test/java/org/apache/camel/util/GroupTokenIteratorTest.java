@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  *
  */
-public class GroupIteratorTest extends TestSupport {
+public class GroupTokenIteratorTest extends TestSupport {
 
     private CamelContext context;
     private Exchange exchange;
@@ -55,7 +55,7 @@ public class GroupIteratorTest extends TestSupport {
         Scanner scanner = new Scanner(s);
         scanner.useDelimiter("\n");
 
-        GroupIterator gi = new GroupIterator(exchange, scanner, "\n", 3);
+        GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 3);
 
         assertTrue(gi.hasNext());
         assertEquals("ABC\nDEF\nGHI", gi.next());
@@ -80,7 +80,7 @@ public class GroupIteratorTest extends TestSupport {
         scanner.useDelimiter("\n");
 
         exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.displayName());
-        GroupIterator gi = new GroupIterator(exchange, scanner, "\n", 1);
+        GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 1);
 
         assertTrue(gi.hasNext());
         assertEquals("\u00A31", gi.next());

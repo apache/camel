@@ -54,6 +54,7 @@ import org.apache.camel.support.XMLTokenExpressionIterator;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.GroupIterator;
+import org.apache.camel.util.GroupTokenIterator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -1344,7 +1345,11 @@ public final class ExpressionBuilder {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
-                return new GroupIterator(exchange, it, token, group);
+                if (token != null) {
+                    return new GroupTokenIterator(exchange, it, token, group);
+                } else {
+                    return new GroupIterator(exchange, it, group);
+                }
             }
 
             @Override
@@ -1957,6 +1962,24 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "random";
+            }
+        };
+    }
+
+    /**
+     * Returns an iterator to collate (iterate) the given expression
+     */
+    public static Expression collateExpression(final String expression, final int group) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // use simple language
+                Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(expression);
+                return ExpressionBuilder.groupIteratorExpression(exp, null, group).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "collate(" + expression + "," + group + ")";
             }
         };
     }
