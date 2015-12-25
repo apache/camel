@@ -25,6 +25,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.spell.PlainTextDictionary;
 import org.apache.lucene.search.spell.SpellChecker;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Version;
 
 /**
  * Apache Lucene based {@link SuggestionStrategy}.
@@ -51,7 +52,7 @@ public class LuceneSuggestionStrategy implements SuggestionStrategy {
             // use in-memory lucene spell checker to make the suggestions
             RAMDirectory dir = new RAMDirectory();
             SpellChecker checker = new SpellChecker(dir);
-            checker.indexDictionary(words, new IndexWriterConfig(new KeywordAnalyzer()), false);
+            checker.indexDictionary(words, new IndexWriterConfig(Version.LUCENE_4_10_4, new KeywordAnalyzer()), false);
 
             return checker.suggestSimilar(unknownOption, maxSuggestions);
         } catch (Exception e) {
