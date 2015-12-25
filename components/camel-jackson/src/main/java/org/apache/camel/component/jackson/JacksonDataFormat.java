@@ -52,8 +52,8 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
 
     private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
 
-    private final ObjectMapper objectMapper;
     private CamelContext camelContext;
+    private ObjectMapper objectMapper;
     private Class<? extends Collection> collectionType;
     private List<Module> modules;
     private String moduleClassNames;
@@ -108,7 +108,6 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
      * @param enableJaxbAnnotationModule if it is true, will enable the JaxbAnnotationModule.
      */
     public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
-        this.objectMapper = new ObjectMapper();
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
@@ -177,6 +176,14 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
     // Properties
     // -------------------------------------------------------------------------
 
+    public ObjectMapper getObjectMapper() {
+        return this.objectMapper;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     public Class<?> getUnmarshalType() {
         return this.unmarshalType;
     }
@@ -199,10 +206,6 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
 
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
-    }
-
-    public ObjectMapper getObjectMapper() {
-        return this.objectMapper;
     }
 
     public String getInclude() {
@@ -398,6 +401,9 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     protected void doStart() throws Exception {
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
         
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing

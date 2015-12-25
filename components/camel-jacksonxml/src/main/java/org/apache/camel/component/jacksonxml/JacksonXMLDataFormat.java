@@ -52,8 +52,8 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
 
     private static final Logger LOG = LoggerFactory.getLogger(JacksonXMLDataFormat.class);
 
-    private final XmlMapper xmlMapper;
     private CamelContext camelContext;
+    private XmlMapper xmlMapper;
     private Class<? extends Collection> collectionType;
     private List<Module> modules;
     private String moduleClassNames;
@@ -108,7 +108,6 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
      * @param enableJaxbAnnotationModule if it is true, will enable the JaxbAnnotationModule.
      */
     public JacksonXMLDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
-        this.xmlMapper = new XmlMapper();
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
@@ -177,6 +176,14 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
     // Properties
     // -------------------------------------------------------------------------
 
+    public XmlMapper getXmlMapper() {
+        return this.xmlMapper;
+    }
+
+    public void setXmlMapper(XmlMapper xmlMapper) {
+        this.xmlMapper = xmlMapper;
+    }
+
     public Class<?> getUnmarshalType() {
         return this.unmarshalType;
     }
@@ -199,10 +206,6 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
 
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
-    }
-
-    public XmlMapper getXmlMapper() {
-        return this.xmlMapper;
     }
 
     public String getInclude() {
@@ -398,6 +401,9 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
 
     @Override
     protected void doStart() throws Exception {
+        if (xmlMapper == null) {
+            xmlMapper = new XmlMapper();
+        }
 
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing
