@@ -286,7 +286,9 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (xmlMapper != null) {
-            setProperty(camelContext, dataFormat, "xmlMapper", xmlMapper);
+            // must be a reference value
+            String ref = xmlMapper.startsWith("#") ? xmlMapper : "#" + xmlMapper;
+            setProperty(camelContext, dataFormat, "xmlMapper", ref);
         }
         if (unmarshalType != null) {
             setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);

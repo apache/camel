@@ -342,7 +342,9 @@ public class JsonDataFormat extends DataFormatDefinition {
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (objectMapper != null) {
-            setProperty(camelContext, dataFormat, "objectMapper", objectMapper);
+            // must be a reference value
+            String ref = objectMapper.startsWith("#") ? objectMapper : "#" + objectMapper;
+            setProperty(camelContext, dataFormat, "objectMapper", ref);
         }
         if (unmarshalType != null) {
             setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
