@@ -67,9 +67,9 @@ public class CamelAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(RoutesCollector.class)
-    RoutesCollector routesCollector(ApplicationContext applicationContext) {
+    RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties configurationProperties) {
         Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
-        return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations));
+        return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations), configurationProperties);
     }
 
     /**
