@@ -96,9 +96,6 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>${project.version}</version>
-        <configuration>
-          <useCDI>true</useCDI>
-        </configuration>
       </plugin>
     </plugins>
 

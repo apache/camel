@@ -47,6 +47,7 @@ import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Exclusion;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -360,8 +361,8 @@ public class RunMojo extends AbstractExecMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         boolean usingSpringJavaConfigureMain = false;
-        boolean useCdiMain = useCDI;
-        boolean usingBlueprintMain = useBlueprint;
+        boolean useCdiMain = useCDI || detectCDIOnClassPath();
+        boolean usingBlueprintMain = useBlueprint || detectBlueprintOnClassPathOrBlueprintXMLFiles();
         if (killAfter != -1) {
             getLog().warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
         }
@@ -663,6 +664,41 @@ public class RunMojo extends AbstractExecMojo {
                 System.setProperty(systemProperty.getKey(), value == null ? "" : value);
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean detectCDIOnClassPath() {
+        List<Dependency> deps = project.getCompileDependencies();
+        for (Dependency dep : deps) {
+            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-cdi".equals(dep.getArtifactId())) {
+                getLog().info("camel-cdi detected on classpath");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean detectBlueprintOnClassPathOrBlueprintXMLFiles() {
+        List<Dependency> deps = project.getCompileDependencies();
+        for (Dependency dep : deps) {
+            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-blueprint".equals(dep.getArtifactId())) {
+                getLog().info("camel-blueprint detected on classpath");
+            }
+        }
+
+        // maybe there is blueprint XML files
+        List<Resource> resources = project.getResources();
+        for (Resource res : resources) {
+            File dir = new File(res.getDirectory());
+            File xml = new File(dir, "OSGI-INF/blueprint");
+            if (xml.exists() && xml.isDirectory()) {
+                getLog().info("OSGi Blueprint XML files detected in directory " + xml);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
