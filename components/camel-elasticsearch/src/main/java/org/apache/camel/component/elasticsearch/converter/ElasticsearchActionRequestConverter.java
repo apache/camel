@@ -143,7 +143,7 @@ public final class ElasticsearchActionRequestConverter {
         MultiSearchRequest multiSearchRequest = new MultiSearchRequest();
         Iterator<SearchRequest> it = items.iterator();
         while (it.hasNext()) {
-        	SearchRequest item = (SearchRequest) it.next();
+            SearchRequest item = (SearchRequest) it.next();
             multiSearchRequest.add(item);
         }
         return multiSearchRequest;

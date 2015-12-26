@@ -201,7 +201,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_MULTISEARCH);
         SearchRequestBuilder srb1 = node.client().prepareSearch("test").setTypes("type").setQuery(QueryBuilders.termQuery("field", "xxx"));
         SearchRequestBuilder srb2 = node.client().prepareSearch("test").setTypes("type").setQuery(QueryBuilders.termQuery("field", "yyy"));
-        SearchRequestBuilder srb3= node.client().prepareSearch("instagram")
+        SearchRequestBuilder srb3 = node.client().prepareSearch("instagram")
             .setTypes("type").setQuery(QueryBuilders.termQuery("test-multisearchkey", "test-multisearchvalue"));
         List<SearchRequest> list = new ArrayList<>();
         list.add(srb1.request());
