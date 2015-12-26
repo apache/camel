@@ -31,8 +31,8 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 public class ElasticsearchBaseTest extends CamelTestSupport {
 
-    private static Node node;
-    private static Client client;
+    public static Node node;
+    public static Client client;
 
     @BeforeClass
     public static void cleanupOnce() {
