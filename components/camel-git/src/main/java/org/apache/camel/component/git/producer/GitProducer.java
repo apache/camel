@@ -424,15 +424,15 @@ public class GitProducer extends DefaultProducer {
         CherryPickResult result = null;
         String commitId = null;
         try {
-        	if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_ID))) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_ID))) {
                 commitId = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_ID, String.class);
             } else {
                 throw new IllegalArgumentException("Commit id must be specified to execute " + operation);
             }
-        	RevWalk walk = new RevWalk(repo);
-        	ObjectId id = repo.resolve(commitId);
-        	RevCommit commit = walk.parseCommit(id);
-        	walk.dispose();
+            RevWalk walk = new RevWalk(repo);
+            ObjectId id = repo.resolve(commitId);
+            RevCommit commit = walk.parseCommit(id);
+            walk.dispose();
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }

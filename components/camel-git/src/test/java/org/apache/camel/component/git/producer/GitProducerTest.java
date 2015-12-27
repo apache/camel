@@ -905,10 +905,10 @@ public class GitProducerTest extends GitTestSupport {
         String id = "";
         for (RevCommit rev : logs) {
             if (count == 0) { 
-            	id = rev.getName();
-            	assertEquals(rev.getShortMessage(), "Test second commit");
+                id = rev.getName();
+                assertEquals(rev.getShortMessage(), "Test second commit");
             }
-        	count++;
+            count++;
         }
         assertEquals(count, 2);
         
@@ -927,7 +927,7 @@ public class GitProducerTest extends GitTestSupport {
         count = 0;
         for (RevCommit rev : logs) {
             if (count == 0) {
-            	assertEquals(rev.getShortMessage(), "Test second commit");
+                assertEquals(rev.getShortMessage(), "Test second commit");
             }
             count++;
         }
@@ -1010,10 +1010,10 @@ public class GitProducerTest extends GitTestSupport {
         String id = "";
         for (RevCommit rev : logs) {
             if (count == 0) { 
-            	id = rev.getName();
-            	assertEquals(rev.getShortMessage(), "Test second commit");
+                id = rev.getName();
+                assertEquals(rev.getShortMessage(), "Test second commit");
             }
-        	count++;
+            count++;
         }
         assertEquals(count, 2);
         
@@ -1032,7 +1032,7 @@ public class GitProducerTest extends GitTestSupport {
         count = 0;
         for (RevCommit rev : logs) {
             if (count == 0) {
-            	assertEquals(rev.getShortMessage(), "Test second commit");
+                assertEquals(rev.getShortMessage(), "Test second commit");
             }
             count++;
         }
