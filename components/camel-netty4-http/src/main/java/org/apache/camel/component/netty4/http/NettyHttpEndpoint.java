@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HTTP based {@link NettyEndpoint}
+ * Netty HTTP server and client using the Netty 4.x library.
  */
 @UriEndpoint(scheme = "netty4-http", extendsScheme = "netty4", title = "Netty4 HTTP",
         syntax = "netty4-http:protocol:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http")
