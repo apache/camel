@@ -42,9 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://activemq.apache.org/quartz.html">Quartz Endpoint</a>
- *
- * @version 
+ * Provides a scheduled delivery of messages using the Quartz 1.x scheduler
  */
 @UriEndpoint(scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/timerName", consumerOnly = true, consumerClass = QuartzConsumer.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {

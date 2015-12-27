@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Is used for polling rss feeds.
+ * The rss component is used for consuming RSS feeds.
  */
 @UriEndpoint(scheme = "rss", extendsScheme = "atom", title = "RSS",
         syntax = "rss:feedUri", consumerOnly = true, consumerClass = RssEntryPollingConsumer.class, label = "rss")

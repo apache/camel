@@ -59,6 +59,9 @@ import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The rabbitmq component allows AMQP messages to be sent to (or consumed from) a RabbitMQ broker.
+ */
 @UriEndpoint(scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:hostname:portNumber/exchangeName", consumerClass = RabbitMQConsumer.class, label = "messaging")
 public class RabbitMQEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQEndpoint.class);

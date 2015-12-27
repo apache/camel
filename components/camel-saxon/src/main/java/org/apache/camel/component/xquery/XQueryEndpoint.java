@@ -35,6 +35,9 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Generates a response using an XQuery template
+ */
 @UriEndpoint(scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri", label = "transformation")
 public class XQueryEndpoint extends ProcessorEndpoint {
 
