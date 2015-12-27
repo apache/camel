@@ -43,9 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of the <a href="https://github.com/sirchia/camel-disruptor">Disruptor component</a>
- * for asynchronous SEDA exchanges on an
- * <a href="https://github.com/LMAX-Exchange/disruptor">LMAX Disruptor</a> within a CamelContext
+ * The disruptor component provides asynchronous SEDA behavior much as the standard SEDA Component,
+ * but utilizes a Disruptor instead of a BlockingQueue utilized by the standard SEDA.
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
 @UriEndpoint(scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")
