@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Defines the <a href="http://aws.amazon.com/ses/">AWS SES component</a> 
+ * For working with Amazon's Simple Email Service (SES).
  */
 public class SesComponent extends UriEndpointComponent {
 

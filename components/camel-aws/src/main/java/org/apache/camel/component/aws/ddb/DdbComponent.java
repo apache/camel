@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Defines the <a href="http://aws.amazon.com/dynamodb/">AWS DynamoDB component</a>
+ * For working with Amazon's DynamoDB (DDB).
  */
 public class DdbComponent extends UriEndpointComponent {
 

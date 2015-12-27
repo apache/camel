@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Defines the <a href="http://aws.amazon.com/cloudwatch/">AWS CloudWatch Component</a>
+ * For working with Amazon's CloudWatch (CW).
  */
 public class CwComponent extends UriEndpointComponent {
 

@@ -47,7 +47,7 @@ public class WsEndpoint extends AhcEndpoint {
     private static final boolean GRIZZLY_AVAILABLE = 
         probeClass("com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider");
 
-    private final Set<WsConsumer> consumers  = new HashSet<WsConsumer>();
+    private final Set<WsConsumer> consumers = new HashSet<WsConsumer>();
 
     private WebSocket websocket;
     @UriParam

@@ -50,9 +50,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
- */
 @UriEndpoint(scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueName", consumerClass = SqsConsumer.class, label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
     

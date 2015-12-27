@@ -37,9 +37,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS SNS Endpoint</a>.  
- */
 @UriEndpoint(scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicName", producerOnly = true, label = "cloud,mobile,messaging")
 public class SnsEndpoint extends DefaultEndpoint {
 

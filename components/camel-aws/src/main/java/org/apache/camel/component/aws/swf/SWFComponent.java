@@ -23,7 +23,7 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
- * Defines the <a href="http://aws.amazon.com/swf/">Amazon Simple Workflow Component</a>
+ * For Messaging with Amazon's Simple Workflow Service (SWF).
  */
 public class SWFComponent extends UriEndpointComponent {
 

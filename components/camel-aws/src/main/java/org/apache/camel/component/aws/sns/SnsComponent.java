@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Defines the <a href="http://aws.amazon.com/sns/">AWS SNS Component</a> 
+ * For Messaging with Amazon's Simple Notification Service (SNS).
  */
 public class SnsComponent extends UriEndpointComponent {
     

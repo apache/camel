@@ -23,8 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS Component</a> 
- * 
+ * For Messaging with Amazon's Simple Queue Service (SQS).
  */
 public class SqsComponent extends UriEndpointComponent {
     
