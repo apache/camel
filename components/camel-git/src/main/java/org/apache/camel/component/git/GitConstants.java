@@ -26,4 +26,6 @@ public interface GitConstants {
     String GIT_COMMIT_USERNAME = "CamelGitCommitUsername";
     
     String GIT_COMMIT_EMAIL = "CamelGitCommitEmail";
+    
+    String GIT_COMMIT_ID = "CamelGitCommitId";
 }
