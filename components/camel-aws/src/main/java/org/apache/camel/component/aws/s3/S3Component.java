@@ -22,9 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * For working with Amazon's Simple Storage Service (S3).
- */
 public class S3Component extends UriEndpointComponent {
     
     public S3Component() {

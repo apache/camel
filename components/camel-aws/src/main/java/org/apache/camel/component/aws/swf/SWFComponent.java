@@ -22,9 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IntrospectionSupport;
 
-/**
- * For Messaging with Amazon's Simple Workflow Service (SWF).
- */
 public class SWFComponent extends UriEndpointComponent {
 
     public SWFComponent() {

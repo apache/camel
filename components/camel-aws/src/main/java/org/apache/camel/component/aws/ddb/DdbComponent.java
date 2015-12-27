@@ -22,9 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * For working with Amazon's DynamoDB (DDB).
- */
 public class DdbComponent extends UriEndpointComponent {
 
     public DdbComponent() {

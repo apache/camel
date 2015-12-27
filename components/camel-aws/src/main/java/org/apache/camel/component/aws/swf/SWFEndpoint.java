@@ -32,6 +32,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 
+/**
+ * The aws-swf component is used for managing workflows from Amazon Simple Workflow.
+ */
 @UriEndpoint(scheme = "aws-swf", title = "AWS Simple Workflow", syntax = "aws-swf:type", consumerClass = SWFWorkflowConsumer.class, label = "cloud,workflow")
 public class SWFEndpoint extends DefaultEndpoint {
 

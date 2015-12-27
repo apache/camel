@@ -38,9 +38,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Endpoint for DataSet.
+ * The DataSet component provides a mechanism to easily perform load & soak testing of your system.
  *
- * @version 
+ * It works by allowing you to create DataSet instances both as a source of messages and as a way to assert that the data set is received.
+ * Camel will use the throughput logger when sending dataset's.
  */
 @UriEndpoint(scheme = "dataset", title = "Dataset", syntax = "dataset:name", consumerClass = DataSetConsumer.class, label = "core,testing")
 public class DataSetEndpoint extends MockEndpoint implements Service {

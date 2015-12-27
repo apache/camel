@@ -22,9 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * For Messaging with Amazon's Simple Notification Service (SNS).
- */
 public class SnsComponent extends UriEndpointComponent {
     
     public SnsComponent() {

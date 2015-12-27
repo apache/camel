@@ -24,9 +24,6 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * For working with Amazon's Kinesis Streams.
- */
 public class KinesisComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(KinesisComponent.class);
 

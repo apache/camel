@@ -34,9 +34,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a timer endpoint that can generate periodic inbound exchanges triggered by a timer.
+ * The timer component is used for generating message exchanges when a timer fires.
  *
- * @version 
+ * This component is similar to the scheduler component, but has much less functionality.
  */
 @ManagedResource(description = "Managed TimerEndpoint")
 @UriEndpoint(scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")

@@ -30,9 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Endpoint for the bean component.
- *
- * @version 
+ * The <a href="http://camel.apache.org/bean.html">Bean Component</a> is for invoking Java beans from Camel.
  */
 @UriEndpoint(scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
 public class BeanEndpoint extends DefaultEndpoint {

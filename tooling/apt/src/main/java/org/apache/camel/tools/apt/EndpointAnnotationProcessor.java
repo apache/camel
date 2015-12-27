@@ -433,12 +433,12 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             Map<String, String> map = parseAsMap(data);
             // now we have a lot more data, so we need to load it as key/value
             // need to sanitize the description first
-            String doc = map.get("projectDescription");
-            if (doc != null) {
-                model.setDescription(sanitizeDescription(doc, true));
-            } else {
+//            String doc = map.get("projectDescription");
+//            if (doc != null) {
+//                model.setDescription(sanitizeDescription(doc, true));
+//            } else {
                 model.setDescription("");
-            }
+//            }
             if (map.containsKey("groupId")) {
                 model.setGroupId(map.get("groupId"));
             } else {

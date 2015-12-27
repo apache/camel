@@ -29,6 +29,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
+/**
+ * The aws-ddbstream component is used for working with Amazon DynamoDB Streams
+ */
 @UriEndpoint(scheme = "aws-ddbstream", title = "AWS DynamoDB Streams",
         consumerOnly = true, syntax = "aws-ddbstream:tableName",
         consumerClass = DdbStreamConsumer.class, label = "cloud,messaging,streams")

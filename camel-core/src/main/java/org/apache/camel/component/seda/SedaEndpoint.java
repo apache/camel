@@ -48,9 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of the <a
- * href="http://camel.apache.org/queue.html">Queue components</a> for
- * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
+ * The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
  */
 @ManagedResource(description = "Managed SedaEndpoint")
 @UriEndpoint(scheme = "seda", title = "SEDA", syntax = "seda:name", consumerClass = SedaConsumer.class, label = "core,endpoint")

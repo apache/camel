@@ -22,9 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * For Messaging with Amazon's Simple Queue Service (SQS).
- */
 public class SqsComponent extends UriEndpointComponent {
     
     public SqsComponent() {
