@@ -43,7 +43,7 @@ public class GitEndpoint extends DefaultEndpoint {
     @UriParam
     private String tagName;
 
-    @UriParam(label = "consumer")
+    @UriParam(enums = "commit,tag,branch", label = "consumer")
     private GitType type;
 
     @UriParam
@@ -55,7 +55,7 @@ public class GitEndpoint extends DefaultEndpoint {
     @UriParam
     private String remotePath;
 
-    @UriParam(label = "producer")
+    @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick", label = "producer")
     private String operation;
 
     public GitEndpoint(String uri, GitComponent component) {
