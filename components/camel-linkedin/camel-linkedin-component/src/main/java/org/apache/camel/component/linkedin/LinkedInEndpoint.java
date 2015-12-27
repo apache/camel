@@ -44,7 +44,7 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 
 /**
- * Represents a LinkedIn endpoint.
+ * The linkedin component is uses for retrieving LinkedIn user profiles, connections, companies, groups, posts, etc.
  */
 @UriEndpoint(scheme = "linkedin", title = "Linkedin", syntax = "linkedin:apiName/methodName", label = "api,cloud,social", consumerClass = LinkedInConsumer.class)
 public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, LinkedInConfiguration> {

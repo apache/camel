@@ -47,6 +47,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The kubernetes component allows to work with Kubernetes PaaS.
+ */
 @UriEndpoint(scheme = "kubernetes", title = "Kubernetes", syntax = "kubernetes:master", label = "container,cloud,paas")
 public class KubernetesEndpoint extends DefaultEndpoint {
 
