@@ -64,6 +64,8 @@ import org.springframework.util.ErrorHandler;
 
 /**
  * The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+ *
+ * This component uses Spring JMS.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 @UriEndpoint(scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
