@@ -21,7 +21,6 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.policies.LoadBalancingPolicy;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -37,7 +36,9 @@ import org.apache.camel.utils.cassandra.CassandraLoadBalancingPolicies;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
 /**
- * Cassandra 2 CQL3 endpoint
+ * The cql component aims at integrating Cassandra 2.0+ using the CQL3 API (not the Thrift API).
+ *
+ * It's based on Cassandra Java Driver provided by DataStax.
  */
 @UriEndpoint(scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", consumerClass = CassandraConsumer.class, label = "database,nosql")
 public class CassandraEndpoint extends DefaultEndpoint {

@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The DataSet component provides a mechanism to easily perform load & soak testing of your system.
+ * The dataset component provides a mechanism to easily perform load & soak testing of your system.
  *
  * It works by allowing you to create DataSet instances both as a source of messages and as a way to assert that the data set is received.
  * Camel will use the throughput logger when sending dataset's.

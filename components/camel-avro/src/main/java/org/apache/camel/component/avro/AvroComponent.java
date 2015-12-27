@@ -30,9 +30,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.URISupport;
 
-/**
- * Working with Apache Avro for data serialization.
- */
 public class AvroComponent extends UriEndpointComponent {
 
     private AvroConfiguration configuration;

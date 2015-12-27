@@ -108,13 +108,8 @@ import org.apache.cxf.wsdl.WSDLManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
- * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>.
- * It contains a list of properties for CXF endpoint including {@link DataFormat},
- * {@link CxfBinding}, and {@link HeaderFilterStrategy}.  The default DataFormat
- * mode is {@link DataFormat#POJO}.
+ * The cxf component is used for SOAP WebServices using Apache CXF.
  */
 @UriEndpoint(scheme = "cxf", title = "CXF", syntax = "cxf:beanId:address", consumerClass = CxfConsumer.class, label = "soap,webservice")
 public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service, Cloneable {

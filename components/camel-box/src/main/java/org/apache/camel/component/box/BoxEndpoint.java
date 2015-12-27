@@ -37,7 +37,7 @@ import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
 /**
- * Represents a Box endpoint.
+ * For uploading, downloading and managing files, folders, groups, collaborations, etc on box DOT com.
  */
 @UriEndpoint(scheme = "box", title = "Box", syntax = "box:apiName/methodName", consumerClass = BoxConsumer.class, consumerPrefix = "consumer", label = "api,file,cloud")
 public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguration> {

@@ -437,7 +437,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 //            if (doc != null) {
 //                model.setDescription(sanitizeDescription(doc, true));
 //            } else {
-                model.setDescription("");
+                model.setDescription("TODO");
 //            }
             if (map.containsKey("groupId")) {
                 model.setGroupId(map.get("groupId"));

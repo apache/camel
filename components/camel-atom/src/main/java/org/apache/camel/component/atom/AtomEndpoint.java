@@ -26,6 +26,9 @@ import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;
 import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * The atom component is used for consuming Atom RSS feeds.
+ */
 @UriEndpoint(scheme = "atom", title = "Atom", syntax = "atom:feedUri", consumerOnly = true, consumerClass = FeedPollingConsumer.class, label = "rss")
 public class AtomEndpoint extends FeedEndpoint {
 
