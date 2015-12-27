@@ -43,6 +43,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
+/**
+ * The jpa component enables you to store and retrieve Java objects from databases using JPA.
+ */
 @UriEndpoint(scheme = "jpa", title = "JPA", syntax = "jpa:entityType", consumerClass = JpaConsumer.class, label = "database,sql")
 public class JpaEndpoint extends ScheduledPollEndpoint {
 

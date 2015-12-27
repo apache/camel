@@ -25,6 +25,9 @@ import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
+ */
 @UriEndpoint(scheme = "jetty", extendsScheme = "http", title = "Jetty",
         syntax = "jetty:httpUri", consumerClass = HttpConsumer.class, label = "http")
 public class JettyHttpEndpoint8 extends JettyHttpEndpoint {
