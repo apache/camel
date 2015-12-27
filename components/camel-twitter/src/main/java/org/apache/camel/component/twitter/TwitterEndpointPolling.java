@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Twitter polling endpoint
+ * This component integrates with Twitter to send tweets or search for tweets and more.
  */
 @ManagedResource(description = "Managed Twitter Endpoint")
 @UriEndpoint(scheme = "twitter", title = "Twitter", syntax = "twitter:type", consumerClass = Twitter4JConsumer.class, label = "api,social")

@@ -33,6 +33,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
 
+/**
+ * The websocket component provides websocket endpoints for communicating with clients using websocket.
+ *
+ * This component uses Jetty as the websocket implementation.
+ */
 @UriEndpoint(scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "websocket")
 public class WebsocketEndpoint extends DefaultEndpoint {
 

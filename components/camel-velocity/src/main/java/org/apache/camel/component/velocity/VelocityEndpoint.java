@@ -40,6 +40,9 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.CommonsLogLogChute;
 
+/**
+ * Generates a response using an Apache Velocity template.
+ */
 @UriEndpoint(scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
 public class VelocityEndpoint extends ResourceEndpoint {
 
