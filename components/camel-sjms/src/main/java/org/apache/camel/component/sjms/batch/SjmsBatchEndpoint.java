@@ -40,6 +40,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
+/**
+ * The sjms-batch component is a specialized for highly performant, transactional batch consumption from a JMS queue.
+ */
 @UriEndpoint(scheme = "sjms-batch", title = "Simple JMS Batch Component", syntax = "sjms-batch:destinationName",
         consumerClass = SjmsBatchComponent.class, label = "messaging", consumerOnly = true)
 public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {

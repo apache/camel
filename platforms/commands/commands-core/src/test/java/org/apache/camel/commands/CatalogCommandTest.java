@@ -50,7 +50,6 @@ public class CatalogCommandTest {
         String out = os.toString();
         assertNotNull(out);
         LOG.info("\n\n{}\n", out);
-        System.out.println(out);
 
         context.stop();
     }
