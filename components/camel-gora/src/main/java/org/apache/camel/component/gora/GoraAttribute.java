@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.gora;
 
 /**
@@ -86,6 +85,7 @@ public enum GoraAttribute {
      * Gora Query Fields attribute
      */
     GORA_QUERY_FIELDS("fields");
+
     /**
      * Enum value
      */
@@ -96,8 +96,7 @@ public enum GoraAttribute {
      *
      * @param str Operation Value
      */
-    private GoraAttribute(final String str) {
-
+    GoraAttribute(final String str) {
         value = str;
     }
 
