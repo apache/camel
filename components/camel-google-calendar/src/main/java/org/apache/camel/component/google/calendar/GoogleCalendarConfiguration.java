@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.api.services.calendar.CalendarScopes;
+
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -63,6 +64,9 @@ public class GoogleCalendarConfiguration {
 
     @UriParam
     private String p12FileName;
+    
+    @UriParam
+    private String user;
 
     public GoogleCalendarApiName getApiName() {
         return apiName;
@@ -173,5 +177,16 @@ public class GoogleCalendarConfiguration {
     public void setP12FileName(String p12FileName) {
         this.p12FileName = p12FileName;
     }
+
+	public String getUser() {
+		return user;
+	}
+
+	/**
+     * The email address of the user the application is trying to impersonate in the service account flow
+     */
+	public void setUser(String user) {
+		this.user = user;
+	}
 
 }

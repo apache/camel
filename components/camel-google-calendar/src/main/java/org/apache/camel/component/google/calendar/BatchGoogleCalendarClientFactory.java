@@ -28,6 +28,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
 
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +46,13 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
     @Override
     public Calendar makeClient(String clientId, String clientSecret,
             Collection<String> scopes, String applicationName, String refreshToken,
-            String accessToken, String emailAddress, String p12FileName) {
+            String accessToken, String emailAddress, String p12FileName, String user) {
                                
         Credential credential;
         try {
          // if emailAddress and p12FileName values are present, assume Google Service Account
             if (null != emailAddress && !"".equals(emailAddress) && null != p12FileName && !"".equals(p12FileName)) {
-                credential = authorizeServiceAccount(emailAddress, p12FileName, scopes);
+                credential = authorizeServiceAccount(emailAddress, p12FileName, scopes, user);
             } else {
                 credential = authorize(clientId, clientSecret, scopes);
                 if (refreshToken != null && !"".equals(refreshToken)) {
@@ -78,14 +79,16 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
             .build();
     }
     
-    private Credential authorizeServiceAccount(String emailAddress, String p12FileName, Collection<String> scopes) throws Exception {
+    private Credential authorizeServiceAccount(String emailAddress, String p12FileName, Collection<String> scopes, String user) throws Exception {
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        // set the service account user when provided
         GoogleCredential credential = new GoogleCredential.Builder()
                 .setTransport(httpTransport)
                 .setJsonFactory(jsonFactory)
                 .setServiceAccountId(emailAddress)
                 .setServiceAccountPrivateKeyFromP12File(new File(p12FileName))
                 .setServiceAccountScopes(scopes)
+                .setServiceAccountUser(user)
                 .build();
         return credential;
     }

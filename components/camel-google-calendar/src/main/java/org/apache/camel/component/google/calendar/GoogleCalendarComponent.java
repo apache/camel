@@ -51,7 +51,7 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
                                                    configuration.getClientSecret(), configuration.getScopes(), 
                                                    configuration.getApplicationName(), configuration.getRefreshToken(), 
                                                    configuration.getAccessToken(), configuration.getEmailAddress(),
-                                                   configuration.getP12FileName());
+                                                   configuration.getP12FileName(), configuration.getUser());
         }
         return client;
     }
