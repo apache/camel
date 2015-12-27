@@ -37,9 +37,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPSClient;
 
 /**
- * FTP Secure (FTP over SSL/TLS) endpoint
- * 
- * @version 
+ * The ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
  */
 @UriEndpoint(scheme = "ftps", extendsScheme = "file", title = "FTPS",
         syntax = "ftps:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")

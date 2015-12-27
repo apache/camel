@@ -36,6 +36,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
+ * The github component is used for integrating Camel with github.
+ *
  * The endpoint encapsulates portions of the GitHub API, relying on the org.eclipse.egit.github.core Java SDK.
  * Available endpoint URIs include:
  *

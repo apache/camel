@@ -28,6 +28,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * The ganglia component is used for sending metrics to the Ganglia monitoring system.
+ */
 @UriEndpoint(scheme = "ganglia", title = "Ganglia", syntax = "ganglia:host:port", producerOnly = true, label = "monitoring")
 public class GangliaEndpoint extends DefaultEndpoint {
 

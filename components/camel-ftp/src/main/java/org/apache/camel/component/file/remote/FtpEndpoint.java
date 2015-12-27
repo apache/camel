@@ -34,7 +34,7 @@ import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
- * FTP endpoint
+ * The ftp component is used for uploading or downloading files from FTP servers.
  */
 @UriEndpoint(scheme = "ftp", extendsScheme = "file", title = "FTP",
         syntax = "ftp:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")

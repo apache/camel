@@ -37,6 +37,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
+ * The gauth component is used by web applications to implement a Google-specific OAuth consumer.
+ *
  * Represents a <a href="http://camel.apache.org/gauth.html">GAuth Endpoint</a>.
  * Instances can have one of two names, either <code>authorize</code> for
  * requesting an unauthorized request token or <code>upgrade</code> for
@@ -44,7 +46,7 @@ import org.apache.camel.spi.UriPath;
  * endpoint URIs are <code>gauth:authorize</code> and <code>gauth:upgrade</code>
  * , respectively.
  */
-@UriEndpoint(scheme = "gauth", title = "Google GAuth", syntax = "gauth:name", producerOnly = true, label = "cloud")
+@UriEndpoint(scheme = "gauth", title = "Google GAuth", syntax = "gauth:name", producerOnly = true, label = "cloud,paas")
 public class GAuthEndpoint  extends DefaultEndpoint {
 
     public static enum Name {

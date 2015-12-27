@@ -28,10 +28,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a <a href="http://camel.apache.org/glogin.html">GLogin
- * Endpoint</a>.
+ * The glogin component is used by Camel applications outside Google App Engine (GAE) for programmatic login to GAE applications.
  */
-@UriEndpoint(scheme = "glogin", title = "Google Login", syntax = "glogin:hostName", producerOnly = true, label = "cloud")
+@UriEndpoint(scheme = "glogin", title = "Google Login", syntax = "glogin:hostName", producerOnly = true, label = "cloud,paas")
 public class GLoginEndpoint extends DefaultEndpoint {
 
     private OutboundBinding<GLoginEndpoint, GLoginData, GLoginData> outboundBinding;

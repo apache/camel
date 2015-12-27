@@ -33,7 +33,7 @@ import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
 /**
- * Represents a GoogleDrive endpoint.
+ * The google-driverr component provides access to Google Drive file storage service.
  */
 @UriEndpoint(scheme = "google-drive", title = "Google Drive", syntax = "google:drive:apiName/methodName",
 consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer", label = "api,cloud,file")

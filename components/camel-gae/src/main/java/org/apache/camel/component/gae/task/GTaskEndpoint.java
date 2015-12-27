@@ -39,10 +39,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a <a href="http://camel.apache.org/gtask.html">Google App Engine Task Queueing endpoint</a>.
+ * The gtask component is used for sending messages to GAE task queue service.
  */
 @UriEndpoint(scheme = "gtask", extendsScheme = "servlet", title = "Google Task",
-        syntax = "gtask:queueName", producerOnly = true, label = "cloud")
+        syntax = "gtask:queueName", producerOnly = true, label = "cloud,paas")
 public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSupport<GTaskEndpoint, TaskOptions, Void> {
 
     private OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding;

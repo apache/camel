@@ -32,7 +32,7 @@ import org.apache.camel.util.ResourceHelper;
 import org.apache.fop.apps.FopFactory;
 
 /**
- * Represents a Fop endpoint.
+ * The fop component allows you to render a message into different output formats using Apache FOP.
  */
 @UriEndpoint(scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, label = "transformation")
 public class FopEndpoint extends DefaultEndpoint {
