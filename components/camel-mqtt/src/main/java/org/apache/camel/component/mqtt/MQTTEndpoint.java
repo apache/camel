@@ -58,7 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Component for communicating with MQTT M2M message brokers
+ * Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
  */
 @UriEndpoint(scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging,iot")
 public class MQTTEndpoint extends DefaultEndpoint {

@@ -37,9 +37,10 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
-@UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
+/**
+ * Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
+ */
+@UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging,iot", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
