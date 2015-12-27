@@ -80,7 +80,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             return ElasticsearchConstants.OPERATION_EXISTS;
         } else if (request instanceof SearchRequest) {
             return ElasticsearchConstants.OPERATION_SEARCH;
-        } else if (request instanceof MultiGetRequest) {
+        } else if (request instanceof MultiSearchRequest) {
             return ElasticsearchConstants.OPERATION_MULTISEARCH;
         }
 
