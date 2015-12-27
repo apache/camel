@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a Salesforce endpoint.
+ * The salesforce component is used for integrating Camel with the massive Salesforce API.
  */
 @UriEndpoint(scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm", consumerClass = SalesforceConsumer.class)
 public class SalesforceEndpoint extends DefaultEndpoint {

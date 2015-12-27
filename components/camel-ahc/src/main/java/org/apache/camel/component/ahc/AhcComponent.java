@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  Defines the <a href="http://camel.apache.org/ahc.html">Async HTTP Client Component</a>
+ *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
  */
 public class AhcComponent extends HeaderFilterStrategyComponent {
     

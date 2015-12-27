@@ -35,10 +35,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
 /**
- * An endpoint which maintains a {@link List} of {@link Exchange} instances
- * which can be useful for tooling, debugging and visualising routes.
+ * The browse component is used for viewsing the messages received on endpoints that supports {@link BrowsableEndpoint}.
  *
- * @version 
+ * This can be useful for testing, visualisation tools or debugging. he exchanges sent to the endpoint are all available to be browsed.
  */
 @UriEndpoint(scheme = "browse", title = "Browse", syntax = "browse:name", label = "core,monitoring")
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {

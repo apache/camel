@@ -206,6 +206,39 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.cacheExpression(exp);
         }
 
+        // random
+        remainder = ifStartsWithReturnRemainder("random", function);
+        if (remainder != null) {
+            String values = ObjectHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = values.split(",", -1);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+                }
+                int min = Integer.parseInt(tokens[0].trim());
+                int max = Integer.parseInt(tokens[1].trim());
+                return ExpressionBuilder.randomExpression(min, max);
+            } else {
+                int max = Integer.parseInt(values.trim());
+                return ExpressionBuilder.randomExpression(max);
+            }
+        }
+
+        // collate function
+        remainder = ifStartsWithReturnRemainder("collate", function);
+        if (remainder != null) {
+            String values = ObjectHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, token.getIndex());
+            }
+            String exp = "${body}";
+            int num = Integer.parseInt(values.trim());
+            return ExpressionBuilder.collateExpression(exp, num);
+        }
+
         if (strict) {
             throw new SimpleParserException("Unknown function: " + function, token.getIndex());
         } else {
@@ -320,27 +353,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
         if (remainder != null) {
             return ExpressionBuilder.outHeaderExpression(remainder);
-        }
-        
-        // random
-        remainder = ifStartsWithReturnRemainder("random", function);
-        if (remainder != null) {
-            String values = ObjectHelper.between(remainder, "(", ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
-            }
-            if (values.contains(",")) {
-                String[] tokens = values.split(",", -1);
-                if (tokens.length > 2) {
-                    throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
-                }
-                int min = Integer.parseInt(tokens[0].trim());
-                int max = Integer.parseInt(tokens[1].trim());
-                return ExpressionBuilder.randomExpression(min, max);
-            } else {
-                int max = Integer.parseInt(values.trim());
-                return ExpressionBuilder.randomExpression(max);
-            }
         }
 
         return null;

@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Endpoint for Camel Mail.
+ * To send or receive emails using imap/pop3 or stmp protocols.
  */
 @UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS", syntax = "imap:host:port", consumerClass = MailConsumer.class, label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {

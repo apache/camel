@@ -34,6 +34,9 @@ import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityLevel;
 
+/**
+ * The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
+ */
 @UriEndpoint(scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 

@@ -29,7 +29,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "openshift", title = "OpenShift", syntax = "openshift:clientId", consumerClass = OpenShiftConsumer.class, label = "cloud")
+/**
+ * To manage your Openshift 2.x applications.
+ */
+@UriEndpoint(scheme = "openshift", title = "OpenShift", syntax = "openshift:clientId", consumerClass = OpenShiftConsumer.class, label = "cloud,paas")
 public class OpenShiftEndpoint extends ScheduledPollEndpoint {
 
     @UriPath @Metadata(required = "true")

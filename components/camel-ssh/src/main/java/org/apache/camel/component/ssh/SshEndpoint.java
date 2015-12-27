@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents an SSH endpoint.
+ * The ssh component enables access to SSH servers such that you can send an SSH command, and process the response.
  */
 @UriEndpoint(scheme = "ssh", title = "SSH", syntax = "ssh:host:port", consumerClass = SshConsumer.class, label = "file")
 public class SshEndpoint extends ScheduledPollEndpoint {

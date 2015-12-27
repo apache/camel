@@ -24,14 +24,17 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.exists.ExistsResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetRequest.Item;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -185,6 +188,33 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         assertFalse("response 2 should be ok", responses[1].isFailed());
         assertTrue("response 3 should be failed", responses[2].isFailed());
     }
+    
+    @Test
+    public void testMultiSearch() throws Exception {
+        //first, INDEX two values
+        Map<String, Object> headers = new HashMap<String, Object>();
+        
+        node.client().prepareIndex("test", "type", "1").setSource("field", "xxx").execute().actionGet();
+        node.client().prepareIndex("test", "type", "2").setSource("field", "yyy").execute().actionGet();
+
+        //now, verify MULTISEARCH
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_MULTISEARCH);
+        SearchRequestBuilder srb1 = node.client().prepareSearch("test").setTypes("type").setQuery(QueryBuilders.termQuery("field", "xxx"));
+        SearchRequestBuilder srb2 = node.client().prepareSearch("test").setTypes("type").setQuery(QueryBuilders.termQuery("field", "yyy"));
+        SearchRequestBuilder srb3 = node.client().prepareSearch("instagram")
+            .setTypes("type").setQuery(QueryBuilders.termQuery("test-multisearchkey", "test-multisearchvalue"));
+        List<SearchRequest> list = new ArrayList<>();
+        list.add(srb1.request());
+        list.add(srb2.request());
+        list.add(srb3.request());
+        MultiSearchResponse response = template.requestBodyAndHeaders("direct:multisearch", list, headers, MultiSearchResponse.class);
+        MultiSearchResponse.Item[] responses = response.getResponses();
+        assertNotNull("response should not be null", response);
+        assertEquals("response should contains three multiSearchResponse object", 3, response.getResponses().length);
+        assertFalse("response 1 should be ok", responses[0].isFailure());
+        assertFalse("response 2 should be ok", responses[1].isFailure());
+        assertTrue("response 3 should be failed", responses[2].isFailure());
+    }
 
     @Test
     public void testDeleteWithHeaders() throws Exception {
@@ -286,6 +316,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
                 from("direct:search").to("elasticsearch://local?operation=SEARCH&indexName=twitter&indexType=tweet");
                 from("direct:update").to("elasticsearch://local?operation=UPDATE&indexName=twitter&indexType=tweet");
                 from("direct:exists").to("elasticsearch://local?operation=EXISTS");
+                from("direct:multisearch").to("elasticsearch://local?operation=MULTISEARCH&indexName=test");
             }
         };
     }

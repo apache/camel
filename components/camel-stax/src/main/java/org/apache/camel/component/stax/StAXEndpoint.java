@@ -26,6 +26,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 
+/**
+ * The stax component allows messages to be process through a SAX ContentHandler.
+ */
 @UriEndpoint(scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true, label = "transformation")
 public class StAXEndpoint extends ProcessorEndpoint {
 

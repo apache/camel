@@ -31,6 +31,7 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetRequest.Item;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -134,6 +135,18 @@ public final class ElasticsearchActionRequestConverter {
             multiGetRequest.add(item);
         }
         return multiGetRequest;
+    }
+    
+    @Converter
+    public static MultiSearchRequest toMultiSearchRequest(Object document, Exchange exchange) {
+        List<SearchRequest> items = (List<SearchRequest>) document;
+        MultiSearchRequest multiSearchRequest = new MultiSearchRequest();
+        Iterator<SearchRequest> it = items.iterator();
+        while (it.hasNext()) {
+            SearchRequest item = (SearchRequest) it.next();
+            multiSearchRequest.add(item);
+        }
+        return multiSearchRequest;
     }
 
     @Converter

@@ -39,6 +39,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JacksonXMLDataFormat extends DataFormatDefinition {
     @XmlAttribute
+    private String xmlMapper;
+    @XmlAttribute
     private Boolean prettyPrint;
     @XmlAttribute
     private String unmarshalTypeName;
@@ -69,6 +71,17 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
 
     public JacksonXMLDataFormat() {
         super("jacksonxml");
+    }
+
+    public String getXmlMapper() {
+        return xmlMapper;
+    }
+
+    /**
+     * Lookup and use the existing XmlMapper with the given id.
+     */
+    public void setXmlMapper(String xmlMapper) {
+        this.xmlMapper = xmlMapper;
     }
 
     public Boolean getPrettyPrint() {
@@ -272,6 +285,11 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+        if (xmlMapper != null) {
+            // must be a reference value
+            String ref = xmlMapper.startsWith("#") ? xmlMapper : "#" + xmlMapper;
+            setProperty(camelContext, dataFormat, "xmlMapper", ref);
+        }
         if (unmarshalType != null) {
             setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
         }

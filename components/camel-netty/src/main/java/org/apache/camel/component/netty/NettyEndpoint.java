@@ -37,6 +37,9 @@ import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.jboss.netty.util.Timer;
 
+/**
+ * Socket level networking using TCP or UDP with the Netty 3.x library.
+ */
 @UriEndpoint(scheme = "netty", title = "Netty", syntax = "netty:protocol:host:port", consumerClass = NettyConsumer.class, label = "networking,tcp,udp")
 public class NettyEndpoint extends DefaultEndpoint {
     @UriParam

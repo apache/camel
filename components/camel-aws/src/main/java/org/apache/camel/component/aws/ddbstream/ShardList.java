@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.aws.ddbstream;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.model.Shard;
@@ -25,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class ShardList {
+
     private final Logger log = LoggerFactory.getLogger(ShardList.class);
 
     private final Map<String, Shard> shards = new HashMap<>();
@@ -49,6 +55,8 @@ class ShardList {
     }
 
     Shard first() {
+        // Potential optimisation: if the two provided sequence numbers are the
+        // same then we can skip the shard entirely. Need to confirm this with AWS.
         for (Shard shard : shards.values()) {
             if (!shards.containsKey(shard.getParentShardId())) {
                 return shard;
@@ -70,9 +78,39 @@ class ShardList {
         throw new IllegalStateException("Unable to find a shard with no children " + shards);
     }
 
+    Shard afterSeq(String sequenceNumber) {
+        return atAfterSeq(sequenceNumber, BigIntComparisons.Conditions.LT);
+    }
+
+    Shard atSeq(String sequenceNumber) {
+        return atAfterSeq(sequenceNumber, BigIntComparisons.Conditions.LTEQ);
+    }
+
+    Shard atAfterSeq(String sequenceNumber, BigIntComparisons condition) {
+        BigInteger atAfter = new BigInteger(sequenceNumber);
+        List<Shard> sorted = new ArrayList<>();
+        sorted.addAll(shards.values());
+        Collections.sort(sorted, StartingSequenceNumberComparator.INSTANCE);
+        for (Shard shard : sorted) {
+            if (shard.getSequenceNumberRange().getEndingSequenceNumber() != null) {
+                BigInteger end = new BigInteger(shard.getSequenceNumberRange().getEndingSequenceNumber());
+                // essentially: after < end or after <= end
+                if (condition.matches(atAfter, end)) {
+                    return shard;
+                }
+
+            }
+        }
+        if (shards.size() > 0) {
+            return sorted.get(sorted.size() - 1);
+        }
+        throw new IllegalStateException("Unable to find a shard with appropriate sequence numbers for " + sequenceNumber + " in " + shards);
+    }
+
     /**
-     * Removes shards that are older than the provided shard.
-     * Does not remove the provided shard.
+     * Removes shards that are older than the provided shard. Does not remove
+     * the provided shard.
+     *
      * @param removeBefore
      */
     void removeOlderThan(Shard removeBefore) {
@@ -94,5 +132,20 @@ class ShardList {
     @Override
     public String toString() {
         return "ShardList{" + "shards=" + shards + '}';
+    }
+
+
+
+
+
+    private static enum StartingSequenceNumberComparator implements Comparator<Shard> {
+        INSTANCE() {
+            @Override
+            public int compare(Shard o1, Shard o2) {
+                BigInteger i1 = new BigInteger(o1.getSequenceNumberRange().getStartingSequenceNumber());
+                BigInteger i2 = new BigInteger(o2.getSequenceNumberRange().getStartingSequenceNumber());
+                return i1.compareTo(i2);
+            }
+        }
     }
 }

@@ -38,6 +38,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
+ */
 @UriEndpoint(scheme = "rest-api", title = "REST API", syntax = "rest-api:path/contextId", consumerOnly = true, label = "core,rest")
 public class RestApiEndpoint extends DefaultEndpoint {
 

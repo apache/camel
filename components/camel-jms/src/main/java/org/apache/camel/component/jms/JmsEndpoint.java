@@ -63,9 +63,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
 /**
- * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
+ * The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
  *
- * @version
+ * This component uses Spring JMS.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 @UriEndpoint(scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")

@@ -32,6 +32,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
+ * The jmx component allows to receive JMX notifications.
+ *
  * Endpoint that describes a connection to an mbean.
  * <p/>
  * The component can connect to the local platform mbean server with the following URI:

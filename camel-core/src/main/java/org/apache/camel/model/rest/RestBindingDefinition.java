@@ -18,7 +18,6 @@ package org.apache.camel.model.rest;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,6 +32,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -223,7 +223,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 }
             }
 
-            IntrospectionSupport.setProperties(context.getTypeConverter(), dataFormat, copy);
+            // set reference properties first as they use # syntax that fools the regular properties setter
+            EndpointHelper.setReferenceProperties(context, dataFormat, copy);
+            EndpointHelper.setProperties(context, dataFormat, copy);
         }
     }
 
@@ -241,6 +243,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     public void setComponent(String component) {
         this.component = component;
     }
+
     public String getComponent() {
         return component;
     }

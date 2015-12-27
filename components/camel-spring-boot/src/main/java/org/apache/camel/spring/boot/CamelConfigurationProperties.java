@@ -48,6 +48,12 @@ public class CamelConfigurationProperties {
      */
     private String name;
 
+    /**
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to <tt>false</tt>
+     */
+    private String xmlRoutes = "classpath:camel/*.xml";
+
     // Getters & setters
 
     public boolean isJmxEnabled() {
@@ -90,4 +96,11 @@ public class CamelConfigurationProperties {
         this.name = name;
     }
 
+    public String getXmlRoutes() {
+        return xmlRoutes;
+    }
+
+    public void setXmlRoutes(String xmlRoutes) {
+        this.xmlRoutes = xmlRoutes;
+    }
 }

@@ -59,6 +59,9 @@ import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The rabbitmq component allows AMQP messages to be sent to (or consumed from) a RabbitMQ broker.
+ */
 @UriEndpoint(scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:hostname:portNumber/exchangeName", consumerClass = RabbitMQConsumer.class, label = "messaging")
 public class RabbitMQEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQEndpoint.class);
@@ -185,7 +188,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     public Exchange createRabbitExchange(Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
         Exchange exchange = super.createExchange();
-        setRabbitExchange(exchange, envelope, properties, body);
+        setRabbitExchange(exchange, envelope, properties, body, false);
         return exchange;
     }
 
@@ -196,14 +199,19 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         return messageConverter;
     }
 
-    public void setRabbitExchange(Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
+    public void setRabbitExchange(Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body, boolean out) {
         Message message;
-        if (camelExchange.getIn() != null) {
-            // Use the existing message so we keep the headers
-            message = camelExchange.getIn();
-        } else {
-            message = new DefaultMessage();
-            camelExchange.setIn(message);
+        if (out) {
+            // use OUT message
+            message = camelExchange.getOut();
+        }  else {
+            if (camelExchange.getIn() != null) {
+                // Use the existing message so we keep the headers
+                message = camelExchange.getIn();
+            } else {
+                message = new DefaultMessage();
+                camelExchange.setIn(message);
+            }
         }
 
         if (envelope != null) {

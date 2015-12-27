@@ -38,6 +38,9 @@ import org.slf4j.LoggerFactory;
 import quickfix.Message;
 import quickfix.SessionID;
 
+/**
+ * The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
+ */
 @UriEndpoint(scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", consumerClass = QuickfixjConsumer.class, label = "engine,messaging")
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
     public static final String EVENT_CATEGORY_KEY = "EventCategory";

@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Spark endpoint can be used to create various type of producers, including RDD-, DataFrame- and Hive-based.
+ * The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
  */
 @UriEndpoint(scheme = "spark", title = "Apache Spark", syntax = "spark:endpointType",
         producerOnly = true, label = "bigdata,iot")

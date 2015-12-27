@@ -46,6 +46,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Component for working with documents stored in MongoDB database.
+ */
 @UriEndpoint(scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean", consumerClass = MongoDbTailableCursorConsumer.class, label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
 

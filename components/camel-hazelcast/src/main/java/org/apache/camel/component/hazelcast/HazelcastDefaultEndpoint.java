@@ -27,6 +27,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
+/**
+ * The hazelcast component allows you to work with the Hazelcast distributed data grid / cache.
+ */
 @UriEndpoint(scheme = "hazelcast", title = "Hazelcast", syntax = "hazelcast:command:cacheName", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 

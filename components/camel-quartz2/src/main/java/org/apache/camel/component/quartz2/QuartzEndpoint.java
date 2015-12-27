@@ -51,9 +51,7 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 /**
- * This endpoint represent each job to be created in scheduler. When consumer is started or stopped, it will
- * call back into {@link #onConsumerStart(QuartzConsumer)} to add/resume or {@link #onConsumerStop(QuartzConsumer)}
- * to pause the scheduler trigger.
+ * Provides a scheduled delivery of messages using the Quartz 2.x scheduler
  */
 @UriEndpoint(scheme = "quartz2", title = "Quartz2", syntax = "quartz2:groupName/triggerName", consumerOnly = true, consumerClass = QuartzComponent.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint {

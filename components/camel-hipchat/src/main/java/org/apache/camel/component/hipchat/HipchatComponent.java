@@ -53,7 +53,7 @@ public class HipchatComponent extends UriEndpointComponent {
             throw new HipchatException("OAuth 2 auth token must be specified");
         }
         parseUri(uri, endpoint);
-        LOG.info("Using Hipchat API URL: " + endpoint.getConfiguration().hipChatUrl());
+        LOG.debug("Using Hipchat API URL: {}", endpoint.getConfiguration().hipChatUrl());
         return endpoint;
     }
 

@@ -27,9 +27,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * SQL Endpoint. Endpoint URI should contain valid SQL statement, but instead of
- * question marks (that are parameter placeholders), sharp signs should be used.
- * This is because in camel question mark has other meaning.
+ * The sql component can be used to perform SQL query to a database.
  */
 @UriEndpoint(scheme = "sql", title = "SQL", syntax = "sql:query", consumerClass = SqlConsumer.class, label = "database,sql")
 public class SqlEndpoint extends DefaultSqlEndpoint {

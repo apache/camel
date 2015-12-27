@@ -22,9 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IntrospectionSupport;
 
-/**
- * Defines the <a href="http://aws.amazon.com/swf/">Amazon Simple Workflow Component</a>
- */
 public class SWFComponent extends UriEndpointComponent {
 
     public SWFComponent() {

@@ -64,6 +64,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The mock component is used for testing routes and mediation rules using mocks.
+ * <p/>
  * A Mock endpoint which provides a literate, fluent API for testing routes
  * using a <a href="http://jmock.org/">JMock style</a> API.
  * <p/>

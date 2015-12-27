@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 /**
- * Represents an Elasticsearch endpoint.
+ * The elasticsearch component is used for interfacing with ElasticSearch server.
  */
 @UriEndpoint(scheme = "elasticsearch", title = "Elasticsearch", syntax = "elasticsearch:clusterName", producerOnly = true, label = "monitoring,search")
 public class ElasticsearchEndpoint extends DefaultEndpoint {

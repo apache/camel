@@ -35,7 +35,9 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 
 /**
- * Logger endpoint.
+ * The log component logs message exchanges to the underlying logging mechanism.
+ *
+ * Camel uses sfl4j which allows you to configure logging to the actual logging system.
  */
 @UriEndpoint(scheme = "log", title = "Log", syntax = "log:loggerName", producerOnly = true, label = "core,monitoring")
 public class LogEndpoint extends ProcessorEndpoint {

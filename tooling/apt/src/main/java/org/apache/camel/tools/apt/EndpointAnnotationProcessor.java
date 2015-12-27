@@ -132,7 +132,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
                                           String title, String scheme, String extendsScheme, String label) {
         // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, title, scheme, extendsScheme, label);
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label);
 
         String syntax = componentModel.getSyntax();
         String description = componentModel.getDescription();
@@ -180,7 +180,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
                                                 String title, String scheme, String extendsScheme, String label) {
         // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, title, scheme, extendsScheme, label);
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
@@ -408,7 +408,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint,
+    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, TypeElement endpointClassElement,
                                                      String title, String scheme, String extendsScheme, String label) {
         ComponentModel model = new ComponentModel(scheme);
 
@@ -456,19 +456,17 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             }
         }
 
-        // favor to use class javadoc of component as description
-        if (model.getJavaType() != null) {
-            Elements elementUtils = processingEnv.getElementUtils();
-            TypeElement typeElement = findTypeElement(roundEnv, model.getJavaType());
-            if (typeElement != null) {
-                String doc = elementUtils.getDocComment(typeElement);
-                if (doc != null) {
-                    // need to sanitize the description first (we only want a summary)
-                    doc = sanitizeDescription(doc, true);
-                    // the javadoc may actually be empty, so only change the doc if we got something
-                    if (!Strings.isNullOrEmpty(doc)) {
-                        model.setDescription(doc);
-                    }
+        // favor to use endpoint class javadoc as description
+        Elements elementUtils = processingEnv.getElementUtils();
+        TypeElement typeElement = findTypeElement(roundEnv, endpointClassElement.getQualifiedName().toString());
+        if (typeElement != null) {
+            String doc = elementUtils.getDocComment(typeElement);
+            if (doc != null) {
+                // need to sanitize the description first (we only want a summary)
+                doc = sanitizeDescription(doc, true);
+                // the javadoc may actually be empty, so only change the doc if we got something
+                if (!Strings.isNullOrEmpty(doc)) {
+                    model.setDescription(doc);
                 }
             }
         }

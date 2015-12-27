@@ -33,11 +33,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/test.html">Test Endpoint</a> is a
- * <a href="http://camel.apache.org/mock.html">Mock Endpoint</a> for testing but it will
- * pull all messages from the nested endpoint and use those as expected message body assertions.
+ * The test component extends the mock component to support pulling messages from another endpoint on startup to set the expected message bodies.
  *
- * @version 
+ * That is, you use the test endpoint in a route and messages arriving on it will be implicitly compared to some
+ * expected messages extracted from some other location.
+ * So you can use, for example, an expected set of message bodies as files.
+ * This will then set up a properly configured Mock endpoint, which is only valid if the received messages
+ * match the number of expected messages and their message payloads are equal.
  */
 @UriEndpoint(scheme = "test", title = "Test", syntax = "test:name", producerOnly = true, label = "core,testing")
 public class TestEndpoint extends MockEndpoint {

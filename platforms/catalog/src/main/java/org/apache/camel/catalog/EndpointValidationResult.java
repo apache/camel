@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,9 +26,10 @@ import java.util.Set;
 /**
  * Details result of validating endpoint uri.
  */
-public class ValidationResult implements Serializable {
+public class EndpointValidationResult implements Serializable {
 
     private final String uri;
+    private int errors;
 
     // component
     private String syntaxError;
@@ -36,50 +37,83 @@ public class ValidationResult implements Serializable {
 
     // options
     private Set<String> unknown;
+    private Map<String, String[]> unknownSuggestions;
     private Set<String> required;
     private Map<String, String> invalidEnum;
     private Map<String, String[]> invalidEnumChoices;
+    private Map<String, String> invalidReference;
     private Map<String, String> invalidBoolean;
     private Map<String, String> invalidInteger;
     private Map<String, String> invalidNumber;
+    private Map<String, String> defaultValues;
 
-    public ValidationResult(String uri) {
+    public EndpointValidationResult(String uri) {
         this.uri = uri;
     }
 
+    public String getUri() {
+        return uri;
+    }
+
+    public int getNumberOfErrors() {
+        return errors;
+    }
+
     public boolean isSuccess() {
-        return syntaxError == null && unknownComponent == null
-                && unknown == null && required == null && invalidEnum == null && invalidEnumChoices == null
+        boolean ok = syntaxError == null && unknownComponent == null
+                && unknown == null && required == null;
+        if (ok) {
+            ok = invalidEnum == null && invalidEnumChoices == null && invalidReference == null
                 && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
+        }
+        return ok;
     }
 
     public void addSyntaxError(String syntaxError) {
         this.syntaxError = syntaxError;
+        errors++;
     }
 
     public void addUnknownComponent(String name) {
         this.unknownComponent = name;
+        errors++;
     }
 
     public void addUnknown(String name) {
         if (unknown == null) {
             unknown = new LinkedHashSet<String>();
         }
-        unknown.add(name);
+        if (!unknown.contains(name)) {
+            unknown.add(name);
+            errors++;
+        }
+    }
+
+    public void addUnknownSuggestions(String name, String[] suggestions) {
+        if (unknownSuggestions == null) {
+            unknownSuggestions = new LinkedHashMap<String, String[]>();
+        }
+        unknownSuggestions.put(name, suggestions);
     }
 
     public void addRequired(String name) {
         if (required == null) {
             required = new LinkedHashSet<String>();
         }
-        required.add(name);
+        if (!required.contains(name)) {
+            required.add(name);
+            errors++;
+        }
     }
 
     public void addInvalidEnum(String name, String value) {
         if (invalidEnum == null) {
             invalidEnum = new LinkedHashMap<String, String>();
         }
-        invalidEnum.put(name, value);
+        if (!invalidEnum.containsKey(name)) {
+            invalidEnum.put(name, value);
+            errors++;
+        }
     }
 
     public void addInvalidEnumChoices(String name, String[] choices) {
@@ -89,25 +123,51 @@ public class ValidationResult implements Serializable {
         invalidEnumChoices.put(name, choices);
     }
 
+    public void addInvalidReference(String name, String value) {
+        if (invalidReference == null) {
+            invalidReference = new LinkedHashMap<String, String>();
+        }
+        if (!invalidReference.containsKey(name)) {
+            invalidReference.put(name, value);
+            errors++;
+        }
+    }
+
     public void addInvalidBoolean(String name, String value) {
         if (invalidBoolean == null) {
-            invalidBoolean = new LinkedHashMap<String, String>();;
+            invalidBoolean = new LinkedHashMap<String, String>();
         }
-        invalidBoolean.put(name, value);
+        if (!invalidBoolean.containsKey(name)) {
+            invalidBoolean.put(name, value);
+            errors++;
+        }
     }
 
     public void addInvalidInteger(String name, String value) {
         if (invalidInteger == null) {
-            invalidInteger = new LinkedHashMap<String, String>();;
+            invalidInteger = new LinkedHashMap<String, String>();
         }
-        invalidInteger.put(name, value);
+        if (!invalidInteger.containsKey(name)) {
+            invalidInteger.put(name, value);
+            errors++;
+        }
     }
 
     public void addInvalidNumber(String name, String value) {
         if (invalidNumber == null) {
-            invalidNumber = new LinkedHashMap<String, String>();;
+            invalidNumber = new LinkedHashMap<String, String>();
         }
-        invalidNumber.put(name, value);
+        if (!invalidNumber.containsKey(name)) {
+            invalidNumber.put(name, value);
+            errors++;
+        }
+    }
+
+    public void addDefaultValue(String name, String value)  {
+        if (defaultValues == null) {
+            defaultValues = new LinkedHashMap<String, String>();
+        }
+        defaultValues.put(name, value);
     }
 
     public String getSyntaxError() {
@@ -116,6 +176,10 @@ public class ValidationResult implements Serializable {
 
     public Set<String> getUnknown() {
         return unknown;
+    }
+
+    public Map<String, String[]> getUnknownSuggestions() {
+        return unknownSuggestions;
     }
 
     public String getUnknownComponent() {
@@ -130,6 +194,14 @@ public class ValidationResult implements Serializable {
         return invalidEnum;
     }
 
+    public Map<String, String[]> getInvalidEnumChoices() {
+        return invalidEnumChoices;
+    }
+
+    public Map<String, String> getInvalidReference() {
+        return invalidReference;
+    }
+
     public Map<String, String> getInvalidBoolean() {
         return invalidBoolean;
     }
@@ -140,6 +212,10 @@ public class ValidationResult implements Serializable {
 
     public Map<String, String> getInvalidNumber() {
         return invalidNumber;
+    }
+
+    public Map<String, String> getDefaultValues() {
+        return defaultValues;
     }
 
     /**
@@ -162,19 +238,39 @@ public class ValidationResult implements Serializable {
         Map<String, String> options = new LinkedHashMap<String, String>();
         if (unknown != null) {
             for (String name : unknown) {
-                options.put(name, "Unknown field");
+                if (unknownSuggestions != null && unknownSuggestions.containsKey(name)) {
+                    String[] suggestions = unknownSuggestions.get(name);
+                    String str = Arrays.asList(suggestions).toString();
+                    options.put(name, "Unknown option. Did you mean: " + str);
+                } else {
+                    options.put(name, "Unknown option.");
+                }
             }
         }
         if (required != null) {
             for (String name : required) {
-                options.put(name, "Missing required field");
+                options.put(name, "Missing required option");
             }
         }
         if (invalidEnum != null) {
             for (Map.Entry<String, String> entry : invalidEnum.entrySet()) {
                 String[] choices = invalidEnumChoices.get(entry.getKey());
+                String defaultValue = defaultValues != null ? defaultValues.get(entry.getKey()) : null;
                 String str = Arrays.asList(choices).toString();
-                options.put(entry.getKey(), "Invalid enum value: " + entry.getValue() + ". Possible values: " + str);
+                String msg = "Invalid enum value: " + entry.getValue() + ". Possible values: " + str;
+                if (defaultValue != null) {
+                    msg += ". Default value: " + defaultValue;
+                }
+                options.put(entry.getKey(), msg);
+            }
+        }
+        if (invalidReference != null) {
+            for (Map.Entry<String, String> entry : invalidReference.entrySet()) {
+                if (!entry.getValue().startsWith("#")) {
+                    options.put(entry.getKey(), "Invalid reference value: " + entry.getValue() + " must start with #");
+                } else {
+                    options.put(entry.getKey(), "Invalid reference value: " + entry.getValue() + " must not be empty");
+                }
             }
         }
         if (invalidBoolean != null) {

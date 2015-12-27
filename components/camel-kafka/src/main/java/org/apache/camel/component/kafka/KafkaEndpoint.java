@@ -30,6 +30,9 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
+/**
+ * The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
+ */
 @UriEndpoint(scheme = "kafka", title = "Kafka", syntax = "kafka:brokers", consumerClass = KafkaConsumer.class, label = "messaging")
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 

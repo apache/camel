@@ -47,7 +47,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "kubernetes", title = "Kubernetes", syntax = "kubernetes:master", label = "cloud,paas")
+/**
+ * The kubernetes component allows to work with Kubernetes PaaS.
+ */
+@UriEndpoint(scheme = "kubernetes", title = "Kubernetes", syntax = "kubernetes:master", label = "container,cloud,paas")
 public class KubernetesEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesEndpoint.class);

@@ -36,9 +36,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.data.Method;
 
 /**
- * Represents a <a href="http://www.restlet.org/"> endpoint</a>
- *
- * @version 
+ * Component for consuming and producing Restful resources using Restlet
  */
 @UriEndpoint(scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern", consumerClass = RestletConsumer.class, label = "rest")
 public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {

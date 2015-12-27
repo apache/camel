@@ -35,7 +35,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
+ * The rmi component is for invoking Java RMI beans from Camel.
  */
 @UriEndpoint(scheme = "rmi", title = "RMI", syntax = "rmi:hostname:port/name", consumerClass = RmiConsumer.class, label = "messaging")
 public class RmiEndpoint extends DefaultEndpoint {

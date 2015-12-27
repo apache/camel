@@ -44,7 +44,7 @@ import org.xnio.OptionMap;
 import org.xnio.Options;
 
 /**
- * Represents an Undertow endpoint.
+ * The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests
  */
 @UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
         consumerClass = UndertowConsumer.class, label = "http")

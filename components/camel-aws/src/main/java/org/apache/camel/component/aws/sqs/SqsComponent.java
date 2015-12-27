@@ -22,10 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS Component</a> 
- * 
- */
 public class SqsComponent extends UriEndpointComponent {
     
     public SqsComponent() {

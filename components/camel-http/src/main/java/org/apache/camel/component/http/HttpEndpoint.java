@@ -37,9 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a <a href="http://camel.apache.org/http.html">HTTP endpoint</a>
- *
- * @version 
+ * For calling out to external HTTP servers using Apache HTTP Client 3.x.
  */
 @UriEndpoint(scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri", producerOnly = true, label = "http")
 public class HttpEndpoint extends HttpCommonEndpoint {

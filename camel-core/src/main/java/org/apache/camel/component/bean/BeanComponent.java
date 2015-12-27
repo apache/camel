@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/bean.html">Bean Component</a> is for invoking Java beans from Camel.
- *
- * @version 
  */
 public class BeanComponent extends UriEndpointComponent {
 

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -1439,7 +1440,63 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody("87444549697");
         assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", false);
     }
+
+    public void testCollateEven() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        data.add("D");
+        data.add("E");
+        data.add("F");
+        exchange.getIn().setBody(data);
+
+        Iterator it = (Iterator) evaluateExpression("${collate(3)}", null);
+        List chunk = (List) it.next();
+        List chunk2 = (List) it.next();
+        assertFalse(it.hasNext());
+
+        assertEquals(3, chunk.size());
+        assertEquals(3, chunk2.size());
+
+        assertEquals("A", chunk.get(0));
+        assertEquals("B", chunk.get(1));
+        assertEquals("C", chunk.get(2));
+        assertEquals("D", chunk2.get(0));
+        assertEquals("E", chunk2.get(1));
+        assertEquals("F", chunk2.get(2));
+    }
     
+    public void testCollateOdd() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        data.add("D");
+        data.add("E");
+        data.add("F");
+        data.add("G");
+        exchange.getIn().setBody(data);
+
+        Iterator it = (Iterator) evaluateExpression("${collate(3)}", null);
+        List chunk = (List) it.next();
+        List chunk2 = (List) it.next();
+        List chunk3 = (List) it.next();
+        assertFalse(it.hasNext());
+
+        assertEquals(3, chunk.size());
+        assertEquals(3, chunk2.size());
+        assertEquals(1, chunk3.size());
+
+        assertEquals("A", chunk.get(0));
+        assertEquals("B", chunk.get(1));
+        assertEquals("C", chunk.get(2));
+        assertEquals("D", chunk2.get(0));
+        assertEquals("E", chunk2.get(1));
+        assertEquals("F", chunk2.get(2));
+        assertEquals("G", chunk3.get(0));
+    }
+
     public void testRandomExpression() throws Exception {
         int min = 1;
         int max = 10;

@@ -37,8 +37,6 @@ public class DdbStreamComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DdbStreamEndpoint endpoint = new DdbStreamEndpoint(uri, remaining, this);
-
-        LOG.debug("Created endpoint: {}", endpoint.toString());
         return endpoint;
     }
 }

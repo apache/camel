@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
+ * The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
  */
 @UriEndpoint(scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueName", consumerClass = SqsConsumer.class, label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {

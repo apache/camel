@@ -38,9 +38,15 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
 /**
- * Language endpoint.
+ * The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
  *
- * @version 
+ * By having a component to execute language scripts, it allows more dynamic routing capabilities.
+ * For example by using the Routing Slip or Dynamic Router EIPs you can send messages to language endpoints
+ * where the script is dynamic defined as well.
+ *
+ * This component is provided out of the box in camel-core and hence no additional JARs is needed.
+ * You only have to include additional Camel components if the language of choice mandates it,
+ * such as using Groovy or JavaScript languages.
  */
 @UriEndpoint(scheme = "language", title = "Language", syntax = "language:languageName", producerOnly = true, label = "core,script")
 public class LanguageEndpoint extends ResourceEndpoint {

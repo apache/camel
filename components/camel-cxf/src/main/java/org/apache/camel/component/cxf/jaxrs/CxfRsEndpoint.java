@@ -56,6 +56,9 @@ import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The cxfrs component is used for JAX-RS REST services using Apache CXF.
+ */
 @UriEndpoint(scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", consumerClass = CxfRsConsumer.class, label = "rest")
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
 

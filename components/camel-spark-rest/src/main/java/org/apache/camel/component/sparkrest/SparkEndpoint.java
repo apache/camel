@@ -28,6 +28,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import spark.route.HttpMethod;
 
+/**
+ * The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
+ */
 @UriEndpoint(scheme = "spark-rest", title = "Spark Rest", syntax = "spark-rest:verb:path", consumerOnly = true, consumerClass =  SparkConsumer.class, label = "rest")
 public class SparkEndpoint extends DefaultEndpoint {
     @UriPath(enums = "get,post,put,patch,delete,head,trace,connect,options") @Metadata(required = "true")

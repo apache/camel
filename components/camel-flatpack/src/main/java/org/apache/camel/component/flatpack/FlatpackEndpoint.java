@@ -44,9 +44,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
 /**
- * Processing fixed width or delimited files or messages using the FlatPack library.
- *
- * @version
+ * The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
  */
 @UriEndpoint(scheme = "flatpack", title = "Flatpack", syntax = "flatpack:type:resourceUri", consumerClass = FlatpackConsumer.class, label = "transformation")
 public class FlatpackEndpoint extends DefaultPollingEndpoint {

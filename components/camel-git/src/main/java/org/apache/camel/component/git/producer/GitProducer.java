@@ -25,14 +25,18 @@ import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.eclipse.jgit.api.CherryPickCommand;
+import org.eclipse.jgit.api.CherryPickResult;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -94,6 +98,10 @@ public class GitProducer extends DefaultProducer {
             doAdd(exchange, operation);
             break;
 
+        case GitOperation.CHERRYPICK_OPERATION:
+            doCherryPick(exchange, operation);
+            break;
+            
         case GitOperation.REMOVE_OPERATION:
             doRemove(exchange, operation);
             break;
@@ -405,6 +413,30 @@ public class GitProducer extends DefaultProducer {
         List<Ref> result = null;
         try {
             result = git.branchList().setListMode(ListMode.ALL).call();
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
+        exchange.getOut().setBody(result);
+    }
+    
+    protected void doCherryPick(Exchange exchange, String operation) throws Exception {
+        CherryPickResult result = null;
+        String commitId = null;
+        try {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_ID))) {
+                commitId = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_ID, String.class);
+            } else {
+                throw new IllegalArgumentException("Commit id must be specified to execute " + operation);
+            }
+            RevWalk walk = new RevWalk(repo);
+            ObjectId id = repo.resolve(commitId);
+            RevCommit commit = walk.parseCommit(id);
+            walk.dispose();
+            if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
+                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+            }
+            result = git.cherryPick().include(commit).call();
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;

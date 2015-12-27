@@ -24,7 +24,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Represents a Redis endpoint.
+ * The spring-redis component allows sending and receiving messages from Redis.
  */
 @UriEndpoint(scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port", consumerClass = RedisConsumer.class, label = "spring,nosql")
 public class RedisEndpoint extends DefaultEndpoint {

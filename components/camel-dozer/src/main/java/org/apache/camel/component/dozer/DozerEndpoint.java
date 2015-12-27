@@ -35,6 +35,9 @@ import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The dozer component provides the ability to map between Java beans using the Dozer mapping library.
+ */
 @UriEndpoint(scheme = "dozer", title = "Dozer", syntax = "dozer:name", producerOnly = true, label = "transformation")
 public class DozerEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(DozerEndpoint.class);

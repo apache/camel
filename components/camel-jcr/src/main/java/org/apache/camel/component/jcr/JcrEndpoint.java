@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A JCR endpoint
+ * The jcr component allows you to add/read nodes to/from a JCR compliant content repository.
  */
 @UriEndpoint(scheme = "jcr", title = "JCR", syntax = "jcr:host/base", consumerClass = JcrConsumer.class, label = "cms,database")
 public class JcrEndpoint extends DefaultEndpoint {

@@ -34,7 +34,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Freemarker endpoint
+ * Generates a response using a FreeMarker template
  */
 @UriEndpoint(scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
 public class FreemarkerEndpoint extends ResourceEndpoint {

@@ -31,6 +31,9 @@ import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file and URL.
+ */
 @UriEndpoint(scheme = "stream", title = "Stream", syntax = "stream:url", consumerClass = StreamConsumer.class, label = "file,system")
 public class StreamEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);

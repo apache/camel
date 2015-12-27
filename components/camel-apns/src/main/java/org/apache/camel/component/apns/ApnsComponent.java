@@ -22,6 +22,9 @@ import com.notnoop.apns.ApnsService;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
+/**
+ * For sending notifications to Apple iOS devices
+ */
 public class ApnsComponent extends UriEndpointComponent {
 
     private ApnsService apnsService;

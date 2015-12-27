@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A XMPP Endpoint
+ * To send and receive messages from a XMPP (chat) server.
  */
 @UriEndpoint(scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant", consumerClass = XmppConsumer.class, label = "chat,messaging")
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {

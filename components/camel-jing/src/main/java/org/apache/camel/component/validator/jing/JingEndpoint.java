@@ -36,6 +36,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
+/**
+ * Validates the payload of a message using RelaxNG Syntax using Jing library.
+ */
 @UriEndpoint(scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {
 

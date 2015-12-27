@@ -1274,6 +1274,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        RestConfiguration config = getCamelContext().getRestConfiguration("jetty", true);
+        // configure additional options on jetty configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(this, config.getComponentProperties());
+        }
+
         startMbContainer();
     }
 

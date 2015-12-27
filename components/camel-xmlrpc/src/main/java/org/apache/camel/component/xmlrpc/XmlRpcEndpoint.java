@@ -35,7 +35,7 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 /**
- * Represents a xmlrpc endpoint.
+ * The xmlrpc component is used for sending messages to a XML RPC service.
  */
 @UriEndpoint(scheme = "xmlrpc", title = "XML RPC", syntax = "xmlrpc:address", producerOnly = true, label = "transformation")
 public class XmlRpcEndpoint extends DefaultEndpoint {

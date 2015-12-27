@@ -26,7 +26,7 @@ import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.qpid.jms.JmsConnectionFactory;
 
 /**
- * This component supports the AMQP protocol using the Client API of the Apache Qpid project.
+ * Messaging with AMQP protocol using Apache QPid Client.
  */
 public class AMQPComponent extends JmsComponent {
 

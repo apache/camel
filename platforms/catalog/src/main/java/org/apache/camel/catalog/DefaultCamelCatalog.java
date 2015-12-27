@@ -41,12 +41,14 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 
 import static org.apache.camel.catalog.CatalogHelper.after;
+import static org.apache.camel.catalog.JSonSchemaHelper.getNames;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyEnum;
 import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyNumber;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyObject;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
 import static org.apache.camel.catalog.URISupport.createQueryString;
 import static org.apache.camel.catalog.URISupport.isEmpty;
@@ -77,6 +79,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
     private final Map<String, Object> cache = new HashMap<String, Object>();
 
     private boolean caching;
+    private SuggestionStrategy suggestionStrategy;
 
     /**
      * Creates the {@link CamelCatalog} without caching enabled.
@@ -96,6 +99,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
     @Override
     public void enableCache() {
         caching = true;
+    }
+
+    @Override
+    public void setSuggestionStrategy(SuggestionStrategy suggestionStrategy) {
+        this.suggestionStrategy = suggestionStrategy;
     }
 
     @Override
@@ -646,8 +654,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
-    public ValidationResult validateProperties(String uri) {
-        ValidationResult result = new ValidationResult(uri);
+    public EndpointValidationResult validateEndpointProperties(String uri) {
+        EndpointValidationResult result = new EndpointValidationResult(uri);
 
         Map<String, String> properties;
         List<Map<String, String>> rows;
@@ -675,11 +683,21 @@ public class DefaultCamelCatalog implements CamelCatalog {
             boolean placeholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
 
             Map<String, String> row = getRow(rows, name);
-            // unknown option
             if (row == null) {
+                // unknown option
                 result.addUnknown(name);
+                if (suggestionStrategy != null) {
+                    String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
+                    if (suggestions != null) {
+                        result.addUnknownSuggestions(name, suggestions);
+                    }
+                }
             } else {
-                // invalid value/type
+                // default value
+                String defaultValue = getPropertyDefaultValue(rows, name);
+                if (defaultValue != null) {
+                    result.addDefaultValue(name, defaultValue);
+                }
 
                 // is required but the value is empty
                 boolean required = isPropertyRequired(rows, name);
@@ -702,6 +720,14 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     if (!found) {
                         result.addInvalidEnum(name, value);
                         result.addInvalidEnumChoices(name, choices);
+                    }
+                }
+
+                // is reference lookup of bean
+                if (isPropertyObject(rows, name)) {
+                    // must start with # and be at least 2 characters
+                    if (!value.startsWith("#") || value.length() <= 1) {
+                        result.addInvalidReference(name, value);
                     }
                 }
 

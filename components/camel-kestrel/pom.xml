@@ -26,26 +26,13 @@
 
     <artifactId>camel-kestrel</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: Kestrel</name>
+    <name>Camel :: Kestrel (deprecated)</name>
     <description>Camel Kestrel support</description>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.kestrel.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=kestrel</camel.osgi.export.service>
     </properties>
-
-    <!-- TODO: we should use SMX bundle JAR -->
-    <repositories>
-        <repository>
-            <id>couchbase.repo</id>
-            <name>Couchbase Repository</name>
-            <layout>default</layout>
-            <url>http://files.couchbase.com/maven2/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencies>
 
@@ -55,7 +42,7 @@
         </dependency>
 
         <dependency>
-            <groupId>spy</groupId>
+            <groupId>net.spy</groupId>
             <artifactId>spymemcached</artifactId>
             <version>${spymemcached-version}</version>
         </dependency>

@@ -255,4 +255,15 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         return consumer;
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        RestConfiguration config = getCamelContext().getRestConfiguration("servlet", true);
+        // configure additional options on jetty configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(this, config.getComponentProperties());
+        }
+    }
 }
