@@ -114,8 +114,9 @@ public class GoraProducer extends DefaultProducer implements ServicePoolAware {
         }
 
         exchange.getOut().setBody(result);
-        // preserve headers
+        // preserve headers and attachments
         exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        exchange.getOut().setAttachments(exchange.getIn().getAttachments());
     }
 
 }
