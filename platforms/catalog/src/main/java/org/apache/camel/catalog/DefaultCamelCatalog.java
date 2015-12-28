@@ -1192,27 +1192,38 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String listComponentsAsJson() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        List<String> names = findComponentNames();
-        for (int i = 0; i < names.size(); i++) {
-            String scheme = names.get(i);
-            String json = componentJSonSchema(scheme);
-            // skip first line
-            json = CatalogHelper.between(json, "\"component\": {", "\"componentProperties\": {");
-            json = json != null ? json.trim() : "";
-            // skip last comma if not the last
-            if (i == names.size() - 1) {
-                json = json.substring(0, json.length() - 1);
-            }
-            sb.append("\n");
-            sb.append("  {\n");
-            sb.append("    ");
-            sb.append(json);
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("listComponentsAsJson");
         }
 
-        sb.append("\n]");
-        return sb.toString();
+        if (answer == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+            List<String> names = findComponentNames();
+            for (int i = 0; i < names.size(); i++) {
+                String scheme = names.get(i);
+                String json = componentJSonSchema(scheme);
+                // skip first line
+                json = CatalogHelper.between(json, "\"component\": {", "\"componentProperties\": {");
+                json = json != null ? json.trim() : "";
+                // skip last comma if not the last
+                if (i == names.size() - 1) {
+                    json = json.substring(0, json.length() - 1);
+                }
+                sb.append("\n");
+                sb.append("  {\n");
+                sb.append("    ");
+                sb.append(json);
+            }
+            sb.append("\n]");
+            answer = sb.toString();
+            if (caching) {
+                cache.put("listComponentsAsJson", answer);
+            }
+        }
+
+        return answer;
     }
 
     @Override
