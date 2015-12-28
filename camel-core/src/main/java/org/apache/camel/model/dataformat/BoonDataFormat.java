@@ -41,7 +41,7 @@ public class BoonDataFormat extends DataFormatDefinition {
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
-    @XmlTransient
+    @XmlAttribute
     private Boolean useList;
 
     public BoonDataFormat() {
