@@ -584,8 +584,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             for (Map.Entry<String, Properties> entry : components.entrySet()) {
                 String name = entry.getKey();
                 String title = null;
+                String syntax = null;
                 String description = null;
                 String label = null;
+                String deprecated = null;
                 String status = context.hasComponent(name) != null ? "in use" : "on classpath";
                 String type = (String) entry.getValue().get("class");
                 String groupId = null;
@@ -603,10 +605,14 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 for (Map<String, String> row : rows) {
                     if (row.containsKey("title")) {
                         title = row.get("title");
+                    } else if (row.containsKey("syntax")) {
+                        syntax = row.get("syntax");
                     } else if (row.containsKey("description")) {
                         description = row.get("description");
                     } else if (row.containsKey("label")) {
                         label = row.get("label");
+                    } else if (row.containsKey("deprecated")) {
+                        deprecated = row.get("deprecated");
                     } else if (row.containsKey("javaType")) {
                         type = row.get("javaType");
                     } else if (row.containsKey("groupId")) {
@@ -619,8 +625,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 }
 
                 CompositeType ct = CamelOpenMBeanTypes.listComponentsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "title", "description", "label", "status", "type", "groupId", "artifactId", "version"},
-                        new Object[]{name, title, description, label, status, type, groupId, artifactId, version});
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "title", "syntax", "description", "label", "deprecated", "status", "type", "groupId", "artifactId", "version"},
+                        new Object[]{name, title, syntax, description, label, deprecated, status, type, groupId, artifactId, version});
                 answer.put(data);
             }
             return answer;

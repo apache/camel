@@ -143,9 +143,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         writer.println("</header>");
         writer.println("<body>");
         writer.println("<h1>" + title + "</h1>");
-        writer.println("<b>Description:</b> " + description + "<br/>");
         writer.println("<b>Scheme:</b> " + scheme + "<br/>");
         writer.println("<b>Syntax:</b> " + syntax + "<br/>");
+        writer.println("<b>Description:</b> " + description + "<br/>");
+        writer.println("<b>Deprecated:</b>" + componentModel.isDeprecated() + "<br/>");
         writer.println("<b>Maven:</b> " + componentModel.getGroupId() + "/" + componentModel.getArtifactId() + "/" + componentModel.getVersionId() + "<br/>");
 
         writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, classElement, "");
@@ -212,6 +213,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n    \"title\": \"").append(componentModel.getTitle()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
+        buffer.append("\n    \"deprecated\": \"").append(componentModel.isDeprecated()).append("\",");
         if (componentModel.isConsumerOnly()) {
             buffer.append("\n    \"consumerOnly\": \"").append("true").append("\",");
         } else if (componentModel.isProducerOnly()) {
@@ -439,6 +441,16 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             } else {
                 model.setDescription("");
             }
+
+            // we can mark a component as deprecated by using the annotation or in the pom.xml
+            boolean deprecated = endpointClassElement.getAnnotation(Deprecated.class) != null;
+            if (!deprecated) {
+                String name = map.get("projectName");
+                // we may have marked a component as deprecated in the project name
+                deprecated = name != null && name.contains("(deprecated)");
+            }
+            model.setDeprecated(deprecated);
+
             if (map.containsKey("groupId")) {
                 model.setGroupId(map.get("groupId"));
             } else {

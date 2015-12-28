@@ -30,6 +30,7 @@ public final class ComponentModel {
     private String label;
     private boolean consumerOnly;
     private boolean producerOnly;
+    private boolean deprecated;
 
     public ComponentModel(String scheme) {
         this.scheme = scheme;
@@ -125,5 +126,13 @@ public final class ComponentModel {
 
     public void setProducerOnly(boolean producerOnly) {
         this.producerOnly = producerOnly;
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(boolean deprecated) {
+        this.deprecated = deprecated;
     }
 }
