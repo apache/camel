@@ -36,7 +36,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultConsumer;
 
-
 public class RabbitMQConsumer extends DefaultConsumer {
     private ExecutorService executor;
     private Connection conn;
@@ -60,7 +59,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
 
     @Override
     public RabbitMQEndpoint getEndpoint() {
-        return (RabbitMQEndpoint) super.getEndpoint();
+        return (RabbitMQEndpoint)super.getEndpoint();
     }
 
     /**
@@ -81,8 +80,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
         log.debug("Created channel: {}", channel);
         // setup the basicQos
         if (endpoint.isPrefetchEnabled()) {
-            channel.basicQos(endpoint.getPrefetchSize(), endpoint.getPrefetchCount(),
-                            endpoint.isPrefetchGlobal());
+            channel.basicQos(endpoint.getPrefetchSize(), endpoint.getPrefetchCount(), endpoint.isPrefetchGlobal());
         }
         return channel;
     }
@@ -122,16 +120,25 @@ public class RabbitMQConsumer extends DefaultConsumer {
             startConsumers();
         } catch (Exception e) {
             log.info("Connection failed, will start background thread to retry!", e);
-            // Open connection, and start message listener in background
-            Integer networkRecoveryInterval = getEndpoint().getNetworkRecoveryInterval();
-            final long connectionRetryInterval = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
-            startConsumerCallable = new StartConsumerCallable(connectionRetryInterval);
-            executor.submit(startConsumerCallable);
+            reconnect();
         }
     }
 
+    private void reconnect() {
+        // Open connection, and start message listener in background
+        Integer networkRecoveryInterval = getEndpoint().getNetworkRecoveryInterval();
+        final long connectionRetryInterval = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
+        startConsumerCallable = new StartConsumerCallable(connectionRetryInterval);
+        executor.submit(startConsumerCallable);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        reconnect();
+    }
+
     /**
-     * If needed, close Connection and Channels 
+     * If needed, close Connection and Channels
      */
     private void closeConnectionAndChannel() throws IOException, TimeoutException {
         if (startConsumerCallable != null) {
@@ -151,6 +158,11 @@ public class RabbitMQConsumer extends DefaultConsumer {
             conn.close(closeTimeout);
             conn = null;
         }
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        closeConnectionAndChannel();
     }
 
     @Override
@@ -186,9 +198,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope,
-                                   AMQP.BasicProperties properties, byte[] body) throws IOException {
-
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
             Exchange exchange = consumer.endpoint.createRabbitExchange(envelope, properties, body);
             endpoint.getMessageConverter().mergeAmqpProperties(exchange, properties);
 
@@ -228,7 +238,8 @@ public class RabbitMQConsumer extends DefaultConsumer {
                     channel.basicAck(deliveryTag, false);
                 }
             } else if (endpoint.isTransferException() && exchange.getPattern().isOutCapable()) {
-                // the inOut exchange failed so put the exception in the body and send back
+                // the inOut exchange failed so put the exception in the body
+                // and send back
                 msg.setBody(exchange.getException());
                 exchange.setOut(msg);
                 try {
@@ -282,8 +293,8 @@ public class RabbitMQConsumer extends DefaultConsumer {
     }
 
     /**
-     * Task in charge of opening connection and adding listener when consumer is started
-     * and broker is not available.
+     * Task in charge of opening connection and adding listener when consumer is
+     * started and broker is not available.
      */
     private class StartConsumerCallable implements Callable<Void> {
         private final long connectionRetryInterval;
