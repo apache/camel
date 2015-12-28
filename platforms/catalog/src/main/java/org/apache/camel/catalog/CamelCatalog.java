@@ -49,6 +49,14 @@ public interface CamelCatalog {
     void addComponent(String name, String className);
 
     /**
+     * Adds a 3rd party data format to this catalog.
+     *
+     * @param name      the data format name
+     * @param className the fully qualified class name for the data format class
+     */
+    void addDataFormat(String name, String className);
+
+    /**
      * The version of this Camel Catalog
      */
     String getCatalogVersion();

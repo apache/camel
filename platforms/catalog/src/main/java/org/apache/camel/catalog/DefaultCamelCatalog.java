@@ -76,8 +76,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     private final VersionHelper version = new VersionHelper();
 
-    // 3rd party components
+    // 3rd party components/data-formats
     private final Map<String, String> extraComponents = new HashMap<String, String>();
+    private final Map<String, String> extraDataFormats = new HashMap<String, String>();
 
     // cache of operation -> result
     private final Map<String, Object> cache = new HashMap<String, Object>();
@@ -117,6 +118,15 @@ public class DefaultCamelCatalog implements CamelCatalog {
         cache.remove("findComponentNames");
         cache.remove("findComponentLabels");
         cache.remove("listComponentsAsJson");
+    }
+
+    @Override
+    public void addDataFormat(String name, String className) {
+        extraDataFormats.put(name, className);
+        // invalidate the cache
+        cache.remove("findDataFormatNames");
+        cache.remove("findDataFormatLabels");
+        cache.remove("listDataFormatsAsJson");
     }
 
     @Override
@@ -175,6 +185,14 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     // ignore
                 }
             }
+
+            // include third party data formats
+            for (Map.Entry<String, String> entry : extraDataFormats.entrySet()) {
+                names.add(entry.getKey());
+            }
+            // sort the names
+            Collections.sort(names);
+
             if (caching) {
                 cache.put("findDataFormatNames", names);
             }
@@ -440,6 +458,22 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     answer = CatalogHelper.loadText(is);
                 } catch (IOException e) {
                     // ignore
+                }
+            } else {
+                // its maybe a third party so try load it
+                String className = extraDataFormats.get(name);
+                if (className != null) {
+                    String packageName = className.substring(0, className.lastIndexOf('.'));
+                    packageName = packageName.replace('.', '/');
+                    String path = packageName + "/" + name + ".json";
+                    is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(path);
+                    if (is != null) {
+                        try {
+                            answer = CatalogHelper.loadText(is);
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    }
                 }
             }
             if (caching) {

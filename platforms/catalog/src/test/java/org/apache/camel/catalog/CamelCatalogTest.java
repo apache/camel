@@ -549,4 +549,21 @@ public class CamelCatalogTest {
         assertNotNull(tree);
     }
 
+    @Test
+    public void testAddDataFormat() throws Exception {
+        assertFalse(catalog.findDataFormatNames().contains("dummyformat"));
+
+        catalog.addDataFormat("dummyformat", "org.foo.camel.DummyDataFormat");
+
+        assertTrue(catalog.findDataFormatNames().contains("dummyformat"));
+
+        String json = catalog.dataFormatJSonSchema("dummyformat");
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
 }
