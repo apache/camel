@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The test component extends the mock component to support pulling messages from another endpoint on startup to set the expected message bodies.
+ * The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
  *
  * That is, you use the test endpoint in a route and messages arriving on it will be implicitly compared to some
  * expected messages extracted from some other location.

@@ -32,7 +32,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 /**
- * Performs a query, poll, insert, update or delete in a relational database using MyBatis
+ * Performs a query, poll, insert, update or delete in a relational database using MyBatis.
  */
 @UriEndpoint(scheme = "mybatis", title = "MyBatis", syntax = "mybatis:statement", consumerClass =  MyBatisConsumer.class, label = "database,sql")
 public class MyBatisEndpoint extends DefaultPollingEndpoint {

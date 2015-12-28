@@ -37,7 +37,7 @@ import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.security.UserGroupInformation;
 
 /**
- * For reading/writing from/to an HBase store (Hadoop database)
+ * For reading/writing from/to an HBase store (Hadoop database).
  */
 @UriEndpoint(scheme = "hbase", title = "HBase", syntax = "hbase:tableName", consumerClass = HBaseConsumer.class, label = "hadoop")
 public class HBaseEndpoint extends DefaultEndpoint {

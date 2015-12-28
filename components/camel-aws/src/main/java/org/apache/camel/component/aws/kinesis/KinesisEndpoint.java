@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * The aws-kinesis component is for consuming records from Amazon Kinesis Streams
+ * The aws-kinesis component is for consuming records from Amazon Kinesis Streams.
  */
 @UriEndpoint(scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName", consumerOnly = true, consumerClass = KinesisConsumer.class, label = "cloud,messaging")
 public class KinesisEndpoint extends ScheduledPollEndpoint {

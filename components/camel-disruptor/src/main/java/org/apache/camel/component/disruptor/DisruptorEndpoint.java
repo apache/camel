@@ -43,8 +43,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The disruptor component provides asynchronous SEDA behavior much as the standard SEDA Component,
- * but utilizes a Disruptor instead of a BlockingQueue utilized by the standard SEDA.
+ * The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
+ *
+ * This component works much as the standard SEDA Component, but utilizes a Disruptor
+ * instead of a BlockingQueue utilized by the standard SEDA.
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
 @UriEndpoint(scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")

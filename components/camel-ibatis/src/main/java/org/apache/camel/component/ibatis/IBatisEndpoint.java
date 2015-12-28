@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Performs a query, poll, insert, update or delete in a relational database using Apache iBATIS
+ * Performs a query, poll, insert, update or delete in a relational database using Apache iBATIS.
  */
 @UriEndpoint(scheme = "ibatis", title = "iBatis", syntax = "ibatis:statement", consumerClass = IBatisConsumer.class, label = "database,sql")
 public class IBatisEndpoint extends DefaultPollingEndpoint {

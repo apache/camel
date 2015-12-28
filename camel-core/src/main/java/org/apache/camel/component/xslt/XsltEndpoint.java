@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Generates a response using an XSLT template
+ * Generates a response using an XSLT template.
  */
 @ManagedResource(description = "Managed XsltEndpoint")
 @UriEndpoint(scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true, label = "core,transformation")

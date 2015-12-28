@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The jbpm component provides integration with jBPM (Business Process Management)
+ * The jbpm component provides integration with jBPM (Business Process Management).
  */
 @UriEndpoint(scheme = "jbpm", title = "JBPM", syntax = "jbpm:host", producerOnly = true, label = "process")
 public class JBPMEndpoint extends DefaultEndpoint {

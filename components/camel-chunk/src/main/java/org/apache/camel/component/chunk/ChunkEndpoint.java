@@ -41,7 +41,7 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_RESOURCE_URI
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 
 /**
- * Generates a response using a Chunk template
+ * Generates a response using a Chunk template.
  */
 @UriEndpoint(scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, label = "transformation")
 public class ChunkEndpoint extends ResourceEndpoint {

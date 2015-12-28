@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To send passive checks to Nagios using JSendNSCA
+ * To send passive checks to Nagios using JSendNSCA.
  */
 @UriEndpoint(scheme = "nagios", title = "Nagios", syntax = "nagios:host:port", producerOnly = true, label = "monitoring")
 public class NagiosEndpoint extends DefaultEndpoint {
