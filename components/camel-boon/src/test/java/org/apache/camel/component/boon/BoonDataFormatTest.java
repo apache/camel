@@ -126,7 +126,7 @@ public class BoonDataFormatTest extends CamelTestSupport {
                 from("direct:backPojo").unmarshal(formatPojo).to("mock:reversePojo");
                 
                 BoonDataFormat formatList = new BoonDataFormat();
-                formatList.useList();
+                formatList.setUseList(true);
 
                 from("direct:inList").marshal(formatList);
                 from("direct:backList").unmarshal(formatList).to("mock:reverseList");

@@ -94,7 +94,9 @@ public class BoonDataFormat extends ChildServiceSupport implements DataFormat, D
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        if (useList) {
+        	useList();
+        }
     }
 
     @Override
@@ -117,11 +119,11 @@ public class BoonDataFormat extends ChildServiceSupport implements DataFormat, D
         return this.objectMapper;
     }
     
-    public boolean isUseList() {
+    public Boolean getUseList() {
         return useList;
     }
 
-    public void setUseList(boolean useList) {
+    public void setUseList(Boolean useList) {
         this.useList = useList;
     }    
 
