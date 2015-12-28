@@ -41,6 +41,14 @@ public interface CamelCatalog {
     void setSuggestionStrategy(SuggestionStrategy suggestionStrategy);
 
     /**
+     * Adds a 3rd party component to this catalog.
+     *
+     * @param name      the component name
+     * @param className the fully qualified class name for the component class
+     */
+    void addComponent(String name, String className);
+
+    /**
      * The version of this Camel Catalog
      */
     String getCatalogVersion();
