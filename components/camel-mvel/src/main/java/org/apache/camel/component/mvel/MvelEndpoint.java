@@ -35,7 +35,7 @@ import org.mvel2.templates.TemplateCompiler;
 import org.mvel2.templates.TemplateRuntime;
 
 /**
- * Generates a response using an MVEL template.
+ * Transforms the message using a MVEL template.
  */
 @UriEndpoint(scheme = "mvel", title = "MVEL", syntax = "mvel:resourceUri", producerOnly = true, label = "transformation,script")
 public class MvelEndpoint extends ResourceEndpoint {

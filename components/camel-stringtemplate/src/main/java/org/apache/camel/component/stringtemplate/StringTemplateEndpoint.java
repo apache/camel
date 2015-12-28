@@ -32,7 +32,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 /**
- * Generates a response using a String Template.
+ * Transforms the message using a String template.
  */
 @UriEndpoint(scheme = "stringtemplate", title = "String Template", syntax = "stringtemplate:resourceUri", producerOnly = true, label = "transformation")
 public class StringTemplateEndpoint extends ResourceEndpoint {
