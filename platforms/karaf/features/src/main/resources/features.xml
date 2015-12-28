@@ -1030,6 +1030,9 @@
     <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mina2/${project.version}</bundle>
   </feature>
+  <feature name='camel-mllp' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle>mvn:org.apache.camel/camel-mllp/${project.version}</bundle>
+  </feature>
   <feature name='camel-mongodb' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo-java-driver-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mongodb/${project.version}</bundle>
