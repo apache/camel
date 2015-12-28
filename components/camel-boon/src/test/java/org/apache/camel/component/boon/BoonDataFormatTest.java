@@ -92,7 +92,7 @@ public class BoonDataFormatTest extends CamelTestSupport {
         TestPojo in = new TestPojo();
         in.setName("Camel");
         
-        HashMap<String,TestPojo> map = new HashMap<String,TestPojo>();
+        HashMap<String, TestPojo> map = new HashMap<String, TestPojo>();
         map.put("test1", in);
         map.put("test2", in);
 

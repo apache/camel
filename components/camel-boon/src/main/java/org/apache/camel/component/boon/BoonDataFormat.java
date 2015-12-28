@@ -129,6 +129,6 @@ public class BoonDataFormat extends ChildServiceSupport implements DataFormat, D
      * Uses {@link java.util.List} when unmarshalling.
      */
     public void useList() {
-    	setUnmarshalType(List.class);
+        setUnmarshalType(List.class);
     }
 }
