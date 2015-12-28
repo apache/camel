@@ -17,7 +17,6 @@
 package org.apache.camel.component.google.calendar;
 
 import com.google.api.services.calendar.Calendar;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
@@ -47,15 +46,15 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
 
     public Calendar getClient() {
         if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(), 
-                                                   configuration.getClientSecret(), configuration.getScopes(), 
-                                                   configuration.getApplicationName(), configuration.getRefreshToken(), 
-                                                   configuration.getAccessToken(), configuration.getEmailAddress(),
-                                                   configuration.getP12FileName());
+            client = getClientFactory().makeClient(configuration.getClientId(),
+                    configuration.getClientSecret(), configuration.getScopes(),
+                    configuration.getApplicationName(), configuration.getRefreshToken(),
+                    configuration.getAccessToken(), configuration.getEmailAddress(),
+                    configuration.getP12FileName(), configuration.getUser());
         }
         return client;
     }
-    
+
     public GoogleCalendarClientFactory getClientFactory() {
         if (clientFactory == null) {
             clientFactory = new BatchGoogleCalendarClientFactory();
@@ -70,7 +69,6 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
 
     /**
      * To use the shared configuration
-     * @param configuration
      */
     @Override
     public void setConfiguration(GoogleCalendarConfiguration configuration) {
@@ -80,12 +78,11 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
     /**
      * To use the GoogleCalendarClientFactory as factory for creating the client.
      * Will by default use {@link BatchGoogleCalendarClientFactory}
-     * @param clientFactory
      */
     public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
         this.clientFactory = clientFactory;
     }
-    
+
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, GoogleCalendarApiName apiName,
                                       GoogleCalendarConfiguration endpointConfiguration) {
