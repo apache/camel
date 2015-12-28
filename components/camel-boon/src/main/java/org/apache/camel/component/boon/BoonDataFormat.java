@@ -22,7 +22,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -42,6 +45,7 @@ public class BoonDataFormat extends ChildServiceSupport implements DataFormat, D
 
     private final ObjectMapper objectMapper;
     private Class<?> unmarshalType;
+    private boolean useList;
 
     public BoonDataFormat() {
         this(HashMap.class);
@@ -112,5 +116,19 @@ public class BoonDataFormat extends ChildServiceSupport implements DataFormat, D
     public ObjectMapper getObjectMapper() {
         return this.objectMapper;
     }
+    
+    public boolean isUseList() {
+        return useList;
+    }
 
+    public void setUseList(boolean useList) {
+        this.useList = useList;
+    }    
+
+    /**
+     * Uses {@link java.util.List} when unmarshalling.
+     */
+    public void useList() {
+    	setUnmarshalType(List.class);
+    }
 }

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.boon;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -63,6 +65,50 @@ public class BoonDataFormatTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
+    
+    @Test
+    public void testMarshalAndUnmarshalList() throws Exception {
+        List<String> in = new ArrayList<String>();
+        in.add("Karaf");
+        in.add("Camel");
+        in.add("Servicemix");
+
+        MockEndpoint mock = getMockEndpoint("mock:reverseList");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(List.class);
+        mock.message(0).body().equals(in);
+
+        Object marshalled = template.requestBody("direct:inList", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        assertEquals("[\"Karaf\",\"Camel\",\"Servicemix\"]", marshalledAsString);
+
+        template.sendBody("direct:backList", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testMarshalAndUnmarshalPojoMap() throws Exception {
+        TestPojo in = new TestPojo();
+        in.setName("Camel");
+        
+        HashMap<String,TestPojo> map = new HashMap<String,TestPojo>();
+        map.put("test1", in);
+        map.put("test2", in);
+
+        MockEndpoint mock = getMockEndpoint("mock:reversePojosMap");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(HashMap.class);
+        mock.message(0).body().equals(map);
+
+        Object marshalled = template.requestBody("direct:inPojosMap", map);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        assertEquals("{\"test1\":{\"name\":\"Camel\"},\"test2\":{\"name\":\"Camel\"}}", marshalledAsString);
+
+        template.sendBody("direct:backPojosMap", marshalled);
+
+        mock.assertIsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -78,6 +124,17 @@ public class BoonDataFormatTest extends CamelTestSupport {
 
                 from("direct:inPojo").marshal(formatPojo);
                 from("direct:backPojo").unmarshal(formatPojo).to("mock:reversePojo");
+                
+                BoonDataFormat formatList = new BoonDataFormat();
+                formatList.useList();
+
+                from("direct:inList").marshal(formatList);
+                from("direct:backList").unmarshal(formatList).to("mock:reverseList");
+                
+                BoonDataFormat formatPojoMaps = new BoonDataFormat();
+
+                from("direct:inPojosMap").marshal(formatPojoMaps);
+                from("direct:backPojosMap").unmarshal(formatPojoMaps).to("mock:reversePojosMap");
             }
         };
     }
