@@ -532,4 +532,21 @@ public class CamelCatalogTest {
         assertNotNull(tree);
     }
 
+    @Test
+    public void testAddComponent() throws Exception {
+        assertFalse(catalog.findComponentNames().contains("dummy"));
+
+        catalog.addComponent("dummy", "org.foo.camel.DummyComponent");
+
+        assertTrue(catalog.findComponentNames().contains("dummy"));
+
+        String json = catalog.componentJSonSchema("dummy");
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
 }
