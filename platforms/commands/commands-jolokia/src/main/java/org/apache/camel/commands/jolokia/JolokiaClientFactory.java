@@ -19,6 +19,7 @@ package org.apache.camel.commands.jolokia;
 import org.jolokia.client.BasicAuthenticator;
 import org.jolokia.client.J4pClient;
 import org.jolokia.client.J4pClientBuilder;
+import org.jolokia.client.J4pClientBuilderFactory;
 
 /**
  * A factory to create a {@link org.jolokia.client.J4pClient} jolokia client that connects to a remote JVM.
@@ -29,7 +30,7 @@ public final class JolokiaClientFactory {
     }
 
     public static J4pClient createJolokiaClient(String jolokiaUrl, String username, String password) {
-        J4pClientBuilder builder = J4pClient.url(jolokiaUrl);
+        J4pClientBuilder builder = J4pClientBuilderFactory.url(jolokiaUrl);
         boolean auth = false;
         if (isNotEmpty(username)) {
             builder = builder.user(username);

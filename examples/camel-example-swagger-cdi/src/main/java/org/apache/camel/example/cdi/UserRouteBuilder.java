@@ -19,7 +19,6 @@ package org.apache.camel.example.cdi;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.apache.camel.model.rest.RestHostNameResolver;
 
 import static org.apache.camel.model.rest.RestParamType.body;
 import static org.apache.camel.model.rest.RestParamType.path;

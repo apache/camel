@@ -16,23 +16,12 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.security.KeyPair;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.sshd.ClientChannel;
-import org.apache.sshd.ClientSession;
-import org.apache.sshd.SshClient;
-import org.apache.sshd.client.future.AuthFuture;
-import org.apache.sshd.client.future.ConnectFuture;
-import org.apache.sshd.client.future.OpenFuture;
 import org.apache.sshd.common.KeyPairProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

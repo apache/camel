@@ -111,6 +111,7 @@ public abstract class TestSupport extends Assert {
      *
      * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public static <T> ValueBuilder outBodyAs(Class<T> type) {
         return Builder.outBodyAs(type);
     }

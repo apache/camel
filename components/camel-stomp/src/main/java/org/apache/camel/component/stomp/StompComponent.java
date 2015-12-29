@@ -19,7 +19,6 @@ package org.apache.camel.component.stomp;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 
 public class StompComponent extends UriEndpointComponent {

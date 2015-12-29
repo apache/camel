@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.blueprint;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -47,7 +46,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.jar.JarInputStream;
 
 import org.apache.camel.impl.DefaultClassResolver;
-import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -66,13 +64,10 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.SynchronousBundleListener;
