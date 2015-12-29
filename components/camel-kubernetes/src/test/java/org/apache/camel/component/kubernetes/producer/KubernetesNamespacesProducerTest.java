@@ -28,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
@@ -46,7 +45,7 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
         Iterator<Namespace> it = result.iterator();
         while (it.hasNext()) {
-            Namespace namespace = (Namespace) it.next();
+            Namespace namespace = it.next();
             if ("default".equalsIgnoreCase(namespace.getMetadata().getName())) {
                 defaultExists = true;
             }
@@ -162,7 +161,7 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
         Iterator<Namespace> it = result.iterator();
         while (it.hasNext()) {
-            Namespace namespace = (Namespace) it.next();
+            Namespace namespace = it.next();
             if ("test".equalsIgnoreCase(namespace.getMetadata().getName())) {
                 testExists = true;
             }

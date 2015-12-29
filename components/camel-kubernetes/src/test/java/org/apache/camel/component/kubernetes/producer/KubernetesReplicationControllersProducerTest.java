@@ -31,7 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
@@ -50,7 +49,7 @@ public class KubernetesReplicationControllersProducerTest extends
 
         Iterator<ReplicationController> it = result.iterator();
         while (it.hasNext()) {
-            ReplicationController rc = (ReplicationController) it.next();
+            ReplicationController rc = it.next();
             if ("fabric8".equalsIgnoreCase(rc.getMetadata().getName())) {
                 fabric8Exists = true;
             }
@@ -85,7 +84,7 @@ public class KubernetesReplicationControllersProducerTest extends
         boolean rcExists = false;
         Iterator<ReplicationController> it = result.iterator();
         while (it.hasNext()) {
-            ReplicationController rc = (ReplicationController) it.next();
+            ReplicationController rc = it.next();
             if ("elasticsearch".equalsIgnoreCase(rc.getMetadata().getName())) {
                 rcExists = true;
             }

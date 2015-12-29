@@ -17,21 +17,16 @@
 package org.apache.camel.component.kubernetes.producer;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Node;
-import io.fabric8.kubernetes.api.model.PersistentVolume;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class KubernetesNodesProducerTest extends KubernetesTestSupport {

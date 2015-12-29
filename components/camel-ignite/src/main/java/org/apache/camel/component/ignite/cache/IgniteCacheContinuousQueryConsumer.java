@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.ignite.cache;
 
-import java.util.Arrays;
-
 import javax.cache.Cache.Entry;
 import javax.cache.event.CacheEntryEvent;
 import javax.cache.event.CacheEntryListenerException;

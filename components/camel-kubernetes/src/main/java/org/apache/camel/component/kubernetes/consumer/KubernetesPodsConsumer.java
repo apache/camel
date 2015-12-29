@@ -104,7 +104,7 @@ public class KubernetesPodsConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         int mapSize = map.size();
         for (ConcurrentMap.Entry<Long, PodEvent> entry : map.entrySet()) {
-            PodEvent podEvent = (PodEvent) entry.getValue();
+            PodEvent podEvent = entry.getValue();
             Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(podEvent.getPod());
             e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, podEvent.getAction());

@@ -108,7 +108,7 @@ public class KubernetesReplicationControllersConsumer extends ScheduledPollConsu
     protected int poll() throws Exception {
         int mapSize = map.size();
         for (ConcurrentMap.Entry<Long, ReplicationControllerEvent> entry : map.entrySet()) {
-            ReplicationControllerEvent serviceEvent = (ReplicationControllerEvent) entry.getValue();
+            ReplicationControllerEvent serviceEvent = entry.getValue();
             Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(serviceEvent.getReplicationController());
             e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, serviceEvent.getAction());

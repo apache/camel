@@ -89,7 +89,7 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
 
         Iterator<Namespace> it = result.iterator();
         while (it.hasNext()) {
-            Namespace namespace = (Namespace) it.next();
+            Namespace namespace = it.next();
             if ("test".equalsIgnoreCase(namespace.getMetadata().getName())) {
                 testExists = true;
             }

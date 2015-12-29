@@ -32,7 +32,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
@@ -49,7 +48,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
 
         Iterator<Pod> it = result.iterator();
         while (it.hasNext()) {
-            Pod pod = (Pod) it.next();
+            Pod pod = it.next();
             if ((pod.getMetadata().getName()).contains("fabric8")) {
                 defaultExists = true;
             }
@@ -82,7 +81,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
         boolean podExists = false;
         Iterator<Pod> it = result.iterator();
         while (it.hasNext()) {
-            Pod pod = (Pod) it.next();
+            Pod pod = it.next();
             if (pod.getMetadata().getLabels().containsValue("elasticsearch")) {
                 podExists = true;
             }

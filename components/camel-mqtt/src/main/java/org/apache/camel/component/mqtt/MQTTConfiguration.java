@@ -28,7 +28,6 @@ import org.fusesource.hawtdispatch.DispatchQueue;
 import org.fusesource.hawtdispatch.transport.TcpTransport;
 import org.fusesource.mqtt.client.MQTT;
 import org.fusesource.mqtt.client.QoS;
-import org.fusesource.mqtt.client.Tracer;
 
 @UriParams
 public class MQTTConfiguration extends MQTT {

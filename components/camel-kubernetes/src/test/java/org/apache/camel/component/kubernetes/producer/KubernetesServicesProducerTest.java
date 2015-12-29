@@ -32,7 +32,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
@@ -50,7 +49,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
 
         Iterator<Service> it = result.iterator();
         while (it.hasNext()) {
-            Service service = (Service) it.next();
+            Service service = it.next();
             if ("fabric8".equalsIgnoreCase(service.getMetadata().getName())) {
                 fabric8Exists = true;
             }
@@ -83,7 +82,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
         boolean serviceExists = false;
         Iterator<Service> it = result.iterator();
         while (it.hasNext()) {
-            Service service = (Service) it.next();
+            Service service = it.next();
             if ("elasticsearch".equalsIgnoreCase(service.getMetadata()
                     .getName())) {
                 serviceExists = true;

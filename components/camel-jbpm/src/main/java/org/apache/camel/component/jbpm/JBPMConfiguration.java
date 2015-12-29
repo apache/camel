@@ -19,7 +19,6 @@ package org.apache.camel.component.jbpm;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import javax.naming.InitialContext;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

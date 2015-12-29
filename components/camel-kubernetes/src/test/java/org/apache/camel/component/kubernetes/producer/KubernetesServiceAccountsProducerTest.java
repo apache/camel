@@ -29,7 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
@@ -48,7 +47,7 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
 
         Iterator<ServiceAccount> it = result.iterator();
         while (it.hasNext()) {
-            ServiceAccount service = (ServiceAccount) it.next();
+            ServiceAccount service = it.next();
             if ("fabric8".equalsIgnoreCase(service.getMetadata().getName())) {
                 fabric8Exists = true;
             }

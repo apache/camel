@@ -106,7 +106,7 @@ public class KubernetesServicesConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         int mapSize = map.size();
         for (ConcurrentMap.Entry<Long, ServiceEvent> entry : map.entrySet()) {
-            ServiceEvent serviceEvent = (ServiceEvent) entry.getValue();
+            ServiceEvent serviceEvent = entry.getValue();
             Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(serviceEvent.getService());
             e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, serviceEvent.getAction());

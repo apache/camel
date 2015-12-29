@@ -33,7 +33,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
@@ -141,7 +140,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends
         boolean pvcExists = false;
         Iterator<PersistentVolumeClaim> it = result.iterator();
         while (it.hasNext()) {
-            PersistentVolumeClaim pvcLocal = (PersistentVolumeClaim) it.next();
+            PersistentVolumeClaim pvcLocal = it.next();
             if ("test".equalsIgnoreCase(pvcLocal.getMetadata().getName())) {
                 pvcExists = true;
             }
