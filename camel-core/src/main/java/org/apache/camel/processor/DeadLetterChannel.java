@@ -22,10 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * Implements a <a

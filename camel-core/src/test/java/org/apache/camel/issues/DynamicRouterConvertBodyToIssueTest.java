@@ -70,7 +70,7 @@ public class DynamicRouterConvertBodyToIssueTest extends ContextTestSupport impl
         }
         exchange.getIn().setBody(sb);
 
-        Thread.currentThread().sleep(100);
+        Thread.sleep(100);
 
         if (counter++ > MAX_ITERATIONS) {
             exchange.setProperty("EXIT", "PLEASE");
