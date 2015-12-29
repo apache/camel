@@ -46,7 +46,7 @@
                       <id>setup.eclipse.workspace</id>
                       <phase>process-test-sources</phase>
                       <goals>
-                          <goal>add-maven-repo</goal>
+                          <goal>configure-workspace</goal>
                       </goals>
                       <configuration>
                           <workspace>${workspace}</workspace>
