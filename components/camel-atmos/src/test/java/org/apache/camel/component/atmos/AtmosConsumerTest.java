@@ -17,7 +17,6 @@
 package org.apache.camel.component.atmos;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atmos.integration.consumer.AtmosScheduledPollGetConsumer;
 import org.apache.camel.test.junit4.CamelTestSupport;

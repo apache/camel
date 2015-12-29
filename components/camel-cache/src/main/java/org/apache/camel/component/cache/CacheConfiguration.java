@@ -16,16 +16,12 @@
  */
 package org.apache.camel.component.cache;
 
-import java.net.URI;
-import java.util.Map;
-
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.URISupport;
 
 @UriParams
 public class CacheConfiguration implements Cloneable {

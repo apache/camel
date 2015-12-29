@@ -76,14 +76,14 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         List<String> received1 = wsclient1.getReceived(String.class);
         assertEquals(1, received1.size());
 
-        for (int i = 0; i < broadcastMessageTo.length; i++) {
-            assertTrue(received1.get(0).contains(broadcastMessageTo[i]));
+        for (String element : broadcastMessageTo) {
+            assertTrue(received1.get(0).contains(element));
         }
 
         List<String> received2 = wsclient2.getReceived(String.class);
         assertEquals(1, received2.size());
-        for (int i = 0; i < broadcastMessageTo.length; i++) {
-            assertTrue(received2.get(0).contains(broadcastMessageTo[i]));
+        for (String element : broadcastMessageTo) {
+            assertTrue(received2.get(0).contains(element));
         }
 
         List<String> received3 = wsclient3.getReceived(String.class);
@@ -126,8 +126,8 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         List<String> received1 = wsclient1.getReceived(String.class);
         assertEquals(1, received1.size());
 
-        for (int i = 0; i < broadcastMessageTo.length; i++) {
-            assertTrue(received1.get(0).contains(broadcastMessageTo[i]));
+        for (String element : broadcastMessageTo) {
+            assertTrue(received1.get(0).contains(element));
         }
 
         List<String> received2 = wsclient2.getReceived(String.class);
@@ -252,9 +252,9 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         String additionalMessage = "";
 
         //send the message only to selected connections
-        for (int i = 0; i < broadcastMessageTo.length; i++) {
-            connectionKeyList.add(connectionKeyUserMap.get(broadcastMessageTo[i]));
-            additionalMessage += broadcastMessageTo[i] + " ";
+        for (String element : broadcastMessageTo) {
+            connectionKeyList.add(connectionKeyUserMap.get(element));
+            additionalMessage += element + " ";
         }
 
         additionalMessage += " Received the message: ";

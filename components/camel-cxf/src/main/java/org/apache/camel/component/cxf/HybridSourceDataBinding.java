@@ -18,15 +18,11 @@ package org.apache.camel.component.cxf;
 
 import java.util.logging.Logger;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.Source;
-import javax.xml.transform.stax.StAXSource;
 
 import org.w3c.dom.Node;
 
-import org.apache.cxf.common.i18n.Message;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.databinding.DataReader;
 import org.apache.cxf.databinding.DataWriter;
@@ -35,11 +31,8 @@ import org.apache.cxf.databinding.source.NodeDataWriter;
 import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.databinding.source.XMLStreamDataReader;
 import org.apache.cxf.databinding.source.XMLStreamDataWriter;
-import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.service.model.MessagePartInfo;
-import org.apache.cxf.staxutils.StaxSource;
-import org.apache.cxf.staxutils.StaxUtils;
 
 
 /**

@@ -17,7 +17,6 @@
 package org.apache.camel.component.cache;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;

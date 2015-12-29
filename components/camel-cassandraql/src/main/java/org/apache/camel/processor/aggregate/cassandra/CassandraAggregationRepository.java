@@ -204,7 +204,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         Select select = generateSelect(table,
                 getAllColumns(),
                 pkColumns);
-        select = (Select) applyConsistencyLevel(select, readConsistencyLevel);
+        select = applyConsistencyLevel(select, readConsistencyLevel);
         LOGGER.debug("Generated Select {}", select);
         selectStatement = getSession().prepare(select);
     }
