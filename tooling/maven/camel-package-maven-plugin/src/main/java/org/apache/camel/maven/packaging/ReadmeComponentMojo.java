@@ -17,15 +17,25 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.sonatype.plexus.build.incremental.BuildContext;
+
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getValue;
+import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
 /**
  * Generate or updates the component readme.md file in the project root directort.
@@ -61,6 +71,98 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // find the component names
+        List<String> componentNames = findComponentNames();
+
+        final Set<File> jsonFiles = new TreeSet<File>();
+        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+
+        // only if there is components we should create/update the readme file
+        if (!componentNames.isEmpty()) {
+            getLog().info("Found " + componentNames.size() + " components");
+            File readmeFile = initReadMeFile();
+
+            for (String componentName : componentNames) {
+                String json = loadComponentJson(jsonFiles, componentName);
+                if (json != null) {
+                    updateReadMeFile(readmeFile, componentName, json);
+                }
+            }
+        }
+    }
+
+    private String loadComponentJson(Set<File> jsonFiles, String componentName) {
+        try {
+            for (File file : jsonFiles) {
+                if (file.getName().equals(componentName + ".json")) {
+                    String json = loadText(new FileInputStream(file));
+                    boolean isComponent = json.contains("\"kind\": \"component\"");
+                    if (isComponent) {
+                        return json;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private void updateReadMeFile(File readmeFile, String componentName, String json) throws MojoExecutionException {
+        // TODO: use some template like velocity or freemarker
+
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+        String scheme = getValue("scheme", rows);
+        String syntax = getValue("syntax", rows);
+        String title = getValue("title", rows);
+        String description = getValue("description", rows);
+        String label = getValue("label", rows);
+        String groupId = getValue("groupId", rows);
+        String artifactId = getValue("artifactId", rows);
+        String version = getValue("version", rows);
+
+        try {
+            OutputStream os = buildContext.newFileOutputStream(readmeFile);
+            os.write("##".getBytes());
+            os.write(title.getBytes());
+            os.write("\n\n".getBytes());
+            os.write(description.getBytes());
+            os.write("\n\n".getBytes());
+            os.close();
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to update " + readmeFile + " file. Reason: " + e, e);
+        }
+    }
+
+    private List<String> findComponentNames() {
+        List<String> componentNames = new ArrayList<String>();
+        for (Resource r : project.getBuild().getResources()) {
+            File f = new File(r.getDirectory());
+            if (!f.exists()) {
+                f = new File(project.getBasedir(), r.getDirectory());
+            }
+            f = new File(f, "META-INF/services/org/apache/camel/component");
+
+            if (f.exists() && f.isDirectory()) {
+                File[] files = f.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        // skip directories as there may be a sub .resolver directory
+                        if (file.isDirectory()) {
+                            continue;
+                        }
+                        String name = file.getName();
+                        if (name.charAt(0) != '.') {
+                            componentNames.add(name);
+                        }
+                    }
+                }
+            }
+        }
+        return componentNames;
+    }
+
+    private File initReadMeFile() throws MojoExecutionException {
         File readmeDir = new File(buildDir, "..");
         File readmeFile = new File(readmeDir, "readme.md");
 
@@ -82,16 +184,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
             getLog().info("Creating new readme.md file");
         }
 
-        try {
-            OutputStream os = buildContext.newFileOutputStream(readmeFile);
-            os.write("Hello World".getBytes());
-            os.close();
-
-        } catch (IOException e) {
-            throw new MojoExecutionException("Failed to write to " + readmeFile + ". Reason: " + e, e);
-        }
-
+        return readmeFile;
     }
-
 
 }

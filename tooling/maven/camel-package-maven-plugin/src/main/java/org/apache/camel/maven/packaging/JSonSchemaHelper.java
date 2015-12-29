@@ -112,4 +112,14 @@ public final class JSonSchemaHelper {
         return value;
     }
 
+    public static String getValue(String key, List<Map<String, String>> rows) {
+        for (Map<String, String> row : rows) {
+            String value = row.get(key);
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
+    }
+
 }
