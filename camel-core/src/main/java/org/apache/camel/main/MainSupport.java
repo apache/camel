@@ -417,6 +417,8 @@ public abstract class MainSupport extends ServiceSupport {
         for (RouteBuilder routeBuilder : routeBuilders) {
             camelContext.addRoutes(routeBuilder);
         }
+        // register lifecycle so we are notified in Camel is stopped from JMX or somewhere else
+        camelContext.addLifecycleStrategy(new MainLifecycleStrategy(completed, latch));
         // allow to do configuration before its started
         for (MainListener listener : listeners) {
             listener.configure(camelContext);
