@@ -675,9 +675,8 @@ public class RunMojo extends AbstractExecMojo {
             }
 
             List<String> exclusions = new ArrayList<String>();
-            for (Iterator<?> j = dependency.getExclusions().iterator(); j.hasNext();) {
-                Exclusion e = (Exclusion)j.next();
-                exclusions.add(e.getGroupId() + ":" + e.getArtifactId());
+            for (Exclusion exclusion : dependency.getExclusions()) {
+                exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
             }
 
             ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);
