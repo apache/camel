@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
 import com.hazelcast.core.ISet;
 import com.hazelcast.core.ItemEvent;
 import com.hazelcast.core.ItemEventType;

@@ -23,7 +23,6 @@ import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryEventType;
 import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.MultiMap;
 import com.hazelcast.core.ReplicatedMap;
 
 import org.apache.camel.builder.RouteBuilder;

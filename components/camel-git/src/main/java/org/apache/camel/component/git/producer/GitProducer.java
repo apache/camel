@@ -25,14 +25,12 @@ import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.eclipse.jgit.api.CherryPickCommand;
 import org.eclipse.jgit.api.CherryPickResult;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -165,9 +163,9 @@ public class GitProducer extends DefaultProducer {
             if (!localRepo.exists()) {
                 if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
                     UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
-                    result = git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                    result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
                 } else {
-                    result = git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                    result = Git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
                 }
             } else {
                 throw new IllegalArgumentException("The local repository directory already exists");
@@ -186,7 +184,7 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Local path must specified to execute " + operation);
         }
         try {
-            result = git.init().setDirectory(new File(endpoint.getLocalPath(), "")).setBare(false).call();
+            result = Git.init().setDirectory(new File(endpoint.getLocalPath(), "")).setBare(false).call();
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;

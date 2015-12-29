@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
 import com.hazelcast.core.ISet;
 
 import org.apache.camel.CamelExecutionException;

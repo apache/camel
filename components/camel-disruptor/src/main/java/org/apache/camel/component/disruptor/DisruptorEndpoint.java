@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;

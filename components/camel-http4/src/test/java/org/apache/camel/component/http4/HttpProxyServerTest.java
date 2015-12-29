@@ -24,9 +24,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.component.http4.handler.HeaderValidationHandler;
-import org.apache.camel.component.http4.handler.ProxyAuthenticationValidationHandler;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.codec.BinaryDecoder;
 import org.apache.commons.codec.DecoderException;
@@ -42,8 +40,6 @@ import org.apache.http.ProtocolException;
 import org.apache.http.auth.AUTH;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.localserver.RequestBasicAuth;
-import org.apache.http.localserver.ResponseBasicUnauthorized;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;

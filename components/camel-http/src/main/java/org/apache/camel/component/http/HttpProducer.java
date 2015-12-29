@@ -32,7 +32,6 @@ import java.util.Map;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.http.common.HttpConstants;

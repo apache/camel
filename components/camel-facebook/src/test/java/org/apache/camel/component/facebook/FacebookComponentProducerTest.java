@@ -23,17 +23,10 @@ import facebook4j.Facebook;
 import facebook4j.FacebookException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.processor.ErrorHandler;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
 
 public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
