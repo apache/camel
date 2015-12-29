@@ -25,7 +25,6 @@ public class ReplicationControllerEvent {
     private ReplicationController replicationController;
 
     public ReplicationControllerEvent(Action action, ReplicationController rc) {
-        super();
         this.action = action;
         this.replicationController = rc;
     }

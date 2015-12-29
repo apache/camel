@@ -25,7 +25,6 @@ public class SecretEvent {
     private Secret secret;
 
     public SecretEvent(Action action, Secret secret) {
-        super();
         this.action = action;
         this.secret = secret;
     }

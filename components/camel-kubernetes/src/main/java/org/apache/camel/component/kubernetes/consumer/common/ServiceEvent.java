@@ -25,7 +25,6 @@ public class ServiceEvent {
     private Service service;
 
     public ServiceEvent(Action action, Service service) {
-        super();
         this.action = action;
         this.service = service;
     }

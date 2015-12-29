@@ -25,7 +25,6 @@ public class NamespaceEvent {
     private Namespace namespace;
 
     public NamespaceEvent(Action action, Namespace namespace) {
-        super();
         this.action = action;
         this.namespace = namespace;
     }

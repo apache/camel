@@ -64,7 +64,6 @@ public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
         private final String target;
 
         public MyDynamicRouterPojo(String target) {
-            super();
             this.target = target;
         }
 

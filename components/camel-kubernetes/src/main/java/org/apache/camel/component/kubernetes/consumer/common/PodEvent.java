@@ -25,7 +25,6 @@ public class PodEvent {
     private Pod pod;
 
     public PodEvent(Action action, Pod pod) {
-        super();
         this.action = action;
         this.pod = pod;
     }
