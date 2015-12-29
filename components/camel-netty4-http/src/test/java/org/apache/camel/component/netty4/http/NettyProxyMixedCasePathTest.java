@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty4.http;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 

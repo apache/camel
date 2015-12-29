@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty.http.handlers;
 
-import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.Iterator;

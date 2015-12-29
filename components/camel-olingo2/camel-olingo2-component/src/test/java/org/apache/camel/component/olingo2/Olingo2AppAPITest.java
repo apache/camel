@@ -17,6 +17,7 @@
 package org.apache.camel.component.olingo2;
 
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -567,7 +568,7 @@ public class Olingo2AppAPITest {
                 b.append(value).append(NEW_LINE);
             } else if (value instanceof Calendar) {
                 Calendar cal = (Calendar) value;
-                value = SimpleDateFormat.getInstance().format(cal.getTime());
+                value = DateFormat.getInstance().format(cal.getTime());
                 b.append(value).append(NEW_LINE);
             } else if (value instanceof ODataDeltaFeed) {
                 ODataDeltaFeed feed = (ODataDeltaFeed) value;
