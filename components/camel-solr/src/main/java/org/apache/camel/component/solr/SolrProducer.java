@@ -27,7 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
