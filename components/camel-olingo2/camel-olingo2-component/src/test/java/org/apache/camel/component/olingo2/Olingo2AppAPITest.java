@@ -18,7 +18,6 @@ package org.apache.camel.component.olingo2;
 
 import java.io.InputStream;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
