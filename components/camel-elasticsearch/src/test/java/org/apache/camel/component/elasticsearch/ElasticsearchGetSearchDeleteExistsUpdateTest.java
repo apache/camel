@@ -91,6 +91,29 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         assertNotNull("response should not be null", response);
         assertNull("response source should be null", response.getSource());
     }
+    
+    @Test
+    public void testHttpDelete() throws Exception {
+        //first, INDEX a value
+        Map<String, String> map = createIndexedData();
+        sendBody("direct:index", map);
+        String indexId = template.requestBody("direct:index", map, String.class);
+        assertNotNull("indexId should be set", indexId);
+
+        //now, verify GET succeeded
+        GetResponse response = template.requestBody("direct:get", indexId, GetResponse.class);
+        assertNotNull("response should not be null", response);
+        assertNotNull("response source should not be null", response.getSource());
+
+        //now, perform DELETE
+        String deleteResponse = template.requestBody("direct:delete2", indexId, String.class);
+        assertNotNull("response should not be null", deleteResponse);
+
+        //now, verify GET fails to find the indexed value
+        response = template.requestBody("direct:get", indexId, GetResponse.class);
+        assertNotNull("response should not be null", response);
+        assertNull("response source should be null", response.getSource());
+    }
 
     @Test
     public void testSearch() throws Exception {
@@ -328,6 +351,8 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
                 
                 from("direct:multiget").to("elasticsearch://local?operation=MULTIGET&indexName=twitter&indexType=tweet");
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
+                from("direct:delete2").to("elasticsearch://elasticsearch?ip=localhost&port=9201&operation=DELETE&indexName=twitter&indexType=tweet");
+                
                 from("direct:search").to("elasticsearch://local?operation=SEARCH&indexName=twitter&indexType=tweet");
                 from("direct:update").to("elasticsearch://local?operation=UPDATE&indexName=twitter&indexType=tweet");
                 from("direct:exists").to("elasticsearch://local?operation=EXISTS");

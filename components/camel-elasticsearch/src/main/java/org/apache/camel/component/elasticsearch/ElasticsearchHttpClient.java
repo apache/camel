@@ -132,7 +132,15 @@ public class ElasticsearchHttpClient {
 		
 		Response response = target.request()
 				.get();
-		//TODO need to rethink this approach of responding with just the ID
+		return response.readEntity(String.class);
+	}
+
+	public String delete(String indexName, String indexType, String docId) {
+		WebTarget target = getRootTarget()
+				.path(indexName).path(indexType).path(docId);
+		
+		Response response = target.request()
+				.delete();
 		return response.readEntity(String.class);
 	}
 

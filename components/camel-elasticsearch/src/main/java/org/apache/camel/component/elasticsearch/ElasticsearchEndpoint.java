@@ -260,9 +260,13 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 		return indexedIds;
 	}
 
-	public void delete(Message message) {
-		DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
-		message.setBody(client.delete(deleteRequest).actionGet());
+	public Object delete(Message message) {
+		if(useHttpClient) {
+			return esHttpClient.delete(getIndexName(message), getIndexType(message), message.getBody(String.class));
+		} else {
+			DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
+			return client.delete(deleteRequest).actionGet();
+		}
 	}
 
 	public void exists(Message message) {
