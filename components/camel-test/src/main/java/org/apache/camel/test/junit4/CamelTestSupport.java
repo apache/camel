@@ -26,6 +26,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -657,6 +658,7 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected void sendBody(String endpointUri, final Object body) {
         template.send(endpointUri, new Processor() {
+            @Override
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(body);
@@ -673,6 +675,7 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected void sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
         template.send(endpointUri, new Processor() {
+            @Override
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(body);
