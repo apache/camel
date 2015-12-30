@@ -59,7 +59,6 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         context().setTracing(true);
         return new RouteBuilder() {
-
             @Override
             public void configure() throws Exception {
                 from("direct:start").to(BASIC_URI);
