@@ -380,7 +380,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         String answer = null;
         if (caching) {
-            answer = (String) cache.get(file);
+            answer = (String) cache.get("model-" + file);
         }
 
         if (answer == null) {
@@ -393,7 +393,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
             }
             if (caching) {
-                cache.put(file, answer);
+                cache.put("model-" + file, answer);
             }
         }
 
@@ -406,7 +406,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         String answer = null;
         if (caching) {
-            answer = (String) cache.get(file);
+            answer = (String) cache.get("component-" + file);
         }
 
         if (answer == null) {
@@ -435,7 +435,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
             }
             if (caching) {
-                cache.put(file, answer);
+                cache.put("component-" + file, answer);
             }
         }
 
@@ -448,7 +448,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         String answer = null;
         if (caching) {
-            answer = (String) cache.get(file);
+            answer = (String) cache.get("dataformat-" + file);
         }
 
         if (answer == null) {
@@ -477,7 +477,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
             }
             if (caching) {
-                cache.put(file, answer);
+                cache.put("dataformat-" + file, answer);
             }
         }
 
@@ -490,7 +490,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         String answer = null;
         if (caching) {
-            answer = (String) cache.get(file);
+            answer = (String) cache.get("language-" + file);
         }
 
         if (answer == null) {
@@ -503,7 +503,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
             }
             if (caching) {
-                cache.put(file, answer);
+                cache.put("language-" + file, answer);
             }
         }
 
