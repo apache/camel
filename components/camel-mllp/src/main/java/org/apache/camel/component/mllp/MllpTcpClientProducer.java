@@ -105,7 +105,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
         }
 
         log.debug("Reading acknowledgement from external system");
-        byte[] acknowledgementBytes = null;
+        byte[] acknowledgementBytes;
         try {
             MllpUtil.openFrame(socket);
             acknowledgementBytes = MllpUtil.closeFrame(socket);
@@ -226,7 +226,6 @@ public class MllpTcpClientProducer extends DefaultProducer {
         }
 
         return null;
-
     }
 
 }

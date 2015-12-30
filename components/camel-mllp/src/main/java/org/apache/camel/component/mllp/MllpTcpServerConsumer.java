@@ -55,10 +55,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     public MllpTcpServerConsumer(MllpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         log.trace("MllpTcpServerConsumer(endpoint, processor)");
-
-
         this.endpoint = endpoint;
-
     }
 
     @Override
@@ -127,7 +124,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
         super.doShutdown();
     }
-
 
     /**
      * Nested Class to handle the ServerSocket.accept requests
@@ -543,8 +539,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 }
             }
         }
-
-
     }
 }
 

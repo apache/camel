@@ -19,78 +19,66 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
-        <version>2.17-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>components</artifactId>
+    <version>2.17-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>camel-mllp</artifactId>
-    <packaging>bundle</packaging>
-    <name>Camel :: MLLP</name>
-    <description>Camel MLLP Component</description>
+  <artifactId>camel-mllp</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel :: MLLP</name>
+  <description>Camel MLLP Component</description>
 
-    <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.mllp.*,org.apache.camel.processor.mllp.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=mllp</camel.osgi.export.service>
-    </properties>
+  <properties>
+    <camel.osgi.export.pkg>
+      org.apache.camel.component.mllp.*,
+      org.apache.camel.processor.mllp.*
+    </camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=mllp</camel.osgi.export.service>
+  </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
+  <dependencies>
 
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
 
-        <!-- support camel documentation -->
-        <!--dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>apt</artifactId>
-        </dependency -->
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-blueprint</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+    <!-- test logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-
-        <!-- testing -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-blueprint</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- test logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
+  </dependencies>
 
   <!-- Ensure that test runs do no leave running JVMs -->
-   <build>
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.19</version>
         <configuration>
           <shutdown>kill</shutdown>
         </configuration>

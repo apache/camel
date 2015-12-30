@@ -35,7 +35,7 @@ import static org.apache.camel.component.mllp.MllpEndpoint.SEGMENT_DELIMITER;
  * A Camel Processor for generating HL7 Acknowledgements
  */
 public class Hl7AcknowledgementGenerator implements Processor {
-    Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(Hl7AcknowledgementGenerator.class);
 
     String defaultNack = "MSH|^~\\&|||||||NACK||P|2.2" + SEGMENT_DELIMITER
             + "MSA|AR|" + SEGMENT_DELIMITER
@@ -127,7 +127,7 @@ public class Hl7AcknowledgementGenerator implements Processor {
         }
 
         if (-1 == msh92start) {
-            log.warn("Didn't find component separator for MSH-9.2 - sending ACK in MSH-9");
+            LOG.warn("Didn't find component separator for MSH-9.2 - sending ACK in MSH-9");
         } else {
             acknowledgement.write(hl7MessageBytes, msh92start, fieldSeparatorIndexes.get(8) - msh92start); // MSH-9.2
         }

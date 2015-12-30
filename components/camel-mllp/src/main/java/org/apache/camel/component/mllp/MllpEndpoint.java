@@ -45,7 +45,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     public static final char SEGMENT_DELIMITER = 0x0d;   // CR (carriage return)     - decimal 13, octal 015
     public static final char MESSAGE_TERMINATOR = 0x0a;  // LF (line feed, new line) - decimal 10, octal 012
 
-    Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MllpEndpoint.class);
 
     @UriPath(defaultValue = "0.0.0.0", description = "Hostname or IP for connection")
     String hostname = "0.0.0.0";
@@ -54,6 +54,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     int port = -1;
 
     // TODO:  Move URI Params to a MllpConfiguration class
+    // TODO: Move the description documentation to javadoc in the setter method
     @UriParam(defaultValue = "5", description = "TCP Server only - The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a "
             + "connection indication arrives when the queue is full, the connection is refused.")
     int backlog = 5;
@@ -100,6 +101,9 @@ public class MllpEndpoint extends DefaultEndpoint {
     public MllpEndpoint(String uri, MllpComponent component) {
         super(uri, component);
 
+        // TODO: this logic should be in component class
+        // TODO: all the options in the endpoint should be getter/setter so you can configure them as plain Java
+
         // mllp://hostname:port
         String hostPort;
         // look for options
@@ -129,15 +133,9 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Exchange createExchange() {
-        return this.createExchange(getExchangePattern());
-    }
-
-    @Override
     public Exchange createExchange(ExchangePattern exchangePattern) {
         Exchange mllpExchange = super.createExchange(exchangePattern);
         setExchangeProperties(mllpExchange);
-
         return mllpExchange;
     }
 
@@ -145,26 +143,25 @@ public class MllpEndpoint extends DefaultEndpoint {
     public Exchange createExchange(Exchange exchange) {
         Exchange mllpExchange = super.createExchange(exchange);
         setExchangeProperties(mllpExchange);
-
         return mllpExchange;
     }
 
     private void setExchangeProperties(Exchange mllpExchange) {
-        if (null != charsetName) {
+        if (charsetName != null) {
             mllpExchange.setProperty(Exchange.CHARSET_NAME, charsetName);
         }
     }
 
     public Producer createProducer() throws Exception {
-        log.trace("({}).createProducer()", this.getEndpointKey());
-
+        LOG.trace("({}).createProducer()", this.getEndpointKey());
         return new MllpTcpClientProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        log.trace("({}).createConsumer(processor)", this.getEndpointKey());
-
-        return new MllpTcpServerConsumer(this, processor);
+        LOG.trace("({}).createConsumer(processor)", this.getEndpointKey());
+        Consumer consumer = new MllpTcpServerConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

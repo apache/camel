@@ -21,16 +21,12 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link MllpEndpoint}.
  */
 public class MllpComponent extends UriEndpointComponent {
     public static final String MLLP_LOG_PHI_PROPERTY = "org.apache.camel.mllp.logPHI";
-
-    Logger log = LoggerFactory.getLogger(this.getClass());
 
     public MllpComponent() {
         super(MllpEndpoint.class);
