@@ -19,6 +19,7 @@ package org.apache.camel.component.elasticsearch;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Message;
@@ -218,9 +219,15 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 		return null;
 	}
 
-	public void update(Message message) {
-		UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
-		message.setBody(client.update(updateRequest).actionGet().getId());
+	public Object update(Message message) {
+		if(useHttpClient) {
+			String id = message.getExchange().getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class);
+			return esHttpClient.update(getIndexName(message), getIndexType(message), id, message.getBody(Map.class));
+		} else {
+			UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
+			return client.update(updateRequest).actionGet().getId();
+		}
+
 	}
 
 	public void get(Message message) {

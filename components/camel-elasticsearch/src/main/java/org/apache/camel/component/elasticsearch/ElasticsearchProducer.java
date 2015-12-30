@@ -136,7 +136,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         	 if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
         		 message.setBody(endpoint.index(message));
              } else if (ElasticsearchConstants.OPERATION_UPDATE.equals(operation)) {
-                 // TODO
+                 message.setBody(endpoint.update(message));
              } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
             	message.setBody(endpoint.getById(message));
              } else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {

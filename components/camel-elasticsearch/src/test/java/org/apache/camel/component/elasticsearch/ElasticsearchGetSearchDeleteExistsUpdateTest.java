@@ -145,6 +145,13 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
         indexId = template.requestBodyAndHeaders("direct:update", newMap, headers, String.class);
         assertNotNull("indexId should be set", indexId);
+        
+
+        Map<String, String> newMap2 = new HashMap<>();
+        newMap2.put(createPrefix() + "key2", createPrefix() + "value3");
+        
+        indexId = template.requestBodyAndHeaders("direct:update2", newMap2, headers, String.class);
+        assertNotNull("indexId should be set", indexId);
     }
 
     @Test
@@ -351,10 +358,12 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
                 
                 from("direct:multiget").to("elasticsearch://local?operation=MULTIGET&indexName=twitter&indexType=tweet");
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
-                from("direct:delete2").to("elasticsearch://elasticsearch?ip=localhost&port=9201&operation=DELETE&indexName=twitter&indexType=tweet");
+                from("direct:delete2").to("elasticsearch://elasticsearch?ip=localhost&port=9201&operation=DELETE&indexName=twitter&indexType=tweet&useHttpClient=true");
                 
                 from("direct:search").to("elasticsearch://local?operation=SEARCH&indexName=twitter&indexType=tweet");
                 from("direct:update").to("elasticsearch://local?operation=UPDATE&indexName=twitter&indexType=tweet");
+                from("direct:update2").to("elasticsearch://elasticsearch?ip=localhost&port=9201&operation=UPDATE&indexName=twitter&indexType=tweet&useHttpClient=true");
+                
                 from("direct:exists").to("elasticsearch://local?operation=EXISTS");
                 from("direct:multisearch").to("elasticsearch://local?operation=MULTISEARCH&indexName=test");
             }

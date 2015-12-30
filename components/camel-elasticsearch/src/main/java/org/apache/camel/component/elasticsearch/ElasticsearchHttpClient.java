@@ -17,6 +17,7 @@
 package org.apache.camel.component.elasticsearch;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -27,12 +28,15 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 public class ElasticsearchHttpClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchHttpClient.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ElasticsearchHttpClient.class);
 
 	private Client client = null;
 	private String host = "localhost";
@@ -79,8 +83,8 @@ public class ElasticsearchHttpClient {
 		}
 		return rootTarget;
 	}
-	
-	public String index(String indexName, String type, String body) {		
+
+	public String index(String indexName, String type, String body) {
 		return index(indexName, type, body, null, null);
 	}
 
@@ -89,59 +93,97 @@ public class ElasticsearchHttpClient {
 	 * 
 	 * @param body
 	 */
-	public String index(String indexName, String type, String body, String parent, String consistency) {		
-		WebTarget target = getRootTarget()
-				.path(indexName).path(type);
-		if(parent!=null)
+	public String index(String indexName, String type, String body,
+			String parent, String consistency) {
+		WebTarget target = getRootTarget().path(indexName).path(type);
+		if (parent != null)
 			target = target.queryParam("parent", parent);
-		if(consistency!=null)
+		if (consistency != null)
 			target = target.queryParam("consistency", consistency);
-		
-		ESDocumentResponse response = target.request()
-				.post(Entity.json(body), ESDocumentResponse.class);
-		//TODO need to rethink this approach of responding with just the ID
+
+		ESDocumentResponse response = target.request().post(Entity.json(body),
+				ESDocumentResponse.class);
+		// TODO need to rethink this approach of responding with just the ID
 		return response.getId();
 	}
 
+	/**
+	 * Convert the body into the bulk API format and call the BULK API
+	 * and setting the operations to index
+	 * 
+	 * @param indexName
+	 * @param indexType
+	 * @param documents
+	 * @return
+	 */
 	public List<String> bulkIndex(String indexName, String indexType,
 			List<String> documents) {
 		StringBuilder bodyBuilder = new StringBuilder();
-		for(String doc: documents) {
-			bodyBuilder.append("{\"index\":{\"_index\":\"")
-					   .append(indexName).append("\",")
-					   .append("\"_type\":\"")
-					   .append(indexType).append("\"}}\n");
-			String strippedDoc = doc.trim().replaceAll("\r", "").replaceAll("\n", "").replaceAll("\t", "");
+		for (String doc : documents) {
+			bodyBuilder.append("{\"index\":{\"_index\":\"").append(indexName)
+					.append("\",").append("\"_type\":\"").append(indexType)
+					.append("\"}}\n");
+			String strippedDoc = doc.trim().replaceAll("\r", "")
+					.replaceAll("\n", "").replaceAll("\t", "");
 			bodyBuilder.append(strippedDoc).append("\n");
 		}
-		WebTarget target = getRootTarget().path(indexName).path(indexType).path("_bulk");
-		LOG.info("Bulk Indexing \n"+bodyBuilder.toString());
-		Response response = target.request().post(Entity.text(bodyBuilder.toString()));
+		WebTarget target = getRootTarget().path(indexName).path(indexType)
+				.path("_bulk");
+		LOG.info("Bulk Indexing \n" + bodyBuilder.toString());
+		Response response = target.request().post(
+				Entity.text(bodyBuilder.toString()));
 		JsonNode responseNode = response.readEntity(JsonNode.class);
 		JsonNode itemsNode = responseNode.get("items");
 		List<String> ids = itemsNode.findValuesAsText("_id");
 
-		// TODO this returning of List<String> doesn't actually tell you which ones failed
-		
+		// TODO this returning of List<String> doesn't actually tell you which
+		// ones failed
+
 		return ids;
 	}
 
 	public String getById(String indexName, String indexType, String docId) {
-		WebTarget target = getRootTarget()
-				.path(indexName).path(indexType).path(docId);
-		
-		Response response = target.request()
-				.get();
+		WebTarget target = getRootTarget().path(indexName).path(indexType)
+				.path(docId);
+
+		Response response = target.request().get();
 		return response.readEntity(String.class);
 	}
 
 	public String delete(String indexName, String indexType, String docId) {
-		WebTarget target = getRootTarget()
-				.path(indexName).path(indexType).path(docId);
-		
-		Response response = target.request()
-				.delete();
+		WebTarget target = getRootTarget().path(indexName).path(indexType)
+				.path(docId);
+
+		Response response = target.request().delete();
 		return response.readEntity(String.class);
+	}
+
+	public Object update(String indexName, String indexType, String docId,
+			Map body) {
+		WebTarget target = getRootTarget().path(indexName).path(indexType)
+				.path(docId).path("_update");
+		// if(parent!=null)
+		// target = target.queryParam("parent", parent);
+		// if(consistency!=null)
+		// target = target.queryParam("consistency", consistency);
+		//
+		StringBuilder bodyStringBuilder = new StringBuilder();
+		
+		
+		try {
+			bodyStringBuilder.append("{\"doc\":")
+			                 .append(new ObjectMapper().writeValueAsString(body))
+							 .append("}");
+			Response response = target.request().post(
+					Entity.json(bodyStringBuilder.toString()));
+			if(response.getStatus()==200)
+				return docId;
+			
+		} catch (JsonProcessingException e) {
+			LOG.error("Error converting map of changes to JSON String", e);
+		}
+		return null;
+		
 	}
 
 }
