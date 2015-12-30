@@ -345,6 +345,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ignite</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-infinispan</artifactId>
     </dependency>
     <dependency>
@@ -521,6 +525,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mina2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mllp</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
