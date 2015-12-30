@@ -20,13 +20,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import org.apache.camel.maven.packaging.model.ComponentModel;
+import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -85,7 +89,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
-                    updateReadMeFile(readmeFile, componentName, json);
+                    ComponentModel model = generateComponentModel(componentName, json);
+                    String component = templateComponent(model);
+                    getLog().info(component);
                 }
             }
         }
@@ -108,29 +114,55 @@ public class ReadmeComponentMojo extends AbstractMojo {
         return null;
     }
 
-    private void updateReadMeFile(File readmeFile, String componentName, String json) throws MojoExecutionException {
-        // TODO: use some template like velocity or freemarker
-
+    private ComponentModel generateComponentModel(String componentName, String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-        String scheme = getValue("scheme", rows);
-        String syntax = getValue("syntax", rows);
-        String title = getValue("title", rows);
-        String description = getValue("description", rows);
-        String label = getValue("label", rows);
-        String groupId = getValue("groupId", rows);
-        String artifactId = getValue("artifactId", rows);
-        String version = getValue("version", rows);
+
+        ComponentModel component = new ComponentModel();
+        component.setScheme(getValue("scheme", rows));
+        component.setSyntax(getValue("syntax", rows));
+        component.setTitle(getValue("title", rows));
+        component.setDescription(getValue("description", rows));
+        component.setLabel(getValue("label", rows));
+        component.setDeprecated(getValue("deprecated", rows));
+        component.setConsumerOnly(getValue("consumerOnly", rows));
+        component.setProducerOnly(getValue("producerOnly", rows));
+        component.setJavaType(getValue("javaType", rows));
+        component.setGroupId(getValue("groupId", rows));
+        component.setArtifactId(getValue("artifactId", rows));
+        component.setVersion(getValue("version", rows));
+
+        rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+
+        List<ComponentOptionModel> options = new ArrayList<ComponentOptionModel>();
+        ComponentOptionModel option = new ComponentOptionModel();
+        for (Map<String, String> row : rows) {
+            option.setKey(getValue("key", row));
+            option.setKind(getValue("kind", row));
+            option.setType(getValue("type", row));
+            option.setJavaType(getValue("javaType", row));
+            option.setDeprecated(getValue("javaType", row));
+            option.setDescription(getValue("description", row));
+            options.add(option);
+        }
+
+        component.setOptions(options);
+
+        return component;
+    }
+
+    private String templateComponent(ComponentModel model) throws MojoExecutionException {
 
         try {
-            OutputStream os = buildContext.newFileOutputStream(readmeFile);
-            os.write("##".getBytes());
-            os.write(title.getBytes());
-            os.write("\n\n".getBytes());
-            os.write(description.getBytes());
-            os.write("\n\n".getBytes());
-            os.close();
-        } catch (IOException e) {
-            throw new MojoExecutionException("Failed to update " + readmeFile + " file. Reason: " + e, e);
+            String ftl = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-header.ftl"));
+            Template template = new Template("header", ftl, new Configuration());
+
+            StringWriter buffer = new StringWriter();
+            template.process(model, buffer);
+            buffer.flush();
+
+            return buffer.toString();
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing freemarker template. Readon: " + e, e);
         }
     }
 

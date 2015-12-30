@@ -122,4 +122,12 @@ public final class JSonSchemaHelper {
         return null;
     }
 
+    public static String getValue(String key, Map<String, String> rows) {
+        String value = rows.get(key);
+        if (value != null) {
+            return value;
+        }
+        return null;
+    }
+
 }
