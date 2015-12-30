@@ -94,59 +94,63 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 	protected void doStart() throws Exception {
 		super.doStart();
 
-		if (client == null) {
-			if (configuration.isLocal()) {
-				LOG.info("Starting local ElasticSearch server");
-			} else {
-				LOG.info("Joining ElasticSearch cluster "
-						+ configuration.getClusterName());
-			}
-			if (configuration.getUseHttpClient()) {
-				LOG.info("Using HTTP Client ");
-				esHttpClient = new ElasticsearchHttpClient();
-				esHttpClient.setHost(configuration.getIp());
-				esHttpClient.setPort(String.valueOf(configuration.getPort()));
-				return;
-			}
-			if (configuration.getIp() != null) {
-				this.client = TransportClient
-						.builder()
-						.settings(getSettings())
-						.build()
-						.addTransportAddress(
-								new InetSocketTransportAddress(InetAddress
-										.getByName(configuration.getIp()),
-										configuration.getPort()));
-			} else if (configuration.getTransportAddressesList() != null
-					&& !configuration.getTransportAddressesList().isEmpty()) {
-				List<TransportAddress> addresses = new ArrayList(configuration
-						.getTransportAddressesList().size());
-				for (TransportAddress address : configuration
-						.getTransportAddressesList()) {
-					addresses.add(address);
-				}
-				this.client = TransportClient
-						.builder()
-						.settings(getSettings())
-						.build()
-						.addTransportAddresses(
-								addresses
-										.toArray(new TransportAddress[addresses
-												.size()]));
-			} else {
-				NodeBuilder builder = nodeBuilder().local(
-						configuration.isLocal()).data(configuration.getData());
+		if (configuration.getUseHttpClient()) {
+			LOG.info("Using HTTP Client ");
+			esHttpClient = new ElasticsearchHttpClient();
+			esHttpClient.setHost(configuration.getIp());
+			esHttpClient.setPort(String.valueOf(configuration.getPort()));
+			return;
+		} else {
+			if (client == null) {
 				if (configuration.isLocal()) {
-					builder.getSettings().put("http.enabled", false);
+					LOG.info("Starting local ElasticSearch server");
+				} else {
+					LOG.info("Joining ElasticSearch cluster "
+							+ configuration.getClusterName());
 				}
-				if (!configuration.isLocal()
-						&& configuration.getClusterName() != null) {
-					builder.clusterName(configuration.getClusterName());
+
+				if (configuration.getIp() != null) {
+					this.client = TransportClient
+							.builder()
+							.settings(getSettings())
+							.build()
+							.addTransportAddress(
+									new InetSocketTransportAddress(InetAddress
+											.getByName(configuration.getIp()),
+											configuration.getPort()));
+				} else if (configuration.getTransportAddressesList() != null
+						&& !configuration.getTransportAddressesList().isEmpty()) {
+					List<TransportAddress> addresses = new ArrayList(
+							configuration.getTransportAddressesList().size());
+					for (TransportAddress address : configuration
+							.getTransportAddressesList()) {
+						addresses.add(address);
+					}
+					this.client = TransportClient
+							.builder()
+							.settings(getSettings())
+							.build()
+							.addTransportAddresses(
+									addresses
+											.toArray(new TransportAddress[addresses
+													.size()]));
+				} else {
+					NodeBuilder builder = nodeBuilder().local(
+							configuration.isLocal()).data(
+							configuration.getData());
+					if (configuration.isLocal()) {
+						builder.getSettings().put("http.enabled", false);
+					}
+					if (!configuration.isLocal()
+							&& configuration.getClusterName() != null) {
+						builder.clusterName(configuration.getClusterName());
+					}
+					node = builder.node();
+					client = node.client();
 				}
-				node = builder.node();
-				client = node.client();
 			}
 		}
+
 	}
 
 	private Settings getSettings() {
@@ -246,11 +250,10 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 			}
 			return esHttpClient.bulkIndex(getIndexName(message),
 					getIndexType(message), documents);
-		}
-		else {
+		} else {
 			BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-			for (BulkItemResponse response : client.bulk(bulkRequest).actionGet()
-					.getItems()) {
+			for (BulkItemResponse response : client.bulk(bulkRequest)
+					.actionGet().getItems()) {
 				indexedIds.add(response.getId());
 			}
 		}
@@ -271,6 +274,16 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 	public void search(Message message) {
 		SearchRequest searchRequest = message.getBody(SearchRequest.class);
 		message.setBody(client.search(searchRequest).actionGet());
+	}
+
+	public Object getById(Message message) {
+		if (useHttpClient) {
+			return esHttpClient.getById(getIndexName(message),
+					getIndexType(message), message.getBody(String.class));
+		} else {
+			GetRequest getRequest = message.getBody(GetRequest.class);
+			return client.get(getRequest);
+		}
 	}
 
 }

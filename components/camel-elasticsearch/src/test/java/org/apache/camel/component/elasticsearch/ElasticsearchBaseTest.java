@@ -40,7 +40,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
 
         // create an embedded node to resue
         node = nodeBuilder().local(true)
-                .settings(Settings.settingsBuilder().put("http.enabled", false).put("path.data", "target/data").put("path.home", "target/home"))
+                .settings(Settings.settingsBuilder().put("http.enabled", true).put("http.port", "9201").put("path.data", "target/data").put("path.home", "target/home"))
                 .node();
 
         client = node.client();

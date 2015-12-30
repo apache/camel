@@ -37,6 +37,9 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -52,8 +55,18 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
 
         //now, verify GET succeeded
         GetResponse response = template.requestBody("direct:get", indexId, GetResponse.class);
+
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
+
+        //http client GET
+        String response2 = template.requestBody("direct:get2", indexId, String.class);
+        assertNotNull("response should not be null", response2);
+        assertNotNull("response source should not be null", response2);
+        assertNotEquals("response should not equal id", indexId, response2);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode response2JsonNode = objectMapper.readValue(response2, JsonNode.class);
+        assertEquals("response source should equal created source", response.getSourceAsString(), response2JsonNode.findValue("_source").toString());
     }
 
     @Test
@@ -311,6 +324,8 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
                 from("direct:start").to("elasticsearch://local?operation=INDEX");
                 from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
                 from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
+                from("direct:get2").to("elasticsearch://elasticsearch?ip=localhost&port=9201&operation=GET_BY_ID&indexName=twitter&indexType=tweet&useHttpClient=true");
+                
                 from("direct:multiget").to("elasticsearch://local?operation=MULTIGET&indexName=twitter&indexType=tweet");
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
                 from("direct:search").to("elasticsearch://local?operation=SEARCH&indexName=twitter&indexType=tweet");
