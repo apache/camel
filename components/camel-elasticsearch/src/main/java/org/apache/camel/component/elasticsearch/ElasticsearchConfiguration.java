@@ -51,8 +51,23 @@ public class ElasticsearchConfiguration {
     private int port = ElasticsearchConstants.DEFAULT_PORT;
     @UriParam(defaultValue = "true")
     private Boolean clientTransportSniff = true;
+    @UriParam(defaultValue = "false")
+    private Boolean useHttpClient = false; 
 
     /**
+     * Whether or not to use the Http Client instead of NodeClient or TransportClient
+     * 
+     * @return
+     */
+	public Boolean getUseHttpClient() {
+		return useHttpClient;
+	}
+
+	public void setUseHttpClient(Boolean useHttpClient) {
+		this.useHttpClient = useHttpClient;
+	}
+
+	/**
      * Name of cluster or use local for local mode
      */
     public String getClusterName() {

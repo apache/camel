@@ -130,44 +130,71 @@ public class ElasticsearchProducer extends DefaultProducer {
             message.setHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, getEndpoint().getConfig().getConsistencyLevel());
             configConsistencyLevel = true;
         }
-
-        Client client = getEndpoint().getClient();
-        if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
-            IndexRequest indexRequest = message.getBody(IndexRequest.class);
-            message.setBody(client.index(indexRequest).actionGet().getId());
-        } else if (ElasticsearchConstants.OPERATION_UPDATE.equals(operation)) {
-            UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
-            message.setBody(client.update(updateRequest).actionGet().getId());
-        } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
-            GetRequest getRequest = message.getBody(GetRequest.class);
-            message.setBody(client.get(getRequest));
-        } else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {
-            MultiGetRequest multiGetRequest = message.getBody(MultiGetRequest.class);
-            message.setBody(client.multiGet(multiGetRequest));
-        } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
-            BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-            message.setBody(client.bulk(bulkRequest).actionGet());
-        } else if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(operation)) {
-            BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-            List<String> indexedIds = new ArrayList<String>();
-            for (BulkItemResponse response : client.bulk(bulkRequest).actionGet().getItems()) {
-                indexedIds.add(response.getId());
-            }
-            message.setBody(indexedIds);
-        } else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
-            DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
-            message.setBody(client.delete(deleteRequest).actionGet());
-        } else if (ElasticsearchConstants.OPERATION_EXISTS.equals(operation)) {
-            ExistsRequest existsRequest = message.getBody(ExistsRequest.class);
-            message.setBody(client.admin().indices().prepareExists(existsRequest.indices()).get().isExists());
-        } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
-            SearchRequest searchRequest = message.getBody(SearchRequest.class);
-            message.setBody(client.search(searchRequest).actionGet());
-        } else if (ElasticsearchConstants.OPERATION_MULTISEARCH.equals(operation)) {
-            MultiSearchRequest multiSearchRequest = message.getBody(MultiSearchRequest.class);
-            message.setBody(client.multiSearch(multiSearchRequest));
+        
+        ElasticsearchEndpoint endpoint = getEndpoint();
+        if(endpoint.getConfig().getUseHttpClient()) {
+        	 if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
+        		 message.setBody(endpoint.index(message));
+             } else if (ElasticsearchConstants.OPERATION_UPDATE.equals(operation)) {
+                 // TODO
+             } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
+            	// TODO
+             } else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {
+            	// TODO
+             } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
+            	 // TODO
+            	 
+             } else if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(operation)) {
+             	message.setBody(endpoint.bulkIndex(message));
+             } else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
+            	// TODO
+             } else if (ElasticsearchConstants.OPERATION_EXISTS.equals(operation)) {
+            	// TODO
+             } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
+            	// TODO
+             } else if (ElasticsearchConstants.OPERATION_MULTISEARCH.equals(operation)) {
+            	// TODO
+             } else {
+                 throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
+             }
         } else {
-            throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
+            Client client = getEndpoint().getClient();
+            if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
+                message.setBody(endpoint.index(message));
+            } else if (ElasticsearchConstants.OPERATION_UPDATE.equals(operation)) {
+                UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
+                message.setBody(client.update(updateRequest).actionGet().getId());
+            } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
+                GetRequest getRequest = message.getBody(GetRequest.class);
+                message.setBody(client.get(getRequest));
+            } else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {
+                MultiGetRequest multiGetRequest = message.getBody(MultiGetRequest.class);
+                message.setBody(client.multiGet(multiGetRequest));
+            } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
+                BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+                message.setBody(client.bulk(bulkRequest).actionGet());
+            } else if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(operation)) {
+                BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+                List<String> indexedIds = new ArrayList<String>();
+                for (BulkItemResponse response : client.bulk(bulkRequest).actionGet().getItems()) {
+                    indexedIds.add(response.getId());
+                }
+                message.setBody(indexedIds);
+            } else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
+                DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
+                message.setBody(client.delete(deleteRequest).actionGet());
+            } else if (ElasticsearchConstants.OPERATION_EXISTS.equals(operation)) {
+                ExistsRequest existsRequest = message.getBody(ExistsRequest.class);
+                message.setBody(client.admin().indices().prepareExists(existsRequest.indices()).get().isExists());
+            } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
+                SearchRequest searchRequest = message.getBody(SearchRequest.class);
+                message.setBody(client.search(searchRequest).actionGet());
+            } else if (ElasticsearchConstants.OPERATION_MULTISEARCH.equals(operation)) {
+                MultiSearchRequest multiSearchRequest = message.getBody(MultiSearchRequest.class);
+                message.setBody(client.multiSearch(multiSearchRequest));
+            } else {
+                throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
+            }
         }
 
         // If we set params via the configuration on this exchange, remove them
