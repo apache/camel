@@ -52,10 +52,8 @@ public class ZookeeperProducer extends DefaultProducer {
     public static final String ZK_OPERATION_WRITE  = "WRITE";
     public static final String ZK_OPERATION_DELETE = "DELETE";
 
-    private ZooKeeperConfiguration configuration;
-
+    private final ZooKeeperConfiguration configuration;
     private ZooKeeperConnectionManager zkm;
-    
     private ZooKeeper connection;
 
     public ZookeeperProducer(ZooKeeperEndpoint endpoint) {
@@ -108,14 +106,6 @@ public class ZookeeperProducer extends DefaultProducer {
         connection = zkm.getConnection();
         if (log.isTraceEnabled()) {
             log.trace(String.format("Starting zookeeper producer of '%s'", configuration.getPath()));
-        }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        if (log.isTraceEnabled()) {
-            log.trace(String.format("Shutting down zookeeper producer of '%s'", configuration.getPath()));
         }
     }
 
