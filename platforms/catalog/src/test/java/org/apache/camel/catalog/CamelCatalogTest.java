@@ -566,4 +566,30 @@ public class CamelCatalogTest {
         assertNotNull(tree);
     }
 
+    @Test
+    public void testSimpleExpression() throws Exception {
+        SimpleValidationResult result = catalog.validateSimpleExpression("${body}");
+        assertTrue(result.isSuccess());
+        assertEquals("${body}", result.getSimple());
+
+        result = catalog.validateSimpleExpression("${body");
+        assertFalse(result.isSuccess());
+        assertEquals("${body", result.getSimple());
+        LOG.info(result.getError());
+        assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 5"));
+    }
+
+    @Test
+    public void testSimplePredicate() throws Exception {
+        SimpleValidationResult result = catalog.validateSimplePredicate("${body} == 'abc'");
+        assertTrue(result.isSuccess());
+        assertEquals("${body} == 'abc'", result.getSimple());
+
+        result = catalog.validateSimplePredicate("${body} > ${header.size");
+        assertFalse(result.isSuccess());
+        assertEquals("${body} > ${header.size", result.getSimple());
+        LOG.info(result.getError());
+        assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 22"));
+    }
+
 }

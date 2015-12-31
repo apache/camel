@@ -19,6 +19,7 @@ package org.apache.camel.catalog;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -1198,6 +1199,45 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public SimpleValidationResult validateSimpleExpression(String simple) {
+        return doValidateSimple(simple, false);
+    }
+
+    @Override
+    public SimpleValidationResult validateSimplePredicate(String simple) {
+        return doValidateSimple(simple, true);
+    }
+
+    private SimpleValidationResult doValidateSimple(String simple, boolean predicate) {
+        SimpleValidationResult answer = new SimpleValidationResult(simple);
+
+        Object instance = null;
+        Class clazz = null;
+        try {
+            clazz = DefaultCamelCatalog.class.getClassLoader().loadClass("org.apache.camel.language.simple.SimpleLanguage");
+            instance = clazz.newInstance();
+        } catch (Exception e) {
+            // ignore
+        }
+
+        if (clazz != null && instance != null) {
+            try {
+                if (predicate) {
+                    instance.getClass().getMethod("createPredicate", String.class).invoke(instance, simple);
+                } else {
+                    instance.getClass().getMethod("createExpression", String.class).invoke(instance, simple);
+                }
+            } catch (InvocationTargetException e) {
+                answer.setError(e.getTargetException().getMessage());
+            } catch (Exception e) {
+                answer.setError(e.getMessage());
+            }
+        }
+
+        return answer;
     }
 
     /**

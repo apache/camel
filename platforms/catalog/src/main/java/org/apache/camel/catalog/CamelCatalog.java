@@ -199,6 +199,26 @@ public interface CamelCatalog {
     EndpointValidationResult validateEndpointProperties(String uri);
 
     /**
+     * Parses and validates the simple expression.
+     * <p/>
+     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
+     *
+     * @param simple  the simple expression
+     * @return validation result
+     */
+    SimpleValidationResult validateSimpleExpression(String simple);
+
+    /**
+     * Parses and validates the simple predicate
+     * <p/>
+     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
+     *
+     * @param simple  the simple predicate
+     * @return validation result
+     */
+    SimpleValidationResult validateSimplePredicate(String simple);
+
+    /**
      * Returns the component name from the given endpoint uri
      *
      * @param uri  the endpoint uri

@@ -47,6 +47,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- for testing simple language parser -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
