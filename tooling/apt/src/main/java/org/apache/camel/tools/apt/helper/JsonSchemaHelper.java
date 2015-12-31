@@ -16,6 +16,7 @@
  */
 package org.apache.camel.tools.apt.helper;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -127,6 +128,8 @@ public final class JsonSchemaHelper {
             // return generic type for unknown type
             return "object";
         } else if (type.equals(URI.class.getName()) || type.equals(URL.class.getName())) {
+            return "string";
+        } else if (type.equals(File.class.getName())) {
             return "string";
         } else if (type.startsWith("java.lang.Class")) {
             return "string";
