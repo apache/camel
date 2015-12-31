@@ -462,12 +462,12 @@ public class CamelCatalogTest {
     public void validatePropertiesSummary() throws Exception {
         EndpointValidationResult result = catalog.validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
         assertFalse(result.isSuccess());
-        String reason = result.summaryErrorMessage();
+        String reason = result.summaryErrorMessage(true);
         LOG.info(reason);
 
         result = catalog.validateEndpointProperties("jms:unknown:myqueue");
         assertFalse(result.isSuccess());
-        reason = result.summaryErrorMessage();
+        reason = result.summaryErrorMessage(false);
         LOG.info(reason);
     }
 

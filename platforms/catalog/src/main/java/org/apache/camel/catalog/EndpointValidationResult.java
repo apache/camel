@@ -221,9 +221,10 @@ public class EndpointValidationResult implements Serializable {
     /**
      * A human readable summary of the validation errors.
      *
+     * @param includeHeader whether to include a header
      * @return the summary, or <tt>null</tt> if no validation errors
      */
-    public String summaryErrorMessage() {
+    public String summaryErrorMessage(boolean includeHeader) {
         if (isSuccess()) {
             return null;
         }
@@ -243,7 +244,7 @@ public class EndpointValidationResult implements Serializable {
                     String str = Arrays.asList(suggestions).toString();
                     options.put(name, "Unknown option. Did you mean: " + str);
                 } else {
-                    options.put(name, "Unknown option.");
+                    options.put(name, "Unknown option");
                 }
             }
         }
@@ -299,14 +300,16 @@ public class EndpointValidationResult implements Serializable {
 
         // build the human error summary
         StringBuilder sb = new StringBuilder();
-        sb.append("Endpoint validator error\n");
-        sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
-        sb.append("\n\t").append(uri).append("\n");
+        if (includeHeader) {
+            sb.append("Endpoint validator error\n");
+            sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
+            sb.append("\n");
+        }
+        sb.append("\t").append(uri).append("\n");
         for (Map.Entry<String, String> option : options.entrySet()) {
             String out = String.format(format, option.getKey(), option.getValue());
             sb.append("\n\t").append(out);
         }
-        sb.append("\n\n");
 
         return sb.toString();
     }
