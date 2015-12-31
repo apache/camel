@@ -241,8 +241,12 @@ public class EndpointValidationResult implements Serializable {
             for (String name : unknown) {
                 if (unknownSuggestions != null && unknownSuggestions.containsKey(name)) {
                     String[] suggestions = unknownSuggestions.get(name);
-                    String str = Arrays.asList(suggestions).toString();
-                    options.put(name, "Unknown option. Did you mean: " + str);
+                    if (suggestions != null && suggestions.length > 0) {
+                        String str = Arrays.asList(suggestions).toString();
+                        options.put(name, "Unknown option. Did you mean: " + str);
+                    } else {
+                        options.put(name, "Unknown option");
+                    }
                 } else {
                     options.put(name, "Unknown option");
                 }
