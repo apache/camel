@@ -85,7 +85,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Export-Package>org.apache.camel.catalog</Export-Package>
+            <Export-Package>org.apache.camel.catalog*</Export-Package>
             <Import-Package>org.apache.camel.language.simple;resolution:=optional,*</Import-Package>
           </instructions>
         </configuration>
