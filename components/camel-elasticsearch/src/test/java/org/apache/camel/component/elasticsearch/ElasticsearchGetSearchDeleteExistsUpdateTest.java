@@ -128,6 +128,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         match.put("match", actualQuery);
         Map<String, Object> query = new HashMap<String, Object>();
         query.put("query", match);
+        
         SearchResponse response = template.requestBody("direct:search", query, SearchResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response hits should be == 1", response.getHits().totalHits());
@@ -221,8 +222,9 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         list.add(item1);
         list.add(item2);
         list.add(item3);
-        MultiGetResponse response = template.requestBodyAndHeaders("direct:start", list, headers, MultiGetResponse.class);
+        MultiGetResponse response = template.requestBodyAndHeaders("direct:multiget", list, headers, MultiGetResponse.class);
         MultiGetItemResponse[] responses = response.getResponses();
+        
         assertNotNull("response should not be null", response);
         assertEquals("response should contains three multiGetResponse object", 3, response.getResponses().length);
         assertEquals("response 1 should contains tweet as type", "tweet", responses[0].getResponse().getType().toString());
@@ -230,6 +232,41 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         assertFalse("response 1 should be ok", responses[0].isFailed());
         assertFalse("response 2 should be ok", responses[1].isFailed());
         assertTrue("response 3 should be failed", responses[2].isFailed());
+        
+        //Now for the http version of multiget
+        Map<String, String> item1Map = new HashMap<String,String>();
+        item1Map.put("_index", "twitter");
+        item1Map.put("_type", "tweet");
+        item1Map.put("_id", "1");
+        
+        Map<String, String> item2Map = new HashMap<String,String>();
+        item2Map.put("_index", "facebook");
+        item2Map.put("_type", "status");
+        item2Map.put("_id", "2");
+        
+        Map<String, String> item3Map = new HashMap<String,String>();
+        item3Map.put("_index", "instagram");
+        item3Map.put("_type", "latest");
+        item3Map.put("_id", "3");
+        
+        List<Map> list2 = new ArrayList<Map>();
+        list2.add(item1Map);
+        list2.add(item2Map);
+        list2.add(item3Map);
+        List<String> multiGetRequestResults = (List<String>)template.requestBodyAndHeaders("direct:multiget2", list2, headers);
+        assertNotNull("response should not be null", multiGetRequestResults);
+        assertTrue("response size greater than 0", multiGetRequestResults.size()>0);
+        assertTrue("response size equal to 3", multiGetRequestResults.size() == 3);
+        String result1 = multiGetRequestResults.get(0);
+        ObjectMapper objectMapper = new ObjectMapper();
+        assertTrue("response 1 should be ok", objectMapper.readTree(result1).get("_source")!=null);
+        
+        String result2 = multiGetRequestResults.get(1);
+        assertTrue("response 2 should be ok", objectMapper.readTree(result2).get("_source")!=null);
+        
+        String result3 = multiGetRequestResults.get(2);
+        assertTrue("response 3 should fail", objectMapper.readTree(result3).get("_source")==null);
+        
     }
     
     @Test
@@ -357,6 +394,8 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
                 from("direct:get2").to("elasticsearch://elasticsearch?ip=localhost&port=9201&operation=GET_BY_ID&indexName=twitter&indexType=tweet&useHttpClient=true");
                 
                 from("direct:multiget").to("elasticsearch://local?operation=MULTIGET&indexName=twitter&indexType=tweet");
+                from("direct:multiget2").to("elasticsearch://elasticsearch?ip=localhost&port=9201&operation=MULTIGET&indexName=twitter&indexType=tweet&useHttpClient=true");
+                
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
                 from("direct:delete2").to("elasticsearch://elasticsearch?ip=localhost&port=9201&operation=DELETE&indexName=twitter&indexType=tweet&useHttpClient=true");
                 

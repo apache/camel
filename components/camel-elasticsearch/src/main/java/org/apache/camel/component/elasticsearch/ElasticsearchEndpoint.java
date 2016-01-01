@@ -235,10 +235,17 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 		message.setBody(client.get(getRequest));
 	}
 
-	public void multiget(Message message) {
-		MultiGetRequest multiGetRequest = message
-				.getBody(MultiGetRequest.class);
-		message.setBody(client.multiGet(multiGetRequest));
+	public Object multiget(Message message) {
+		if(useHttpClient) {
+			String indexName = getIndexName(message);
+			String indexType = getIndexType(message);
+			return esHttpClient.multiget(indexName, indexType, message.getBody(List.class));
+		} else {
+			MultiGetRequest multiGetRequest = message
+					.getBody(MultiGetRequest.class);
+			return client.multiGet(multiGetRequest);
+		}
+
 	}
 
 	public void bulk(Message message) {

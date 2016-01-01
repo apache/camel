@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +36,28 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
+/**
+ * Implementation of CRUD and search operations using HTTP calls rather than the
+ * Java Client API
+ *
+ */
 public class ElasticsearchHttpClient {
+
+	private static final String HTTPS_PROTOCOL = "https";
+
+	private static final String HTTP_PROTOCOL = "http";
+
+	private static final String CONSISTENCY_REQUEST_PARAM = "consistency";
+
+	private static final String PARENT_REQUEST_PARAM = "parent";
+
+	private static final String ID_ATTR = "_id";
+
+	private static final String ITEMS_ATTR = "items";
+
+	private static final String UPDATE_API_PATH = "_update";
+
+	private static final String MGET_API_PATH = "_mget";
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ElasticsearchHttpClient.class);
@@ -75,31 +99,45 @@ public class ElasticsearchHttpClient {
 
 	private WebTarget getRootTarget() {
 		if (rootTarget == null) {
-			String protocol = "http";
+			String protocol = HTTP_PROTOCOL;
 			if (isSecure())
-				protocol = "https";
+				protocol = HTTPS_PROTOCOL;
 
 			rootTarget = client.target(protocol + "://" + host + ":" + port);
 		}
 		return rootTarget;
 	}
 
+	/**
+	 * Index API for when parent and consistency are not specified
+	 * 
+	 * @param indexName
+	 * @param type
+	 * @param body
+	 * @return
+	 */
 	public String index(String indexName, String type, String body) {
 		return index(indexName, type, body, null, null);
 	}
 
 	/**
-	 * Call index API with String as body
+	 * Index API given an indexName, type, body, and optional parent and
+	 * consistency
 	 * 
+	 * @param indexName
+	 * @param type
 	 * @param body
+	 * @param parent
+	 * @param consistency
+	 * @return
 	 */
 	public String index(String indexName, String type, String body,
 			String parent, String consistency) {
 		WebTarget target = getRootTarget().path(indexName).path(type);
 		if (parent != null)
-			target = target.queryParam("parent", parent);
+			target = target.queryParam(PARENT_REQUEST_PARAM, parent);
 		if (consistency != null)
-			target = target.queryParam("consistency", consistency);
+			target = target.queryParam(CONSISTENCY_REQUEST_PARAM, consistency);
 
 		ESDocumentResponse response = target.request().post(Entity.json(body),
 				ESDocumentResponse.class);
@@ -108,8 +146,7 @@ public class ElasticsearchHttpClient {
 	}
 
 	/**
-	 * Convert the body into the bulk API format and call the BULK API
-	 * and setting the operations to index
+	 * Bulk index API using the bulk api format
 	 * 
 	 * @param indexName
 	 * @param indexType
@@ -133,8 +170,8 @@ public class ElasticsearchHttpClient {
 		Response response = target.request().post(
 				Entity.text(bodyBuilder.toString()));
 		JsonNode responseNode = response.readEntity(JsonNode.class);
-		JsonNode itemsNode = responseNode.get("items");
-		List<String> ids = itemsNode.findValuesAsText("_id");
+		JsonNode itemsNode = responseNode.get(ITEMS_ATTR);
+		List<String> ids = itemsNode.findValuesAsText(ID_ATTR);
 
 		// TODO this returning of List<String> doesn't actually tell you which
 		// ones failed
@@ -142,6 +179,14 @@ public class ElasticsearchHttpClient {
 		return ids;
 	}
 
+	/**
+	 * Get document by ID API
+	 * 
+	 * @param indexName
+	 * @param indexType
+	 * @param docId
+	 * @return
+	 */
 	public String getById(String indexName, String indexType, String docId) {
 		WebTarget target = getRootTarget().path(indexName).path(indexType)
 				.path(docId);
@@ -150,6 +195,14 @@ public class ElasticsearchHttpClient {
 		return response.readEntity(String.class);
 	}
 
+	/**
+	 * Delete Document By ID API
+	 * 
+	 * @param indexName
+	 * @param indexType
+	 * @param docId
+	 * @return
+	 */
 	public String delete(String indexName, String indexType, String docId) {
 		WebTarget target = getRootTarget().path(indexName).path(indexType)
 				.path(docId);
@@ -158,32 +211,92 @@ public class ElasticsearchHttpClient {
 		return response.readEntity(String.class);
 	}
 
+	/**
+	 * Update API by document given a Map of changed fields
+	 * 
+	 * @param indexName
+	 * @param indexType
+	 * @param docId
+	 * @param body
+	 * @return
+	 */
 	public Object update(String indexName, String indexType, String docId,
 			Map body) {
 		WebTarget target = getRootTarget().path(indexName).path(indexType)
-				.path(docId).path("_update");
+				.path(docId).path(UPDATE_API_PATH);
 		// if(parent!=null)
 		// target = target.queryParam("parent", parent);
 		// if(consistency!=null)
 		// target = target.queryParam("consistency", consistency);
 		//
 		StringBuilder bodyStringBuilder = new StringBuilder();
-		
-		
+
 		try {
 			bodyStringBuilder.append("{\"doc\":")
-			                 .append(new ObjectMapper().writeValueAsString(body))
-							 .append("}");
+					.append(new ObjectMapper().writeValueAsString(body))
+					.append("}");
 			Response response = target.request().post(
 					Entity.json(bodyStringBuilder.toString()));
-			if(response.getStatus()==200)
+			if (response.getStatus() == 200)
 				return docId;
-			
+
 		} catch (JsonProcessingException e) {
 			LOG.error("Error converting map of changes to JSON String", e);
 		}
 		return null;
-		
+
+	}
+
+	/**
+	 * Returns a list of Strings representing the documents requested in the
+	 * mget request The request body is a list of Maps which may or may not
+	 * contain the indexName, indexType and will contain the document IDs
+	 * requested
+	 * 
+	 * @param indexName
+	 * @param indexType
+	 * @param body
+	 * @return
+	 */
+	public List<String> multiget(String indexName, String indexType, List body) {
+		WebTarget target = getRootTarget();
+		if (indexName != null) {
+			target = target.path(indexName);
+			if (indexType != null) {
+				target = target.path(indexType);
+			}
+		}
+		target = target.path(MGET_API_PATH);
+
+		Map<String, Object> wrapper = new HashMap<String, Object>();
+		wrapper.put("docs", body);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String bodyAsString;
+		try {
+			bodyAsString = objectMapper.writeValueAsString(wrapper);
+
+			Response response = target.request()
+					.post(Entity.json(bodyAsString));
+
+			JsonNode responseJsonNode = response.readEntity(JsonNode.class);
+			if (responseJsonNode != null) {
+
+				List<String> result = new ArrayList<String>();
+				Iterator<JsonNode> jsonNodeIterator = responseJsonNode.get(
+						"docs").iterator();
+				while (jsonNodeIterator.hasNext()) {
+					JsonNode jsonNode = jsonNodeIterator.next();
+					result.add(jsonNode.toString());
+				}
+				return result;
+			}
+
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException("Could not process  of IDs", e);
+		}
+
+		return new ArrayList<String>();
 	}
 
 }
