@@ -21,6 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -40,6 +41,8 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     protected String hazelcastInstanceName;
     @UriParam
     private int defaultOperation = -1;
+    @UriParam
+    private HazelcastSedaConfiguration hazelcastSedaConfiguration; // to include component schema docs
 
     public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
         this(hazelcastInstance, endpointUri, component, null);

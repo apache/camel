@@ -119,11 +119,13 @@ public class HazelcastComponent extends UriEndpointComponent {
         }
 
         if (remaining.startsWith(HazelcastConstants.SEDA_PREFIX)) {
+            // remaining is anything (name it foo ;)
+            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.SEDA_PREFIX.length()), '/');
             final HazelcastSedaConfiguration config = new HazelcastSedaConfiguration();
             setProperties(config, parameters);
-            config.setQueueName(remaining.substring(remaining.indexOf(":") + 1, remaining.length()));
-
+            config.setQueueName(remaining);
             endpoint = new HazelcastSedaEndpoint(hzInstance, uri, this, config);
+            endpoint.setCacheName(remaining);
             endpoint.setCommand(HazelcastCommand.seda);
         }
 
