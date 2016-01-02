@@ -456,6 +456,10 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertEquals("ggg", result.getInvalidBoolean().get("showAll"));
         assertEquals(1, result.getNumberOfErrors());
+
+        // dataset
+        result = catalog.validateEndpointProperties("dataset:foo?minRate=50");
+        assertTrue(result.isSuccess());
     }
 
     @Test

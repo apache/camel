@@ -131,6 +131,23 @@ public final class JSonSchemaHelper {
         return false;
     }
 
+    public static String getPropertyKind(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String kind = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("kind")) {
+                kind = row.get("kind");
+            }
+            if (found) {
+                return kind;
+            }
+        }
+        return null;
+    }
+
     public static boolean isPropertyBoolean(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             String type = null;
