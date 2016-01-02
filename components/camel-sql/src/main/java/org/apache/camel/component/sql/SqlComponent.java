@@ -75,7 +75,7 @@ public class SqlComponent extends UriEndpointComponent {
         }
 
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
-        
+
         JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
         IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
 
@@ -104,6 +104,7 @@ public class SqlComponent extends UriEndpointComponent {
         }
 
         SqlEndpoint endpoint = new SqlEndpoint(uri, this, jdbcTemplate, query);
+        endpoint.setPlaceholder(parameterPlaceholderSubstitute);
         endpoint.setOnConsume(onConsume);
         endpoint.setOnConsumeFailed(onConsumeFailed);
         endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);

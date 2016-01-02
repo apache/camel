@@ -85,7 +85,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private boolean alwaysPopulateStatement;
     @UriParam(defaultValue = ",",
             description = "The separator to use when parameter values is taken from message body (if the body is a String type), to be inserted at # placeholders."
-            + "Notice if you use named parameters, then a Map type is used instead. The default value is ,")
+            + "Notice if you use named parameters, then a Map type is used instead. The default value is comma")
     private char separator = ',';
     @UriParam(defaultValue = "SelectList", description = "Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way:"
             + "a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long object."
@@ -107,6 +107,9 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private String outputHeader;
     @UriParam(label = "producer", description = "Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used.")
     private boolean useMessageBodyForSql;
+    @UriParam(label = "advanced", defaultValue = "#", description = "Specifies a character that will be replaced to ? in SQL query."
+            + " Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change).")
+    private String placeholder = "#";
 
     public DefaultSqlEndpoint() {
     }
@@ -249,7 +252,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
      * The separator to use when parameter values is taken from message body (if the body is a String type), to be inserted at # placeholders.
      * Notice if you use named parameters, then a Map type is used instead.
      * <p/>
-     * The default value is ,
+     * The default value is comma.
      */
     public void setSeparator(char separator) {
         this.separator = separator;
@@ -398,6 +401,18 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
      */
     public void setBreakBatchOnConsumeFail(boolean breakBatchOnConsumeFail) {
         this.breakBatchOnConsumeFail = breakBatchOnConsumeFail;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
+    }
+
+    /**
+     * Specifies a character that will be replaced to ? in SQL query.
+     * Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change).
+     */
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
     }
 
     @SuppressWarnings("unchecked")
