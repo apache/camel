@@ -64,7 +64,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     public String getDataFormatName() {
         return "bindy-fixed";
     }
-
+    
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
@@ -76,14 +76,14 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         List<Map<String, Object>> models;
 
         // the body is not a prepared list so help a bit here and create one for us
-        if (exchange.getContext().getTypeConverter().convertTo(List.class, body) == null) {
+        if (!isPreparedList(body)) {
             models = new ArrayList<Map<String, Object>>();
             Iterator<?> it = ObjectHelper.createIterator(body);
             while (it.hasNext()) {
                 Object model = it.next();
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<String, Object>();
-                row.put(name, body);
+                row.put(name, model);
                 models.add(row);
             }
         } else {
@@ -145,6 +145,32 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             // Add a carriage return
             outputStream.write(bytesCRLF);
         }
+    }
+
+    /*
+     * Check if the body is already parsed.
+     * Bindy expects a list containing Map<String, Object> entries
+     * where each Map contains only one entry where the key is the class
+     * name of the object to be marshalled, and the value is the
+     * object to be marshalled.
+     */
+    private boolean isPreparedList(Object object) {
+        if (List.class.isAssignableFrom(object.getClass())) {
+            List<?> list = (List<?>) object;
+            if (list.size() > 0) {
+                // Check first entry, should be enough
+                Object entry = list.get(0);
+                if (Map.class.isAssignableFrom(entry.getClass())) {
+                    Map<?, ?> map = (Map<?, ?>) entry;
+                    if (map.size() == 1) {
+                        if (map.keySet().toArray()[0] instanceof String) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
