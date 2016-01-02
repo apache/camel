@@ -145,6 +145,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected IdempotentRepository<String> idempotentRepository;
     @UriParam(label = "consumer,filter")
     protected GenericFileFilter<T> filter;
+    @UriParam(label = "consumer,filter", defaultValue = "true")
+    protected boolean antFilterCaseSensitive = true;
     protected volatile AntPathMatcherGenericFileFilter<T> antFilter;
     @UriParam(label = "consumer,filter")
     protected String antInclude;
@@ -451,10 +453,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setAntInclude(String antInclude) {
         this.antInclude = antInclude;
-        if (this.antFilter == null) {
-            this.antFilter = new AntPathMatcherGenericFileFilter<T>();
-        }
-        this.antFilter.setIncludes(antInclude);
     }
 
     public String getAntExclude() {
@@ -467,20 +465,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setAntExclude(String antExclude) {
         this.antExclude = antExclude;
-        if (this.antFilter == null) {
-            this.antFilter = new AntPathMatcherGenericFileFilter<T>();
-        }
-        this.antFilter.setExcludes(antExclude);
+    }
+
+    public boolean isAntFilterCaseSensitive() {
+        return antFilterCaseSensitive;
     }
 
     /**
-     * Sets case sensitive flag on {@link org.apache.camel.component.file.AntPathMatcherFileFilter}
+     * Sets case sensitive flag on ant fiter
      */
     public void setAntFilterCaseSensitive(boolean antFilterCaseSensitive) {
-        if (this.antFilter == null) {
-            this.antFilter = new AntPathMatcherGenericFileFilter<T>();
-        }
-        this.antFilter.setCaseSensitive(antFilterCaseSensitive);
+        this.antFilterCaseSensitive = antFilterCaseSensitive;
     }
 
     public GenericFileFilter<T> getAntFilter() {
@@ -1415,6 +1410,22 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         }
         if ("idempotent".equals(readLock) && idempotentRepository == null) {
             throw new IllegalArgumentException("IdempotentRepository must be configured when using readLock=idempotent");
+        }
+
+        if (antInclude != null) {
+            if (antFilter == null) {
+                antFilter = new AntPathMatcherGenericFileFilter<>();
+            }
+            antFilter.setIncludes(antInclude);
+        }
+        if (antExclude != null) {
+            if (antFilter == null) {
+                antFilter = new AntPathMatcherGenericFileFilter<>();
+            }
+            antFilter.setExcludes(antExclude);
+        }
+        if (antFilter != null) {
+            antFilter.setCaseSensitive(antFilterCaseSensitive);
         }
 
         // idempotent repository may be used by others, so add it as a service so its stopped when CamelContext stops
