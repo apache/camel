@@ -48,7 +48,7 @@ import org.apache.camel.util.ResourceHelper;
  * You only have to include additional Camel components if the language of choice mandates it,
  * such as using Groovy or JavaScript languages.
  */
-@UriEndpoint(scheme = "language", title = "Language", syntax = "language:languageName", producerOnly = true, label = "core,script")
+@UriEndpoint(scheme = "language", title = "Language", syntax = "language:languageName:resourceUri", producerOnly = true, label = "core,script")
 public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;
