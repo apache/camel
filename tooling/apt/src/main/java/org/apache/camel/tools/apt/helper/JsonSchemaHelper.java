@@ -162,36 +162,23 @@ public final class JsonSchemaHelper {
             return "array";
         } else if ("java.lang.String[]".equals(name) || "String[]".equals(name)) {
             return "array";
-            // and these is common as well
+        } else if ("java.lang.Character".equals(name) || "Character".equals(name) || "char".equals(name)) {
+            return "string";
         } else if ("java.lang.String".equals(name) || "String".equals(name)) {
             return "string";
-        } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name)) {
+        } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name) || "boolean".equals(name)) {
             return "boolean";
-        } else if ("boolean".equals(name)) {
-            return "boolean";
-        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name)) {
+        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name) || "int".equals(name)) {
             return "integer";
-        } else if ("int".equals(name)) {
+        } else if ("java.lang.Long".equals(name) || "Long".equals(name) || "long".equals(name)) {
             return "integer";
-        } else if ("java.lang.Long".equals(name) || "Long".equals(name)) {
+        } else if ("java.lang.Short".equals(name) || "Short".equals(name) || "short".equals(name)) {
             return "integer";
-        } else if ("long".equals(name)) {
+        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name) || "byte".equals(name)) {
             return "integer";
-        } else if ("java.lang.Short".equals(name) || "Short".equals(name)) {
-            return "integer";
-        } else if ("short".equals(name)) {
-            return "integer";
-        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name)) {
-            return "integer";
-        } else if ("byte".equals(name)) {
-            return "integer";
-        } else if ("java.lang.Float".equals(name) || "Float".equals(name)) {
+        } else if ("java.lang.Float".equals(name) || "Float".equals(name) || "float".equals(name)) {
             return "number";
-        } else if ("float".equals(name)) {
-            return "number";
-        } else if ("java.lang.Double".equals(name) || "Double".equals(name)) {
-            return "number";
-        } else if ("double".equals(name)) {
+        } else if ("java.lang.Double".equals(name) || "Double".equals(name) || "double".equals(name)) {
             return "number";
         }
 
