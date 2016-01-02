@@ -46,6 +46,7 @@ import static org.apache.camel.catalog.CatalogHelper.after;
 import static org.apache.camel.catalog.JSonSchemaHelper.getNames;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyEnum;
+import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyKind;
 import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
@@ -795,8 +796,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     }
                 }
 
-                // is reference lookup of bean
-                if (isPropertyObject(rows, name)) {
+                // is reference lookup of bean (not applicable for @UriPath)
+                String kind = getPropertyKind(rows, name);
+                if (!"path".equals(kind) && isPropertyObject(rows, name)) {
                     // must start with # and be at least 2 characters
                     if (!value.startsWith("#") || value.length() <= 1) {
                         result.addInvalidReference(name, value);
