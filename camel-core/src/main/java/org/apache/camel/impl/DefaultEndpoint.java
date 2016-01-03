@@ -59,6 +59,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
     private Component component;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
+                    + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
+                    + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions,that by default will be logged at WARN/ERROR level and ignored.")
+    private boolean bridgeErrorHandler;
     @UriParam(defaultValue = "InOnly", label = "advanced",
             description = "Sets the default exchange pattern when creating an exchange")
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
@@ -277,6 +281,22 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         this.synchronous = synchronous;
     }
 
+    public boolean isBridgeErrorHandler() {
+        return bridgeErrorHandler;
+    }
+
+    /**
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and
+     * handled by the routing Error Handler.
+     * <p/>
+     * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions,
+     * that by default will be logged at WARN/ERROR level and ignored.
+     */
+    public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
+        this.bridgeErrorHandler = bridgeErrorHandler;
+    }
+
     /**
      * Gets the {@link org.apache.camel.PollingConsumer} queue size, when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
      * is being used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
@@ -476,7 +496,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        // the bridgeErrorHandler was orignally configured as consumer.bridgeErrorHandler so map to that style
+        if (bridgeErrorHandler) {
+            getConsumerProperties().put("bridgeErrorHandler", "true");
+        }
     }
 
     @Override
