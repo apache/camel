@@ -47,6 +47,7 @@ import static org.apache.camel.catalog.JSonSchemaHelper.getNames;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyEnum;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyKind;
+import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyOptionalPrefix;
 import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
@@ -752,11 +753,21 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // validate all the options
         for (Map.Entry<String, String> property : properties.entrySet()) {
             String name = property.getKey();
+            String optionalPrefix = getPropertyOptionalPrefix(rows, name);
             String value = property.getValue();
             boolean placeholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
             boolean lookup = value.startsWith("#") && value.length() > 1;
 
             Map<String, String> row = getRow(rows, name);
+
+            // maybe the name was using an optional prefix, and if so then lookup without the prefix
+            if (row == null && !isEmpty(optionalPrefix)) {
+                if (name.startsWith(optionalPrefix)) {
+                    name = name.substring(optionalPrefix.length());
+                }
+                row = getRow(rows, name);
+            }
+
             if (row == null) {
                 // unknown option
                 result.addUnknown(name);
