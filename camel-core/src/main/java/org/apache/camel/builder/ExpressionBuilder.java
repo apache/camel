@@ -1339,6 +1339,23 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression groupXmlIteratorExpression(final Expression expression, final int group) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // evaluate expression as iterator
+                Iterator<?> it = expression.evaluate(exchange, Iterator.class);
+                ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                // must use GroupTokenIterator in xml mode as we want to concat the xml parts into a single message
+                return new GroupTokenIterator(exchange, it, null, group);
+            }
+
+            @Override
+            public String toString() {
+                return "group " + expression + " " + group + " times";
+            }
+        };
+    }
+
     public static Expression groupIteratorExpression(final Expression expression, final String token, final int group) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {

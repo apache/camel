@@ -124,9 +124,11 @@ public class TokenizeLanguage implements Language, IsSingleton {
 
         // if group then wrap answer in group expression
         if (group > 0) {
-            // only include group token if not xml
-            String groupToken = isXml() ? null : token;
-            answer = ExpressionBuilder.groupIteratorExpression(answer, groupToken, group);
+            if (isXml()) {
+                answer = ExpressionBuilder.groupXmlIteratorExpression(answer, group);
+            } else {
+                answer = ExpressionBuilder.groupIteratorExpression(answer, token, group);
+            }
         }
 
         return answer;
