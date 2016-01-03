@@ -247,8 +247,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 defaultValue = "false";
             }
 
+            // component options do not have optional prefix
+            String optionalPrefix = "";
+
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null));
+                    entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null, optionalPrefix));
         }
         buffer.append("\n  },");
 
@@ -292,8 +295,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 defaultValue = "false";
             }
 
+            // @UriPath options do not have optional prefix
+            String optionalPrefix = "";
+
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null));
+                    entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null, optionalPrefix));
         }
 
         // sort the endpoint options in the standard order we prefer
@@ -332,9 +338,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 // fallback as false for boolean types
                 defaultValue = "false";
             }
+            String optionalPrefix = entry.getOptionalPrefix();
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), defaultValue,
-                    doc, entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null));
+                    doc, entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null, optionalPrefix));
         }
         buffer.append("\n  }");
 
@@ -655,6 +662,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     }
                     name = prefix + name;
 
+                    String optionalPrefix = param.optionalPrefix();
                     String defaultValue = param.defaultValue();
                     if (defaultValue == null && metadata != null) {
                         defaultValue = metadata.defaultValue();
@@ -719,7 +727,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                         EndpointOption option = new EndpointOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
-                                docComment.trim(), deprecated, group, label, isEnum, enums);
+                                docComment.trim(), optionalPrefix, deprecated, group, label, isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }

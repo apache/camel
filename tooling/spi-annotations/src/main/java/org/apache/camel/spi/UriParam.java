@@ -84,4 +84,11 @@ public @interface UriParam {
      */
     String javaType() default "";
 
+    /**
+     * If the parameter can be configured with an optional prefix.
+     * <p/>
+     * For example to configure consumer options, the parameters can be prefixed with <tt>consumer.</tt>, eg <tt>consumer.delay=5000</tt>
+     */
+    String optionalPrefix() default "";
+
 }
