@@ -108,6 +108,7 @@ public class TimerComponent extends UriEndpointComponent {
             }
             Date date = sdf.parse(time);
             answer.setTime(date);
+            answer.setPattern(pattern);
         }
 
         setProperties(answer, parameters);
