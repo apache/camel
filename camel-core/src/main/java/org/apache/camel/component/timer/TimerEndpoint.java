@@ -53,8 +53,10 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private boolean fixedRate;
     @UriParam(defaultValue = "true", label = "advanced")
     private boolean daemon = true;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", javaType = "java.lang.String")
     private Date time;
+    @UriParam(label = "advanced")
+    private String pattern;
     @UriParam(label = "advanced")
     private Timer timer;
 
@@ -206,6 +208,17 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      */
     public void setTime(Date time) {
         this.time = time;
+    }
+
+    public String getPattern() {
+        return pattern;
+    }
+
+    /**
+     * Allows you to specify a custom Date pattern to use for setting the time option using URI syntax.
+     */
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
     }
 
     public Timer getTimer(TimerConsumer consumer) {
