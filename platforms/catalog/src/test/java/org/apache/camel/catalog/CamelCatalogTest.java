@@ -460,6 +460,10 @@ public class CamelCatalogTest {
         // dataset
         result = catalog.validateEndpointProperties("dataset:foo?minRate=50");
         assertTrue(result.isSuccess());
+
+        // time pattern
+        result = catalog.validateEndpointProperties("timer://foo?fixedRate=true&delay=0&period=2s");
+        assertTrue(result.isSuccess());
     }
 
     @Test
