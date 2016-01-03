@@ -18,6 +18,7 @@ package org.apache.camel.component.boon;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class BoonDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
-        Map<String, String> in = new HashMap<String, String>();
+        Map<String, String> in = new LinkedHashMap<String, String>();
         in.put("name", "Camel");
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");
@@ -92,7 +93,7 @@ public class BoonDataFormatTest extends CamelTestSupport {
         TestPojo in = new TestPojo();
         in.setName("Camel");
         
-        HashMap<String, TestPojo> map = new HashMap<String, TestPojo>();
+        HashMap<String, TestPojo> map = new LinkedHashMap<String, TestPojo>();
         map.put("test1", in);
         map.put("test2", in);
 
