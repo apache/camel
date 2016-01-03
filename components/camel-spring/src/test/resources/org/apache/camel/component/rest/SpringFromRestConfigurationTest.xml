@@ -25,6 +25,8 @@
   <!-- use a dummy rest consumer factory for the rest engine -->
   <bean id="dummy-rest" class="org.apache.camel.component.rest.DummyRestConsumerFactory"/>
 
+  <bean id="myDummy" class="org.apache.camel.impl.FooBar"/>
+
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <restConfiguration component="dummy-rest" host="localhost" port="9090">
@@ -32,6 +34,7 @@
       <componentProperty key="other" value="stuff"/>
       <endpointProperty key="size" value="200"/>
       <consumerProperty key="pollTimeout" value="1000"/>
+      <consumerProperty key="dummy" value="#myDummy"/>
     </restConfiguration>
 
     <rest path="/say/hello">

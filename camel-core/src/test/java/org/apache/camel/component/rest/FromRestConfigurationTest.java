@@ -22,12 +22,10 @@ import org.apache.camel.impl.JndiRegistry;
 
 public class FromRestConfigurationTest extends FromRestGetTest {
 
-    private Object myDummy = new FooBar();
-
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myDummy", myDummy);
+        jndi.bind("myDummy", new FooBar());
         return jndi;
     }
 
@@ -45,7 +43,9 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         assertEquals("#myDummy", context.getRestConfiguration().getConsumerProperties().get("dummy"));
 
         DummyRestConsumerFactory factory = (DummyRestConsumerFactory) context.getRegistry().lookupByName("dummy-rest");
-        assertSame(myDummy, factory.getDummy());
+
+        Object dummy = context.getRegistry().lookupByName("myDummy");
+        assertSame(dummy, factory.getDummy());
     }
 
     @Override
