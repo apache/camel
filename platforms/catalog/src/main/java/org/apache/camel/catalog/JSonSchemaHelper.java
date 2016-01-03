@@ -233,7 +233,7 @@ public final class JSonSchemaHelper {
         return null;
     }
 
-    public static String getPropertyOptionalPrefix(List<Map<String, String>> rows, String name) {
+    public static String stripOptionalPrefixFromName(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             String optionalPrefix = null;
             boolean found = false;
@@ -241,20 +241,19 @@ public final class JSonSchemaHelper {
                 optionalPrefix = row.get("optionalPrefix");
             }
             if (row.containsKey("name")) {
-                String key = name;
-                if (optionalPrefix != null && key.startsWith(optionalPrefix)) {
-                    key = key.substring(optionalPrefix.length());
-                    // found the optional prefix so remove it from the key, and lookup again
-                    return getPropertyOptionalPrefix(rows, key);
+                if (optionalPrefix != null && name.startsWith(optionalPrefix)) {
+                    name = name.substring(optionalPrefix.length());
+                    // try again
+                    return stripOptionalPrefixFromName(rows, name);
                 } else {
-                    found = key.equals(row.get("name"));
+                    found = name.equals(row.get("name"));
                 }
             }
             if (found) {
-                return optionalPrefix;
+                return name;
             }
         }
-        return null;
+        return name;
     }
 
     public static String getPropertyEnum(List<Map<String, String>> rows, String name) {

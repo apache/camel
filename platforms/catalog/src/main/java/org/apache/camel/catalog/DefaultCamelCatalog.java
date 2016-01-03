@@ -47,13 +47,13 @@ import static org.apache.camel.catalog.JSonSchemaHelper.getNames;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyEnum;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyKind;
-import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyOptionalPrefix;
 import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyNumber;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyObject;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
+import static org.apache.camel.catalog.JSonSchemaHelper.stripOptionalPrefixFromName;
 import static org.apache.camel.catalog.URISupport.createQueryString;
 import static org.apache.camel.catalog.URISupport.isEmpty;
 import static org.apache.camel.catalog.URISupport.normalizeUri;
@@ -753,21 +753,14 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // validate all the options
         for (Map.Entry<String, String> property : properties.entrySet()) {
             String name = property.getKey();
-            String optionalPrefix = getPropertyOptionalPrefix(rows, name);
+            // the name may be using an optional prefix, so lets strip that because the options
+            // in the schema are listed without the prefix
+            name = stripOptionalPrefixFromName(rows, name);
             String value = property.getValue();
             boolean placeholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
             boolean lookup = value.startsWith("#") && value.length() > 1;
 
             Map<String, String> row = getRow(rows, name);
-
-            // maybe the name was using an optional prefix, and if so then lookup without the prefix
-            if (row == null && !isEmpty(optionalPrefix)) {
-                if (name.startsWith(optionalPrefix)) {
-                    name = name.substring(optionalPrefix.length());
-                }
-                row = getRow(rows, name);
-            }
-
             if (row == null) {
                 // unknown option
                 result.addUnknown(name);
