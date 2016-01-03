@@ -84,7 +84,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
                     to("mock:report");
 
                 // for no locks
-                from("file://target/reports/notlocked/?noop=true&readLock=false").process(new MyNoopProcessor()).
+                from("file://target/reports/notlocked/?noop=true&readLock=none").process(new MyNoopProcessor()).
                     to("mock:report");
             }
         };
