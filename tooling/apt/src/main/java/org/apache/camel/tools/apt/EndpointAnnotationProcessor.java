@@ -636,6 +636,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         }
                     }
 
+                    // the field type may be overloaded by another type
+                    if (!Strings.isNullOrEmpty(path.javaType())) {
+                        fieldTypeName = path.javaType();
+                    }
+
                     String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                     EndpointPath ep = new EndpointPath(name, fieldTypeName, required, defaultValue, docComment, deprecated, group, label, isEnum, enums);
                     endpointPaths.add(ep);
@@ -707,6 +712,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                             }
                         }
 
+                        // the field type may be overloaded by another type
+                        if (!Strings.isNullOrEmpty(param.javaType())) {
+                            fieldTypeName = param.javaType();
+                        }
 
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                         EndpointOption option = new EndpointOption(name, fieldTypeName, required, defaultValue, defaultValueNote,

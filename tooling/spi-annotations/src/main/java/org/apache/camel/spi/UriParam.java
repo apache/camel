@@ -77,4 +77,11 @@ public @interface UriParam {
      */
     String label() default "";
 
+    /**
+     * To re-associate the preferred Java type of this parameter.
+     * <p/>
+     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as from a String.
+     */
+    String javaType() default "";
+
 }

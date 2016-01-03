@@ -42,6 +42,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -73,7 +74,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected int bufferSize = FileUtil.BUFFER_SIZE;
     @UriParam
     protected String charset;
-    @UriParam
+    @UriParam(javaType = "java.lang.String")
     protected Expression fileName;
 
     // producer options
@@ -84,7 +85,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected GenericFileExist fileExist = GenericFileExist.Override;
     @UriParam(label = "producer")
     protected String tempPrefix;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", javaType = "java.lang.String")
     protected Expression tempFileName;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     protected boolean eagerDeleteTargetFile = true;
@@ -129,17 +130,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String include;
     @UriParam(label = "consumer,filter")
     protected String exclude;
-    @UriParam(label = "consumer,filter")
+    @UriParam(label = "consumer,filter", javaType = "java.lang.String")
     protected Expression move;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", javaType = "java.lang.String")
     protected Expression moveFailed;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", javaType = "java.lang.String")
     protected Expression preMove;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", javaType = "java.lang.String")
     protected Expression moveExisting;
     @UriParam(label = "consumer,filter", defaultValue = "false")
     protected Boolean idempotent;
-    @UriParam(label = "consumer,filter")
+    @UriParam(label = "consumer,filter", javaType = "java.lang.String")
     protected Expression idempotentKey;
     @UriParam(label = "consumer,filter")
     protected IdempotentRepository<String> idempotentRepository;
@@ -154,7 +155,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String antExclude;
     @UriParam(label = "consumer,sort")
     protected Comparator<GenericFile<T>> sorter;
-    @UriParam(label = "consumer,sort")
+    @UriParam(label = "consumer,sort", javaType = "java.lang.String")
     protected Comparator<Exchange> sortBy;
     @UriParam(label = "consumer,sort")
     protected boolean shuffle;
