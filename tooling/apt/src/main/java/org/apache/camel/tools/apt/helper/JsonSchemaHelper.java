@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,6 +131,8 @@ public final class JsonSchemaHelper {
         } else if (type.equals(URI.class.getName()) || type.equals(URL.class.getName())) {
             return "string";
         } else if (type.equals(File.class.getName())) {
+            return "string";
+        } else if (type.equals(Date.class.getName())) {
             return "string";
         } else if (type.startsWith("java.lang.Class")) {
             return "string";
