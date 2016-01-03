@@ -754,6 +754,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
             String name = property.getKey();
             String value = property.getValue();
             boolean placeholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
+            boolean lookup = value.startsWith("#") && value.length() > 1;
 
             Map<String, String> row = getRow(rows, name);
             if (row == null) {
@@ -781,7 +782,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 // is enum but the value is not within the enum range
                 // but we can only check if the value is not a placeholder
                 String enums = getPropertyEnum(rows, name);
-                if (!placeholder && enums != null) {
+                if (!placeholder && !lookup && enums != null) {
                     String[] choices = enums.split(",");
                     boolean found = false;
                     for (String s : choices) {
@@ -806,7 +807,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
 
                 // is boolean
-                if (!placeholder && isPropertyBoolean(rows, name)) {
+                if (!placeholder && !lookup && isPropertyBoolean(rows, name)) {
                     // value must be a boolean
                     boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
                     if (!bool) {
@@ -815,7 +816,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
 
                 // is integer
-                if (!placeholder && isPropertyInteger(rows, name)) {
+                if (!placeholder && !lookup && isPropertyInteger(rows, name)) {
                     // value must be an integer
                     boolean valid = validateInteger(value);
                     if (!valid) {
@@ -824,7 +825,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
 
                 // is number
-                if (!placeholder && isPropertyNumber(rows, name)) {
+                if (!placeholder && !lookup && isPropertyNumber(rows, name)) {
                     // value must be an number
                     boolean valid = false;
                     try {
