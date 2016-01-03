@@ -30,6 +30,7 @@ public final class EndpointOption {
     private String defaultValue;
     private String defaultValueNote;
     private String documentation;
+    private String optionalPrefix;
     private boolean deprecated;
     private String group;
     private String label;
@@ -37,13 +38,15 @@ public final class EndpointOption {
     private Set<String> enums;
 
     public EndpointOption(String name, String type, String required, String defaultValue, String defaultValueNote,
-                          String documentation, boolean deprecated,  String group, String label, boolean enumType, Set<String> enums) {
+                          String documentation, String optionalPrefix, boolean deprecated,  String group, String label,
+                          boolean enumType, Set<String> enums) {
         this.name = name;
         this.type = type;
         this.required = required;
         this.defaultValue = defaultValue;
         this.defaultValueNote = defaultValueNote;
         this.documentation = documentation;
+        this.optionalPrefix = optionalPrefix;
         this.deprecated = deprecated;
         this.group = group;
         this.label = label;
@@ -69,6 +72,10 @@ public final class EndpointOption {
 
     public String getDocumentation() {
         return documentation;
+    }
+
+    public String getOptionalPrefix() {
+        return optionalPrefix;
     }
 
     public boolean isDeprecated() {
