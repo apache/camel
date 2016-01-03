@@ -1,4 +1,4 @@
-package org.apache.camel.component.sql.sspt.ast;
+package org.apache.camel.component.sql.stored.template.ast;
 
 /**
  * Created by snurmine on 12/20/15.

@@ -98,6 +98,27 @@
 	  <reuseForks>false</reuseForks>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceDirectory>${basedir}/src/main/java/org/apache/camel/component/sql/stored/template/grammar</sourceDirectory>
+              <outputDirectory>${basedir}/src/main/java</outputDirectory>
+            </configuration>
+            <goals>
+              <goal>javacc</goal>
+            </goals>
+          </execution>
+        </executions>
+        <version>2.6</version>
+      </plugin>
+
+
+
     </plugins>
   </build>
 </project>

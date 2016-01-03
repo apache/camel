@@ -1,8 +1,9 @@
-package org.apache.camel.component.sql.sspt;
+package org.apache.camel.component.sql.stored;
 
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.sspt.ast.ParseException;
+import org.apache.camel.component.sql.stored.template.TemplateStoredProcedure;
+import org.apache.camel.component.sql.stored.template.TemplateStoredProcedureFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Assert;
@@ -13,9 +14,9 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-public class SimpleStoredProcedureTest extends CamelTestSupport {
+public class TemplateStoredProcedureTest extends CamelTestSupport {
 
-    SimpleStoredProcedureFactory parser = new SimpleStoredProcedureFactory();
+    TemplateStoredProcedureFactory parser = new TemplateStoredProcedureFactory();
 
     private EmbeddedDatabase db;
     private JdbcTemplate jdbcTemplate;
@@ -32,8 +33,8 @@ public class SimpleStoredProcedureTest extends CamelTestSupport {
 
 
     @Test
-    public void shouldExecuteStoredProcedure() throws ParseException {
-        SimpleStoredProcedure sp = new SimpleStoredProcedure(db, parser.parseTemplate("ADDNUMBERS" +
+    public void shouldExecuteStoredProcedure()  {
+        TemplateStoredProcedure sp = new TemplateStoredProcedure(db, parser.parseTemplate("ADDNUMBERS" +
                 "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsum)"));
 
         Exchange exchange = createExchangeWithBody(null);

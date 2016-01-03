@@ -1,9 +1,9 @@
-package org.apache.camel.component.sql.sspt;
+package org.apache.camel.component.sql.stored.template;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.sspt.ast.InputParameter;
-import org.apache.camel.component.sql.sspt.ast.OutParameter;
-import org.apache.camel.component.sql.sspt.ast.Template;
+import org.apache.camel.component.sql.stored.template.ast.InputParameter;
+import org.apache.camel.component.sql.stored.template.ast.OutParameter;
+import org.apache.camel.component.sql.stored.template.ast.Template;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
@@ -13,11 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class SimpleStoredProcedure extends StoredProcedure {
+public class TemplateStoredProcedure extends StoredProcedure {
 
     Template template;
 
-    public SimpleStoredProcedure(DataSource dataSource, Template template) {
+    public TemplateStoredProcedure(DataSource dataSource, Template template) {
         this.template = template;
         setDataSource(dataSource);
 

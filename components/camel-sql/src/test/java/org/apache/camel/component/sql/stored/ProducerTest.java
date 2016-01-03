@@ -1,4 +1,4 @@
-package org.apache.camel.component.sql.sspt;
+package org.apache.camel.component.sql.stored;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -62,9 +62,9 @@ public class ProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // required for the sql component
-                getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
+                getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
-                from("direct:query").to("sql:sspt:ADDNUMBERS(INTEGER ${headers.num1},INTEGER ${headers"
+                from("direct:query").to("sql-stored:ADDNUMBERS(INTEGER ${headers.num1},INTEGER ${headers"
                         + ".num2},OUT INTEGER resultofsum)").to("mock:query");
             }
         };

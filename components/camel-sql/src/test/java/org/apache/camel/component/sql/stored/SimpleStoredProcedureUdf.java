@@ -1,4 +1,4 @@
-package org.apache.camel.component.sql.sspt;
+package org.apache.camel.component.sql.stored;
 
 /**
  * Created by snurmine on 12/20/15.
