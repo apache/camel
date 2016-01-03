@@ -7,9 +7,9 @@ options {
 
 PARSER_BEGIN(SSPTParser)
 
-package org.apache.camel.component.sql.sspt.parser;
+package org.apache.camel.component.sql.stored.template.generated;
 
-import org.apache.camel.component.sql.sspt.ast.*;
+import org.apache.camel.component.sql.stored.template.ast.*;
 
 public class SSPTParser {
    int paramaterNameCounter = 0;

@@ -1,11 +1,13 @@
-package org.apache.camel.component.sql.sspt;
+package org.apache.camel.component.sql.stored;
 
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.sspt.ast.InputParameter;
-import org.apache.camel.component.sql.sspt.ast.OutParameter;
-import org.apache.camel.component.sql.sspt.ast.ParseException;
-import org.apache.camel.component.sql.sspt.ast.Template;
+import org.apache.camel.component.sql.stored.template.ast.InputParameter;
+import org.apache.camel.component.sql.stored.template.ast.OutParameter;
+import org.apache.camel.component.sql.stored.template.ast.ParseRuntimeException;
+import org.apache.camel.component.sql.stored.template.ast.Template;
+import org.apache.camel.component.sql.stored.template.TemplateStoredProcedureFactory;
+import org.apache.camel.component.sql.stored.template.generated.ParseException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,7 +17,7 @@ import java.sql.Types;
 
 public class ParserTest extends CamelTestSupport {
 
-    SimpleStoredProcedureFactory parser = new SimpleStoredProcedureFactory();
+    TemplateStoredProcedureFactory parser = new TemplateStoredProcedureFactory();
 
 
     @Test
@@ -56,14 +58,14 @@ public class ParserTest extends CamelTestSupport {
     }
 
 
-    @Test(expected = ParseException.class)
+    @Test(expected = ParseRuntimeException.class)
     public void noOutputParameterShouldFail() {
         parser.parseTemplate("ADDNUMBERS2" +
                 "(INTEGER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})");
 
     }
 
-    @Test(expected = ParseException.class)
+    @Test(expected = ParseRuntimeException.class)
     public void unexistingTypeShouldFail() {
         parser.parseTemplate("ADDNUMBERS2" +
                 "(XML VALUE1 ${header.v1},OUT INTEGER VALUE2 ${header.v2})");
@@ -71,7 +73,7 @@ public class ParserTest extends CamelTestSupport {
     }
 
 
-    @Test(expected = ParseException.class)
+    @Test(expected = ParseRuntimeException.class)
     public void unmappedTypeShouldFaild() {
         parser.parseTemplate("ADDNUMBERS2" +
                 "(OTHER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})");

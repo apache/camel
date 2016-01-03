@@ -1,4 +1,4 @@
-package org.apache.camel.component.sql.sspt.ast;
+package org.apache.camel.component.sql.stored.template.ast;
 
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;

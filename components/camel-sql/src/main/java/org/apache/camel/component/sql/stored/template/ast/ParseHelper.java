@@ -1,4 +1,4 @@
-package org.apache.camel.component.sql.sspt.ast;
+package org.apache.camel.component.sql.stored.template.ast;
 
 import org.springframework.util.ReflectionUtils;
 
@@ -13,12 +13,12 @@ public class ParseHelper {
     public static int parseSqlType(String sqlType) {
         Field field = ReflectionUtils.findField(Types.class, sqlType);
         if (field == null) {
-            throw new ParseException("Field " + sqlType + " not found from java.procedureName.Types");
+            throw new ParseRuntimeException("Field " + sqlType + " not found from java.procedureName.Types");
         }
         try {
             return field.getInt(Types.class);
         } catch (IllegalAccessException e) {
-            throw new ParseException(e);
+            throw new ParseRuntimeException(e);
         }
     }
 
@@ -50,7 +50,7 @@ public class ParseHelper {
                 break;
         }
         if (ret == null) {
-            throw new ParseException("Unable to map SQL type " + sqlTypeStr + " to Java type");
+            throw new ParseRuntimeException("Unable to map SQL type " + sqlTypeStr + " to Java type");
 
         }
         return ret;

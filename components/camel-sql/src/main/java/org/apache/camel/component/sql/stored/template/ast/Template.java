@@ -1,4 +1,4 @@
-package org.apache.camel.component.sql.sspt.ast;
+package org.apache.camel.component.sql.stored.template.ast;
 
 import java.util.ArrayList;
 import java.util.List;
