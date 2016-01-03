@@ -817,12 +817,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 // is integer
                 if (!placeholder && isPropertyInteger(rows, name)) {
                     // value must be an integer
-                    boolean valid = false;
-                    try {
-                        valid = Integer.valueOf(value) != null;
-                    } catch (Exception e) {
-                        // ignore
-                    }
+                    boolean valid = validateInteger(value);
                     if (!valid) {
                         result.addInvalidInteger(name, value);
                     }
@@ -860,6 +855,25 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         return result;
+    }
+
+    private static boolean validateInteger(String value) {
+        boolean valid = false;
+        try {
+            valid = Integer.valueOf(value) != null;
+        } catch (Exception e) {
+            // ignore
+        }
+        if (!valid) {
+            // it may be a time pattern, such as 5s for 5 seconds = 5000
+            try {
+                TimePatternConverter.toMilliSeconds(value);
+                valid = true;
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return valid;
     }
 
     @Override
