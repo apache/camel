@@ -23,6 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apache.camel.catalog.URISupport.isEmpty;
+
 /**
  * Details result of validating endpoint uri.
  */
@@ -271,26 +273,44 @@ public class EndpointValidationResult implements Serializable {
         }
         if (invalidReference != null) {
             for (Map.Entry<String, String> entry : invalidReference.entrySet()) {
-                if (!entry.getValue().startsWith("#")) {
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty reference value");
+                } else if (!entry.getValue().startsWith("#")) {
                     options.put(entry.getKey(), "Invalid reference value: " + entry.getValue() + " must start with #");
                 } else {
-                    options.put(entry.getKey(), "Invalid reference value: " + entry.getValue() + " must not be empty");
+                    options.put(entry.getKey(), "Invalid reference value: " + entry.getValue());
                 }
             }
         }
         if (invalidBoolean != null) {
             for (Map.Entry<String, String> entry : invalidBoolean.entrySet()) {
-                options.put(entry.getKey(), "Invalid boolean value: " + entry.getValue());
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty boolean value");
+                } else {
+                    options.put(entry.getKey(), "Invalid boolean value: " + entry.getValue());
+                }
             }
         }
         if (invalidInteger != null) {
             for (Map.Entry<String, String> entry : invalidInteger.entrySet()) {
-                options.put(entry.getKey(), "Invalid integer value: " + entry.getValue());
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty integer value");
+                } else {
+                    options.put(entry.getKey(), "Invalid integer value: " + entry.getValue());
+                }
             }
         }
         if (invalidNumber != null) {
             for (Map.Entry<String, String> entry : invalidNumber.entrySet()) {
-                options.put(entry.getKey(), "Invalid number value: " + entry.getValue());
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty number value");
+                } else {
+                    options.put(entry.getKey(), "Invalid number value: " + entry.getValue());
+                }
             }
         }
 
