@@ -53,7 +53,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private boolean fixedRate;
     @UriParam(defaultValue = "true", label = "advanced")
     private boolean daemon = true;
-    @UriParam(label = "advanced", javaType = "java.lang.String")
+    @UriParam(label = "advanced")
     private Date time;
     @UriParam(label = "advanced")
     private String pattern;
