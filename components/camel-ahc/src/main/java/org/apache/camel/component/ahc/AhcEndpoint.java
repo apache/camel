@@ -17,6 +17,7 @@
 package org.apache.camel.component.ahc;
 
 import java.net.URI;
+import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import com.ning.http.client.AsyncHttpClient;
@@ -44,21 +45,23 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @UriPath @Metadata(required = "true")
     private URI httpUri;
     @UriParam
-    private AsyncHttpClientConfig clientConfig;
-    @UriParam
     private boolean bridgeEndpoint;
     @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
     @UriParam
     private boolean transferException;
-    @UriParam
-    private SSLContextParameters sslContextParameters;
     @UriParam(defaultValue = "" + 4 * 1024)
     private int bufferSize = 4 * 1024;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     @UriParam
     private AhcBinding binding;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
+    @UriParam(label = "advanced")
+    private AsyncHttpClientConfig clientConfig;
+    @UriParam(label = "advanced", prefix = "clientConfig.", multiValue = true)
+    private Map<String, Object> clientConfigOptions;
 
     public AhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -213,6 +216,17 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      */
     public void setBufferSize(int bufferSize) {
         this.bufferSize = bufferSize;
+    }
+
+    public Map<String, Object> getClientConfigOptions() {
+        return clientConfigOptions;
+    }
+
+    /**
+     * To configure the AsyncHttpClientConfig using the key/values from the Map.
+     */
+    public void setClientConfigOptions(Map<String, Object> clientConfigOptions) {
+        this.clientConfigOptions = clientConfigOptions;
     }
 
     @Override
