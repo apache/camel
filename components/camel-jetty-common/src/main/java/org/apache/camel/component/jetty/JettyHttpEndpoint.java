@@ -41,14 +41,8 @@ import org.eclipse.jetty.server.Handler;
  */
 public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
 
-    private List<Handler> handlers;
     private HttpClient client;
-    private Filter multipartFilter;
-    private List<Filter> filters;
     private SSLContextParameters sslContextParameters;
-    private Map<String, Object> httpClientParameters;
-    private JettyHttpBinding jettyBinding;
-
     @UriParam(label = "consumer",
             description = "Specifies whether to enable the session manager on the server side of Jetty.")
     private boolean sessionSupport;
@@ -84,6 +78,42 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "consumer",
             description = "Whether or not to use Jetty continuations for the Jetty Server.")
     private Boolean useContinuation;
+    @UriParam(label = "consumer",
+            description = "If the option is true, Jetty server will setup the CrossOriginFilter which supports the CORS out of box.")
+    private boolean enableCORS;
+    @UriParam(label = "producer,advanced", prefix = "httpClient.", multiValue = true,
+            description = "Configuration of Jetty's HttpClient. For example, setting httpClient.idleTimeout=30000 sets the idle timeout to 30 seconds."
+            + " And httpClient.timeout=30000 sets the request timeout to 30 seconds, in case you want to timeout sooner if you have long running request/response calls.")
+    private Map<String, Object> httpClientParameters;
+    @UriParam(label = "consumer,advanced", javaType = "java.lang.String",
+            description = "Specifies a comma-delimited set of Handler instances to lookup in your Registry."
+            + " These handlers are added to the Jetty servlet context (for example, to add security)."
+            + " Important: You can not use different handlers with different Jetty endpoints using the same port number."
+            + " The handlers is associated to the port number. If you need different handlers, then use different port numbers.")
+    private List<Handler> handlers;
+    @UriParam(label = "consumer,advanced", javaType = "java.lang.String", name = "filtersRef",
+            description = "Allows using a custom filters which is putted into a list and can be find in the Registry."
+            + " Multiple values can be separated by comma.")
+    private List<Filter> filters;
+    @UriParam(label = "producer,advanced",
+        description = "To use a custom JettyHttpBinding which be used to customize how a response should be written for the producer.")
+    private JettyHttpBinding jettyBinding;
+    @UriParam(label = "producer,advanced",
+            description = "To use a custom JettyHttpBinding which be used to customize how a response should be written for the producer.")
+    @Deprecated
+    private String jettyBindingRef;
+    @UriParam(label = "consumer,advanced",
+            description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
+            + " This allows you to get all responses regardless of the HTTP status code.")
+    @Deprecated
+    private String httpBindingRef;
+    @UriParam(label = "consumer,advanced",
+            description = "Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true.")
+    private Filter multipartFilter;
+    @UriParam(label = "consumer,advanced",
+            description = "Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true.")
+    @Deprecated
+    private String multipartFilterRef;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -162,6 +192,12 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
         return handlers;
     }
 
+    /**
+     * Specifies a comma-delimited set of org.mortbay.jetty.Handler instances in your Registry (such as your Spring ApplicationContext).
+     * These handlers are added to the Jetty servlet context (for example, to add security).
+     * Important: You can not use different handlers with different Jetty endpoints using the same port number.
+     * The handlers is associated to the port number. If you need different handlers, then use different port numbers.
+     */
     public void setHandlers(List<Handler> handlers) {
         this.handlers = handlers;
     }
@@ -200,6 +236,9 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
         return jettyBinding;
     }
 
+    /**
+     * To use a custom JettyHttpBinding which be used to customize how a response should be written for the producer.
+     */
     public void setJettyBinding(JettyHttpBinding jettyBinding) {
         this.jettyBinding = jettyBinding;
     }
@@ -261,7 +300,11 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     public Filter getMultipartFilter() {
         return multipartFilter;
     }
-    
+
+    /**
+     * Allows using a custom filters which is putted into a list and can be find in the Registry.
+     * Multiple values can be separated by comma.
+     */
     public void setFilters(List<Filter> filterList) {
         this.filters = filterList;
     }
@@ -342,6 +385,17 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
      */
     public void setHttpClientParameters(Map<String, Object> httpClientParameters) {
         this.httpClientParameters = httpClientParameters;
+    }
+
+    public boolean isEnableCORS() {
+        return enableCORS;
+    }
+
+    /**
+     * If the option is true, Jetty server will setup the CrossOriginFilter which supports the CORS out of box.
+     */
+    public void setEnableCORS(boolean enableCORS) {
+        this.enableCORS = enableCORS;
     }
 
     public abstract JettyContentExchange createContentExchange();

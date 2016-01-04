@@ -164,28 +164,20 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         // must extract well known parameters before we create the endpoint
-        List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
         JettyHttpBinding jettyBinding = resolveAndRemoveReferenceParameter(parameters, "jettyHttpBindingRef", JettyHttpBinding.class);
-        Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
-        Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
-        Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
-        Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
         Boolean enableMultipartFilter = getAndRemoveParameter(parameters, "enableMultipartFilter",
                                                               Boolean.class, true);
         Filter multipartFilter = resolveAndRemoveReferenceParameter(parameters, "multipartFilterRef", Filter.class);
         List<Filter> filters = resolveAndRemoveReferenceListParameter(parameters, "filtersRef", Filter.class);
         Boolean enableCors = getAndRemoveParameter(parameters, "enableCORS", Boolean.class, false);
-        Long continuationTimeout = getAndRemoveParameter(parameters, "continuationTimeout", Long.class);
-        Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
         SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class, getProxyHost());
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class, getProxyPort());
-        Integer responseBufferSize = getAndRemoveParameter(parameters, "responseBufferSize", Integer.class, getResponseBufferSize());
         Integer httpClientMinThreads = getAndRemoveParameter(parameters, "httpClientMinThreads", Integer.class, this.httpClientMinThreads);
         Integer httpClientMaxThreads = getAndRemoveParameter(parameters, "httpClientMaxThreads", Integer.class, this.httpClientMaxThreads);
 
@@ -228,9 +220,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (httpClientParameters != null && !httpClientParameters.isEmpty()) {
             endpoint.setHttpClientParameters(httpClientParameters);
         }
-        if (handlerList.size() > 0) {
-            endpoint.setHandlers(handlerList);
-        }
         // prefer to use endpoint configured over component configured
         if (binding == null) {
             // fallback to component configured
@@ -247,33 +236,20 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (jettyBinding != null) {
             endpoint.setJettyBinding(jettyBinding);
         }
-        // should we use an exception for failed error codes?
-        if (throwExceptionOnFailure != null) {
-            endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
-        }
-        // should we transfer exception as serialized object
-        if (transferException != null) {
-            endpoint.setTransferException(transferException);
-        }
-        if (bridgeEndpoint != null) {
-            endpoint.setBridgeEndpoint(bridgeEndpoint);
-        }
-        if (matchOnUriPrefix != null) {
-            endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
-        }
         if (enableJmx != null) {
             endpoint.setEnableJmx(enableJmx);
         } else { 
             // set this option based on setting of JettyHttpComponent
             endpoint.setEnableJmx(isEnableJmx());
         }
-        
+
         endpoint.setEnableMultipartFilter(enableMultipartFilter);
         if (multipartFilter != null) {
             endpoint.setMultipartFilter(multipartFilter);
             endpoint.setEnableMultipartFilter(true);
         }
         if (enableCors) {
+            endpoint.setEnableCORS(enableCors);
             if (filters == null) {
                 filters = new ArrayList<Filter>(1);
             }
@@ -283,20 +259,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             endpoint.setFilters(filters);
         }
 
-        if (continuationTimeout != null) {
-            endpoint.setContinuationTimeout(continuationTimeout);
-        }
-        if (useContinuation != null) {
-            endpoint.setUseContinuation(useContinuation);
-        }
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
         }
         if (ssl != null) {
             endpoint.setSslContextParameters(ssl);
-        }
-        if (responseBufferSize != null) {
-            endpoint.setResponseBufferSize(responseBufferSize);
         }
         if (httpClientMinThreads != null) {
             endpoint.setHttpClientMinThreads(httpClientMinThreads);
