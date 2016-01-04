@@ -480,6 +480,10 @@ public class CamelCatalogTest {
         // mixed optional without consumer. prefix
         result = catalog.validateEndpointProperties("file:inbox?delay=5000&consumer.greedy=true");
         assertTrue(result.isSuccess());
+
+        // prefix
+        result = catalog.validateEndpointProperties("file:inbox?delay=5000&scheduler.foo=123&scheduler.bar=456");
+        assertTrue(result.isSuccess());
     }
 
     @Test

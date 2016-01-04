@@ -249,11 +249,14 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 defaultValue = "false";
             }
 
-            // component options do not have optional prefix
+            // component options do not have prefix
             String optionalPrefix = "";
+            String prefix = "";
+            boolean multiValue = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null, optionalPrefix));
+                    entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
+                    optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  },");
 
@@ -297,11 +300,14 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 defaultValue = "false";
             }
 
-            // @UriPath options do not have optional prefix
+            // @UriPath options do not have prefix
             String optionalPrefix = "";
+            String prefix = "";
+            boolean multiValue = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null, optionalPrefix));
+                    entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
+                    optionalPrefix, prefix, multiValue));
         }
 
         // sort the endpoint options in the standard order we prefer
@@ -341,9 +347,12 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 defaultValue = "false";
             }
             String optionalPrefix = entry.getOptionalPrefix();
+            String prefix = entry.getPrefix();
+            boolean multiValue = entry.isMultiValue();
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), defaultValue,
-                    doc, entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null, optionalPrefix));
+                    doc, entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
+                    optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  }");
 
@@ -672,7 +681,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     }
                     name = prefix + name;
 
-                    String optionalPrefix = param.optionalPrefix();
+                    String paramOptionalPrefix = param.optionalPrefix();
+                    String paramPrefix = param.prefix();
+                    boolean multiValue = param.multiValue();
                     String defaultValue = param.defaultValue();
                     if (defaultValue == null && metadata != null) {
                         defaultValue = metadata.defaultValue();
@@ -737,7 +748,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                         EndpointOption option = new EndpointOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
-                                docComment.trim(), optionalPrefix, deprecated, group, label, isEnum, enums);
+                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, group, label, isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }

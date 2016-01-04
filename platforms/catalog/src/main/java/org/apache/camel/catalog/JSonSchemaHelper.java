@@ -273,6 +273,58 @@ public final class JSonSchemaHelper {
         return null;
     }
 
+    public static String getPropertyPrefix(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String prefix = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("prefix")) {
+                prefix = row.get("prefix");
+            }
+            if (found) {
+                return prefix;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isPropertyMultiValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            boolean multiValue = false;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("multiValue")) {
+                multiValue = "true".equals(row.get("multiValue"));
+            }
+            if (found) {
+                return multiValue;
+            }
+        }
+        return false;
+    }
+
+    public static String getPropertyNameFromNameWithPrefix(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String propertyName = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                propertyName = row.get("name");
+            }
+            if (row.containsKey("prefix")) {
+                String preifx = row.get("prefix");
+                found = name.startsWith(preifx);
+            }
+            if (found) {
+                return propertyName;
+            }
+        }
+        return null;
+    }
+
     public static Map<String, String> getRow(List<Map<String, String>> rows, String key) {
         for (Map<String, String> row : rows) {
             if (key.equals(row.get("name"))) {

@@ -76,7 +76,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             defaultValue = "none", label = "consumer,scheduler", description = "To use a cron scheduler from either camel-spring or camel-quartz2 component")
     private ScheduledPollConsumerScheduler scheduler;
     private String schedulerName = "none"; // used when configuring scheduler using a string value
-    @UriParam(optionalPrefix = "consumer.", label = "consumer,scheduler",
+    @UriParam(prefix = "scheduler.", multiValue = true, label = "consumer,scheduler",
             description = "To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler.")
     private Map<String, Object> schedulerProperties;
     @UriParam(optionalPrefix = "consumer.", label = "consumer,scheduler",

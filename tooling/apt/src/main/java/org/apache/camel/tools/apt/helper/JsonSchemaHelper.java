@@ -42,7 +42,7 @@ public final class JsonSchemaHelper {
 
     public static String toJson(String name, String kind, Boolean required, String type, String defaultValue, String description,
                                 Boolean deprecated, String group, String label, boolean enumType, Set<String> enums,
-                                boolean oneOfType, Set<String> oneOffTypes, String optionalPrefix) {
+                                boolean oneOfType, Set<String> oneOffTypes, String optionalPrefix, String prefix, boolean multiValue) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
@@ -100,6 +100,16 @@ public final class JsonSchemaHelper {
             sb.append(", \"optionalPrefix\": ");
             String text = safeDefaultValue(optionalPrefix);
             sb.append(Strings.doubleQuote(text));
+        }
+
+        if (!Strings.isNullOrEmpty(prefix)) {
+            sb.append(", \"prefix\": ");
+            String text = safeDefaultValue(prefix);
+            sb.append(Strings.doubleQuote(text));
+        }
+        if (multiValue) {
+            sb.append(", \"multiValue\": ");
+            sb.append(Strings.doubleQuote("true"));
         }
 
         if (deprecated != null) {
