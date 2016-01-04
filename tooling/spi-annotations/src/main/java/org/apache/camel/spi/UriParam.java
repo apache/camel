@@ -85,6 +85,18 @@ public @interface UriParam {
     String javaType() default "";
 
     /**
+     * If the parameter can be configured multiple times, such as configuring options to a <tt>Map</tt> type.
+     */
+    boolean multiValue() default false;
+
+    /**
+     * If the parameter must be configured with a prefix.
+     * <p/>
+     * For example to configure scheduler options, the parameters is prefixed with <tt>scheduler.foo=bar</tt>
+     */
+    String prefix() default "";
+
+    /**
      * If the parameter can be configured with an optional prefix.
      * <p/>
      * For example to configure consumer options, the parameters can be prefixed with <tt>consumer.</tt>, eg <tt>consumer.delay=5000</tt>

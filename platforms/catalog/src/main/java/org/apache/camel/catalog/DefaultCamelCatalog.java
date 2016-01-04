@@ -47,9 +47,12 @@ import static org.apache.camel.catalog.JSonSchemaHelper.getNames;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyEnum;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyKind;
+import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyNameFromNameWithPrefix;
+import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyPrefix;
 import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyMultiValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyNumber;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyObject;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
@@ -752,13 +755,25 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         // validate all the options
         for (Map.Entry<String, String> property : properties.entrySet()) {
+            String value = property.getValue();
+
+            String originalName = property.getKey();
             String name = property.getKey();
             // the name may be using an optional prefix, so lets strip that because the options
             // in the schema are listed without the prefix
             name = stripOptionalPrefixFromName(rows, name);
-            String value = property.getValue();
+            // the name may be using a prefix, so lets see if we can find the real property name
+            String propertyName = getPropertyNameFromNameWithPrefix(rows, name);
+            if (propertyName != null) {
+                name = propertyName;
+            }
+
+            String prefix = getPropertyPrefix(rows, name);
+            String kind = getPropertyKind(rows, name);
             boolean placeholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
             boolean lookup = value.startsWith("#") && value.length() > 1;
+            // we cannot evaluate multi values as strict as the others, as we don't know their expected types
+            boolean mulitValue = prefix != null && originalName.startsWith(prefix) && isPropertyMultiValue(rows, name);
 
             Map<String, String> row = getRow(rows, name);
             if (row == null) {
@@ -786,7 +801,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 // is enum but the value is not within the enum range
                 // but we can only check if the value is not a placeholder
                 String enums = getPropertyEnum(rows, name);
-                if (!placeholder && !lookup && enums != null) {
+                if (!mulitValue && !placeholder && !lookup && enums != null) {
                     String[] choices = enums.split(",");
                     boolean found = false;
                     for (String s : choices) {
@@ -801,9 +816,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     }
                 }
 
-                // is reference lookup of bean (not applicable for @UriPath)
-                String kind = getPropertyKind(rows, name);
-                if (!"path".equals(kind) && isPropertyObject(rows, name)) {
+                // is reference lookup of bean (not applicable for @UriPath, or multi-valued)
+                if (!mulitValue && !"path".equals(kind) && isPropertyObject(rows, name)) {
                     // must start with # and be at least 2 characters
                     if (!value.startsWith("#") || value.length() <= 1) {
                         result.addInvalidReference(name, value);
@@ -811,7 +825,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
 
                 // is boolean
-                if (!placeholder && !lookup && isPropertyBoolean(rows, name)) {
+                if (!mulitValue && !placeholder && !lookup && isPropertyBoolean(rows, name)) {
                     // value must be a boolean
                     boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
                     if (!bool) {
@@ -820,7 +834,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
 
                 // is integer
-                if (!placeholder && !lookup && isPropertyInteger(rows, name)) {
+                if (!mulitValue && !placeholder && !lookup && isPropertyInteger(rows, name)) {
                     // value must be an integer
                     boolean valid = validateInteger(value);
                     if (!valid) {
@@ -829,7 +843,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
 
                 // is number
-                if (!placeholder && !lookup && isPropertyNumber(rows, name)) {
+                if (!mulitValue && !placeholder && !lookup && isPropertyNumber(rows, name)) {
                     // value must be an number
                     boolean valid = false;
                     try {
