@@ -164,6 +164,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         // must extract well known parameters before we create the endpoint
+        List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
         JettyHttpBinding jettyBinding = resolveAndRemoveReferenceParameter(parameters, "jettyHttpBindingRef", JettyHttpBinding.class);
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
@@ -220,7 +221,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (httpClientParameters != null && !httpClientParameters.isEmpty()) {
             endpoint.setHttpClientParameters(httpClientParameters);
         }
-        // prefer to use endpoint configured over component configured
+        if (handlerList.size() > 0) {
+            endpoint.setHandlers(handlerList);
+        }        // prefer to use endpoint configured over component configured
         if (binding == null) {
             // fallback to component configured
             binding = getHttpBinding();
