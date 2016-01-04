@@ -35,7 +35,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,rest")
+/**
+ * The rest component is used for hosting REST services which has been defined using the rest-dsl in Camel.
+ */
+@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,rest", lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
 
     @UriPath(enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")

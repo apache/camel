@@ -35,7 +35,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
-@UriEndpoint(scheme = "ahc", title = "AHC", syntax = "ahc:httpUri", producerOnly = true, label = "http")
+/**
+ * To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
+ */
+@UriEndpoint(scheme = "ahc", title = "AHC", syntax = "ahc:httpUri", producerOnly = true, label = "http", lenientProperties = true)
 public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;

@@ -40,7 +40,8 @@ import org.restlet.data.Method;
  *
  * @version 
  */
-@UriEndpoint(scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern", consumerClass = RestletConsumer.class, label = "rest")
+@UriEndpoint(scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern",
+        consumerClass = RestletConsumer.class, label = "rest", lenientProperties = true)
 public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final int DEFAULT_PORT = 80;
