@@ -46,9 +46,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private ContentTypeResolver contentTypeResolver;
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
-    @UriParam(label = "consumer,filter")
+    @UriParam(label = "consumer,filter", prefix = "searchTerm.", multiValue = true)
     private SearchTerm searchTerm;
-    @UriParam(label = "consumer,sort")
+    @UriParam(label = "consumer,sort", javaType = "java.lang.String")
     private SortTerm[] sortTerm;
     @UriParam(label = "consumer,advanced")
     private MailBoxPostProcessAction postProcessAction;

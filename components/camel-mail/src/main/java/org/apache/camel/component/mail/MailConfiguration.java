@@ -43,7 +43,7 @@ public class MailConfiguration implements Cloneable {
     private ClassLoader applicationClassLoader;
     private Session session;
     private Properties javaMailProperties;
-    private Properties additionalJavaMailProperties;
+    private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
 
     // protocol is implied by component name so it should not be in UriPath
     private String protocol;
@@ -61,9 +61,15 @@ public class MailConfiguration implements Cloneable {
     private JavaMailSender javaMailSender;
     @UriParam(defaultValue = "true", label = "consumer,advanced")
     private boolean mapMailMessage = true;
-    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FROM) @Metadata(label = "producer")
+    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FROM, label = "producer")
     private String from = MailConstants.MAIL_DEFAULT_FROM;
-    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FOLDER) @Metadata(label = "consumer,advanced")
+    @UriParam(label = "producer")
+    private String to;
+    @UriParam(label = "producer")
+    private String cc;
+    @UriParam(label = "producer")
+    private String bcc;
+    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FOLDER, label = "consumer,advanced")
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
     @UriParam @Metadata(label = "consumer")
     private boolean delete;
@@ -73,7 +79,6 @@ public class MailConfiguration implements Cloneable {
     private boolean unseen = true;
     @UriParam(label = "advanced")
     private boolean ignoreUriScheme;
-    private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     @UriParam @Metadata(label = "producer")
     private String replyTo;
     @UriParam(defaultValue = "-1") @Metadata(label = "consumer,advanced")
@@ -104,6 +109,8 @@ public class MailConfiguration implements Cloneable {
     private boolean handleFailedMessage;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "advanced", prefix = "mail.", multiValue = true)
+    private Properties additionalJavaMailProperties;
 
     public MailConfiguration() {
     }
@@ -466,21 +473,36 @@ public class MailConfiguration implements Cloneable {
      * Sets the <tt>To</tt> email address. Separate multiple email addresses with comma.
      */
     public void setTo(String address) {
+        this.to = to;
         recipients.put(Message.RecipientType.TO, address);
+    }
+
+    public String getTo() {
+        return to;
     }
 
     /**
      * Sets the <tt>CC</tt> email address. Separate multiple email addresses with comma.
      */
-    public void setCC(String address) {
+    public void setCc(String address) {
+        this.cc = address;
         recipients.put(Message.RecipientType.CC, address);
+    }
+
+    public String getCc() {
+        return cc;
     }
 
     /**
      * Sets the <tt>BCC</tt> email address. Separate multiple email addresses with comma.
      */
-    public void setBCC(String address) {
+    public void setBcc(String address) {
+        this.bcc = address;
         recipients.put(Message.RecipientType.BCC, address);
+    }
+
+    public String getBcc() {
+        return bcc;
     }
 
     public Map<Message.RecipientType, String> getRecipients() {
