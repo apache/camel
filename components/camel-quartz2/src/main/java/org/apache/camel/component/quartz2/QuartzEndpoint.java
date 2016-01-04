@@ -58,8 +58,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
     private TriggerKey triggerKey;
     private LoadBalancer consumerLoadBalancer;
-    private Map<String, Object> triggerParameters;
-    private Map<String, Object> jobParameters;
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
     private final AtomicBoolean jobAdded = new AtomicBoolean(false);
     private final AtomicBoolean jobPaused = new AtomicBoolean(false);
@@ -85,7 +83,17 @@ public class QuartzEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "500")
     private long triggerStartDelay = 500;
     @UriParam
+    private int startDelayedSeconds;
+    @UriParam(defaultValue = "true")
+    private boolean autoStartScheduler = true;
+    @UriParam
     private boolean usingFixedCamelContextName;
+    @UriParam
+    private boolean prefixJobNameWithEndpointId;
+    @UriParam(prefix = "trigger.", multiValue = true)
+    private Map<String, Object> triggerParameters;
+    @UriParam(prefix = "job.", multiValue = true)
+    private Map<String, Object> jobParameters;
 
     public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {
         super(uri, quartzComponent);
@@ -206,14 +214,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
         this.usingFixedCamelContextName = usingFixedCamelContextName;
     }
 
-    public void setTriggerParameters(Map<String, Object> triggerParameters) {
-        this.triggerParameters = triggerParameters;
-    }
-
-    public void setJobParameters(Map<String, Object> jobParameters) {
-        this.jobParameters = jobParameters;
-    }
-
     public LoadBalancer getConsumerLoadBalancer() {
         if (consumerLoadBalancer == null) {
             consumerLoadBalancer = new RoundRobinLoadBalancer();
@@ -223,6 +223,63 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     public void setConsumerLoadBalancer(LoadBalancer consumerLoadBalancer) {
         this.consumerLoadBalancer = consumerLoadBalancer;
+    }
+
+
+    public Map<String, Object> getTriggerParameters() {
+        return triggerParameters;
+    }
+
+    /**
+     * To configure additional options on the trigger.
+     */
+    public void setTriggerParameters(Map<String, Object> triggerParameters) {
+        this.triggerParameters = triggerParameters;
+    }
+
+    public Map<String, Object> getJobParameters() {
+        return jobParameters;
+    }
+
+    /**
+     * To configure additional options on the job.
+     */
+    public void setJobParameters(Map<String, Object> jobParameters) {
+        this.jobParameters = jobParameters;
+    }
+
+    public int getStartDelayedSeconds() {
+        return startDelayedSeconds;
+    }
+
+    /**
+     * Seconds to wait before starting the quartz scheduler.
+     */
+    public void setStartDelayedSeconds(int startDelayedSeconds) {
+        this.startDelayedSeconds = startDelayedSeconds;
+    }
+
+    public boolean isAutoStartScheduler() {
+        return autoStartScheduler;
+    }
+
+    /**
+     * Whether or not the scheduler should be auto started.
+     */
+    public void setAutoStartScheduler(boolean autoStartScheduler) {
+        this.autoStartScheduler = autoStartScheduler;
+    }
+
+    public boolean isPrefixJobNameWithEndpointId() {
+        return prefixJobNameWithEndpointId;
+    }
+
+    /**
+     * Whether the job name should be prefixed with endpoint id
+     * @param prefixJobNameWithEndpointId
+     */
+    public void setPrefixJobNameWithEndpointId(boolean prefixJobNameWithEndpointId) {
+        this.prefixJobNameWithEndpointId = prefixJobNameWithEndpointId;
     }
 
     /**
@@ -239,7 +296,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     public void setTriggerKey(TriggerKey triggerKey) {
         this.triggerKey = triggerKey;
     }
-    
+
     @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Quartz producer is not supported.");
