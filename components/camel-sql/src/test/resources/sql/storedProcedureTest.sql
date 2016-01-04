@@ -19,4 +19,10 @@ CREATE PROCEDURE ADDNUMBERS(VALUE1 INTEGER, VALUE2 INTEGER,OUT RESULT INTEGER)
  PARAMETER STYLE JAVA
  LANGUAGE JAVA
  EXTERNAL NAME
-'org.apache.camel.component.sql.stored.SimpleStoredProcedureUdf.addnumbers';
+'org.apache.camel.component.sql.stored.TestStoredProcedure.addnumbers';
+
+CREATE PROCEDURE NILADIC()
+ PARAMETER STYLE JAVA
+ LANGUAGE JAVA
+ EXTERNAL NAME
+'org.apache.camel.component.sql.stored.TestStoredProcedure.niladic';

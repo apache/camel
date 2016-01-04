@@ -27,9 +27,9 @@ public Template parse() :
     Object parameter = null;
 }
 {
-  (procudureName = <IDENTIFIER> "(" (parameter = Parameter() { template.addParameter(parameter);}) (","
+  (procudureName = <IDENTIFIER> "(" ( (parameter = Parameter() { template.addParameter(parameter);}) (","
   parameter
-  = Parameter(){template.addParameter(parameter);})*  ")" <EOF>)
+  = Parameter(){template.addParameter(parameter);})*)? ")" <EOF>)
   {
    template.setProcedureName(procudureName.toString());
    return template;

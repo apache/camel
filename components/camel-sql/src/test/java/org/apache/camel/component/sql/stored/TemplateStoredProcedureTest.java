@@ -33,7 +33,7 @@ public class TemplateStoredProcedureTest extends CamelTestSupport {
 
 
     @Test
-    public void shouldExecuteStoredProcedure()  {
+    public void shouldExecuteStoredProcedure() {
         TemplateStoredProcedure sp = new TemplateStoredProcedure(db, parser.parseTemplate("ADDNUMBERS" +
                 "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsum)"));
 
@@ -47,6 +47,20 @@ public class TemplateStoredProcedureTest extends CamelTestSupport {
         Assert.assertEquals(Integer.valueOf(3), exchange.getOut().getHeader("resultofsum"));
 
 
+    }
+
+
+    @Test
+    public void shouldExecuteNilacidProcedure() {
+        TemplateStoredProcedure sp = new TemplateStoredProcedure(db, parser.parseTemplate("NILADIC" +
+                "()"));
+
+        Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader("v1", 1);
+        exchange.getIn().setHeader("v2", 2);
+
+
+        sp.execute(exchange);
     }
 
     @After
