@@ -114,6 +114,15 @@ public final class JSonSchemaHelper {
         return value;
     }
 
+    public static boolean isComponentLenientProperties(List<Map<String, String>> rows) {
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("lenientProperties")) {
+                return "true".equals(row.get("lenientProperties"));
+            }
+        }
+        return false;
+    }
+
     public static boolean isPropertyRequired(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             boolean required = false;
