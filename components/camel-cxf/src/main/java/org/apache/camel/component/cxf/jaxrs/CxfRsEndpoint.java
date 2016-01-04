@@ -62,27 +62,6 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", consumerClass = CxfRsConsumer.class, label = "rest")
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
 
-    public enum BindingStyle {
-        /**
-         * <i>Only available for consumers.</i>
-         * This binding style processes request parameters, multiparts, etc. and maps them to IN headers, IN attachments and to the message body.
-         * It aims to eliminate low-level processing of {@link org.apache.cxf.message.MessageContentsList}.
-         * It also also adds more flexibility and simplicity to the response mapping.
-         */
-        SimpleConsumer,
-
-        /**
-         * This is the traditional binding style, which simply dumps the {@link org.apache.cxf.message.MessageContentsList} coming in from the CXF stack
-         * onto the IN message body. The user is then responsible for processing it according to the contract defined by the JAX-RS method signature.
-         */
-        Default,
-
-        /**
-         * A custom binding set by the user.
-         */
-        Custom
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
     
     @UriPath
