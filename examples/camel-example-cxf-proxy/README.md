@@ -17,27 +17,27 @@ To run the example type:
 
 The proxied webservice is located at
 
-	http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident
+	http://localhost:${proxy.port}/camel-example-cxf-proxy/webservices/incident
 
-[http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident](http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident)
+<http://localhost:9080/camel-example-cxf-proxy/webservices/incident>
 
 The real webservice is located at
 
-	http://localhost:<port 2>/real-webservice
+	http://localhost:${real.port}/real-webservice
 	
-[http://localhost:<port 2>/real-webservice](http://localhost:<port 2>/real-webservice)
+<http://localhost:9081/real-webservice>
 
 The webservice WSDL is exposed at:
 
-	http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident?wsdl
+	http://localhost:${proxy.port}/camel-example-cxf-proxy/webservices/incident?wsdl
 	
-[http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident?wsdl](http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident?wsdl)
+<http://localhost:9080/camel-example-cxf-proxy/webservices/incident?wsdl>
 
 Because we use dynamic port numbers, you have to check the console to get the used one.
 To stop the example hit `ctrl + c`
 
 To make a SOAP call open soapUI or another SOAP query tool and create a new
-project w/WSDL of [http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident?wsdl](http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident?wsdl).
+project w/WSDL of <http://localhost:${proxy.port}/camel-example-cxf-proxy/webservices/incident?wsdl>.
 Then make SOAP requests of this format:
 
 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
@@ -57,14 +57,18 @@ Then make SOAP requests of this format:
 	   </soapenv:Body>
 	</soapenv:Envelope>
 
+### Configuration
+
+You can change `${proxy.port}` and `${real.port}` via configuration file `src/main/resources/incident.properties`
+
 ### Documentation
 
-This example is documented at [http://camel.apache.org/cxf-proxy-example.html](http://camel.apache.org/cxf-proxy-example.html)
+This example is documented at <http://camel.apache.org/cxf-proxy-example.html>
 
 ### Forum, Help, etc 
 
 If you hit an problems please let us know on the Camel Forums
-  [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+  <http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
