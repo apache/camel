@@ -125,7 +125,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private BindingConfiguration bindingConfig;
     private DataBinding dataBinding;
     private Object serviceFactoryBean;
-    private Map<String, Object> properties;
     private List<Interceptor<? extends Message>> in = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
     private List<Interceptor<? extends Message>> out = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
     private List<Interceptor<? extends Message>> outFault = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
@@ -141,6 +140,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String address;
     @UriParam
     private String wsdlURL;
+    @UriParam
     private Class<?> serviceClass;
     @UriParam(name = "portName")
     private String portNameString;
@@ -190,6 +190,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String username;
     @UriParam
     private String password;
+    @UriParam(label = "advanced", prefix = "properties.", multiValue = true)
+    private Map<String, Object> properties;
 
     public CxfEndpoint() {
     }
@@ -1024,6 +1026,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
     }
 
+    /**
+     * To set additional CXF options using the key/value pairs from the Map.
+     * For example to turn on stacktraces in SOAP faults, <tt>properties.faultStackTraceEnabled=true</tt>
+     */
     public void setProperties(Map<String, Object> properties) {
         if (this.properties == null) {
             this.properties = properties;
