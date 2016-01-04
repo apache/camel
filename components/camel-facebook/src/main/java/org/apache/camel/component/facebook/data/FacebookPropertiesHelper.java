@@ -69,6 +69,7 @@ public final class FacebookPropertiesHelper {
             options, FacebookConstants.READING_PREFIX);
         if (!readingProperties.isEmpty()) {
             try {
+                configuration.setReadingOptions(readingProperties);
 
                 // add to an existing reading reference?
                 // NOTE Reading class does not support overwriting properties!!!

@@ -128,6 +128,8 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     private String questionId;
     @UriParam
     private Reading reading;
+    @UriParam(prefix = "reading.", multiValue = true)
+    private Map<String, Object> readingOptions;
     @UriParam
     private Integer scoreValue;
     @UriParam
@@ -663,6 +665,17 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
      */
     public void setReading(Reading reading) {
         this.reading = reading;
+    }
+
+    public Map<String, Object> getReadingOptions() {
+        return readingOptions;
+    }
+
+    /**
+     * To configure {@link Reading} using key/value pairs from the Map.
+     */
+    public void setReadingOptions(Map<String, Object> readingOptions) {
+        this.readingOptions = readingOptions;
     }
 
     public Integer getScoreValue() {
