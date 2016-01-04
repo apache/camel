@@ -77,7 +77,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     private Boolean tcpNoDelay = Boolean.TRUE;
     @UriPath(label = "producer", defaultValue = "true")
     private Boolean reuseAddresses = Boolean.TRUE;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", prefix = "option.", multiValue = true)
     private Map<String, Object> options;
 
     public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {
