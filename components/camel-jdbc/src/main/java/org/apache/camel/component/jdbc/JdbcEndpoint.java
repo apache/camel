@@ -46,6 +46,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private boolean transacted;
     @UriParam(defaultValue = "true")
     private boolean resetAutoCommit = true;
+    @UriParam(prefix = "statement.", multiValue = true)
     private Map<String, Object> parameters;
     @UriParam(defaultValue = "true")
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;

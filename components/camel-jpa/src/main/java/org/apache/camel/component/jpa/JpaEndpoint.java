@@ -49,7 +49,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
     private Expression producerExpression;
-    private Map<String, Object> entityManagerProperties;
 
     @UriPath(description = "Entity class name") @Metadata(required = "true")
     private Class<?> entityType;
@@ -76,6 +75,9 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean usePassedInEntityManager;
     @UriParam(label = "producer")
     private boolean remove;
+
+    @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
+    private Map<String, Object> entityManagerProperties;
 
     public JpaEndpoint() {
     }
