@@ -40,13 +40,17 @@ import org.apache.commons.net.ftp.FTPFile;
         syntax = "ftp:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
     protected FTPClient ftpClient;
-    protected FTPClientConfig ftpClientConfig;
-    protected Map<String, Object> ftpClientParameters;
-    protected Map<String, Object> ftpClientConfigParameters;
     protected int soTimeout;
     protected int dataTimeout;
+
     @UriParam
     protected FtpConfiguration configuration;
+    @UriParam(label = "advanced")
+    protected FTPClientConfig ftpClientConfig;
+    @UriParam(label = "advanced", prefix = "ftpClientConfig.", multiValue = true)
+    protected Map<String, Object> ftpClientConfigParameters;
+    @UriParam(label = "advanced", prefix = "ftpClient.", multiValue = true)
+    protected Map<String, Object> ftpClientParameters;
 
     public FtpEndpoint() {
     }
@@ -188,6 +192,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         return ftpClientConfig;
     }
 
+    /**
+     * To use a custom instance of FTPClientConfig to configure the FTP client the endpoint should use.
+     */
     public void setFtpClientConfig(FTPClientConfig ftpClientConfig) {
         this.ftpClientConfig = ftpClientConfig;
     }
