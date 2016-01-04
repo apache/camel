@@ -47,6 +47,7 @@ public class TokenizeLanguage implements Language, IsSingleton {
     private boolean xml;
     private boolean includeTokens;
     private int group;
+    private boolean skipFirst;
 
     public static Expression tokenize(String token) {
         return tokenize(token, false);
@@ -120,6 +121,10 @@ public class TokenizeLanguage implements Language, IsSingleton {
             } else {
                 answer = ExpressionBuilder.tokenizeExpression(exp, token);
             }
+            if (group == 0 && skipFirst) {
+                // wrap in skip first (if group then it has its own skip first logic)
+                answer = ExpressionBuilder.skipFirstExpression(answer);
+            }
         }
 
         // if group then wrap answer in group expression
@@ -127,7 +132,7 @@ public class TokenizeLanguage implements Language, IsSingleton {
             if (isXml()) {
                 answer = ExpressionBuilder.groupXmlIteratorExpression(answer, group);
             } else {
-                answer = ExpressionBuilder.groupIteratorExpression(answer, token, group);
+                answer = ExpressionBuilder.groupIteratorExpression(answer, token, group, skipFirst);
             }
         }
 
@@ -203,6 +208,14 @@ public class TokenizeLanguage implements Language, IsSingleton {
 
     public void setGroup(int group) {
         this.group = group;
+    }
+
+    public boolean isSkipFirst() {
+        return skipFirst;
+    }
+
+    public void setSkipFirst(boolean skipFirst) {
+        this.skipFirst = skipFirst;
     }
 
     public boolean isSingleton() {

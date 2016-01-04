@@ -55,7 +55,23 @@ public class GroupTokenIteratorTest extends TestSupport {
         Scanner scanner = new Scanner(s);
         scanner.useDelimiter("\n");
 
-        GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 3);
+        GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 3, false);
+
+        assertTrue(gi.hasNext());
+        assertEquals("ABC\nDEF\nGHI", gi.next());
+        assertEquals("JKL\nMNO\nPQR", gi.next());
+        assertEquals("STU\nVW", gi.next());
+        assertFalse(gi.hasNext());
+
+        IOHelper.close(gi);
+    }
+
+    public void testGroupIteratorSkipFirst() throws Exception {
+        String s = "##comment\nABC\nDEF\nGHI\nJKL\nMNO\nPQR\nSTU\nVW";
+        Scanner scanner = new Scanner(s);
+        scanner.useDelimiter("\n");
+
+        GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 3, true);
 
         assertTrue(gi.hasNext());
         assertEquals("ABC\nDEF\nGHI", gi.next());
@@ -80,7 +96,7 @@ public class GroupTokenIteratorTest extends TestSupport {
         scanner.useDelimiter("\n");
 
         exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.displayName());
-        GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 1);
+        GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 1, false);
 
         assertTrue(gi.hasNext());
         assertEquals("\u00A31", gi.next());

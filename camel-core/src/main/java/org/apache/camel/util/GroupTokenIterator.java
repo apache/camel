@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -43,6 +44,8 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
     private final Iterator<?> it;
     private final String token;
     private final int group;
+    private final boolean skipFirst;
+    private final AtomicBoolean hasSkipFirst;
     private boolean closed;
     private final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     
@@ -66,6 +69,8 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
         if (group <= 0) {
             throw new IllegalArgumentException("Group must be a positive number, was: " + group);
         }
+        this.skipFirst = false;
+        this.hasSkipFirst = null;
     }
 
     /**
@@ -77,7 +82,7 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
      * @param group         number of parts to group together
      * @throws IllegalArgumentException is thrown if group is not a positive number
      */
-    public GroupTokenIterator(Exchange exchange, Iterator<?> it, String token, int group) {
+    public GroupTokenIterator(Exchange exchange, Iterator<?> it, String token, int group, boolean skipFirst) {
         this.exchange = exchange;
         this.camelContext = exchange.getContext();
         this.it = it;
@@ -85,6 +90,12 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
         this.group = group;
         if (group <= 0) {
             throw new IllegalArgumentException("Group must be a positive number, was: " + group);
+        }
+        this.skipFirst = skipFirst;
+        if (skipFirst) {
+            this.hasSkipFirst = new AtomicBoolean();
+        } else {
+            this.hasSkipFirst = null;
         }
     }
 
@@ -142,6 +153,10 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
         Object data = "";
         while (count < group && it.hasNext()) {
             data = it.next();
+
+            if (skipFirst && hasSkipFirst.compareAndSet(false, true)) {
+                data = it.next();
+            }
 
             // include token in between
             if (data != null && count > 0 && token != null) {
