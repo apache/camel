@@ -23,6 +23,7 @@ public class ProducerTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
+
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()

@@ -6,6 +6,7 @@ import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 import javax.sql.DataSource;
 
@@ -40,6 +41,6 @@ public class SqlStoredEndpoint extends DefaultPollingEndpoint {
 
     @Override
     protected String createEndpointUri() {
-        return "sql-stored:" + template;
+        return "sql-stored:" + UnsafeUriCharactersEncoder.encode(template);
     }
 }

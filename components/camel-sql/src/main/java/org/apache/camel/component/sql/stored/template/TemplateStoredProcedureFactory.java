@@ -28,9 +28,7 @@ public class TemplateStoredProcedureFactory {
     }
 
     private Template validate(Template input) {
-        if (input.getOutParameterList().isEmpty()) {
-            throw new ParseRuntimeException("At least one OUT parameter must be given.");
-        }
+        //TODO:remove validation ?
         return input;
     }
 
