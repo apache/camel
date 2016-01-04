@@ -37,7 +37,7 @@ public class SWFComponent extends UriEndpointComponent {
         configuration.setType(remaining);
         setProperties(configuration, parameters);
         configuration.setClientConfigurationParameters(clientConfigurationParameters);
-        configuration.setsWClientParameters(sWClientParameters);
+        configuration.setSWClientParameters(sWClientParameters);
         configuration.setStartWorkflowOptionsParameters(startWorkflowOptionsParameters);
 
         return new SWFEndpoint(uri, this, configuration);

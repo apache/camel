@@ -95,8 +95,8 @@ public class SWFEndpoint extends DefaultEndpoint {
         }
 
         AmazonSimpleWorkflowClient client = new AmazonSimpleWorkflowClient(credentials, clientConfiguration);
-        if (!configuration.getsWClientParameters().isEmpty()) {
-            setProperties(client, configuration.getsWClientParameters());
+        if (!configuration.getSWClientParameters().isEmpty()) {
+            setProperties(client, configuration.getSWClientParameters());
         }
         return client;
     }

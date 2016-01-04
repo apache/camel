@@ -23,7 +23,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to uri="aws-swf://workflow?amazonSWClient=#amazonSWClient&amp;accessKey=key&amp;secretKey=secret&amp;domainName=testDomain&amp;version=1.0&amp;eventName=testEvent"/>
+            <to uri="aws-swf:workflow?amazonSWClient=#amazonSWClient&amp;accessKey=key&amp;secretKey=secret&amp;domainName=testDomain&amp;version=1.0&amp;eventName=testEvent"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>
