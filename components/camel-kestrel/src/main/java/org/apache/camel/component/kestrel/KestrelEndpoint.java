@@ -89,12 +89,7 @@ public class KestrelEndpoint extends DefaultEndpoint {
         return component.getMemcachedClient(configuration, queue);
     }
 
-    @Override
-    public boolean isLenientProperties() {
-        return false;
-    }
-
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 }

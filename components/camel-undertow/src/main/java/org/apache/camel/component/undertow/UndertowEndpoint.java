@@ -47,7 +47,7 @@ import org.xnio.Options;
  * The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests.
  */
 @UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
-        consumerClass = UndertowConsumer.class, label = "http")
+        consumerClass = UndertowConsumer.class, label = "http", lenientProperties = true)
 public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);

@@ -36,7 +36,7 @@ import org.apache.camel.spi.UriEndpoint;
  * query arguments will usually fail. Stub won't though, as it basically ignores all query parameters
  * to let you quickly stub out one or more endpoints in your route temporarily.
  */
-@UriEndpoint(scheme = "stub", title = "Stub", syntax = "stub:name", consumerClass = VmConsumer.class, label = "core,testing")
+@UriEndpoint(scheme = "stub", title = "Stub", syntax = "stub:name", consumerClass = VmConsumer.class, label = "core,testing", lenientProperties = true)
 public class StubEndpoint extends VmEndpoint {
 
     public StubEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
@@ -56,4 +56,8 @@ public class StubEndpoint extends VmEndpoint {
         return new StubConsumer(this, processor);
     }
 
+    @Override
+    public boolean isLenientProperties() {
+        return true;
+    }
 }

@@ -219,6 +219,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         } else if (componentModel.isProducerOnly()) {
             buffer.append("\n    \"producerOnly\": \"").append("true").append("\",");
         }
+        if (componentModel.isLenientProperties()) {
+            buffer.append("\n    \"lenientProperties\": \"").append("true").append("\",");
+        }
         buffer.append("\n    \"javaType\": \"").append(componentModel.getJavaType()).append("\",");
         buffer.append("\n    \"groupId\": \"").append(componentModel.getGroupId()).append("\",");
         buffer.append("\n    \"artifactId\": \"").append(componentModel.getArtifactId()).append("\",");
@@ -439,6 +442,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         model.setLabel(label);
         model.setConsumerOnly(uriEndpoint.consumerOnly());
         model.setProducerOnly(uriEndpoint.producerOnly());
+        model.setLenientProperties(uriEndpoint.lenientProperties());
 
         String data = loadResource("META-INF/services/org/apache/camel/component", scheme);
         if (data != null) {

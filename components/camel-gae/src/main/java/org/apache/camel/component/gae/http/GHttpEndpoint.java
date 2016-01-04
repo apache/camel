@@ -45,7 +45,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  * The ghttp component provides HTTP connectivity to the GAE.
  */
 @UriEndpoint(scheme = "ghttp", extendsScheme = "servlet", title = "Google HTTP",
-        syntax = "ghttp:httpUri", producerOnly = true, label = "cloud,paas")
+        syntax = "ghttp:httpUri", producerOnly = true, label = "cloud,paas", lenientProperties = true)
 public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSupport<GHttpEndpoint, HTTPRequest, HTTPResponse> {
 
     public static final String GHTTP_SCHEME = "ghttp";
