@@ -321,6 +321,15 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         result.setTriggerKey(triggerKey);
         result.setTriggerParameters(triggerParameters);
         result.setJobParameters(jobParameters);
+        if (startDelayedSeconds != null) {
+            result.setStartDelayedSeconds(startDelayedSeconds);
+        }
+        if (autoStartScheduler != null) {
+            result.setAutoStartScheduler(autoStartScheduler);
+        }
+        if (prefixJobNameWithEndpointId != null) {
+            result.setPrefixJobNameWithEndpointId(prefixJobNameWithEndpointId);
+        }
         return result;
     }
 
