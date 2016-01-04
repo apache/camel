@@ -50,6 +50,7 @@ import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyKind;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyNameFromNameWithPrefix;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyPrefix;
 import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
+import static org.apache.camel.catalog.JSonSchemaHelper.isComponentLenientProperties;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyMultiValue;
@@ -736,6 +737,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         Map<String, String> properties;
         List<Map<String, String>> rows;
+        boolean lenientProperties;
 
         try {
             // parse the uri
@@ -746,6 +748,10 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 result.addUnknownComponent(scheme);
                 return result;
             }
+
+            rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+            lenientProperties = isComponentLenientProperties(rows);
+
             rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
             properties = endpointProperties(uri);
         } catch (URISyntaxException e) {
@@ -778,11 +784,16 @@ public class DefaultCamelCatalog implements CamelCatalog {
             Map<String, String> row = getRow(rows, name);
             if (row == null) {
                 // unknown option
-                result.addUnknown(name);
-                if (suggestionStrategy != null) {
-                    String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
-                    if (suggestions != null) {
-                        result.addUnknownSuggestions(name, suggestions);
+
+                // only add as error if the component is not lenient properties
+                // as if we are lenient then the option is a dynamic extra option which we cannot validate
+                if (!lenientProperties) {
+                    result.addUnknown(name);
+                    if (suggestionStrategy != null) {
+                        String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
+                        if (suggestions != null) {
+                            result.addUnknownSuggestions(name, suggestions);
+                        }
                     }
                 }
             } else {

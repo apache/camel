@@ -484,6 +484,10 @@ public class CamelCatalogTest {
         // prefix
         result = catalog.validateEndpointProperties("file:inbox?delay=5000&scheduler.foo=123&scheduler.bar=456");
         assertTrue(result.isSuccess());
+
+        // lenient
+        result = catalog.validateEndpointProperties("stub:foo?me=123&you=456");
+        assertTrue(result.isSuccess());
     }
 
     @Test
