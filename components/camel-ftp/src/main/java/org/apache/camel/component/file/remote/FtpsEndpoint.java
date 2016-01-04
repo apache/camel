@@ -44,12 +44,14 @@ import org.apache.commons.net.ftp.FTPSClient;
 @UriEndpoint(scheme = "ftps", extendsScheme = "file", title = "FTPS",
         syntax = "ftps:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
-    protected Map<String, Object> ftpClientKeyStoreParameters;
-    protected Map<String, Object> ftpClientTrustStoreParameters;
     @UriParam
     protected FtpsConfiguration configuration;
     @UriParam(label = "security")
     protected SSLContextParameters sslContextParameters;
+    @UriParam(label = "security", prefix = "ftpClient.keyStore.", multiValue = true)
+    protected Map<String, Object> ftpClientKeyStoreParameters;
+    @UriParam(label = "security", prefix = "ftpClient.trustStore.", multiValue = true)
+    protected Map<String, Object> ftpClientTrustStoreParameters;
 
     public FtpsEndpoint() {
     }
