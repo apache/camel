@@ -23,11 +23,15 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Endpoint for the class component.
  */
-@UriEndpoint(scheme = "class", title = "Class", syntax = "class:beanName", label = "core,java")
+@UriEndpoint(scheme = "class", title = "Class", syntax = "class:beanName", label = "core,java", lenientProperties = true)
 public class ClassEndpoint extends BeanEndpoint {
 
     public ClassEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 
+    @Override
+    public boolean isLenientProperties() {
+        return true;
+    }
 }
