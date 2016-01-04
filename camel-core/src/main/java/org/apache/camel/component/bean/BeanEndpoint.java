@@ -47,7 +47,7 @@ public class BeanEndpoint extends DefaultEndpoint {
             + "true means the message body should be an array of parameters. Note: This option is used internally by Camel, and is not intended for end users to use.")
     @Deprecated
     private boolean multiParameterArray;
-    @UriParam(label = "advanced", description = "Used for configuring additional properties on the bean")
+    @UriParam(prefix = "bean.", label = "advanced", description = "Used for configuring additional properties on the bean", multiValue = true)
     private Map<String, Object> parameters;
 
     public BeanEndpoint() {

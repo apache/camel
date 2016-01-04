@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.LRUSoftCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +49,10 @@ public class BeanComponent extends UriEndpointComponent {
         BeanEndpoint endpoint = new BeanEndpoint(uri, this);
         endpoint.setBeanName(remaining);
         setProperties(endpoint, parameters);
-        // any remaining parameters are parameters for the bean
-        endpoint.setParameters(parameters);
+
+        // the bean.xxx options is for the bean
+        Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "bean.");
+        endpoint.setParameters(options);
         return endpoint;
     }
     
