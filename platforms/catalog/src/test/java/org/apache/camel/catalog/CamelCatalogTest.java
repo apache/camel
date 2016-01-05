@@ -501,6 +501,10 @@ public class CamelCatalogTest {
         // data format
         result = catalog.validateEndpointProperties("dataformat:string:marshal?charset=utf-8", true);
         assertTrue(result.isSuccess());
+
+        // 2 slash after component name
+        result = catalog.validateEndpointProperties("atmos://put?remotePath=/dummy.txt");
+        assertTrue(result.isSuccess());
     }
 
     @Test

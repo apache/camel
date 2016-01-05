@@ -780,8 +780,16 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         // validate all the options
+        boolean first = true;
         for (Map.Entry<String, String> property : properties.entrySet()) {
             String value = property.getValue();
+            if (first) {
+                // skip any leading double slash in first property from uri as that is from the scheme part
+                if (value != null && value.startsWith("//")) {
+                    value = value.substring(2);
+                }
+            }
+            first = false;
 
             String originalName = property.getKey();
             String name = property.getKey();
