@@ -213,14 +213,17 @@ public class HttpComponent extends HttpCommonComponent {
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
-        IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
+        Map<String, Object> httpClientOptions = IntrospectionSupport.extractProperties(parameters, "httpClient.");
+        IntrospectionSupport.setProperties(clientParams, httpClientOptions);
         // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateParameters(uri, parameters, "httpClient.");       
+        validateParameters(uri, httpClientOptions, null);
         // http client can be configured from URI options
         HttpConnectionManagerParams connectionManagerParams = new HttpConnectionManagerParams();
         // setup the httpConnectionManagerParams
-        IntrospectionSupport.setProperties(connectionManagerParams, parameters, "httpConnectionManager.");
-        validateParameters(uri, parameters, "httpConnectionManager.");
+        Map<String, Object> httpConnectionManagerOptions = IntrospectionSupport.extractProperties(parameters, "httpConnectionManager.");
+        IntrospectionSupport.setProperties(connectionManagerParams, httpConnectionManagerOptions);
+        // validate that we could resolve all httpConnectionManager. parameters as this component is lenient
+        validateParameters(uri, httpConnectionManagerOptions, null);
         // make sure the component httpConnectionManager is take effect
         HttpConnectionManager thisHttpConnectionManager = httpConnectionManager;
         if (thisHttpConnectionManager == null) {
@@ -290,6 +293,7 @@ public class HttpComponent extends HttpCommonComponent {
             }
         }
         endpoint.setHttpUri(httpUri);
+        endpoint.setHttpClientOptions(httpClientOptions);
         return endpoint;
     }
 
