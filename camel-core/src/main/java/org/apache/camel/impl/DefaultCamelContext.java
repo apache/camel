@@ -870,32 +870,32 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public synchronized RestsDefinition loadRestsDefinition(InputStream is) throws Exception {
-    	// load routes using JAXB
-    	if (jaxbContext == null) {
-    		// must use classloader from CamelContext to have JAXB working
-    		jaxbContext = getModelJAXBContextFactory().newJAXBContext();
-    	}
+        // load routes using JAXB
+        if (jaxbContext == null) {
+            // must use classloader from CamelContext to have JAXB working
+            jaxbContext = getModelJAXBContextFactory().newJAXBContext();
+        }
 
-    	Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-    	Object result = unmarshaller.unmarshal(is);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        Object result = unmarshaller.unmarshal(is);
 
-    	if (result == null) {
-    		throw new IOException("Cannot unmarshal to rests using JAXB from input stream: " + is);
-    	}
+        if (result == null) {
+            throw new IOException("Cannot unmarshal to rests using JAXB from input stream: " + is);
+        }
 
-    	// can either be routes or a single route
-    	RestsDefinition answer;
-    	if (result instanceof RestDefinition) {
-    		RestDefinition rest = (RestDefinition) result;
-    		answer = new RestsDefinition();
-    		answer.getRests().add(rest);
-    	} else if (result instanceof RestsDefinition) {
-    		answer = (RestsDefinition) result;
-    	} else {
-    		throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
-    	}
+        // can either be routes or a single route
+        RestsDefinition answer;
+        if (result instanceof RestDefinition) {
+            RestDefinition rest = (RestDefinition) result;
+            answer = new RestsDefinition();
+            answer.getRests().add(rest);
+        } else if (result instanceof RestsDefinition) {
+            answer = (RestsDefinition) result;
+        } else {
+            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
+        }
 
-    	return answer;
+        return answer;
     }
     
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {

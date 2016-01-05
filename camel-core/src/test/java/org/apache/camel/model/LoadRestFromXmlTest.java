@@ -29,7 +29,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 
 /**
- * @version 
+ * @version
  */
 public class LoadRestFromXmlTest extends ContextTestSupport {
 
@@ -40,10 +40,10 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         jndi.bind("dummy-rest-api", new DummyRestProcessorFactory());
         return jndi;
     }
-	
+
     public void testLoadRestFromXml() throws Exception {
         assertNotNull("Existing foo route should be there", context.getRoute("foo"));
-        
+
         assertEquals(2, context.getRoutes().size());
 
         // test that existing route works
@@ -56,11 +56,11 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         InputStream is = getClass().getResourceAsStream("barRest.xml");
         RestsDefinition rests = context.loadRestsDefinition(is);
         context.addRestDefinitions(rests.getRests());
-        
+
         for (final RestDefinition restDefinition : rests.getRests()) {
             List<RouteDefinition> routeDefinitions = restDefinition.asRouteDefinition(context);
             context.addRouteDefinitions(routeDefinitions);
-		}
+        }
 
         assertNotNull("Loaded rest route should be there", context.getRoute("route1"));
         assertEquals(3, context.getRoutes().size());
@@ -77,10 +77,10 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-            	restConfiguration().host("localhost").component("dummy-rest").apiContextPath("/api-docs");
-            	
+                restConfiguration().host("localhost").component("dummy-rest").apiContextPath("/api-docs");
+
                 from("direct:foo").routeId("foo")
-                    .to("mock:foo");
+                        .to("mock:foo");
             }
         };
     }

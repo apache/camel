@@ -56,11 +56,11 @@ public interface ModelCamelContext extends CamelContext {
 
     /**
      * Loads a collection of rest definitions from the given {@link java.io.InputStream}.
-	 *
-	 * @param is input stream with the rest(s) definition to add
-	 * @throws Exception if the rest definitions could not be loaded for whatever reason
-	 * @return the rest definitions
-	 */
+     *
+     * @param is input stream with the rest(s) definition to add
+     * @return the rest definitions
+     * @throws Exception if the rest definitions could not be loaded for whatever reason
+     */
     RestsDefinition loadRestsDefinition(InputStream is) throws Exception;
     
     /**

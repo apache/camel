@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import java.net.URL;
 import java.util.List;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -31,7 +30,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 
 /**
- * @version 
+ * @version
  */
 public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSupport {
 
@@ -44,7 +43,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
         jndi.bind("dummy-rest-api", new DummyRestProcessorFactory());
         return jndi;
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -65,7 +64,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
     }
 
     public void testAddRestDefinitionsFromXml() throws Exception {
-    	RestDefinition rest = loadRest("rest1.xml");
+        RestDefinition rest = loadRest("rest1.xml");
         assertNotNull(rest);
 
         assertEquals("foo", rest.getId());
@@ -75,13 +74,13 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
         assertEquals(1, context.getRestDefinitions().size());
 
         final List<RouteDefinition> routeDefinitions = rest.asRouteDefinition(context);
-        
+
         for (final RouteDefinition routeDefinition : routeDefinitions) {
-        	context.addRouteDefinition(routeDefinition);
-		}
+            context.addRouteDefinition(routeDefinition);
+        }
 
         assertEquals(2, context.getRoutes().size());
-        
+
         assertTrue("Route should be started", context.getRouteStatus("route1").isStarted());
 
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
@@ -98,5 +97,5 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
             }
         };
     }
-    
+
 }

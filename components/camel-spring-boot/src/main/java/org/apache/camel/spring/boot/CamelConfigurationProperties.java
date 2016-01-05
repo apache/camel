@@ -110,12 +110,12 @@ public class CamelConfigurationProperties {
         this.xmlRoutes = xmlRoutes;
     }
 
-	public String getXmlRests() {
-		return xmlRests;
-	}
+    public String getXmlRests() {
+        return xmlRests;
+    }
 
-	public void setXmlRests(String xmlRests) {
-		this.xmlRests = xmlRests;
-	}
-    
+    public void setXmlRests(String xmlRests) {
+        this.xmlRests = xmlRests;
+    }
+
 }
