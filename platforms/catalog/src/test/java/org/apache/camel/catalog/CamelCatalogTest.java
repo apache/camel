@@ -497,6 +497,10 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("dataformat:string:marshal?foo=bar", true);
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknown().contains("foo"));
+
+        // data format
+        result = catalog.validateEndpointProperties("dataformat:string:marshal?charset=utf-8", true);
+        assertTrue(result.isSuccess());
     }
 
     @Test

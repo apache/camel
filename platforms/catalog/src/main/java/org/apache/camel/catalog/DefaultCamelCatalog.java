@@ -766,6 +766,19 @@ public class DefaultCamelCatalog implements CamelCatalog {
             return result;
         }
 
+        // the dataformat component refers to a data format so lets add the properties for the selected
+        // data format to the list of rows
+        if ("dataformat".equals(scheme)) {
+            String dfName = properties.get("name");
+            if (dfName != null) {
+                String dfJson = dataFormatJSonSchema(dfName);
+                List<Map<String, String>> dfRows = JSonSchemaHelper.parseJsonSchema("properties", dfJson, true);
+                if (dfRows != null && !dfRows.isEmpty()) {
+                    rows.addAll(dfRows);
+                }
+            }
+        }
+
         // validate all the options
         for (Map.Entry<String, String> property : properties.entrySet()) {
             String value = property.getValue();
