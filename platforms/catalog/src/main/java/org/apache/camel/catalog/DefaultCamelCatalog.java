@@ -733,6 +733,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public EndpointValidationResult validateEndpointProperties(String uri) {
+        return validateEndpointProperties(uri, false);
+    }
+
+    @Override
+    public EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties) {
         EndpointValidationResult result = new EndpointValidationResult(uri);
 
         Map<String, String> properties;
@@ -751,7 +756,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
 
             rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-            lenientProperties = isComponentLenientProperties(rows);
+            // only enable lenient properties if we should not ignore
+            lenientProperties = !ignoreLenientProperties && isComponentLenientProperties(rows);
 
             rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
             properties = endpointProperties(uri);
