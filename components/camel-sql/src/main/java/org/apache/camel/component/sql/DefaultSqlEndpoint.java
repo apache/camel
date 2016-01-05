@@ -110,6 +110,9 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     @UriParam(label = "advanced", defaultValue = "#", description = "Specifies a character that will be replaced to ? in SQL query."
             + " Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change).")
     private String placeholder = "#";
+    @UriParam(label = "advanced", prefix = "template.", multiValue = true,
+            description = "Configures the Spring JdbcTemplate with the key/values from the Map")
+    private Map<String, Object> templateOptions;
 
     public DefaultSqlEndpoint() {
     }
@@ -413,6 +416,17 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
      */
     public void setPlaceholder(String placeholder) {
         this.placeholder = placeholder;
+    }
+
+    public Map<String, Object> getTemplateOptions() {
+        return templateOptions;
+    }
+
+    /**
+     * Configures the Spring JdbcTemplate with the key/values from the Map
+     */
+    public void setTemplateOptions(Map<String, Object> templateOptions) {
+        this.templateOptions = templateOptions;
     }
 
     @SuppressWarnings("unchecked")
