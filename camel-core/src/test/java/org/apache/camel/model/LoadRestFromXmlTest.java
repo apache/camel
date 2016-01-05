@@ -41,7 +41,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         return jndi;
     }
 	
-    public void testLoadRouteFromXml() throws Exception {
+    public void testLoadRestFromXml() throws Exception {
         assertNotNull("Existing foo route should be there", context.getRoute("foo"));
         
         assertEquals(2, context.getRoutes().size());
