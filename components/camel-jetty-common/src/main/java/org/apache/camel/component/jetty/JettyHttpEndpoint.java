@@ -42,7 +42,7 @@ import org.eclipse.jetty.server.Handler;
 public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
 
     private HttpClient client;
-    private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "consumer",
             description = "Specifies whether to enable the session manager on the server side of Jetty.")
     private boolean sessionSupport;
@@ -114,6 +114,13 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
             description = "Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true.")
     @Deprecated
     private String multipartFilterRef;
+    @UriParam(label = "security",
+            description = "To configure security using SSLContextParameters")
+    private SSLContextParameters sslContextParameters;
+    @UriParam(label = "security",
+            description = "To configure security using SSLContextParameters")
+    @Deprecated
+    private String sslContextParametersRef;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -347,6 +354,19 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Deprecated
+    public String getSslContextParametersRef() {
+        return sslContextParametersRef;
+    }
+
+    /**
+     * To configure security using SSLContextParameters
+     */
+    @Deprecated
+    public void setSslContextParametersRef(String sslContextParametersRef) {
+        this.sslContextParametersRef = sslContextParametersRef;
     }
 
     public Integer getHttpClientMinThreads() {
