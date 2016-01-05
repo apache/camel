@@ -65,12 +65,7 @@ public class HttpComponent extends HttpCommonComponent {
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, Set<AuthMethod> authMethods) {
         // prefer to use endpoint configured over component configured
-        // TODO cmueller: remove the "httpClientConfigurerRef" look up in Camel 3.0
-        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
-        if (configurer == null) {
-            // try without ref
-            configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
-        }
+        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
         if (configurer == null) {
             // fallback to component configured
             configurer = getHttpClientConfigurer();
@@ -200,12 +195,7 @@ public class HttpComponent extends HttpCommonComponent {
         }
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         // must extract well known parameters before we create the endpoint
-        // TODO cmueller: remove the "httpBindingRef" look up in Camel 3.0
-        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
-        if (binding == null) {
-            // try without ref
-            binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
-        }
+        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
         String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);

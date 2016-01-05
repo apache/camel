@@ -28,8 +28,8 @@ import org.junit.Test;
  */
 public class HttpReferenceParameterTest extends CamelTestSupport {
 
-    private static final String TEST_URI_1 = "http://localhost:8080?httpBindingRef=#customBinding&httpClientConfigurerRef=#customConfigurer";
-    private static final String TEST_URI_2 = "http://localhost:8081?httpBindingRef=customBinding&httpClientConfigurerRef=customConfigurer";
+    private static final String TEST_URI_1 = "http://localhost:8080?httpBinding=#customBinding&httpClientConfigurer=#customConfigurer";
+    private static final String TEST_URI_2 = "http://localhost:8081?httpBinding=customBinding&httpClientConfigurer=customConfigurer";
     
     private HttpEndpoint endpoint1;
     private HttpEndpoint endpoint2;
@@ -47,7 +47,7 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     }
     
     @Test
-    public void testHttpBindingRef() {
+    public void testHttpBinding() {
         assertSame(testBinding, endpoint1.getBinding());
         assertSame(testBinding, endpoint2.getBinding());
     }
