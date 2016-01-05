@@ -19,6 +19,7 @@ package org.apache.camel.component.http4;
 import java.io.Closeable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
@@ -49,12 +50,17 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
-    // Note: all options must be documented with description in annotations so extended components can access the documentation
-
+    @UriParam(label = "advanced")
     private HttpContext httpContext;
+    @UriParam(label = "advanced")
     private HttpClientConfigurer httpClientConfigurer;
+    @UriParam(label = "advanced", prefix = "httpClient.", multiValue = true)
+    private Map<String, Object> httpClientOptions;
+    @UriParam(label = "advanced")
     private HttpClientConnectionManager clientConnectionManager;
+    @UriParam(label = "advanced")
     private HttpClientBuilder clientBuilder;
+    @UriParam(label = "advanced")
     private HttpClient httpClient;
 
     @UriParam(label = "producer")
@@ -218,6 +224,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.httpClientConfigurer = httpClientConfigurer;
     }
 
+    /**
+     * To use a custom HttpContext instance
+     */
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
     }
@@ -268,6 +277,17 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
         this.authenticationPreemptive = authenticationPreemptive;
+    }
+
+    public Map<String, Object> getHttpClientOptions() {
+        return httpClientOptions;
+    }
+
+    /**
+     * To configure the HttpClient using the key/values from the Map.
+     */
+    public void setHttpClientOptions(Map<String, Object> httpClientOptions) {
+        this.httpClientOptions = httpClientOptions;
     }
 
 }
