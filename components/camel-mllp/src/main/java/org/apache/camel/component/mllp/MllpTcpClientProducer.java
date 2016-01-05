@@ -131,6 +131,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
             if (SEGMENT_DELIMITER == acknowledgementBytes[i]) {
                 final byte bM = 77;
                 final byte bS = 83;
+                final byte bC = 67;
                 final byte bA = 65;
                 final byte bE = 69;
                 final byte bR = 82;
@@ -142,25 +143,38 @@ public class MllpTcpClientProducer extends DefaultProducer {
                     if (bM == acknowledgementBytes[i + 1] && bS == acknowledgementBytes[i + 2] && bA == acknowledgementBytes[i + 3] && fieldDelim == acknowledgementBytes[i + 4]) {
                         // Found the beginning of the MSA - the next two bytes should be our acknowledgement code
                         msaStartIndex = i + 1;
-                        if (bA != acknowledgementBytes[i + 5]) {
+                        if (bA != acknowledgementBytes[i + 5]  &&  bC != acknowledgementBytes[i + 5]) {
                             exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
                         } else {
+                            String acknowledgemenTypeString;
                             switch (acknowledgementBytes[i + 6]) {
                             case bA:
                                 // We have an AA - make sure that's the end of the field
                                 if (fieldDelim != acknowledgementBytes[i + 7]) {
                                     exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
                                 }
-                                message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
+                                if (bA == acknowledgementBytes[i + 5]) {
+                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
+                                } else {
+                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CA");
+                                }
                                 break;
                             case bE:
                                 // We have an AE
                                 exchange.setException(new MllpApplicationErrorAcknowledgementException(new String(acknowledgementBytes)));
-                                message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AE");
+                                if (bA == acknowledgementBytes[i + 5]) {
+                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AE");
+                                } else {
+                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CE");
+                                }
                                 break;
                             case bR:
                                 exchange.setException(new MllpApplicationRejectAcknowledgementException(new String(acknowledgementBytes)));
-                                message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AR");
+                                if (bA == acknowledgementBytes[i + 5]) {
+                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AR");
+                                } else {
+                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CR");
+                                }
                                 break;
                             default:
                                 exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
