@@ -158,14 +158,15 @@ public class HttpComponent extends HttpCommonComponent {
         // http client can be configured from URI options
         HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         // allow the builder pattern
-        IntrospectionSupport.setProperties(clientBuilder, parameters, "httpClient.", true);
+        Map<String, Object> httpClientOptions = IntrospectionSupport.extractProperties(parameters, "httpClient.");
+        IntrospectionSupport.setProperties(clientBuilder, httpClientOptions);
         // set the Request configure this way and allow the builder pattern
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-        IntrospectionSupport.setProperties(requestConfigBuilder, parameters, "httpClient.", true);
+        IntrospectionSupport.setProperties(requestConfigBuilder, httpClientOptions);
         clientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
         
         // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateParameters(uri, parameters, "httpClient.");
+        validateParameters(uri, httpClientOptions, null);
         
         // TODO cmueller: remove the "httpBindingRef" look up in Camel 3.0
         HttpBinding httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
@@ -289,6 +290,7 @@ public class HttpComponent extends HttpCommonComponent {
         if (endpoint.getCookieStore() == null) {
             endpoint.setCookieStore(getCookieStore());
         }
+        endpoint.setHttpClientOptions(httpClientOptions);
         
         return endpoint;
     }
