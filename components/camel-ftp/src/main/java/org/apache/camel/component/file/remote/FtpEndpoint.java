@@ -39,7 +39,6 @@ import org.apache.commons.net.ftp.FTPFile;
 @UriEndpoint(scheme = "ftp", extendsScheme = "file", title = "FTP",
         syntax = "ftp:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
-    protected FTPClient ftpClient;
     protected int soTimeout;
     protected int dataTimeout;
 
@@ -51,6 +50,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     protected Map<String, Object> ftpClientConfigParameters;
     @UriParam(label = "advanced", prefix = "ftpClient.", multiValue = true)
     protected Map<String, Object> ftpClientParameters;
+    @UriParam(label = "advanced")
+    protected FTPClient ftpClient;
 
     public FtpEndpoint() {
     }
@@ -184,6 +185,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         return ftpClient;
     }
 
+    /**
+     * To use a custom instance of FTPClient
+     */
     public void setFtpClient(FTPClient ftpClient) {
         this.ftpClient = ftpClient;
     }
