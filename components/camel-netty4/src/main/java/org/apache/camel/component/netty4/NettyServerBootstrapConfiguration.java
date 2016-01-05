@@ -63,6 +63,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected ServerInitializerFactory serverInitializerFactory;
     @UriParam(label = "consumer,advanced")
     protected NettyServerBootstrapFactory nettyServerBootstrapFactory;
+    @UriParam(label = "advanced", prefix = "option.", multiValue = true)
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
     @UriParam(label = "security")
