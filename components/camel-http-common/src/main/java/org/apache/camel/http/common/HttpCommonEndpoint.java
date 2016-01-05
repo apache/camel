@@ -31,7 +31,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     // Note: all options must be documented with description in annotations so extended components can access the documentation
 
     HttpCommonComponent component;
-    UrlRewrite urlRewrite;
 
     @UriPath(label = "producer", description = "The url of the HTTP endpoint to call.") @Metadata(required = "true")
     URI httpUri;
@@ -99,6 +98,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriParam(label = "producer", defaultValue = "200-299",
             description = "The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
+    @UriParam(label = "producer,advanced",
+            description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
+                    + " See more details at http://camel.apache.org/urlrewrite.html")
+    private UrlRewrite urlRewrite;
 
     public HttpCommonEndpoint() {
     }
@@ -408,4 +411,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     public void setOkStatusCodeRange(String okStatusCodeRange) {
         this.okStatusCodeRange = okStatusCodeRange;
     }
+
+
 }
