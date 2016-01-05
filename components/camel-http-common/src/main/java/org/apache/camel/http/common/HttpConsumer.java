@@ -37,7 +37,7 @@ public class HttpConsumer extends DefaultConsumer implements SuspendableService 
     }
 
     public HttpBinding getBinding() {
-        return getEndpoint().getBinding();
+        return getEndpoint().getHttpBinding();
     }
 
     public String getPath() {

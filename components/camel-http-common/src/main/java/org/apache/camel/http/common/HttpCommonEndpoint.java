@@ -37,7 +37,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriParam(description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     @UriParam(description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
-    HttpBinding binding;
+    HttpBinding httpBinding;
     @UriParam(label = "producer", defaultValue = "true",
             description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
                     + " This allows you to get all responses regardless of the HTTP status code.")
@@ -138,25 +138,35 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     // Properties
     //-------------------------------------------------------------------------
 
+    @Deprecated
     public HttpBinding getBinding() {
-        if (binding == null) {
+        return httpBinding;
+    }
+
+    @Deprecated
+    public void setBinding(HttpBinding httpBinding) {
+        setHttpBinding(httpBinding);
+    }
+
+    public HttpBinding getHttpBinding() {
+        if (httpBinding == null) {
             // create a new binding and use the options from this endpoint
-            binding = new DefaultHttpBinding();
-            binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
-            binding.setTransferException(isTransferException());
+            httpBinding = new DefaultHttpBinding();
+            httpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            httpBinding.setTransferException(isTransferException());
             if (getComponent() != null) {
-                binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+                httpBinding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
             }
-            binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
+            httpBinding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
         }
-        return binding;
+        return httpBinding;
     }
 
     /**
      * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
      */
-    public void setBinding(HttpBinding binding) {
-        this.binding = binding;
+    public void setHttpBinding(HttpBinding httpBinding) {
+        this.httpBinding = httpBinding;
     }
 
     public String getPath() {
