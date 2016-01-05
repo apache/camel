@@ -52,11 +52,11 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
                         exchange.getOut().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
                     }
                 };
-                from("netty4-http://http://localhost:" + port2 + "/nettyTestRouteA?matchOnUriPrefix=true")
+                from("netty4-http:http://localhost:" + port2 + "/nettyTestRouteA?matchOnUriPrefix=true")
                         .log("Using NettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
-                        .to("netty4-http://http://localhost:" + port1 + "/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                        .to("netty4-http:http://localhost:" + port1 + "/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
-                from("netty4-http://http://localhost:" + port1 + "/nettyTestRouteB?matchOnUriPrefix=true")
+                from("netty4-http:http://localhost:" + port1 + "/nettyTestRouteB?matchOnUriPrefix=true")
                         .log("Using NettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .process(serviceProc);
             }
