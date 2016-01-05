@@ -37,8 +37,30 @@ public class MllpComponent extends UriEndpointComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new MllpEndpoint(uri, this);
+        MllpEndpoint endpoint = new MllpEndpoint(uri, this);
         setProperties(endpoint, parameters);
+
+        // mllp://hostname:port
+        String hostPort;
+        // look for options
+        int optionsStartIndex = uri.indexOf('?');
+        if (-1 == optionsStartIndex) {
+            // No options - just get the host/port stuff
+            hostPort = uri.substring(7);
+        } else {
+            hostPort = uri.substring(7, optionsStartIndex);
+        }
+
+        // Make sure it has a host - may just be a port
+        int colonIndex = hostPort.indexOf(':');
+        if (-1 != colonIndex) {
+            endpoint.setHostname(hostPort.substring(0, colonIndex));
+            endpoint.setPort(Integer.parseInt(hostPort.substring(colonIndex + 1)));
+        } else {
+            // No host specified - leave the default host and set the port
+            endpoint.setPort(Integer.parseInt(hostPort.substring(colonIndex + 1)));
+        }
+
         return endpoint;
     }
 

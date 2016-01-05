@@ -93,7 +93,7 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
                 from(source.getDefaultEndpoint())
                         .routeId("mllp-sender-test-route")
                         .log(LoggingLevel.INFO, "Sending Message: $simple{header[CamelHL7MessageControl]}")
-                        .toF("mllp://%s:%d?connectTimeout=%d&responseTimeout=%d",
+                        .toF("mllp://%s:%d?connectTimeout=%d&receiveTimeout=%d",
                                 "0.0.0.0", mllpServer.getListenPort(), connectTimeout, responseTimeout)
                         .to(acknowledged);
 

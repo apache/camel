@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Represents a MLLP endpoint.
- *
+ * <p/>
  * NOTE: MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI
  * into the log files.  Logging of PHI can be globally disabled by setting the org.apache.camel.mllp.logPHI system
  * property to false.
@@ -47,85 +47,54 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MllpEndpoint.class);
 
-    @UriPath(defaultValue = "0.0.0.0", description = "Hostname or IP for connection")
+    @UriPath(defaultValue = "0.0.0.0")
     String hostname = "0.0.0.0";
 
     @UriPath(description = "TCP Port for connection")
     int port = -1;
 
-    // TODO:  Move URI Params to a MllpConfiguration class
-    // TODO: Move the description documentation to javadoc in the setter method
-    @UriParam(defaultValue = "5", description = "TCP Server only - The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a "
-            + "connection indication arrives when the queue is full, the connection is refused.")
+    @UriParam(defaultValue = "5")
     int backlog = 5;
 
     @UriParam(defaultValue = "30000", description = "TCP Server only - timeout value while waiting for a TCP listener to start (milliseconds)")
     int bindTimeout = 30000;
 
-    @UriParam(defaultValue = "30000", description = "TCP Server only - timeout value while waiting for a TCP connection (milliseconds)")
-    int acceptTimeout = 30000;
+    @UriParam(defaultValue = "60000")
+    int acceptTimeout = 60000;
 
-    @UriParam(defaultValue = "30000", description = "TCP Client only - timeout value while establishing for a TCP connection (milliseconds)")
+    @UriParam(defaultValue = "30000")
     int connectTimeout = 30000;
 
-    @UriParam(defaultValue = "5000", description = "Timeout value (milliseconds) used when reading a message from an external")
-    int responseTimeout = 5000;
+    @UriParam(defaultValue = "10000")
+    int receiveTimeout = 10000;
 
-    @UriParam(defaultValue = "true", description = "Enable/disable the SO_KEEPALIVE socket option.")
+    @UriParam(defaultValue = "true")
     boolean keepAlive = true;
 
-    @UriParam(defaultValue = "true", description = "Enable/disable the TCP_NODELAY socket option.")
+    @UriParam(defaultValue = "true")
     boolean tcpNoDelay = true;
 
-    @UriParam(defaultValue = "false", description = "Enable/disable the SO_REUSEADDR socket option.")
+    @UriParam(defaultValue = "false")
     boolean reuseAddress;
 
-    @UriParam(description = "Sets the SO_RCVBUF option to the specified value")
+    @UriParam(defaultValue = "System Default")
     Integer receiveBufferSize;
 
-    @UriParam(description = "Sets the SO_SNDBUF option to the specified value")
+    @UriParam(defaultValue = "System Default")
     Integer sendBufferSize;
-
-    @UriParam(defaultValue = "0", description = "The amount of time a TCP connection can remain idle before it is closed")
-    int idleTimeout;
 
     @UriParam(description = "The TCP mode of the endpoint (client or server).  Defaults to client for Producers and server for Consumers")
     String tcpMode;
 
-    @UriParam(defaultValue = "true", description = "MLLP Consumers only - Automatically generate and send an MLLP Acknowledgement")
+    @UriParam(defaultValue = "true")
     boolean autoAck = true;
 
-    @UriParam(description = "Set the CamelCharsetName property on the exchange")
+    @UriParam(defaultValue = "System Default")
     String charsetName;
 
     public MllpEndpoint(String uri, MllpComponent component) {
         super(uri, component);
-
-        // TODO: this logic should be in component class
-        // TODO: all the options in the endpoint should be getter/setter so you can configure them as plain Java
-
-        // mllp://hostname:port
-        String hostPort;
-        // look for options
-        int optionsStartIndex = uri.indexOf('?');
-        if (-1 == optionsStartIndex) {
-            // No options - just get the host/port stuff
-            hostPort = uri.substring(7);
-        } else {
-            hostPort = uri.substring(7, optionsStartIndex);
-        }
-
-        // Make sure it has a host - may just be a port
-        int colonIndex = hostPort.indexOf(':');
-        if (-1 != colonIndex) {
-            hostname = hostPort.substring(0, colonIndex);
-            port = Integer.parseInt(hostPort.substring(colonIndex + 1));
-        } else {
-            // No host specified - leave the default host and set the port
-            port = Integer.parseInt(hostPort);
-        }
     }
-
 
     @Override
     public ExchangePattern getExchangePattern() {
@@ -177,6 +146,11 @@ public class MllpEndpoint extends DefaultEndpoint {
         return charsetName;
     }
 
+    /**
+     * Set the CamelCharsetName property on the exchange
+     *
+     * @param charsetName
+     */
     public void setCharsetName(String charsetName) {
         this.charsetName = charsetName;
     }
@@ -185,14 +159,28 @@ public class MllpEndpoint extends DefaultEndpoint {
         return hostname;
     }
 
+    /**
+     * Hostname or IP for connection for the TCP connection
+     *
+     * @param hostname Hostname or IP
+     */
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
     public int getPort() {
         return port;
     }
 
     /**
-     * The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection
-     * is refused.
+     * Port number for the TCP connection
+     *
+     * @param port TCP port
      */
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public int getBacklog() {
         return backlog;
     }
@@ -209,6 +197,13 @@ public class MllpEndpoint extends DefaultEndpoint {
         return acceptTimeout;
     }
 
+    /**
+     * Timeout value while waiting for a TCP connection
+     * <p/>
+     * TCP Server Only
+     *
+     * @param acceptTimeout timeout in milliseconds
+     */
     public void setAcceptTimeout(int acceptTimeout) {
         this.acceptTimeout = acceptTimeout;
     }
@@ -217,22 +212,39 @@ public class MllpEndpoint extends DefaultEndpoint {
         return connectTimeout;
     }
 
+    /**
+     * Timeout value for establishing for a TCP connection
+     * <p/>
+     * TCP Client only
+     *
+     * @param connectTimeout timeout in milliseconds
+     */
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
-    public int getResponseTimeout() {
-        return responseTimeout;
+    public int getReceiveTimeout() {
+        return receiveTimeout;
     }
 
-    public void setResponseTimeout(int responseTimeout) {
-        this.responseTimeout = responseTimeout;
+    /**
+     * The SO_TIMEOUT value used when waiting for the start of an MLLP frame
+     *
+     * @param receiveTimeout timeout in milliseconds
+     */
+    public void setReceiveTimeout(int receiveTimeout) {
+        this.receiveTimeout = receiveTimeout;
     }
 
     public boolean isKeepAlive() {
         return keepAlive;
     }
 
+    /**
+     * Enable/disable the SO_KEEPALIVE socket option.
+     *
+     * @param keepAlive enable SO_KEEPALIVE when true; otherwise disable SO_KEEPALIVE
+     */
     public void setKeepAlive(boolean keepAlive) {
         this.keepAlive = keepAlive;
     }
@@ -241,6 +253,11 @@ public class MllpEndpoint extends DefaultEndpoint {
         return tcpNoDelay;
     }
 
+    /**
+     * Enable/disable the TCP_NODELAY socket option.
+     *
+     * @param tcpNoDelay enable TCP_NODELAY when true; otherwise disable TCP_NODELAY
+     */
     public void setTcpNoDelay(boolean tcpNoDelay) {
         this.tcpNoDelay = tcpNoDelay;
     }
@@ -249,6 +266,11 @@ public class MllpEndpoint extends DefaultEndpoint {
         return reuseAddress;
     }
 
+    /**
+     * Enable/disable the SO_REUSEADDR socket option.
+     *
+     * @param reuseAddress enable SO_REUSEADDR when true; otherwise disable SO_REUSEADDR
+     */
     public void setReuseAddress(boolean reuseAddress) {
         this.reuseAddress = reuseAddress;
     }
@@ -257,7 +279,12 @@ public class MllpEndpoint extends DefaultEndpoint {
         return receiveBufferSize;
     }
 
-    public void setReceiveBufferSize(int receiveBufferSize) {
+    /**
+     * Sets the SO_RCVBUF option to the specified value
+     *
+     * @param receiveBufferSize the SO_RCVBUF option value.  If null, the system default is used
+     */
+    public void setReceiveBufferSize(Integer receiveBufferSize) {
         this.receiveBufferSize = receiveBufferSize;
     }
 
@@ -265,7 +292,12 @@ public class MllpEndpoint extends DefaultEndpoint {
         return sendBufferSize;
     }
 
-    public void setSendBufferSize(int sendBufferSize) {
+    /**
+     * Sets the SO_SNDBUF option to the specified value
+     *
+     * @param sendBufferSize the SO_SNDBUF option value.  If null, the system default is used
+     */
+    public void setSendBufferSize(Integer sendBufferSize) {
         this.sendBufferSize = sendBufferSize;
     }
 
@@ -273,6 +305,13 @@ public class MllpEndpoint extends DefaultEndpoint {
         return autoAck;
     }
 
+    /**
+     * Enable/Disable the automatic generation of a MLLP Acknowledgement
+     *
+     * MLLP Consumers only
+     *
+     * @param autoAck enabled if true, otherwise disabled
+     */
     public void setAutoAck(boolean autoAck) {
         this.autoAck = autoAck;
     }

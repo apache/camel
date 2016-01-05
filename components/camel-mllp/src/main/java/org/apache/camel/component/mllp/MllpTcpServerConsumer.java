@@ -38,7 +38,27 @@ import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerator;
 import org.apache.camel.util.IOHelper;
 
-import static org.apache.camel.component.mllp.MllpConstants.*;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_CHARSET;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_EVENT_TYPE;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_LOCAL_ADDRESS;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_MESSAGE_CONTROL;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_MESSAGE_TYPE;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_PROCESSING_ID;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_RECEIVING_APPLICATION;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_RECEIVING_FACILITY;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_REMOTE_ADDRESS;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_SECURITY;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_SENDING_APPLICATION;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_SENDING_FACILITY;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_TIMESTAMP;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_TRIGGER_EVENT;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_VERSION_ID;
 import static org.apache.camel.component.mllp.MllpEndpoint.SEGMENT_DELIMITER;
 import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 
@@ -208,7 +228,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         socket.setSoTimeout(100);
                         try {
                             int tmpByte = inputStream.read();
-                            socket.setSoTimeout(endpoint.responseTimeout);
+                            socket.setSoTimeout(endpoint.receiveTimeout);
                             if (-1 == tmpByte) {
                                 log.debug("Socket.read() returned END_OF_STREAM - resetting connection");
                                 MllpUtil.resetConnection(socket);
@@ -272,7 +292,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             this.clientSocket.setSoLinger(false, -1);
 
             // Read Timeout
-            this.clientSocket.setSoTimeout(endpoint.responseTimeout);
+            this.clientSocket.setSoTimeout(endpoint.receiveTimeout);
 
         }
 
