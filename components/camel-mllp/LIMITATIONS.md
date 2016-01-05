@@ -12,10 +12,6 @@ maxConnections are not enforced yet - an unlimited number of connections are all
 
 Suspending a MLLP Consumer is not yet implemented
 
-RouteBuilders for standard usage -
-  The plan for this is to have a few RouteBuilders packaged with the component that 
-  can be used as-is for some of the standard use-cases ( i.e. MLLP to JMS, JMS to MLLP, etc).
-  
 JMX Instrumentation is not yet implemented
  - Manually reset connection
  - Suspend a consumer

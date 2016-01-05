@@ -8,9 +8,10 @@ http://www.hl7.org/documentcenter/public_temp_E7494E36-1C23-BA17-0C5E72EF77542E1
 The camel-mllp component is specifically designed to handle the nuances of the MLLP protocol and provide
 the functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
 
-The component is capable of handling both byte[] and String payloads which allows using other HL7 Libraries (i.e. HAPI)
-to parse the messages.  When String payloads are specified, the component will use the systems default Charset for 
-encoding/decoding, but this can be overridden. 
+The component uses byte[] payloads, and relies on the Camel type conversion system for converting other payload
+types to/from byte[].  This allows using other HL7 Libraries (i.e. HAPI) to parse the messages.  The component
+provides a 'charset' URI option that will cause the endpoint to set the CamelCharsetName property on the exchange
+which allows the proper conversion of byte[] to String payloads for Consumers.
 
 The component provides a simple URI for configuring MLLP endpoints:
 MLLP-Producers:
@@ -21,9 +22,9 @@ MLLP-Consumers:
 
 MLLP-Producers also interrogate the HL7 Acknowledgment received from the external system and if a negative acknowledgment
 is received, the producer sets an exception on the exchange indicating the type of negative acknowledgement that was
-received (i.e. a HL7 Application Reject Acknowledgement or a HL7 Application Error Acknowledgement).  This enables
-the use of Camel Redelivery Policies to configure redelivery attempts and routing erroneous messages to alternate
-endpoints for analysis.
+received (i.e. a HL7 Application Reject Acknowledgement, Application Error Acknowledgement, 
+Commit Reject Acknowledgement and Commit Error Acknowledgement).  This enables the use of Camel Redelivery 
+Policies to configure redelivery attempts and routing erroneous messages to alternate endpoints for analysis.
 
 MLLP-Consumers will, by default, automatically generate an acknowledgement.  A HL7 Application Accept Acknowledgment 
 will be generated for successfully processed messages, or a HL7 Application Error Acknowledgement for messages where an 
