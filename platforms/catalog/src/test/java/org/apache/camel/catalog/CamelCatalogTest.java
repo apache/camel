@@ -489,9 +489,14 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("stub:foo?me=123&you=456");
         assertTrue(result.isSuccess());
 
-        // lenient
+        // lenient on
         result = catalog.validateEndpointProperties("dataformat:string:marshal?foo=bar");
         assertTrue(result.isSuccess());
+
+        // lenient off
+        result = catalog.validateEndpointProperties("dataformat:string:marshal?foo=bar", true);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("foo"));
     }
 
     @Test
