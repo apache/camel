@@ -77,7 +77,8 @@ public class SqlComponent extends UriEndpointComponent {
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
-        IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
+        Map<String, Object> templateOptions = IntrospectionSupport.extractProperties(parameters, "template.");
+        IntrospectionSupport.setProperties(jdbcTemplate, templateOptions);
 
         String query = remaining.replaceAll(parameterPlaceholderSubstitute, "?");
 
@@ -110,6 +111,7 @@ public class SqlComponent extends UriEndpointComponent {
         endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
         endpoint.setDataSource(ds);
         endpoint.setDataSourceRef(dataSourceRef);
+        endpoint.setTemplateOptions(templateOptions);
         return endpoint;
     }
 
