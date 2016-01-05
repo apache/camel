@@ -738,11 +738,12 @@ public class DefaultCamelCatalog implements CamelCatalog {
         Map<String, String> properties;
         List<Map<String, String>> rows;
         boolean lenientProperties;
+        String scheme;
 
         try {
             // parse the uri
             URI u = normalizeUri(uri);
-            String scheme = u.getScheme();
+            scheme = u.getScheme();
             String json = componentJSonSchema(scheme);
             if (json == null) {
                 result.addUnknownComponent(scheme);
@@ -785,9 +786,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
             if (row == null) {
                 // unknown option
 
-                // only add as error if the component is not lenient properties
+                // only add as error if the component is not lenient properties, or not stub component
                 // as if we are lenient then the option is a dynamic extra option which we cannot validate
-                if (!lenientProperties) {
+                if (!lenientProperties && !"stub".equals(scheme)) {
                     result.addUnknown(name);
                     if (suggestionStrategy != null) {
                         String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
