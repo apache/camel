@@ -37,6 +37,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
@@ -53,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
  */
 @UriEndpoint(scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueName", consumerClass = SqsConsumer.class, label = "cloud,messaging")
-public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
+public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport {
     
     private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
 
@@ -74,6 +75,11 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
+    }
+
+    @Override
+    public boolean isMultipleConsumersSupported() {
+        return true;
     }
 
     /**
