@@ -208,7 +208,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
                 socket.setSoLinger(false, -1);
 
                 // Read Timeout
-                socket.setSoTimeout(endpoint.responseTimeout);
+                socket.setSoTimeout(endpoint.receiveTimeout);
             } catch (SocketException e) {
                 return e;
             }

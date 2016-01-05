@@ -69,7 +69,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
                         .toF("log:%s?level=INFO&showAll=true", routeId)
                         .log(LoggingLevel.INFO, routeId, "Test route complete");
 
-                fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&responseTimeout=%d",
+                fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
                         .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Test route received message")
