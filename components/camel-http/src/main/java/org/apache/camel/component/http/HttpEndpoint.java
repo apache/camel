@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -47,6 +48,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
     private HttpClientParams clientParams;
+
+    @UriParam(label = "advanced")
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager;
 
