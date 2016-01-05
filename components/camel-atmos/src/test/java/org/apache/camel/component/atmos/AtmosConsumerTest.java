@@ -32,7 +32,7 @@ public class AtmosConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("atmos:foo/" + get + "?remotePath=/path").to("mock:test");
+                from("atmos:foo/get?remotePath=/path").to("mock:test");
             }
         };
     }
@@ -40,7 +40,7 @@ public class AtmosConsumerTest extends CamelTestSupport {
     @Test
     public void shouldCreateGetConsumer() throws Exception {
         // Given
-        AtmosEndpoint atmosEndpoint = context.getEndpoint("atmos:foo/" + get + "?remotePath=/path", AtmosEndpoint.class);
+        AtmosEndpoint atmosEndpoint = context.getEndpoint("atmos:foo/get?remotePath=/path", AtmosEndpoint.class);
 
         // When
         Consumer consumer = atmosEndpoint.createConsumer(null);
