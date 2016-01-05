@@ -52,7 +52,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = "false", defaultValue = "delim")
     private FlatpackType type;
     @UriPath @Metadata(required = "true")
     private String resourceUri;
