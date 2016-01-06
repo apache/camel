@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * Used to sign and verify exchanges using the XML signature specification.
  */
-@UriEndpoint(scheme = "xmlsecurity", title = "XML Security", syntax = "xmlsecurity:command/name", producerOnly = true, label = "security,transformation")
+@UriEndpoint(scheme = "xmlsecurity", title = "XML Security", syntax = "xmlsecurity:command:name", producerOnly = true, label = "security,transformation")
 public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -142,7 +142,6 @@ public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
 
     public void setSchemaResourceUri(String schemaResourceUri) {
         getConfiguration().setSchemaResourceUri(schemaResourceUri);
-        
     }
     
     public String getOutputXmlEncoding() {

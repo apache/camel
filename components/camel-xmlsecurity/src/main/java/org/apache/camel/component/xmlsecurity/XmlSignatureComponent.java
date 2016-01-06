@@ -55,7 +55,7 @@ public class XmlSignatureComponent extends UriEndpointComponent {
             throw new MalformedURLException(
                 String.format(
                     "An invalid xmlsecurity uri was provided '%s'."
-                    + " Check the uri matches the format xmlsecurity:sign://<name> or xmlsecurity:verify://<name>",
+                    + " Check the uri matches the format xmlsecurity:sign://<name> or xmlsecurity:verify:<name>",
                     uri
                 )
             );

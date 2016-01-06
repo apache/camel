@@ -113,27 +113,27 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
             public void configure() throws Exception {
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
                 from("direct:enveloped")
-                        .to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties&parentLocalName=root&parentNamespace=http://test/test")
+                        .to("xmlsecurity:sign:xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties&parentLocalName=root&parentNamespace=http://test/test")
                         .to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
-                from("direct:enveloping").to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties")
+                from("direct:enveloping").to("xmlsecurity:sign:xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties")
                         .to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
                 from("direct:emptySignatureId").to(
-                        "xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties&signatureId=").to(
+                        "xmlsecurity:sign:xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties&signatureId=").to(
                         "mock:result");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 onException(Exception.class).handled(false).to("mock:exception");
                 from("direct:detached").to(
-                        "xmlsecurity:sign://detached?keyAccessor=#keyAccessorDefault&xpathsToIdAttributes=#xpathsToIdAttributes&"//
+                        "xmlsecurity:sign:detached?keyAccessor=#keyAccessorDefault&xpathsToIdAttributes=#xpathsToIdAttributes&"//
                                 + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&properties=#xmlSignatureProperties")
                         .to("mock:result");
             }
@@ -723,7 +723,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
     private XmlSignerEndpoint getSignerEndpoint() {
         return (XmlSignerEndpoint) context().getEndpoint(
-                "xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties");
+                "xmlsecurity:sign:xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties");
     }
 
     private String getPathToSignatureProperties() {
