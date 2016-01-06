@@ -352,6 +352,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return new RestOperationResponseMsgDefinition(verb);
     }
 
+    public RestDefinition responseMessages(List<RestOperationResponseMsgDefinition> msgs) {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.getResponseMsgs().addAll(msgs);
+        return this;
+    }
+
     public RestDefinition produces(String mediaType) {
         if (getVerbs().isEmpty()) {
             this.produces = mediaType;
