@@ -62,9 +62,9 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
     @UriParam(label = "producer", defaultValue = "" + DEFAULT_CONNECT_TIMEOUT)
     private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
-    @UriParam(defaultValue = "GET")
+    @UriParam(defaultValue = "GET", enums = "ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE")
     private Method restletMethod = Method.GET;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", javaType = "java.lang.String")
     private Method[] restletMethods;
     @UriParam(label = "consumer")
     private List<String> restletUriPatterns;
@@ -245,6 +245,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     /**
      * Specify one or more methods separated by commas (e.g. restletMethods=post,put) to be serviced by a restlet consumer endpoint.
      * If both restletMethod and restletMethods options are specified, the restletMethod setting is ignored.
+     * The possible methods are: ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE
      */
     public void setRestletMethods(Method[] restletMethods) {
         this.restletMethods = restletMethods;
