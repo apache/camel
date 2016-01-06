@@ -42,6 +42,8 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
     @UriParam
     private String encoding;
     @UriParam
+    private int templateUpdateDelay;
+    @UriParam
     private Configuration configuration;
 
     public FreemarkerEndpoint() {
@@ -75,6 +77,17 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
 
     public String getEncoding() {
         return encoding;
+    }
+
+    public int getTemplateUpdateDelay() {
+        return templateUpdateDelay;
+    }
+
+    /**
+     * Number of seconds the loaded template resource will remain in the cache.
+     */
+    public void setTemplateUpdateDelay(int templateUpdateDelay) {
+        this.templateUpdateDelay = templateUpdateDelay;
     }
 
     public Configuration getConfiguration() {
