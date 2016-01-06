@@ -940,13 +940,34 @@ public class DefaultCamelCatalog implements CamelCatalog {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
         }
 
+        Map<String, String> userInfoOptions = new LinkedHashMap<String, String>();
+
+        // do we have user info in authority?
+        boolean userInfo = false;
+        String username = null;
+        String password = null;
+        if (u.getUserInfo() != null) {
+            userInfo = true;
+            String[] parts = u.getUserInfo().split(":");
+            if (parts.length == 2) {
+                username = parts[0];
+                password = parts[1];
+            } else {
+                // only username
+                username = u.getUserInfo();
+            }
+        }
+
         // grab the syntax
         String syntax = null;
+        String alternativeSyntax = null;
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
         for (Map<String, String> row : rows) {
             if (row.containsKey("syntax")) {
                 syntax = row.get("syntax");
-                break;
+            }
+            if (row.containsKey("alternativeSyntax")) {
+                alternativeSyntax = row.get("alternativeSyntax");
             }
         }
         if (syntax == null) {
@@ -955,10 +976,34 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         // clip the scheme from the syntax
         syntax = after(syntax, ":");
+        if (alternativeSyntax != null) {
+            alternativeSyntax = after(alternativeSyntax, ":");
+        }
 
         // clip the scheme from the uri
         uri = after(uri, ":");
         String uriPath = stripQuery(uri);
+
+        // do the component support userinfo?
+        if (alternativeSyntax != null && alternativeSyntax.contains("@")) {
+            int idx = alternativeSyntax.indexOf("@");
+            String fields = alternativeSyntax.substring(0, idx);
+            String[] names = fields.split(":");
+            if (userInfo && names.length == 2) {
+                userInfoOptions.put(names[0], username);
+                if (password != null) {
+                    // password is optional
+                    userInfoOptions.put(names[1], password);
+                }
+            }
+        }
+        // strip user info from uri path
+        if (userInfo) {
+            int idx = uriPath.indexOf('@');
+            if (idx > -1) {
+                uriPath = uriPath.substring(idx + 1);
+            }
+        }
 
         // strip double slash in the start
         if (uriPath != null && uriPath.startsWith("//")) {
@@ -1015,6 +1060,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         // now parse the uri to know which part isw what
         Map<String, String> options = new LinkedHashMap<String, String>();
+
+        // include the username and password from the userinfo section
+        if (!userInfoOptions.isEmpty()) {
+            options.putAll(userInfoOptions);
+        }
 
         // word contains the syntax path elements
         Iterator<String> it = word2.iterator();

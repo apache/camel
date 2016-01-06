@@ -37,7 +37,8 @@ import org.apache.commons.net.ftp.FTPFile;
  * The ftp component is used for uploading or downloading files from FTP servers.
  */
 @UriEndpoint(scheme = "ftp", extendsScheme = "file", title = "FTP",
-        syntax = "ftp:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
+        syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName",
+        consumerClass = FtpConsumer.class, label = "file")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
     protected int soTimeout;
     protected int dataTimeout;

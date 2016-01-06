@@ -392,6 +392,25 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testEndpointPropertiesSshWithUserInfo() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("ssh:localhost:8101?username=scott&password=tiger");
+        assertNotNull(map);
+        assertEquals(4, map.size());
+        assertEquals("8101", map.get("port"));
+        assertEquals("localhost", map.get("host"));
+        assertEquals("scott", map.get("username"));
+        assertEquals("tiger", map.get("password"));
+
+        map = catalog.endpointProperties("ssh://scott:tiger@localhost:8101");
+        assertNotNull(map);
+        assertEquals(4, map.size());
+        assertEquals("8101", map.get("port"));
+        assertEquals("localhost", map.get("host"));
+        assertEquals("scott", map.get("username"));
+        assertEquals("tiger", map.get("password"));
+    }
+
+    @Test
     public void validateProperties() throws Exception {
         // valid
         EndpointValidationResult result = catalog.validateEndpointProperties("log:mylog");
@@ -504,6 +523,14 @@ public class CamelCatalogTest {
 
         // 2 slash after component name
         result = catalog.validateEndpointProperties("atmos://put?remotePath=/dummy.txt");
+        assertTrue(result.isSuccess());
+
+        // userinfo in authority with username and password
+        result = catalog.validateEndpointProperties("ssh://karaf:karaf@localhost:8101");
+        assertTrue(result.isSuccess());
+
+        // userinfo in authority without password
+        result = catalog.validateEndpointProperties("ssh://scott@localhost:8101?certResource=classpath:test_rsa&useFixedDelay=true&delay=5000&pollCommand=features:list%0A");
         assertTrue(result.isSuccess());
     }
 

@@ -74,6 +74,16 @@ public @interface UriEndpoint {
     String syntax();
 
     /**
+     * If the endpoint supports specifying username and/or password in the UserInfo part of the URI, then the
+     * alternative syntax can represent this such as:
+     * <ul>
+     *     <li>ftp:userName:password@host:port/directoryName</li>
+     *     <li>ssh:username:password@host:port</li>
+     * </ul>
+     */
+    String alternativeSyntax() default "";
+
+    /**
      * Represents the consumer class which is injected and created by consumers
      */
     Class<?> consumerClass() default Object.class;
