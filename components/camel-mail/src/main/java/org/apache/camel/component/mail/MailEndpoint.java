@@ -32,7 +32,9 @@ import org.apache.camel.spi.UriParam;
 /**
  * To send or receive emails using imap/pop3 or stmp protocols.
  */
-@UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS", syntax = "imap:host:port", consumerClass = MailConsumer.class, label = "mail")
+@UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
+        syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
+        consumerClass = MailConsumer.class, label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {
     @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer", description = "Milliseconds before the next poll.")
     private long delay = MailConsumer.DEFAULT_CONSUMER_DELAY;

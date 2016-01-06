@@ -34,7 +34,8 @@ import org.slf4j.LoggerFactory;
 /**
  * For IRC chat communication.
  */
-@UriEndpoint(scheme = "irc", title = "IRC", syntax = "irc:hostname:port", consumerClass = IrcConsumer.class, label = "chat")
+@UriEndpoint(scheme = "irc", title = "IRC", syntax = "irc:hostname:port", alternativeSyntax = "irc:username:password@hostname:port",
+        consumerClass = IrcConsumer.class, label = "chat")
 public class IrcEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
 
