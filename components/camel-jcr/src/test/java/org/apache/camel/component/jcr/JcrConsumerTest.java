@@ -39,9 +39,6 @@ public class JcrConsumerTest extends JcrRouteTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(JcrConsumerTest.class);
 
     private String absPath = "/home/test";
-    private int eventTypes = Event.NODE_ADDED;
-    private boolean deep = true;
-    private boolean noLocal;
 
     @Test
     public void testJcrConsumer() throws Exception {
@@ -104,12 +101,8 @@ public class JcrConsumerTest extends JcrRouteTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String uri = "jcr://user:pass@repository";
-                uri += absPath;
-                uri += "?eventTypes=" + eventTypes;
-                uri += "&deep=" + deep;
-                uri += "&noLocal=" + noLocal;
-                from(uri).to("direct:a");
+                from("jcr://user:pass@repository/home/test?eventTypes=1&deep=true&noLocal=false")
+                        .to("direct:a");
             }
         };
     }
