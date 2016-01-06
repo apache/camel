@@ -7,8 +7,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-
-import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @UriEndpoint(scheme = "sql-stored", title = "SQL stored", syntax = "sql-stored:template", label = "database,sql")
 public class SqlStoredEndpoint extends DefaultPollingEndpoint {
@@ -19,19 +18,19 @@ public class SqlStoredEndpoint extends DefaultPollingEndpoint {
 
     private final TemplateStoredProcedureFactory templateStoredProcedureFactory;
 
-    private final DataSource dataSource;
+    private final JdbcTemplate jdbcTemplate;
 
 
-    public SqlStoredEndpoint(TemplateStoredProcedureFactory templateStoredProcedureFactory, DataSource dataSource,
+    public SqlStoredEndpoint(JdbcTemplate jdbcTemplate,
                              String template) {
-        this.templateStoredProcedureFactory = templateStoredProcedureFactory;
-        this.dataSource = dataSource;
+        this.templateStoredProcedureFactory = new TemplateStoredProcedureFactory(jdbcTemplate);
+        this.jdbcTemplate = jdbcTemplate;
         this.template = template;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new SqlStoredProducer(this, templateStoredProcedureFactory.createFromString(template, dataSource));
+        return new SqlStoredProducer(this, template, templateStoredProcedureFactory);
     }
 
     @Override

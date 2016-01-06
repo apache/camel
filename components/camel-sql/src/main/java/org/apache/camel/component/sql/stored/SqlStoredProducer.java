@@ -3,6 +3,7 @@ package org.apache.camel.component.sql.stored;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.stored.template.TemplateStoredProcedure;
+import org.apache.camel.component.sql.stored.template.TemplateStoredProcedureFactory;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
@@ -10,16 +11,20 @@ import org.apache.camel.impl.DefaultProducer;
  */
 public class SqlStoredProducer extends DefaultProducer {
 
-    final TemplateStoredProcedure templateStoredProcedure;
+    final TemplateStoredProcedureFactory templateStoredProcedureFactory;
 
-    public SqlStoredProducer(Endpoint endpoint, TemplateStoredProcedure templateStoredProcedure) {
+    final TemplateStoredProcedure defaultTemplateStoredProcedure;
+
+    public SqlStoredProducer(Endpoint endpoint, String template, TemplateStoredProcedureFactory
+            templateStoredProcedureFactory) {
         super(endpoint);
-        this.templateStoredProcedure = templateStoredProcedure;
+        this.defaultTemplateStoredProcedure = templateStoredProcedureFactory.createFromString(template);
+        this.templateStoredProcedureFactory = templateStoredProcedureFactory;
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        templateStoredProcedure.execute(exchange);
+        this.defaultTemplateStoredProcedure.execute(exchange);
     }
 
 }

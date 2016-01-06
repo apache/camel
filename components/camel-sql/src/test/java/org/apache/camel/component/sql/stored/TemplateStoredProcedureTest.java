@@ -16,7 +16,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class TemplateStoredProcedureTest extends CamelTestSupport {
 
-    TemplateStoredProcedureFactory parser = new TemplateStoredProcedureFactory();
+    TemplateStoredProcedureFactory parser;
 
     private EmbeddedDatabase db;
     private JdbcTemplate jdbcTemplate;
@@ -28,13 +28,16 @@ public class TemplateStoredProcedureTest extends CamelTestSupport {
 
         jdbcTemplate = new JdbcTemplate(db);
 
+
+        parser = new TemplateStoredProcedureFactory(jdbcTemplate);
+
         super.setUp();
     }
 
 
     @Test
     public void shouldExecuteStoredProcedure() {
-        TemplateStoredProcedure sp = new TemplateStoredProcedure(db, parser.parseTemplate("ADDNUMBERS" +
+        TemplateStoredProcedure sp = new TemplateStoredProcedure(jdbcTemplate, parser.parseTemplate("ADDNUMBERS" +
                 "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsum)"));
 
         Exchange exchange = createExchangeWithBody(null);
@@ -52,7 +55,7 @@ public class TemplateStoredProcedureTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteNilacidProcedure() {
-        TemplateStoredProcedure sp = new TemplateStoredProcedure(db, parser.parseTemplate("NILADIC" +
+        TemplateStoredProcedure sp = new TemplateStoredProcedure(jdbcTemplate, parser.parseTemplate("NILADIC" +
                 "()"));
 
         Exchange exchange = createExchangeWithBody(null);
