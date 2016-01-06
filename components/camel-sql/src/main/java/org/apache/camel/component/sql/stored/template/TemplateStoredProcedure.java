@@ -4,6 +4,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.stored.template.ast.InputParameter;
 import org.apache.camel.component.sql.stored.template.ast.OutParameter;
 import org.apache.camel.component.sql.stored.template.ast.Template;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
@@ -17,9 +18,9 @@ public class TemplateStoredProcedure extends StoredProcedure {
 
     Template template;
 
-    public TemplateStoredProcedure(DataSource dataSource, Template template) {
+    public TemplateStoredProcedure(JdbcTemplate jdbcTemplate, Template template) {
         this.template = template;
-        setDataSource(dataSource);
+        setDataSource(jdbcTemplate.getDataSource());
 
         setSql(template.getProcedureName());
 
@@ -33,7 +34,9 @@ public class TemplateStoredProcedure extends StoredProcedure {
         }
 
         compile();
+
     }
+
 
 
     public void execute(Exchange exchange) {

@@ -5,6 +5,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.sql.stored.template.TemplateStoredProcedureFactory;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -19,9 +20,6 @@ public class SqlStoredComponent extends UriEndpointComponent {
     public SqlStoredComponent() {
         super(SqlStoredEndpoint.class);
     }
-
-
-    TemplateStoredProcedureFactory templateStoredProcedureFactory = new TemplateStoredProcedureFactory();
 
     public SqlStoredComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
         super(context, endpointClass);
@@ -49,7 +47,7 @@ public class SqlStoredComponent extends UriEndpointComponent {
         }
 
 
-        return new SqlStoredEndpoint(templateStoredProcedureFactory, target, remaining);
+        return new SqlStoredEndpoint(new JdbcTemplate(target), remaining);
     }
 
     public DataSource getDataSource() {

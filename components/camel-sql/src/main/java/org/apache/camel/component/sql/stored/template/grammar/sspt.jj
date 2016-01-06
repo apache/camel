@@ -2,6 +2,8 @@
 
 options {
     STATIC = false;
+    FORCE_LA_CHECK = true;
+    SANITY_CHECK = true;
 }
 
 

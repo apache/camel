@@ -17,7 +17,7 @@ import java.sql.Types;
 
 public class ParserTest extends CamelTestSupport {
 
-    TemplateStoredProcedureFactory parser = new TemplateStoredProcedureFactory();
+    TemplateStoredProcedureFactory parser = new TemplateStoredProcedureFactory(null);
 
 
     @Test
