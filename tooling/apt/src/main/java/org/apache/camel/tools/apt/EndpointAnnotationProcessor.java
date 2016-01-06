@@ -148,7 +148,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         writer.println("<b>Syntax:</b> " + syntax + "<br/>");
         writer.println("<b>Maven:</b> " + componentModel.getGroupId() + "/" + componentModel.getArtifactId() + "/" + componentModel.getVersionId() + "<br/>");
 
-        writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, classElement, "");
+        writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, classElement, "", uriEndpoint.excludeProperties());
 
         // This code is not my fault, it seems to honestly be the hacky way to find a class name in APT :)
         TypeMirror consumerType = null;
@@ -166,7 +166,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             TypeElement consumerElement = findTypeElement(roundEnv, consumerClassName);
             if (consumerElement != null) {
                 writer.println("<h2>" + scheme + " consumer" + "</h2>");
-                writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, consumerElement, consumerPrefix);
+                writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, consumerElement, consumerPrefix, uriEndpoint.excludeProperties());
                 found = true;
             }
         }
@@ -192,7 +192,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             findComponentClassProperties(writer, roundEnv, componentModel, componentOptions, componentClassElement, "");
         }
 
-        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "");
+        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "", uriEndpoint.excludeProperties());
 
         String json = createParameterJsonSchema(componentModel, componentOptions, endpointPaths, endpointOptions);
         writer.println(json);
@@ -362,7 +362,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     protected void writeHtmlDocumentationAndFieldInjections(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
-                                                            TypeElement classElement, String prefix) {
+                                                            TypeElement classElement, String prefix, String excludeProperties) {
         String classDoc = processingEnv.getElementUtils().getDocComment(classElement);
         if (!isNullOrEmpty(classDoc)) {
             // remove dodgy @version that we may have in class javadoc
@@ -373,7 +373,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
         Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
-        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, prefix);
+        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, prefix, excludeProperties);
 
         // sort the endpoint options in the standard order we prefer
         List<EndpointPath> paths = new ArrayList<EndpointPath>();
@@ -593,7 +593,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
     protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
                                        Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions,
-                                       TypeElement classElement, String prefix) {
+                                       TypeElement classElement, String prefix, String excludeProperties) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
@@ -610,6 +610,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         name = fieldName;
                     }
                     name = prefix + name;
+
+                    // should we exclude the name?
+                    if (excludeProperty(excludeProperties, name)) {
+                        continue;
+                    }
 
                     String defaultValue = path.defaultValue();
                     if (defaultValue == null && metadata != null) {
@@ -675,6 +680,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     }
                     name = prefix + name;
 
+                    // should we exclude the name?
+                    if (excludeProperty(excludeProperties, name)) {
+                        continue;
+                    }
+
                     String paramOptionalPrefix = param.optionalPrefix();
                     String paramPrefix = param.prefix();
                     boolean multiValue = param.multiValue();
@@ -703,7 +713,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         if (!isNullOrEmpty(extraPrefix)) {
                             nestedPrefix += extraPrefix;
                         }
-                        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix);
+                        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix, excludeProperties);
                     } else {
                         String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
                         if (isNullOrEmpty(docComment)) {
@@ -763,7 +773,17 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    protected Map<String, String> parseAsMap(String data) {
+    private static boolean excludeProperty(String excludeProperties, String name) {
+        String[] excludes = excludeProperties.split(",");
+        for (String exclude : excludes) {
+            if (name.equals(exclude)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected static Map<String, String> parseAsMap(String data) {
         Map<String, String> answer = new HashMap<String, String>();
         String[] lines = data.split("\n");
         for (String line : lines) {
