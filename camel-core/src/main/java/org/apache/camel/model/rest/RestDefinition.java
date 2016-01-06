@@ -318,6 +318,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition params(List<RestOperationParamDefinition> params) {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.getParams().addAll(params);
+        return this;
+    }
+
     public RestOperationParamDefinition param(VerbDefinition verb) {
         return new RestOperationParamDefinition(verb);
     }
