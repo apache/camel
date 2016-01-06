@@ -142,7 +142,13 @@ public class MailConfiguration implements Cloneable {
 
         String userInfo = uri.getUserInfo();
         if (userInfo != null) {
-            setUsername(userInfo);
+            String[] parts = uri.getUserInfo().split(":");
+            if (parts.length == 2) {
+                setUsername(parts[0]);
+                setPassword(parts[1]);
+            } else {
+                setUsername(userInfo);
+            }
         }
 
         int port = uri.getPort();
