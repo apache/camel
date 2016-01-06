@@ -17,6 +17,7 @@
 package org.apache.camel.component.jmx;
 
 import java.util.Hashtable;
+import java.util.Map;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotificationFilter;
 import javax.management.ObjectName;
@@ -212,7 +213,8 @@ public class JMXEndpoint extends DefaultEndpoint {
     /**
      * URI Property: properties for the object name. These values will be used if the objectName param is not set
      */
-    private Hashtable<String, String> objectProperties;
+    @UriParam(label = "advanced", prefix = "key.", multiValue = true)
+    private Map<String, String> objectProperties;
 
     /**
      * cached object name that was built from the objectName param or the hashtable
@@ -346,7 +348,7 @@ public class JMXEndpoint extends DefaultEndpoint {
         handback = aHandback;
     }
 
-    public Hashtable<String, String> getObjectProperties() {
+    public Map<String, String> getObjectProperties() {
         return objectProperties;
     }
 
@@ -360,11 +362,11 @@ public class JMXEndpoint extends DefaultEndpoint {
      * If there are extra properties that begin with "key." then the component will
      * create a Hashtable with these values after removing the "key." prefix.
      */
-    public void setObjectProperties(Hashtable<String, String> aObjectProperties) {
+    public void setObjectProperties(Map<String, String> objectProperties) {
         if (getObjectName() != null) {
             throw new IllegalArgumentException("Cannot set both objectName and objectProperties");
         }
-        objectProperties = aObjectProperties;
+        this.objectProperties = objectProperties;
     }
 
     protected ObjectName getJMXObjectName() throws MalformedObjectNameException {
@@ -521,7 +523,9 @@ public class JMXEndpoint extends DefaultEndpoint {
             StringBuilder sb = new StringBuilder(getObjectDomain()).append(':').append("name=").append(getObjectName());
             objectName = new ObjectName(sb.toString());
         } else {
-            objectName = new ObjectName(getObjectDomain(), getObjectProperties());
+            Hashtable<String, String> ht = new Hashtable<String, String>();
+            ht.putAll(getObjectProperties());
+            objectName = new ObjectName(getObjectDomain(), ht);
         }
         return objectName;
     }
