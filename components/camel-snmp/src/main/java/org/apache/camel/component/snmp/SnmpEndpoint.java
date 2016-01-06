@@ -44,8 +44,6 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnmpEndpoint.class);
 
-    private OIDList oids = new OIDList();
-
     private transient String address;
 
     @UriPath(description = "Hostname of the SNMP enabled device") @Metadata(required = "true")
@@ -82,6 +80,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private String snmpContextName;
     @UriParam
     private String snmpContextEngineId;
+    @UriParam(javaType = "java.lang.String")
+    private OIDList oids = new OIDList();
+
     /**
      * creates a snmp endpoint
      *
