@@ -135,6 +135,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, title, scheme, extendsScheme, label);
 
         String syntax = componentModel.getSyntax();
+        String alternativeSyntax = componentModel.getAlternativeSyntax();
         String description = componentModel.getDescription();
 
         writer.println("<html>");
@@ -143,9 +144,12 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         writer.println("</header>");
         writer.println("<body>");
         writer.println("<h1>" + title + "</h1>");
-        writer.println("<b>Description:</b> " + description + "<br/>");
         writer.println("<b>Scheme:</b> " + scheme + "<br/>");
         writer.println("<b>Syntax:</b> " + syntax + "<br/>");
+        if (alternativeSyntax != null) {
+            writer.println("<b>Alternative Syntax:</b> " + alternativeSyntax + "<br/>");
+        }
+        writer.println("<b>Description:</b> " + description + "<br/>");
         writer.println("<b>Maven:</b> " + componentModel.getGroupId() + "/" + componentModel.getArtifactId() + "/" + componentModel.getVersionId() + "<br/>");
 
         writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, classElement, "", uriEndpoint.excludeProperties());
@@ -209,6 +213,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             buffer.append("\n    \"extendsScheme\": \"").append(componentModel.getExtendsScheme()).append("\",");
         }
         buffer.append("\n    \"syntax\": \"").append(componentModel.getSyntax()).append("\",");
+        if (componentModel.getAlternativeSyntax() != null) {
+            buffer.append("\n    \"alternativeSyntax\": \"").append(componentModel.getAlternativeSyntax()).append("\",");
+        }
         buffer.append("\n    \"title\": \"").append(componentModel.getTitle()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
@@ -433,6 +440,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         // if the scheme is an alias then replace the scheme name from the syntax with the alias
         String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");
+        // alternative syntax is optional
+        if (!Strings.isNullOrEmpty(uriEndpoint.alternativeSyntax())) {
+            String alternativeSyntax = scheme + ":" + Strings.after(uriEndpoint.alternativeSyntax(), ":");
+            model.setAlternativeSyntax(alternativeSyntax);
+        }
 
         model.setExtendsScheme(extendsScheme);
         model.setSyntax(syntax);

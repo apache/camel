@@ -21,6 +21,7 @@ public final class ComponentModel {
     private String scheme;
     private String extendsScheme;
     private String syntax;
+    private String alternativeSyntax;
     private String javaType;
     private String title;
     private String description;
@@ -55,6 +56,14 @@ public final class ComponentModel {
 
     public void setSyntax(String syntax) {
         this.syntax = syntax;
+    }
+
+    public String getAlternativeSyntax() {
+        return alternativeSyntax;
+    }
+
+    public void setAlternativeSyntax(String alternativeSyntax) {
+        this.alternativeSyntax = alternativeSyntax;
     }
 
     public String getJavaType() {
