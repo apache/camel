@@ -50,19 +50,8 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
 
-    /**
-     * Statement to run after data has been processed in the route
-     */
     private String onConsume;
-
-    /**
-     * Process resultset individually or as a list
-     */
     private boolean useIterator = true;
-
-    /**
-     * Whether allow empty resultset to be routed to the next hop
-     */
     private boolean routeEmptyResultSet;
 
     public MyBatisConsumer(MyBatisEndpoint endpoint, Processor processor) {

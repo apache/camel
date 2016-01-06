@@ -31,58 +31,64 @@ import org.kie.api.task.model.Task;
 @UriParams
 public class JBPMConfiguration {
 
-    /**
-     * Specifies the operation to perform
-     */
-    @UriParam(label = "producer", defaultValue = "startProcess")
-    private String operation;
-    /**
-     * Specifies the value to use
-     */
-    @UriParam
-    private Object value;
-    private String processId;
-    private Map<String, Object> parameters;
-    /**
-     * Specifies the process instance to interact with
-     */
-    @UriParam @Metadata(required = "true")
-    private Long processInstanceId;
-    private String eventType;
-    private Object event;
-    private Integer maxNumber;
-    private String identifier;
-    private Long workItemId;
-    private Long taskId;
-    private String userId;
-    private String language;
-    private String targetUserId;
-    private Long attachmentId;
-    private Long contentId;
-    private Task task;
-    private List<OrganizationalEntity> entities;
-    private List<Status> statuses;
-
-    //connection
-    private String userName;
-    private String password;
-    /**
-     * Specifies the connection url to the jBPM system
-     */
     @UriPath @Metadata(required = "true")
     private URL connectionURL;
-    /**
-     * Specifies the deploymentId to use
-     */
+    @UriParam(label = "producer", defaultValue = "startProcess")
+    private String operation;
     @UriParam @Metadata(required = "true")
     private String deploymentId;
+    @UriParam
+    private Long processInstanceId;
+    @UriParam
+    private Object value;
+    @UriParam
+    private String processId;
+    @UriParam
+    private String eventType;
+    @UriParam
+    private Object event;
+    @UriParam
+    private Integer maxNumber;
+    @UriParam
+    private String identifier;
+    @UriParam
+    private Long workItemId;
+    @UriParam
+    private Long taskId;
+    @UriParam
+    private String userId;
+    @UriParam
+    private String language;
+    @UriParam
+    private String targetUserId;
+    @UriParam
+    private Long attachmentId;
+    @UriParam
+    private Long contentId;
+    @UriParam
+    private Task task;
+    @UriParam
+    private List<OrganizationalEntity> entities;
+    @UriParam
+    private List<Status> statuses;
+    @UriParam(label = "security")
+    private String userName;
+    @UriParam(label = "security")
+    private String password;
+    @UriParam
     private Integer timeout;
+    @UriParam(label = "advanced")
+    private Map<String, Object> parameters;
+    @UriParam(label = "advanced")
     private Class[] extraJaxbClasses;
 
     public String getOperation() {
         return operation;
     }
 
+    /**
+     * The operation to perform
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -91,6 +97,9 @@ public class JBPMConfiguration {
         return value;
     }
 
+    /**
+     * the value to assign to the global identifier
+     */
     public void setValue(Object value) {
         this.value = value;
     }
@@ -99,6 +108,9 @@ public class JBPMConfiguration {
         return processId;
     }
 
+    /**
+     * the id of the process that should be acted upon
+     */
     public void setProcessId(String processId) {
         this.processId = processId;
     }
@@ -107,6 +119,9 @@ public class JBPMConfiguration {
         return parameters;
     }
 
+    /**
+     * the variables that should be set for various operations
+     */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
@@ -115,6 +130,9 @@ public class JBPMConfiguration {
         return processInstanceId;
     }
 
+    /**
+     * the id of the process instance
+     */
     public void setProcessInstanceId(Long processInstanceId) {
         this.processInstanceId = processInstanceId;
     }
@@ -123,6 +141,9 @@ public class JBPMConfiguration {
         return eventType;
     }
 
+    /**
+     * the type of event to use when signalEvent operation is performed
+     */
     public void setEventType(String eventType) {
         this.eventType = eventType;
     }
@@ -131,6 +152,9 @@ public class JBPMConfiguration {
         return event;
     }
 
+    /**
+     * the data associated with this event when signalEvent operation is performed
+     */
     public void setEvent(Object event) {
         this.event = event;
     }
@@ -139,6 +163,9 @@ public class JBPMConfiguration {
         return maxNumber;
     }
 
+    /**
+     * the maximum number of rules that should be fired
+     */
     public void setMaxNumber(Integer maxNumber) {
         this.maxNumber = maxNumber;
     }
@@ -147,6 +174,9 @@ public class JBPMConfiguration {
         return identifier;
     }
 
+    /**
+     * identifier the global identifier
+     */
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
@@ -155,6 +185,9 @@ public class JBPMConfiguration {
         return workItemId;
     }
 
+    /**
+     * the id of the work item
+     */
     public void setWorkItemId(Long workItemId) {
         this.workItemId = workItemId;
     }
@@ -163,6 +196,9 @@ public class JBPMConfiguration {
         return taskId;
     }
 
+    /**
+     *the id of the task
+     */
     public void setTaskId(Long taskId) {
         this.taskId = taskId;
     }
@@ -171,6 +207,9 @@ public class JBPMConfiguration {
         return userId;
     }
 
+    /**
+     * userId to use with task operations
+     */
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -179,6 +218,9 @@ public class JBPMConfiguration {
         return task;
     }
 
+    /**
+     * The task instance to use with task operations
+     */
     public void setTask(Task task) {
         this.task = task;
     }
@@ -187,6 +229,9 @@ public class JBPMConfiguration {
         return language;
     }
 
+    /**
+     * The language to use when filtering user tasks
+     */
     public void setLanguage(String language) {
         this.language = language;
     }
@@ -195,6 +240,9 @@ public class JBPMConfiguration {
         return targetUserId;
     }
 
+    /**
+     * The targetUserId used when delegating a task
+     */
     public void setTargetUserId(String targetUserId) {
         this.targetUserId = targetUserId;
     }
@@ -203,6 +251,9 @@ public class JBPMConfiguration {
         return attachmentId;
     }
 
+    /**
+     * attachId to use when retrieving attachments
+     */
     public void setAttachmentId(Long attachmentId) {
         this.attachmentId = attachmentId;
     }
@@ -211,6 +262,9 @@ public class JBPMConfiguration {
         return contentId;
     }
 
+    /**
+     * contentId to use when retrieving attachments
+     */
     public void setContentId(Long contentId) {
         this.contentId = contentId;
     }
@@ -219,6 +273,9 @@ public class JBPMConfiguration {
         return entities;
     }
 
+    /**
+     * The potentialOwners when nominateTask operation is performed
+     */
     public void setEntities(List<OrganizationalEntity> entities) {
         this.entities = entities;
     }
@@ -227,6 +284,9 @@ public class JBPMConfiguration {
         return statuses;
     }
 
+    /**
+     * The list of status to use when filtering tasks
+     */
     public void setStatuses(List<Status> statuses) {
         this.statuses = statuses;
     }
@@ -235,6 +295,9 @@ public class JBPMConfiguration {
         return userName;
     }
 
+    /**
+     * Username for authentication
+     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -243,6 +306,9 @@ public class JBPMConfiguration {
         return password;
     }
 
+    /**
+     * Password for authentication
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -251,6 +317,9 @@ public class JBPMConfiguration {
         return connectionURL;
     }
 
+    /**
+     * The URL to the jBPM server.
+     */
     public void setConnectionURL(URL connectionURL) {
         this.connectionURL = connectionURL;
     }
@@ -259,6 +328,9 @@ public class JBPMConfiguration {
         return deploymentId;
     }
 
+    /**
+     * The id of the deployment
+     */
     public void setDeploymentId(String deploymentId) {
         this.deploymentId = deploymentId;
     }
@@ -267,6 +339,9 @@ public class JBPMConfiguration {
         return timeout;
     }
 
+    /**
+     * A timeout value
+     */
     public void setTimeout(Integer timeout) {
         this.timeout = timeout;
     }
@@ -275,6 +350,9 @@ public class JBPMConfiguration {
         return extraJaxbClasses;
     }
 
+    /**
+     * To load additional classes when working with XML
+     */
     public void setExtraJaxbClasses(Class[] extraJaxbClasses) {
         this.extraJaxbClasses = extraJaxbClasses;
     }
