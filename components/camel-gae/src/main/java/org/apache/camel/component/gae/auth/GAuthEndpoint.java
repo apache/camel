@@ -46,7 +46,7 @@ import org.apache.camel.spi.UriPath;
  * endpoint URIs are <code>gauth:authorize</code> and <code>gauth:upgrade</code>
  * , respectively.
  */
-@UriEndpoint(scheme = "gauth", title = "Google GAuth", syntax = "gauth:name", producerOnly = true, label = "cloud,paas")
+@UriEndpoint(scheme = "gauth", title = "Google GAuth", syntax = "gauth:name", producerOnly = true, label = "cloud,paas", excludeProperties = "httpUri")
 public class GAuthEndpoint  extends DefaultEndpoint {
 
     public static enum Name {

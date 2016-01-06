@@ -42,7 +42,7 @@ import org.apache.camel.spi.UriPath;
  * The gtask component is used for sending messages to GAE task queue service.
  */
 @UriEndpoint(scheme = "gtask", extendsScheme = "servlet", title = "Google Task",
-        syntax = "gtask:queueName", producerOnly = true, label = "cloud,paas")
+        syntax = "gtask:queueName", producerOnly = true, label = "cloud,paas", excludeProperties = "httpUri")
 public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSupport<GTaskEndpoint, TaskOptions, Void> {
 
     private OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding;

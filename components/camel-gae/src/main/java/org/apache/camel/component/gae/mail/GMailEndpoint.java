@@ -35,7 +35,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The gmail component is used for sending emails to GAE.
  */
-@UriEndpoint(scheme = "gmail", title = "Google mail", syntax = "gmail:sender", producerOnly = true, label = "cloud,mail,paas")
+@UriEndpoint(scheme = "gmail", title = "Google mail", syntax = "gmail:sender", producerOnly = true, label = "cloud,mail,paas", excludeProperties = "httpUri")
 public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSupport<GMailEndpoint, Message, Void> {
 
     private OutboundBinding<GMailEndpoint, Message, Void> outboundBinding;
