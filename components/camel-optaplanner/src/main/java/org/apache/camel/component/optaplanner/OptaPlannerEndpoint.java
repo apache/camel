@@ -32,7 +32,7 @@ import org.optaplanner.core.api.solver.SolverFactory;
 /**
  * OptaPlanner endpoint for Camel
  */
-@UriEndpoint(scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:resourceUri", label = "engine,planning")
+@UriEndpoint(scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", label = "engine,planning")
 public class OptaPlannerEndpoint extends DefaultEndpoint {
     private static final Map<String, Solver> SOLVERS = new HashMap<String, Solver>();
 
