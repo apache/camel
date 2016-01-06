@@ -779,18 +779,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
         }
 
-        // validate all the options
-        boolean first = true;
         for (Map.Entry<String, String> property : properties.entrySet()) {
             String value = property.getValue();
-            if (first) {
-                // skip any leading double slash in first property from uri as that is from the scheme part
-                if (value != null && value.startsWith("//")) {
-                    value = value.substring(2);
-                }
-            }
-            first = false;
-
             String originalName = property.getKey();
             String name = property.getKey();
             // the name may be using an optional prefix, so lets strip that because the options
@@ -969,6 +959,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // clip the scheme from the uri
         uri = after(uri, ":");
         String uriPath = stripQuery(uri);
+
+        // strip double slash in the start
+        if (uriPath != null && uriPath.startsWith("//")) {
+            uriPath = uriPath.substring(2);
+        }
 
         // parse the syntax and find the names of each option
         Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
