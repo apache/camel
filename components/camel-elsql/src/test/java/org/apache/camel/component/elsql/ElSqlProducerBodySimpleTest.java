@@ -80,7 +80,7 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:simple")
-                        .to("elsql:projectsByIdBody:elsql/projects.elsql?dataSource=dataSource")
+                        .to("elsql:projectsByIdBody:elsql/projects.elsql?dataSource=#dataSource")
                         .to("mock:result");
             }
         };

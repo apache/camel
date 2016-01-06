@@ -308,7 +308,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("elasticsearch://local");
+                from("direct:start").to("elasticsearch://local?operation=INDEX");
                 from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
                 from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
                 from("direct:multiget").to("elasticsearch://local?operation=MULTIGET&indexName=twitter&indexType=tweet");

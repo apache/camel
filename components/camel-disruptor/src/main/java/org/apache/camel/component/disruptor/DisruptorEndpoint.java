@@ -67,6 +67,8 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000;
+    @UriParam(defaultValue = "" + DisruptorComponent.DEFAULT_BUFFER_SIZE)
+    private int size;
     @UriParam(label = "producer")
     private boolean blockWhenFull;
     @UriParam(label = "consumer", defaultValue = "Blocking")
@@ -138,6 +140,22 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
      */
     public void setTimeout(final long timeout) {
         this.timeout = timeout;
+    }
+
+    @ManagedAttribute(description = "The maximum capacity of the Disruptors ringbuffer")
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * The maximum capacity of the Disruptors ringbuffer
+     * Will be effectively increased to the nearest power of two.
+     * Notice: Mind if you use this option, then its the first endpoint being created with the queue name,
+     * that determines the size. To make sure all endpoints use same size, then configure the size option
+     * on all of them, or the first endpoint being created.
+     */
+    public void setSize(int size) {
+        this.size = size;
     }
 
     @Override
