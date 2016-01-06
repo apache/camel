@@ -19,8 +19,6 @@ package org.apache.camel.component.jbpm;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import javax.naming.InitialContext;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -37,18 +35,6 @@ public class JBPMConfiguration {
     private URL connectionURL;
     @UriParam(label = "producer", defaultValue = "startProcess")
     private String operation;
-<<<<<<< HEAD
-    /**
-     * Specifies the key to use
-     */
-    @UriParam
-    private String key;
-    /**
-     * Specifies the value to use
-     */
-    @UriParam
-    private Objects value;
-=======
     @UriParam @Metadata(required = "true")
     private String deploymentId;
     @UriParam
@@ -56,17 +42,12 @@ public class JBPMConfiguration {
     @UriParam
     private Object value;
     @UriParam
->>>>>>> 38d72c9... Component docs
     private String processId;
     @UriParam
     private String eventType;
-<<<<<<< HEAD
-    private String event;
-=======
     @UriParam
     private Object event;
     @UriParam
->>>>>>> 38d72c9... Component docs
     private Integer maxNumber;
     @UriParam
     private String identifier;
@@ -112,26 +93,14 @@ public class JBPMConfiguration {
         this.operation = operation;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public Objects getValue() {
+    public Object getValue() {
         return value;
     }
 
-<<<<<<< HEAD
-    public void setValue(Objects value) {
-=======
     /**
      * the value to assign to the global identifier
      */
     public void setValue(Object value) {
->>>>>>> 38d72c9... Component docs
         this.value = value;
     }
 
@@ -179,18 +148,14 @@ public class JBPMConfiguration {
         this.eventType = eventType;
     }
 
-    public String getEvent() {
+    public Object getEvent() {
         return event;
     }
 
-<<<<<<< HEAD
-    public void setEvent(String event) {
-=======
     /**
      * the data associated with this event when signalEvent operation is performed
      */
     public void setEvent(Object event) {
->>>>>>> 38d72c9... Component docs
         this.event = event;
     }
 
