@@ -51,7 +51,7 @@ public class BoxConfiguration {
     @UriParam
     private IAuthSecureStorage authSecureStorage;
 
-    @UriParam @Metadata(required = "true")
+    @UriParam
     private String userName;
 
     @UriParam
