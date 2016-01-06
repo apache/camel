@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * The rss component is used for consuming RSS feeds.
  */
 @UriEndpoint(scheme = "rss", extendsScheme = "atom", title = "RSS",
-        syntax = "rss:feedUri", consumerOnly = true, consumerClass = RssEntryPollingConsumer.class, label = "rss")
+        syntax = "rss:feedUri", consumerOnly = true, consumerClass = RssEntryPollingConsumer.class, label = "rss", lenientProperties = true)
 public class RssEndpoint extends FeedEndpoint {
     protected static final Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);
 
