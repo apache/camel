@@ -244,7 +244,7 @@
         <route>
             <from uri="direct:validationFailedHandler" />
             <to
-                uri="xmlsecurity:verify:validationFailedHandler?keySelector=#selectorKeyValue&amp;validationFailedHandler=validationFailedHandlerIgnoreManifestFailures" />
+                uri="xmlsecurity:verify:validationFailedHandler?keySelector=#selectorKeyValue&amp;validationFailedHandler=#validationFailedHandlerIgnoreManifestFailures" />
             <to uri="mock:result" />
         </route>
         <!-- END SNIPPET: validationFailedHandler -->
