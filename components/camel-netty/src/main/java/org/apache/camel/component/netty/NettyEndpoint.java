@@ -44,6 +44,9 @@ import org.jboss.netty.util.Timer;
 public class NettyEndpoint extends DefaultEndpoint {
     @UriParam
     private NettyConfiguration configuration;
+    @UriParam(label = "advanced", javaType = "org.apache.camel.component.netty.NettyServerBootstrapConfiguration",
+            description = "To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.")
+    private Object bootstrapConfiguration; // to include in component docs as NettyServerBootstrapConfiguration is a @UriParams class
     private Timer timer;
 
     public NettyEndpoint(String endpointUri, NettyComponent component, NettyConfiguration configuration) {

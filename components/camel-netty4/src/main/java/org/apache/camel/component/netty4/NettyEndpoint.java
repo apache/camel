@@ -44,7 +44,10 @@ import org.apache.camel.util.ObjectHelper;
 public class NettyEndpoint extends DefaultEndpoint {
     @UriParam
     private NettyConfiguration configuration;
-    
+    @UriParam(label = "advanced", javaType = "org.apache.camel.component.netty4.NettyServerBootstrapConfiguration",
+            description = "To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.")
+    private Object bootstrapConfiguration; // to include in component docs as NettyServerBootstrapConfiguration is a @UriParams class
+
     public NettyEndpoint(String endpointUri, NettyComponent component, NettyConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
