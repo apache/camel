@@ -794,7 +794,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
             String prefix = getPropertyPrefix(rows, name);
             String kind = getPropertyKind(rows, name);
-            boolean placeholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
+            boolean namePlaceholder = name.startsWith("{{") && name.endsWith("}}");
+            boolean valuePlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
             boolean lookup = value.startsWith("#") && value.length() > 1;
             // we cannot evaluate multi values as strict as the others, as we don't know their expected types
             boolean mulitValue = prefix != null && originalName.startsWith(prefix) && isPropertyMultiValue(rows, name);
@@ -804,8 +805,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 // unknown option
 
                 // only add as error if the component is not lenient properties, or not stub component
+                // and the name is not a property placeholder for one or more values
                 // as if we are lenient then the option is a dynamic extra option which we cannot validate
-                if (!lenientProperties && !"stub".equals(scheme)) {
+                if (!namePlaceholder && !lenientProperties && !"stub".equals(scheme)) {
                     result.addUnknown(name);
                     if (suggestionStrategy != null) {
                         String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
@@ -830,7 +832,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 // is enum but the value is not within the enum range
                 // but we can only check if the value is not a placeholder
                 String enums = getPropertyEnum(rows, name);
-                if (!mulitValue && !placeholder && !lookup && enums != null) {
+                if (!mulitValue && !valuePlaceholder && !lookup && enums != null) {
                     String[] choices = enums.split(",");
                     boolean found = false;
                     for (String s : choices) {
@@ -854,7 +856,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
 
                 // is boolean
-                if (!mulitValue && !placeholder && !lookup && isPropertyBoolean(rows, name)) {
+                if (!mulitValue && !valuePlaceholder && !lookup && isPropertyBoolean(rows, name)) {
                     // value must be a boolean
                     boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
                     if (!bool) {
@@ -863,7 +865,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
 
                 // is integer
-                if (!mulitValue && !placeholder && !lookup && isPropertyInteger(rows, name)) {
+                if (!mulitValue && !valuePlaceholder && !lookup && isPropertyInteger(rows, name)) {
                     // value must be an integer
                     boolean valid = validateInteger(value);
                     if (!valid) {
@@ -872,7 +874,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 }
 
                 // is number
-                if (!mulitValue && !placeholder && !lookup && isPropertyNumber(rows, name)) {
+                if (!mulitValue && !valuePlaceholder && !lookup && isPropertyNumber(rows, name)) {
                     // value must be an number
                     boolean valid = false;
                     try {
