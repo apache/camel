@@ -745,6 +745,12 @@ public class DefaultCamelCatalog implements CamelCatalog {
         boolean lenientProperties;
         String scheme;
 
+        // skip uris that may start with a placeholder
+        if (uri.startsWith("{{")) {
+            result.addIncapable(uri);
+            return result;
+        }
+
         try {
             // parse the uri
             URI u = normalizeUri(uri);
