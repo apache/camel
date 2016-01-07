@@ -26,8 +26,8 @@
         <!-- START SNIPPET: basic -->
         <route>
             <from uri="direct:keypair"/>
-            <to uri="crypto:sign://basic?privateKey=#myPrivateKey" />
-            <to uri="crypto:verify://basic?publicKey=#myPublicKey" />
+            <to uri="crypto:sign:basic?privateKey=#myPrivateKey" />
+            <to uri="crypto:verify:basic?publicKey=#myPublicKey" />
             <to uri="mock:result"/>
         </route>
         <!-- END SNIPPET: basic -->
@@ -35,8 +35,8 @@
         <!-- START SNIPPET: algorithm -->
         <route>
             <from uri="direct:algorithm"/>
-            <to uri="crypto:sign://rsa?algorithm=MD5withRSA&amp;privateKey=#rsaPrivateKey" />
-            <to uri="crypto:verify://rsa?algorithm=MD5withRSA&amp;publicKey=#rsaPublicKey" />
+            <to uri="crypto:sign:rsa?algorithm=MD5withRSA&amp;privateKey=#rsaPrivateKey" />
+            <to uri="crypto:verify:rsa?algorithm=MD5withRSA&amp;publicKey=#rsaPublicKey" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: algorithm -->
@@ -44,8 +44,8 @@
         <!-- START SNIPPET: rsa-sha1 -->
         <route>
             <from uri="direct:rsa-sha1"/>
-            <to uri="crypto:sign://rsa?algorithm=SHA1withRSA&amp;privateKey=#rsaPrivateKey" />
-            <to uri="crypto:verify://rsa?algorithm=SHA1withRSA&amp;publicKey=#rsaPublicKey" />
+            <to uri="crypto:sign:rsa?algorithm=SHA1withRSA&amp;privateKey=#rsaPrivateKey" />
+            <to uri="crypto:verify:rsa?algorithm=SHA1withRSA&amp;publicKey=#rsaPublicKey" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: rsa-sha1 -->
@@ -53,8 +53,8 @@
         <!-- START SNIPPET: rsa-sha256 -->
         <route>
             <from uri="direct:rsa-sha256"/>
-            <to uri="crypto:sign://rsa?algorithm=SHA256withRSA&amp;privateKey=#rsaPrivateKey" />
-            <to uri="crypto:verify://rsa?algorithm=SHA256withRSA&amp;publicKey=#rsaPublicKey" />
+            <to uri="crypto:sign:rsa?algorithm=SHA256withRSA&amp;privateKey=#rsaPrivateKey" />
+            <to uri="crypto:verify:rsa?algorithm=SHA256withRSA&amp;publicKey=#rsaPublicKey" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: rsa-sha256 -->
@@ -62,8 +62,8 @@
         <!-- START SNIPPET: buffersize -->
         <route>
             <from uri="direct:buffersize" />
-            <to uri="crypto:sign://buffer?privateKey=#myPrivateKey&amp;buffersize=1024" />
-            <to uri="crypto:verify://buffer?publicKey=#myPublicKey&amp;buffersize=1024" />
+            <to uri="crypto:sign:buffer?privateKey=#myPrivateKey&amp;bufferSize=1024" />
+            <to uri="crypto:verify:buffer?publicKey=#myPublicKey&amp;bufferSize=1024" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: buffersize -->
@@ -71,8 +71,8 @@
         <!-- START SNIPPET: random -->
         <route>
             <from uri="direct:random" />
-            <to uri="crypto:sign://random?privateKey=#myPrivateKey&amp;secureRandom=#someRandom" />
-            <to uri="crypto:verify://random?publicKey=#myPublicKey" />
+            <to uri="crypto:sign:random?privateKey=#myPrivateKey&amp;secureRandom=#someRandom" />
+            <to uri="crypto:verify:random?publicKey=#myPublicKey" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: random -->
@@ -80,8 +80,8 @@
         <!-- START SNIPPET: provider -->
         <route>
             <from uri="direct:provider"/>
-            <to uri="crypto:sign://provider?privateKey=#myPrivateKey&amp;provider=SUN" />
-            <to uri="crypto:verify://provider?publicKey=#myPublicKey&amp;provider=SUN" />
+            <to uri="crypto:sign:provider?privateKey=#myPrivateKey&amp;provider=SUN" />
+            <to uri="crypto:verify:provider?publicKey=#myPublicKey&amp;provider=SUN" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: provider -->
@@ -89,8 +89,8 @@
         <!-- START SNIPPET: certificate -->
         <route>
             <from uri="direct:certificate"/>
-            <to uri="crypto:sign://withcert?privateKey=#myPrivateKey" />
-            <to uri="crypto:verify://withcert?certificate=#myCert" />
+            <to uri="crypto:sign:withcert?privateKey=#myPrivateKey" />
+            <to uri="crypto:verify:withcert?certificate=#myCert" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: certificate -->
@@ -98,8 +98,8 @@
         <!-- START SNIPPET: keystore -->
         <route>
             <from uri="direct:keystore"/>
-            <to uri="crypto:sign://keystore?keystore=#keystore&amp;alias=bob&amp;password=letmein" />
-            <to uri="crypto:verify://keystore?keystore=#keystore&amp;alias=bob" />
+            <to uri="crypto:sign:keystore?keystore=#keystore&amp;alias=bob&amp;password=letmein" />
+            <to uri="crypto:verify:keystore?keystore=#keystore&amp;alias=bob" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: keystore -->
@@ -107,8 +107,8 @@
         <!-- START SNIPPET: keystoreParameters -->
         <route>
             <from uri="direct:keystoreParameters"/>
-            <to uri="crypto:sign://keystoreParameters?keyStoreParameters=#signatureParams&amp;alias=bob&amp;password=letmein" />
-            <to uri="crypto:verify://keystoreParameters?keyStoreParameters=#signatureParams&amp;alias=bob" />
+            <to uri="crypto:sign:keystoreParameters?keyStoreParameters=#signatureParams&amp;alias=bob&amp;password=letmein" />
+            <to uri="crypto:verify:keystoreParameters?keyStoreParameters=#signatureParams&amp;alias=bob" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: keystoreParameters -->
@@ -116,8 +116,8 @@
          <!-- START SNIPPET: signature-header -->
         <route>
             <from uri="direct:signature-header"/>
-            <to uri="crypto:sign://another?privateKey=#myPrivateKey&amp;signatureHeader=AnotherDigitalSignature" />
-            <to uri="crypto:verify://another?publicKey=#myPublicKey&amp;signatureHeader=AnotherDigitalSignature" />
+            <to uri="crypto:sign:another?privateKey=#myPrivateKey&amp;signatureHeaderName=AnotherDigitalSignature" />
+            <to uri="crypto:verify:another?publicKey=#myPublicKey&amp;signatureHeaderName=AnotherDigitalSignature" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: signature-header -->
@@ -125,11 +125,11 @@
         <!-- START SNIPPET: alias -->
         <route>
             <from uri="direct:alias-sign"/>
-            <to uri="crypto:sign://alias?keystore=#keystore" />
+            <to uri="crypto:sign:alias?keystore=#keystore" />
         </route>       
         <route>
             <from uri="direct:alias-verify"/>
-            <to uri="crypto:verify://alias?keystore=#keystore" />
+            <to uri="crypto:verify:alias?keystore=#keystore" />
             <to uri="mock:result"/>
         </route>    
         <!-- END SNIPPET: alias -->
@@ -137,19 +137,19 @@
         <!-- START SNIPPET: headerkey -->
         <route>
             <from uri="direct:headerkey-sign"/>
-            <to uri="crypto:sign://headerkey" />
+            <to uri="crypto:sign:headerkey" />
         </route>       
         <route>
             <from uri="direct:headerkey-verify"/>
-            <to uri="crypto:verify://headerkey" />
+            <to uri="crypto:verify:headerkey" />
             <to uri="mock:result"/>
         </route>    
         <!-- END SNIPPET: headerkey -->
         <!-- START SNIPPET: clearheaders -->
         <route>
             <from uri="direct:headers"/>
-            <to uri="crypto:sign://headers?privateKey=#myPrivateKey" />
-            <to uri="crypto:verify://headers?publicKey=#myPublicKey&amp;clearHeaders=false" />
+            <to uri="crypto:sign:headers?privateKey=#myPrivateKey" />
+            <to uri="crypto:verify:headers?publicKey=#myPublicKey&amp;clearHeaders=false" />
             <to uri="mock:result"/>
         </route>
         <!-- END SNIPPET: clearheaders -->
