@@ -533,6 +533,13 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("ssh://scott@localhost:8101?certResource=classpath:test_rsa&useFixedDelay=true&delay=5000&pollCommand=features:list%0A");
         assertTrue(result.isSuccess());
 
+        // userinfo with both user and password and placeholder
+        result = catalog.validateEndpointProperties("ssh://smx:smx@localhost:8181?timeout=3000");
+        assertTrue(result.isSuccess());
+        // and should also work when port is using a placeholder
+        result = catalog.validateEndpointProperties("ssh://smx:smx@localhost:{{port}}?timeout=3000");
+        assertTrue(result.isSuccess());
+
         // placeholder for a bunch of optional options
         result = catalog.validateEndpointProperties("aws-swf://activity?{{options}}");
         assertTrue(result.isSuccess());

@@ -942,24 +942,6 @@ public class DefaultCamelCatalog implements CamelCatalog {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
         }
 
-        Map<String, String> userInfoOptions = new LinkedHashMap<String, String>();
-
-        // do we have user info in authority?
-        boolean userInfo = false;
-        String username = null;
-        String password = null;
-        if (u.getUserInfo() != null) {
-            userInfo = true;
-            String[] parts = u.getUserInfo().split(":");
-            if (parts.length == 2) {
-                username = parts[0];
-                password = parts[1];
-            } else {
-                // only username
-                username = u.getUserInfo();
-            }
-        }
-
         // grab the syntax
         String syntax = null;
         String alternativeSyntax = null;
@@ -976,31 +958,54 @@ public class DefaultCamelCatalog implements CamelCatalog {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
-        // clip the scheme from the syntax
-        syntax = after(syntax, ":");
-        if (alternativeSyntax != null) {
+        // only if we support alternative syntax, and the uri contains the username and password in the authority
+        // part of the uri, then we would need some special logic to capture that information and strip those
+        // details from the uri, so we can continue parsing the uri using the normal syntax
+        Map<String, String> userInfoOptions = new LinkedHashMap<String, String>();
+        if (alternativeSyntax != null && alternativeSyntax.contains("@")) {
+            // clip the scheme from the syntax
             alternativeSyntax = after(alternativeSyntax, ":");
+            // trim so only userinfo
+            int idx = alternativeSyntax.indexOf("@");
+            String fields = alternativeSyntax.substring(0, idx);
+            String[] names = fields.split(":");
+
+            // grab authority part and grab username and/or password
+            String authority = u.getAuthority();
+            if (authority != null && authority.contains("@")) {
+                String username = null;
+                String password = null;
+
+                // grab unserinfo part before @
+                String userInfo = authority.substring(0, authority.indexOf("@"));
+                String[] parts = userInfo.split(":");
+                if (parts.length == 2) {
+                    username = parts[0];
+                    password = parts[1];
+                } else {
+                    // only username
+                    username = userInfo;
+                }
+
+                // remember the username and/or password which we add later to the options
+                if (names.length == 2) {
+                    userInfoOptions.put(names[0], username);
+                    if (password != null) {
+                        // password is optional
+                        userInfoOptions.put(names[1], password);
+                    }
+                }
+            }
         }
 
+        // clip the scheme from the syntax
+        syntax = after(syntax, ":");
         // clip the scheme from the uri
         uri = after(uri, ":");
         String uriPath = stripQuery(uri);
 
-        // do the component support userinfo?
-        if (alternativeSyntax != null && alternativeSyntax.contains("@")) {
-            int idx = alternativeSyntax.indexOf("@");
-            String fields = alternativeSyntax.substring(0, idx);
-            String[] names = fields.split(":");
-            if (userInfo && names.length == 2) {
-                userInfoOptions.put(names[0], username);
-                if (password != null) {
-                    // password is optional
-                    userInfoOptions.put(names[1], password);
-                }
-            }
-        }
         // strip user info from uri path
-        if (userInfo) {
+        if (!userInfoOptions.isEmpty()) {
             int idx = uriPath.indexOf('@');
             if (idx > -1) {
                 uriPath = uriPath.substring(idx + 1);
