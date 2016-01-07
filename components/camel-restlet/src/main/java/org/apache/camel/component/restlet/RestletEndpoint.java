@@ -54,7 +54,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private String host = DEFAULT_HOST;
     @UriPath(defaultValue = "80") @Metadata(required = "true")
     private int port = DEFAULT_PORT;
-    @UriPath @Metadata(required = "true")
+    @UriPath
     private String uriPattern;
     @UriParam(label = "producer", defaultValue = "" + DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
