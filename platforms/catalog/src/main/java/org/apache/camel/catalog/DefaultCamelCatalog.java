@@ -745,19 +745,18 @@ public class DefaultCamelCatalog implements CamelCatalog {
         boolean lenientProperties;
         String scheme;
 
-        // skip uris that may start with a placeholder
-        if (uri.startsWith("{{")) {
-            result.addIncapable(uri);
-            return result;
-        }
-
         try {
             // parse the uri
             URI u = normalizeUri(uri);
             scheme = u.getScheme();
             String json = componentJSonSchema(scheme);
             if (json == null) {
-                result.addUnknownComponent(scheme);
+                // if the uri starts with a placeholder then we are also incapable of parsing it as we wasn't able to resolve the component name
+                if (uri.startsWith("{{")) {
+                    result.addIncapable(uri);
+                } else if (scheme != null) {
+                    result.addUnknownComponent(scheme);
+                }
                 return result;
             }
 
@@ -768,7 +767,13 @@ public class DefaultCamelCatalog implements CamelCatalog {
             rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
             properties = endpointProperties(uri);
         } catch (URISyntaxException e) {
-            result.addSyntaxError(e.getMessage());
+            if (uri.startsWith("{{")) {
+                // if the uri starts with a placeholder then we are also incapable of parsing it as we wasn't able to resolve the component name
+                result.addIncapable(uri);
+            } else {
+                result.addSyntaxError(e.getMessage());
+            }
+
             return result;
         }
 
