@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.crypto;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -41,8 +39,12 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
 
     @UriPath @Metadata(required = "true")
     private CryptoOperation cryptoOperation;
+    @UriParam @Metadata(required = "true")
+    private String name;
     @UriParam
     private PrivateKey privateKey;
+    @UriParam
+    private KeyStoreParameters keyStoreParameters;
     @UriParam
     private KeyStore keystore;
     @UriParam
@@ -57,7 +59,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private String signatureHeaderName;
     @UriParam
     private String alias;
-    @UriParam
+    @UriParam(javaType = "java.lang.String")
     private char[] password;
     @UriParam
     private PublicKey publicKey;
@@ -99,6 +101,17 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
         setPrivateKeyName(privateKeyName);
         setCertificateName(certificateName);
         setSecureRandomName(secureRandomName);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * The logical name of this operation.
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -323,11 +336,24 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     public void setPassword(char[] password) {
         this.password = password;
     }
-    
-    public void setKeyStoreParameters(KeyStoreParameters parameters) 
-        throws GeneralSecurityException, IOException {
-        if (parameters != null) {
-            this.keystore = parameters.createKeyStore();
+
+    public KeyStoreParameters getKeyStoreParameters() {
+        return keyStoreParameters;
+    }
+
+    /**
+     * Sets the KeyStore that can contain keys and Certficates for use in
+     * signing and verifying exchanges based on the given KeyStoreParameters.
+     * A {@link KeyStore} is typically used
+     * with an alias, either one supplied in the Route definition or dynamically
+     * via the message header "CamelSignatureKeyStoreAlias". If no alias is
+     * supplied and there is only a single entry in the Keystore, then this
+     * single entry will be used.
+     */
+    public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) throws Exception {
+        this.keyStoreParameters = keyStoreParameters;
+        if (keyStoreParameters != null) {
+            this.keystore = keyStoreParameters.createKeyStore();
         }
     }
 
