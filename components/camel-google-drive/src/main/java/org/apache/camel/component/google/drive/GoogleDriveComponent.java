@@ -80,6 +80,8 @@ public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiNam
                                       GoogleDriveConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
-        return new GoogleDriveEndpoint(uri, this, apiName, methodName, endpointConfiguration);
+        GoogleDriveEndpoint endpoint = new GoogleDriveEndpoint(uri, this, apiName, methodName, endpointConfiguration);
+        endpoint.setClientFactory(clientFactory);
+        return endpoint;
     }
 }
