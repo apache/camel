@@ -28,17 +28,18 @@ import org.infinispan.commons.api.BasicCacheContainer;
 
 @UriParams
 public class InfinispanConfiguration {
-    private BasicCacheContainer cacheContainer;
     @UriPath @Metadata(required = "true")
     private String host;
     @UriParam
+    private BasicCacheContainer cacheContainer;
+    @UriParam
     private String cacheName;
     @UriParam(label = "producer", defaultValue = "put", enums = "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,get,containsKey,containsValue,remove,removeAsync,"
-           + "replace,replaceAsync,clear,size")
+           + "replace,replaceAsync,clear,clearAsync,size")
     private String command;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean sync = true;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", javaType = "java.lang.String")
     private Set<String> eventTypes;
 
     public String getCommand() {
