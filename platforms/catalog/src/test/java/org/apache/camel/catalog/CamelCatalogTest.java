@@ -532,6 +532,10 @@ public class CamelCatalogTest {
         // userinfo in authority without password
         result = catalog.validateEndpointProperties("ssh://scott@localhost:8101?certResource=classpath:test_rsa&useFixedDelay=true&delay=5000&pollCommand=features:list%0A");
         assertTrue(result.isSuccess());
+
+        // placeholder for a bunch of optional options
+        result = catalog.validateEndpointProperties("aws-swf://activity?{{options}}");
+        assertTrue(result.isSuccess());
     }
 
     @Test
