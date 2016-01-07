@@ -398,8 +398,8 @@
     <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>
     <olingo2-version>2.0.5</olingo2-version>
     <olingo-odata2-core-bundle-version>2.0.5_1</olingo-odata2-core-bundle-version>
-    <ognl-version>3.1.1</ognl-version>
-    <ognl-bundle-version>3.1.1_1</ognl-bundle-version>
+    <ognl-version>3.1.2</ognl-version>
+    <ognl-bundle-version>3.1.2_1</ognl-bundle-version>
     <oncrpc-version>1.1.2</oncrpc-version>
     <openejb-version>4.7.3</openejb-version>
     <openjpa-version>2.4.0</openjpa-version>
