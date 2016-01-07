@@ -543,6 +543,11 @@ public class CamelCatalogTest {
         // placeholder for a bunch of optional options
         result = catalog.validateEndpointProperties("aws-swf://activity?{{options}}");
         assertTrue(result.isSuccess());
+
+        // incapable to parse
+        result = catalog.validateEndpointProperties("{{getFtpUrl}}?recursive=true");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getIncapable() != null);
     }
 
     @Test

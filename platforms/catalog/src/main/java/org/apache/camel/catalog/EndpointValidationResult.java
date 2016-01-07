@@ -33,9 +33,10 @@ public class EndpointValidationResult implements Serializable {
     private final String uri;
     private int errors;
 
-    // component
+    // general
     private String syntaxError;
     private String unknownComponent;
+    private String incapable;
 
     // options
     private Set<String> unknown;
@@ -62,7 +63,7 @@ public class EndpointValidationResult implements Serializable {
     }
 
     public boolean isSuccess() {
-        boolean ok = syntaxError == null && unknownComponent == null
+        boolean ok = syntaxError == null && unknownComponent == null && incapable == null
                 && unknown == null && required == null;
         if (ok) {
             ok = invalidEnum == null && invalidEnumChoices == null && invalidReference == null
@@ -73,6 +74,11 @@ public class EndpointValidationResult implements Serializable {
 
     public void addSyntaxError(String syntaxError) {
         this.syntaxError = syntaxError;
+        errors++;
+    }
+
+    public void addIncapable(String uri) {
+        this.incapable = uri;
         errors++;
     }
 
@@ -176,6 +182,10 @@ public class EndpointValidationResult implements Serializable {
         return syntaxError;
     }
 
+    public String getIncapable() {
+        return incapable;
+    }
+
     public Set<String> getUnknown() {
         return unknown;
     }
@@ -231,7 +241,9 @@ public class EndpointValidationResult implements Serializable {
             return null;
         }
 
-        if (syntaxError != null) {
+        if (incapable != null) {
+            return "Incapable of parsing uri " + incapable;
+        } else if (syntaxError != null) {
             return "Syntax error " + syntaxError;
         } else if (unknownComponent != null) {
             return "Unknown component " + unknownComponent;
