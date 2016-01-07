@@ -242,11 +242,11 @@ public class EndpointValidationResult implements Serializable {
         }
 
         if (incapable != null) {
-            return "Incapable of parsing uri " + incapable;
+            return "\tIncapable of parsing uri: " + incapable;
         } else if (syntaxError != null) {
-            return "Syntax error " + syntaxError;
+            return "\tSyntax error: " + syntaxError;
         } else if (unknownComponent != null) {
-            return "Unknown component " + unknownComponent;
+            return "\tUnknown component: " + unknownComponent;
         }
 
         // for each invalid option build a reason message
