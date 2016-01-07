@@ -756,6 +756,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     result.addIncapable(uri);
                 } else if (scheme != null) {
                     result.addUnknownComponent(scheme);
+                } else {
+                    result.addUnknownComponent(uri);
                 }
                 return result;
             }
