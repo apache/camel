@@ -47,6 +47,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     @UriParam
     private NettyHttpConfiguration configuration;
+    @UriParam(label = "advanced", name = "configuration", javaType = "org.apache.camel.component.netty4.http.NettyHttpConfiguration",
+            description = "To use a custom configured NettyHttpConfiguration for configuring this endpoint.")
+    private Object httpConfiguration; // to include in component docs as NettyHttpConfiguration is a @UriParams class
     @UriParam(label = "advanced")
     private NettyHttpBinding nettyHttpBinding;
     @UriParam(label = "advanced")
