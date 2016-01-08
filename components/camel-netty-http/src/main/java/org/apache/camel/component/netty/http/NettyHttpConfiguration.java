@@ -40,7 +40,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private String host;
     @UriPath
     private int port;
-    @UriPath @Metadata(required = "true")
+    @UriPath
     private String path;
     @UriParam(label = "consumer,advanced")
     private boolean urlDecodeHeaders;
