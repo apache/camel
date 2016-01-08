@@ -1102,7 +1102,18 @@ public class DefaultCamelCatalog implements CamelCatalog {
             } else {
                 // we have a little problem as we do not not have all options
                 if (!required) {
-                    String value = defaultValue;
+                    String value = null;
+
+                    boolean last = i == word.size() - 1;
+                    if (last) {
+                        // if its the last value then use it instead of the default value
+                        value = it.hasNext() ? it.next() : null;
+                        if (value != null) {
+                            options.put(key, value);
+                        } else {
+                            value = defaultValue;
+                        }
+                    }
                     if (value != null) {
                         options.put(key, value);
                         defaultValueAdded = true;
