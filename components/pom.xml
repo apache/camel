@@ -74,6 +74,7 @@
     <module>camel-bindy</module>
     <module>camel-boon</module>
     <module>camel-box</module>
+    <module>camel-braintree</module>
     <module>camel-cache</module>
     <module>camel-cassandraql</module>
     <module>camel-castor</module>
