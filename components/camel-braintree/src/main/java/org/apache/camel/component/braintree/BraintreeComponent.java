@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.braintree;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.braintreegateway.BraintreeGateway;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -23,8 +26,6 @@ import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.util.component.AbstractApiComponent;
 
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
