@@ -45,7 +45,7 @@ public class JdbcFix9491Test extends AbstractJdbcTestSupport {
         direct.sendBody("select * from customer");
 
         assertMockEndpointsSatisfied();
-        Assert.assertEquals(3,mock.getReceivedExchanges().get(1).getIn().getBody(List.class).size());
+        Assert.assertEquals(2,mock.getReceivedExchanges().get(1).getIn().getBody(List.class).size());
 
     }
 
@@ -54,7 +54,7 @@ public class JdbcFix9491Test extends AbstractJdbcTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").
-                to("jdbc:testdb").to("mock:result");
+                to("jdbc:testdb?statement.maxRows=2").to("mock:result");
             }
         };
     }
