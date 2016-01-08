@@ -59,6 +59,7 @@
       <artifactId>commons-lang3</artifactId>
       <version>${commons-lang3-version}</version>
     </dependency>
+
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
@@ -70,31 +71,6 @@
       <artifactId>guava</artifactId>
       <version>${google-guava-version}</version>
       <scope>test</scope>
-    </dependency>
-
-
-    <!-- support camel documentation -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>apt</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-nop</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-jdk14</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <!-- Component API javadoc in provided scope to read API signatures -->
@@ -128,6 +104,7 @@
       <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -243,28 +220,6 @@
                 </api>
               </apis>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- generate components meta-data and validate component includes documentation etc -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>prepare</id>
-            <goals>
-              <goal>prepare-components</goal>
-            </goals>
-            <phase>generate-resources</phase>
-          </execution>
-          <execution>
-            <id>validate</id>
-            <goals>
-              <goal>validate-components</goal>
-            </goals>
-            <phase>prepare-package</phase>
           </execution>
         </executions>
       </plugin>

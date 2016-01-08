@@ -43,6 +43,7 @@
         <include>org.apache.camel:camel-blueprint</include>
         <include>org.apache.camel:camel-boon</include>
         <include>org.apache.camel:camel-box</include>
+        <include>org.apache.camel:camel-braintree</include>
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-cassandraql</include>
         <include>org.apache.camel:camel-castor</include>

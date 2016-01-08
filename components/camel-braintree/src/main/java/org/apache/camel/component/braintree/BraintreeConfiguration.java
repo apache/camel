@@ -54,71 +54,52 @@ public class BraintreeConfiguration {
     @Metadata(required = "true")
     private String privateKey;
 
-
-    /**
-     * @return the environment
-     */
     public String getEnvironment() {
         return ObjectHelper.notNull(environment, ENVIRONMENT);
     }
 
     /**
-     * @param environment the environment Either SANDBOX or PRODUCTION
+     * The environment Either SANDBOX or PRODUCTION
      */
     public void setEnvironment(String environment) {
         this.environment = environment;
     }
 
-
-    /**
-     * @return the merchant id
-     */
     public String getMerchantId() {
         return ObjectHelper.notNull(merchantId, MERCHANT_ID);
     }
 
     /**
-     * @param merchantId the merchant id provided by Braintree.
+     * The merchant id provided by Braintree.
      */
     public void setMerchantId(String merchantId) {
         this.merchantId = merchantId;
     }
 
-
-    /**
-     * @return the public key
-     */
     public String getPublicKey() {
         return ObjectHelper.notNull(publicKey, PUBLIC_KEY);
     }
 
     /**
-     * @param publicKey the public key provided by Braintree.
+     * The public key provided by Braintree.
      */
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
 
-
-    /**
-     * @return the private key
-     */
     public String getPrivateKey() {
         return ObjectHelper.notNull(privateKey, PRIVATE_KEY);
     }
 
     /**
-     * @param privateKey the private key provided by Braintree.
+     * The private key provided by Braintree.
      */
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
     }
 
-
     /**
      * Helper method to get and Environment object from its name
-     *
-     * @return the environment
      */
     private Environment getBraintreeEnvironment() {
         String name = getEnvironment();
@@ -140,9 +121,7 @@ public class BraintreeConfiguration {
     }
 
     /**
-     * Contruct a BraintreeGateway from configuration
-     *
-     * @return a braintree gateway
+     * Construct a BraintreeGateway from configuration
      */
     BraintreeGateway newBraintreeGateway() {
         return new BraintreeGateway(
@@ -152,15 +131,4 @@ public class BraintreeConfiguration {
             getPrivateKey());
     }
 
-    /*
-    public void validate() {
-        if (ObjectHelper.isEmpty(environment)
-            || ObjectHelper.isEmpty(merchantId)
-            || ObjectHelper.isEmpty(publicKey)
-            || ObjectHelper.isEmpty(privateKey)) {
-            throw new IllegalArgumentException(String.format(
-                "Missing required properties %s, %s, %s, %s", ENVIRONMENT, MERCHANT_ID, PUBLIC_KEY, PRIVATE_KEY));
-        }
-    }
-    */
 }

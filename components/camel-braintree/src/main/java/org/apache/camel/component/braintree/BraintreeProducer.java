@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.braintree;
 
-
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.component.braintree.internal.BraintreePropertiesHelper;
 import org.apache.camel.util.component.AbstractApiProducer;
@@ -25,6 +24,7 @@ import org.apache.camel.util.component.AbstractApiProducer;
  * The Braintree producer.
  */
 public class BraintreeProducer extends AbstractApiProducer<BraintreeApiName, BraintreeConfiguration> {
+
     public BraintreeProducer(BraintreeEndpoint endpoint) {
         super(endpoint, BraintreePropertiesHelper.getHelper());
     }

@@ -30,12 +30,13 @@ import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.BraintreePropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
 /**
- * Represents a Braintree endpoint.
+ * The braintree component is used for integrating with the Braintree Payment System.
  */
 @UriEndpoint(scheme = "braintree", title = "Braintree", syntax = "braintree:name", consumerClass = BraintreeConsumer.class, label = "Braintree")
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
@@ -62,10 +63,9 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
-        if (inBody != null) {
-            throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
-        }
-        final BraintreeConsumer consumer = new BraintreeConsumer(this, processor);
+        ObjectHelper.notNull(inBody, "inbody", this);
+
+        BraintreeConsumer consumer = new BraintreeConsumer(this, processor);
         // also set consumer.* properties
         configureConsumer(consumer);
         return consumer;
