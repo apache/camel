@@ -122,6 +122,10 @@ public class FacebookMethodsTypeHelperTest {
     public void testGetType() throws Exception {
         for (Field field : FacebookEndpointConfiguration.class.getDeclaredFields()) {
             Class<?> expectedType = field.getType();
+            // skip readingOptions
+            if ("readingOptions".equals(field.getName())) {
+                continue;
+            }
             final Class<?> actualType = FacebookMethodsTypeHelper.getType(field.getName());
             // test for auto boxing, un-boxing
             if (actualType.isPrimitive()) {
