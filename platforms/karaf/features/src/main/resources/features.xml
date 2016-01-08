@@ -264,7 +264,9 @@
   <feature name='camel-chunk' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.x5dev/chunk-templates/${chunk-templates-version}</bundle>
+    <bundle dependency='true'>mvn:net.minidev/json-smart/${json-smart-version}</bundle>
+    <bundle dependency='true'>mvn:net.minidev/accessors-smart/${json-accessors-smart-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.chunk-templates/${chunk-templates-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-chunk/${project.version}</bundle>
   </feature>
   <feature name='camel-cmis' version='${project.version}' resolver='(obr)' start-level='50'>

@@ -90,6 +90,7 @@
     <cglib-bundle-version>3.2.0_1</cglib-bundle-version>
     <cglib-version>3.2.0</cglib-version>
     <chunk-templates-version>3.1.3</chunk-templates-version>
+    <chunk-templates-bundle-version>3.1.3_1</chunk-templates-bundle-version>
     <classmate-version>1.3.1</classmate-version>
     <cmis-version>0.13.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
@@ -313,6 +314,7 @@
     <jsonlib-version>2.4</jsonlib-version>
     <json4s-bundle-version>3.2.8_1</json4s-bundle-version>
     <json-asm-version>1.0.2</json-asm-version>
+    <json-accessors-smart-version>1.1</json-accessors-smart-version>
     <json-path-version>2.1.0</json-path-version>
     <json-simple-version>1.1.1</json-simple-version>
     <json-smart-version>2.2.1</json-smart-version>
