@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.braintree;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.braintreegateway.BraintreeGateway;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.util.component.AbstractApiComponent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -61,6 +61,11 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     @Override
     public void setConfiguration(BraintreeConfiguration configuration) {
         super.setConfiguration(configuration);
+    }
+
+    @Override
+    public BraintreeConfiguration getConfiguration() {
+        return super.getConfiguration();
     }
 
     private synchronized BraintreeGateway getGateway(BraintreeConfiguration configuration) {

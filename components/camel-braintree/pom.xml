@@ -50,17 +50,10 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.braintreepayments.gateway</groupId>
-      <artifactId>braintree-java</artifactId>
-      <version>${braintree-gateway-version}</version>
-    </dependency>
-    <!--
-    <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.braintree-java</artifactId>
       <version>${braintree-gateway-bundle-version}</version>
     </dependency>
-    -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
