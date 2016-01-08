@@ -34,7 +34,7 @@ import org.jboss.netty.handler.codec.frame.TooLongFrameException;
 @UriParams
 public class NettyHttpConfiguration extends NettyConfiguration {
 
-    @UriPath(enums = "http,https", defaultValue = "http") @Metadata(required = "true")
+    @UriPath(enums = "http,https") @Metadata(required = "true")
     private String protocol;
     @UriPath @Metadata(required = "true")
     private String host;

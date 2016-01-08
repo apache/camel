@@ -44,7 +44,7 @@ public class NettyDefaultProtocolTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:0.0.0.0:{{port}}/foo")
+                from("netty-http:http:0.0.0.0:{{port}}/foo")
                     .to("mock:input")
                     .transform().constant("Bye World");
             }
