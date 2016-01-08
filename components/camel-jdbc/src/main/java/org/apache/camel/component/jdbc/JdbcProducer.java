@@ -23,10 +23,12 @@ import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
@@ -193,7 +195,8 @@ public class JdbcProducer extends DefaultProducer {
             stmt = conn.createStatement();
 
             if (parameters != null && !parameters.isEmpty()) {
-                IntrospectionSupport.setProperties(stmt, parameters);
+                Map<String, Object> copy = new HashMap<String, Object>(parameters);
+                IntrospectionSupport.setProperties(stmt, copy);
             }
 
             LOG.debug("Executing JDBC Statement: {}", sql);
