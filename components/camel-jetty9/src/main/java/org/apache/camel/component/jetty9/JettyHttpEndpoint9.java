@@ -37,9 +37,10 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint {
     public JettyHttpEndpoint9(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(component, uri, httpURL);
     }
-    
+
     @Override
-    public HttpBinding getBinding() {
+    public HttpBinding getHttpBinding() {
+        // make sure we include jetty9 variant of the http binding
         if (this.binding == null) {
             this.binding = new AttachmentHttpBinding();
             this.binding.setTransferException(isTransferException());
@@ -52,8 +53,8 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint {
     }
 
     @Override
-    public void setBinding(HttpBinding binding) {
-        super.setBinding(binding);
+    public void setHttpBinding(HttpBinding binding) {
+        super.setHttpBinding(binding);
         this.binding = binding;
     }
     
