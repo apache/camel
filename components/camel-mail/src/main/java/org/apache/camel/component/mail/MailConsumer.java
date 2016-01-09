@@ -117,7 +117,13 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             int count = folder.getMessageCount();
             if (count > 0) {
                 Message[] messages = retrieveMessages();
-
+                // need to call setPeek on java-mail to avoid the message being flagged eagerly as SEEN on the server in case
+                // we process the message and rollback due an exception
+                if (getEndpoint().getConfiguration().isPeek()) {
+                    for (Message message : messages) {
+                        peekMessage(message);
+                    }
+                }
                 polledMessages = processBatch(CastUtils.cast(createExchanges(messages)));
 
                 final MailBoxPostProcessAction postProcessor = getEndpoint().getPostProcessAction();
@@ -186,12 +192,6 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
             // must use the original message in case we need to workaround a charset issue when extracting mail content
             final Message mail = exchange.getIn(MailMessage.class).getOriginalMessage();
-
-            // need to call setPeek on java-mail to avoid the message being flagged eagerly as SEEN on the server in case
-            // we process the message and rollback due an exception
-            if (getEndpoint().getConfiguration().isPeek()) {
-                peekMessage(mail);
-            }
 
             // add on completion to handle after work when the exchange is done
             exchange.addOnCompletion(new SynchronizationAdapter() {
