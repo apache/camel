@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.sql.stored;
 
 import org.apache.camel.Endpoint;
@@ -6,25 +22,20 @@ import org.apache.camel.component.sql.stored.template.TemplateStoredProcedure;
 import org.apache.camel.component.sql.stored.template.TemplateStoredProcedureFactory;
 import org.apache.camel.impl.DefaultProducer;
 
-/**
- * Created by snurmine on 1/3/16.
- */
 public class SqlStoredProducer extends DefaultProducer {
 
-    final TemplateStoredProcedureFactory templateStoredProcedureFactory;
+    private TemplateStoredProcedureFactory templateStoredProcedureFactory;
+    private TemplateStoredProcedure defaultTemplateStoredProcedure;
 
-    final TemplateStoredProcedure defaultTemplateStoredProcedure;
-
-    public SqlStoredProducer(Endpoint endpoint, String template, TemplateStoredProcedureFactory
-            templateStoredProcedureFactory) {
+    public SqlStoredProducer(Endpoint endpoint, String template, TemplateStoredProcedureFactory templateStoredProcedureFactory) {
         super(endpoint);
-        this.defaultTemplateStoredProcedure = templateStoredProcedureFactory.createFromString(template);
         this.templateStoredProcedureFactory = templateStoredProcedureFactory;
+        this.defaultTemplateStoredProcedure = templateStoredProcedureFactory.createFromString(template);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        this.defaultTemplateStoredProcedure.execute(exchange);
+        defaultTemplateStoredProcedure.execute(exchange);
     }
 
 }
