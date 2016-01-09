@@ -273,7 +273,7 @@ public final class HttpHelper {
         String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
         // NOW the HTTP_PATH is just related path, we don't need to trim it
         if (path != null) {
-            if (path.startsWith("/")) {
+            if (path.length() > 1 && path.startsWith("/")) {
                 path = path.substring(1);
             }
             if (path.length() > 0) {
@@ -283,7 +283,7 @@ public final class HttpHelper {
                 // if there are no query params
                 if (idx == -1) {
                     // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
-                    uri = uri.endsWith("/") ? uri : uri + "/";
+                    uri = uri.endsWith("/") || path.startsWith("/") ? uri : uri + "/";
                     uri = uri.concat(path);
                 } else {
                     // there are query params, so inject the relative path in the right place
