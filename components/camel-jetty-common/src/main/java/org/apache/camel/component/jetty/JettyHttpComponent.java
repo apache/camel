@@ -223,7 +223,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         }
         if (handlerList.size() > 0) {
             endpoint.setHandlers(handlerList);
-        }        // prefer to use endpoint configured over component configured
+        }
+        // prefer to use endpoint configured over component configured
         if (binding == null) {
             // fallback to component configured
             binding = getHttpBinding();
