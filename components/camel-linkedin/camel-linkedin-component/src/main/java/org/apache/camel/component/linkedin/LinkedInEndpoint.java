@@ -46,7 +46,8 @@ import org.apache.cxf.jaxrs.client.WebClient;
 /**
  * Represents a LinkedIn endpoint.
  */
-@UriEndpoint(scheme = "linkedin", title = "Linkedin", syntax = "linkedin:apiName/methodName", label = "api,cloud,social", consumerClass = LinkedInConsumer.class)
+@UriEndpoint(scheme = "linkedin", title = "Linkedin", syntax = "linkedin:apiName/methodName", label = "api,cloud,social",
+        consumerClass = LinkedInConsumer.class, lenientProperties = true)
 public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, LinkedInConfiguration> {
 
     protected static final String FIELDS_OPTION = "fields";
