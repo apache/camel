@@ -45,7 +45,7 @@ public class JdbcFix9491Test extends AbstractJdbcTestSupport {
         direct.sendBody("select * from customer");
 
         assertMockEndpointsSatisfied();
-        Assert.assertEquals(2,mock.getReceivedExchanges().get(1).getIn().getBody(List.class).size());
+        Assert.assertEquals(2, mock.getReceivedExchanges().get(1).getIn().getBody(List.class).size());
 
     }
 
