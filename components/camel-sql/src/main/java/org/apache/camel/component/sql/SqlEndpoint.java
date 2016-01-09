@@ -61,7 +61,8 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
 
     public Producer createProducer() throws Exception {
         SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
-        SqlProducer result = new SqlProducer(this, query, getJdbcTemplate(), prepareStrategy, isBatch(), isAlwaysPopulateStatement(), isUseMessageBodyForSql());
+        SqlProducer result = new SqlProducer(this, query, getJdbcTemplate(), prepareStrategy, isBatch(),
+                isAlwaysPopulateStatement(), isUseMessageBodyForSql());
         result.setParametersCount(getParametersCount());
         return result;
     }
