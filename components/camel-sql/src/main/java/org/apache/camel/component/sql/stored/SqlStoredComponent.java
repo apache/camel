@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.sql.stored.template.TemplateStoredProcedureFactory;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -58,7 +59,14 @@ public class SqlStoredComponent extends UriEndpointComponent {
             throw new IllegalArgumentException("DataSource must be configured");
         }
 
-        return new SqlStoredEndpoint(new JdbcTemplate(target), remaining);
+        JdbcTemplate template = new JdbcTemplate(target);
+        TemplateStoredProcedureFactory factory = new TemplateStoredProcedureFactory(template);
+
+        SqlStoredEndpoint answer = new SqlStoredEndpoint(uri, this);
+        answer.setJdbcTemplate(template);
+        answer.setTemplate(remaining);
+        answer.setTemplateStoredProcedureFactory(factory);
+        return answer;
     }
 
     public DataSource getDataSource() {
@@ -71,4 +79,5 @@ public class SqlStoredComponent extends UriEndpointComponent {
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
 }

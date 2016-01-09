@@ -43,7 +43,7 @@ public final class ParseHelper {
     public static Class sqlTypeToJavaType(int sqlType, String sqlTypeStr) {
         //TODO: as rest of types.
         //TODO: add test for each type.
-        Class ret = null;
+        Class ret;
         switch (sqlType) {
         case Types.INTEGER:
             ret = Integer.class;

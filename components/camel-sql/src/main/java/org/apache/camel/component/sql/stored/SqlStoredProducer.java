@@ -24,12 +24,10 @@ import org.apache.camel.impl.DefaultProducer;
 
 public class SqlStoredProducer extends DefaultProducer {
 
-    private TemplateStoredProcedureFactory templateStoredProcedureFactory;
     private TemplateStoredProcedure defaultTemplateStoredProcedure;
 
     public SqlStoredProducer(Endpoint endpoint, String template, TemplateStoredProcedureFactory templateStoredProcedureFactory) {
         super(endpoint);
-        this.templateStoredProcedureFactory = templateStoredProcedureFactory;
         this.defaultTemplateStoredProcedure = templateStoredProcedureFactory.createFromString(template);
     }
 

@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.stored.template.ast.InputParameter;
 import org.apache.camel.component.sql.stored.template.ast.OutParameter;
 import org.apache.camel.component.sql.stored.template.ast.Template;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -30,6 +32,7 @@ import org.springframework.jdbc.object.StoredProcedure;
 
 public class TemplateStoredProcedure extends StoredProcedure {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TemplateStoredProcedure.class);
     private final Template template;
 
     public TemplateStoredProcedure(JdbcTemplate jdbcTemplate, Template template) {
@@ -47,6 +50,7 @@ public class TemplateStoredProcedure extends StoredProcedure {
             setFunction(false);
         }
 
+        LOG.debug("Compiling stored procedure: {}", template.getProcedureName());
         compile();
     }
 
@@ -58,6 +62,7 @@ public class TemplateStoredProcedure extends StoredProcedure {
             params.put(inputParameter.getName(), inputParameter.getValueExpression().evaluate(exchange, inputParameter.getJavaType()));
         }
 
+        LOG.debug("Invoking stored procedure: {}", template.getProcedureName());
         Map<String, Object> ret = super.execute(params);
 
         for (OutParameter out : template.getOutParameterList()) {

@@ -22,14 +22,15 @@ import org.apache.camel.component.sql.stored.template.ast.ParseRuntimeException;
 import org.apache.camel.component.sql.stored.template.ast.Template;
 import org.apache.camel.component.sql.stored.template.generated.ParseException;
 import org.apache.camel.component.sql.stored.template.generated.SSPTParser;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.LRUCache;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class TemplateStoredProcedureFactory {
+public class TemplateStoredProcedureFactory extends ServiceSupport {
 
     public static final int TEMPLATE_CACHE_DEFAULT_SIZE = 200;
     private final JdbcTemplate jdbcTemplate;
-    private LRUCache<String, TemplateStoredProcedure> templateCache = new LRUCache<String, TemplateStoredProcedure>(TEMPLATE_CACHE_DEFAULT_SIZE);
+    private final LRUCache<String, TemplateStoredProcedure> templateCache = new LRUCache<String, TemplateStoredProcedure>(TEMPLATE_CACHE_DEFAULT_SIZE);
 
     public TemplateStoredProcedureFactory(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -63,4 +64,13 @@ public class TemplateStoredProcedureFactory {
         return input;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // clear cache when we are stopping
+        templateCache.clear();
+    }
 }
