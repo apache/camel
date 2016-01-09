@@ -117,7 +117,7 @@ public class BraintreeConfiguration {
         }
 
         throw new IllegalArgumentException(String.format(
-            "Environment should be  development, sandbox or production, got %s", name));
+            "Environment should be development, sandbox or production, got %s", name));
     }
 
     /**

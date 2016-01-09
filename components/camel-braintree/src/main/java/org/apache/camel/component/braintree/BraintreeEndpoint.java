@@ -62,9 +62,6 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        // make sure inBody is not set for consumers
-        ObjectHelper.notNull(inBody, "inbody", this);
-
         BraintreeConsumer consumer = new BraintreeConsumer(this, processor);
         // also set consumer.* properties
         configureConsumer(consumer);

@@ -24,6 +24,7 @@ import org.apache.camel.util.component.AbstractApiConsumer;
  * The Braintree consumer.
  */
 public class BraintreeConsumer extends AbstractApiConsumer<BraintreeApiName, BraintreeConfiguration> {
+
     public BraintreeConsumer(BraintreeEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }

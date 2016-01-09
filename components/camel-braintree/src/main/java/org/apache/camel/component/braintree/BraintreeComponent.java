@@ -26,8 +26,6 @@ import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.util.component.AbstractApiComponent;
 
-
-
 /**
  * Represents the component that manages {@link BraintreeEndpoint}.
  */
@@ -36,13 +34,11 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
 
     public BraintreeComponent() {
         super(BraintreeEndpoint.class, BraintreeApiName.class, BraintreeApiCollection.getCollection());
-
         this.gateways = new HashMap<>();
     }
 
     public BraintreeComponent(CamelContext context) {
         super(context, BraintreeEndpoint.class, BraintreeApiName.class, BraintreeApiCollection.getCollection());
-
         this.gateways = new HashMap<>();
     }
 
