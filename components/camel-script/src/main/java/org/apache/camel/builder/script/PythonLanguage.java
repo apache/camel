@@ -25,7 +25,7 @@ public class PythonLanguage extends LanguageSupport {
 
     @Override
     public Predicate createPredicate(String predicate) {
-        Language language = getCamelContext().resolveLanguage("python");
+        Language language = new ScriptLanguageResolver().resolveLanguage("python", getCamelContext());
         if (language != null) {
             return language.createPredicate(predicate);
         } else {
@@ -35,7 +35,7 @@ public class PythonLanguage extends LanguageSupport {
 
     @Override
     public Expression createExpression(String expression) {
-        Language language = getCamelContext().resolveLanguage("python");
+        Language language = new ScriptLanguageResolver().resolveLanguage("python", getCamelContext());
         if (language != null) {
             return language.createExpression(expression);
         } else {
