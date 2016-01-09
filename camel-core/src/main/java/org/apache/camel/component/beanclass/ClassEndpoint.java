@@ -30,8 +30,4 @@ public class ClassEndpoint extends BeanEndpoint {
         super(endpointUri, component);
     }
 
-    @Override
-    public boolean isLenientProperties() {
-        return true;
-    }
 }
