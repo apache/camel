@@ -35,8 +35,8 @@ public class ParserTest extends CamelTestSupport {
 
     @Test
     public void shouldParseOk() {
-        Template template = parser.parseTemplate("addnumbers(INTEGER ${header.header1}," +
-                "VARCHAR ${property.property1},BIGINT ${header.header2},OUT INTEGER header1)");
+        Template template = parser.parseTemplate("addnumbers(INTEGER ${header.header1},"
+                + "VARCHAR ${property.property1},BIGINT ${header.header2},OUT INTEGER header1)");
 
         Assert.assertEquals("addnumbers", template.getProcedureName());
         Assert.assertEquals(3, template.getInputParameterList().size());
@@ -69,21 +69,21 @@ public class ParserTest extends CamelTestSupport {
 
     @Test(expected = ParseRuntimeException.class)
     public void noOutputParameterShouldFail() {
-        parser.parseTemplate("ADDNUMBERS2" +
-                "(INTEGER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})");
+        parser.parseTemplate("ADDNUMBERS2"
+                + "(INTEGER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})");
 
     }
 
     @Test(expected = ParseRuntimeException.class)
     public void unexistingTypeShouldFail() {
-        parser.parseTemplate("ADDNUMBERS2" +
-                "(XML VALUE1 ${header.v1},OUT INTEGER VALUE2 ${header.v2})");
+        parser.parseTemplate("ADDNUMBERS2"
+                + "(XML VALUE1 ${header.v1},OUT INTEGER VALUE2 ${header.v2})");
     }
 
     @Test(expected = ParseRuntimeException.class)
     public void unmappedTypeShouldFaild() {
-        parser.parseTemplate("ADDNUMBERS2" +
-                "(OTHER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})");
+        parser.parseTemplate("ADDNUMBERS2"
+                + "(OTHER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})");
     }
 
 }

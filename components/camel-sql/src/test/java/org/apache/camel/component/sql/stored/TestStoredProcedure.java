@@ -19,9 +19,12 @@ package org.apache.camel.component.sql.stored;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestStoredProcedure {
+public final class TestStoredProcedure {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestStoredProcedure.class);
+
+    private TestStoredProcedure() {
+    }
 
     public static void addnumbers(int val1, int val2, int[] ret) {
         LOG.info("calling addnumbers:{} + {}", val1, val2);

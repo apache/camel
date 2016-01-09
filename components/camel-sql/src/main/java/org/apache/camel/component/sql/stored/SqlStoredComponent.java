@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.sql.stored;
 
+import java.util.Map;
+import javax.sql.DataSource;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.sql.stored.template.TemplateStoredProcedureFactory;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import javax.sql.DataSource;
-import java.util.Map;
 
 public class SqlStoredComponent extends UriEndpointComponent {
 

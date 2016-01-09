@@ -27,9 +27,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class TemplateStoredProcedureFactory {
 
-    private final int TEMPLATE_CACHE_DEFAULT_SIZE = 200;
+    public static final int TEMPLATE_CACHE_DEFAULT_SIZE = 200;
     private final JdbcTemplate jdbcTemplate;
-    private LRUCache<String, TemplateStoredProcedure> templateCache = new LRUCache<String, TemplateStoredProcedure>(200);
+    private LRUCache<String, TemplateStoredProcedure> templateCache = new LRUCache<String, TemplateStoredProcedure>(TEMPLATE_CACHE_DEFAULT_SIZE);
 
     public TemplateStoredProcedureFactory(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

@@ -47,8 +47,8 @@ public class TemplateStoredProcedureTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteStoredProcedure() {
-        TemplateStoredProcedure sp = new TemplateStoredProcedure(jdbcTemplate, parser.parseTemplate("ADDNUMBERS" +
-                "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsum)"));
+        TemplateStoredProcedure sp = new TemplateStoredProcedure(jdbcTemplate, parser.parseTemplate("ADDNUMBERS"
+                + "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsum)"));
 
         Exchange exchange = createExchangeWithBody(null);
         exchange.getIn().setHeader("v1", 1);

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,10 @@ import java.sql.Types;
 
 import org.springframework.util.ReflectionUtils;
 
-public class ParseHelper {
+public final class ParseHelper {
+
+    private ParseHelper() {
+    }
 
     public static int parseSqlType(String sqlType) {
         Field field = ReflectionUtils.findField(Types.class, sqlType);
@@ -42,32 +45,31 @@ public class ParseHelper {
         //TODO: add test for each type.
         Class ret = null;
         switch (sqlType) {
-            case Types.INTEGER:
-                ret = Integer.class;
-                break;
-            case Types.VARCHAR:
-                ret = String.class;
-                break;
-            case Types.BIGINT:
-                ret = BigInteger.class;
-                break;
-            case Types.CHAR:
-                ret = String.class;
-                break;
-            case Types.BOOLEAN:
-                ret = Boolean.class;
-                break;
-            case Types.DATE:
-                ret = Date.class;
-                break;
-            case Types.TIMESTAMP:
-                ret = Date.class;
-                break;
-        }
-
-        if (ret == null) {
+        case Types.INTEGER:
+            ret = Integer.class;
+            break;
+        case Types.VARCHAR:
+            ret = String.class;
+            break;
+        case Types.BIGINT:
+            ret = BigInteger.class;
+            break;
+        case Types.CHAR:
+            ret = String.class;
+            break;
+        case Types.BOOLEAN:
+            ret = Boolean.class;
+            break;
+        case Types.DATE:
+            ret = Date.class;
+            break;
+        case Types.TIMESTAMP:
+            ret = Date.class;
+            break;
+        default:
             throw new ParseRuntimeException("Unable to map SQL type " + sqlTypeStr + " to Java type");
         }
+
         return ret;
     }
 
