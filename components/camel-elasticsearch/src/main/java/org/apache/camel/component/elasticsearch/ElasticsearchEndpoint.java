@@ -293,7 +293,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 	public boolean indexExists(Message message) {
 		if (useHttpClient) {
 			return esHttpClient.indexExists(getIndexName(message));
-			
+
 		} else {
 			ExistsRequest existsRequest = message.getBody(ExistsRequest.class);
 			return client.admin().indices()
@@ -302,9 +302,15 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
 	}
 
-	public void search(Message message) {
-		SearchRequest searchRequest = message.getBody(SearchRequest.class);
-		message.setBody(client.search(searchRequest).actionGet());
+	public Object search(Message message) {
+		if (useHttpClient) {
+			Map queryObject = message.getBody(Map.class);
+			return esHttpClient.search(getIndexName(message), getIndexType(message), queryObject);
+		} else {
+			SearchRequest searchRequest = message.getBody(SearchRequest.class);
+			return client.search(searchRequest).actionGet();
+		}
+
 	}
 
 	public Object getById(Message message) {

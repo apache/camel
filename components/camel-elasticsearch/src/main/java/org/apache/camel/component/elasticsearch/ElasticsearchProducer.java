@@ -39,182 +39,221 @@ import org.elasticsearch.client.Client;
  */
 public class ElasticsearchProducer extends DefaultProducer {
 
-    public ElasticsearchProducer(ElasticsearchEndpoint endpoint) {
-        super(endpoint);
-    }
+	public ElasticsearchProducer(ElasticsearchEndpoint endpoint) {
+		super(endpoint);
+	}
 
-    @Override
-    public ElasticsearchEndpoint getEndpoint() {
-        return (ElasticsearchEndpoint) super.getEndpoint();
-    }
+	@Override
+	public ElasticsearchEndpoint getEndpoint() {
+		return (ElasticsearchEndpoint) super.getEndpoint();
+	}
 
-    private String resolveOperation(Exchange exchange) {
-        // 1. Operation can be driven by either (in order of preference):
-        // a. If the body is an ActionRequest the operation is set by the type
-        // of request.
-        // b. If the body is not an ActionRequest, the operation is set by the
-        // header if it exists.
-        // c. If neither the operation can not be derived from the body or
-        // header, the configuration is used.
-        // In the event we can't discover the operation from a, b or c we throw
-        // an error.
-        Object request = exchange.getIn().getBody();
-        if (request instanceof IndexRequest) {
-            return ElasticsearchConstants.OPERATION_INDEX;
-        } else if (request instanceof GetRequest) {
-            return ElasticsearchConstants.OPERATION_GET_BY_ID;
-        } else if (request instanceof MultiGetRequest) {
-            return ElasticsearchConstants.OPERATION_MULTIGET;
-        } else if (request instanceof UpdateRequest) {
-            return ElasticsearchConstants.OPERATION_UPDATE;
-        } else if (request instanceof BulkRequest) {
-            // do we want bulk or bulk_index?
-            if ("BULK_INDEX".equals(getEndpoint().getConfig().getOperation())) {
-                return ElasticsearchConstants.OPERATION_BULK_INDEX;
-            } else {
-                return ElasticsearchConstants.OPERATION_BULK;
-            }
-        } else if (request instanceof DeleteRequest) {
-            return ElasticsearchConstants.OPERATION_DELETE;
-        } else if (request instanceof ExistsRequest) {
-            return ElasticsearchConstants.OPERATION_EXISTS;
-        } else if (request instanceof SearchRequest) {
-            return ElasticsearchConstants.OPERATION_SEARCH;
-        } else if (request instanceof MultiSearchRequest) {
-            return ElasticsearchConstants.OPERATION_MULTISEARCH;
-        }
+	private String resolveOperation(Exchange exchange) {
+		// 1. Operation can be driven by either (in order of preference):
+		// a. If the body is an ActionRequest the operation is set by the type
+		// of request.
+		// b. If the body is not an ActionRequest, the operation is set by the
+		// header if it exists.
+		// c. If neither the operation can not be derived from the body or
+		// header, the configuration is used.
+		// In the event we can't discover the operation from a, b or c we throw
+		// an error.
+		Object request = exchange.getIn().getBody();
+		if (request instanceof IndexRequest) {
+			return ElasticsearchConstants.OPERATION_INDEX;
+		} else if (request instanceof GetRequest) {
+			return ElasticsearchConstants.OPERATION_GET_BY_ID;
+		} else if (request instanceof MultiGetRequest) {
+			return ElasticsearchConstants.OPERATION_MULTIGET;
+		} else if (request instanceof UpdateRequest) {
+			return ElasticsearchConstants.OPERATION_UPDATE;
+		} else if (request instanceof BulkRequest) {
+			// do we want bulk or bulk_index?
+			if ("BULK_INDEX".equals(getEndpoint().getConfig().getOperation())) {
+				return ElasticsearchConstants.OPERATION_BULK_INDEX;
+			} else {
+				return ElasticsearchConstants.OPERATION_BULK;
+			}
+		} else if (request instanceof DeleteRequest) {
+			return ElasticsearchConstants.OPERATION_DELETE;
+		} else if (request instanceof ExistsRequest) {
+			return ElasticsearchConstants.OPERATION_EXISTS;
+		} else if (request instanceof SearchRequest) {
+			return ElasticsearchConstants.OPERATION_SEARCH;
+		} else if (request instanceof MultiSearchRequest) {
+			return ElasticsearchConstants.OPERATION_MULTISEARCH;
+		}
 
-        String operationConfig = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_OPERATION, String.class);
-        if (operationConfig == null) {
-            operationConfig = getEndpoint().getConfig().getOperation();
-        }
-        if (operationConfig == null) {
-            throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operationConfig + "' is not supported");
-        }
-        return operationConfig;
-    }
+		String operationConfig = exchange.getIn().getHeader(
+				ElasticsearchConstants.PARAM_OPERATION, String.class);
+		if (operationConfig == null) {
+			operationConfig = getEndpoint().getConfig().getOperation();
+		}
+		if (operationConfig == null) {
+			throw new IllegalArgumentException(
+					ElasticsearchConstants.PARAM_OPERATION + " value '"
+							+ operationConfig + "' is not supported");
+		}
+		return operationConfig;
+	}
 
-    public void process(Exchange exchange) throws Exception {
-        // 2. Index and type will be set by:
-        // a. If the incoming body is already an action request
-        // b. If the body is not an action request we will use headers if they
-        // are set.
-        // c. If the body is not an action request and the headers aren't set we
-        // will use the configuration.
-        // No error is thrown by the component in the event none of the above
-        // conditions are met. The java es client
-        // will throw.
+	public void process(Exchange exchange) throws Exception {
+		// 2. Index and type will be set by:
+		// a. If the incoming body is already an action request
+		// b. If the body is not an action request we will use headers if they
+		// are set.
+		// c. If the body is not an action request and the headers aren't set we
+		// will use the configuration.
+		// No error is thrown by the component in the event none of the above
+		// conditions are met. The java es client
+		// will throw.
 
-        Message message = exchange.getIn();
-        final String operation = resolveOperation(exchange);
+		Message message = exchange.getIn();
+		final String operation = resolveOperation(exchange);
 
-        // Set the index/type headers on the exchange if necessary. This is used
-        // for type conversion.
-        boolean configIndexName = false;
-        String indexName = message.getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
-        if (indexName == null) {
-            message.setHeader(ElasticsearchConstants.PARAM_INDEX_NAME, getEndpoint().getConfig().getIndexName());
-            configIndexName = true;
-        }
+		// Set the index/type headers on the exchange if necessary. This is used
+		// for type conversion.
+		boolean configIndexName = false;
+		String indexName = message.getHeader(
+				ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
+		if (indexName == null) {
+			message.setHeader(ElasticsearchConstants.PARAM_INDEX_NAME,
+					getEndpoint().getConfig().getIndexName());
+			configIndexName = true;
+		}
 
-        boolean configIndexType = false;
-        String indexType = message.getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class);
-        if (indexType == null) {
-            message.setHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, getEndpoint().getConfig().getIndexType());
-            configIndexType = true;
-        }
+		boolean configIndexType = false;
+		String indexType = message.getHeader(
+				ElasticsearchConstants.PARAM_INDEX_TYPE, String.class);
+		if (indexType == null) {
+			message.setHeader(ElasticsearchConstants.PARAM_INDEX_TYPE,
+					getEndpoint().getConfig().getIndexType());
+			configIndexType = true;
+		}
 
-        boolean configConsistencyLevel = false;
-        String consistencyLevel = message.getHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, String.class);
-        if (consistencyLevel == null) {
-            message.setHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, getEndpoint().getConfig().getConsistencyLevel());
-            configConsistencyLevel = true;
-        }
-        
-        ElasticsearchEndpoint endpoint = getEndpoint();
-        if(endpoint.getConfig().getUseHttpClient()) {
-        	 if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
-        		 message.setBody(endpoint.index(message));
-             } else if (ElasticsearchConstants.OPERATION_UPDATE.equals(operation)) {
-                 message.setBody(endpoint.update(message));
-             } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
-            	message.setBody(endpoint.getById(message));
-             } else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {
-            	message.setBody(endpoint.multiget(message));
-             } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
-            	throw new UnsupportedOperationException();
-             } else if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(operation)) {
-             	message.setBody(endpoint.bulkIndex(message));
-             } else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
-            	message.setBody(endpoint.delete(message));
-             } else if (ElasticsearchConstants.OPERATION_EXISTS.equals(operation)) {
-            	message.setBody(endpoint.indexExists(message));
-             } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
-            	// TODO
-             } else if (ElasticsearchConstants.OPERATION_MULTISEARCH.equals(operation)) {
-            	// TODO
-             } else {
-                 throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
-             }
-        } else {
-            Client client = getEndpoint().getClient();
-            if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
-                message.setBody(endpoint.index(message));
-            } else if (ElasticsearchConstants.OPERATION_UPDATE.equals(operation)) {
-                UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
-                message.setBody(client.update(updateRequest).actionGet().getId());
-            } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
-                GetRequest getRequest = message.getBody(GetRequest.class);
-                message.setBody(client.get(getRequest));
-            } else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {
-                MultiGetRequest multiGetRequest = message.getBody(MultiGetRequest.class);
-                message.setBody(client.multiGet(multiGetRequest));
-            } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
-                BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-                message.setBody(client.bulk(bulkRequest).actionGet());
-            } else if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(operation)) {
-                BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-                List<String> indexedIds = new ArrayList<String>();
-                for (BulkItemResponse response : client.bulk(bulkRequest).actionGet().getItems()) {
-                    indexedIds.add(response.getId());
-                }
-                message.setBody(indexedIds);
-            } else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
-                DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
-                message.setBody(client.delete(deleteRequest).actionGet());
-            } else if (ElasticsearchConstants.OPERATION_EXISTS.equals(operation)) {
-                ExistsRequest existsRequest = message.getBody(ExistsRequest.class);
-                message.setBody(client.admin().indices().prepareExists(existsRequest.indices()).get().isExists());
-            } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
-                SearchRequest searchRequest = message.getBody(SearchRequest.class);
-                message.setBody(client.search(searchRequest).actionGet());
-            } else if (ElasticsearchConstants.OPERATION_MULTISEARCH.equals(operation)) {
-                MultiSearchRequest multiSearchRequest = message.getBody(MultiSearchRequest.class);
-                message.setBody(client.multiSearch(multiSearchRequest));
-            } else {
-                throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
-            }
-        }
+		boolean configConsistencyLevel = false;
+		String consistencyLevel = message.getHeader(
+				ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, String.class);
+		if (consistencyLevel == null) {
+			message.setHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL,
+					getEndpoint().getConfig().getConsistencyLevel());
+			configConsistencyLevel = true;
+		}
 
-        // If we set params via the configuration on this exchange, remove them
-        // now. This preserves legacy behavior for this component and enables a
-        // use case where one message can be sent to multiple elasticsearch
-        // endpoints where the user is relying on the endpoint configuration
-        // (index/type) rather than header values. If we do not clear this out
-        // sending the same message (index request, for example) to multiple
-        // elasticsearch endpoints would have the effect overriding any
-        // subsequent endpoint index/type with the first endpoint index/type.
-        if (configIndexName) {
-            message.removeHeader(ElasticsearchConstants.PARAM_INDEX_NAME);
-        }
+		ElasticsearchEndpoint endpoint = getEndpoint();
+		if (endpoint.getConfig().getUseHttpClient()) {
+			if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
+				message.setBody(endpoint.index(message));
+			} else if (ElasticsearchConstants.OPERATION_UPDATE
+					.equals(operation)) {
+				message.setBody(endpoint.update(message));
+			} else if (ElasticsearchConstants.OPERATION_GET_BY_ID
+					.equals(operation)) {
+				message.setBody(endpoint.getById(message));
+			} else if (ElasticsearchConstants.OPERATION_MULTIGET
+					.equals(operation)) {
+				message.setBody(endpoint.multiget(message));
+			} else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
+				throw new UnsupportedOperationException();
+			} else if (ElasticsearchConstants.OPERATION_BULK_INDEX
+					.equals(operation)) {
+				message.setBody(endpoint.bulkIndex(message));
+			} else if (ElasticsearchConstants.OPERATION_DELETE
+					.equals(operation)) {
+				message.setBody(endpoint.delete(message));
+			} else if (ElasticsearchConstants.OPERATION_EXISTS
+					.equals(operation)) {
+				message.setBody(endpoint.indexExists(message));
+			} else if (ElasticsearchConstants.OPERATION_SEARCH
+					.equals(operation)) {
+				message.setBody(endpoint.search(message));
+			} else if (ElasticsearchConstants.OPERATION_MULTISEARCH
+					.equals(operation)) {
+				//
+			} else {
+				throw new IllegalArgumentException(
+						ElasticsearchConstants.PARAM_OPERATION + " value '"
+								+ operation + "' is not supported");
+			}
+		} else {
+			Client client = getEndpoint().getClient();
+			if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
+				message.setBody(endpoint.index(message));
+			} else if (ElasticsearchConstants.OPERATION_UPDATE
+					.equals(operation)) {
+				UpdateRequest updateRequest = message
+						.getBody(UpdateRequest.class);
+				message.setBody(client.update(updateRequest).actionGet()
+						.getId());
+			} else if (ElasticsearchConstants.OPERATION_GET_BY_ID
+					.equals(operation)) {
+				GetRequest getRequest = message.getBody(GetRequest.class);
+				message.setBody(client.get(getRequest));
+			} else if (ElasticsearchConstants.OPERATION_MULTIGET
+					.equals(operation)) {
+				MultiGetRequest multiGetRequest = message
+						.getBody(MultiGetRequest.class);
+				message.setBody(client.multiGet(multiGetRequest));
+			} else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
+				BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+				message.setBody(client.bulk(bulkRequest).actionGet());
+			} else if (ElasticsearchConstants.OPERATION_BULK_INDEX
+					.equals(operation)) {
+				BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+				List<String> indexedIds = new ArrayList<String>();
+				for (BulkItemResponse response : client.bulk(bulkRequest)
+						.actionGet().getItems()) {
+					indexedIds.add(response.getId());
+				}
+				message.setBody(indexedIds);
+			} else if (ElasticsearchConstants.OPERATION_DELETE
+					.equals(operation)) {
+				DeleteRequest deleteRequest = message
+						.getBody(DeleteRequest.class);
+				message.setBody(client.delete(deleteRequest).actionGet());
+			} else if (ElasticsearchConstants.OPERATION_EXISTS
+					.equals(operation)) {
+				ExistsRequest existsRequest = message
+						.getBody(ExistsRequest.class);
+				message.setBody(client.admin().indices()
+						.prepareExists(existsRequest.indices()).get()
+						.isExists());
+			} else if (ElasticsearchConstants.OPERATION_SEARCH
+					.equals(operation)) {
+				SearchRequest searchRequest = message
+						.getBody(SearchRequest.class);
+				message.setBody(client.search(searchRequest).actionGet());
+			} else if (ElasticsearchConstants.OPERATION_MULTISEARCH
+					.equals(operation)) {
+				MultiSearchRequest multiSearchRequest = message
+						.getBody(MultiSearchRequest.class);
+				message.setBody(client.multiSearch(multiSearchRequest));
+			} else {
+				throw new IllegalArgumentException(
+						ElasticsearchConstants.PARAM_OPERATION + " value '"
+								+ operation + "' is not supported");
+			}
+		}
 
-        if (configIndexType) {
-            message.removeHeader(ElasticsearchConstants.PARAM_INDEX_TYPE);
-        }
+		// If we set params via the configuration on this exchange, remove them
+		// now. This preserves legacy behavior for this component and enables a
+		// use case where one message can be sent to multiple elasticsearch
+		// endpoints where the user is relying on the endpoint configuration
+		// (index/type) rather than header values. If we do not clear this out
+		// sending the same message (index request, for example) to multiple
+		// elasticsearch endpoints would have the effect overriding any
+		// subsequent endpoint index/type with the first endpoint index/type.
+		if (configIndexName) {
+			message.removeHeader(ElasticsearchConstants.PARAM_INDEX_NAME);
+		}
 
-        if (configConsistencyLevel) {
-            message.removeHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL);
-        }
+		if (configIndexType) {
+			message.removeHeader(ElasticsearchConstants.PARAM_INDEX_TYPE);
+		}
 
-    }
+		if (configConsistencyLevel) {
+			message.removeHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL);
+		}
+
+	}
 }

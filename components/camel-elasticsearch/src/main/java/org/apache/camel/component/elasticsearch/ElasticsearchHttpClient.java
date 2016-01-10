@@ -144,8 +144,7 @@ public class ElasticsearchHttpClient {
 		// TODO need to rethink this approach of responding with just the ID
 		return response.getId();
 	}
-	
-	
+
 	/**
 	 * Exists API given an indexName, type, id
 	 * 
@@ -308,6 +307,35 @@ public class ElasticsearchHttpClient {
 		}
 
 		return new ArrayList<String>();
+	}
+
+	/**
+	 * Executes an elasticsearch query represented by the queryObject and
+	 * optionally sets the index and index type in the URL
+	 * 
+	 * @param indexName
+	 * @param indexType
+	 * @param queryObject
+	 * @return query results as a map representation
+	 */
+	public Object search(String indexName, String indexType, Map queryObject) {
+		WebTarget target = getRootTarget();
+		if (indexName != null) {
+			target = target.path(indexName);
+			if (indexType != null) {
+				target = target.path(indexType);
+			}
+		}
+		target = target.path("_search");
+		try {
+			String searchBody = new ObjectMapper()
+					.writeValueAsString(queryObject);
+			Response response = target.request().post(Entity.json(searchBody));
+			return response.readEntity(Map.class);
+
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException("Could not process query body map", e);
+		}
 	}
 
 }
