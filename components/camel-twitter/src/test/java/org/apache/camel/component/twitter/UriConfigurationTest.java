@@ -58,7 +58,7 @@ public class UriConfigurationTest extends Assert {
         TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
         
         assertEquals("example.com", twitterEndpoint.getProperties().getHttpProxyHost());
-        assertEquals(3338, twitterEndpoint.getProperties().getHttpProxyPort());
+        assertEquals(Integer.valueOf(3338), twitterEndpoint.getProperties().getHttpProxyPort());
         assertEquals("test", twitterEndpoint.getProperties().getHttpProxyUser());
         assertEquals("pwd", twitterEndpoint.getProperties().getHttpProxyPassword());
     }
