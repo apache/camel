@@ -31,7 +31,10 @@ import twitter4j.conf.ConfigurationBuilder;
 @UriParams
 public class TwitterConfiguration {
 
-    @UriPath(description = "What kind of type to use") @Metadata(required = "true")
+    @UriPath(description = "The kind of endpoint", enums = "directmessage,search,streaming/filter,streaming/sample,streaming/user"
+            + ",timeline/home,timeline/mentions,timeline/retweetsofme,timeline/user") @Metadata(required = "true")
+    private String kind;
+    @UriParam(label = "consumer", defaultValue = "direct", enums = "polling,direct,event")
     private EndpointType type = EndpointType.DIRECT;
     @UriParam
     private String accessToken;
@@ -86,6 +89,8 @@ public class TwitterConfiguration {
      * if we only need twitterStream.
      */
     private Twitter twitter;
+
+    @UriParam(label = "consumer,advanced")
     private TwitterStream twitterStream;
 
     /**
@@ -126,7 +131,6 @@ public class TwitterConfiguration {
         return confBuilder.build();
     }
 
-
     public Twitter getTwitter() {
         if (twitter == null) {
             twitter = new TwitterFactory(getConfiguration()).getInstance();
@@ -142,6 +146,9 @@ public class TwitterConfiguration {
         return twitterStream;
     }
 
+    /**
+     * To use a custom instance of TwitterStream
+     */
     public void setTwitterStream(TwitterStream twitterStream) {
         this.twitterStream = twitterStream;
     }
@@ -150,8 +157,19 @@ public class TwitterConfiguration {
         if (twitterStream == null) {
             twitterStream = new TwitterStreamFactory(getConfiguration()).getInstance();
         }
-
         return twitterStream;
+    }
+
+    public String getKind() {
+        return kind;
+    }
+
+    /**
+     * What polling mode to use, direct, polling or event based.
+     * The event mode is only supported when the endpoint kind is event based.
+     */
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
     public String getConsumerKey() {
@@ -235,6 +253,9 @@ public class TwitterConfiguration {
         return type;
     }
 
+    /**
+     * Endpoint type to use. Only streaming supports event type.
+     */
     public void setType(EndpointType type) {
         this.type = type;
     }
@@ -353,11 +374,11 @@ public class TwitterConfiguration {
     /**
      * The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
      */
-    public void setHttpProxyPort(int httpProxyPort) {
+    public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
 
-    public int getHttpProxyPort() {
+    public Integer getHttpProxyPort() {
         return httpProxyPort;
     }
 
