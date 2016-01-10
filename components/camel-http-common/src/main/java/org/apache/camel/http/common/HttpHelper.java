@@ -412,6 +412,10 @@ public final class HttpHelper {
             // we should use the relative path if possible
             String baseUrl;
             relativeUrl = endpoint.getHttpUri().toASCIIString();
+            // strip query parameters from relative url
+            if (relativeUrl.contains("?")) {
+                relativeUrl = ObjectHelper.before(relativeUrl, "?");
+            }
             if (url.startsWith(relativeUrl)) {
                 baseUrl = url.substring(0, relativeUrl.length());
                 relativeUrl = url.substring(relativeUrl.length());
