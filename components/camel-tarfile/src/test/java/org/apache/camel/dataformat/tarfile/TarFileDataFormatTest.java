@@ -70,12 +70,16 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testTarWithFileName() throws Exception {
-        getMockEndpoint("mock:tar").expectedBodiesReceived(getTaredText("poem.txt"));
-        getMockEndpoint("mock:tar").expectedHeaderReceived(FILE_NAME, "poem.txt.tar");
+        MockEndpoint mock = getMockEndpoint("mock:tar");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(FILE_NAME, "poem.txt.tar");
 
         template.sendBodyAndHeader("direct:tar", TEXT, FILE_NAME, "poem.txt");
 
         assertMockEndpointsSatisfied();
+
+        Exchange exchange = mock.getReceivedExchanges().get(0);
+        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), (byte[]) exchange.getIn().getBody()));
     }
 
     @Test
