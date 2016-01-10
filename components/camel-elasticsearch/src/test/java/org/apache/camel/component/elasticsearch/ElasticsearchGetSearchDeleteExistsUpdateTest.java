@@ -188,8 +188,14 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_EXISTS);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         Boolean exists = template.requestBodyAndHeaders("direct:exists", "", headers, Boolean.class);
+        
         assertNotNull("response should not be null", exists);
         assertTrue("Index should exists", exists);
+        
+        Boolean exists2 = template.requestBodyAndHeaders("direct:exists2", "", headers, Boolean.class);
+        assertNotNull("response should not be null", exists2);
+        assertTrue("Index should exists", exists2);
+        
     }
     
     @Test
@@ -404,6 +410,8 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
                 from("direct:update2").to("elasticsearch://elasticsearch?ip=localhost&port=9201&operation=UPDATE&indexName=twitter&indexType=tweet&useHttpClient=true");
                 
                 from("direct:exists").to("elasticsearch://local?operation=EXISTS");
+                from("direct:exists2").to("elasticsearch://elasticsearch?ip=localhost&port=9201&useHttpClient=true&operation=EXISTS");
+                
                 from("direct:multisearch").to("elasticsearch://local?operation=MULTISEARCH&indexName=test");
             }
         };

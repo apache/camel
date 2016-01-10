@@ -144,6 +144,17 @@ public class ElasticsearchHttpClient {
 		// TODO need to rethink this approach of responding with just the ID
 		return response.getId();
 	}
+	
+	
+	/**
+	 * Exists API given an indexName, type, id
+	 * 
+	 */
+	public boolean indexExists(String indexName) {
+		WebTarget target = getRootTarget().path(indexName);
+		Response response = target.request().head();
+		return (response.getStatus() == 200);
+	}
 
 	/**
 	 * Bulk index API using the bulk api format

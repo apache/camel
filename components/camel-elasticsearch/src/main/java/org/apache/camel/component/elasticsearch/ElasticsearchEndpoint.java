@@ -220,9 +220,14 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 	}
 
 	public Object update(Message message) {
-		if(useHttpClient) {
-			String id = message.getExchange().getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class);
-			return esHttpClient.update(getIndexName(message), getIndexType(message), id, message.getBody(Map.class));
+		if (useHttpClient) {
+			String id = message
+					.getExchange()
+					.getIn()
+					.getHeader(ElasticsearchConstants.PARAM_INDEX_ID,
+							String.class);
+			return esHttpClient.update(getIndexName(message),
+					getIndexType(message), id, message.getBody(Map.class));
 		} else {
 			UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
 			return client.update(updateRequest).actionGet().getId();
@@ -236,10 +241,11 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 	}
 
 	public Object multiget(Message message) {
-		if(useHttpClient) {
+		if (useHttpClient) {
 			String indexName = getIndexName(message);
 			String indexType = getIndexType(message);
-			return esHttpClient.multiget(indexName, indexType, message.getBody(List.class));
+			return esHttpClient.multiget(indexName, indexType,
+					message.getBody(List.class));
 		} else {
 			MultiGetRequest multiGetRequest = message
 					.getBody(MultiGetRequest.class);
@@ -275,18 +281,25 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 	}
 
 	public Object delete(Message message) {
-		if(useHttpClient) {
-			return esHttpClient.delete(getIndexName(message), getIndexType(message), message.getBody(String.class));
+		if (useHttpClient) {
+			return esHttpClient.delete(getIndexName(message),
+					getIndexType(message), message.getBody(String.class));
 		} else {
 			DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
 			return client.delete(deleteRequest).actionGet();
 		}
 	}
 
-	public void exists(Message message) {
-		ExistsRequest existsRequest = message.getBody(ExistsRequest.class);
-		message.setBody(client.admin().indices()
-				.prepareExists(existsRequest.indices()).get().isExists());
+	public boolean indexExists(Message message) {
+		if (useHttpClient) {
+			return esHttpClient.indexExists(getIndexName(message));
+			
+		} else {
+			ExistsRequest existsRequest = message.getBody(ExistsRequest.class);
+			return client.admin().indices()
+					.prepareExists(existsRequest.indices()).get().isExists();
+		}
+
 	}
 
 	public void search(Message message) {

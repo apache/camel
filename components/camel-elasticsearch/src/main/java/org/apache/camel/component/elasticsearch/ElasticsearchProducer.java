@@ -142,13 +142,13 @@ public class ElasticsearchProducer extends DefaultProducer {
              } else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {
             	message.setBody(endpoint.multiget(message));
              } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
-            	 // TODO
+            	throw new UnsupportedOperationException();
              } else if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(operation)) {
              	message.setBody(endpoint.bulkIndex(message));
              } else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
             	message.setBody(endpoint.delete(message));
              } else if (ElasticsearchConstants.OPERATION_EXISTS.equals(operation)) {
-            	// TODO
+            	message.setBody(endpoint.indexExists(message));
              } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
             	// TODO
              } else if (ElasticsearchConstants.OPERATION_MULTISEARCH.equals(operation)) {
