@@ -26,7 +26,7 @@ public class NettyMixedCaseHttpPathTest extends BaseNettyTest {
     public void testMixedCase() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "/HelloWorld");
 
-        String out = template.requestBody("netty4-http:http://0.0.0.0:{{port}}/SHoppING/HelloWorld", "Camel", String.class);
+        String out = template.requestBody("netty4-http:http://localhost:{{port}}/SHoppING/HelloWorld", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
         assertMockEndpointsSatisfied();
