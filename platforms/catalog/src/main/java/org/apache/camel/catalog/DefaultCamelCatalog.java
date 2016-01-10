@@ -23,10 +23,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -857,6 +859,15 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     if (!found) {
                         result.addInvalidEnum(name, value);
                         result.addInvalidEnumChoices(name, choices);
+                        if (suggestionStrategy != null) {
+                            Set<String> names = new LinkedHashSet<>();
+                            names.addAll(Arrays.asList(choices));
+                            String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
+                            if (suggestions != null) {
+                                result.addInvalidEnumSuggestions(name, suggestions);
+                            }
+                        }
+
                     }
                 }
 

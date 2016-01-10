@@ -44,6 +44,7 @@ public class EndpointValidationResult implements Serializable {
     private Set<String> required;
     private Map<String, String> invalidEnum;
     private Map<String, String[]> invalidEnumChoices;
+    private Map<String, String[]> invalidEnumSuggestions;
     private Map<String, String> invalidReference;
     private Map<String, String> invalidBoolean;
     private Map<String, String> invalidInteger;
@@ -129,6 +130,13 @@ public class EndpointValidationResult implements Serializable {
             invalidEnumChoices = new LinkedHashMap<String, String[]>();
         }
         invalidEnumChoices.put(name, choices);
+    }
+
+    public void addInvalidEnumSuggestions(String name, String[] suggestions) {
+        if (invalidEnumSuggestions == null) {
+            invalidEnumSuggestions = new LinkedHashMap<String, String[]>();
+        }
+        invalidEnumSuggestions.put(name, suggestions);
     }
 
     public void addInvalidReference(String name, String value) {
@@ -273,13 +281,22 @@ public class EndpointValidationResult implements Serializable {
         }
         if (invalidEnum != null) {
             for (Map.Entry<String, String> entry : invalidEnum.entrySet()) {
-                String[] choices = invalidEnumChoices.get(entry.getKey());
+                String name = entry.getKey();
+                String[] choices = invalidEnumChoices.get(name);
                 String defaultValue = defaultValues != null ? defaultValues.get(entry.getKey()) : null;
                 String str = Arrays.asList(choices).toString();
                 String msg = "Invalid enum value: " + entry.getValue() + ". Possible values: " + str;
+                if (invalidEnumSuggestions != null) {
+                    String[] suggestions = invalidEnumSuggestions.get(name);
+                    if (suggestions != null && suggestions.length > 0) {
+                        str = Arrays.asList(suggestions).toString();
+                        msg += ". Did you mean: " + str;
+                    }
+                }
                 if (defaultValue != null) {
                     msg += ". Default value: " + defaultValue;
                 }
+
                 options.put(entry.getKey(), msg);
             }
         }
