@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
 
-    private String url = "netty4-http:http://0.0.0.0:" + getPort() + "/cheese?urlDecodeHeaders=true";
+    private String url = "netty4-http:http://localhost:" + getPort() + "/cheese?urlDecodeHeaders=true";
 
     @Test
     public void testQueryParameters() throws Exception {
