@@ -60,7 +60,7 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://get?" + getAuthParams() + "&remotePath=/XXX")
+                        .to("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX")
                         .to("mock:result");
             }
         };
