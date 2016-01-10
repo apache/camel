@@ -101,7 +101,7 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
                     .to("hbase://" + PERSON_TABLE);
 
                 from("direct:scan")
-                    .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&family=family1&qualifier=column1");
+                    .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&row.family=family1&row.qualifier=column1");
             }
         };
     }

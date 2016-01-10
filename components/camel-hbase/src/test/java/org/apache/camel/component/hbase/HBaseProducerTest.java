@@ -323,7 +323,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
                     .to("hbase://" + PERSON_TABLE);
 
                 from("direct:start-with-model")
-                    .to("hbase://" + PERSON_TABLE + "?family=info&qualifier=firstName&family2=birthdate&qualifier2=year");
+                    .to("hbase://" + PERSON_TABLE + "?row.family=info&row.qualifier=firstName&row.family2=birthdate&row.qualifier2=year");
 
                 from("direct:scan")
                         .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN);
