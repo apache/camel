@@ -1052,7 +1052,7 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:add")
                         .to("git://" + gitLocalRepo + "?operation=add");
                 from("direct:remove")
-                        .to("git://" + gitLocalRepo + "?operation=rm");
+                        .to("git://" + gitLocalRepo + "?operation=remove");
                 from("direct:add-on-branch")
                         .to("git://" + gitLocalRepo + "?operation=add&branchName=" + branchTest);
                 from("direct:remove-on-branch")
