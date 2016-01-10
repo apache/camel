@@ -56,10 +56,10 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
     private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
 
     private FacebookNameStyle nameStyle;
-    private String method;
 
-    // Facebook4J method name
-    @UriPath(description = "What operation to perform") @Metadata(required = "true")
+    @UriPath(name = "methodName", description = "What operation to perform") @Metadata(required = "true")
+
+    private String method;
     private FacebookMethodsType methodName;
     @UriParam
     private FacebookEndpointConfiguration configuration;
@@ -202,8 +202,4 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         this.inBody = inBody;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
 }
