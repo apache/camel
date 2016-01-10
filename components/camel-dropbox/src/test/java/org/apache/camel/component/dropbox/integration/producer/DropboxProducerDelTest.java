@@ -58,7 +58,7 @@ public class DropboxProducerDelTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://del?" + getAuthParams() + "&remotePath=/XXX")
+                        .to("dropbox://del?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX")
                         .to("mock:result");
             }
         };

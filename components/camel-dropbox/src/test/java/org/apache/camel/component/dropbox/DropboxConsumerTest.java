@@ -19,21 +19,22 @@ package org.apache.camel.component.dropbox;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.integration.consumer.DropboxScheduledPollGetConsumer;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.apache.camel.component.dropbox.util.DropboxOperation.get;
+public class DropboxConsumerTest extends DropboxTestSupport {
 
-public class DropboxConsumerTest extends CamelTestSupport {
+    public DropboxConsumerTest() throws Exception {
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("dropbox://" + get + "?accessToken=token&remotePath=/path").to("mock:test");
+                from("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/path").to("mock:test");
             }
         };
     }
@@ -41,7 +42,7 @@ public class DropboxConsumerTest extends CamelTestSupport {
     @Test
     public void shouldCreateGetConsumer() throws Exception {
         // Given
-        Endpoint dropboxEndpoint = context.getEndpoint("dropbox://" + get + "?accessToken=token&remotePath=/path");
+        Endpoint dropboxEndpoint = context.getEndpoint("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/path");
 
         // When
         Consumer consumer = dropboxEndpoint.createConsumer(null);

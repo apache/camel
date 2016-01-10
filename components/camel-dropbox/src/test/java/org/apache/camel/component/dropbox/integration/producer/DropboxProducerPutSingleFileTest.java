@@ -58,7 +58,7 @@ public class DropboxProducerPutSingleFileTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://put?" + getAuthParams() + "&uploadMode=add&localPath=/XXX")
+                        .to("dropbox://put?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&uploadMode=add&localPath=/XXX")
                         .to("mock:result");
             }
         };
