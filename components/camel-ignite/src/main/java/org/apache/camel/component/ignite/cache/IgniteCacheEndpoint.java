@@ -43,8 +43,7 @@ import org.apache.ignite.cache.query.Query;
     consumerClass = IgniteCacheContinuousQueryConsumer.class)
 public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
-    @UriParam
-    @Metadata(required = "true")
+    @UriParam @Metadata(required = "true")
     private String cacheName;
 
     @UriParam

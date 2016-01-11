@@ -43,7 +43,6 @@ public final class IgniteConstants {
 
     // Ignite Sets.
     public static final String IGNITE_SETS_OPERATION = "CamelIgniteSetsOperation";
-    public static final String IGNITE_SETS_OPERATION_RESULT = "CamelIgniteSetsOperationResult";
 
     // Ignite ID Gen.
     public static final String IGNITE_IDGEN_OPERATION = "CamelIgniteIdGenOperation";
