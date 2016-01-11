@@ -70,14 +70,14 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 2.x
   ex :
   
 	2010-07-14 09:57:54,403 [main           ] INFO  LoggingOutInterceptor          - Outbound Message
-	---------------------------
+	---
 	ID: 1
 	Address: http://localhost:9081/camel-example-reportincident/webservices/incident
 	Encoding: UTF-8
 	Content-Type: text/xml
 	Headers: {SOAPAction=["http://reportincident.example.camel.apache.org/ReportIncident"], Accept=[*/*]}
 	Payload: <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Header><wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" soap:mustUnderstand="1"><wsu:Timestamp xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="Timestamp-2"><wsu:Created>2010-07-14T07:57:54.387Z</wsu:Created><wsu:Expires>2010-07-14T08:02:54.387Z</wsu:Expires></wsu:Timestamp><wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="UsernameToken-1"><wsse:Username>charles</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest">0U5uXRYukYG5PF82gsmncH+yWEE=</wsse:Password><wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">/Ka8O+F8cyufohiJFp8wjA==</wsse:Nonce><wsu:Created>2010-07-14T07:57:54.387Z</wsu:Created></wsse:UsernameToken></wsse:Security></soap:Header><soap:Body><ns2:inputReportIncident xmlns:ns2="http://reportincident.example.camel.apache.org"><incidentId>123</incidentId><incidentDate>2008-08-18</incidentDate><givenName>Claus</givenName><familyName>Ibsen</familyName><summary>Bla</summary><details>Bla bla</details><email>davsclaus@apache.org</email><phone>0045 2962 7576</phone></ns2:inputReportIncident></soap:Body></soap:Envelope>
-	--------------------------------------
+	--------------
 	2010-07-14 09:57:54,403 [main           ] DEBUG HTTPConduit                    - Sending POST Message with Headers to http://localhost:9080/camel-example-reportincident/webservices/incident Conduit :{http://reportincident.example.camel.apache.org}ReportIncidentEndpointPort.http-conduit
   
   --> and the message formatted that you copy in SOAPUI

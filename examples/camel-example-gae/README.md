@@ -11,5 +11,5 @@ If you hit an problems please let us know on the Camel Forums [http://camel.apac
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
 
-------------------------
+
 The Camel riders!
