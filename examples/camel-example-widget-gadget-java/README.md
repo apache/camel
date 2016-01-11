@@ -1,4 +1,4 @@
-# Widget and Gadget Example
+# Widget and Gadget Example - Plain Java
 
 ### Introduction
 
@@ -25,14 +25,31 @@ You will need to build this example first:
 
 This example requires an existing Apache ActiveMQ broker running.
 
-This application connects to the remote broker on url: tcp://localhost:61616.
+To setup and run Apache ActiveMQ then download it from the []ActiveMQ website](http://activemq.apache.org/).
+
+Then extract the download such as (the .tar)
+
+    tar xf ~/Downloads/apache-activemq-5.13.0-bin.tar.gz
+
+Then the broker can be started with
+
+    cd apache-activemq-5.13.0
+    bin/activemq console
+
+And then Broker is running (you can press `ctrl + c` in the shell to stop the broker).
+
+The Camel application connects to the remote broker on url: `tcp://localhost:61616`.
 The url can be changed in the `WidgetMain.java` source code.
 
-When the ActiveMQ broker is running, then you can run this example using
+When the ActiveMQ broker is running, then you can run this example using:
 
     mvn compile exec:java
 
-When the Camel application runs, you should see 2 orders being processed and logged to the console.
+When the Camel application runs, you should see 2 orders being processed and logged to the console, such as:
+```
+2016-01-11 12:53:53,978 [sumer[newOrder]] INFO  widget                         - Exchange[ExchangePattern: InOnly, BodyType: byte[], Body: <order>  <customerId>123</customerId>  <product>widget</product>  <amount>2</amount></order>]
+2016-01-11 12:53:54,005 [sumer[newOrder]] INFO  gadget                         - Exchange[ExchangePattern: InOnly, BodyType: byte[], Body: <order>  <customerId>456</customerId>  <product>gadget</product>  <amount>3</amount></order>]
+```
 
 You can access the ActiveMQ web console using [http://localhost:8161/admin/](http://localhost:8161/admin/)
 and then browse the queues. You should see the three queues:
@@ -41,6 +58,7 @@ and then browse the queues. You should see the three queues:
  - widget
  - gadget
 
+The Camel application can be stopped pressing `ctrl + c` in the shell.
 
 ### Configuration
 
@@ -59,5 +77,4 @@ If you hit an problems please let us know on the Camel Forums
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
 
-------------------------
 The Camel riders!
