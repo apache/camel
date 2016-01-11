@@ -224,6 +224,11 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
     <feature>jetty</feature>
   </feature>
+  <feature name='camel-braintree' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.braintree-java/${braintree-gateway-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-braintree/${project.version}</bundle>
+  </feature>
   <feature name='camel-cache' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
 	  <feature>transaction</feature>
