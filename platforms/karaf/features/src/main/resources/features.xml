@@ -895,7 +895,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:com.jayway.jsonpath/json-path/${json-path-version}</bundle>
     <bundle>mvn:net.minidev/json-smart/${json-smart-version}</bundle>
-    <bundle>mvn:net.minidev/asm/${json-asm-version}</bundle>
+    <bundle>mvn:net.minidev/accessors-smart/${json-accessors-smart-version}</bundle>
     <!-- should be optional: https://code.google.com/p/json-path/issues/detail?id=66 -->
     <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
