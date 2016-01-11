@@ -20,6 +20,7 @@ All examples have been sort by type/category
 
 ##### EIP
 
+* [camel-example-widget-gadget-java](camel-example-widget-gadget-java/README.md)
 * [camel-example-tracer](camel-example-tracer/README.md)
 * [camel-example-route-throttling](camel-example-route-throttling/README.md)
 * [camel-example-aggregate](camel-example-aggregate/README.md)
@@ -115,5 +116,4 @@ If you hit an problems please let us know on the Camel Forums <http://camel.apac
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
 
-------------------------
 The Camel riders!
