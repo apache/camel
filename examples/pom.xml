@@ -85,7 +85,8 @@
     <module>camel-example-swagger-java</module>
     <module>camel-example-tracer</module>
     <module>camel-example-twitter-websocket</module>
-    <module>camel-example-twitter-websocket-blueprint</module>    
+    <module>camel-example-twitter-websocket-blueprint</module>
+    <module>camel-example-widget-gadget</module>    
   </modules>
  
   <properties>
