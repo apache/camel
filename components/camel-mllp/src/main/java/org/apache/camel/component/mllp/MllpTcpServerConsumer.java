@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -194,12 +195,33 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             log.debug("Starting acceptor thread");
 
             while (null != serverSocket && serverSocket.isBound() && !serverSocket.isClosed()) {
-                try {
                     /* ? set this here ? */
                     // serverSocket.setSoTimeout( 10000 );
                     // TODO: Need to check maxConnections and figure out what to do when exceeded
-                    Socket socket = serverSocket.accept();
+                Socket socket = null;
+                try {
+                    socket = serverSocket.accept();
+                } catch (SocketException socketEx) {
+                    // This should happen if the component is closed while the accept call is blocking
+                    if (serverSocket.isBound()) {
+                        try {
+                            serverSocket.close();
+                        } catch (Exception ex) {
+                            log.info("Exception encountered closing ServerSocket after SocketException on accept()", ex);
+                        }
+                    }
+                } catch (IOException ioEx) {
+                    log.error("Exception encountered accepting connection - closing ServerSocket", ioEx);
+                    if (serverSocket.isBound()) {
+                        try {
+                            serverSocket.close();
+                        } catch (Exception ex) {
+                            log.info("Exception encountered closing ServerSocket after exception on accept()", ex);
+                        }
+                    }
+                }
 
+                try {
                     /* Wait a bit and then check and see if the socket is really there - it could be a load balancer
                      pinging the port
                       */
@@ -266,8 +288,30 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     log.error("Exception accepting new connection", ex);
                 }
             }
+
+            log.info("ServerSocket.accept loop finished - closing listener");
+            if (null != serverSocket  &&  serverSocket.isBound()  &&  !serverSocket.isClosed()) {
+                try {
+                    serverSocket.close();
+                } catch (Exception ex) {
+                    log.warn("Exception encountered closing ServerSocket after accept loop had exited", ex);
+                }
+            }
         }
 
+        @Override
+        public void interrupt() {
+            super.interrupt();
+            if (null != serverSocket) {
+                if (serverSocket.isBound()) {
+                    try {
+                        serverSocket.close();
+                    } catch (IOException ioEx ) {
+                        log.warn("Exception encountered closing ServerSocket in interrupt() method", ioEx);
+                    }
+                }
+            }
+        }
     }
 
     class ClientSocketThread extends Thread {
