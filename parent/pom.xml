@@ -3318,5 +3318,31 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <activation>
+        <os>
+          <family>Linux</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <!-- By default Java's secure RNG uses /dev/random to generate seeds. In
+                     certain environments (in particular cloud environments), some unit
+                     tests may exhaust the Linux entropy pool and start blocking on reads
+                     from /dev/random. To avoid this, force Java to always use /dev/urandom.
+                     Note that "file:/dev/urandom" doesn't work here because it is interpreted
+                     in a special way. Use either "file:///dev/urandom" or "file:/dev/./urandom". -->
+                <java.security.egd>file:///dev/urandom</java.security.egd>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
