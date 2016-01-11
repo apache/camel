@@ -26,8 +26,8 @@
     <version>2.17-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-example-widget-gadget</artifactId>
-  <name>Camel :: Example :: Widget and Gadget</name>
+  <artifactId>camel-example-widget-gadget-java</artifactId>
+  <name>Camel :: Example :: Widget and Gadget :: Java</name>
   <description>The widget and gadget example from the EIP book</description>
   <packaging>jar</packaging>
 
