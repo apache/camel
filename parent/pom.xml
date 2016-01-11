@@ -120,7 +120,7 @@
     <commons-lang3-version>3.4</commons-lang3-version>
     <commons-logging-version>1.2</commons-logging-version>
     <commons-math-version>2.2</commons-math-version>
-    <commons-math3-version>3.5</commons-math3-version>
+    <commons-math3-version>3.6</commons-math3-version>
     <commons-net-version>3.3</commons-net-version>
     <commons-pool-version>1.6</commons-pool-version>
     <commons-pool2-version>2.4.2</commons-pool2-version>
