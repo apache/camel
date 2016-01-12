@@ -47,9 +47,9 @@ public class ${className} extends AbstractCamelRunner {
     public static final String COMPONENT_DESCRIPTION = "This is the description for ${artifactId}.";
 
     @Override
-    protected List<RoutesBuilder>getRouteBuilders() {
-        List<RoutesBuilder>routesBuilders = new ArrayList<>();
-        routesBuilders.add(new ${className}Route());
+    protected List<RoutesBuilder> getRouteBuilders() {
+        List<RoutesBuilder> routesBuilders = new ArrayList<>();
+        routesBuilders.add(new ${className}Route(getLocalRegistry()));
         return routesBuilders;
     }
 
