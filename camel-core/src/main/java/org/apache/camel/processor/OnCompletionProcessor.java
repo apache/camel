@@ -169,7 +169,7 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
                 exchange.setProperty(Exchange.ROLLBACK_ONLY, rollbackOnly);
             }
             if (rollbackOnlyLast != null) {
-                exchange.setProperty(Exchange.ROLLBACK_ONLY, rollbackOnlyLast);
+                exchange.setProperty(Exchange.ROLLBACK_ONLY_LAST, rollbackOnlyLast);
             }
             if (cause != null) {
                 exchange.setException(cause);
