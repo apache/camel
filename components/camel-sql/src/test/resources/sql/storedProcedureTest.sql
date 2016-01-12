@@ -15,14 +15,20 @@
 -- limitations under the License.
 -- ------------------------------------------------------------------------
 
-CREATE PROCEDURE ADDNUMBERS(VALUE1 INTEGER, VALUE2 INTEGER,OUT RESULT INTEGER)
+CREATE PROCEDURE SUBNUMBERS(VALUE1 INTEGER, VALUE2 INTEGER,OUT RESULT INTEGER)
  PARAMETER STYLE JAVA
  LANGUAGE JAVA
  EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredProcedure.addnumbers';
+'org.apache.camel.component.sql.stored.TestStoredProcedure.subnumbers';
 
 CREATE PROCEDURE NILADIC()
  PARAMETER STYLE JAVA
  LANGUAGE JAVA
  EXTERNAL NAME
 'org.apache.camel.component.sql.stored.TestStoredProcedure.niladic';
+
+CREATE PROCEDURE BATCHFN(VALUE1 CHAR(10))
+ PARAMETER STYLE JAVA
+ LANGUAGE JAVA
+ EXTERNAL NAME
+'org.apache.camel.component.sql.stored.TestStoredProcedure.batchfn';

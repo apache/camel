@@ -14,33 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sql.stored.template.ast;
+package org.apache.camel.component.sql.stored;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
 
-/**
- * Root element of Simple Stored Procedure Template AST.
- */
-public class Template {
+import org.springframework.dao.DataAccessException;
 
-    private final List<Object> parameterList = new ArrayList<>();
-    private String procedureName;
+public interface WrapperExecuteCallback {
 
-    public void addParameter(Object parameter) {
-        parameterList.add(parameter);
-    }
-
-    public String getProcedureName() {
-        return procedureName;
-    }
-
-    public void setProcedureName(String procedureName) {
-        this.procedureName = procedureName;
-    }
-
-    public List<Object> getParameterList() {
-        return parameterList;
-    }
+    void execute(StamentWrapper stamentWrapper) throws SQLException, DataAccessException;
 }
-

@@ -14,33 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sql.stored.template.ast;
+package org.apache.camel.component.sql.stored;
 
-import java.util.ArrayList;
-import java.util.List;
+public final class SqlStoredConstants {
 
-/**
- * Root element of Simple Stored Procedure Template AST.
- */
-public class Template {
+    public static final String SQL_STORED_TEMPLATE = "CamelSqlStoredTemplate";
 
-    private final List<Object> parameterList = new ArrayList<>();
-    private String procedureName;
+    public static final String SQL_STORED_PARAMETERS = "CamelSqlStoredParameters";
 
-    public void addParameter(Object parameter) {
-        parameterList.add(parameter);
-    }
+    public static final String SQL_STORED_UPDATE_COUNT = "CamelSqlStoredUpdateCount";
 
-    public String getProcedureName() {
-        return procedureName;
-    }
-
-    public void setProcedureName(String procedureName) {
-        this.procedureName = procedureName;
-    }
-
-    public List<Object> getParameterList() {
-        return parameterList;
+    private SqlStoredConstants() {
+        // Utility class
     }
 }
-
