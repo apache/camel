@@ -141,13 +141,7 @@ public abstract class AbstractCamelRunner implements Runnable {
             Properties initialProps = new Properties();
             initialProps.putAll(props);
             log.debug(String.format("Added %d initial properties", props.size()));
-            try {
-                pc.setInitialProperties(initialProps);
-            } catch (NoSuchMethodError e) {
-                // For Camel versions without setInitialProperties
-                pc.setOverrideProperties(initialProps);
-                pc.setLocation("default.properties");
-            }
+            pc.setInitialProperties(initialProps);
         }
     }
 
