@@ -76,12 +76,11 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
             if (transactionTemplate == null) {
                 Map<String, TransactionTemplate> mapTemplate = routeContext.lookupByType(TransactionTemplate.class);
-                if (mapTemplate != null && mapTemplate.size() == 1) {
-                    transactionTemplate = mapTemplate.values().iterator().next();
-                }
                 if (mapTemplate == null || mapTemplate.isEmpty()) {
                     LOG.trace("No TransactionTemplate found in registry.");
-                } else {
+                } else if (mapTemplate.size() == 1) {
+                    transactionTemplate = mapTemplate.values().iterator().next();
+                }else {
                     LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
                               + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapTemplate.size());
                 }
@@ -89,12 +88,11 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
             if (transactionTemplate == null) {
                 Map<String, PlatformTransactionManager> mapManager = routeContext.lookupByType(PlatformTransactionManager.class);
-                if (mapManager != null && mapManager.size() == 1) {
-                    transactionTemplate = new TransactionTemplate(mapManager.values().iterator().next());
-                }
                 if (mapManager == null || mapManager.isEmpty()) {
                     LOG.trace("No PlatformTransactionManager found in registry.");
-                } else {
+                } else if (mapManager.size() == 1) {
+                    transactionTemplate = new TransactionTemplate(mapManager.values().iterator().next());
+                }else {
                     LOG.debug("Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
                               + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapManager.size());
                 }
