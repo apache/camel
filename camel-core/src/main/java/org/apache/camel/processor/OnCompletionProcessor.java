@@ -127,9 +127,9 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
     protected static void doProcess(Processor processor, Exchange exchange) {
         // must remember some properties which we cannot use during onCompletion processing
         // as otherwise we may cause issues
+        // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
         Object stop = exchange.removeProperty(Exchange.ROUTE_STOP);
         Object failureHandled = exchange.removeProperty(Exchange.FAILURE_HANDLED);
-        Object caught = exchange.removeProperty(Exchange.EXCEPTION_CAUGHT);
         Object errorhandlerHandled = exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
         Object rollbackOnly = exchange.removeProperty(Exchange.ROLLBACK_ONLY);
         Object rollbackOnlyLast = exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
@@ -148,9 +148,6 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
             }
             if (failureHandled != null) {
                 exchange.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
-            }
-            if (caught != null) {
-                exchange.setProperty(Exchange.EXCEPTION_CAUGHT, caught);
             }
             if (errorhandlerHandled != null) {
                 exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, errorhandlerHandled);
