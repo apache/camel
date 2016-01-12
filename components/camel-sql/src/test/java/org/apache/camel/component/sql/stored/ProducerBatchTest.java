@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.sql.stored;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -30,7 +32,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-public class ProducerTest extends CamelTestSupport {
+public class ProducerBatchTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
@@ -48,22 +50,34 @@ public class ProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldExecuteStoredProcedure() throws InterruptedException {
+    public void shouldExecuteBatch() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
 
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("num1", 1);
-        headers.put("num2", 2);
-        template.requestBodyAndHeaders("direct:query", null, headers);
+        List<Map> batchParams = new ArrayList<>();
+
+        Map<String, Object> batch1 = new HashMap<>();
+        batchParams.add(batch1);
+
+        batch1.put("num", "1");
+
+
+        Map<String, Object> batch2 = new HashMap<>();
+
+        batch2.put("num", "3");
+        batchParams.add(batch2);
+
+        final long batchfnCallsBefore = TestStoredProcedure.BATCHFN_CALL_COUNTER.get();
+
+        template.requestBody("direct:query", batchParams);
 
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
 
-        assertEquals(Integer.valueOf(-1), exchange.getIn().getBody(Map.class).get("resultofsub"));
         assertNotNull(exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT));
+        assertEquals(batchfnCallsBefore + 2, TestStoredProcedure.BATCHFN_CALL_COUNTER.get());
     }
 
     @Override
@@ -74,10 +88,8 @@ public class ProducerTest extends CamelTestSupport {
                 // required for the sql component
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
-                from("direct:query").to("sql-stored:SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers"
-                        + ".num2},OUT INTEGER resultofsub)").to("mock:query");
+                from("direct:query").to("sql-stored:BATCHFN(INTEGER :#num)?batch=true").to("mock:query");
             }
         };
     }
-
 }

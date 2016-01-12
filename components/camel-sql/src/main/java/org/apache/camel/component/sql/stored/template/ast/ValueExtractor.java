@@ -16,31 +16,14 @@
  */
 package org.apache.camel.component.sql.stored.template.ast;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.camel.Exchange;
 
 /**
- * Root element of Simple Stored Procedure Template AST.
+ * ValueExtractotr extracts value from Exchange and Container object.
+ * Usually each input parameter has one extractor which extracts
+ * parameter value from input "map" to be sent into db.
  */
-public class Template {
+public interface ValueExtractor {
 
-    private final List<Object> parameterList = new ArrayList<>();
-    private String procedureName;
-
-    public void addParameter(Object parameter) {
-        parameterList.add(parameter);
-    }
-
-    public String getProcedureName() {
-        return procedureName;
-    }
-
-    public void setProcedureName(String procedureName) {
-        this.procedureName = procedureName;
-    }
-
-    public List<Object> getParameterList() {
-        return parameterList;
-    }
+    Object eval(Exchange exchange, Object container);
 }
-

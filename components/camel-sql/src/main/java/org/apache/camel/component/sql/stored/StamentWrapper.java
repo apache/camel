@@ -14,33 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sql.stored.template.ast;
+package org.apache.camel.component.sql.stored;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.component.sql.SqlProducer;
 
 /**
- * Root element of Simple Stored Procedure Template AST.
+ * Wrapper that simplifies operations on  {@link java.sql.CallableStatement}
+ * in {@link SqlStoredProducer}.
+ * Wrappers are statefull objects and must not be reused.
  */
-public class Template {
+public interface StamentWrapper {
 
-    private final List<Object> parameterList = new ArrayList<>();
-    private String procedureName;
+    void call(WrapperExecuteCallback cb) throws Exception;
 
-    public void addParameter(Object parameter) {
-        parameterList.add(parameter);
-    }
+    int[] executeBatch() throws SQLException;
 
-    public String getProcedureName() {
-        return procedureName;
-    }
+    Integer getUpdateCount() throws SQLException;
 
-    public void setProcedureName(String procedureName) {
-        this.procedureName = procedureName;
-    }
+    Object executeStatement() throws SQLException;
 
-    public List<Object> getParameterList() {
-        return parameterList;
-    }
+    void populateStatement(Object value, Exchange exchange) throws SQLException;
+
+    void addBatch(Object value, Exchange exchange);
 }
-

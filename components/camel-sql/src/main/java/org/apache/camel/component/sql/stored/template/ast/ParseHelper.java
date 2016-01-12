@@ -17,13 +17,30 @@
 package org.apache.camel.component.sql.stored.template.ast;
 
 import java.lang.reflect.Field;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Types;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.util.ReflectionUtils;
 
 public final class ParseHelper {
+
+    static final Map<Integer, Class> SQL_TYPE_TO_JAVA_CLASS = new HashMap<>();
+
+    //somekind of mapping here https://docs.oracle.com/cd/E19501-01/819-3659/gcmaz/
+    //TODO: test with each SQL_TYPE_TO_JAVA_CLASS that JAVA conversion works!
+    static {
+        SQL_TYPE_TO_JAVA_CLASS.put(Types.INTEGER, Integer.class);
+        SQL_TYPE_TO_JAVA_CLASS.put(Types.VARCHAR, String.class);
+        SQL_TYPE_TO_JAVA_CLASS.put(Types.BIGINT, Long.class);
+        SQL_TYPE_TO_JAVA_CLASS.put(Types.CHAR, String.class);
+        SQL_TYPE_TO_JAVA_CLASS.put(Types.DECIMAL, BigDecimal.class);
+        SQL_TYPE_TO_JAVA_CLASS.put(Types.BOOLEAN, Boolean.class);
+        SQL_TYPE_TO_JAVA_CLASS.put(Types.DATE, Date.class);
+        SQL_TYPE_TO_JAVA_CLASS.put(Types.TIMESTAMP, Date.class);
+    }
 
     private ParseHelper() {
     }
@@ -41,36 +58,10 @@ public final class ParseHelper {
     }
 
     public static Class sqlTypeToJavaType(int sqlType, String sqlTypeStr) {
-        //TODO: as rest of types.
-        //TODO: add test for each type.
-        Class ret;
-        switch (sqlType) {
-        case Types.INTEGER:
-            ret = Integer.class;
-            break;
-        case Types.VARCHAR:
-            ret = String.class;
-            break;
-        case Types.BIGINT:
-            ret = BigInteger.class;
-            break;
-        case Types.CHAR:
-            ret = String.class;
-            break;
-        case Types.BOOLEAN:
-            ret = Boolean.class;
-            break;
-        case Types.DATE:
-            ret = Date.class;
-            break;
-        case Types.TIMESTAMP:
-            ret = Date.class;
-            break;
-        default:
+        Class javaType = SQL_TYPE_TO_JAVA_CLASS.get(sqlType);
+        if (javaType == null) {
             throw new ParseRuntimeException("Unable to map SQL type " + sqlTypeStr + " to Java type");
         }
-
-        return ret;
+        return javaType;
     }
-
 }

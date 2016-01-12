@@ -66,14 +66,15 @@ InputParameter InputParameter() :
 {
      String sqlTypeAsStr;
      String name;
-     String valueSrcAsStr;
+     Token valueSrcToken;
 }
 {
-    (sqlTypeAsStr = ParameterSqlType() " " valueSrcAsStr =
+    (sqlTypeAsStr = ParameterSqlType() " " valueSrcToken =
     InputParameterSrc())
     {
         int sqlType = ParseHelper.parseSqlType(sqlTypeAsStr);
-        return new InputParameter(createNextParameterName(),sqlType,valueSrcAsStr,ParseHelper.sqlTypeToJavaType(sqlType,sqlTypeAsStr));
+        return new InputParameter(createNextParameterName(),sqlType,valueSrcToken,ParseHelper.sqlTypeToJavaType(sqlType,
+        sqlTypeAsStr));
     }
 }
 
@@ -112,26 +113,20 @@ String OutHeader():
         return token.toString();
     }
 }
-
-String InputParameterSrc():
+Token InputParameterSrc():
 {
-    String ret;
+    Token ret = null;
 }
 {
-    (ret = SimpleExpression())
+    (ret = <SIMPLE_EXP_TOKEN>)
     {
         return ret;
     }
-}
+    |
 
-String SimpleExpression() :
-{
- Token t = null;
-}
-{
-    (t = <SIMPLE_EXP_TOKEN>)
+    (ret = <PARAMETER_POS_TOKEN>)
     {
-    return t.toString();
+            return ret;
     }
 }
 
@@ -143,12 +138,20 @@ TOKEN: {
     <#LETTER: (["a"-"z","A"-"Z"])>
 }
 
+TOKEN: {
+    <#SPECIAL: (["#","_","-","'",".","$","{","}","\""])>
+}
+
 TOKEN : {
-    <SIMPLE_EXP_TOKEN: "${"(<LETTER>|<DIGIT> | " " | "'" | "." )* "}">
+    <SIMPLE_EXP_TOKEN: "${"(<LETTER>|<DIGIT> | <SPECIAL> | " ")+ "}">
+}
+
+TOKEN : {
+    <PARAMETER_POS_TOKEN: ":#"(<LETTER>|<DIGIT>|<SPECIAL> )+>
 }
 
 
 TOKEN : {
-    <IDENTIFIER: <LETTER>( <LETTER> | <DIGIT> | ".") *>
+    <IDENTIFIER: ( <LETTER> | <DIGIT> | <SPECIAL> )+ >
 }
 

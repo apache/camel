@@ -21,17 +21,22 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.sql.stored.template.TemplateStoredProcedureFactory;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class SqlStoredComponent extends UriEndpointComponent {
-
     private DataSource dataSource;
 
     public SqlStoredComponent() {
         super(SqlStoredEndpoint.class);
+    }
+
+    public SqlStoredComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
+    }
+
+    public SqlStoredComponent(CamelContext context) {
+        super(context, SqlStoredEndpoint.class);
     }
 
     public SqlStoredComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
@@ -47,10 +52,6 @@ public class SqlStoredComponent extends UriEndpointComponent {
         if (ds != null) {
             target = ds;
         }
-        String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
-        if (target == null && dataSourceRef != null) {
-            target = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
-        }
         if (target == null) {
             // fallback and use component
             target = dataSource;
@@ -59,14 +60,12 @@ public class SqlStoredComponent extends UriEndpointComponent {
             throw new IllegalArgumentException("DataSource must be configured");
         }
 
-        JdbcTemplate template = new JdbcTemplate(target);
-        TemplateStoredProcedureFactory factory = new TemplateStoredProcedureFactory(template);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
+        String template = remaining;
 
-        SqlStoredEndpoint answer = new SqlStoredEndpoint(uri, this);
-        answer.setJdbcTemplate(template);
-        answer.setTemplate(remaining);
-        answer.setTemplateStoredProcedureFactory(factory);
-        return answer;
+        SqlStoredEndpoint endpoint = new SqlStoredEndpoint(uri, this, jdbcTemplate);
+        endpoint.setTemplate(template);
+        return endpoint;
     }
 
     public DataSource getDataSource() {
@@ -79,5 +78,4 @@ public class SqlStoredComponent extends UriEndpointComponent {
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
 }

@@ -14,9 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sql.stored.template;
+package org.apache.camel.component.sql.stored;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -33,7 +35,10 @@ import org.springframework.jdbc.object.StoredProcedure;
 public class TemplateStoredProcedure extends StoredProcedure {
 
     private static final Logger LOG = LoggerFactory.getLogger(TemplateStoredProcedure.class);
+
     private final Template template;
+
+    private List<InputParameter> inputParameterList = new ArrayList<>();
 
     public TemplateStoredProcedure(JdbcTemplate jdbcTemplate, Template template) {
         this.template = template;
@@ -41,34 +46,38 @@ public class TemplateStoredProcedure extends StoredProcedure {
 
         setSql(template.getProcedureName());
 
-        for (InputParameter inputParameter : template.getInputParameterList()) {
-            declareParameter(new SqlParameter(inputParameter.getName(), inputParameter.getSqlType()));
-        }
+        for (Object parameter : template.getParameterList()) {
+            if (parameter instanceof InputParameter) {
+                InputParameter inputParameter = (InputParameter) parameter;
+                declareParameter(new SqlParameter(inputParameter.getName(), inputParameter.getSqlType()));
+                inputParameterList.add(inputParameter);
 
-        for (OutParameter outParameter : template.getOutParameterList()) {
-            declareParameter(new SqlOutParameter(outParameter.getName(), outParameter.getSqlType()));
-            setFunction(false);
+            } else if (parameter instanceof OutParameter) {
+                OutParameter outParameter = (OutParameter) parameter;
+                declareParameter(new SqlOutParameter(outParameter.getOutHeader(), outParameter.getSqlType()));
+                setFunction(false);
+            }
         }
 
         LOG.debug("Compiling stored procedure: {}", template.getProcedureName());
         compile();
     }
 
-    public void execute(Exchange exchange) {
-
+    public Map execute(Exchange exchange, Object rowData) {
         Map<String, Object> params = new HashMap<>();
 
-        for (InputParameter inputParameter : template.getInputParameterList()) {
-            params.put(inputParameter.getName(), inputParameter.getValueExpression().evaluate(exchange, inputParameter.getJavaType()));
+        for (InputParameter inputParameter : inputParameterList) {
+            params.put(inputParameter.getName(), inputParameter.getValueExtractor().eval(exchange, rowData));
         }
 
         LOG.debug("Invoking stored procedure: {}", template.getProcedureName());
         Map<String, Object> ret = super.execute(params);
 
-        for (OutParameter out : template.getOutParameterList()) {
-            exchange.getOut().setHeader(out.getOutHeader(), ret.get(out.getName()));
-        }
-
+        return ret;
     }
 
+    public Template getTemplate() {
+        return template;
+    }
 }
+

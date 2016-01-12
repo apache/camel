@@ -16,26 +16,62 @@
  */
 package org.apache.camel.component.sql.stored.template.ast;
 
+import java.util.Map;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.component.sql.stored.template.generated.SSPTParserConstants;
+import org.apache.camel.component.sql.stored.template.generated.Token;
 
 public class InputParameter {
 
     private final String name;
     private final int sqlType;
-    private final Expression valueExpression;
     private final Class javaType;
+    private ValueExtractor valueExtractor;
 
-    public InputParameter(String name, int sqlType, String valueSrcAsStr, Class javaType) {
+    public InputParameter(String name, int sqlType, Token valueSrcToken, Class javaType) {
         this.name = name;
         this.sqlType = sqlType;
         this.javaType = javaType;
-        this.valueExpression = parseValueExpression(valueSrcAsStr);
+        parseValueExpression(valueSrcToken);
     }
 
-    private Expression parseValueExpression(String str) {
-        return ExpressionBuilder.simpleExpression(str);
+    private void parseValueExpression(Token valueSrcToken) {
+        if (SSPTParserConstants.SIMPLE_EXP_TOKEN == valueSrcToken.kind) {
+            final Expression exp = ExpressionBuilder.simpleExpression(valueSrcToken.toString());
+            this.valueExtractor = new ValueExtractor() {
+
+                @Override
+                public Object eval(Exchange exchange, Object container) {
+                    return exp.evaluate(exchange, javaType);
+                }
+            };
+        } else if (SSPTParserConstants.PARAMETER_POS_TOKEN == valueSrcToken.kind) {
+
+            //remove leading :#
+            final String mapKey = valueSrcToken.toString().substring(2);
+            this.valueExtractor = new ValueExtractor() {
+                @Override
+                public Object eval(Exchange exchange, Object container) {
+                    return ((Map) container).get(mapKey);
+                }
+            };
+        }
     }
+
+    /*public Object getParameterValueFromContainer(Exchange exchange, Object container) {
+        if (this.valueExpression != null) {
+            return valueExpression.evaluate(exchange, this.getJavaType());
+        } else {
+            return getValueFromMap((Map<String, Object>) container);
+        }
+    }*/
+
+    /*private Object getValueFromMap(Map<String, Object> container) {
+        return container.get(mapKey);
+    }*/
 
     public String getName() {
         return name;
@@ -45,12 +81,12 @@ public class InputParameter {
         return sqlType;
     }
 
-    public Expression getValueExpression() {
-        return valueExpression;
-    }
 
     public Class getJavaType() {
         return javaType;
     }
 
+    public ValueExtractor getValueExtractor() {
+        return valueExtractor;
+    }
 }

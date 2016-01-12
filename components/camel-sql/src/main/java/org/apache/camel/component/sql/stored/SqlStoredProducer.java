@@ -16,24 +16,101 @@
  */
 package org.apache.camel.component.sql.stored;
 
-import org.apache.camel.Endpoint;
+import java.sql.SQLException;
+import java.util.Iterator;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.stored.template.TemplateStoredProcedure;
-import org.apache.camel.component.sql.stored.template.TemplateStoredProcedureFactory;
 import org.apache.camel.impl.DefaultProducer;
+import org.springframework.dao.DataAccessException;
 
 public class SqlStoredProducer extends DefaultProducer {
+    private CallableStatementWrapperFactory callableStatementWrapperFactory;
 
-    private TemplateStoredProcedure defaultTemplateStoredProcedure;
-
-    public SqlStoredProducer(Endpoint endpoint, String template, TemplateStoredProcedureFactory templateStoredProcedureFactory) {
+    public SqlStoredProducer(SqlStoredEndpoint endpoint) {
         super(endpoint);
-        this.defaultTemplateStoredProcedure = templateStoredProcedureFactory.createFromString(template);
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        defaultTemplateStoredProcedure.execute(exchange);
+    public SqlStoredEndpoint getEndpoint() {
+        return (SqlStoredEndpoint) super.getEndpoint();
     }
+
+    public void process(final Exchange exchange) throws Exception {
+        StamentWrapper stamentWrapper = createStatement(exchange);
+        stamentWrapper.call(new WrapperExecuteCallback() {
+            @Override
+            public void execute(StamentWrapper ps) throws SQLException, DataAccessException {
+                // transfer incoming message body data to prepared statement parameters, if necessary
+                if (getEndpoint().isBatch()) {
+                    Iterator<?> iterator;
+                    if (getEndpoint().isUseMessageBodyForTemplate()) {
+                        iterator = exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_PARAMETERS, Iterator.class);
+                    } else {
+                        iterator = exchange.getIn().getBody(Iterator.class);
+                    }
+
+                    if (iterator == null) {
+                        throw new IllegalStateException("batch=true but Iterator cannot be found from body or header");
+                    }
+                    while (iterator.hasNext()) {
+                        Object value = iterator.next();
+                        ps.addBatch(value, exchange);
+                    }
+                } else {
+                    Object value;
+                    if (getEndpoint().isUseMessageBodyForTemplate()) {
+                        value = exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_PARAMETERS);
+                    } else {
+                        value = exchange.getIn().getBody();
+                    }
+                    ps.populateStatement(value, exchange);
+                }
+
+                // call the prepared statement and populate the outgoing message
+                if (getEndpoint().isBatch()) {
+                    int[] updateCounts = ps.executeBatch();
+                    int total = 0;
+                    for (int count : updateCounts) {
+                        total += count;
+                    }
+                    exchange.getIn().setHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT, total);
+                } else {
+                    Object result = ps.executeStatement();
+                    // preserve headers first, so we can override the SQL_ROW_COUNT and SQL_UPDATE_COUNT headers
+                    // if statement returns them
+                    exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+
+                    if (result != null) {
+                        if (getEndpoint().isNoop()) {
+                            exchange.getOut().setBody(exchange.getIn().getBody());
+                        } else if (getEndpoint().getOutputHeader() != null) {
+                            exchange.getOut().setBody(exchange.getIn().getBody());
+                            exchange.getOut().setHeader(getEndpoint().getOutputHeader(), result);
+                        } else {
+                            exchange.getOut().setBody(result);
+                        }
+                    }
+                    // for noop=true we still want to enrich with the headers
+
+                    if (ps.getUpdateCount() != null) {
+                        exchange.getOut().setHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT, ps.getUpdateCount());
+                    }
+                }
+            }
+        });
+    }
+
+    private StamentWrapper createStatement(Exchange exchange) throws SQLException {
+        final String sql;
+        if (getEndpoint().isUseMessageBodyForTemplate()) {
+            sql = exchange.getIn().getBody(String.class);
+        } else {
+            String templateHeader = exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_TEMPLATE, String.class);
+            sql = templateHeader != null ? templateHeader : getEndpoint().getTemplate();
+        }
+
+        return getEndpoint().getWrapperFactory().create(sql);
+    }
+
 
 }

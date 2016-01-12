@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.sql.stored;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.stored.template.TemplateStoredProcedure;
-import org.apache.camel.component.sql.stored.template.TemplateStoredProcedureFactory;
+import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,45 +26,15 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-public class TemplateStoredProcedureTest extends CamelTestSupport {
+public class TemplateCacheTest extends CamelTestSupport {
 
-    private TemplateStoredProcedureFactory parser;
     private EmbeddedDatabase db;
-    private JdbcTemplate jdbcTemplate;
 
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.DERBY).addScript("sql/storedProcedureTest.sql").build();
-        jdbcTemplate = new JdbcTemplate(db);
-        parser = new TemplateStoredProcedureFactory(jdbcTemplate);
         super.setUp();
-    }
-
-
-    @Test
-    public void shouldExecuteStoredProcedure() {
-        TemplateStoredProcedure sp = new TemplateStoredProcedure(jdbcTemplate, parser.parseTemplate("ADDNUMBERS"
-                + "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsum)"));
-
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader("v1", 1);
-        exchange.getIn().setHeader("v2", 2);
-
-        sp.execute(exchange);
-
-        Assert.assertEquals(Integer.valueOf(3), exchange.getOut().getHeader("resultofsum"));
-    }
-
-    @Test
-    public void shouldExecuteNilacidProcedure() {
-        TemplateStoredProcedure sp = new TemplateStoredProcedure(jdbcTemplate, parser.parseTemplate("NILADIC()"));
-
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader("v1", 1);
-        exchange.getIn().setHeader("v2", 2);
-
-        sp.execute(exchange);
     }
 
     @After
@@ -76,4 +43,17 @@ public class TemplateStoredProcedureTest extends CamelTestSupport {
         db.shutdown();
     }
 
+    @Test
+    public void shouldCacheTemplateFunctions() throws InterruptedException {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(db);
+        CallableStatementWrapperFactory fac = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser());
+
+        BatchCallableStatementCreatorFactory batchFactory1 = fac.getTemplateForBatch("FOO()");
+        BatchCallableStatementCreatorFactory batchFactory2 = fac.getTemplateForBatch("FOO()");
+        assertSame(batchFactory1, batchFactory2);
+
+        TemplateStoredProcedure templateStoredProcedure1 = fac.getTemplateStoredProcedure("FOO()");
+        TemplateStoredProcedure templateStoredProcedure2 = fac.getTemplateStoredProcedure("FOO()");
+        assertSame(templateStoredProcedure1, templateStoredProcedure2);
+    }
 }
