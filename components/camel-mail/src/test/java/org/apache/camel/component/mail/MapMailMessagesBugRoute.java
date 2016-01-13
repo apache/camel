@@ -30,7 +30,6 @@ public class MapMailMessagesBugRoute extends RouteBuilder {
 
     public static void main(String... args) throws Exception {
         Main main = new Main();
-        main.enableHangupSupport();
         main.addRouteBuilder(new MapMailMessagesBugRoute());
         main.run(args);
     }

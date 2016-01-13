@@ -46,7 +46,6 @@ public class CamelSpringBootApplicationController {
 
     public void blockMainThread() {
         try {
-            mainSupport.enableHangupSupport();
             mainSupport.run();
         } catch (Exception e) {
             throw new RuntimeException(e);

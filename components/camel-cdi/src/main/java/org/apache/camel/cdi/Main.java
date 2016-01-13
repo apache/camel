@@ -43,7 +43,6 @@ public abstract class Main extends MainSupport { // abstract to prevent cdi mana
     public static void main(String... args) throws Exception {
         Main main = new Main() { };
         instance = main;
-        main.enableHangupSupport();
         main.run(args);
     }
 

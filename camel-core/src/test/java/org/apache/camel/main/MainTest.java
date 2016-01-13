@@ -51,6 +51,31 @@ public class MainTest extends TestCase {
 
         main.stop();
     }
+
+    public void testDisableHangupSupport() throws Exception {
+        // lets make a simple route
+        Main main = new Main();
+        main.addRouteBuilder(new MyRouteBuilder());
+        main.disableHangupSupport();
+        main.enableTrace();
+        main.bind("foo", new Integer(31));
+        main.start();
+
+        List<CamelContext> contextList = main.getCamelContexts();
+        assertNotNull(contextList);
+        assertEquals("Did not get the expected count of Camel contexts", 1, contextList.size());
+        CamelContext camelContext = contextList.get(0);
+        assertEquals("Could not find the registry bound object", 31, camelContext.getRegistry().lookupByName("foo"));
+
+        MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
+        endpoint.expectedMinimumMessageCount(1);
+
+        main.getCamelTemplate().sendBody("direct:start", "<message>1</message>");
+
+        endpoint.assertIsSatisfied();
+
+        main.stop();
+    }
     
     public void testLoadingRouteFromCommand() throws Exception {
         Main main = new Main();

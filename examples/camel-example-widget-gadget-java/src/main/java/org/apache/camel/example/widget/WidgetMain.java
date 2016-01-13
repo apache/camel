@@ -37,9 +37,6 @@ public class WidgetMain {
         // add a 2nd route that routes files from src/main/data to the order queue
         main.addRouteBuilder(new CreateOrderRoute());
 
-        // allow to graceful shutdown when the JVM is terminated
-        main.enableHangupSupport();
-
         // start and run Camel (block)
         main.run();
     }
