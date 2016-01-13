@@ -57,6 +57,7 @@ public class StompProducerTest extends StompBaseTest {
                 for (int i = 0; i < numberOfMessages; i++) {
                     try {
                         StompFrame frame = subscribeConnection.receive();
+                        frame.contentAsString().startsWith("test message ");
                         latch.countDown();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -70,7 +71,7 @@ public class StompProducerTest extends StompBaseTest {
         Producer producer = context.getEndpoint("direct:foo").createProducer();
         for (int i = 0; i < numberOfMessages; i++) {
             Exchange exchange = producer.createExchange();
-            exchange.getIn().setBody("test message " + i);
+            exchange.getIn().setBody(("test message " + i).getBytes("UTF-8"));
             producer.process(exchange);
         }
         latch.await(20, TimeUnit.SECONDS);
