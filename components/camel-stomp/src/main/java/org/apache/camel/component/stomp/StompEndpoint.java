@@ -131,7 +131,8 @@ public class StompEndpoint extends DefaultEndpoint {
     protected void send(final Exchange exchange, final AsyncCallback callback) {
         final StompFrame frame = new StompFrame(SEND);
         frame.addHeader(DESTINATION, StompFrame.encodeHeader(destination));
-        frame.content(utf8(exchange.getIn().getBody().toString()));
+        //Fix for CAMEL-9506 leveraging the camel converter to do the change
+        frame.content(utf8(exchange.getIn().getBody(String.class)));
 
         connection.getDispatchQueue().execute(new Task() {
             @Override
