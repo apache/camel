@@ -26,9 +26,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Integration test to confirm REQUEUE header causes message to be re-queued instead of sent to DLQ.
+ * Integration test to confirm REQUEUE header causes message to be re-queued when an unhandled exception occurs.
  */
-public class RabbitMQRequeueIntTest extends CamelTestSupport {
+public class RabbitMQRequeueUnhandledExceptionIntTest extends CamelTestSupport {
     public static final String ROUTING_KEY = "rk4";
 
     @Produce(uri = "direct:rabbitMQ")
@@ -57,58 +57,24 @@ public class RabbitMQRequeueIntTest extends CamelTestSupport {
                         .to(producingMockEndpoint);
 
                 from(rabbitMQEndpoint)
+                        .onException(Exception.class)
+                        .handled(false)
+                        .end()
                         .id("consumingRoute")
                         .log("Receiving message")
                         .inOnly(consumingMockEndpoint)
-                        .throwException(new Exception("Simulated exception"));
+                        .throwException(new Exception("Simulated unhandled exception"));
             }
         };
     }
 
     @Test
-    public void testNoRequeueHeaderCausesReject() throws Exception {
-        producingMockEndpoint.expectedMessageCount(1);
-        consumingMockEndpoint.expectedMessageCount(1);
-
-        directProducer.sendBody("Hello, World!");
-
-        Thread.sleep(100);
-        producingMockEndpoint.assertIsSatisfied();
-        consumingMockEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testNonBooleanRequeueHeaderCausesReject() throws Exception {
-        producingMockEndpoint.expectedMessageCount(1);
-        consumingMockEndpoint.expectedMessageCount(1);
-
-        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, 4L);
-
-        Thread.sleep(100);
-        producingMockEndpoint.assertIsSatisfied();
-        consumingMockEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testFalseRequeueHeaderCausesReject() throws Exception {
-        producingMockEndpoint.expectedMessageCount(1);
-        consumingMockEndpoint.expectedMessageCount(1);
-
-        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, false);
-
-        Thread.sleep(100);
-        producingMockEndpoint.assertIsSatisfied();
-        consumingMockEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testTrueRequeueHeaderCausesRequeue() throws Exception {
+    public void testTrueRequeueHeaderWithUnandleExceptionCausesRequeue() throws Exception {
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.setMinimumExpectedMessageCount(2);
 
         directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, true);
 
-        Thread.sleep(100);
         producingMockEndpoint.assertIsSatisfied();
         consumingMockEndpoint.assertIsSatisfied();
     }
