@@ -52,7 +52,6 @@ public class MyMainAppTest {
         main.setIncludeSelfAsBundle(true);
         // we support *.xml to find any blueprint xml files
         main.setDescriptors("org/apache/camel/test/blueprint/xpath/*.xml");
-        main.enableHangupSupport();
 
         // run for 1 second and then stop automatic
         main.setDuration(1000);

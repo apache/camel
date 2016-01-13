@@ -50,6 +50,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected final List<Option> options = new ArrayList<Option>();
     protected final CountDownLatch latch = new CountDownLatch(1);
     protected final AtomicBoolean completed = new AtomicBoolean(false);
+    protected final HangupInterceptor hangupInterceptor = new HangupInterceptor();
     protected long duration = -1;
     protected TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     protected boolean trace;
@@ -61,19 +62,14 @@ public abstract class MainSupport extends ServiceSupport {
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
      */
-    private static final class HangupInterceptor extends Thread {
+    private final class HangupInterceptor extends Thread {
         Logger log = LoggerFactory.getLogger(this.getClass());
-        MainSupport mainInstance;
-
-        public HangupInterceptor(MainSupport main) {
-            mainInstance = main;
-        }
 
         @Override
         public void run() {
             log.info("Received hang up - stopping the main instance.");
             try {
-                mainInstance.stop();
+                MainSupport.this.stop();
             } catch (Exception ex) {
                 log.warn("Error during stopping the main instance.", ex);
             }
@@ -112,6 +108,8 @@ public abstract class MainSupport extends ServiceSupport {
                 enableTrace();
             }
         });
+
+        Runtime.getRuntime().addShutdownHook(hangupInterceptor);
     }
 
     /**
@@ -137,12 +135,14 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Enables the hangup support. Gracefully stops by calling stop() on a
+     * Disable the hangup support. No graceful stop by calling stop() on a
      * Hangup signal.
      */
-    public void enableHangupSupport() {
-        HangupInterceptor interceptor = new HangupInterceptor(this);
-        Runtime.getRuntime().addShutdownHook(interceptor);
+    public void disableHangupSupport() {
+        boolean result = Runtime.getRuntime().removeShutdownHook(hangupInterceptor);
+        if (LOG.isDebugEnabled() && result) {
+            LOG.debug("HangupInterceptor ({}) successfully removed", hangupInterceptor);
+        }
     }
 
     /**

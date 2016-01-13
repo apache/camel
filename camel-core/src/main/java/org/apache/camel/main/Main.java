@@ -42,7 +42,6 @@ public class Main extends MainSupport {
     public static void main(String... args) throws Exception {
         Main main = new Main();
         instance = main;
-        main.enableHangupSupport();
         main.run(args);
     }
 
