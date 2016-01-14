@@ -112,7 +112,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public String getPath() {
