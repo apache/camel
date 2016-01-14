@@ -50,7 +50,6 @@ public abstract class MainSupport extends ServiceSupport {
     protected final List<Option> options = new ArrayList<Option>();
     protected final CountDownLatch latch = new CountDownLatch(1);
     protected final AtomicBoolean completed = new AtomicBoolean(false);
-    protected final HangupInterceptor hangupInterceptor = new HangupInterceptor();
     protected long duration = -1;
     protected TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     protected boolean trace;
@@ -58,18 +57,24 @@ public abstract class MainSupport extends ServiceSupport {
     protected String routeBuilderClasses;
     protected final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
     protected ProducerTemplate camelTemplate;
+    protected boolean hangupInterceptorEnabled = true;
 
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
      */
     private final class HangupInterceptor extends Thread {
         Logger log = LoggerFactory.getLogger(this.getClass());
+        final MainSupport mainInstance;
+
+        public HangupInterceptor(MainSupport main) {
+            mainInstance = main;
+        }
 
         @Override
         public void run() {
             log.info("Received hang up - stopping the main instance.");
             try {
-                MainSupport.this.stop();
+                mainInstance.stop();
             } catch (Exception ex) {
                 log.warn("Error during stopping the main instance.", ex);
             }
@@ -108,8 +113,6 @@ public abstract class MainSupport extends ServiceSupport {
                 enableTrace();
             }
         });
-
-        Runtime.getRuntime().addShutdownHook(hangupInterceptor);
     }
 
     /**
@@ -117,6 +120,7 @@ public abstract class MainSupport extends ServiceSupport {
      */
     public void run() throws Exception {
         if (!completed.get()) {
+            internalBeforeStart();
             // if we have an issue starting then propagate the exception to caller
             beforeStart();
             start();
@@ -139,10 +143,7 @@ public abstract class MainSupport extends ServiceSupport {
      * Hangup signal.
      */
     public void disableHangupSupport() {
-        boolean result = Runtime.getRuntime().removeShutdownHook(hangupInterceptor);
-        if (LOG.isDebugEnabled() && result) {
-            LOG.debug("HangupInterceptor ({}) successfully removed", hangupInterceptor);
-        }
+        hangupInterceptorEnabled = false;
     }
 
     /**
@@ -182,6 +183,12 @@ public abstract class MainSupport extends ServiceSupport {
     protected void afterStart() throws Exception {
         for (MainListener listener : listeners) {
             listener.afterStart(this);
+        }
+    }
+
+    private void internalBeforeStart() {
+        if (hangupInterceptorEnabled) {
+            Runtime.getRuntime().addShutdownHook(new HangupInterceptor(this));
         }
     }
 
