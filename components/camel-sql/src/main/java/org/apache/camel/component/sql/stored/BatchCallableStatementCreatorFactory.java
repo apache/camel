@@ -86,7 +86,7 @@ public class BatchCallableStatementCreatorFactory {
         return params;
     }
 
-    public CallableStatementCreator newCallableStatementCreator(Map params) {
+    public CallableStatementCreator newCallableStatementCreator(Map<String, ?> params) {
         return this.callableStatementCreatorFactory.newCallableStatementCreator(params);
     }
 

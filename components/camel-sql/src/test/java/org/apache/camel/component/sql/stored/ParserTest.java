@@ -61,12 +61,12 @@ public class ParserTest extends CamelTestSupport {
         InputParameter param3 = (InputParameter) template.getParameterList().get(2);
         Assert.assertEquals("_2", param3.getName());
         Assert.assertEquals(Types.BIGINT, param3.getSqlType());
-        Assert.assertEquals(2L, param3.getValueExtractor().eval(exchange, null));
+        Assert.assertEquals(BigInteger.valueOf(2L), param3.getValueExtractor().eval(exchange, null));
 
         OutParameter sptpOutputNode = (OutParameter) template.getParameterList().get(3);
         Assert.assertEquals("_3", sptpOutputNode.getName());
         Assert.assertEquals(Types.INTEGER, sptpOutputNode.getSqlType());
-        Assert.assertEquals("header1", sptpOutputNode.getOutHeader());
+        Assert.assertEquals("header1", sptpOutputNode.getOutValueMapKey());
     }
 
     @Test(expected = ParseRuntimeException.class)
@@ -89,6 +89,19 @@ public class ParserTest extends CamelTestSupport {
         Template template = parser.parseTemplate("ADDNUMBERS2(INTEGER ${${header.body}})");
         assertEquals(1, ((InputParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
     }
+
+    @Test
+    public void vendorSpeficSqlType() {
+        Template template = parser.parseTemplate("ADDNUMBERS2(1342 ${${header.body}})");
+        assertEquals(1342, ((InputParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void vendorSpeficSqlTypeOut() {
+        Template template = parser.parseTemplate("ADDNUMBERS2(OUT 1342 h1)");
+        assertEquals(1342, ((OutParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
 
     @Test
     public void nableIssueSyntax() {

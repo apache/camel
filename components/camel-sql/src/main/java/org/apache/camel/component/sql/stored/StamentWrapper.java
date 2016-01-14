@@ -19,7 +19,6 @@ package org.apache.camel.component.sql.stored;
 import java.sql.SQLException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.SqlProducer;
 
 /**
  * Wrapper that simplifies operations on  {@link java.sql.CallableStatement}

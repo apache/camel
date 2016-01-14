@@ -17,36 +17,26 @@
 package org.apache.camel.component.sql.stored.template.ast;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Types;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.apache.camel.component.sql.stored.template.generated.SSPTParserConstants;
+import org.apache.camel.component.sql.stored.template.generated.Token;
 import org.springframework.util.ReflectionUtils;
 
 public final class ParseHelper {
 
-    static final Map<Integer, Class> SQL_TYPE_TO_JAVA_CLASS = new HashMap<>();
-
-    //somekind of mapping here https://docs.oracle.com/cd/E19501-01/819-3659/gcmaz/
-    //TODO: test with each SQL_TYPE_TO_JAVA_CLASS that JAVA conversion works!
-    static {
-        SQL_TYPE_TO_JAVA_CLASS.put(Types.INTEGER, Integer.class);
-        SQL_TYPE_TO_JAVA_CLASS.put(Types.VARCHAR, String.class);
-        SQL_TYPE_TO_JAVA_CLASS.put(Types.BIGINT, Long.class);
-        SQL_TYPE_TO_JAVA_CLASS.put(Types.CHAR, String.class);
-        SQL_TYPE_TO_JAVA_CLASS.put(Types.DECIMAL, BigDecimal.class);
-        SQL_TYPE_TO_JAVA_CLASS.put(Types.BOOLEAN, Boolean.class);
-        SQL_TYPE_TO_JAVA_CLASS.put(Types.DATE, Date.class);
-        SQL_TYPE_TO_JAVA_CLASS.put(Types.TIMESTAMP, Date.class);
-    }
-
     private ParseHelper() {
     }
 
-    public static int parseSqlType(String sqlType) {
-        Field field = ReflectionUtils.findField(Types.class, sqlType);
+    public static int parseSqlType(Token sqlType) {
+
+        //if number then use it(probably Vendor spesific SQL-type)
+        if (sqlType.kind == SSPTParserConstants.NUMBER) {
+            return Integer.valueOf(sqlType.toString());
+        }
+
+        //Loop-up from "Standard" types
+        Field field = ReflectionUtils.findField(Types.class, sqlType.toString());
         if (field == null) {
             throw new ParseRuntimeException("Field " + sqlType + " not found from java.procedureName.Types");
         }
@@ -55,13 +45,5 @@ public final class ParseHelper {
         } catch (IllegalAccessException e) {
             throw new ParseRuntimeException(e);
         }
-    }
-
-    public static Class sqlTypeToJavaType(int sqlType, String sqlTypeStr) {
-        Class javaType = SQL_TYPE_TO_JAVA_CLASS.get(sqlType);
-        if (javaType == null) {
-            throw new ParseRuntimeException("Unable to map SQL type " + sqlTypeStr + " to Java type");
-        }
-        return javaType;
     }
 }

@@ -39,7 +39,7 @@ public class CallableStatementWrapper implements StamentWrapper {
 
     Map result;
 
-    List<Map> batchItems;
+    List<Map<String, ?>> batchItems;
 
     Integer updateCount;
 
@@ -63,7 +63,7 @@ public class CallableStatementWrapper implements StamentWrapper {
             throw new IllegalArgumentException("Batch must have at least one item");
         }
 
-        final Iterator<Map> params = batchItems.iterator();
+        final Iterator<Map<String, ?>> params = batchItems.iterator();
 
 
         return factory.getJdbcTemplate().execute(new CallableStatementCreator() {

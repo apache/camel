@@ -64,42 +64,41 @@ Object Parameter() :
 
 InputParameter InputParameter() :
 {
-     String sqlTypeAsStr;
+     Token sqlTypeToken;
      String name;
      Token valueSrcToken;
 }
 {
-    (sqlTypeAsStr = ParameterSqlType() " " valueSrcToken =
+    (sqlTypeToken = ParameterSqlType() " " valueSrcToken =
     InputParameterSrc())
     {
-        int sqlType = ParseHelper.parseSqlType(sqlTypeAsStr);
-        return new InputParameter(createNextParameterName(),sqlType,valueSrcToken,ParseHelper.sqlTypeToJavaType(sqlType,
-        sqlTypeAsStr));
+        int sqlType = ParseHelper.parseSqlType(sqlTypeToken);
+        return new InputParameter(createNextParameterName(),sqlType,valueSrcToken);
     }
 }
 
 OutParameter OutParameter() :
 {
-     String sqlType;
+     Token sqlTypeToken;
      String name;
-     String outHeader;
+     String outValueMapKey;
 }
 {
-    ("OUT" " " sqlType = ParameterSqlType() " " outHeader =
+    ("OUT" " " sqlTypeToken = ParameterSqlType() " " outValueMapKey =
     OutHeader())
     {
-        return new OutParameter(createNextParameterName(),ParseHelper.parseSqlType(sqlType),outHeader);
+        return new OutParameter(createNextParameterName(),ParseHelper.parseSqlType(sqlTypeToken),outValueMapKey);
     }
 }
 
-String ParameterSqlType():
+Token ParameterSqlType():
 {
     Token t;
 }
 {
-    (t = <IDENTIFIER>)
+    (t = <NUMBER> | t = <IDENTIFIER>)
     {
-        return t.toString();
+        return t;
     }
 }
 
@@ -129,6 +128,11 @@ Token InputParameterSrc():
             return ret;
     }
 }
+
+TOKEN: {
+    <NUMBER: (["0"-"9"])+>
+}
+
 
 TOKEN: {
     <#DIGIT: (["0"-"9"])>
