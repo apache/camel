@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.validator;
 
+import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
@@ -26,9 +27,12 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.validation.DefaultValidationErrorHandler;
+import org.apache.camel.processor.validation.SchemaReader;
 import org.apache.camel.processor.validation.ValidatingProcessor;
 import org.apache.camel.processor.validation.ValidatorErrorHandler;
 import org.apache.camel.spi.Metadata;
@@ -43,6 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Validates the payload of a message using XML Schema and JAXP Validation.
  */
+@ManagedResource(description = "Managed ValidatorEndpoint")
 @UriEndpoint(scheme = "validator", title = "Validator", syntax = "validator:resourceUri", producerOnly = true, label = "core,validation")
 public class ValidatorEndpoint extends DefaultEndpoint {
 
@@ -73,6 +78,14 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     @UriParam(description = "To validate against a header instead of the message body.")
     private String headerName;
 
+    /**
+     * We need a one-to-one relation between endpoint and schema reader in order
+     * to be able to clear the cached schema in the schema reader. See method
+     * {@link #clearCachedSchema}.
+     */
+    private final SchemaReader schemaReader = new SchemaReader();
+    private volatile boolean schemaReaderConfigured;
+
     public ValidatorEndpoint() {
     }
 
@@ -81,28 +94,58 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         this.resourceUri = resourceUri;
     }
 
+    @ManagedOperation(description = "Clears the cached schema, forcing to re-load the schema on next request")
+    public void clearCachedSchema() throws Exception {
+        LOG.debug("{} rereading schema resource: {}", this, resourceUri);
+        byte[] bytes = readSchemaResource();
+        schemaReader.setSchemaAsByteArray(bytes);
+
+        schemaReader.setSchema(null); // will cause to reload the schema from
+                                      // the set byte-array on next request
+    }
+
     @Override
     public Producer createProducer() throws Exception {
-        ValidatingProcessor validator = new ValidatingProcessor();
 
+        if (!schemaReaderConfigured) {
+            if (resourceResolver != null) {
+                schemaReader.setResourceResolver(resourceResolver);
+            } else {
+                schemaReader.setResourceResolver(new DefaultLSResourceResolver(getCamelContext(), resourceUri));
+            }
+            schemaReader.setSchemaLanguage(getSchemaLanguage());
+            schemaReader.setSchemaFactory(getSchemaFactory());
+            
+            byte[] bytes = readSchemaResource();
+            schemaReader.setSchemaAsByteArray(bytes);
+            LOG.debug("{} using schema resource: {}", this, resourceUri);
+
+            // force loading of schema at create time otherwise concurrent
+            // processing could cause thread safe issues for the
+            // javax.xml.validation.SchemaFactory
+            schemaReader.loadSchema();
+
+            // configure only once
+            schemaReaderConfigured = true;
+        }
+
+        ValidatingProcessor validator = new ValidatingProcessor(schemaReader);
+        configureValidator(validator);
+
+        return new ValidatorProducer(this, validator);
+    }
+
+    protected byte[] readSchemaResource() throws IOException {
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
         byte[] bytes = null;
         try {
             bytes = IOConverter.toBytes(is);
         } finally {
-            // and make sure to close the input stream after the schema has been loaded
+            // and make sure to close the input stream after the schema has been
+            // loaded
             IOHelper.close(is);
         }
-
-        validator.setSchemaAsByteArray(bytes);
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
-        configureValidator(validator);
-
-        // force loading of schema at create time otherwise concurrent
-        // processing could cause thread safe issues for the javax.xml.validation.SchemaFactory
-        validator.loadSchema();
-
-        return new ValidatorProducer(this, validator);
+        return bytes;
     }
 
     @Override
@@ -116,13 +159,6 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     }
 
     protected void configureValidator(ValidatingProcessor validator) throws Exception {
-        if (resourceResolver != null) {
-            validator.setResourceResolver(resourceResolver);
-        } else {
-            validator.setResourceResolver(new DefaultLSResourceResolver(getCamelContext(), resourceUri));
-        }
-        validator.setSchemaLanguage(getSchemaLanguage());
-        validator.setSchemaFactory(getSchemaFactory());
         validator.setErrorHandler(getErrorHandler());
         validator.setUseDom(isUseDom());
         validator.setUseSharedSchema(isUseSharedSchema());
