@@ -42,6 +42,8 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ElasticsearchGetSearchDeleteExistsUpdateTest extends
 		ElasticsearchBaseTest {
@@ -377,6 +379,60 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends
 		assertFalse("response 1 should be ok", responses[0].isFailure());
 		assertFalse("response 2 should be ok", responses[1].isFailure());
 		assertTrue("response 3 should be failed", responses[2].isFailure());
+
+		List<Map> queriesList = new ArrayList<Map>();
+
+		// http version of multisearch
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode objectNode = objectMapper.createObjectNode()
+				.put("index", "test").put("type", "type");
+		ObjectNode termNode = objectMapper.createObjectNode();
+		termNode.put("field", "xxx");
+		ObjectNode matchNode = objectMapper.createObjectNode();
+		matchNode.set("match", termNode);
+		objectNode.set("query", matchNode);
+
+		Map queryObjectMap1 = objectMapper.convertValue(objectNode, Map.class);
+		queriesList.add(queryObjectMap1);
+
+		ObjectNode objectNode2 = objectMapper.createObjectNode()
+				.put("index", "test").put("type", "type");
+
+		ObjectNode termNode2 = objectMapper.createObjectNode();
+		termNode2.put("field", "yyy");
+		ObjectNode matchNode2 = objectMapper.createObjectNode();
+		matchNode2.set("match", termNode);
+		objectNode2.set("query", matchNode);
+		Map queryObjectMap2 = objectMapper.convertValue(objectNode2, Map.class);
+		queriesList.add(queryObjectMap2);
+
+		ObjectNode objectNode3 = objectMapper.createObjectNode()
+				.put("index", "instagram").put("type", "type");
+
+		ObjectNode termNode3 = objectMapper.createObjectNode();
+		termNode3.put("test-multisearchkey", "test-multisearchvalue");
+		ObjectNode matchNode3 = objectMapper.createObjectNode();
+		matchNode3.set("match", termNode);
+		objectNode3.set("query", matchNode);
+		Map queryObjectMap3 = objectMapper.convertValue(objectNode3, Map.class);
+		queriesList.add(queryObjectMap3);
+
+		Thread.sleep(1000);
+		List<Map> response2 = template.requestBodyAndHeaders(
+				"direct:multisearch2", queriesList, headers, List.class);
+
+		assertNotNull("response should not be null", response2);
+		assertEquals(
+				"response should contains three multiSearchResponse object", 3,
+				response2.size());
+
+		assertEquals("response 1 should be ok",
+				((Map) response2.get(0).get("hits")).get("total"), 1);
+		assertEquals("response 2 should be ok",
+				((Map) response2.get(1).get("hits")).get("total"), 1);
+		assertTrue("response 3 should have error", response2.get(2)
+				.containsKey("error"));
+
 	}
 
 	@Test
@@ -529,6 +585,9 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends
 
 				from("direct:multisearch")
 						.to("elasticsearch://local?operation=MULTISEARCH&indexName=test");
+				from("direct:multisearch2")
+						.to("elasticsearch://elasticsearch?ip=localhost&port=9201&useHttpClient=true&operation=MULTISEARCH&indexName=test");
+
 			}
 		};
 	}

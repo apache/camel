@@ -35,6 +35,7 @@ import org.elasticsearch.action.exists.ExistsRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
@@ -254,9 +255,13 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
 	}
 
-	public void bulk(Message message) {
-		BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-		message.setBody(client.bulk(bulkRequest).actionGet());
+	public Object bulk(Message message) {
+		if(useHttpClient)
+			throw new UnsupportedOperationException();
+		else {
+			BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+			return client.bulk(bulkRequest).actionGet();
+		}
 	}
 
 	public List<String> bulkIndex(Message message) {
@@ -320,6 +325,17 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 		} else {
 			GetRequest getRequest = message.getBody(GetRequest.class);
 			return client.get(getRequest);
+		}
+	}
+
+	public Object multisearch(Message message) {
+		if(useHttpClient) {
+			List queryObjects = message.getBody(List.class);
+			return esHttpClient.multisearch(getIndexName(message), getIndexType(message), queryObjects);			
+		} else {
+			MultiSearchRequest multiSearchRequest = message
+					.getBody(MultiSearchRequest.class);
+			return client.multiSearch(multiSearchRequest);
 		}
 	}
 

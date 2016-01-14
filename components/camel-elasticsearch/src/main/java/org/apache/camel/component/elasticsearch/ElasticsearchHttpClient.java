@@ -43,6 +43,24 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
  */
 public class ElasticsearchHttpClient {
 
+	private static final String MSEARCH_API_PATH = "_msearch";
+
+	private static final String QUOTE = ":";
+
+	private static final String ESCAPED_DOUBLE_QUOTE = "\"";
+
+	private static final String TAB_CHAR = "\t";
+
+	private static final String CARRIAGE_RETURN = "\r";
+
+	private static final String END_OF_LINE = "\n";
+
+	private static final String JSON_OBJECT_END = "}";
+
+	private static final String JSON_OBJECT_COMMA = ",";
+
+	private static final String JSON_OBJECT_START = "{";
+
 	private static final String HTTPS_PROTOCOL = "https";
 
 	private static final String HTTP_PROTOCOL = "http";
@@ -58,6 +76,9 @@ public class ElasticsearchHttpClient {
 	private static final String UPDATE_API_PATH = "_update";
 
 	private static final String MGET_API_PATH = "_mget";
+
+	private static final String[] MSEARCH_HEADERS_TO_CHECK = new String[] {
+			"index", "type", "search_type", "preference", "routing" };
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ElasticsearchHttpClient.class);
@@ -103,7 +124,7 @@ public class ElasticsearchHttpClient {
 			if (isSecure())
 				protocol = HTTPS_PROTOCOL;
 
-			rootTarget = client.target(protocol + "://" + host + ":" + port);
+			rootTarget = client.target(protocol + "://" + host + QUOTE + port);
 		}
 		return rootTarget;
 	}
@@ -170,9 +191,9 @@ public class ElasticsearchHttpClient {
 			bodyBuilder.append("{\"index\":{\"_index\":\"").append(indexName)
 					.append("\",").append("\"_type\":\"").append(indexType)
 					.append("\"}}\n");
-			String strippedDoc = doc.trim().replaceAll("\r", "")
-					.replaceAll("\n", "").replaceAll("\t", "");
-			bodyBuilder.append(strippedDoc).append("\n");
+			String strippedDoc = doc.trim().replaceAll(CARRIAGE_RETURN, "")
+					.replaceAll(END_OF_LINE, "").replaceAll(TAB_CHAR, "");
+			bodyBuilder.append(strippedDoc).append(END_OF_LINE);
 		}
 		WebTarget target = getRootTarget().path(indexName).path(indexType)
 				.path("_bulk");
@@ -244,7 +265,7 @@ public class ElasticsearchHttpClient {
 		try {
 			bodyStringBuilder.append("{\"doc\":")
 					.append(new ObjectMapper().writeValueAsString(body))
-					.append("}");
+					.append(JSON_OBJECT_END);
 			Response response = target.request().post(
 					Entity.json(bodyStringBuilder.toString()));
 			if (response.getStatus() == 200)
@@ -336,6 +357,81 @@ public class ElasticsearchHttpClient {
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException("Could not process query body map", e);
 		}
+	}
+
+	/**
+	 * Multisearch API taking in multiple queries as a List of Maps and
+	 * returning the result as a List of Map objects
+	 * 
+	 * Each Map in the List will contain at least a "query" object and
+	 * optionally index and type
+	 * 
+	 * @param indexName
+	 * @param indexType
+	 * @param queryObject
+	 * @return
+	 */
+	public Object multisearch(String indexName, String indexType,
+			List queryObjects) {
+		WebTarget target = getRootTarget();
+		if (indexName != null) {
+			target = target.path(indexName);
+			if (indexType != null) {
+				target = target.path(indexType);
+			}
+		}
+
+		target = target.path(MSEARCH_API_PATH);
+		
+		StringBuilder bodyBuilder = new StringBuilder();
+		ObjectMapper objectMapper = new ObjectMapper();
+		for (Object queryObj : queryObjects) {
+			Map queryObjMap = (Map) queryObj;
+			// add header
+			bodyBuilder.append(JSON_OBJECT_START);
+			// this is not standard but really the only way to pass in the index
+			// and type
+			// headers in the same object as the query
+			boolean commaRequired = false;
+			for (String header : MSEARCH_HEADERS_TO_CHECK) {
+				
+				if (queryObjMap.containsKey(header)) {
+					if (commaRequired) {
+						bodyBuilder.append(JSON_OBJECT_COMMA);
+					}
+					bodyBuilder.append(ESCAPED_DOUBLE_QUOTE)
+							   .append(header)
+							   .append(ESCAPED_DOUBLE_QUOTE)
+							   .append(QUOTE).append(ESCAPED_DOUBLE_QUOTE)
+							.append(queryObjMap.get(header)).append(ESCAPED_DOUBLE_QUOTE);
+					
+					commaRequired = true;
+				}
+				queryObjMap.remove(header);
+			}
+			bodyBuilder.append(JSON_OBJECT_END).append(END_OF_LINE);
+
+			// now add the query portion
+			String queryString;
+			try {
+				queryString = objectMapper.writeValueAsString(queryObjMap);
+				String strippedDoc = queryString.trim().replaceAll(CARRIAGE_RETURN, "")
+						.replaceAll(END_OF_LINE, "").replaceAll(TAB_CHAR, "");
+				bodyBuilder.append(strippedDoc).append(END_OF_LINE);
+			} catch (JsonProcessingException e) {
+				LOG.warn("Error processing JSON", e);
+			}
+
+		}
+
+		Response response = target.request().post(
+				Entity.json(bodyBuilder.toString()));
+		Map responseMap = response.readEntity(Map.class);
+		if (responseMap.containsKey("responses")) {
+			return responseMap.get("responses");
+		}
+
+		return null;
 	}
 
 }

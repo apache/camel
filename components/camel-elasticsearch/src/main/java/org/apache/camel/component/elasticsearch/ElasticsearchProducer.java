@@ -141,98 +141,32 @@ public class ElasticsearchProducer extends DefaultProducer {
 		}
 
 		ElasticsearchEndpoint endpoint = getEndpoint();
-		if (endpoint.getConfig().getUseHttpClient()) {
-			if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
-				message.setBody(endpoint.index(message));
-			} else if (ElasticsearchConstants.OPERATION_UPDATE
-					.equals(operation)) {
-				message.setBody(endpoint.update(message));
-			} else if (ElasticsearchConstants.OPERATION_GET_BY_ID
-					.equals(operation)) {
-				message.setBody(endpoint.getById(message));
-			} else if (ElasticsearchConstants.OPERATION_MULTIGET
-					.equals(operation)) {
-				message.setBody(endpoint.multiget(message));
-			} else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
-				throw new UnsupportedOperationException();
-			} else if (ElasticsearchConstants.OPERATION_BULK_INDEX
-					.equals(operation)) {
-				message.setBody(endpoint.bulkIndex(message));
-			} else if (ElasticsearchConstants.OPERATION_DELETE
-					.equals(operation)) {
-				message.setBody(endpoint.delete(message));
-			} else if (ElasticsearchConstants.OPERATION_EXISTS
-					.equals(operation)) {
-				message.setBody(endpoint.indexExists(message));
-			} else if (ElasticsearchConstants.OPERATION_SEARCH
-					.equals(operation)) {
-				message.setBody(endpoint.search(message));
-			} else if (ElasticsearchConstants.OPERATION_MULTISEARCH
-					.equals(operation)) {
-				//
-			} else {
-				throw new IllegalArgumentException(
-						ElasticsearchConstants.PARAM_OPERATION + " value '"
-								+ operation + "' is not supported");
-			}
+		if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
+			message.setBody(endpoint.index(message));
+		} else if (ElasticsearchConstants.OPERATION_UPDATE.equals(operation)) {
+			message.setBody(endpoint.update(message));
+		} else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
+			message.setBody(endpoint.getById(message));
+		} else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {
+			message.setBody(endpoint.multiget(message));
+		} else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
+			message.setBody(endpoint.bulk(message));
+		} else if (ElasticsearchConstants.OPERATION_BULK_INDEX
+				.equals(operation)) {
+			message.setBody(endpoint.bulkIndex(message));
+		} else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
+			message.setBody(endpoint.delete(message));
+		} else if (ElasticsearchConstants.OPERATION_EXISTS.equals(operation)) {
+			message.setBody(endpoint.indexExists(message));
+		} else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
+			message.setBody(endpoint.search(message));
+		} else if (ElasticsearchConstants.OPERATION_MULTISEARCH
+				.equals(operation)) {
+			message.setBody(endpoint.multisearch(message));
 		} else {
-			Client client = getEndpoint().getClient();
-			if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
-				message.setBody(endpoint.index(message));
-			} else if (ElasticsearchConstants.OPERATION_UPDATE
-					.equals(operation)) {
-				UpdateRequest updateRequest = message
-						.getBody(UpdateRequest.class);
-				message.setBody(client.update(updateRequest).actionGet()
-						.getId());
-			} else if (ElasticsearchConstants.OPERATION_GET_BY_ID
-					.equals(operation)) {
-				GetRequest getRequest = message.getBody(GetRequest.class);
-				message.setBody(client.get(getRequest));
-			} else if (ElasticsearchConstants.OPERATION_MULTIGET
-					.equals(operation)) {
-				MultiGetRequest multiGetRequest = message
-						.getBody(MultiGetRequest.class);
-				message.setBody(client.multiGet(multiGetRequest));
-			} else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
-				BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-				message.setBody(client.bulk(bulkRequest).actionGet());
-			} else if (ElasticsearchConstants.OPERATION_BULK_INDEX
-					.equals(operation)) {
-				BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-				List<String> indexedIds = new ArrayList<String>();
-				for (BulkItemResponse response : client.bulk(bulkRequest)
-						.actionGet().getItems()) {
-					indexedIds.add(response.getId());
-				}
-				message.setBody(indexedIds);
-			} else if (ElasticsearchConstants.OPERATION_DELETE
-					.equals(operation)) {
-				DeleteRequest deleteRequest = message
-						.getBody(DeleteRequest.class);
-				message.setBody(client.delete(deleteRequest).actionGet());
-			} else if (ElasticsearchConstants.OPERATION_EXISTS
-					.equals(operation)) {
-				ExistsRequest existsRequest = message
-						.getBody(ExistsRequest.class);
-				message.setBody(client.admin().indices()
-						.prepareExists(existsRequest.indices()).get()
-						.isExists());
-			} else if (ElasticsearchConstants.OPERATION_SEARCH
-					.equals(operation)) {
-				SearchRequest searchRequest = message
-						.getBody(SearchRequest.class);
-				message.setBody(client.search(searchRequest).actionGet());
-			} else if (ElasticsearchConstants.OPERATION_MULTISEARCH
-					.equals(operation)) {
-				MultiSearchRequest multiSearchRequest = message
-						.getBody(MultiSearchRequest.class);
-				message.setBody(client.multiSearch(multiSearchRequest));
-			} else {
-				throw new IllegalArgumentException(
-						ElasticsearchConstants.PARAM_OPERATION + " value '"
-								+ operation + "' is not supported");
-			}
+			throw new IllegalArgumentException(
+					ElasticsearchConstants.PARAM_OPERATION + " value '"
+							+ operation + "' is not supported");
 		}
 
 		// If we set params via the configuration on this exchange, remove them
