@@ -20,12 +20,12 @@ public class OutParameter {
 
     private String name;
     private int sqlType;
-    private String outHeader;
+    private String outValueMapKey;
 
-    public OutParameter(String name, int sqlType, String outHeader) {
+    public OutParameter(String name, int sqlType, String outValueMapKey) {
         this.name = name;
         this.sqlType = sqlType;
-        this.outHeader = outHeader;
+        this.outValueMapKey = outValueMapKey;
     }
 
     public String getName() {
@@ -36,7 +36,7 @@ public class OutParameter {
         return sqlType;
     }
 
-    public String getOutHeader() {
-        return outHeader;
+    public String getOutValueMapKey() {
+        return outValueMapKey;
     }
 }

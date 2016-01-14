@@ -54,7 +54,7 @@ public class TemplateStoredProcedure extends StoredProcedure {
 
             } else if (parameter instanceof OutParameter) {
                 OutParameter outParameter = (OutParameter) parameter;
-                declareParameter(new SqlOutParameter(outParameter.getOutHeader(), outParameter.getSqlType()));
+                declareParameter(new SqlOutParameter(outParameter.getOutValueMapKey(), outParameter.getSqlType()));
                 setFunction(false);
             }
         }
@@ -71,9 +71,7 @@ public class TemplateStoredProcedure extends StoredProcedure {
         }
 
         LOG.debug("Invoking stored procedure: {}", template.getProcedureName());
-        Map<String, Object> ret = super.execute(params);
-
-        return ret;
+        return super.execute(params);
     }
 
     public Template getTemplate() {

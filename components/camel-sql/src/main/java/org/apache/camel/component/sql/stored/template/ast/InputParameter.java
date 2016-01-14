@@ -28,13 +28,11 @@ public class InputParameter {
 
     private final String name;
     private final int sqlType;
-    private final Class javaType;
     private ValueExtractor valueExtractor;
 
-    public InputParameter(String name, int sqlType, Token valueSrcToken, Class javaType) {
+    public InputParameter(String name, int sqlType, Token valueSrcToken) {
         this.name = name;
         this.sqlType = sqlType;
-        this.javaType = javaType;
         parseValueExpression(valueSrcToken);
     }
 
@@ -45,7 +43,7 @@ public class InputParameter {
 
                 @Override
                 public Object eval(Exchange exchange, Object container) {
-                    return exp.evaluate(exchange, javaType);
+                    return exp.evaluate(exchange, Object.class);
                 }
             };
         } else if (SSPTParserConstants.PARAMETER_POS_TOKEN == valueSrcToken.kind) {
@@ -61,29 +59,12 @@ public class InputParameter {
         }
     }
 
-    /*public Object getParameterValueFromContainer(Exchange exchange, Object container) {
-        if (this.valueExpression != null) {
-            return valueExpression.evaluate(exchange, this.getJavaType());
-        } else {
-            return getValueFromMap((Map<String, Object>) container);
-        }
-    }*/
-
-    /*private Object getValueFromMap(Map<String, Object> container) {
-        return container.get(mapKey);
-    }*/
-
     public String getName() {
         return name;
     }
 
     public int getSqlType() {
         return sqlType;
-    }
-
-
-    public Class getJavaType() {
-        return javaType;
     }
 
     public ValueExtractor getValueExtractor() {

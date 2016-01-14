@@ -44,7 +44,7 @@ public class SqlStoredComponent extends UriEndpointComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String template, Map<String, Object> parameters) throws Exception {
         DataSource target = null;
 
         // endpoint options overrule component configured datasource
@@ -61,7 +61,6 @@ public class SqlStoredComponent extends UriEndpointComponent {
         }
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
-        String template = remaining;
 
         SqlStoredEndpoint endpoint = new SqlStoredEndpoint(uri, this, jdbcTemplate);
         endpoint.setTemplate(template);

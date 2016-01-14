@@ -58,8 +58,7 @@ public class SqlStoredEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        SqlStoredProducer result = new SqlStoredProducer(this);
-        return result;
+        return new SqlStoredProducer(this);
     }
 
 
