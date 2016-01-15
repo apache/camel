@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
 import org.apache.deltaspike.cdise.api.CdiContainer;
+import org.apache.deltaspike.cdise.api.CdiContainerLoader;
 
 /**
  * Camel CDI boot integration. Allows Camel and CDI to be booted up on the command line as a JVM process.
@@ -85,7 +86,7 @@ public class Main extends MainSupport {
     @Override
     protected void doStart() throws Exception {
         // TODO: Use standard CDI Java SE support when CDI 2.0 becomes a prerequisite
-        org.apache.deltaspike.cdise.api.CdiContainer container = org.apache.deltaspike.cdise.api.CdiContainerLoader.getCdiContainer();
+        CdiContainer container = CdiContainerLoader.getCdiContainer();
         container.boot();
         container.getContextControl().startContexts();
         cdiContainer = container;
