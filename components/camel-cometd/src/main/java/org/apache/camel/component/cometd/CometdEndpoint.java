@@ -69,8 +69,8 @@ public class CometdEndpoint extends DefaultEndpoint {
     private String allowedOrigins;
     @UriParam
     private String filterPath;
-    @UriParam(defaultValue = "true")
-    private boolean disconnectLocalSession = true;
+    @UriParam
+    private boolean disconnectLocalSession;
 
     public CometdEndpoint(CometdComponent component, String uri, String remaining, Map<String, Object> parameters) {
         super(uri, component);
