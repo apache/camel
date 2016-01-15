@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -153,15 +155,20 @@ public class RestSwaggerSupport {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> names = server.queryNames(new ObjectName("*:type=context,*"), null);
         for (ObjectName on : names) {
+
             String id = on.getKeyProperty("name");
             if (id.startsWith("\"") && id.endsWith("\"")) {
                 id = id.substring(1, id.length() - 1);
             }
 
             // filter out older Camel versions as this requires Camel 2.15 or better (rest-dsl)
-            String version = (String) server.getAttribute(on, "CamelVersion");
-            if (CamelVersionHelper.isGE("2.15.0", version)) {
-                answer.add(id);
+            try {
+                String version = (String) server.getAttribute(on, "CamelVersion");
+                if (CamelVersionHelper.isGE("2.15.0", version)) {
+                    answer.add(id);
+                }
+            } catch (AttributeNotFoundException ex) {
+                // ignore
             }
         }
         return answer;
