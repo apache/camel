@@ -605,18 +605,21 @@ public class BeanInfo {
         possibleOperations.addAll(localOperationsWithCustomAnnotation);
 
         if (!possibleOperations.isEmpty()) {
-            // multiple possible operations so find the best suited if possible
-            MethodInfo answer = chooseMethodWithMatchingBody(exchange, possibleOperations, localOperationsWithCustomAnnotation);
 
-            if (answer == null && name != null) {
-                // do we have hardcoded parameters values provided from the method name then fallback and try that
+            MethodInfo answer = null;
+
+            if (name != null) {
+                // do we have hardcoded parameters values provided from the method name then use that for matching
                 String parameters = ObjectHelper.between(name, "(", ")");
                 if (parameters != null) {
                     // special as we have hardcoded parameters, so we need to choose method that matches those parameters the best
                     answer = chooseMethodWithMatchingParameters(exchange, parameters, possibleOperations);
                 }
             }
-            
+            if (answer == null) {
+                // multiple possible operations so find the best suited if possible
+                answer = chooseMethodWithMatchingBody(exchange, possibleOperations, localOperationsWithCustomAnnotation);
+            }
             if (answer == null && possibleOperations.size() > 1) {
                 answer = getSingleCovariantMethod(possibleOperations);
             }
@@ -657,6 +660,7 @@ public class BeanInfo {
 
         // okay we still got multiple operations, so need to match the best one
         List<MethodInfo> candidates = new ArrayList<MethodInfo>();
+        MethodInfo fallbackCandidate = null;
         for (MethodInfo info : operations) {
             it = ObjectHelper.createIterator(parameters);
             int index = 0;
@@ -667,7 +671,16 @@ public class BeanInfo {
                 Class<?> expectedType = info.getParameters().get(index).getType();
 
                 if (parameterType != null && expectedType != null) {
-                    if (!parameterType.isAssignableFrom(expectedType)) {
+
+                    // skip java.lang.Object type, when we have multiple possible methods we want to avoid it if possible
+                    if (Object.class.equals(expectedType)) {
+                        fallbackCandidate = info;
+                        matches = false;
+                        break;
+                    }
+
+                    boolean matchingTypes = isParameterMatchingType(parameterType, expectedType);
+                    if (!matchingTypes) {
                         matches = false;
                         break;
                     }
@@ -683,12 +696,22 @@ public class BeanInfo {
 
         if (candidates.size() > 1) {
             MethodInfo answer = getSingleCovariantMethod(candidates);
-            if (answer == null) {
-                throw new AmbiguousMethodCallException(exchange, candidates);
+            if (answer != null) {
+                return answer;
             }
-            return answer;
         }
-        return candidates.size() == 1 ? candidates.get(0) : null;
+        return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
+    }
+
+    private boolean isParameterMatchingType(Class<?> parameterType, Class<?> expectedType) {
+        if (Number.class.equals(parameterType)) {
+            // number should match long/int/etc.
+            if (Integer.class.isAssignableFrom(expectedType) || Long.class.isAssignableFrom(expectedType)
+                    || int.class.isAssignableFrom(expectedType) || long.class.isAssignableFrom(expectedType)) {
+                return true;
+            }
+        }
+        return parameterType.isAssignableFrom(expectedType);
     }
 
     private MethodInfo getSingleCovariantMethod(Collection<MethodInfo> candidates) {
