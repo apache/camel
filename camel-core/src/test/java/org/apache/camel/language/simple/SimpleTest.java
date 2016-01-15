@@ -1473,6 +1473,36 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testListRemoveByInstance() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        exchange.getIn().setBody(data);
+
+        assertEquals(2, data.size());
+
+        Expression expression = SimpleLanguage.simple("${body.remove('A')}");
+        expression.evaluate(exchange, Object.class);
+
+        assertEquals(1, data.size());
+        assertEquals("B", data.get(0));
+    }
+
+    public void testListRemoveIndex() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        exchange.getIn().setBody(data);
+
+        assertEquals(2, data.size());
+
+        Expression expression = SimpleLanguage.simple("${body.remove(0)}");
+        expression.evaluate(exchange, Object.class);
+
+        assertEquals(1, data.size());
+        assertEquals("B", data.get(0));
+    }
+
     protected String getLanguageName() {
         return "simple";
     }
