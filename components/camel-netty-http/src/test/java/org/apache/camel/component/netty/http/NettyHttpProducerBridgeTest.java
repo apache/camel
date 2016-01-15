@@ -26,7 +26,7 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
 
     @Test
     public void testProxy() throws Exception {
-        String reply = template.requestBody("netty-http:http://0.0.0.0:" + port1 + "/foo", "World", String.class);
+        String reply = template.requestBody("netty-http:http://localhost:" + port1 + "/foo", "World", String.class);
         assertEquals("Bye World", reply);
     }
 
@@ -39,7 +39,7 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
                 port2 = getNextPort();
 
                 from("netty-http:http://0.0.0.0:" + port1 + "/foo")
-                        .to("netty-http:http://0.0.0.0:" + port2 + "/bar?bridgeEndpoint=true&throwExceptionOnFailure=false");
+                        .to("netty-http:http://localhost:" + port2 + "/bar?bridgeEndpoint=true&throwExceptionOnFailure=false");
 
                 from("netty-http:http://0.0.0.0:" + port2 + "/bar")
                         .transform().simple("Bye ${body}");
