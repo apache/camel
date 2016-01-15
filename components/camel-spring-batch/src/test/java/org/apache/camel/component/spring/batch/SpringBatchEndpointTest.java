@@ -207,7 +207,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         context().addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:launcherRefTest").to("spring-batch:mockJob?jobLauncherRef=alternativeJobLauncher");
+                from("direct:launcherRefTest").to("spring-batch:mockJob?jobLauncher=#alternativeJobLauncher");
             }
         });
 
@@ -215,7 +215,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         template.sendBody("direct:launcherRefTest", "Start the job, please.");
 
         // Then
-        SpringBatchEndpoint batchEndpoint = context().getEndpoint("spring-batch:mockJob?jobLauncherRef=alternativeJobLauncher", SpringBatchEndpoint.class);
+        SpringBatchEndpoint batchEndpoint = context().getEndpoint("spring-batch:mockJob?jobLauncher=#alternativeJobLauncher", SpringBatchEndpoint.class);
         JobLauncher batchEndpointJobLauncher = (JobLauncher) FieldUtils.readField(batchEndpoint, "jobLauncher", true);
         assertSame(alternativeJobLauncher, batchEndpointJobLauncher);
     }

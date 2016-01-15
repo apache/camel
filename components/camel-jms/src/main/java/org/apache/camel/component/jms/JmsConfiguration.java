@@ -132,6 +132,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean replyToDeliveryPersistent = true;
     @UriParam(defaultValue = "-1", label = "producer")
     private long timeToLive = -1;
+    @UriParam(label = "advanced")
     private MessageConverter messageConverter;
     @UriParam(defaultValue = "true", label = "advanced")
     private boolean mapJmsMessage = true;
@@ -175,7 +176,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean replyToSameDestinationAllowed;
     @UriParam(enums = "Bytes,Map,Object,Stream,Text")
     private JmsMessageType jmsMessageType;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", enums = "default,passthrough")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
     @UriParam(label = "advanced")
     private boolean transferExchange;

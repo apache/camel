@@ -17,8 +17,6 @@
 package org.apache.camel.component.beanstalk;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
 import org.junit.Before;
@@ -73,16 +71,6 @@ public class EndpointTest {
         assertEquals("Command", BeanstalkComponent.COMMAND_KICK, endpoint.getCommand().name());
         assertEquals("Host", "host", endpoint.conn.host);
         assertArrayEquals("Tubes", new String[]{"tube1", "tube+", "tube?"}, endpoint.conn.tubes);
-    }
-
-    @Test(expected = FailedToCreateRouteException.class)
-    public void testWrongCommand() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:start").to("beanstalk:default?command=noCommand");
-            }
-        });
     }
 
     @After

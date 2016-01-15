@@ -436,9 +436,9 @@ public class CamelCatalogTest {
         assertEquals(0, result.getNumberOfErrors());
 
         // reference
-        result = catalog.validateEndpointProperties("jms:queue:myqueue?jmsKeyFormatStrategy=key");
+        result = catalog.validateEndpointProperties("jms:queue:myqueue?jmsKeyFormatStrategy=foo");
         assertFalse(result.isSuccess());
-        assertEquals("key", result.getInvalidReference().get("jmsKeyFormatStrategy"));
+        assertEquals("foo", result.getInvalidEnum().get("jmsKeyFormatStrategy"));
         assertEquals(1, result.getNumberOfErrors());
 
         // okay
