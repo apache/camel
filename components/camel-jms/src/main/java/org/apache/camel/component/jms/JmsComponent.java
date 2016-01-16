@@ -879,6 +879,10 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
 
         MessageListenerContainerFactory messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters,
                 "messageListenerContainerFactoryRef", MessageListenerContainerFactory.class);
+        if (messageListenerContainerFactory == null) {
+            messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters,
+                    "messageListenerContainerFactory", MessageListenerContainerFactory.class);
+        }
         if (messageListenerContainerFactory != null) {
             endpoint.setMessageListenerContainerFactory(messageListenerContainerFactory);
         }
