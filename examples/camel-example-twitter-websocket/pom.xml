@@ -63,6 +63,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
         <configuration>
           <mainClass>org.apache.camel.example.websocket.CamelTwitterWebSocketMain</mainClass>
         </configuration>
