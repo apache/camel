@@ -118,6 +118,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
             return;
         }
 
+        final File rootdir = new File(".");
         final File dir = new File("target/test/multiple-consumers");
         dir.mkdirs();
         for (int i = 1; i <= ITERATIONS; i++) {
@@ -139,10 +140,10 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs://" + dir.toURI() + "/?pattern=*.txt&fileSystemType=LOCAL&chunkSize=100&initialDelay=0").to("mock:result");
-                from("hdfs://" + dir.toURI() + "/?pattern=*.txt&fileSystemType=LOCAL&chunkSize=200&initialDelay=0").to("mock:result");
-                from("hdfs://" + dir.toURI() + "/?pattern=*.txt&fileSystemType=LOCAL&chunkSize=300&initialDelay=0").to("mock:result");
-                from("hdfs://" + dir.toURI() + "/?pattern=*.txt&fileSystemType=LOCAL&chunkSize=400&initialDelay=0").to("mock:result");
+                from("hdfs://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=100&initialDelay=0").to("mock:result");
+                from("hdfs://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=200&initialDelay=0").to("mock:result");
+                from("hdfs://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=300&initialDelay=0").to("mock:result");
+                from("hdfs://" + rootdir.toURI() + "/target/test/multiple-consumers?pattern=*.txt&fileSystemType=LOCAL&chunkSize=400&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -263,14 +264,12 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:localhost/" + file.getParent().toUri() + "?consumerProperties=#cprops&pattern=*&fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0&readSuffix=handled").to("mock:result");
+                from("hdfs:localhost/" + file.getParent().toUri() + "?scheduler=#myScheduler&pattern=*&fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0&readSuffix=handled").to("mock:result");
             }
         });
-        Map<String, Object> props = new HashMap<String, Object>();
         ScheduledExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(null, "unitTestPool", 1);
         DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler(pool);
-        props.put("scheduler", scheduler);
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("cprops", props);
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("myScheduler", scheduler);
         context.start();
 
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
@@ -372,7 +371,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:localhost/" + file.toUri() + "??fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -403,7 +402,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:localhost/" + file.toUri() + "??fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
