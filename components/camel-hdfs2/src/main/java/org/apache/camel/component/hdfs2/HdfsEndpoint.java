@@ -23,12 +23,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 @UriEndpoint(scheme = "hdfs2", title = "HDFS2", syntax = "hdfs2:hostName:port/path", consumerClass = HdfsConsumer.class, label = "hadoop,file")
-public class HdfsEndpoint extends DefaultEndpoint {
+public class HdfsEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private final HdfsConfiguration config;
