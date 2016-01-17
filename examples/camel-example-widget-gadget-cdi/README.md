@@ -8,7 +8,8 @@ The example provides a simple order system, where incoming orders, is routed to 
 for further processing. The example uses the most famous pattern from the EIP book, which is the Content Based Router.
 
 The example is implemented in Java with CDI dependency injection.
-The example uses JBoss Weld as the minimal CDI container to run the applicaton.
+The example uses JBoss Weld as the minimal CDI container to run the application,
+but you can run the application in any CDI compliant container.
 
 #### Camel component used in this example
 
