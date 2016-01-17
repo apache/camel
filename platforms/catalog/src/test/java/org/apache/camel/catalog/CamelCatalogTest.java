@@ -412,6 +412,16 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void validateActiveMQProperties() throws Exception {
+        // add activemq as known component
+        catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
+
+        // activemq
+        EndpointValidationResult result = catalog.validateEndpointProperties("activemq:temp:queue:cheese");
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
     public void validateProperties() throws Exception {
         // valid
         EndpointValidationResult result = catalog.validateEndpointProperties("log:mylog");

@@ -1056,6 +1056,16 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // find the position where each option start/end
         List<String> word2 = new ArrayList<String>();
         int prev = 0;
+        int prevPath = 0;
+
+        // special for activemq/jms where the enum for destinationType causes a token issue as it includes a colon
+        // for 'temp:queue' and 'temp:topic' values
+        if ("activemq".equals(scheme) || "jms".equals("scheme")) {
+            if (uriPath.startsWith("temp:")) {
+                prevPath = 5;
+            }
+        }
+
         for (String token : tokens) {
             if (token.isEmpty()) {
                 continue;
@@ -1065,11 +1075,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
             int idx = -1;
             int len = 0;
             if (":".equals(token)) {
-                idx = uriPath.indexOf("://", prev);
+                idx = uriPath.indexOf("://", prevPath);
                 len = 3;
             }
             if (idx == -1) {
-                idx = uriPath.indexOf(token, prev);
+                idx = uriPath.indexOf(token, prevPath);
                 len = token.length();
             }
 
@@ -1077,6 +1087,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 String option = uriPath.substring(prev, idx);
                 word2.add(option);
                 prev = idx + len;
+                prevPath = prev;
             }
         }
         // special for last or if we did not add anyone
