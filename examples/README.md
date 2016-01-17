@@ -20,6 +20,7 @@ All examples have been sort by type/category
 
 ##### EIP
 
+* [camel-example-widget-gadget-java](camel-example-widget-gadget-cdi/README.md)
 * [camel-example-widget-gadget-java](camel-example-widget-gadget-java/README.md)
 * [camel-example-widget-gadget-xml](camel-example-widget-gadget-xml/README.md)
 * [camel-example-tracer](camel-example-tracer/README.md)
