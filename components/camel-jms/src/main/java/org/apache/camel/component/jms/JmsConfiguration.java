@@ -195,6 +195,8 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "true", label = "consumer",
             description = "Specifies whether to use persistent delivery by default for replies.")
     private boolean replyToDeliveryPersistent = true;
+    @UriParam(label = "consumer", description = "Sets the JMS selector to use")
+    private String selector;
     @UriParam(defaultValue = "-1", label = "producer",
             description = "When sending messages, specifies the time-to-live of the message (in milliseconds).")
     private long timeToLive = -1;
@@ -1943,5 +1945,16 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
         this.messageCreatedStrategy = messageCreatedStrategy;
+    }
+
+    public String getSelector() {
+        return selector;
+    }
+
+    /**
+     * Sets the JMS selector to use
+     */
+    public void setSelector(String selector) {
+        this.selector = selector;
     }
 }
