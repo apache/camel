@@ -172,6 +172,7 @@
     <module>camel-mvel</module>
     <module>camel-mybatis</module>
     <module>camel-nagios</module>
+    <module>camel-nats</module>
     <module>camel-netty</module>
     <module>camel-netty4</module>
     <module>camel-netty-http</module>

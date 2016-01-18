@@ -1094,6 +1094,11 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsendnsca-core/${jsendnsca-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-nagios/${project.version}</bundle>
   </feature>
+  <feature name='camel-nats' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:com.github.tyagihas/java_nats/${java-nats-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-nats/${project.version}</bundle>
+  </feature>
   <feature name='camel-netty' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
