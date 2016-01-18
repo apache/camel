@@ -76,8 +76,6 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean allowDefaultCodec = true;
     @UriParam
     private ClientInitializerFactory clientInitializerFactory;
-    @UriParam(defaultValue = "16")
-    private int maximumPoolSize = 16;
     @UriParam(defaultValue = "true")
     private boolean usingExecutorService = true;
     @UriParam(defaultValue = "-1")
@@ -418,14 +416,6 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void setClientInitializerFactory(ClientInitializerFactory clientInitializerFactory) {
         this.clientInitializerFactory = clientInitializerFactory;
-    }
-
-    public int getMaximumPoolSize() {
-        return maximumPoolSize;
-    }
-
-    public void setMaximumPoolSize(int maximumPoolSize) {
-        this.maximumPoolSize = maximumPoolSize;
     }
 
     public boolean isUsingExecutorService() {
