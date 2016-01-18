@@ -32,6 +32,7 @@ import org.apache.camel.util.concurrent.CamelThreadFactory;
 
 public class NettyComponent extends UriEndpointComponent {
     private NettyConfiguration configuration;
+    private int maximumPoolSize = 16;
     private volatile EventExecutorGroup executorService;
 
     public NettyComponent() {
@@ -44,6 +45,19 @@ public class NettyComponent extends UriEndpointComponent {
 
     public NettyComponent(CamelContext context) {
         super(context, NettyEndpoint.class);
+    }
+
+    public int getMaximumPoolSize() {
+        return maximumPoolSize;
+    }
+
+    /**
+     * The thread pool size for the EventExecutorGroup if its in use.
+     * <p/>
+     * The default value is 16.
+     */
+    public void setMaximumPoolSize(int maximumPoolSize) {
+        this.maximumPoolSize = maximumPoolSize;
     }
 
     @Override
@@ -124,14 +138,14 @@ public class NettyComponent extends UriEndpointComponent {
         // we should use a shared thread pool as recommended by Netty
         String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
         ThreadFactory factory = new CamelThreadFactory(pattern, "NettyEventExecutorGroup", true);
-        return new DefaultEventExecutorGroup(configuration.getMaximumPoolSize(), factory);
+        return new DefaultEventExecutorGroup(getMaximumPoolSize(), factory);
     }
 
     @Override
     protected void doStop() throws Exception {
-
-        if (executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        //Only shutdown the executorService if it is create by netty component
+        if (configuration.isUsingExecutorService() && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
         }
 
