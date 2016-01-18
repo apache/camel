@@ -17,15 +17,23 @@
 ## ------------------------------------------------------------------------
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
        xsi:schemaLocation="
-       http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
-       http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+         http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+         http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
+         http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
+
+  <cm:property-placeholder persistent-id="HelloBean" update-strategy="reload">
+    <cm:default-properties>
+      <cm:property name="greeting" value="Hi from Camel" />
+    </cm:default-properties>
+  </cm:property-placeholder>
 
   <bean id="helloBean" class="${package}.HelloBean">
-      <property name="say" value="Hi from Camel"/>
+      <property name="say" value="${greeting}"/>
   </bean>
 
-  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+  <camelContext id="blueprint-bean-context" xmlns="http://camel.apache.org/schema/blueprint">
     <route id="timerToLog">
       <from uri="timer:foo?period=5000"/>
       <setBody>
