@@ -1,0 +1,110 @@
+package org.apache.camel.component.aws.ddbstream;
+
+import java.math.BigInteger;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
+import com.amazonaws.services.dynamodbv2.model.DescribeStreamRequest;
+import com.amazonaws.services.dynamodbv2.model.DescribeStreamResult;
+import com.amazonaws.services.dynamodbv2.model.GetShardIteratorRequest;
+import com.amazonaws.services.dynamodbv2.model.GetShardIteratorResult;
+import com.amazonaws.services.dynamodbv2.model.ListStreamsRequest;
+import com.amazonaws.services.dynamodbv2.model.ListStreamsResult;
+import com.amazonaws.services.dynamodbv2.model.Shard;
+import com.amazonaws.services.dynamodbv2.model.ShardIteratorType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+class ShardIteratorHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(ShardIteratorHandler.class);
+
+    private final DdbStreamEndpoint endpoint;
+    private final ShardList shardList = new ShardList();
+
+    private String currentShardIterator;
+    private Shard currentShard;
+
+    ShardIteratorHandler(DdbStreamEndpoint endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    String getShardIterator() {
+        // either return a cached one or get a new one via a GetShardIterator request.
+        if (currentShardIterator == null) {
+            ListStreamsRequest req0 = new ListStreamsRequest()
+                    .withTableName(getEndpoint().getTableName());
+            ListStreamsResult res0 = getClient().listStreams(req0);
+            final String streamArn = res0.getStreams().get(0).getStreamArn(); // XXX assumes there is only one stream
+            DescribeStreamRequest req1 = new DescribeStreamRequest()
+                    .withStreamArn(streamArn);
+            DescribeStreamResult res1 = getClient().describeStream(req1);
+            shardList.addAll(res1.getStreamDescription().getShards());
+
+            LOG.trace("Current shard is: {} (in {})", currentShard, shardList);
+            if (currentShard == null) {
+                switch(getEndpoint().getIteratorType()) {
+                case AFTER_SEQUENCE_NUMBER:
+                    currentShard = shardList.afterSeq(getEndpoint().getSequenceNumber());
+                    break;
+                case AT_SEQUENCE_NUMBER:
+                    currentShard = shardList.atSeq(getEndpoint().getSequenceNumber());
+                    break;
+                case TRIM_HORIZON:
+                    currentShard = shardList.first();
+                    break;
+                case LATEST:
+                default:
+                    currentShard = shardList.last();
+                    break;
+                }
+            } else {
+                currentShard = shardList.nextAfter(currentShard);
+            }
+            shardList.removeOlderThan(currentShard);
+            LOG.trace("Next shard is: {} (in {})", currentShard, shardList);
+
+            GetShardIteratorRequest req = new GetShardIteratorRequest()
+                    .withStreamArn(streamArn)
+                    .withShardId(currentShard.getShardId())
+                    .withShardIteratorType(getEndpoint().getIteratorType());
+            switch(getEndpoint().getIteratorType()) {
+            case AFTER_SEQUENCE_NUMBER:
+            case AT_SEQUENCE_NUMBER:
+                // if you request with a sequence number that is LESS than the
+                // start of the shard, you get a HTTP 400 from AWS.
+                // So only add the sequence number if the endpoints
+                // sequence number is less than or equal to the starting
+                // sequence for the shard.
+                // Otherwise change the shart iterator type to trim_horizon
+                // because we get a 400 when we use one of the
+                // {at,after}_sequence_number iterator types and don't supply
+                // a sequence number.
+                if (BigIntComparisons.Conditions.LTEQ.matches(
+                        new BigInteger(currentShard.getSequenceNumberRange().getStartingSequenceNumber()),
+                        new BigInteger(getEndpoint().getSequenceNumber())
+                )) {
+                    req = req.withSequenceNumber(getEndpoint().getSequenceNumber());
+                } else {
+                    req = req.withShardIteratorType(ShardIteratorType.TRIM_HORIZON);
+                }
+                break;
+            default:
+            }
+            GetShardIteratorResult result = getClient().getShardIterator(req);
+            currentShardIterator = result.getShardIterator();
+        }
+        LOG.trace("Shard Iterator is: {}", currentShardIterator);
+        return currentShardIterator;
+    }
+
+    void updateShardIterator(String nextShardIterator) {
+        this.currentShardIterator = nextShardIterator;
+    }
+
+    DdbStreamEndpoint getEndpoint() {
+        return endpoint;
+    }
+   
+    private AmazonDynamoDBStreams getClient() {
+        return getEndpoint().getClient();
+    }
+}
