@@ -30,7 +30,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettyHttpCompressTest extends BaseNettyTest {
-    
+
     // setup the decompress decoder here
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -40,22 +40,22 @@ public class NettyHttpCompressTest extends BaseNettyTest {
         registry.bind("myDecoders", decoders);
         return registry;
     }
-    
+
 
     @Test
     public void testContentType() throws Exception {
-        
+
         byte[] data = "Hello World".getBytes(Charset.forName("UTF-8"));
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("content-type", "text/plain; charset=\"UTF-8\"");
         headers.put("Accept-Encoding", "compress, gzip");
-        String out = template.requestBodyAndHeaders("netty4-http:http://0.0.0.0:9001/foo?decoders=#myDecoders", data,
+        String out = template.requestBodyAndHeaders("netty4-http:http://localhost:{{port}}/foo?decoders=#myDecoders", data,
                 headers, String.class);
         // The decoded out has some space to clean up.
         assertEquals("Bye World", out.trim());
-        
 
-        
+
+
     }
 
     @Override
@@ -63,7 +63,7 @@ public class NettyHttpCompressTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4-http:http://0.0.0.0:9001/foo?compression=true")
+                from("netty4-http:http://0.0.0.0:{{port}}/foo?compression=true")
                     .transform().constant("Bye World").setHeader("content-type").constant("text/plain; charset=\"UTF-8\"");
             }
         };
