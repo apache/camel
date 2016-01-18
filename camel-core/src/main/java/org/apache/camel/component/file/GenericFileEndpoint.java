@@ -42,7 +42,6 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -183,6 +182,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     @UriParam(label = "consumer,advanced")
     protected ExceptionHandler onCompletionExceptionHandler;
+    @UriParam(label = "consumer,advanced")
+    protected String extendedAttributes;
 
     public GenericFileEndpoint() {
     }
@@ -1187,6 +1188,18 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setOnCompletionExceptionHandler(ExceptionHandler onCompletionExceptionHandler) {
         this.onCompletionExceptionHandler = onCompletionExceptionHandler;
+    }
+
+    public String getExtendedAttributes() {
+        return extendedAttributes;
+    }
+
+    /**
+     * To define which file attributes of interest. Like posix:permissions,posix:owner,basic:lastAccessTime,
+     * it supports basic wildcard like posix:*, basic:lastAccessTime
+     */
+    public void setExtendedAttributes(String extendedAttributes) {
+        this.extendedAttributes = extendedAttributes;
     }
 
     /**
