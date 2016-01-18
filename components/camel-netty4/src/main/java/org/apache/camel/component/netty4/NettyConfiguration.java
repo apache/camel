@@ -84,8 +84,6 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean allowDefaultCodec = true;
     @UriParam(label = "producer,advanced")
     private ClientInitializerFactory clientInitializerFactory;
-    @UriParam(label = "consumer,advanced", defaultValue = "16")
-    private int maximumPoolSize = 16;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean usingExecutorService = true;
     @UriParam(label = "producer,advanced", defaultValue = "-1")
@@ -505,17 +503,6 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      */
     public void setClientInitializerFactory(ClientInitializerFactory clientInitializerFactory) {
         this.clientInitializerFactory = clientInitializerFactory;
-    }
-
-    public int getMaximumPoolSize() {
-        return maximumPoolSize;
-    }
-
-    /**
-     * The core pool size for the ordered thread pool, if its in use.
-     */
-    public void setMaximumPoolSize(int maximumPoolSize) {
-        this.maximumPoolSize = maximumPoolSize;
     }
 
     public boolean isUsingExecutorService() {
