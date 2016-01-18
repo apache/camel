@@ -124,7 +124,8 @@ public class NettyComponent extends UriEndpointComponent {
         if (configuration == null) {
             configuration = new NettyConfiguration();
         }
-        
+
+        //Only setup the executorService if it is needed
         if (configuration.isUsingExecutorService() && executorService == null) {
             executorService = createExecutorService();
         }
@@ -143,7 +144,7 @@ public class NettyComponent extends UriEndpointComponent {
 
     @Override
     protected void doStop() throws Exception {
-        //Only shutdown the executorService if it is create by netty component
+        //Only shutdown the executorService if it is created by netty component
         if (configuration.isUsingExecutorService() && executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
