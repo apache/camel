@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 ## ------------------------------------------------------------------------
 ## Licensed to the Apache Software Foundation (ASF) under one or more
 ## contributor license agreements.  See the NOTICE file distributed with
@@ -14,27 +15,24 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-package ${package};
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+       xsi:schemaLocation="
+         http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+         http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
 
-import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
+  <reference id="helloService" interface="${package}.Hello" />
 
-import org.junit.Test;
+  <camelContext id="blueprint-service-context" xmlns="http://camel.apache.org/schema/blueprint">
+    <route id="timerToLog">
+      <from uri="timer:foo?period=5000"/>
+      <setBody>
+          <method ref="helloService" method="hello"/>
+      </setBody>
+      <log message="The message contains ${body}"/>
+      <to uri="mock:result"/>
+    </route>
+  </camelContext>
 
-public class RouteTest extends CamelBlueprintTestSupport {
-	
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "/OSGI-INF/blueprint/blueprint.xml";
-    }
-
-    @Test
-    public void testRoute() throws Exception {
-        // the route is timer based, so every 5th second a message is send
-        // we should then expect at least one message
-        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
-
-        // assert expectations
-        assertMockEndpointsSatisfied();
-    }
-
-}
+</blueprint>
