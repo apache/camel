@@ -56,7 +56,7 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected int poll() throws Exception {
         GetRecordsRequest req = new GetRecordsRequest()
-                .withShardIterator(getShardItertor())
+                .withShardIterator(getShardIterator())
                 .withLimit(getEndpoint().getMaxResultsPerRequest());
         GetRecordsResult result = getClient().getRecords(req);
 
@@ -95,7 +95,7 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
         return (DdbStreamEndpoint) super.getEndpoint();
     }
 
-    private String getShardItertor() {
+    private String getShardIterator() {
         // either return a cached one or get a new one via a GetShardIterator request.
         if (currentShardIterator == null) {
             ListStreamsRequest req0 = new ListStreamsRequest()
