@@ -29,44 +29,52 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <camel-version>${camel-version}</camel-version>
+    <slf4j-version>${slf4j-version}</slf4j-version>
+    <log4j-version>${log4j-version}</log4j-version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-      <version>${camel-version}</version>
+      <version>\${camel-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-blueprint</artifactId>
-      <version>${camel-version}</version>
+      <version>\${camel-version}</version>
     </dependency>
 
-    <!-- logging -->
+    <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j-version}</version>
+      <version>\${slf4j-version}</version>
     </dependency>
 
     <!-- Testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-blueprint</artifactId>
-      <version>${camel-version}</version>
+      <version>\${camel-version}</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Test Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>\${slf4j-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>\${log4j-version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -97,18 +105,9 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <version>${maven-bundle-plugin-version}</version>
         <extensions>true</extensions>
-        <executions>
-          <execution>
-           <id>bundle-manifest</id>
-           <phase>process-classes</phase>
-           <goals>
-               <goal>manifest</goal>
-           </goals>
-          </execution>
-        </executions>
         <configuration>
           <instructions>
-            <Bundle-SymbolicName>${artifactId}</Bundle-SymbolicName>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
             <Private-Package>${package}.*</Private-Package>
             <Import-Package>*</Import-Package>
           </instructions>
@@ -119,7 +118,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${camel-version}</version>
+        <version>\${camel-version}</version>
         <configuration>
           <useBlueprint>true</useBlueprint>
         </configuration>
