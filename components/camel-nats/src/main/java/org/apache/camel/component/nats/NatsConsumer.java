@@ -67,10 +67,10 @@ public class NatsConsumer extends DefaultConsumer {
         connection.flush();
         
         try {
-			connection.unsubscribe(sid);
-		} catch (Exception e) {
-			getExceptionHandler().handleException("Error during unsubscribing", e);
-		}
+            connection.unsubscribe(sid);
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error during unsubscribing", e);
+        }
 
         LOG.debug("Stopping Nats Consumer");
         if (executor != null) {
