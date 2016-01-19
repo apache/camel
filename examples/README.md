@@ -13,10 +13,14 @@ View the individual example READMEs for details.
 All examples have been sort by type/category
 
 
-##### Big data
+##### Easy
 
-* [camel-example-spark-rest-tomcat](camel-example-spark-rest-tomcat/README.md)
-* [camel-example-splunk](camel-example-splunk/README.md)
+* [camel-example-cdi](camel-example-cdi/README.md)
+* [camel-example-console](camel-example-console/README.md)
+* [camel-example-jmx](camel-example-jmx/README.md)
+* [camel-example-ftp](camel-example-ftp/README.md)
+* [camel-example-ssh](camel-example-ssh/README.md)
+* [camel-example-ssh-security](camel-example-ssh-security/README.md)
 
 ##### EIP
 
@@ -29,15 +33,6 @@ All examples have been sort by type/category
 * [camel-example-etl](camel-example-etl/README.md)
 * [camel-example-loadbalancing](camel-example-loadbalancing/README.md)
 
-##### Easy
-
-* [camel-example-cdi](camel-example-cdi/README.md)
-* [camel-example-console](camel-example-console/README.md)
-* [camel-example-jmx](camel-example-jmx/README.md)
-* [camel-example-ftp](camel-example-ftp/README.md)
-* [camel-example-ssh](camel-example-ssh/README.md)
-* [camel-example-ssh-security](camel-example-ssh-security/README.md)
-
 ##### "Real" use case
 
 * [camel-example-loan-broker](camel-example-loan-broker/README.md)
@@ -45,6 +40,17 @@ All examples have been sort by type/category
 * [camel-example-reportincident-wssecurity](camel-example-reportincident-wssecurity/README.md)
 * [camel-example-cafe](camel-example-cafe/README.md)
 * [camel-example-bam](camel-example-bam/README.md)
+
+##### Big data
+
+* [camel-example-spark-rest-tomcat](camel-example-spark-rest-tomcat/README.md)
+* [camel-example-splunk](camel-example-splunk/README.md)
+
+##### CDI
+
+* [camel-example-cdi](camel-example-cdi/README.md)
+* [camel-example-metrics-cdi](camel-example-metrics-cdi/README.md)
+* [camel-example-widget-gadget-java](camel-example-widget-gadget-cdi/README.md)
 
 ##### OSGi
 
@@ -88,12 +94,15 @@ All examples have been sort by type/category
 * [camel-example-spring-ws](camel-example-spring-ws/README.md)
 * [camel-example-spring-xquery](camel-example-spring-xquery/README.md)
 
+##### Swagger
+
+* [camel-example-swagger-cdi](camel-example-swagger-cdi/README.md)
+* [camel-example-swagger-java](camel-example-swagger-java/README.md)
+
 ##### Miscellaneous
 
 * [camel-example-servlet-tomcat](camel-example-servlet-tomcat/README.md)
 * [camel-example-servlet-tomcat-no-spring](camel-example-servlet-tomcat-no-spring/README.md)
-* [camel-example-swagger-cdi](camel-example-swagger-cdi/README.md)
-* [camel-example-swagger-java](camel-example-swagger-java/README.md)
 * [camel-example-netty-http](camel-example-netty-http/README.md)
 * [camel-example-management](camel-example-management/README.md)
 
