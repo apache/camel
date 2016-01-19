@@ -32,15 +32,13 @@ public class NatsConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NatsConsumer.class);
 
-    protected ExecutorService executor;
-    private final NatsEndpoint endpoint;
     private final Processor processor;
+    private ExecutorService executor;
     private Connection connection;
     private int sid;
 
     public NatsConsumer(NatsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.endpoint = endpoint;
         this.processor = processor;
     }
 
@@ -53,18 +51,20 @@ public class NatsConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         LOG.debug("Starting Nats Consumer");
-        executor = endpoint.createExecutor();
+        executor = getEndpoint().createExecutor();
 
         LOG.debug("Getting Nats Connection");
         connection = getConnection();
 
         executor.submit(new NatsConsumingTask(connection, getEndpoint().getNatsConfiguration()));
-
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+
+        // TODO: Should we not unsubscribe first?
+
         LOG.debug("Stopping Nats Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
@@ -82,17 +82,14 @@ public class NatsConsumer extends DefaultConsumer {
     }
 
     private Connection getConnection() throws IOException, InterruptedException {
-
         Properties prop = getEndpoint().getNatsConfiguration().createProperties();
         connection = Connection.connect(prop);
-
         return connection;
     }
 
     class NatsConsumingTask implements Runnable {
 
         private final Connection connection;
-        
         private final NatsConfiguration configuration;
 
         public NatsConsumingTask(Connection connection, NatsConfiguration configuration) {
@@ -105,7 +102,7 @@ public class NatsConsumer extends DefaultConsumer {
             try {
                 sid = connection.subscribe(getEndpoint().getNatsConfiguration().getTopic(), configuration.createSubProperties(), new MsgHandler() {
                     public void execute(String msg) {
-                        LOG.debug("Received Message: " + msg);
+                        LOG.debug("Received Message: {}", msg);
                         Exchange exchange = getEndpoint().createExchange();
                         exchange.getIn().setBody(msg);
                         exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
@@ -117,8 +114,8 @@ public class NatsConsumer extends DefaultConsumer {
                         }
                     }
                 });
-            } catch (IOException e1) {
-                getExceptionHandler().handleException("Error during processing", e1);
+            } catch (Throwable e) {
+                getExceptionHandler().handleException("Error during processing", e);
             }
         }
     }

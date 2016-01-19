@@ -43,10 +43,12 @@ public class NatsProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         NatsConfiguration config = getEndpoint().getNatsConfiguration();
-        connection.publish(config.getTopic(), exchange.getIn().getBody(String.class).getBytes());
+        String body = exchange.getIn().getMandatoryBody(String.class);
+
+        LOG.debug("Publishing to topic: {}", config.getTopic());
+        connection.publish(config.getTopic(), body.getBytes());
     }
     
-
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -62,17 +64,15 @@ public class NatsProducer extends DefaultProducer {
         LOG.debug("Stopping Nats Producer");
         
         LOG.debug("Closing Nats Connection");
-        if (connection.isConnected()) {
+        if (connection != null && connection.isConnected()) {
             connection.close();
         }
     }
 
-    
     private Connection getConnection() throws IOException, InterruptedException {
-
         Properties prop = getEndpoint().getNatsConfiguration().createProperties();
         connection = Connection.connect(prop);
-
         return connection;
     }
+
 }

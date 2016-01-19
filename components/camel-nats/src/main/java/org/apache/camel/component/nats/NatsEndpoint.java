@@ -24,13 +24,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "nats", title = "Nats", syntax = "nats:host", label = "messaging")
+@UriEndpoint(scheme = "nats", title = "Nats", syntax = "nats:servers", label = "messaging", consumerClass = NatsConsumer.class)
 public class NatsEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(NatsEndpoint.class);
 
     @UriParam
     private NatsConfiguration configuration;
@@ -56,12 +52,9 @@ public class NatsEndpoint extends DefaultEndpoint {
 
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
     
-    /**
-     * The nats Configuration
-     */
     public NatsConfiguration getNatsConfiguration() {
         return configuration;
     }

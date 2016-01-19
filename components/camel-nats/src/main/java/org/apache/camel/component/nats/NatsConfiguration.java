@@ -26,9 +26,11 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class NatsConfiguration {
 
-	@UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     private String servers;
-    @UriParam @Metadata(required = "true")
+    @UriParam
+    @Metadata(required = "true")
     private String topic;
     @UriParam(defaultValue = "true")
     private boolean reconnect = true;
@@ -52,143 +54,156 @@ public class NatsConfiguration {
     private String maxMessages;
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
-    
+
     /**
-     * The Nats servers
+     * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
      */
     public String getServers() {
         return servers;
     }
+
     public void setServers(String servers) {
         this.servers = servers;
     }
-    
+
     /**
      * The name of topic we want to use
-     */   
+     */
     public String getTopic() {
         return topic;
     }
+
     public void setTopic(String topic) {
         this.topic = topic;
     }
-        
+
     /**
      * Whether or not using reconnection feature
-     */   
+     */
     public boolean getReconnect() {
         return reconnect;
     }
+
     public void setReconnect(boolean reconnect) {
         this.reconnect = reconnect;
     }
-     
+
     /**
      * Whether or not running in pedantic mode (this affects performace)
-     */  
+     */
     public boolean getPedantic() {
         return pedantic;
     }
+
     public void setPedantic(boolean pedantic) {
         this.pedantic = pedantic;
     }
-    
+
     /**
      * Whether or not running in verbose mode
-     */  
+     */
     public boolean getVerbose() {
         return verbose;
     }
+
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
-    
+
     /**
      * Whether or not using SSL
-     */ 
+     */
     public boolean getSsl() {
         return ssl;
     }
+
     public void setSsl(boolean ssl) {
         this.ssl = ssl;
     }
-    
+
     /**
      * Waiting time before attempts reconnection (in milliseconds)
-     */ 
+     */
     public int getReconnectTimeWait() {
         return reconnectTimeWait;
     }
+
     public void setReconnectTimeWait(int reconnectTimeWait) {
         this.reconnectTimeWait = reconnectTimeWait;
     }
-    
+
     /**
      * Max reconnection attempts
-     */ 
+     */
     public int getMaxReconnectAttempts() {
         return maxReconnectAttempts;
     }
+
     public void setMaxReconnectAttempts(int maxReconnectAttempts) {
         this.maxReconnectAttempts = maxReconnectAttempts;
     }
-    
+
     /**
      * Ping interval to be aware if connection is still alive (in milliseconds)
      */
     public int getPingInterval() {
         return pingInterval;
     }
+
     public void setPingInterval(int pingInterval) {
         this.pingInterval = pingInterval;
     }
-    
+
     /**
      * Whether or not randomizing the order of servers for the connection attempts
      */
     public boolean getNoRandomizeServers() {
         return noRandomizeServers;
     }
+
     public void setNoRandomizeServers(boolean noRandomizeServers) {
         this.noRandomizeServers = noRandomizeServers;
     }
-    
+
     /**
      * The Queue name if we are using nats for a queue configuration
      */
     public String getQueueName() {
         return queueName;
     }
+
     public void setQueueName(String queueName) {
         this.queueName = queueName;
     }
-    
+
     /**
      * Stop receiving messages from a topic we are subscribing to after maxMessages 
      */
     public String getMaxMessages() {
         return maxMessages;
     }
+
     public void setMaxMessages(String maxMessages) {
         this.maxMessages = maxMessages;
     }
-    
+
     /**
      * Consumer pool size
      */
     public int getPoolSize() {
         return poolSize;
     }
+
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
     }
-    
+
     private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
         if (value != null) {
             props.put(key, value);
         }
     }
-    
+
     public Properties createProperties() {
         Properties props = new Properties();
         addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_URI, splitServers());
@@ -202,18 +217,18 @@ public class NatsConfiguration {
         addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_DONT_RANDOMIZE_SERVERS, getNoRandomizeServers());
         return props;
     }
-    
+
     public Properties createSubProperties() {
         Properties props = new Properties();
         addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_QUEUE, getQueueName());
         addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_MAX_MESSAGES, getMaxMessages());
         return props;
     }
-    
+
     private String splitServers() {
         StringBuilder servers = new StringBuilder();
         String prefix = "nats://";
-        
+
         String[] pieces = getServers().split(",");
         for (int i = 0; i < pieces.length; i++) {
             if (i < pieces.length - 1) {
