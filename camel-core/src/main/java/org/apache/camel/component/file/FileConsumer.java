@@ -80,7 +80,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
             }
 
             // creates a generic file
-            GenericFile<File> gf = asGenericFile(endpointPath, file, getEndpoint().getCharset());
+            GenericFile<File> gf = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
 
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
@@ -124,9 +124,23 @@ public class FileConsumer extends GenericFileConsumer<File> {
      * @param endpointPath the starting directory the endpoint was configured with
      * @param file the source file
      * @return wrapped as a GenericFile
+     * @deprecated use {@link #asGenericFile(String, File, String, boolean)}
      */
+    @Deprecated
     public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset) {
-        GenericFile<File> answer = new GenericFile<File>();
+        return asGenericFile(endpointPath, file, charset, false);
+    }
+
+    /**
+     * Creates a new GenericFile<File> based on the given file.
+     *
+     * @param endpointPath the starting directory the endpoint was configured with
+     * @param file the source file
+     * @param probeContentType whether to probe the content type of the file or not
+     * @return wrapped as a GenericFile
+     */
+    public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset, boolean probeContentType) {
+        GenericFile<File> answer = new GenericFile<File>(probeContentType);
         // use file specific binding
         answer.setBinding(new FileBinding());
 

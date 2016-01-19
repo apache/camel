@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 public class GenericFile<T> implements WrappedFile<T>  {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFile.class);
 
+    private final boolean probeContentType;
+
     private String copyFromAbsoluteFilePath;
     private String endpointPath;
     private String fileName;
@@ -48,6 +50,14 @@ public class GenericFile<T> implements WrappedFile<T>  {
     private boolean absolute;
     private boolean directory;
     private String charset;
+
+    public GenericFile() {
+        this(false);
+    }
+
+    public GenericFile(boolean probeContentType) {
+        this.probeContentType = probeContentType;
+    }
 
     public char getFileSeparator() {
         return File.separatorChar;
@@ -135,13 +145,13 @@ public class GenericFile<T> implements WrappedFile<T>  {
             message.setHeader(Exchange.FILE_NAME_CONSUMED, getFileName());
             message.setHeader("CamelFileAbsolute", isAbsolute());
             message.setHeader("CamelFileAbsolutePath", getAbsoluteFilePath());
-            
-            if (file instanceof File) {
+
+            if (probeContentType && file instanceof File) {
                 File f = (File) file;
                 Path path = f.toPath();
                 try {
                     message.setHeader(Exchange.FILE_CONTENT_TYPE, Files.probeContentType(path));
-                } catch (Exception ex) {
+                } catch (Throwable e) {
                     // just ignore the exception
                 }
             }

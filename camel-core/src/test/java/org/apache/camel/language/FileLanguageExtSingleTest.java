@@ -54,7 +54,7 @@ public class FileLanguageExtSingleTest extends LanguageTestSupport {
 
         // get the file handle
         file = new File("target/filelanguage/test/bye.def.txt");
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null);
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 

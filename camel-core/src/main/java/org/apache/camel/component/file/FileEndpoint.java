@@ -18,9 +18,11 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.Metadata;
@@ -46,6 +48,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private boolean renameUsingCopy;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean forceWrites = true;
+    @UriParam(label = "consumer,advanced")
+    private boolean probeContentType;
 
     public FileEndpoint() {
         // use marker file as default exclusive read locks
@@ -208,5 +212,17 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
      */
     public void setForceWrites(boolean forceWrites) {
         this.forceWrites = forceWrites;
+    }
+
+    public boolean isProbeContentType() {
+        return probeContentType;
+    }
+
+    /**
+     * Whether to enable probing of the content type. If enable then the consumer uses {@link Files#probeContentType(java.nio.file.Path)} to
+     * determine the content-type of the file, and store that as a header with key {@link Exchange#FILE_CONTENT_TYPE} on the {@link Message}.
+     */
+    public void setProbeContentType(boolean probeContentType) {
+        this.probeContentType = probeContentType;
     }
 }
