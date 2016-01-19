@@ -53,7 +53,7 @@ When the Camel application runs, you should see 2 orders being processed and log
 2016-01-11 12:53:54,005 [sumer[newOrder]] INFO  gadget                         - Exchange[ExchangePattern: InOnly, BodyType: byte[], Body: <order>  <customerId>456</customerId>  <product>gadget</product>  <amount>3</amount></order>]
 ```
 
-You can access the ActiveMQ web console using [http://localhost:8161/admin/](http://localhost:8161/admin/)
+You can access the ActiveMQ web console using <http://localhost:8161/admin/>
 and then browse the queues. You should see the three queues:
 
  - newOrder
@@ -69,12 +69,12 @@ The Camel application is configured in the `org.apache.camel.example.widget.Widg
 ### Documentation
 
 This example is documented at
-	[http://camel.apache.org/widget-gadget.html](http://camel.apache.org/widget-gadget.html)
+	<http://camel.apache.org/widget-gadget.html>
 
 ### Forum, Help, etc 
 
 If you hit an problems please let us know on the Camel Forums
-  [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+  <http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
