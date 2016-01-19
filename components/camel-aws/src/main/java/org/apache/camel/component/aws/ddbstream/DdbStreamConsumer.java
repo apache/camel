@@ -40,8 +40,12 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
     private final ShardIteratorHandler shardIteratorHandler;
 
     public DdbStreamConsumer(DdbStreamEndpoint endpoint, Processor processor) {
+        this(endpoint, processor, new ShardIteratorHandler(endpoint));
+    }
+    
+    DdbStreamConsumer(DdbStreamEndpoint endpoint, Processor processor, ShardIteratorHandler shardIteratorHandler) {
         super(endpoint, processor);
-        shardIteratorHandler = new ShardIteratorHandler(endpoint);
+        this.shardIteratorHandler = shardIteratorHandler;
     }
 
     @Override
