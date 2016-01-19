@@ -63,7 +63,14 @@ public class NatsConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        // TODO: Should we not unsubscribe first?
+        LOG.debug("Flushing Messages before stopping");
+        connection.flush();
+        
+        try {
+			connection.unsubscribe(sid);
+		} catch (Exception e) {
+			getExceptionHandler().handleException("Error during unsubscribing", e);
+		}
 
         LOG.debug("Stopping Nats Consumer");
         if (executor != null) {
