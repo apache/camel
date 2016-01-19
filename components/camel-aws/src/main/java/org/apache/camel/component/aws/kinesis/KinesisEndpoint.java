@@ -64,6 +64,7 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         final KinesisConsumer consumer = new KinesisConsumer(this, processor);
         consumer.setSchedulerProperties(getSchedulerProperties());
+        configureConsumer(consumer);
         return consumer;
     }
 

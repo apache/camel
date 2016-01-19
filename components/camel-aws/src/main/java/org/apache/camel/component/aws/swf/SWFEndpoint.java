@@ -57,8 +57,10 @@ public class SWFEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return isWorkflow()
+        Consumer consumer = isWorkflow()
                 ? new SWFWorkflowConsumer(this, processor, configuration) : new SWFActivityConsumer(this, processor, configuration);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public boolean isSingleton() {

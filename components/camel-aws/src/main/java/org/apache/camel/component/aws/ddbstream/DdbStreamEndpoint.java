@@ -84,6 +84,7 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         DdbStreamConsumer consumer = new DdbStreamConsumer(this, processor);
         consumer.setSchedulerProperties(consumer.getEndpoint().getSchedulerProperties());
+        configureConsumer(consumer);
         return consumer;
     }
 
