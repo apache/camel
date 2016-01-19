@@ -54,8 +54,6 @@ public class ShardIteratorHandlerTest {
     @Before
     public void setup() throws Exception {
         endpoint.setAmazonDynamoDbStreamsClient(amazonDynamoDBStreams);
-
-
         undertest = new ShardIteratorHandler(endpoint);
 
         when(amazonDynamoDBStreams.listStreams(any(ListStreamsRequest.class))).thenReturn(
@@ -91,7 +89,6 @@ public class ShardIteratorHandlerTest {
             }
         });
     }
-
 
     @Test
     public void latestOnlyUsesTheLastShard() throws Exception {
@@ -175,5 +172,4 @@ public class ShardIteratorHandlerTest {
         assertThat(getIteratorCaptor.getValue().getShardId(), is("c"));
         assertThat(shardIterator, is("shard_iterator_c_000"));
     }
-
 }
