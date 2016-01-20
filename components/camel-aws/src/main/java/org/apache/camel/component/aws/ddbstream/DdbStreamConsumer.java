@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Queue;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
+import com.amazonaws.services.dynamodbv2.model.ExpiredIteratorException;
 import com.amazonaws.services.dynamodbv2.model.GetRecordsRequest;
 import com.amazonaws.services.dynamodbv2.model.GetRecordsResult;
 import com.amazonaws.services.dynamodbv2.model.Record;
@@ -48,17 +49,30 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
         this.shardIteratorHandler = shardIteratorHandler;
     }
 
+    private String lastSeenSequenceNumber;
     @Override
     protected int poll() throws Exception {
-        GetRecordsRequest req = new GetRecordsRequest()
-                .withShardIterator(shardIteratorHandler.getShardIterator())
-                .withLimit(getEndpoint().getMaxResultsPerRequest());
-        GetRecordsResult result = getClient().getRecords(req);
+        GetRecordsResult result;
+        try {
+            GetRecordsRequest req = new GetRecordsRequest()
+                        .withShardIterator(shardIteratorHandler.getShardIterator(null))
+                        .withLimit(getEndpoint().getMaxResultsPerRequest());
+            result = getClient().getRecords(req);
+        } catch (ExpiredIteratorException e) {
+            LOG.warn("Expired Shard Iterator, attempting to resume from " + lastSeenSequenceNumber, e);
+            GetRecordsRequest req = new GetRecordsRequest()
+                        .withShardIterator(shardIteratorHandler.getShardIterator(lastSeenSequenceNumber))
+                        .withLimit(getEndpoint().getMaxResultsPerRequest());
+            result = getClient().getRecords(req);
+        }
 
-        Queue<Exchange> exchanges = createExchanges(result.getRecords());
+        Queue<Exchange> exchanges = createExchanges(result.getRecords(), lastSeenSequenceNumber);
         int processedExchangeCount = processBatch(CastUtils.cast(exchanges));
 
         shardIteratorHandler.updateShardIterator(result.getNextShardIterator());
+        if (!result.getRecords().isEmpty()) {
+            lastSeenSequenceNumber = result.getRecords().get((result.getRecords().size()-1)).getDynamodb().getSequenceNumber();
+        }
 
         return processedExchangeCount;
     }
@@ -90,10 +104,14 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
         return (DdbStreamEndpoint) super.getEndpoint();
     }
 
-    private Queue<Exchange> createExchanges(List<Record> records) {
+    private Queue<Exchange> createExchanges(List<Record> records, String lastSeenSequenceNumber) {
         Queue<Exchange> exchanges = new ArrayDeque<>();
-        BigIntComparisons condition;
+        BigIntComparisons condition = null;
         BigInteger providedSeqNum = null;
+        if (lastSeenSequenceNumber != null) {
+            providedSeqNum = new BigInteger(lastSeenSequenceNumber);
+            condition = BigIntComparisons.Conditions.LT;
+        }
         switch(getEndpoint().getIteratorType()) {
         case AFTER_SEQUENCE_NUMBER:
             condition = BigIntComparisons.Conditions.LT;
@@ -103,8 +121,6 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
             condition = BigIntComparisons.Conditions.LTEQ;
             providedSeqNum = new BigInteger(getEndpoint().getSequenceNumberProvider().getSequenceNumber());
             break;
-        default:
-            condition = null;
         }
         for (Record record : records) {
             BigInteger recordSeqNum = new BigInteger(record.getDynamodb().getSequenceNumber());

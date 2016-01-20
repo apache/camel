@@ -94,7 +94,7 @@ public class ShardIteratorHandlerTest {
     public void latestOnlyUsesTheLastShard() throws Exception {
         endpoint.setIteratorType(ShardIteratorType.LATEST);
 
-        String shardIterator = undertest.getShardIterator();
+        String shardIterator = undertest.getShardIterator(null);
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
@@ -107,7 +107,7 @@ public class ShardIteratorHandlerTest {
         endpoint.setIteratorType(ShardIteratorType.LATEST);
 
         undertest.updateShardIterator("bar");
-        String shardIterator = undertest.getShardIterator();
+        String shardIterator = undertest.getShardIterator(null);
 
         verify(amazonDynamoDBStreams, times(0)).getShardIterator(any(GetShardIteratorRequest.class));
         assertThat(shardIterator, is("bar"));
@@ -117,14 +117,13 @@ public class ShardIteratorHandlerTest {
     public void trimHorizonStartsWithTheFirstShard() throws Exception {
         endpoint.setIteratorType(ShardIteratorType.TRIM_HORIZON);
 
-        String shardIterator = undertest.getShardIterator();
+        String shardIterator = undertest.getShardIterator(null);
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
         assertThat(getIteratorCaptor.getValue().getShardId(), is("a"));
         assertThat(shardIterator, is("shard_iterator_a_000"));
     }
-
 
     @Test
     public void trimHorizonWalksAllShards() throws Exception {
@@ -133,7 +132,7 @@ public class ShardIteratorHandlerTest {
         String[] shardIterators = new String[4];
 
         for (int i = 0; i < shardIterators.length; ++i) {
-            shardIterators[i] = undertest.getShardIterator();
+            shardIterators[i] = undertest.getShardIterator(null);
             undertest.updateShardIterator(null);
         }
 
@@ -152,7 +151,7 @@ public class ShardIteratorHandlerTest {
         endpoint.setIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
         endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("12"));
 
-        String shardIterator = undertest.getShardIterator();
+        String shardIterator = undertest.getShardIterator(null);
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
@@ -165,7 +164,7 @@ public class ShardIteratorHandlerTest {
         endpoint.setIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
         endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("16"));
 
-        String shardIterator = undertest.getShardIterator();
+        String shardIterator = undertest.getShardIterator(null);
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());

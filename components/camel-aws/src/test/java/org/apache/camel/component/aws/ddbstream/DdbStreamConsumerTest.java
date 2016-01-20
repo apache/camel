@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
+import com.amazonaws.services.dynamodbv2.model.ExpiredIteratorException;
 import com.amazonaws.services.dynamodbv2.model.GetRecordsRequest;
 import com.amazonaws.services.dynamodbv2.model.GetRecordsResult;
 import com.amazonaws.services.dynamodbv2.model.Record;
@@ -40,6 +41,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -47,6 +49,7 @@ import org.mockito.stubbing.Answer;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -62,6 +65,7 @@ public class DdbStreamConsumerTest {
     private final CamelContext context = new DefaultCamelContext();
     private final DdbStreamComponent component = new DdbStreamComponent(context);
     private final DdbStreamEndpoint endpoint = new DdbStreamEndpoint(null, "table_name", component);
+    private GetRecordsAnswer recordsAnswer;
 
     @Before
     public void setup() throws Exception {
@@ -82,28 +86,8 @@ public class DdbStreamConsumerTest {
         answers.put("shard_iterator_b_002", createRecords("14"));
         answers.put("shard_iterator_d_000", createRecords("21", "25"));
         answers.put("shard_iterator_d_001", createRecords("30", "35", "40"));
-        when(amazonDynamoDBStreams.getRecords(any(GetRecordsRequest.class))).thenAnswer(new Answer<GetRecordsResult>() {
-            @Override
-            public GetRecordsResult answer(InvocationOnMock invocation) throws Throwable {
-                final String shardIterator = ((GetRecordsRequest) invocation.getArguments()[0]).getShardIterator();
-                // note that HashMap returns null when there is no entry in the map.
-                // A null 'nextShardIterator' indicates that the shard has finished
-                // and we should move onto the next shard.
-                String nextShardIterator = shardIterators.get(shardIterator);
-                Matcher m = Pattern.compile("shard_iterator_d_0*(\\d+)").matcher(shardIterator);
-                Collection<Record> ans = answers.get(shardIterator);
-                if (nextShardIterator == null && m.matches()) { // last shard iterates forever.
-                    Integer num = Integer.parseInt(m.group(1));
-                    nextShardIterator = "shard_iterator_d_" + pad(Integer.toString(num + 1), 3);
-                }
-                if (null == ans) { // default to an empty list of records.
-                    ans = createRecords();
-                }
-                return new GetRecordsResult()
-                        .withRecords(ans)
-                        .withNextShardIterator(nextShardIterator);
-            }
-        });
+        recordsAnswer = new GetRecordsAnswer(shardIterators, answers);
+        when(amazonDynamoDBStreams.getRecords(any(GetRecordsRequest.class))).thenAnswer(recordsAnswer);
     }
 
     String pad(String num, int to) {
@@ -119,10 +103,32 @@ public class DdbStreamConsumerTest {
     }
 
     @Test
+    public void itResumesFromAfterTheLastSeenSequenceNumberWhenAShardIteratorHasExpired() throws Exception {
+        endpoint.setIteratorType(ShardIteratorType.LATEST);
+        when(shardIteratorHandler.getShardIterator(anyString())).thenReturn("shard_iterator_b_000", "shard_iterator_b_001", "shard_iterator_b_001");
+        Mockito.reset(amazonDynamoDBStreams);
+        when(amazonDynamoDBStreams.getRecords(any(GetRecordsRequest.class)))
+                .thenAnswer(recordsAnswer)
+                .thenThrow(new ExpiredIteratorException("expired shard"))
+                .thenAnswer(recordsAnswer);
+
+        undertest.poll();
+        undertest.poll();
+
+        ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
+        verify(processor, times(3)).process(exchangeCaptor.capture(), any(AsyncCallback.class));
+        verify(shardIteratorHandler, times(2)).getShardIterator(null); // first poll. Second poll, getRecords fails with an expired shard.
+        verify(shardIteratorHandler).getShardIterator("9"); // second poll, with a resumeFrom.
+        assertThat(exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("9"));
+        assertThat(exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("11"));
+        assertThat(exchangeCaptor.getAllValues().get(2).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("13"));
+    }
+
+    @Test
     public void atSeqNumber35GivesFirstRecordWithSeq35() throws Exception {
         endpoint.setIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
         endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
-        when(shardIteratorHandler.getShardIterator()).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
+        when(shardIteratorHandler.getShardIterator(anyString())).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
 
         for (int i = 0; i < 10; ++i) { // poll lots.
             undertest.poll();
@@ -139,7 +145,7 @@ public class DdbStreamConsumerTest {
     public void afterSeqNumber35GivesFirstRecordWithSeq40() throws Exception {
         endpoint.setIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
         endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
-        when(shardIteratorHandler.getShardIterator()).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
+        when(shardIteratorHandler.getShardIterator(anyString())).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
 
         for (int i = 0; i < 10; ++i) { // poll lots.
             undertest.poll();
@@ -161,6 +167,38 @@ public class DdbStreamConsumerTest {
         }
 
         return results;
+    }
+
+    private class GetRecordsAnswer implements Answer<GetRecordsResult> {
+
+        private final Map<String, String> shardIterators;
+        private final Map<String, Collection<Record>> answers;
+
+        GetRecordsAnswer(Map<String, String> shardIterators, Map<String, Collection<Record>> answers) {
+            this.shardIterators = shardIterators;
+            this.answers = answers;
+        }
+
+        @Override
+        public GetRecordsResult answer(InvocationOnMock invocation) throws Throwable {
+            final String shardIterator = ((GetRecordsRequest) invocation.getArguments()[0]).getShardIterator();
+            // note that HashMap returns null when there is no entry in the map.
+            // A null 'nextShardIterator' indicates that the shard has finished
+            // and we should move onto the next shard.
+            String nextShardIterator = shardIterators.get(shardIterator);
+            Matcher m = Pattern.compile("shard_iterator_d_0*(\\d+)").matcher(shardIterator);
+            Collection<Record> ans = answers.get(shardIterator);
+            if (nextShardIterator == null && m.matches()) { // last shard iterates forever.
+                Integer num = Integer.parseInt(m.group(1));
+                nextShardIterator = "shard_iterator_d_" + pad(Integer.toString(num + 1), 3);
+            }
+            if (null == ans) { // default to an empty list of records.
+                ans = createRecords();
+            }
+            return new GetRecordsResult()
+                    .withRecords(ans)
+                    .withNextShardIterator(nextShardIterator);
+        }
     }
     
 }
