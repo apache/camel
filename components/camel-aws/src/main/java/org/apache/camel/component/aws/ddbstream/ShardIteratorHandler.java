@@ -47,21 +47,22 @@ class ShardIteratorHandler {
         ShardIteratorType iteratorType = getEndpoint().getIteratorType();
         String sequenceNumber = getEndpoint().getSequenceNumber();
         if (resumeFromSequenceNumber != null) {
-            iteratorType = ShardIteratorType.AFTER_SEQUENCE_NUMBER;
+            // Reset things as we're in an error condition.
             currentShard = null;
             currentShardIterator = null;
+            iteratorType = ShardIteratorType.AFTER_SEQUENCE_NUMBER;
             sequenceNumber = resumeFromSequenceNumber;
         }
         // either return a cached one or get a new one via a GetShardIterator request.
         if (currentShardIterator == null) {
-            ListStreamsRequest req0 = new ListStreamsRequest()
-                    .withTableName(getEndpoint().getTableName());
-            ListStreamsResult res0 = getClient().listStreams(req0);
-            final String streamArn = res0.getStreams().get(0).getStreamArn(); // XXX assumes there is only one stream
-            DescribeStreamRequest req1 = new DescribeStreamRequest()
-                    .withStreamArn(streamArn);
-            DescribeStreamResult res1 = getClient().describeStream(req1);
-            shardList.addAll(res1.getStreamDescription().getShards());
+            ListStreamsResult streamsListResult = getClient().listStreams(
+                    new ListStreamsRequest().withTableName(getEndpoint().getTableName())
+            );
+            final String streamArn = streamsListResult.getStreams().get(0).getStreamArn(); // XXX assumes there is only one stream
+            DescribeStreamResult streamDescriptionResult = getClient().describeStream(
+                    new DescribeStreamRequest().withStreamArn(streamArn)
+            );
+            shardList.addAll(streamDescriptionResult.getStreamDescription().getShards());
 
             LOG.trace("Current shard is: {} (in {})", currentShard, shardList);
             if (currentShard == null) {
@@ -71,38 +72,45 @@ class ShardIteratorHandler {
             }
             shardList.removeOlderThan(currentShard);
             LOG.trace("Next shard is: {} (in {})", currentShard, shardList);
-            GetShardIteratorRequest req = new GetShardIteratorRequest()
-                    .withStreamArn(streamArn)
-                    .withShardId(currentShard.getShardId())
-                    .withShardIteratorType(iteratorType);
-            if (getEndpoint().getIteratorType() == ShardIteratorType.AFTER_SEQUENCE_NUMBER
-                    || getEndpoint().getIteratorType() == ShardIteratorType.AFTER_SEQUENCE_NUMBER
-                    || resumeFromSequenceNumber != null
-                    ) {
-                // if you request with a sequence number that is LESS than the
-                // start of the shard, you get a HTTP 400 from AWS.
-                // So only add the sequence number if the endpoints
-                // sequence number is less than or equal to the starting
-                // sequence for the shard.
-                // Otherwise change the shart iterator type to trim_horizon
-                // because we get a 400 when we use one of the
-                // {at,after}_sequence_number iterator types and don't supply
-                // a sequence number.
 
-                if (BigIntComparisons.Conditions.LTEQ.matches(
-                        new BigInteger(currentShard.getSequenceNumberRange().getStartingSequenceNumber()),
-                        new BigInteger(sequenceNumber)
-                )) {
-                    req = req.withSequenceNumber(sequenceNumber);
-                } else {
-                    req = req.withShardIteratorType(ShardIteratorType.TRIM_HORIZON);
-                }
-            }
-            GetShardIteratorResult result = getClient().getShardIterator(req);
+            GetShardIteratorResult result = getClient().getShardIterator(
+                    buildGetShardIteratorRequest(streamArn, iteratorType, sequenceNumber)
+            );
             currentShardIterator = result.getShardIterator();
         }
         LOG.trace("Shard Iterator is: {}", currentShardIterator);
         return currentShardIterator;
+    }
+
+    private GetShardIteratorRequest buildGetShardIteratorRequest(final String streamArn, ShardIteratorType iteratorType, String sequenceNumber) {
+        GetShardIteratorRequest req = new GetShardIteratorRequest()
+                .withStreamArn(streamArn)
+                .withShardId(currentShard.getShardId())
+                .withShardIteratorType(iteratorType);
+        switch (iteratorType) {
+        case AFTER_SEQUENCE_NUMBER:
+        case AT_SEQUENCE_NUMBER:
+            // if you request with a sequence number that is LESS than the
+            // start of the shard, you get a HTTP 400 from AWS.
+            // So only add the sequence number if the endpoints
+            // sequence number is less than or equal to the starting
+            // sequence for the shard.
+            // Otherwise change the shart iterator type to trim_horizon
+            // because we get a 400 when we use one of the
+            // {at,after}_sequence_number iterator types and don't supply
+            // a sequence number.
+            if (BigIntComparisons.Conditions.LTEQ.matches(
+                    new BigInteger(currentShard.getSequenceNumberRange().getStartingSequenceNumber()),
+                    new BigInteger(sequenceNumber)
+            )) {
+                req = req.withSequenceNumber(sequenceNumber);
+            } else {
+                req = req.withShardIteratorType(ShardIteratorType.TRIM_HORIZON);
+            }
+            break;
+        default:
+        }
+        return req;
     }
 
     private Shard resolveNewShard(ShardIteratorType type, String resumeFrom) {

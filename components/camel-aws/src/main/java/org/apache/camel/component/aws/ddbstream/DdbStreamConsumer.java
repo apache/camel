@@ -39,6 +39,7 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(DdbStreamConsumer.class);
 
     private final ShardIteratorHandler shardIteratorHandler;
+    private String lastSeenSequenceNumber;
 
     public DdbStreamConsumer(DdbStreamEndpoint endpoint, Processor processor) {
         this(endpoint, processor, new ShardIteratorHandler(endpoint));
@@ -49,7 +50,6 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
         this.shardIteratorHandler = shardIteratorHandler;
     }
 
-    private String lastSeenSequenceNumber;
     @Override
     protected int poll() throws Exception {
         GetRecordsResult result;
@@ -65,13 +65,14 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
                         .withLimit(getEndpoint().getMaxResultsPerRequest());
             result = getClient().getRecords(req);
         }
+        List<Record> records = result.getRecords();
 
-        Queue<Exchange> exchanges = createExchanges(result.getRecords(), lastSeenSequenceNumber);
+        Queue<Exchange> exchanges = createExchanges(records, lastSeenSequenceNumber);
         int processedExchangeCount = processBatch(CastUtils.cast(exchanges));
 
         shardIteratorHandler.updateShardIterator(result.getNextShardIterator());
-        if (!result.getRecords().isEmpty()) {
-            lastSeenSequenceNumber = result.getRecords().get((result.getRecords().size()-1)).getDynamodb().getSequenceNumber();
+        if (!records.isEmpty()) {
+            lastSeenSequenceNumber = records.get(records.size() - 1).getDynamodb().getSequenceNumber();
         }
 
         return processedExchangeCount;
@@ -121,6 +122,7 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
             condition = BigIntComparisons.Conditions.LTEQ;
             providedSeqNum = new BigInteger(getEndpoint().getSequenceNumberProvider().getSequenceNumber());
             break;
+        default:
         }
         for (Record record : records) {
             BigInteger recordSeqNum = new BigInteger(record.getDynamodb().getSequenceNumber());
