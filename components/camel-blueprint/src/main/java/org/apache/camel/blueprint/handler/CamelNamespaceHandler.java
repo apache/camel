@@ -261,7 +261,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.addDependsOn(propertiesComponentResolver.getId());
         // We need to add other components which the camel context dependsOn
         if (ObjectHelper.isNotEmpty(ccfb.getDependsOn())) {
-            factory2.addDependsOn(ccfb.getDependsOn());
+            factory2.setDependsOn(Arrays.asList(ccfb.getDependsOn().split(" |,")));
         }
         context.getComponentDefinitionRegistry().registerComponentDefinition(factory2);
 
@@ -342,6 +342,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         try {
             binder = getJaxbContext().createBinder();
         } catch (JAXBException e) {
+
             throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
         }
         Object value = parseUsingJaxb(element, context, binder);
