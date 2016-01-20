@@ -43,7 +43,7 @@ class ShardIteratorHandler {
         this.endpoint = endpoint;
     }
 
-    String getShardIterator() {
+    String getShardIterator(String resumeFromSequenceNumber) {
         // either return a cached one or get a new one via a GetShardIterator request.
         if (currentShardIterator == null) {
             ListStreamsRequest req0 = new ListStreamsRequest()
