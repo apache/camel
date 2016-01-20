@@ -245,6 +245,7 @@ public interface CamelCatalog {
      *
      * @param scheme the endpoint schema
      * @param json the json schema with the endpoint properties
+     * @param encode whether to URL encode the returned uri or not
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
@@ -255,6 +256,7 @@ public interface CamelCatalog {
      *
      * @param scheme the endpoint schema
      * @param json the json schema with the endpoint properties
+     * @param encode whether to URL encode the returned uri or not
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
@@ -265,6 +267,7 @@ public interface CamelCatalog {
      *
      * @param scheme the endpoint schema
      * @param properties the properties as key value pairs
+     * @param encode whether to URL encode the returned uri or not
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
@@ -275,6 +278,7 @@ public interface CamelCatalog {
      *
      * @param scheme the endpoint schema
      * @param properties the properties as key value pairs
+     * @param encode whether to URL encode the returned uri or not
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
