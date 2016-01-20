@@ -28,6 +28,7 @@ import com.amazonaws.services.dynamodbv2.model.Stream;
 import com.amazonaws.services.dynamodbv2.model.StreamDescription;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -160,15 +161,29 @@ public class ShardIteratorHandlerTest {
     }
 
     @Test
-    public void afterSeqNumber16StartsWithShardC() throws Exception {
-        endpoint.setIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
+    public void afterSeqNumber16StartsWithShardD() throws Exception {
+        endpoint.setIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
         endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("16"));
 
         String shardIterator = undertest.getShardIterator(null);
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
-        assertThat(getIteratorCaptor.getValue().getShardId(), is("c"));
-        assertThat(shardIterator, is("shard_iterator_c_000"));
+        assertThat(getIteratorCaptor.getValue().getShardId(), is("d"));
+        assertThat(shardIterator, is("shard_iterator_d_000"));
+    }
+
+    @Test
+    public void resumingFromSomewhereActuallyUsesTheAfterSequenceNumber() throws Exception {
+        endpoint.setIteratorType(ShardIteratorType.LATEST);
+
+        String shardIterator = undertest.getShardIterator("12");
+
+        ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
+        assertThat(getIteratorCaptor.getValue().getShardId(), is("b"));
+        assertThat(shardIterator, is("shard_iterator_b_000"));
+        assertThat(getIteratorCaptor.getValue().getShardIteratorType(), is(ShardIteratorType.AFTER_SEQUENCE_NUMBER.name()));
+        assertThat(getIteratorCaptor.getValue().getSequenceNumber(), is("12"));
     }
 }
