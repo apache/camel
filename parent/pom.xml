@@ -242,7 +242,7 @@
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>
-    <ignite-version>1.5.0-b1</ignite-version>
+    <ignite-version>1.5.0.final</ignite-version>
     <ignite-version-range>[1.5.0-b1,1.6)</ignite-version-range>
     <infinispan-version>8.1.0.Final</infinispan-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
