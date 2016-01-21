@@ -36,7 +36,6 @@ import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;
-import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
@@ -86,8 +85,6 @@ public class CdiCamelExtension implements Extension {
 
     private final Map<InjectionPoint, ForwardingObserverMethod<?>> cdiEventEndpoints = new ConcurrentHashMap<>();
 
-    private final Map<Annotated, Bean<?>> contextBeans = new ConcurrentHashMap<>();
-
     private final Set<Annotation> contextQualifiers = newSetFromMap(new ConcurrentHashMap<Annotation, Boolean>());
 
     private final Set<Annotation> eventQualifiers = newSetFromMap(new ConcurrentHashMap<Annotation, Boolean>());
@@ -102,10 +99,6 @@ public class CdiCamelExtension implements Extension {
 
     Set<Annotation> getObserverEvents() {
         return eventQualifiers;
-    }
-
-    Bean<?> getContextBean(Annotated annotated) {
-        return contextBeans.get(annotated);
     }
 
     Set<Annotation> getContextQualifiers() {
@@ -197,21 +190,15 @@ public class CdiCamelExtension implements Extension {
     }
 
     private <T extends CamelContext> void camelContextBeans(@Observes ProcessBean<T> pb) {
-        processCamelContextBean(pb.getAnnotated(), pb.getBean());
+        contextQualifiers.addAll(pb.getBean().getQualifiers());
     }
 
     private <T extends CamelContext> void camelContextProducerFields(@Observes ProcessProducerField<T, ?> pb) {
-        processCamelContextBean(pb.getAnnotated(), pb.getBean());
+        contextQualifiers.addAll(pb.getBean().getQualifiers());
     }
 
     private <T extends CamelContext> void camelContextProducerMethods(@Observes ProcessProducerMethod<T, ?> pb) {
-        processCamelContextBean(pb.getAnnotated(), pb.getBean());
-    }
-
-    private void processCamelContextBean(Annotated annotated, Bean<?> bean) {
-        contextQualifiers.addAll(bean.getQualifiers());
-        // Annotated must be wrapped because of OWB-1099
-        contextBeans.put(new AnnotatedWrapper(annotated), bean);
+        contextQualifiers.addAll(pb.getBean().getQualifiers());
     }
 
     private void cdiCamelFactoryProducers(@Observes AfterBeanDiscovery abd) {
@@ -234,8 +221,9 @@ public class CdiCamelExtension implements Extension {
     }
 
     private void addDefaultCamelContext(@Observes AfterBeanDiscovery abd, BeanManager manager) {
-        if (contextBeans.isEmpty()) {
-            abd.addBean(new CdiCamelContextBean(manager, environment.camelContextInjectionTarget(new CamelContextDefaultProducer(), null, manager, CdiCamelExtension.this)));
+        if (contextQualifiers.isEmpty()) {
+            CdiCamelContextAnnotated annotated = new CdiCamelContextAnnotated(manager, AnyLiteral.INSTANCE, DefaultLiteral.INSTANCE);
+            abd.addBean(new CdiCamelContextBean(annotated, environment.camelContextInjectionTarget(new CamelContextDefaultProducer(), annotated, manager, this)));
         }
     }
 
