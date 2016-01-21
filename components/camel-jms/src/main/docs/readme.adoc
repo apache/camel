@@ -2,25 +2,34 @@
 JMS Component
 ~~~~~~~~~~~~~
 
-Using ActiveMQ
+[TIP]
+====
+*Using ActiveMQ*
 
 If you are using http://activemq.apache.org/[Apache ActiveMQ], you
 should prefer the link:activemq.html[ActiveMQ] component as it has been
 optimized for link:activemq.html[ActiveMQ]. All of the options and
 samples on this page are also valid for the link:activemq.html[ActiveMQ]
 component.
+====
 
-Transacted and caching
+[NOTE]
+====
+*Transacted and caching*
 
 See section _Transactions and Cache Levels_ below if you are using
 transactions with link:jms.html[JMS] as it can impact performance.
+====
 
-Request/Reply over JMS
+[NOTE]
+====
+*Request/Reply over JMS*
 
 Make sure to read the section _Request-reply over JMS_ further below on
 this page for important notes about request/reply, as Camel offers a
 number of options to configure for performance, and clustered
 environments.
+====
 
 This component allows messages to be sent to (or consumed from) a
 http://java.sun.com/products/jms/[JMS] Queue or Topic. It uses Spring's
@@ -100,8 +109,7 @@ optimized to use ActiveMQ efficiently
 Transactions and Cache Levels
 +++++++++++++++++++++++++++++
 
- +
- If you are consuming messages and using transactions
+If you are consuming messages and using transactions
 (`transacted=true`) then the default settings for cache level can impact
 performance. +
  If you are using XA transactions then you cannot cache as it can cause
@@ -169,11 +177,14 @@ map to properties on the
 http://camel.apache.org/maven/current/camel-jms/apidocs/org/apache/camel/component/jms/JmsConfiguration.html[JMSConfiguration
 POJO].
 
-Mapping to Spring JMS
+[WARNING]
+====
+*Mapping to Spring JMS*
 
 Many of these properties map to properties on Spring JMS, which Camel
 uses for sending and receiving messages. So you can get more information
 about these properties by consulting the relevant Spring documentation.
+====
 
 The options are divided into two tables, the first one with the most
 common options used. The latter contains the rest.
