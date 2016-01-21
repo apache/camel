@@ -182,8 +182,6 @@
             <configuration>
               <excludes>
                 <exclude>**/*Cdi12Test.java</exclude>
-                <!-- Weld does not resolve observer method based on the runtime type of the event object, e.g. @Observe Long for a Long object fired with Event<Object> -->
-                <exclude>**/RawEventEndpointTest.java</exclude>
               </excludes>
             </configuration>
           </plugin>

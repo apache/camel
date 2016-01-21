@@ -41,7 +41,7 @@ import org.junit.runner.RunWith;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 @RunWith(Arquillian.class)
-public class RawEventEndpointTest {
+public class RawEventEndpointCdi12Test {
 
     @Inject
     private MockEndpoint consumed;
