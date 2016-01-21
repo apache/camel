@@ -46,7 +46,7 @@ final class CdiSpiHelper {
         return getFirstElementOfType(ip.getQualifiers(), type);
     }
 
-    private static <E, T extends E> T getFirstElementOfType(Collection<E> collection, Class<T> type) {
+    static <E, T extends E> T getFirstElementOfType(Collection<E> collection, Class<T> type) {
         for (E item : collection) {
             if ((item != null) && type.isAssignableFrom(item.getClass())) {
                 return ObjectHelper.cast(type, item);

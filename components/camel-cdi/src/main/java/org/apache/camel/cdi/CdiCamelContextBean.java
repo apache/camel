@@ -18,14 +18,11 @@ package org.apache.camel.cdi;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.PassivationCapable;
@@ -40,9 +37,9 @@ final class CdiCamelContextBean implements Bean<DefaultCamelContext>, Passivatio
 
     private final InjectionTarget<DefaultCamelContext> target;
 
-    CdiCamelContextBean(BeanManager manager, InjectionTarget<DefaultCamelContext> target) {
-        this.qualifiers = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(AnyLiteral.INSTANCE, DefaultLiteral.INSTANCE)));
-        this.types = Collections.unmodifiableSet(manager.createAnnotatedType(DefaultCamelContext.class).getTypeClosure());
+    CdiCamelContextBean(CdiCamelContextAnnotated annotated, InjectionTarget<DefaultCamelContext> target) {
+        this.qualifiers = annotated.getAnnotations();
+        this.types = annotated.getTypeClosure();
         this.target = target;
     }
 
