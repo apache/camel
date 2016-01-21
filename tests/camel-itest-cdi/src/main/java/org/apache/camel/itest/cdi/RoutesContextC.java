@@ -47,7 +47,7 @@ public class RoutesContextC extends RouteBuilder {
     ProducerTemplate producer;
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from(a).to(b);
     }
 

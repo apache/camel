@@ -73,10 +73,11 @@ public class CamelCdiTest {
     public static JavaArchive createDeployment() {
         return ShrinkWrap.create(JavaArchive.class)
             .addPackage(CdiCamelExtension.class.getPackage())
-            .addClasses(CamelContextA.class, RoutesContextA.class,
-                        CamelContextB.class, RoutesContextB.class,
-                        CamelContextC.class, RoutesContextC.class,
-                        CamelContextD.class, RoutesContextD.class)
+            .addClasses(
+                RoutesContextA.class,
+                RoutesContextB.class,
+                RoutesContextC.class,
+                RoutesContextD.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 

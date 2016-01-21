@@ -93,6 +93,8 @@ public class CdiCamelExtension implements Extension {
 
     private final Map<Method, Set<Annotation>> producerQualifiers = new ConcurrentHashMap<>();
 
+    private final Set<ContextName> contextNames = newSetFromMap(new ConcurrentHashMap<ContextName, Boolean>());
+
     ForwardingObserverMethod<?> getObserverMethod(InjectionPoint ip) {
         return cdiEventEndpoints.get(ip);
     }
@@ -189,6 +191,12 @@ public class CdiCamelExtension implements Extension {
         }
     }
 
+    private <T extends RoutesBuilder> void routeBuilderBeans(@Observes ProcessBean<T> pb) {
+        if (pb.getAnnotated().isAnnotationPresent(ContextName.class)) {
+            contextNames.add(pb.getAnnotated().getAnnotation(ContextName.class));
+        }
+    }
+
     private <T extends CamelContext> void camelContextBeans(@Observes ProcessBean<T> pb) {
         contextQualifiers.addAll(pb.getBean().getQualifiers());
     }
@@ -201,7 +209,22 @@ public class CdiCamelExtension implements Extension {
         contextQualifiers.addAll(pb.getBean().getQualifiers());
     }
 
-    private void cdiCamelFactoryProducers(@Observes AfterBeanDiscovery abd) {
+    private void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager manager) {
+        // Add @ContextName Camel context beans if missing
+        contextNames.removeAll(contextQualifiers);
+        for (ContextName name : contextNames) {
+            abd.addBean(camelContextBean(manager, AnyLiteral.INSTANCE, name));
+        }
+
+        // Add a default Camel context bean if any
+        if (contextQualifiers.isEmpty() && contextNames.isEmpty()) {
+            abd.addBean(camelContextBean(manager, AnyLiteral.INSTANCE, DefaultLiteral.INSTANCE));
+        }
+
+        // Update @ContextName Camel context qualifiers
+        contextQualifiers.addAll(contextNames);
+
+        // Then update the Camel producer beans
         for (Map.Entry<Method, Bean<?>> producer : producerBeans.entrySet()) {
             Bean<?> bean = producer.getValue();
             Set<Annotation> qualifiers = new HashSet<>(producerQualifiers.get(producer.getKey()));
@@ -218,22 +241,19 @@ public class CdiCamelExtension implements Extension {
             // TODO: would be more correct to add a bean for each Camel context bean
             abd.addBean(new BeanDelegate<>(bean, qualifiers));
         }
-    }
 
-    private void addDefaultCamelContext(@Observes AfterBeanDiscovery abd, BeanManager manager) {
-        if (contextQualifiers.isEmpty()) {
-            CdiCamelContextAnnotated annotated = new CdiCamelContextAnnotated(manager, AnyLiteral.INSTANCE, DefaultLiteral.INSTANCE);
-            abd.addBean(new CdiCamelContextBean(annotated, environment.camelContextInjectionTarget(new CamelContextDefaultProducer(), annotated, manager, this)));
-        }
-    }
-
-    private void addCdiEventObserverMethods(@Observes AfterBeanDiscovery abd) {
+        // Add CDI event endpoint observer methods
         for (ObserverMethod method : cdiEventEndpoints.values()) {
             abd.addObserverMethod(method);
         }
     }
 
-    private void createCamelContexts(@Observes AfterDeploymentValidation adv, BeanManager manager) {
+    private Bean<?> camelContextBean(BeanManager manager, Annotation... qualifiers) {
+        CdiCamelContextAnnotated annotated = new CdiCamelContextAnnotated(manager, qualifiers);
+        return new CdiCamelContextBean(annotated, environment.camelContextInjectionTarget(new CamelContextDefaultProducer(), annotated, manager, this));
+    }
+
+    private void afterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager manager) {
         Collection<CamelContext> contexts = new ArrayList<>();
         for (Bean<?> context : manager.getBeans(CamelContext.class, AnyLiteral.INSTANCE)) {
             contexts.add(BeanManagerHelper.getReference(manager, CamelContext.class, context));
@@ -290,6 +310,7 @@ public class CdiCamelExtension implements Extension {
         eagerBeans.clear();
         producerBeans.clear();
         producerQualifiers.clear();
+        contextNames.clear();
     }
 
     private boolean addRouteToContext(Bean<?> routeBean, Bean<?> contextBean, BeanManager manager, AfterDeploymentValidation adv) {
