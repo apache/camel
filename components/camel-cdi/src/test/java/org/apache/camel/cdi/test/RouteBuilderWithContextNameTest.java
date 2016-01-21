@@ -52,7 +52,7 @@ public class RouteBuilderWithContextNameTest {
         return ShrinkWrap.create(JavaArchive.class)
             // Camel CDI
             .addPackage(CdiCamelExtension.class.getPackage())
-            // Test class
+            // Test classes
             .addClasses(
                 FirstCamelContextEndpointInjectRoute.class,
                 SecondCamelContextEndpointInjectRoute.class)
