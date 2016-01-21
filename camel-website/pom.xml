@@ -76,11 +76,21 @@
                               </condition>
 
                               <!-- lets generate the gitbook -->
+                              <mkdir dir="${basedir}/target/docs/user-manual" />
+                              <copy todir="${basedir}/target/docs/user-manual" >
+                                <fileset dir="${basedir}/../docs/user-manual/en"/>
+                              </copy>
+                              <copy todir="${basedir}/target/docs/user-manual/components">
+                                <fileset dir="{basedir}/../../components">
+                                  <include name="**/src/main/docs/**"/>
+                                </fileset>
+                              </copy>
+
                               <mkdir dir="${basedir}/target/classes/user-manual" />
                               <echo>executing ${gitbook.cmd}</echo>
                               <exec executable="${gitbook.cmd}">
                                  <arg value="build" />
-                                 <arg value="${basedir}/../docs/user-manual/en" />
+                                 <arg value="${basedir}/target/docs/user-manual" />
                                  <arg value="${basedir}/target/classes/user-manual" />
                               </exec>
 
