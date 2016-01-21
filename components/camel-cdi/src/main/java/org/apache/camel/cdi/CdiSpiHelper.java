@@ -58,16 +58,16 @@ final class CdiSpiHelper {
     @SafeVarargs
     static <T> Set<T> excludeElementOfTypes(Set<T> annotations, Class<? extends T>... exclusions) {
         Set<T> set = new HashSet<>();
-        for (T qualifier : annotations) {
+        for (T annotation : annotations) {
             boolean exclude = false;
             for (Class<? extends T> exclusion : exclusions) {
-                if (exclusion.isAssignableFrom(qualifier.getClass())) {
+                if (exclusion.isAssignableFrom(annotation.getClass())) {
                     exclude = true;
                     break;
                 }
             }
             if (!exclude) {
-                set.add(qualifier);
+                set.add(annotation);
             }
         }
         return set;
