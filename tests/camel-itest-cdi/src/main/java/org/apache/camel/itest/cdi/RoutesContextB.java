@@ -47,7 +47,7 @@ public class RoutesContextB extends RouteBuilder {
     ProducerTemplate producer;
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         LOG.info("Adding route from " + a + " to " + b);
         from(a).to(b);
     }

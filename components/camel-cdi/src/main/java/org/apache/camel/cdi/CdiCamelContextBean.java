@@ -37,10 +37,13 @@ final class CdiCamelContextBean implements Bean<DefaultCamelContext>, Passivatio
 
     private final InjectionTarget<DefaultCamelContext> target;
 
+    private final String name;
+
     CdiCamelContextBean(CdiCamelContextAnnotated annotated, InjectionTarget<DefaultCamelContext> target) {
         this.qualifiers = annotated.getAnnotations();
         this.types = annotated.getTypeClosure();
         this.target = target;
+        this.name = annotated.isAnnotationPresent(ContextName.class) ? annotated.getAnnotation(ContextName.class).value() : "Default";
     }
 
     @Override
@@ -87,7 +90,7 @@ final class CdiCamelContextBean implements Bean<DefaultCamelContext>, Passivatio
 
     @Override
     public String toString() {
-        return "Default CDI Camel Context";
+        return "Camel context bean [" + name + "]";
     }
 
     @Override
@@ -112,6 +115,6 @@ final class CdiCamelContextBean implements Bean<DefaultCamelContext>, Passivatio
 
     @Override
     public String getId() {
-        return getClass().getName();
+        return getClass().getName() + "[" + name + "]";
     }
 }
