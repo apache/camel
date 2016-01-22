@@ -27,8 +27,7 @@ import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.cdi.bean.FirstCamelContextEndpointInjectRoute;
-import org.apache.camel.cdi.bean.FirstCamelContextEventConsumingRoute;
-import org.apache.camel.cdi.bean.FirstCamelContextEventProducingRoute;
+import org.apache.camel.cdi.bean.SecondCamelContextEndpointInjectRoute;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -40,14 +39,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
-public class RouteBuildersWithSameContextNameTest {
+public class RouteBuildersWithContextNamesTest {
 
     @Deployment
     public static Archive<?> deployment() {
@@ -57,8 +56,7 @@ public class RouteBuildersWithSameContextNameTest {
             // Test classes
             .addClasses(
                 FirstCamelContextEndpointInjectRoute.class,
-                FirstCamelContextEventConsumingRoute.class,
-                FirstCamelContextEventProducingRoute.class)
+                SecondCamelContextEndpointInjectRoute.class)
             // Bean archive deployment descriptor
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
@@ -66,23 +64,47 @@ public class RouteBuildersWithSameContextNameTest {
     @Test
     public void verifyCamelContexts(@Any Instance<CamelContext> contexts) {
         assertThat("Context instances are incorrect!", contexts,
-            contains(
-                hasProperty("name", is(equalTo("first")))));
+            containsInAnyOrder(
+                hasProperty("name", is(equalTo("first"))),
+                hasProperty("name", is(equalTo("second")))));
     }
 
     @Test
-    public void verifyCamelContext(@ContextName("first") CamelContext first) {
+    public void verifyFirstCamelContext(@ContextName("first") CamelContext first) {
         assertThat("Context name is incorrect!", first.getName(), is(equalTo("first")));
-        assertThat("Number of routes is incorrect!", first.getRoutes().size(), is(equalTo(3)));
+        assertThat("Number of routes is incorrect!", first.getRoutes().size(), is(equalTo(1)));
         assertThat("Context status is incorrect!", first.getStatus(), is(equalTo(ServiceStatus.Started)));
     }
 
     @Test
-    public void sendMessageToInbound(@Uri("direct:inbound") ProducerTemplate inbound,
-                                     @Uri("mock:outbound") MockEndpoint outbound) throws InterruptedException {
+    public void verifySecondCamelContext(@ContextName("second") CamelContext second) {
+        assertThat("Context name is incorrect!", second.getName(), is(equalTo("second")));
+        assertThat("Number of routes is incorrect!", second.getRoutes().size(), is(equalTo(1)));
+        assertThat("Context status is incorrect!", second.getStatus(), is(equalTo(ServiceStatus.Started)));
+    }
+
+    @Test
+    public void sendMessageToFirstInbound(@Uri(value = "direct:inbound", context = "first")
+                                          ProducerTemplate inbound,
+                                          @Uri(value = "mock:outbound", context = "first")
+                                          MockEndpoint outbound) throws InterruptedException {
         outbound.expectedMessageCount(1);
         outbound.expectedBodiesReceived("test");
         outbound.expectedHeaderReceived("context", "first");
+
+        inbound.sendBody("test");
+
+        assertIsSatisfied(2L, TimeUnit.SECONDS, outbound);
+    }
+
+    @Test
+    public void sendMessageToSecondInbound(@Uri("direct:inbound") @ContextName("second")
+                                           ProducerTemplate inbound,
+                                           @Uri("mock:outbound") @ContextName("second")
+                                           MockEndpoint outbound) throws InterruptedException {
+        outbound.expectedMessageCount(1);
+        outbound.expectedBodiesReceived("test");
+        outbound.expectedHeaderReceived("context", "second");
 
         inbound.sendBody("test");
 
