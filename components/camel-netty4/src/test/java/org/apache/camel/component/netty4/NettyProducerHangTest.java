@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.netty4;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
+
 public class NettyProducerHangTest extends CamelTestSupport {
 
-	private static int PORT = 4093;
+    private static int PORT = 4093;
 
     @Test
     public void nettyProducerHangsOnTheSecondRequestToTheSocketWhichIsClosed() throws Exception {
@@ -40,7 +40,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
                 } catch (IOException e) {
                     log.error("Exception occured: " + e.getMessage(), e);
                 }
-             }
+            }
         }).start();
 
         String response1 = template.requestBody("netty4:tcp://localhost:" + PORT + "?textline=true&sync=true", "request1", String.class);
@@ -48,7 +48,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
 
         try {
             // our test server will close the socket now so we should get an error
-            template.requestBody("netty4:tcp://localhost:" + PORT + "?textline=true&sync=true", "request2", String.class);            
+            template.requestBody("netty4:tcp://localhost:" + PORT + "?textline=true&sync=true", "request2", String.class);
         } catch (Exception e) {
             assertStringContains(e.getCause().getMessage(), "No response received from remote server");
         }
@@ -58,36 +58,36 @@ public class NettyProducerHangTest extends CamelTestSupport {
 
         try {
             // our test server will close the socket now so we should get an error
-            template.requestBody("netty4:tcp://localhost:" + PORT + "?textline=true&sync=true", "request4", String.class);            
+            template.requestBody("netty4:tcp://localhost:" + PORT + "?textline=true&sync=true", "request4", String.class);
         } catch (Exception e) {
             assertStringContains(e.getCause().getMessage(), "No response received from remote server");
         }
     }
 
-	private void acceptReplyAcceptClose() throws IOException {
-		byte buf[] = new byte[128];
+    private void acceptReplyAcceptClose() throws IOException {
+        byte buf[] = new byte[128];
 
-		ServerSocket serverSocket = new ServerSocket(PORT);
-		Socket soc = serverSocket.accept();
+        ServerSocket serverSocket = new ServerSocket(PORT);
+        Socket soc = serverSocket.accept();
 
-		log.info("Open socket and accept data");
-		try (InputStream is = soc.getInputStream();
-				OutputStream os = soc.getOutputStream()) {
-			// read first message
-			is.read(buf);
-						
-			// reply to the first message
-			os.write("response\n".getBytes());
-			
-			// read second message
-			is.read(buf);				
+        log.info("Open socket and accept data");
+        try (InputStream is = soc.getInputStream();
+                OutputStream os = soc.getOutputStream()) {
+            // read first message
+            is.read(buf);
 
-			// do not reply, just close socket (emulate network problem)
-		} finally {
-			soc.close();
-			serverSocket.close();
-		}
-		log.info("Close socket");
-	}
+            // reply to the first message
+            os.write("response\n".getBytes());
+            
+            // read second message
+            is.read(buf);
+
+            // do not reply, just close socket (emulate network problem)
+        } finally {
+            soc.close();
+            serverSocket.close();
+        }
+        log.info("Close socket");
+    }
 
 }
