@@ -27,7 +27,7 @@ import org.junit.Test;
 
 public class NettyProducerHangTest extends CamelTestSupport {
 
-    private static int PORT = 4093;
+    private static final int PORT = 4093;
 
     @Test
     public void nettyProducerHangsOnTheSecondRequestToTheSocketWhichIsClosed() throws Exception {
