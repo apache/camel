@@ -1118,6 +1118,12 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
         private int weigth(EipOption o) {
             String name = o.getName();
+
+            // these should be first
+            if ("expression".equals(name)) {
+                return 10;
+            }
+
             // these should be last
             if ("description".equals(name)) {
                 return -10;
