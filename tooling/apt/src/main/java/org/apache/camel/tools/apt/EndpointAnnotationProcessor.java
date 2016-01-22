@@ -65,6 +65,8 @@ import static org.apache.camel.tools.apt.helper.Strings.safeNull;
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
+    // CHECKSTYLE:OFF
+
     private static final String HEADER_FILTER_STRATEGY_JAVADOC = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
 
     public boolean process(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
@@ -818,5 +820,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
         return answer;
     }
+
+    // CHECKSTYLE:ON
 
 }
