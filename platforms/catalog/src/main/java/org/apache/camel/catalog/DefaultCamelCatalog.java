@@ -70,6 +70,8 @@ import static org.apache.camel.catalog.URISupport.stripQuery;
  */
 public class DefaultCamelCatalog implements CamelCatalog {
 
+	// CHECKSTYLE:OFF
+
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/dataformats.properties";
@@ -1616,4 +1618,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         return answer;
     }
+
+ // CHECKSTYLE:ON
+
 }
