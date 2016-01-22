@@ -210,15 +210,19 @@ public class CdiCamelExtension implements Extension {
     }
 
     private void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager manager) {
-        // Add @ContextName Camel context beans if missing
+        // Missing @ContextName Camel context qualifiers
         contextNames.removeAll(contextQualifiers);
-        for (ContextName name : contextNames) {
-            abd.addBean(camelContextBean(manager, AnyLiteral.INSTANCE, name));
-        }
-
-        // Add a default Camel context bean if any
         if (contextQualifiers.isEmpty() && contextNames.isEmpty()) {
+            // Add a @Default Camel context bean if any
             abd.addBean(camelContextBean(manager, AnyLiteral.INSTANCE, DefaultLiteral.INSTANCE));
+        } else if (contextQualifiers.isEmpty() && contextNames.size() == 1) {
+            // Add a @ContextName and @Default Camel context bean if only one
+            abd.addBean(camelContextBean(manager, AnyLiteral.INSTANCE, DefaultLiteral.INSTANCE, contextNames.iterator().next()));
+        } else {
+            // Add missing @ContextName Camel context beans
+            for (ContextName name : contextNames) {
+                abd.addBean(camelContextBean(manager, AnyLiteral.INSTANCE, name));
+            }
         }
 
         // Update @ContextName Camel context qualifiers
