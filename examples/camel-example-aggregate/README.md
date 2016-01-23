@@ -37,12 +37,12 @@ uses a persistent store.
 ### Documentation
 
 This example is documented at
-  [http://camel.apache.org/aggregate-example.html](http://camel.apache.org/aggregate-example.html)
+  <http://camel.apache.org/aggregate-example.html>
 
 ### Forum, Help, etc 
 
 If you hit an problems please let us know on the Camel Forums
-  [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+  <http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
