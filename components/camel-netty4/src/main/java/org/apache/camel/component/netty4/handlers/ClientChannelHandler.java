@@ -107,7 +107,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         producer.getAllChannels().remove(ctx.channel());
 
         NettyConfiguration configuration = producer.getConfiguration();
-        if (configuration.isSync() && !exceptionHandled) {
+        if (configuration.isSync() && !messageReceived && !exceptionHandled) {
             // To avoid call the callback.done twice
             exceptionHandled = true;
             // session was closed but no message received. This could be because the remote server had an internal error
@@ -195,6 +195,13 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             // signal callback
             callback.done(false);
         }
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        // reset flag after we have read the complete
+        messageReceived = false;
+        super.channelReadComplete(ctx);
     }
 
     /**
