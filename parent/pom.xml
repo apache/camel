@@ -3031,6 +3031,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin-version}</version>
         <configuration>
           <!--forkMode>pertest</forkMode -->
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
@@ -3325,6 +3326,7 @@
 
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin-version}</version>
             <configuration>
               <excludesFile>${java.io.tmpdir}/${user.name}EkstaziExcludes</excludesFile>
             </configuration>
@@ -3343,6 +3345,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin-version}</version>
             <configuration>
               <systemPropertyVariables>
                 <!-- By default Java's secure RNG uses /dev/random to generate seeds. In

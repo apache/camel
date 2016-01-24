@@ -50,6 +50,7 @@
     <compiler.fork>false</compiler.fork>
 
     <maven-compiler-plugin-version>3.5</maven-compiler-plugin-version>
+    <maven-surefire-plugin-version>2.19.1</maven-surefire-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
@@ -506,6 +507,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin-version}</version>
             <configuration>
               <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
               <childDelegation>false</childDelegation>
