@@ -111,8 +111,12 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         // to keep track of open sockets
         producer.getAllChannels().remove(ctx.channel());
 
+        // this channel is maybe closing graceful and the exchange is already done
+        // and if so we should not trigger an exception
+        boolean doneUoW = exchange.getUnitOfWork() == null;
+
         NettyConfiguration configuration = producer.getConfiguration();
-        if (configuration.isSync() && !messageReceived && !exceptionHandled) {
+        if (configuration.isSync() && !doneUoW && !messageReceived && !exceptionHandled) {
             // To avoid call the callback.done twice
             exceptionHandled = true;
             // session was closed but no message received. This could be because the remote server had an internal error
