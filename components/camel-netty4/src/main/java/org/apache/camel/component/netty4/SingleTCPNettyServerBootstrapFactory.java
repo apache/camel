@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleTCPNettyServerBootstrapFactory.class);
-    private final ChannelGroup allChannels;
+    private ChannelGroup allChannels;
     private CamelContext camelContext;
     private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
@@ -52,20 +52,26 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     private EventLoopGroup workerGroup;
 
     public SingleTCPNettyServerBootstrapFactory() {
-        // The executor just execute tasks in the callers thread
-        this.allChannels = new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
     public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
+
+        this.allChannels = configuration.getChannelGroup() != null
+            ? configuration.getChannelGroup()
+            : new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
     public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
+
+        this.allChannels = configuration.getChannelGroup() != null
+            ? configuration.getChannelGroup()
+            : new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
     public void addChannel(Channel channel) {
