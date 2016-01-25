@@ -19,13 +19,13 @@ To run the example type
 The webservice will be listed in this overview:
 
 	http://localhost:9080/webservices/
-	
+
 <http://localhost:9080/webservices/>
 
 The webservice WSDL is exposed at:
-  
+
 	http://localhost:9080/webservices/incident?wsdl
-	
+
 <http://localhost:9080/webservices/incident?wsdl>
 
 To stop the example hit `ctrl + c`
@@ -35,9 +35,10 @@ To stop the example hit `ctrl + c`
 This example is documented at
   <http://camel.apache.org/tutorial-example-reportincident.html>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

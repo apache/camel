@@ -13,9 +13,9 @@ You will need to first need to build the example:
 
 ### Run
 
-To run the example deploy it in Apache Tomcat by copying the .war located 
+To run the example deploy it in Apache Tomcat by copying the .war located
 in the target directory to the deploy folder of Apache Tomcat.  Alternatively,
-if your Tomcat installation is set up to use the Tomcat Maven plugin 
+if your Tomcat installation is set up to use the Tomcat Maven plugin
 ([http://mojo.codehaus.org/tomcat-maven-plugin/usage.html](http://mojo.codehaus.org/tomcat-maven-plugin/usage.html)), you can simply
 run `mvn tomcat:deploy` (also `tomcat:undeploy`, `tomcat:redeploy`, etc.)
 to install the WAR file.  
@@ -61,10 +61,10 @@ soapUI, making sample SOAP requests such as the following:
 This example is further documented at
   [http://camel.apache.org/cxf-tomcat-example.html](http://camel.apache.org/cxf-tomcat-example.html)
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums
-  [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

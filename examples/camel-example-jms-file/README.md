@@ -1,19 +1,19 @@
 # JMS & File Example
 
 ### Introduction
-This example shows how to work with files and JMS. 
+This example shows how to work with files and JMS.
 
 The example consumes messages from a queue and writes them to the file
 system.
 
 ### Build
-  
+
 You will need to compile this example first:
 
 	mvn compile
 
 ### Run  
-  
+
 The example should run if you type
 
 	mvn exec:java -PExample
@@ -25,9 +25,10 @@ in the test directory.
 
 This example is documented at [http://camel.apache.org/walk-through-an-example.html](http://camel.apache.org/walk-through-an-example.html)
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

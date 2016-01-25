@@ -17,12 +17,12 @@ recommend it.
 
 ### Build
 You will need to compile this example first:
-	
+
 	mvn install
 
 ### Run
 To run the example type
-	
+
 	mvn spring-boot:run
 
 You can also execute the fat WAR directly:
@@ -37,9 +37,10 @@ To stop the example hit `ctrl + c`
 
 This example is documented at <http://camel.apache.org/spring-boot-example.html>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

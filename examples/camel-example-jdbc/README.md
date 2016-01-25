@@ -8,7 +8,7 @@ Apache Derby database.
 ### Build
 
 First compile this example:
-	
+
 	mvn compile
 
 ### Compile
@@ -35,9 +35,10 @@ The spring config setups three routes as follow:
  - These two are connected together. It first query the database for NEW record to be process, invoke RecordProcess bean to do the work, then update the record as DONE so not to re-process on next polled.
 
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

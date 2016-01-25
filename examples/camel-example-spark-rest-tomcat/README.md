@@ -17,7 +17,7 @@ deploy folder of Apache Tomcat.
 
 And then hit this url from a web browser which has further
 instructions
-  
+
 	http://localhost:8080/camel-example-spark-rest-tomcat
 <http://localhost:8080/camel-example-spark-rest-tomcat>
 
@@ -26,13 +26,14 @@ You can also try the example from Maven using
 	mvn jetty:run
 
 ... and use the following url
-	
+
 	http://localhost:8080/
 <http://localhost:8080/>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

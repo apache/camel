@@ -26,7 +26,7 @@ To install Apache Camel in Karaf you type in the shell (we use version 2.12.0):
 
 	features:chooseurl camel 2.12.0
 	features:install camel
-  
+
 First you need to install the following features in Karaf/ServiceMix with:
 
 	features:install camel-netty-http
@@ -59,10 +59,10 @@ This example is documented at
 This example is documented at
   <http://camel.apache.org/netty-http-server-example.htmll>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
-

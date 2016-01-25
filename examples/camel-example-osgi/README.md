@@ -4,9 +4,9 @@
 
 This example shows how use OSGi with Camel. It can be run using Maven.
 
-### Build 
+### Build
 You will need to compile this example first:
-  
+
 	mvn install
 
 ### Run from cmd line outside OSGi container
@@ -18,7 +18,7 @@ To stop the example hit `ctrl + c`
 
 ### Run inside OSGi container
 You will need to compile and install this example first:
-	
+
 	mvn install
 
 If using Apache Karaf / Apache ServiceMix you can install this example
@@ -37,9 +37,10 @@ The example outputs to the log, which you can see using
 
 And use `ctrl+c` to break the tail.
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

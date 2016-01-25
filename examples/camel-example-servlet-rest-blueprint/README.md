@@ -1,7 +1,7 @@
 # Camel Servlet REST and OSGi Blueprint example
 =============================================
 
-### Introduction 
+### Introduction
 This example shows how to use Servlet REST to define REST endpoints in Camel routes using the Rest DSL
 
 
@@ -57,10 +57,10 @@ From the command shell you can use curl to access the service as shown below:
 This example is implemented in XML DSL in the `src/main/resources/OSGI-INF/bluepring/camel.xml` file.
 
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
-

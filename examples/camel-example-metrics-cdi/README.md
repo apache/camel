@@ -10,13 +10,13 @@ The example is implemented in Java with CDI dependency injection. It uses JBoss 
 
 The `camel-core` and `camel-metrics` components are used in this example. Besides, the Metrics CDI extension is used so that metrics can be injected and custom metrics registered via CDI. For instance, a ratio gauge is registered to monitor the success rate, that is the ratio of success calls on the number of generated events.
 
-### Build 
+### Build
 
 You will need to build this example first:
 
     mvn install
 
-### Run 
+### Run
 
 You can run this example using:
 
@@ -51,9 +51,10 @@ And every 10 seconds, the metrics report, e.g.:
 
 The Camel application can be stopped pressing `ctrl + c` in the shell.
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may have. Enjoy!
 

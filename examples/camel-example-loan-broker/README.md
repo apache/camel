@@ -17,7 +17,7 @@ You will need to compile this example first:
 ### Run
 
 The example of JMS queue version should run if you type
-	
+
 	mvn exec:java -PQueue.LoanBroker
 	mvn exec:java -PQueue.Client
 
@@ -33,9 +33,10 @@ To stop the example hit `ctrl + c`
 This example is documented at
   <http://camel.apache.org/loan-broker-example.html>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

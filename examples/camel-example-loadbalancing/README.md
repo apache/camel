@@ -12,8 +12,8 @@ alternatively between each server running on localhost:9991 and localhost:9992.
 
 Within this demo every ten seconds, a Report object is created from the Camel load balancer server.
 This object is sent by the Camel load balancer to a MINA server where the object is then serialized.
-One of the two MINA servers (localhost:9991 and localhost:9992) receives the object and enriches 
-the message by setting the field reply of the Report object. The reply is sent back by the MINA 
+One of the two MINA servers (localhost:9991 and localhost:9992) receives the object and enriches
+the message by setting the field reply of the Report object. The reply is sent back by the MINA
 server to the client, which then logs the reply on the console.
 
 If any of the two MINA servers is not running, then the load balancer will automatic failover
@@ -21,10 +21,10 @@ to the next server.
 
 ### Build
 
-To compile and install the project in your maven repo, execute the following 
+To compile and install the project in your maven repo, execute the following
 command on the root of the project
 
-	mvn clean install 
+	mvn clean install
 
 ### Run
 
@@ -36,7 +36,7 @@ To run the example, then execute the following command in the respective folder:
 
 >mina2
 
-	mvn exec:java -Pmina2 
+	mvn exec:java -Pmina2
 
 >loadbalancing
 
@@ -47,9 +47,10 @@ To run the example, then execute the following command in the respective folder:
 This example is documented at
   <http://camel.apache.org/loadbalancing-mina-example.html>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

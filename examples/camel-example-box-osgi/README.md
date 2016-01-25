@@ -20,11 +20,11 @@ First you will need to compile the example:
 
 To run the example on Apache Karaf 2.3.x
 
-#### Step 1 
+#### Step 1
 
 Launch karaf
 
-#### Step 2 
+#### Step 2
 
 Add features required into Karak
 
@@ -45,7 +45,7 @@ set to your box account credentials.
 #### Step 4
 
 Deploy the example into Karak
-	
+
 	osgi:install -s mvn:org.apache.camel/camel-example-box-osgi/${version}
 
 #### Step 5
@@ -56,10 +56,10 @@ Copy files to the `inbox` directory in the Karaf base directory.
 
 Watch them get transferred to your box.com account.
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums
-  [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

@@ -8,11 +8,11 @@ This example shows how to
  * use Spring XML to configure all routing rules and components
 
 The example consumes messages from a directory, transforms them, then sends
-them to a queue. 
+them to a queue.
 
 ### Build
 You will need to compile this example first:
-  
+
 	mvn compile
 
 ### Run
@@ -29,9 +29,10 @@ To stop the example hit `ctrl + c`
 This example is documented at <http://camel.apache.org/spring-xquery-example.html>
 
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

@@ -2,9 +2,9 @@
 
 ### Introduction
 
-This example shows that you don't need to learn Camel's super cool DSLs 
-if you don't want to. Camel has a set of annotations that allow you to 
-produce, consume or route messages to endpoints. 
+This example shows that you don't need to learn Camel's super cool DSLs
+if you don't want to. Camel has a set of annotations that allow you to
+produce, consume or route messages to endpoints.
 
 ### Build
 
@@ -25,9 +25,10 @@ To stop the example hit `ctrl + c`
 This example is documented at
   <http://camel.apache.org/pojo-messaging-example.html>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

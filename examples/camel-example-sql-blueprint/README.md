@@ -13,8 +13,8 @@ to avoid picking up the same rows again.
 ### Build
 You will need to compile this example first:
   mvn install
-  
-  
+
+
 ### Run with maven
 To run the example type
 
@@ -60,9 +60,10 @@ And you can use `ctrl + c` to stop tailing the log.
 ### Documentation
 This example is documented at <http://camel.apache.org/sql-example-blueprint.html>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

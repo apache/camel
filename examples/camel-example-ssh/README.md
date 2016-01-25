@@ -6,11 +6,11 @@ This example shows how use SSH with Camel. It can be run using Maven.
 This example is built assuming you have a running Apache ServiceMix container with the default SSH port `8101` and
 username / password of smx/smx.
 
-### Build 
+### Build
 You will need to compile this example first:
-	
+
 	mvn install
- 
+
 ### Run with maven
 To run the example using Maven type
 
@@ -27,9 +27,10 @@ from the shell
 	features:addurl mvn:org.apache.camel/camel-example-ssh/<camel version>/xml/features
 	features:install camel-example-ssh
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

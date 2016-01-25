@@ -20,12 +20,12 @@ You will need to compile this example first:
 
 ### Run
 The example should run if you type:
-	
-#### Step 1: Run Server	
+
+#### Step 1: Run Server
 	mvn exec:java -PCamelServer
-	
+
 #### Step 2: Run Clients
-	mvn exec:java -PCamelClient	
+	mvn exec:java -PCamelClient
 	mvn exec:java -PCamelClientRemoting
 	mvn exec:java -PCamelClientEndpoint
 
@@ -35,9 +35,10 @@ To stop the example hit `ctrl + c`
 
 This example is documented at <http://camel.apache.org/tutorial-jmsremoting.html>
 
-### Forum, Help, etc 
+### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
@@ -45,4 +46,3 @@ have.  Enjoy!
 
 
 The Camel riders!
-
