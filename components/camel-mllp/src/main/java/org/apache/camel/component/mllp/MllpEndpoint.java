@@ -47,8 +47,8 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MllpEndpoint.class);
 
-    @UriPath(defaultValue = "0.0.0.0")
-    String hostname = "0.0.0.0";
+    @UriPath(defaultValue = "null")
+    String hostname;
 
     @UriPath(description = "TCP Port for connection")
     int port = -1;
@@ -56,8 +56,11 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "5")
     int backlog = 5;
 
-    @UriParam(defaultValue = "30000", description = "TCP Server only - timeout value while waiting for a TCP listener to start (milliseconds)")
+    @UriParam(defaultValue = "30000")
     int bindTimeout = 30000;
+
+    @UriParam(defaultValue = "5000")
+    int bindRetryInterval = 5000;
 
     @UriParam(defaultValue = "60000")
     int acceptTimeout = 60000;
@@ -160,7 +163,9 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Hostname or IP for connection for the TCP connection
+     * Hostname or IP for connection for the TCP connection.
+     *
+     * The default value is null, which means any local IP address
      *
      * @param hostname Hostname or IP
      */
@@ -191,6 +196,28 @@ public class MllpEndpoint extends DefaultEndpoint {
      */
     public void setBacklog(int backlog) {
         this.backlog = backlog;
+    }
+
+    public int getBindTimeout() {
+        return bindTimeout;
+    }
+
+    /**
+     * TCP Server Only - The number of milliseconds to retry binding to a server port
+     */
+    public void setBindTimeout(int bindTimeout) {
+        this.bindTimeout = bindTimeout;
+    }
+
+    public int getBindRetryInterval() {
+        return bindRetryInterval;
+    }
+
+    /**
+     * TCP Server Only - The number of milliseconds to wait between bind attempts
+     */
+    public void setBindRetryInterval(int bindRetryInterval) {
+        this.bindRetryInterval = bindRetryInterval;
     }
 
     public int getAcceptTimeout() {
