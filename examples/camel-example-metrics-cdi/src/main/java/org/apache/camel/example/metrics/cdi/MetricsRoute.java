@@ -19,8 +19,10 @@ package org.apache.camel.example.metrics.cdi;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.metrics.MetricsConstants;
 
+@ContextName("camel-example-metrics-cdi")
 class MetricsRoute extends RouteBuilder {
 
     @Override
