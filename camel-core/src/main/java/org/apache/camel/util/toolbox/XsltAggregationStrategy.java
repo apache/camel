@@ -161,7 +161,6 @@ public class XsltAggregationStrategy implements AggregationStrategy {
         xslt.setFailOnNullBody(true);
         xslt.transformerCacheSize(0);
         xslt.setAllowStAX(true);
-        xslt.setCamelContext(context);
 
         configureOutput(xslt, output.name());
         loadResource(xslFile);

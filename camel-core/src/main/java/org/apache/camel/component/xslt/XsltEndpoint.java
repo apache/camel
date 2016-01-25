@@ -390,13 +390,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
         // must load resource first which sets a template and do a stylesheet compilation to catch errors early
         loadResource(resourceUri);
 
-        // and then inject camel context and start service
-        xslt.setCamelContext(getCamelContext());
-
         // the processor is the xslt builder
         setProcessor(xslt);
-
-        ServiceHelper.startService(xslt);
     }
 
     protected void configureOutput(XsltBuilder xslt, String output) throws Exception {

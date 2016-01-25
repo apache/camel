@@ -19,13 +19,13 @@ package org.apache.camel.builder.xml;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
@@ -42,8 +42,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Node;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
@@ -52,12 +50,10 @@ import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxp.StAX2SAXSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,9 +72,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @version 
  */
-public class XsltBuilder extends ServiceSupport implements Processor, CamelContextAware {
+public class XsltBuilder implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
-    private CamelContext camelContext;
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private XmlConverter converter = new XmlConverter();
     private Templates template;
@@ -89,9 +84,6 @@ public class XsltBuilder extends ServiceSupport implements Processor, CamelConte
     private boolean deleteOutputFile;
     private ErrorListener errorListener;
     private boolean allowStAX = true;
-    private volatile Method setMessageEmitterMethod;
-    private volatile Class<?> saxonReceiverClass;
-    private volatile Class<?> saxonWarnerClass;
 
     public XsltBuilder() {
     }
@@ -157,10 +149,6 @@ public class XsltBuilder extends ServiceSupport implements Processor, CamelConte
         }
     }
     
-    boolean isSaxonTransformer(Transformer transformer) {
-        return transformer.getClass().getName().startsWith("net.sf.saxon");
-    }
-
     // Builder methods
     // -------------------------------------------------------------------------
 
@@ -448,17 +436,7 @@ public class XsltBuilder extends ServiceSupport implements Processor, CamelConte
     }
 
     protected Transformer createTransformer() throws Exception {
-        Transformer t = getTemplate().newTransformer();
-
-        // special for saxon as we need to call setMessageEmitter on the transformer to hook from saxon to the JAXP errorListener
-        // so we can get notified if any errors happen during transformation
-        // see details at: https://stackoverflow.com/questions/4695489/capture-xslmessage-output-in-java
-        if (isSaxonTransformer(t) && setMessageEmitterMethod != null) {
-            Object warner = getCamelContext().getInjector().newInstance(saxonWarnerClass);
-            setMessageEmitterMethod.invoke(t, warner);
-        }
-
-        return t;
+        return getTemplate().newTransformer();
     }
 
     /**
@@ -587,40 +565,6 @@ public class XsltBuilder extends ServiceSupport implements Processor, CamelConte
                 transformer.setParameter(key, value);
             }
         }
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "camelContext", this);
-
-        // create a transformer to see if its saxon, as we then need to do some initial preparation
-        Transformer t = getTemplate().newTransformer();
-
-        if (isSaxonTransformer(t)) {
-            // pre-load saxon classes as we need to call the setMessageEmitter on the transformer to hook saxon to use the JAXP
-            // error listener, so we can capture errors and xsl:message outputs which end users may define in the xslt files
-            try {
-                saxonReceiverClass = getCamelContext().getClassResolver().resolveMandatoryClass("net.sf.saxon.event.Receiver");
-                saxonWarnerClass = getCamelContext().getClassResolver().resolveMandatoryClass("net.sf.saxon.serialize.MessageWarner");
-                setMessageEmitterMethod = t.getClass().getMethod("setMessageEmitter", saxonReceiverClass);
-            } catch (Exception e) {
-                throw new IllegalStateException("Error pre-loading Saxon classes. Make sure you have saxon on the classpath,"
-                        + " and the classloader can load the following two classes: net.sf.saxon.event.Receiver, net.sf.saxon.serialize.MessageWarner.", e);
-            }
-        }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 
     private static final class XsltBuilderOnCompletion extends SynchronizationAdapter {
