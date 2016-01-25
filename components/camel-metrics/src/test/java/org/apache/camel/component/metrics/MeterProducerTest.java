@@ -29,9 +29,10 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METER_MARK;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -72,7 +73,7 @@ public class MeterProducerTest {
     @Test
     public void testMeterProducer() throws Exception {
         assertThat(producer, is(notNullValue()));
-        assertThat(producer.getEndpoint().equals(endpoint), is(true));
+        assertThat(producer.getEndpoint(), is(equalTo(endpoint)));
     }
 
     @Test
