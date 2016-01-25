@@ -2824,7 +2824,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     started++;
                 }
             }
-            log.info("Total " + getRoutes().size() + " routes, of which " + started + " is started.");
+            log.info("Total " + getRoutes().size() + " routes, of which " + started + " are started.");
             log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + TimeUtils.printDuration(stopWatch.taken()));
         }
         EventHelper.notifyCamelContextStarted(this);
