@@ -20,8 +20,6 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.zip.Deflater;
 
-import org.w3c.dom.Node;
-
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
@@ -41,6 +39,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.model.dataformat.LzfDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
@@ -58,6 +57,7 @@ import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.w3c.dom.Node;
 
 /**
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
@@ -228,6 +228,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         castor.setMappingFile(mappingFile);
         castor.setValidation(validation);
         return dataFormat(castor);
+    }
+
+    /**
+     * Uses the LZF deflater data format
+     */
+    public T lzf() {
+        LzfDataFormat lzfdf = new LzfDataFormat();
+        return dataFormat(lzfdf);
     }
 
     /**

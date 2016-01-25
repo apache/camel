@@ -129,6 +129,7 @@
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
+    <compress-lzf-version>1.0.3</compress-lzf-version>
     <cxf-version>3.1.4</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.0.5</cxf-xjc-plugin-version>
@@ -2488,6 +2489,11 @@
             <artifactId>stax-api</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.ning</groupId>
+        <artifactId>compress-lzf</artifactId>
+        <version>${compress-lzf-version}</version>
       </dependency>
 
       <!-- optional avro -->

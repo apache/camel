@@ -84,6 +84,7 @@
       org.apache.camel.spi.DataFormatResolver;dataformat=serialization,
       org.apache.camel.spi.DataFormatResolver;dataformat=string,
       org.apache.camel.spi.DataFormatResolver;dataformat=zip,
+      org.apache.camel.spi.DataFormatResolver;dataformat=lzf,
       org.apache.camel.spi.LanguageResolver;language=bean,
       org.apache.camel.spi.LanguageResolver;language=constant,
       org.apache.camel.spi.LanguageResolver;language=exchangeProperty,
@@ -134,6 +135,13 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <!-- optional dependencies by camel-core -->
+    <dependency>
+      <groupId>com.ning</groupId>
+      <artifactId>compress-lzf</artifactId>
+      <optional>true</optional>
     </dependency>
 
     <!-- osgi support -->
