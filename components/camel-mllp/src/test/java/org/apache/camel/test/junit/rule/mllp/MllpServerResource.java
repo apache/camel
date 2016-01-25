@@ -24,6 +24,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.rules.ExternalResource;
@@ -436,11 +438,11 @@ public class MllpServerResource extends ExternalResource {
     }
 
     void resetConnection(Socket socket) {
-        if (null != socket) {
+        if (null != socket  && !socket.isClosed()) {
             try {
                 socket.setSoLinger(true, 0);
-            } catch (Exception ex) {
-                log.warn("Exception encountered setting SO_LINGER to 0 on the socket to force a reset", ex);
+            } catch (SocketException socketEx) {
+                log.debug("SocketException encountered setting SO_LINGER to 0 on the socket to force a reset - ignoring", socketEx);
             } finally {
                 closeConnection(socket);
             }
@@ -455,6 +457,7 @@ public class MllpServerResource extends ExternalResource {
         Logger log = LoggerFactory.getLogger(this.getClass());
 
         ServerSocket serverSocket;
+        List<ClientSocketThread> clientSocketThreads = new LinkedList<>();
 
         String listenHost = "0.0.0.0";
         int listenPort;
@@ -519,30 +522,47 @@ public class MllpServerResource extends ExternalResource {
         public void run() {
             log.info("Accepting connections on port {}", serverSocket.getLocalPort());
             this.setName("MllpServerResource$ServerSocketThread - " + serverSocket.getLocalSocketAddress().toString());
-            while (isActive() && serverSocket.isBound()) {
+            while (!isInterrupted()  &&  serverSocket.isBound()  && !serverSocket.isClosed()) {
                 Socket clientSocket = null;
                 try {
                     clientSocket = serverSocket.accept();
-                    clientSocket.setKeepAlive(true);
-                    clientSocket.setTcpNoDelay(false);
-                    clientSocket.setSoLinger(false, -1);
-                    clientSocket.setSoTimeout(5000);
-                    ClientSocketThread clientSocketThread = new ClientSocketThread(clientSocket);
-                    clientSocketThread.setDaemon(true);
-                    clientSocketThread.start();
                 } catch (SocketTimeoutException timeoutEx) {
                     if (raiseExceptionOnAcceptTimeout) {
                         throw new MllpJUnitResourceTimeoutException("Timeout Accepting client connection", timeoutEx);
                     }
-                    continue;
-                } catch (IOException e) {
-                    log.warn("IOException creating Client Socket");
-                    try {
-                        clientSocket.close();
-                    } catch (IOException e1) {
-                        log.warn("Exceptiong encountered closing client socket after attempting to accept connection");
+                    log.warn("Timeout waiting for client connection");
+                } catch (SocketException socketEx) {
+                    log.debug("SocketException encountered accepting client connection - ignoring", socketEx);
+                    if (null == clientSocket) {
+                        continue;
+                    } else if (!clientSocket.isClosed()) {
+                        resetConnection(clientSocket);
+                        continue;
+                    } else {
+                        throw new MllpJUnitResourceException("Unexpected SocketException encountered accepting client connection", socketEx);
                     }
-                    throw new MllpJUnitResourceException("IOException creating Socket", e);
+                } catch (Exception ex) {
+                    throw new MllpJUnitResourceException("Unexpected exception encountered accepting client connection", ex);
+                }
+                if (null != clientSocket) {
+                    try {
+                        clientSocket.setKeepAlive(true);
+                        clientSocket.setTcpNoDelay(false);
+                        clientSocket.setSoLinger(false, -1);
+                        clientSocket.setSoTimeout(5000);
+                        ClientSocketThread clientSocketThread = new ClientSocketThread(clientSocket);
+                        clientSocketThread.setDaemon(true);
+                        clientSocketThread.start();
+                        clientSocketThreads.add(clientSocketThread);
+                    } catch (Exception unexpectedEx) {
+                        log.warn("Unexpected exception encountered configuring client socket");
+                            try {
+                                clientSocket.close();
+                            } catch (IOException ingoreEx) {
+                                log.warn("Exceptiong encountered closing client socket after attempting to accept connection", ingoreEx);
+                            }
+                        throw new MllpJUnitResourceException("Unexpected exception encountered configuring client socket", unexpectedEx);
+                    }
                 }
             }
             log.info("No longer accepting connections - closing TCP Listener on port {}", serverSocket.getLocalPort());
@@ -599,6 +619,22 @@ public class MllpServerResource extends ExternalResource {
         public void setRaiseExceptionOnAcceptTimeout(boolean raiseExceptionOnAcceptTimeout) {
             this.raiseExceptionOnAcceptTimeout = raiseExceptionOnAcceptTimeout;
         }
+
+        @Override
+        public void interrupt() {
+            for (ClientSocketThread clientSocketThread: clientSocketThreads) {
+                clientSocketThread.interrupt();
+            }
+
+            if (serverSocket != null  &&  serverSocket.isBound()  &&  !serverSocket.isClosed()) {
+                try {
+                    serverSocket.close();
+                } catch (Exception ex) {
+                    log.warn("Exception encountered closing server socket on interrupt", ex);
+                }
+            }
+            super.interrupt();
+        }
     }
 
     /**
@@ -638,8 +674,20 @@ public class MllpServerResource extends ExternalResource {
             log.info("Handling Connection: {} -> {}", localAddress, remoteAddress);
 
             try {
-                while (null != clientSocket && clientSocket.isConnected() && !clientSocket.isClosed()) {
-                    InputStream instream = clientSocket.getInputStream();
+                while (!isInterrupted()  &&  null != clientSocket && clientSocket.isConnected() && !clientSocket.isClosed()) {
+                    InputStream instream;
+                    try {
+                        instream = clientSocket.getInputStream();
+                    } catch (IOException ioEx) {
+                        if (clientSocket.isClosed()) {
+                            log.debug( "Client socket was closed - ignoring exception", clientSocket);
+                            break;
+                        } else {
+                            throw new MllpJUnitResourceException( "Unexpected IOException encounted getting input stream", ioEx);
+                        }
+                    } catch (Exception unexpectedEx) {
+                        throw new MllpJUnitResourceException( "Unexpected exception encounted getting input stream", unexpectedEx);
+                    }
                     String parsedHL7Message = getMessage(instream);
 
                     if (null != parsedHL7Message && parsedHL7Message.length() > 0) {
@@ -721,7 +769,7 @@ public class MllpServerResource extends ExternalResource {
                 }
             }
 
-            log.info("Connection Finished: {} -> {}", localAddress, remoteAddress);
+            log.debug("Client Connection Finished: {} -> {}", localAddress, remoteAddress);
         }
 
         /**
@@ -749,8 +797,15 @@ public class MllpServerResource extends ExternalResource {
                     }
                 }
             } catch (SocketException socketEx) {
-                log.error("Unable to read from socket stream when expected bMLLP_ENVELOPE_START_OF_BLOCK - resetting connection ", socketEx);
-                resetConnection(clientSocket);
+                if (clientSocket.isClosed()) {
+                    log.info("Client socket closed while waiting for MLLP_ENVELOPE_START_OF_BLOCK");
+                } else if ( clientSocket.isConnected() ) {
+                    log.info( "SocketException encountered while waiting for MLLP_ENVELOPE_START_OF_BLOCK");
+                    resetConnection(clientSocket);
+                } else {
+                    log.error("Unable to read from socket stream when expected bMLLP_ENVELOPE_START_OF_BLOCK - resetting connection ", socketEx);
+                    resetConnection(clientSocket);
+                }
                 return null;
             }
 
@@ -871,6 +926,18 @@ public class MllpServerResource extends ExternalResource {
             }
 
             return null;
+        }
+
+        @Override
+        public void interrupt() {
+            if (null != clientSocket  &&  clientSocket.isConnected()  &&  !clientSocket.isClosed()) {
+                try {
+                    clientSocket.close();
+                } catch (Exception ex) {
+                    log.warn("Exception encountered closing client socket on interrput", ex);
+                }
+            }
+            super.interrupt();
         }
     }
 

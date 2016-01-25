@@ -105,10 +105,11 @@ public class MllpTcpClientProducer extends DefaultProducer {
         }
 
         log.debug("Reading acknowledgement from external system");
-        byte[] acknowledgementBytes;
+        byte[] acknowledgementBytes = null;
         try {
-            MllpUtil.openFrame(socket);
-            acknowledgementBytes = MllpUtil.closeFrame(socket);
+            if (MllpUtil.openFrame(socket)) {
+                acknowledgementBytes = MllpUtil.closeFrame(socket);
+            }
         } catch (SocketTimeoutException timeoutEx) {
             exchange.setException(new MllpAcknowledgementTimoutException("Acknowledgement timout", timeoutEx));
             return;
@@ -117,82 +118,84 @@ public class MllpTcpClientProducer extends DefaultProducer {
             return;
         }
 
-        log.debug("Populating the exchange with the acknowledgement from the external system");
-        message.setHeader(MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
+        if (null != acknowledgementBytes) {
+            log.debug("Populating the exchange with the acknowledgement from the external system");
+            message.setHeader(MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
 
-        message.setHeader(MLLP_LOCAL_ADDRESS, socket.getLocalAddress().toString());
-        message.setHeader(MLLP_REMOTE_ADDRESS, socket.getRemoteSocketAddress());
+            message.setHeader(MLLP_LOCAL_ADDRESS, socket.getLocalAddress().toString());
+            message.setHeader(MLLP_REMOTE_ADDRESS, socket.getRemoteSocketAddress());
 
-        // Now, extract the acknowledgement type and check for a NACK
-        byte fieldDelim = acknowledgementBytes[3];
-        // First, find the beginning of the MSA segment - should be the second segment
-        int msaStartIndex = -1;
-        for (int i = 0; i < acknowledgementBytes.length; ++i) {
-            if (SEGMENT_DELIMITER == acknowledgementBytes[i]) {
-                final byte bM = 77;
-                final byte bS = 83;
-                final byte bC = 67;
-                final byte bA = 65;
-                final byte bE = 69;
-                final byte bR = 82;
+            // Now, extract the acknowledgement type and check for a NACK
+            byte fieldDelim = acknowledgementBytes[3];
+            // First, find the beginning of the MSA segment - should be the second segment
+            int msaStartIndex = -1;
+            for (int i = 0; i < acknowledgementBytes.length; ++i) {
+                if (SEGMENT_DELIMITER == acknowledgementBytes[i]) {
+                    final byte bM = 77;
+                    final byte bS = 83;
+                    final byte bC = 67;
+                    final byte bA = 65;
+                    final byte bE = 69;
+                    final byte bR = 82;
                         /* We've found the start of a new segment - make sure peeking ahead
                            won't run off the end of the array - we need at least 7 more bytes
                          */
-                if (acknowledgementBytes.length > i + 7) {
-                    // We can safely peek ahead
-                    if (bM == acknowledgementBytes[i + 1] && bS == acknowledgementBytes[i + 2] && bA == acknowledgementBytes[i + 3] && fieldDelim == acknowledgementBytes[i + 4]) {
-                        // Found the beginning of the MSA - the next two bytes should be our acknowledgement code
-                        msaStartIndex = i + 1;
-                        if (bA != acknowledgementBytes[i + 5]  &&  bC != acknowledgementBytes[i + 5]) {
-                            exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
-                        } else {
-                            String acknowledgemenTypeString;
-                            switch (acknowledgementBytes[i + 6]) {
-                            case bA:
-                                // We have an AA or CA- make sure that's the end of the field
-                                if (fieldDelim != acknowledgementBytes[i + 7]) {
-                                    exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
-                                }
-                                if (bA == acknowledgementBytes[i + 5]) {
-                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
-                                } else {
-                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CA");
-                                }
-                                break;
-                            case bE:
-                                // We have an AE or CE
-                                if (bA == acknowledgementBytes[i + 5]) {
-                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AE");
-                                    exchange.setException(new MllpApplicationErrorAcknowledgementException(new String(acknowledgementBytes)));
-                                } else {
-                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CE");
-                                    exchange.setException(new MllpCommitErrorAcknowledgementException(new String(acknowledgementBytes)));
-                                }
-                                break;
-                            case bR:
-                                // We have an AR or CR
-                                if (bA == acknowledgementBytes[i + 5]) {
-                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AR");
-                                    exchange.setException(new MllpApplicationRejectAcknowledgementException(new String(acknowledgementBytes)));
-                                } else {
-                                    message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CR");
-                                    exchange.setException(new MllpCommitRejectAcknowledgementException(new String(acknowledgementBytes)));
-                                }
-                                break;
-                            default:
+                    if (acknowledgementBytes.length > i + 7) {
+                        // We can safely peek ahead
+                        if (bM == acknowledgementBytes[i + 1] && bS == acknowledgementBytes[i + 2] && bA == acknowledgementBytes[i + 3] && fieldDelim == acknowledgementBytes[i + 4]) {
+                            // Found the beginning of the MSA - the next two bytes should be our acknowledgement code
+                            msaStartIndex = i + 1;
+                            if (bA != acknowledgementBytes[i + 5] && bC != acknowledgementBytes[i + 5]) {
                                 exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
+                            } else {
+                                String acknowledgemenTypeString;
+                                switch (acknowledgementBytes[i + 6]) {
+                                    case bA:
+                                        // We have an AA or CA- make sure that's the end of the field
+                                        if (fieldDelim != acknowledgementBytes[i + 7]) {
+                                            exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
+                                        }
+                                        if (bA == acknowledgementBytes[i + 5]) {
+                                            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
+                                        } else {
+                                            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CA");
+                                        }
+                                        break;
+                                    case bE:
+                                        // We have an AE or CE
+                                        if (bA == acknowledgementBytes[i + 5]) {
+                                            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AE");
+                                            exchange.setException(new MllpApplicationErrorAcknowledgementException(new String(acknowledgementBytes)));
+                                        } else {
+                                            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CE");
+                                            exchange.setException(new MllpCommitErrorAcknowledgementException(new String(acknowledgementBytes)));
+                                        }
+                                        break;
+                                    case bR:
+                                        // We have an AR or CR
+                                        if (bA == acknowledgementBytes[i + 5]) {
+                                            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AR");
+                                            exchange.setException(new MllpApplicationRejectAcknowledgementException(new String(acknowledgementBytes)));
+                                        } else {
+                                            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CR");
+                                            exchange.setException(new MllpCommitRejectAcknowledgementException(new String(acknowledgementBytes)));
+                                        }
+                                        break;
+                                    default:
+                                        exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
+                                }
                             }
-                        }
 
-                        break;
+                            break;
+                        }
                     }
                 }
-            }
 
-        }
-        if (-1 == msaStartIndex) {
-            // Didn't find an MSA
-            exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
+            }
+            if (-1 == msaStartIndex) {
+                // Didn't find an MSA
+                exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
+            }
         }
         // Check AFTER_SEND Properties
         if (exchange.getProperty(MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class)) {
@@ -231,10 +234,15 @@ public class MllpTcpClientProducer extends DefaultProducer {
             }
 
 
-            SocketAddress address = new InetSocketAddress(endpoint.getHostname(), endpoint.getPort());
-            log.debug("Connecting to socket on {}", address);
+            InetSocketAddress socketAddress;
+            if (null == endpoint.getHostname()) {
+                socketAddress = new InetSocketAddress(endpoint.getPort());
+            } else {
+                socketAddress = new InetSocketAddress(endpoint.getHostname(), endpoint.getPort());
+            }
+            log.debug("Connecting to socket on {}", socketAddress);
             try {
-                socket.connect(address, endpoint.connectTimeout);
+                socket.connect(socketAddress, endpoint.connectTimeout);
             } catch (SocketTimeoutException e) {
                 return e;
             } catch (IOException e) {
