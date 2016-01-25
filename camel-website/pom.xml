@@ -94,6 +94,14 @@
                                  <arg value="${basedir}/target/classes/user-manual" />
                               </exec>
 
+                              <condition property="grunt.cmd" 
+                                         value="${basedir}/node_modules/.bin/grunt.cmd" 
+                                         else="${basedir}/node_modules/.bin/grunt">
+                                 <os family="windows" />
+                              </condition>
+                              <echo>executing ${grunt.cmd}</echo>
+                              <exec executable="${grunt.cmd}" failonerror="false"/>
+
                            </target>
                         </configuration>
                         <goals>

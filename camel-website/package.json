@@ -8,6 +8,10 @@
     "url": "https://github.com/apache/camel"
   },
   "devDependencies": {
-      "gitbook-cli": "~0.3.6"
+    "gitbook-cli": "~0.3.6",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-http-server": "^1.13.0",
+    "grunt-link-checker": "^0.1.0"
   }
 }
