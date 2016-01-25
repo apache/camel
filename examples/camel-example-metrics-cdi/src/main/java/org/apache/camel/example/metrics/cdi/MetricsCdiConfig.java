@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.codahale.metrics.MetricRegistry;
@@ -29,6 +30,7 @@ import org.apache.camel.component.metrics.MetricsComponent;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.management.event.CamelContextStoppedEvent;
 
+@ApplicationScoped
 class MetricsCdiConfig {
 
     @Produces
@@ -37,24 +39,25 @@ class MetricsCdiConfig {
     // TODO: remove when Camel Metrics component looks up for the Metrics registry by type only
     private MetricRegistry registry = new MetricRegistry();
 
-    @Produces
-    @ApplicationScoped
-    private Slf4jReporter reporter(MetricRegistry registry) {
-        return Slf4jReporter.forRegistry(registry)
+    private final Slf4jReporter reporter;
+
+    @Inject
+    MetricsCdiConfig(MetricRegistry registry) {
+        reporter = Slf4jReporter.forRegistry(registry)
             .convertRatesTo(TimeUnit.SECONDS)
             .convertDurationsTo(TimeUnit.MILLISECONDS)
             .build();
     }
 
-    private static void onStart(@Observes CamelContextStartedEvent event, Slf4jReporter reporter) {
+    private void onStart(@Observes CamelContextStartedEvent event) {
         reporter.start(10L, TimeUnit.SECONDS);
     }
 
-    private static void onStop(@Observes CamelContextStoppedEvent event, Slf4jReporter reporter) {
+    private void onStop(@Observes CamelContextStoppedEvent event) {
         reporter.stop();
     }
 
-    private static void configure(@Observes MetricsConfiguration config) {
+    private void configure(@Observes MetricsConfiguration config) {
         config.useAbsoluteName(true);
     }
 }
