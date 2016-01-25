@@ -159,13 +159,13 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, XmlRootElement rootElement,
-                                                String javaTypeName, String name) {
+                                                String javaTypeName, String modelName) {
         // gather eip information
-        EipModel eipModel = findEipModelProperties(roundEnv, classElement, javaTypeName, name);
+        EipModel eipModel = findEipModelProperties(roundEnv, classElement, javaTypeName, modelName);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EipOption> eipOptions = new TreeSet<EipOption>(new EipOptionComparator(eipModel));
-        findClassProperties(writer, roundEnv, eipOptions, classElement, classElement, "");
+        findClassProperties(writer, roundEnv, eipOptions, classElement, classElement, "", modelName);
 
         // after we have found all the options then figure out if the model accepts input/output
         eipModel.setInput(hasInput(roundEnv, classElement));
@@ -251,7 +251,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<EipOption> eipOptions,
-                                       TypeElement originalClassType, TypeElement classElement, String prefix) {
+                                       TypeElement originalClassType, TypeElement classElement, String prefix, String modelName) {
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
             for (VariableElement fieldElement : fieldElements) {
@@ -260,7 +260,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
                 XmlAttribute attribute = fieldElement.getAnnotation(XmlAttribute.class);
                 if (attribute != null) {
-                    boolean skip = processAttribute(roundEnv, originalClassType, classElement, fieldElement, fieldName, attribute, eipOptions, prefix);
+                    boolean skip = processAttribute(roundEnv, originalClassType, classElement, fieldElement, fieldName, attribute, eipOptions, prefix, modelName);
                     if (skip) {
                         continue;
                     }
@@ -268,7 +268,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
                 XmlValue value = fieldElement.getAnnotation(XmlValue.class);
                 if (value != null) {
-                    processValue(roundEnv, originalClassType, classElement, fieldElement, fieldName, value, eipOptions, prefix);
+                    processValue(roundEnv, originalClassType, classElement, fieldElement, fieldName, value, eipOptions, prefix, modelName);
                 }
 
                 XmlElements elements = fieldElement.getAnnotation(XmlElements.class);
@@ -328,8 +328,8 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    private boolean processAttribute(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement, String fieldName, XmlAttribute attribute,
-        Set<EipOption> eipOptions, String prefix) {
+    private boolean processAttribute(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement,
+                                     String fieldName, XmlAttribute attribute, Set<EipOption> eipOptions, String prefix, String modelName) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         String name = attribute.name();
@@ -381,11 +381,18 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     private void processValue(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement, String fieldName, XmlValue value,
-        Set<EipOption> eipOptions, String prefix) {
+        Set<EipOption> eipOptions, String prefix, String modelName) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         // XmlValue has no name attribute
         String name = fieldName;
+
+        if ("method".equals(modelName) || "tokenize".equals(modelName) || "xtokenize".equals(modelName)) {
+            // skip expression attribute on these three languages as they are solely configured using attributes
+            if ("expression".equals(name)) {
+                return;
+            }
+        }
 
         name = prefix + name;
         TypeMirror fieldType = fieldElement.asType();
