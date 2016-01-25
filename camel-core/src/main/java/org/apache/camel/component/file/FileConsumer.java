@@ -42,9 +42,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
     public FileConsumer(GenericFileEndpoint<File> endpoint, Processor processor, GenericFileOperations<File> operations) {
         super(endpoint, processor, operations);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
-        this.extendedAttributes = new HashSet<>();
 
         if (endpoint.getExtendedAttributes() != null) {
+            this.extendedAttributes = new HashSet<>();
+
             for (String attribute : endpoint.getExtendedAttributes().split(",")) {
                 extendedAttributes.add(attribute);
             }
@@ -111,7 +112,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 if (depth >= endpoint.minDepth && isValidFile(gf, false, files)) {
                     log.trace("Adding valid file: {}", file);
                     // matched file so add
-                    if (!extendedAttributes.isEmpty()) {
+                    if (extendedAttributes != null) {
                         Path path = file.toPath();
                         Map<String, Object> allAttributes = new HashMap<>();
                         for (String attribute : extendedAttributes) {
