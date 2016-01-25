@@ -17,6 +17,7 @@
 DeleteVerbDefinition
 GetVerbDefinition
 HeadVerbDefinition
+OptionsVerbDefinition
 PostVerbDefinition
 PutVerbDefinition
 RestBindingDefinition
@@ -25,8 +26,8 @@ RestConfigurationDefinition
 RestDefinition
 RestHostNameResolver
 RestOperationParamDefinition
+RestOperationResponseMsgDefinition
 RestParamType
 RestPropertyDefinition
 RestsDefinition
 VerbDefinition
-RestOperationResponseMsgDefinition
