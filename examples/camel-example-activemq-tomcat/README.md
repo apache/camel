@@ -35,12 +35,12 @@ And the Camel application in the `src/main/resources/camel-context.xml` file.
 ### Documentation
 
 This example is documented at
-	[http://camel.apache.org/activemq-camel-tomcat.html](http://camel.apache.org/activemq-camel-tomcat.html)
+	<http://camel.apache.org/activemq-camel-tomcat.html>
 
 ### Forum, Help, etc 
 
 If you hit an problems please let us know on the Camel Forums
-  [http://camel.apache.org/discussion-forums.html](http://camel.apache.org/discussion-forums.html)
+   <http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
