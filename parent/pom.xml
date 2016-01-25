@@ -217,7 +217,7 @@
     <hadoop-version>1.2.1</hadoop-version>
     <hadoop2-bundle-version>2.7.1_1</hadoop2-bundle-version>
     <hadoop2-version>2.7.1</hadoop2-version>
-    <hamcrest-version>1.3</hamcrest-version>
+    <hamcrest-version>2.0.0.0</hamcrest-version>
     <hapi-version>2.2</hapi-version>
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
@@ -2304,6 +2304,12 @@
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
         <version>${mockito-version}</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>hamcrest-core</artifactId>
+            <groupId>org.hamcrest</groupId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>httpunit</groupId>
