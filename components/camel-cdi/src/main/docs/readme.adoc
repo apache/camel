@@ -1,0 +1,141 @@
+[[CDI-CamelCDI]]
+Camel CDI
+~~~~~~~~~
+
+As of 2.10 we now have support
+http://jcp.org/en/jsr/detail?id=299[Contexts and Dependency Injection -
+JSR299] and http://jcp.org/en/jsr/detail?id=330[Dependency Injection for
+Java - JSR330] as a dependency injection framework. This offers new
+opportunities to develop and deploy Apache Camel projects in
+http://en.wikipedia.org/wiki/Java_Platform,_Enterprise_Edition[Java EE 6
+containers] but also in standalone Java SE or
+http://openwebbeans.apache.org[CDI container]
+
+The current project is under active development and does not provide all
+the features that we have with injection frameworks like Spring or
+Blueprint
+
+[[CDI-DependencyInjectingCamelwithCDI]]
+Dependency Injecting Camel with CDI
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Basically, two things should be done to use Apache Camel in a CDI
+environment. First, we just need to create a
+https://github.com/cmoulliard/cdi-camel/blob/master/src/main/java/com/fusesource/cdi/camel/simple/BootStrap.java[BootStrap]
+class which will be use by the Java EE 6 container or Java SE to start
+the Camel Context. The
+https://git-wip-us.apache.org/repos/asf?p=camel.git;a=blob;f=components/camel-cdi/src/main/java/org/apache/camel/cdi/CdiCamelContext.java;h=0d863bc8f5aa521b15955c26a512cdec09e366e9;hb=HEAD[CdiCamelContext]
+when instantiated will add a CDI
+http://docs.oracle.com/javaee/6/api/javax/enterprise/inject/spi/BeanManager.html[Bean
+Registry]. That will allow Camel to perform lookup of beans injected and
+registered in CDI container. Next, we must add CDI annotated beans
+(@inject, @named, ...) to use them from the Apache Camel routes.
+
+[[CDI-BootstrappingCamelwithCDIcontainer]]
+Bootstrapping Camel with CDI container
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following example shows how we can bootstrap an Apache Camel Context
+in a Boot Strap class. This class contains important annotations like
+the
+http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html[javax.ejb.Singleton].
+This annotation will tell the container to create a Singleton instance
+of the BootStrapClass class. This mechanism is similar to Bean instance
+creation that we have with Spring framework. By combining this
+annotation with
+http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html[javax.ejb.Startup],
+the container will start the camel context at the startup of the CDI
+container.
+
+[source,java]
+----
+    @Singleton
+    @Startup
+    public class BootStrap {
+    ...
+----
+
+When the @PreConstruct annotation is called, then we inject a
+CdiCamelContext objet, register a SimpleCamelRoute using @Inject
+annotation and starts the Camel Route.
+
+[source,java]
+----
+    @PostConstruct
+    public void init() throws Exception {
+            logger.info(">> Create CamelContext and register Camel Route.");
+
+            // Define Timer URI
+            simpleRoute.setTimerUri("timer://simple?fixedRate=true&period=10s");
+
+            // Add Camel Route
+            camelCtx.addRoutes(simpleRoute);
+
+            // Start Camel Context
+            camelCtx.start();
+----
+
+When you look to the following Camel Route code, you can see that we do
+a lookup to find a bean "helloWorld" which has been injected. This is
+possible because the CdiCamelContext registers a Camel Registry
+containing a reference to a CDI BeanManager.
+
+[source,java]
+----
+    @Override
+    public void configure() throws Exception {
+
+        from(timerUri)
+            .setBody()
+                .simple("Bean Injected")
+
+            // Lookup for bean injected by CDI container
+            // The HellowWorld class is annotated using @Named
+            .beanRef("helloWorld", "sayHello")
+
+            .log(">> Response : ${body}");
+
+    }
+----
+
+Here is the code of the HelloWorld Bean
+
+[source,java]
+----
+@Named
+public class HelloWorld {
+
+    public String sayHello(@Body String message) {
+        return ">> Hello " + message + " user.";
+    }
+}
+----
+
+This project is started using the
+http://embedded-glassfish.java.net/nonav/plugindocs/3.1/plugin-info.html[GlassFish
+maven plugin] but alternatively, you can deploy the war file produced in
+any Java EE 6 servers : Glassfish, JBoss AS 7, OpenEJB, Apache TomEE or
+Apache KarafEE or using a
+http://agoncal.wordpress.com/2011/01/12/bootstrapping-cdi-in-several-environments/[Java
+SE].
+
+[[CDI-SeeAlso]]
+See Also
+^^^^^^^^
+
+* Simple https://github.com/cmoulliard/cdi-camel-example/[Camel CDI BootStrap project]
+* http://docs.jboss.org/weld/reference/1.1.5.Final/en-US/html_single/[JSR299]
+  and http://openwebbeans.apache.org/owb/jsr330.html[JSR330] reference documentations
+* http://deltaspike.apache.org[Apache DeltaSpike project] - CDI
+  extensions and JavaSE BootStrap
+* CDI revealed by Antonio Goncalves -
+  https://agoncal.wordpress.com/2011/04/07/injection-with-cdi-part-i/[part 1],
+  https://agoncal.wordpress.com/2011/05/03/injection-with-cdi-part-ii/[part 2],
+  https://agoncal.wordpress.com/2011/09/25/injection-with-cdi-part-iii/[part 3]
+  and OpenEJB team - see http://openejb.apache.org/examples-trunk/index.html[examples]
+* Apache implementation of the specs JSR299, 330 -
+  http://openwebbeans.apache.org[OpenWebbeans] and Apache
+  http://openejb.apache.org/[OpenEJB] which provide the container to
+  deploy CDI projects
+* Apache Karaf featured with OpenEJB and CDI -
+  https://svn.apache.org/repos/asf/openejb/trunk/openejb/osgi/[Apache KarafEE]
