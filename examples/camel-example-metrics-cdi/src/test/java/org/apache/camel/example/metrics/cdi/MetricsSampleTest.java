@@ -49,9 +49,13 @@ public class MetricsSampleTest {
     private Meter redelivery;
     @Inject
     private Meter error;
+
     @Inject
     @Metric(name = "success-ratio")
     private Gauge<Double> ratio;
+
+    @Inject
+    private CamelContext context;
 
     @Deployment
     public static Archive<?> deployment() {
@@ -67,7 +71,12 @@ public class MetricsSampleTest {
     }
 
     @Test
-    public void testMetricsValues(CamelContext context) throws Exception {
+    public void testContextName() {
+        assertThat("Context name is incorrect!", context.getName(), is(equalTo("camel-example-metrics-cdi")));
+    }
+
+    @Test
+    public void testMetricsValues() throws Exception {
         // Wait a while so that the timer can kick in
         Thread.sleep(5000);
 
