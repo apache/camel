@@ -80,7 +80,7 @@
                               <copy todir="${basedir}/target/docs/user-manual" >
                                 <fileset dir="${basedir}/../docs/user-manual/en"/>
                               </copy>
-                              <copy todir="${basedir}/target/docs/user-manual/components">
+                              <copy todir="${basedir}/target/docs/user-manual" flatten="true">
                                 <fileset dir="{basedir}/../../components">
                                   <include name="**/src/main/docs/**"/>
                                 </fileset>
