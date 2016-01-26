@@ -28,12 +28,12 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class RabbitMQSupendResumeIntTest extends CamelTestSupport {
-    private static final String EXCHANGE = "ex4";
+    private static final String EXCHANGE = "ex6";
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint resultEndpoint;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest&queue=q3&routingKey=rk3&autoDelete=false")
+    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest&queue=q6&routingKey=rk3&autoDelete=false")
     private Endpoint rabbitMQEndpoint;
 
     @Produce(uri = "direct:start")

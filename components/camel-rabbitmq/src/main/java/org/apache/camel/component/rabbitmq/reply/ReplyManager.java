@@ -87,4 +87,11 @@ public interface ReplyManager {
      * @param holder  containing needed data to process the reply and continue routing
      */
     void processReply(ReplyHolder holder);
+
+    /**
+     * Unregister a correlationId when you no longer need a reply
+     * 
+     * @param correlationId
+     */
+    void cancelCorrelationId(String correlationId);
 }

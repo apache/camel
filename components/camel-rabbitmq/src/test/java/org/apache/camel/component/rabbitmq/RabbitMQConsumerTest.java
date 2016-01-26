@@ -44,6 +44,7 @@ public class RabbitMQConsumerTest {
 
         ThreadPoolExecutor e = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);
         Mockito.when(endpoint.createExecutor()).thenReturn(e);
+        Mockito.when(endpoint.getConcurrentConsumers()).thenReturn(1);
         Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(channel);
 
@@ -59,6 +60,7 @@ public class RabbitMQConsumerTest {
         RabbitMQConsumer consumer = new RabbitMQConsumer(endpoint, processor);
 
         Mockito.when(endpoint.createExecutor()).thenReturn(Executors.newFixedThreadPool(3));
+        Mockito.when(endpoint.getConcurrentConsumers()).thenReturn(1);
         Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(channel);
 
