@@ -92,7 +92,8 @@
 	* [Barcode](barcode-data-format.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc)
-	* [Metrics](metrics.adoc) 
+	* [Metrics](metrics.adoc)
+	* [SJMS](sjms.adoc) 
 
 <!--
 * [Expession Languages](languages.adoc)
