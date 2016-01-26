@@ -43,6 +43,8 @@ public class Main extends MainSupport {
         Main main = new Main();
         instance = main;
         main.run(args);
+
+        System.exit(main.getExitCode());
     }
 
     /**

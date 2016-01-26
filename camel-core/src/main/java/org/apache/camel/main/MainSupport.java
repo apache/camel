@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -46,10 +47,13 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class MainSupport extends ServiceSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(MainSupport.class);
+    protected static final int UNINITIALIZED_EXIT_CODE = Integer.MIN_VALUE;
+    protected static final int DEFAULT_EXIT_CODE = 0;
     protected final List<MainListener> listeners = new ArrayList<MainListener>();
     protected final List<Option> options = new ArrayList<Option>();
     protected final CountDownLatch latch = new CountDownLatch(1);
     protected final AtomicBoolean completed = new AtomicBoolean(false);
+    protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
     protected long duration = -1;
     protected TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     protected boolean trace;
@@ -58,6 +62,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
     protected ProducerTemplate camelTemplate;
     protected boolean hangupInterceptorEnabled = true;
+    protected int durationHitExitCode = DEFAULT_EXIT_CODE;
 
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
@@ -111,6 +116,13 @@ public abstract class MainSupport extends ServiceSupport {
         addOption(new Option("t", "trace", "Enables tracing") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
                 enableTrace();
+            }
+        });
+        addOption(new ParameterOption("e", "exitcode",
+                "Sets the exit code if duration was hit",
+                "exitcode")  {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setDurationHitExitCode(Integer.parseInt(parameter));
             }
         });
     }
@@ -230,6 +242,7 @@ public abstract class MainSupport extends ServiceSupport {
      */
     public void completed() {
         completed.set(true);
+        exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, DEFAULT_EXIT_CODE);
         latch.countDown();
     }
 
@@ -301,6 +314,22 @@ public abstract class MainSupport extends ServiceSupport {
         this.timeUnit = timeUnit;
     }
 
+    /**
+     * Sets the exit code for the application if duration was hit
+     */
+    public void setDurationHitExitCode(int durationHitExitCode) {
+        this.durationHitExitCode = durationHitExitCode;
+    }
+
+    public int getDurationHitExitCode() {
+        return durationHitExitCode;
+    }
+
+    public int getExitCode() {
+        return exitCode.get();
+    }
+
+
     public void setRouteBuilderClasses(String builders) {
         this.routeBuilderClasses = builders;
     }
@@ -332,6 +361,7 @@ public abstract class MainSupport extends ServiceSupport {
                     TimeUnit unit = getTimeUnit();
                     LOG.info("Waiting for: " + duration + " " + unit);
                     latch.await(duration, unit);
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
                     completed.set(true);
                 } else {
                     latch.await();
