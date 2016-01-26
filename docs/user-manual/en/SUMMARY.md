@@ -89,7 +89,8 @@
 		* [AWS SQS](aws-sqs.adoc)
 		* [AWS SWF](aws-swf.adoc)
 	* [CDI](cdi.adoc)
-	* [JMS](jms.adoc) 
+	* [JMS](jms.adoc)
+	* [Metrics](metrics.adoc) 
 
 <!--
 * [Expession Languages](languages.adoc)
