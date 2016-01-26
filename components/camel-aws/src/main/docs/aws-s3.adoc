@@ -1,0 +1,264 @@
+[[AWS-S3-S3Component]]
+S3 Component
+~~~~~~~~~~~~
+
+*Available as of Camel 2.8*
+
+The S3 component supports storing and retrieving objetcs from/to
+http://aws.amazon.com/s3[Amazon's S3] service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon S3. More information are available at
+http://aws.amazon.com/s3[Amazon S3].
+
+[[AWS-S3-URIFormat]]
+URI Format
+^^^^^^^^^^
+
+[source,java]
+------------------------------
+aws-s3://bucket-name[?options]
+------------------------------
+
+The bucket will be created if it don't already exists. +
+ You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+[[AWS-S3-URIOptions]]
+URI Options
+^^^^^^^^^^^
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Name |Default Value |Context |Description
+
+|amazonS3Client |`null` |Shared |Reference to a `com.amazonaws.services.sqs.AmazonS3` in the
+link:registry.html[Registry].
+
+|accessKey |`null` |Shared |Amazon AWS Access Key
+
+|secretKey |`null` |Shared |Amazon AWS Secret Key
+
+|amazonS3Endpoint |`null` |Shared |The region with which the AWS-S3 client wants to work with.
+
+|region |`null` |Producer |The region who the bucket is located. This option is used in the
+`com.amazonaws.services.s3.model.CreateBucketRequest`.
+
+|deleteAfterRead |`true` |Consumer |Delete objects from S3 after it has been retrieved.
+
+|deleteAfterWrite |`false` |Producer |*Camel 2.11.0* Delete file object after the S3 file has been uploaded
+
+|maxMessagesPerPoll |10 |Consumer |The maximum number of objects which can be retrieved in one poll. Used
+in in the `com.amazonaws.services.s3.model.ListObjectsRequest`.
+
+|policy |`null` |Shared |*Camel 2.8.4*: The policy for this queue to set in the
+`com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method.
+
+|storageClass |`null` |Producer |*Camel 2.8.4*: The storage class to set in the
+`com.amazonaws.services.s3.model.PutObjectRequest` request.
+
+|prefix |`null` |Consumer |*Camel 2.10.1*: The prefix which is used in the
+`com.amazonaws.services.s3.model.ListObjectsRequest` to only consume
+objects we are interested in.
+
+|multiPartUpload |`false` |Producer |*Camel 2.15.0*: If it is true, camel will upload the file with multi
+part format, the part size is decided by the option of `partSize`
+
+|partSize |`25 * 1024 * 1024` |Producer |*Camel 2.15.0*: Setup the partSize which is used in multi part upload,
+the default size is 25M.
+
+|serverSideEncryption |null |Producer |*Camel 2.16:* Sets the server-side encryption algorithm when encrypting
+the object using AWS-managed keys. For example use AES256.
+
+|proxyHost |null |Producer |*Camel 2.16*: Specify a proxy host to be used inside the client
+definition.
+
+|proxyPort |null |Producer |*Camel 2.16*: Specify a proxy port to be used inside the client
+definition.
+|=======================================================================
+
+Required S3 component options
+
+You have to provide the amazonS3Client in the
+link:registry.html[Registry] or your accessKey and secretKey to access
+the http://aws.amazon.com/s3[Amazon's S3].
+
+[[AWS-S3-BatchConsumer]]
+Batch Consumer
+^^^^^^^^^^^^^^
+
+This component implements the link:batch-consumer.html[Batch Consumer].
+
+This allows you for instance to know how many messages exists in this
+batch and for instance let the link:aggregator.html[Aggregator]
+aggregate this number of messages.
+
+[[AWS-S3-Usage]]
+Usage
+^^^^^
+
+[[AWS-S3-MessageheadersevaluatedbytheS3producer]]
+Message headers evaluated by the S3 producer
+++++++++++++++++++++++++++++++++++++++++++++
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsS3Key` |`String` |The key under which this object will be stored.
+
+|`CamelAwsS3ContentLength` |`Long` |The content length of this object.
+
+|`CamelAwsS3ContentType` |`String` |The content type of this object.
+
+|`CamelAwsS3ContentControl` |`String` |*Camel 2.8.2:* The content control of this object.
+
+|`CamelAwsS3ContentDisposition` |`String` |*Camel 2.8.2:* The content disposition of this object.
+
+|`CamelAwsS3ContentEncoding` |`String` |*Camel 2.8.2:* The content encoding of this object.
+
+|`CamelAwsS3ContentMD5` |`String` |*Camel 2.8.2:* The md5 checksum of this object.
+
+|`CamelAwsS3LastModified` |`java.util.Date` |*Camel 2.8.2:* The last modified timestamp of this object.
+
+|`CamelAwsS3StorageClass` |`String` |*Camel 2.8.4:* The storage class of this object.
+
+|`CamelAwsS3CannedAcl` |`String` |*Camel 2.11.0:* The canned acl that will be applied to the object. see
+`com.amazonaws.services.s3.model.CannedAccessControlList` for allowed
+values.
+
+|`CamelAwsS3Acl` |`com.amazonaws.services.s3.model.AccessControlList` |*Camel 2.11.0:* a well constructed Amazon S3 Access Control List object.
+see `com.amazonaws.services.s3.model.AccessControlList` for more details
+
+|`CamelAwsS3Headers` |`Map<String,String>` |*Camel 2.15.0*: support to get or set custom objectMetadata headers.
+
+|CamelAwsS3ServerSideEncryption |String |*Camel 2.16:* Sets the server-side encryption algorithm when encrypting
+the object using AWS-managed keys. For example use AES256.
+|=======================================================================
+
+[[AWS-S3-MessageheaderssetbytheS3producer]]
+Message headers set by the S3 producer
+++++++++++++++++++++++++++++++++++++++
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+|`CamelAwsS3ETag` |`String` |The ETag value for the newly uploaded object.
+
+|`CamelAwsS3VersionId` |`String` |The *optional* version ID of the newly uploaded object.
+
+|=======================================================================
+
+[[AWS-S3-MessageheaderssetbytheS3consumer]]
+Message headers set by the S3 consumer
+++++++++++++++++++++++++++++++++++++++
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsS3Key` |`String` |The key under which this object is stored.
+
+|`CamelAwsS3BucketName` |`String` |The name of the bucket in which this object is contained.
+
+|`CamelAwsS3ETag` |`String` |The hex encoded 128-bit MD5 digest of the associated object according to
+RFC 1864. This data is used as an integrity check to verify that the
+data received by the caller is the same data that was sent by Amazon S3.
+
+|`CamelAwsS3LastModified` |`Date` |The value of the Last-Modified header, indicating the date and time at
+which Amazon S3 last recorded a modification to the associated object.
+
+|`CamelAwsS3VersionId` |`String` |The version ID of the associated Amazon S3 object if available. Version
+IDs are only assigned to objects when an object is uploaded to an Amazon
+S3 bucket that has object versioning enabled.
+
+|`CamelAwsS3ContentType` |`String` |The Content-Type HTTP header, which indicates the type of content stored
+in the associated object. The value of this header is a standard MIME
+type.
+
+|`CamelAwsS3ContentMD5` |`String` |The base64 encoded 128-bit MD5 digest of the associated object (content
+- not including headers) according to RFC 1864. This data is used as a
+message integrity check to verify that the data received by Amazon S3 is
+the same data that the caller sent.
+
+|`CamelAwsS3ContentLength` |`Long` |The Content-Length HTTP header indicating the size of the associated
+object in bytes.
+
+|`CamelAwsS3ContentEncoding` |`String` |The *optional* Content-Encoding HTTP header specifying what content
+encodings have been applied to the object and what decoding mechanisms
+must be applied in order to obtain the media-type referenced by the
+Content-Type field.
+
+|`CamelAwsS3ContentDisposition` |`String` |The *optional* Content-Disposition HTTP header, which specifies
+presentational information such as the recommended filename for the
+object to be saved as.
+
+|`CamelAwsS3ContentControl` |`String` |The *optional* Cache-Control HTTP header which allows the user to
+specify caching behavior along the HTTP request/reply chain.
+
+|CamelAwsS3ServerSideEncryption |String |*Camel 2.16:* The server-side encryption algorithm when encrypting the
+object using AWS-managed keys.
+|=======================================================================
+
+[[AWS-S3-AdvancedAmazonS3configuration]]
+Advanced AmazonS3 configuration
++++++++++++++++++++++++++++++++
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the `AmazonS3` instance configuration, you can
+create your own instance:
+
+[source,java]
+--------------------------------------------------------------------------------------
+AWSCredentials awsCredentials = new BasicAWSCredentials("myAccessKey", "mySecretKey");
+
+ClientConfiguration clientConfiguration = new ClientConfiguration();
+clientConfiguration.setProxyHost("http://myProxyHost");
+clientConfiguration.setProxyPort(8080);
+
+AmazonS3 client = new AmazonS3Client(awsCredentials, clientConfiguration);
+
+registry.bind("client", client);
+--------------------------------------------------------------------------------------
+
+and refer to it in your Camel aws-s3 component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("aws-s3://MyBucket?amazonS3Client=#client&delay=5000&maxMessagesPerPoll=5")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+[[AWS-S3-Dependencies]]
+Dependencies
+^^^^^^^^^^^^
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.8 or higher).
+
+[[AWS-S3-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:aws.html[AWS Component]
+
