@@ -32,6 +32,7 @@ JaxbDataFormat
 JibxDataFormat
 JsonDataFormat
 JsonLibrary
+LZFDataFormat
 MimeMultipartDataFormat
 ProtobufDataFormat
 RssDataFormat
