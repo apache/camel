@@ -20,15 +20,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.maven.model.Resource;
@@ -36,6 +33,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.mvel2.templates.TemplateRuntime;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getValue;
@@ -90,8 +88,10 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
                     ComponentModel model = generateComponentModel(componentName, json);
-                    String component = templateComponent(model);
-                    getLog().info(component);
+                    String header = templateComponentHeader(model);
+                    String options = templateComponentOptions(model);
+                    getLog().info(header);
+                    getLog().info(options);
                 }
             }
         }
@@ -134,9 +134,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
         rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
 
         List<ComponentOptionModel> options = new ArrayList<ComponentOptionModel>();
-        ComponentOptionModel option = new ComponentOptionModel();
         for (Map<String, String> row : rows) {
-            option.setKey(getValue("key", row));
+            ComponentOptionModel option = new ComponentOptionModel();
+            option.setKey(getValue("name", row));
             option.setKind(getValue("kind", row));
             option.setType(getValue("type", row));
             option.setJavaType(getValue("javaType", row));
@@ -144,25 +144,28 @@ public class ReadmeComponentMojo extends AbstractMojo {
             option.setDescription(getValue("description", row));
             options.add(option);
         }
-
         component.setOptions(options);
 
         return component;
     }
 
-    private String templateComponent(ComponentModel model) throws MojoExecutionException {
-
+    private String templateComponentHeader(ComponentModel model) throws MojoExecutionException {
         try {
-            String ftl = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-header.ftl"));
-            Template template = new Template("header", ftl, new Configuration());
-
-            StringWriter buffer = new StringWriter();
-            template.process(model, buffer);
-            buffer.flush();
-
-            return buffer.toString();
+            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-header.mvel"));
+            String out = (String) TemplateRuntime.eval(template, model);
+            return out;
         } catch (Exception e) {
-            throw new MojoExecutionException("Error processing freemarker template. Readon: " + e, e);
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
+    private String templateComponentOptions(ComponentModel model) throws MojoExecutionException {
+        try {
+            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-options.mvel"));
+            String out = (String) TemplateRuntime.eval(template, model);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
         }
     }
 

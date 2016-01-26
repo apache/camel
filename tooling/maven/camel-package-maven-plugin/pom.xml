@@ -44,9 +44,9 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.freemarker</groupId>
-      <artifactId>freemarker</artifactId>
-      <version>${freemarker-version}</version>
+      <groupId>org.mvel</groupId>
+      <artifactId>mvel2</artifactId>
+      <version>${mvel-version}</version>
     </dependency>
 
     <dependency>

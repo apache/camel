@@ -1,10 +1,10 @@
-Welcome to ${title}
+Welcome to @{title}
 
-${description}
+@{description}
 
 The syntax:
 
-    ${syntax}
+    @{syntax}
 
 Maven users would need to add dependency:
 
@@ -17,6 +17,4 @@ Maven users would need to add dependency:
 ```
 
 Some more bla bla
-
-There are ${this.options} options which are listed below
 
