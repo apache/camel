@@ -1177,10 +1177,31 @@ public class DefaultCamelCatalog implements CamelCatalog {
         Map<String, Object> parameters = URISupport.parseParameters(u);
 
         // and covert the values to String so its JMX friendly
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+        while (!parameters.isEmpty()) {
+            Map.Entry<String, Object> entry = parameters.entrySet().iterator().next();
             String key = entry.getKey();
             String value = entry.getValue() != null ? entry.getValue().toString() : "";
+
+            boolean multiValued = isPropertyMultiValue(rows, key);
+            if (multiValued) {
+                String prefix = getPropertyPrefix(rows, key);
+                // extra all the multi valued options
+                Map<String, Object> values = URISupport.extractProperties(parameters, prefix);
+                // build a string with the extra multi valued options with the prefix and & as separator
+                CollectionStringBuffer csb = new CollectionStringBuffer("&");
+                for (Map.Entry<String, Object> multi : values.entrySet()) {
+                    String line = prefix + multi.getKey() + "=" + (multi.getValue() != null ? multi.getValue().toString() : "");
+                    csb.append(line);
+                }
+                // append the extra multi-values to the existing (which contains the first multi value)
+                if (!csb.isEmpty()) {
+                    value = value + "&" + csb.toString();
+                }
+            }
+
             answer.put(key, value);
+            // remove the parameter as we run in a while loop until no more parameters
+            parameters.remove(key);
         }
 
         return answer;

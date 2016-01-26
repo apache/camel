@@ -393,6 +393,16 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testEndpointPropertiesMultiValued() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("http:helloworld?httpClientOptions=httpClient.foo=123&httpClient.bar=456");
+        assertNotNull(map);
+        assertEquals(2, map.size());
+
+        assertEquals("helloworld", map.get("httpUri"));
+        assertEquals("httpClient.foo=123&httpClient.bar=456", map.get("httpClientOptions"));
+    }
+
+    @Test
     public void testEndpointPropertiesSshWithUserInfo() throws Exception {
         Map<String, String> map = catalog.endpointProperties("ssh:localhost:8101?username=scott&password=tiger");
         assertNotNull(map);
