@@ -58,12 +58,14 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     private final boolean skipBindingOnErrorCode;
     private final boolean enableCORS;
     private final Map<String, String> corsHeaders;
+    private final Map<String, String> queryDefaultValues;
 
     public RestBindingProcessor(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                                 DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
                                 String consumes, String produces, String bindingMode,
                                 boolean skipBindingOnErrorCode, boolean enableCORS,
-                                Map<String, String> corsHeaders) {
+                                Map<String, String> corsHeaders,
+                                Map<String, String> queryDefaultValues) {
 
         this.camelContext = camelContext;
 
@@ -99,6 +101,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
         this.enableCORS = enableCORS;
         this.corsHeaders = corsHeaders;
+        this.queryDefaultValues = queryDefaultValues;
     }
 
     @Override
@@ -160,6 +163,15 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             }
         }
 
+        // add missing default values which are mapped as headers
+        if (queryDefaultValues != null) {
+            for (Map.Entry<String, String> entry : queryDefaultValues.entrySet()) {
+                if (exchange.getIn().getHeader(entry.getKey()) == null) {
+                    exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
         // favor json over xml
         if (isJson && jsonUnmarshal != null) {
             // add reverse operation
@@ -182,7 +194,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         }
 
         // we could not bind
-        if (bindingMode == null || "off".equals(bindingMode) || bindingMode.equals("auto")) {
+        if ("off".equals(bindingMode) || bindingMode.equals("auto")) {
             // okay for auto we do not mind if we could not bind
             exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false, accept));
             callback.done(true);

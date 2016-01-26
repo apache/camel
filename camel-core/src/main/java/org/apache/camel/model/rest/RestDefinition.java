@@ -642,6 +642,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setEnableCORS(getEnableCORS());
             }
+            // register all the default values for the query parameters
+            for (RestOperationParamDefinition param : verb.getParams()) {
+                if (RestParamType.query == param.getType() && param.getDefaultValue() != null) {
+                    binding.addDefaultValue(param.getName(), param.getDefaultValue());
+                }
+            }
+
             route.getOutputs().add(0, binding);
 
             // create the from endpoint uri which is using the rest component
