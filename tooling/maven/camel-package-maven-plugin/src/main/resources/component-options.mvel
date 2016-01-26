@@ -1,8 +1,8 @@
 ### Component options
 
-The @{title} component supports @{options.size()} options which are listed below:
+The @{title} component supports @{componentOptions.size()} options which are listed below.
 
 | Key | Description |
 | --- | ----------- |
-@foreach{row : options}| @{row.key} | @{row.description} |
+@foreach{row : componentOptions}| @{row.name} | @{row.description} |
 @end{}

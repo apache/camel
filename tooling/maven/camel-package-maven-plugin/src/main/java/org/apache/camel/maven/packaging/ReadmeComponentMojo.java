@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,19 +28,21 @@ import java.util.TreeSet;
 
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
+import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+
 import org.mvel2.templates.TemplateRuntime;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.JSonSchemaHelper.getValue;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
 /**
- * Generate or updates the component readme.md file in the project root directort.
+ * Generate or updates the component readme.md file in the project root directory.
  *
  * @goal update-readme
  */
@@ -90,8 +92,10 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     ComponentModel model = generateComponentModel(componentName, json);
                     String header = templateComponentHeader(model);
                     String options = templateComponentOptions(model);
+                    String options2 = templateEndpointOptions(model);
                     getLog().info(header);
                     getLog().info(options);
+                    getLog().info(options2);
                 }
             }
         }
@@ -118,33 +122,52 @@ public class ReadmeComponentMojo extends AbstractMojo {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
 
         ComponentModel component = new ComponentModel();
-        component.setScheme(getValue("scheme", rows));
-        component.setSyntax(getValue("syntax", rows));
-        component.setTitle(getValue("title", rows));
-        component.setDescription(getValue("description", rows));
-        component.setLabel(getValue("label", rows));
-        component.setDeprecated(getValue("deprecated", rows));
-        component.setConsumerOnly(getValue("consumerOnly", rows));
-        component.setProducerOnly(getValue("producerOnly", rows));
-        component.setJavaType(getValue("javaType", rows));
-        component.setGroupId(getValue("groupId", rows));
-        component.setArtifactId(getValue("artifactId", rows));
-        component.setVersion(getValue("version", rows));
+        component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
+        component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
+        component.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        component.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        component.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        component.setConsumerOnly(JSonSchemaHelper.getSafeValue("consumerOnly", rows));
+        component.setProducerOnly(JSonSchemaHelper.getSafeValue("producerOnly", rows));
+        component.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
+        component.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
+        component.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
+        component.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
 
         rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-
-        List<ComponentOptionModel> options = new ArrayList<ComponentOptionModel>();
+        List<ComponentOptionModel> componentOptions = new ArrayList<ComponentOptionModel>();
         for (Map<String, String> row : rows) {
             ComponentOptionModel option = new ComponentOptionModel();
-            option.setKey(getValue("name", row));
-            option.setKind(getValue("kind", row));
-            option.setType(getValue("type", row));
-            option.setJavaType(getValue("javaType", row));
-            option.setDeprecated(getValue("javaType", row));
-            option.setDescription(getValue("description", row));
-            options.add(option);
+            option.setName(getSafeValue("name", row));
+            option.setKind(getSafeValue("kind", row));
+            option.setType(getSafeValue("type", row));
+            option.setJavaType(getSafeValue("javaType", row));
+            option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDescription(getSafeValue("description", row));
+            componentOptions.add(option);
         }
-        component.setOptions(options);
+        component.setComponentOptions(componentOptions);
+
+        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        List<EndpointOptionModel> endpointOptions = new ArrayList<EndpointOptionModel>();
+        for (Map<String, String> row : rows) {
+            EndpointOptionModel option = new EndpointOptionModel();
+            option.setName(getSafeValue("name", row));
+            option.setKind(getSafeValue("kind", row));
+            option.setGroup(getSafeValue("group", row));
+            option.setRequired(getSafeValue("required", row));
+            option.setType(getSafeValue("type", row));
+            option.setJavaType(getSafeValue("javaType", row));
+            option.setEnums(getSafeValue("enum", row));
+            option.setPrefix(getSafeValue("prefix", row));
+            option.setMultiValue(getSafeValue("multiValue", row));
+            option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
+            option.setDescription(getSafeValue("description", row));
+            endpointOptions.add(option);
+        }
+        component.setEndpointOptions(endpointOptions);
 
         return component;
     }
@@ -162,6 +185,16 @@ public class ReadmeComponentMojo extends AbstractMojo {
     private String templateComponentOptions(ComponentModel model) throws MojoExecutionException {
         try {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-options.mvel"));
+            String out = (String) TemplateRuntime.eval(template, model);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
+    private String templateEndpointOptions(ComponentModel model) throws MojoExecutionException {
+        try {
+            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("endpoint-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {

@@ -16,13 +16,19 @@
  */
 package org.apache.camel.maven.packaging.model;
 
-public class ComponentOptionModel {
+public class EndpointOptionModel {
 
     private String name;
     private String kind;
+    private String group;
+    private String required;
     private String type;
     private String javaType;
+    private String enums;
+    private String prefix;
+    private String multiValue;
     private String deprecated;
+    private String defaultValue;
     private String description;
 
     public String getName() {
@@ -41,6 +47,22 @@ public class ComponentOptionModel {
         this.kind = kind;
     }
 
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getRequired() {
+        return required;
+    }
+
+    public void setRequired(String required) {
+        this.required = required;
+    }
+
     public String getType() {
         return type;
     }
@@ -57,12 +79,44 @@ public class ComponentOptionModel {
         this.javaType = javaType;
     }
 
+    public String getEnums() {
+        return enums;
+    }
+
+    public void setEnums(String enums) {
+        this.enums = enums;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getMultiValue() {
+        return multiValue;
+    }
+
+    public void setMultiValue(String multiValue) {
+        this.multiValue = multiValue;
+    }
+
     public String getDeprecated() {
         return deprecated;
     }
 
     public void setDeprecated(String deprecated) {
         this.deprecated = deprecated;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     public String getDescription() {
