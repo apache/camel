@@ -73,6 +73,7 @@
 	* [AHC Websocket (AHC-WS)](ahc-ws.adoc)
 	* [Amqp](amqp.adoc)
 	* [Apns](apns.adoc)
+	* [Atmosphere Websocket](atmosphere-websocket.adoc)
 	* [Atom](atom.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc) 
