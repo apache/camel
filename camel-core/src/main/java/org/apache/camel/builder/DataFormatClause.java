@@ -41,6 +41,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
@@ -270,6 +271,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         IcalDataFormat ical = new IcalDataFormat();
         ical.setValidating(validating);
         return dataFormat(ical);
+    }
+
+    /**
+     * Uses the LZF deflater data format
+     */
+    public T lzf() {
+        LZFDataFormat lzfdf = new LZFDataFormat();
+        return dataFormat(lzfdf);
     }
 
     /**
