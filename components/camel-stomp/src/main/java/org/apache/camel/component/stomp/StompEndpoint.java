@@ -80,11 +80,14 @@ public class StompEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        final Promise<CallbackConnection> promise = new Promise<CallbackConnection>();
+        final Promise<CallbackConnection> promise = new Promise<>();
 
         stomp = new Stomp(configuration.getBrokerURL());
         stomp.setLogin(configuration.getLogin());
         stomp.setPasscode(configuration.getPasscode());
+        if (configuration.getSslContextParameters() != null) {
+            stomp.setSslContext(configuration.getSslContextParameters().createSSLContext());
+        }
         stomp.connectCallback(promise);
         if (configuration.getHost() != null && !configuration.getHost().isEmpty()) {
             stomp.setHost(configuration.getHost());
