@@ -34,6 +34,7 @@ import io.swagger.models.RefModel;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
+import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.HeaderParameter;
@@ -220,6 +221,14 @@ public class RestSwaggerReader {
                         }
                         if (param.getAllowableValues() != null) {
                             sp.setEnum(param.getAllowableValues());
+                        }
+                    }
+
+                    // set default value on parameter
+                    if (parameter instanceof AbstractSerializableParameter) {
+                        AbstractSerializableParameter qp = (AbstractSerializableParameter) parameter;
+                        if (param.getDefaultValue() != null) {
+                            qp.setDefaultValue(param.getDefaultValue());
                         }
                     }
 
