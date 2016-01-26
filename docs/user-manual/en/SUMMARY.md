@@ -72,6 +72,7 @@
 	* [Async Http Client (AHC)](ahc.adoc)
 	* [AHC Websocket (AHC-WS)](ahc-ws.adoc)
 	* [Amqp](amqp.adoc)
+	* [Apns](apns.adoc)
 	* [Atom](atom.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc) 
