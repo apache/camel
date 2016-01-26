@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,23 @@ public final class URISupport {
      */
     public static URI normalizeUri(String uri) throws URISyntaxException {
         return new URI(UnsafeUriCharactersEncoder.encode(uri, true));
+    }
+
+    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
+        Map<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
+
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Object> entry = it.next();
+            String name = entry.getKey();
+            if (name.startsWith(optionPrefix)) {
+                Object value = properties.get(name);
+                name = name.substring(optionPrefix.length());
+                rc.put(name, value);
+                it.remove();
+            }
+        }
+
+        return rc;
     }
 
     /**
