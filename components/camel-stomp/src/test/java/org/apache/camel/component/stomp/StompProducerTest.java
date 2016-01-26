@@ -42,7 +42,7 @@ public class StompProducerTest extends StompBaseTest {
         context.addRoutes(createRouteBuilder());
         context.start();
 
-        Stomp stomp = new Stomp("tcp://localhost:" + getPort());
+        Stomp stomp = createStompClient();
         final BlockingConnection subscribeConnection = stomp.connectBlocking();
 
         StompFrame frame = new StompFrame(SUBSCRIBE);
