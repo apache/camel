@@ -75,6 +75,7 @@
 	* [Apns](apns.adoc)
 	* [Atmosphere Websocket](atmosphere-websocket.adoc)
 	* [Atom](atom.adoc)
+	* [Avro](avro.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc) 
 
