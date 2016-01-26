@@ -283,7 +283,7 @@ public class RestEndpoint extends DefaultEndpoint {
             }
 
             // there may be an optional context path configured to help Camel calculate the correct urls for the REST services
-            // this may be needed when using camel-serlvet where we cannot get the actual context-path or port number of the servlet engine
+            // this may be needed when using camel-servlet where we cannot get the actual context-path or port number of the servlet engine
             // during init of the servlet
             String contextPath = config.getContextPath();
             if (contextPath != null) {
