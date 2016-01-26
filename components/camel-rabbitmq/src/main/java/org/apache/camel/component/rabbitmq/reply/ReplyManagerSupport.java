@@ -110,6 +110,15 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     protected abstract ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                                        String originalCorrelationId, String correlationId, long requestTimeout);
+    
+
+    public void cancelCorrelationId(String correlationId) {
+        ReplyHandler handler = correlation.get(correlationId);
+        if (handler != null) {
+            log.warn("Cancelling correlationID: {}", correlationId);
+            correlation.remove(correlationId);
+        }
+    }
 
     public void onMessage(AMQP.BasicProperties properties, byte[] message) {
         String correlationID = properties.getCorrelationId();
