@@ -94,6 +94,7 @@
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
 	* [SJMS](sjms.adoc) 
+	* [SJMS Batch](sjms-batch.adoc) 
 
 <!--
 * [Expession Languages](languages.adoc)
