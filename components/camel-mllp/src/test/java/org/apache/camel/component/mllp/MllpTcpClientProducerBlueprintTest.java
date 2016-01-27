@@ -37,7 +37,7 @@ import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSupport {
     @Rule
-    public MllpServerResource mllpServer = new MllpServerResource(AvailablePortFinder.getNextAvailable());
+    public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
 
     final String sourceUri = "direct://source";
     final String mockAcknowledgedUri = "mock://acknowledged";
