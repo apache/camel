@@ -125,13 +125,16 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
             String existing = StringHelper.between(text, "//// endpoint options: START", "//// endpoint options: END");
             if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
                 if (existing.equals(changed)) {
                     getLog().info("No changes to file: " + file);
                 } else {
                     getLog().info("Updating file: " + file);
                     String before = StringHelper.before(text, "//// endpoint options: START");
                     String after = StringHelper.after(text, "//// endpoint options: END");
-                    text = before + changed + after;
+                    text = before + "//// endpoint options: START\n" + changed + "//// endpoint options: END\n" + after;
                     writeText(file, text);
                 }
             } else {
