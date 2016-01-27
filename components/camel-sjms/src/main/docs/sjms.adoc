@@ -33,8 +33,6 @@ S stands for Simple and Standard and Springless. Also camel-jms was
 already taken. icon:smile-o[2x]
 ====
 
- 
-
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -100,12 +98,12 @@ to endpoints started under this component
 |icon:check[]
 |`null` |A
 http://docs.oracle.com/javaee/5/api/javax/jms/ConnectionFactory.html[ConnectionFactory]
-is required to enable the SjmsComponent. It can be set directly or set
-set as part of a ConnectionResource.
+is required to enable the `SjmsComponent`. It can be set directly or set
+set as part of a `ConnectionResource`.
 
-|`connectionResource` |  |`null` |A ConnectionResource is an interface
+|`connectionResource` |  |`null` |A `ConnectionResource` is an interface
 that allows for customization and container control of the
-ConnectionFactory. See link:sjms.html[Plugable Connection Resource
+`ConnectionFactory`. See link:sjms.html[Plugable Connection Resource
 Management] for further details.
 
 |`headerFilterStrategy` |  |`DefaultJmsKeyFormatStrategy` | 
@@ -121,23 +119,23 @@ safely marshal dots and hyphens (`.` and `-`).
 The `passthrough` strategy leaves the key as is. Can be used for JMS
 brokers which do not care whether JMS header keys contain illegal
 characters. You can provide your own implementation of
-the`org.apache.camel.component.jms.JmsKeyFormatStrategy` and refer to it
+the `org.apache.camel.component.jms.JmsKeyFormatStrategy` and refer to it
 using the `#` notation.
 
 |`transactionCommitStrategy` |  |`null` | 
 
 |`DestinationCreationStrategy` |  |`DefaultDestinationCreationStrategy`
-|**Camel 2.15.0**: Support to set the custom DestinationCreationStrategy
+|**Camel 2.15.0**: Support to set the custom `DestinationCreationStrategy`
 on the SJMS Component.
 
 |`messageCreatedStrategy` |  |  |*Camel 2.16:* To use the given
-MessageCreatedStrategy which are invoked when Camel creates new
-instances of javax.jms.Message objects when Camel is sending a JMS
+`MessageCreatedStrategy` which are invoked when Camel creates new
+instances of `javax.jms.Message` objects when Camel is sending a JMS
 message.
 |=======================================================================
 
-Below is an example of how to configure the SjmsComponent with its
-required ConnectionFactory provider. It will create a single connection
+Below is an example of how to configure the `SjmsComponent` with its
+required `ConnectionFactory` provider. It will create a single connection
 by default and store it using the components internal pooling APIs to
 ensure that it is able to service Session creation requests in a thread
 safe manner.
@@ -149,9 +147,9 @@ component.setConnectionFactory(new ActiveMQConnectionFactory("tcp://localhost:61
 getContext().addComponent("sjms", component);
 ----
 
-For a SjmsComponent that is required to support a durable subscription,
-you can override the default ConnectionFactoryResource instance and set
-the *clientId* property.
+For a SJMS component that is required to support a durable subscription,
+you can override the default `ConnectionFactoryResource` instance and set
+the `clientId` property.
 
 [source,java]
 ----
@@ -168,7 +166,7 @@ component.setMaxConnections(1);
 Producer Configuration Options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The SjmsProducer Endpoint supports the following properties:
+The SJMS producer endpoint supports the following properties:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -248,7 +246,7 @@ Producer Usage
 InOnly Producer - (Default)
 +++++++++++++++++++++++++++
 
-The InOnly Producer is the default behavior of the SJMS Producer
+The _InOnly_ producer is the default behavior of the SJMS Producer
 Endpoint.
 
 [source,java]
@@ -261,7 +259,7 @@ from("direct:start")
 InOut Producer
 ++++++++++++++
 
-To enable InOut behavior append the `exchangePattern` attribute to the
+To enable _InOut_ behavior append the `exchangePattern` attribute to the
 URI. By default it will use a dedicated TemporaryQueue for each
 consumer.
 
@@ -284,7 +282,7 @@ from("direct:start")
 Consumers Configuration Options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The SjmsConsumer Endpoint supports the following properties:
+The SJMS consumer endpoint supports the following properties:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -295,7 +293,7 @@ name, which is one of: `TRANSACTED`, `AUTO_ACKNOWLEDGE` or
 time.
 
 |`consumerCount` |`1` |Defines the number of
-http://docs.oracle.com/javaee/5/api/javax/jms/MessageListener.html[MessageListener]
+http://docs.oracle.com/javaee/5/api/javax/jms/MessageListener.html[`MessageListener`]
 instances.
 
 |`durableSubscriptionId` |`null` |Required for a durable subscriptions.
@@ -330,7 +328,7 @@ Consumer Usage
 InOnly Consumer - (Default)
 +++++++++++++++++++++++++++
 
-The InOnly Consumer is the default Exchange behavior of the SJMS
+The _InOnly_ xonsumer is the default Exchange behavior of the SJMS
 Consumer Endpoint.
 
 [source,java]
@@ -343,7 +341,7 @@ from("sjms:queue:bar")
 InOut Consumer
 ++++++++++++++
 
-To enable InOut behavior append the `exchangePattern` attribute to the
+To enable _InOut_ behavior append the `exchangePattern` attribute to the
 URI.
 
 [source,java]
@@ -361,33 +359,33 @@ Plugable Connection Resource Management [[SJMS-connectionresource]]
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 SJMS provides JMS
-http://docs.oracle.com/javaee/5/api/javax/jms/Connection.html[Connection]
+http://docs.oracle.com/javaee/5/api/javax/jms/Connection.html[`Connection`]
 resource management through built-in connection pooling. This eliminates
 the need to depend on third party API pooling logic. However there may
 be times that you are required to use an external Connection resource
 manager such as those provided by J2EE or OSGi containers. For this SJMS
 provides an interface that can be used to override the internal SJMS
 Connection pooling capabilities. This is accomplished through the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/jms/ConnectionResource.java[ConnectionResource]
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/jms/ConnectionResource.java[`ConnectionResource`]
 interface.
 
 The
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/jms/ConnectionResource.java[ConnectionResource]
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/jms/ConnectionResource.java[`ConnectionResource`]
 provides methods for borrowing and returning Connections as needed is
 the contract used to provide
-http://docs.oracle.com/javaee/5/api/javax/jms/Connection.html[Connection]
+http://docs.oracle.com/javaee/5/api/javax/jms/Connection.html[`Connection`]
 pools to the SJMS component. A user should use when it is necessary to
 integrate SJMS with an external connection pooling manager.
 
 It is recommended though that for standard
-http://docs.oracle.com/javaee/5/api/javax/jms/ConnectionFactory.html[ConnectionFactory]
+http://docs.oracle.com/javaee/5/api/javax/jms/ConnectionFactory.html[`ConnectionFactory`]
 providers you use the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/test/java/org/apache/camel/component/sjms/it/ConnectionResourceIT.java[ConnectionFactoryResource]
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/test/java/org/apache/camel/component/sjms/it/ConnectionResourceIT.java[`ConnectionFactoryResource`]
 implementation that is provided with SJMS as-is or extend as it is
 optimized for this component.
 
-Below is an example of using the pluggable ConnectionResource with the
-ActiveMQ PooledConnectionFactory:
+Below is an example of using the plugable ConnectionResource with the
+ActiveMQ `PooledConnectionFactory`:
 
 [source,java]
 ----
@@ -426,7 +424,7 @@ public class AMQConnectionResource implements ConnectionResource {
 }
 ----
 
-Then pass in the ConnectionResource to the SjmsComponent:
+Then pass in the `ConnectionResource` to the `SjmsComponent`:
 
 [source,java]
 ----
@@ -438,7 +436,7 @@ camelContext.addComponent("sjms", component);
 ----
 
 To see the full example of its usage please refer to the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/test/java/org/apache/camel/component/sjms/it/ConnectionResourceIT.java[ConnectionResourceIT].
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/test/java/org/apache/camel/component/sjms/it/ConnectionResourceIT.java[`ConnectionResourceIT`].
 
 [[SJMS-Session,Consumer,&ProducerPooling&CachingManagement]]
 Session, Consumer, & Producer Pooling & Caching Management
@@ -451,18 +449,18 @@ Batch Message Support
 +++++++++++++++++++++
 
 The SjmsProducer supports publishing a collection of messages by
-creating an Exchange that encapsulates a List. This SjmsProducer will
+creating an Exchange that encapsulates a `List`. This SjmsProducer will
 take then iterate through the contents of the List and publish each
 message individually.
 
 If when producing a batch of messages there is the need to set headers
 that are unique to each message you can use the SJMS
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/BatchMessage.java[BatchMessage]
-class. When the SjmsProducer encounters a BatchMessage List it will
-iterate each BatchMessage and publish the included payload and headers.
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/BatchMessage.java[`BatchMessage`]
+class. When the SjmsProducer encounters a `BatchMessage` list it will
+iterate each `BatchMessage` and publish the included payload and headers.
 
 Below is an example of using the BatchMessage class. First we create a
-List of BatchMessages:
+list of `BatchMessage`:
 
 [source,java]
 ----
@@ -474,7 +472,7 @@ for (int i = 1; i <= messageCount; i++) {
 }
 ----
 
-Then publish the List:
+Then publish the list:
 
 [source,java]
 ----
@@ -487,24 +485,24 @@ Customizable Transaction Commit Strategies (Local JMS Transactions only)
 
 SJMS provides a developer the means to create a custom and plugable
 transaction strategy through the use of the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/TransactionCommitStrategy.java[TransactionCommitStrategy]
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/TransactionCommitStrategy.java[`TransactionCommitStrategy`]
 interface. This allows a user to define a unique set of circumstances
 that the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/tx/SessionTransactionSynchronization.java[SessionTransactionSynchronization]
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/tx/SessionTransactionSynchronization.java[`SessionTransactionSynchronization`]
 will use to determine when to commit the Session. An example of its use
 is the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/tx/BatchTransactionCommitStrategy.java[BatchTransactionCommitStrategy]
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/tx/BatchTransactionCommitStrategy.java[`BatchTransactionCommitStrategy`]
 which is detailed further in the next section.
 
 [[SJMS-TransactedBatchConsumersAndProducers]]
 Transacted Batch Consumers & Producers
 ++++++++++++++++++++++++++++++++++++++
 
-The SjmsComponent has been designed to support the batching of local JMS
+The SJMS component has been designed to support the batching of local JMS
 transactions on both the Producer and Consumer endpoints. How they are
 handled on each is very different though.
 
-The SjmsConsumer endpoint is a straitforward implementation that will
+The SJMS consumer endpoint is a straightforward implementation that will
 process X messages before committing them with the associated Session.
 To enable batched transaction on the consumer first enable transactions
 by setting the `transacted` parameter to true and then adding the
@@ -520,7 +518,7 @@ sjms:queue:transacted.batch.consumer?transacted=true&transactionBatchCount=10
 If an exception occurs during the processing of a batch on the consumer
 endpoint, the Session rollback is invoked causing the messages to be
 redelivered to the next available consumer. The counter is also reset to
-0 for the BatchTransactionCommitStrategy for the associated Session as
+0 for the `BatchTransactionCommitStrategy` for the associated Session as
 well. It is the responsibility of the user to ensure they put hooks in
 their processors of batch messages to watch for messages with the
 JMSRedelivered header set to true. This is the indicator that messages
@@ -581,23 +579,23 @@ The SJMS Component uses the same header format strategy that is used in
 the Camel JMS Component. This plugable strategy ensures that messages
 sent over the wire conform to the JMS Message spec.
 
-For the exchange.in.header the following rules apply for the header
+For the `exchange.in.header` the following rules apply for the header
 keys:
 
-Keys starting with JMS or JMSX are reserved. +
-exchange.in.headers keys must be literals and all be valid Java
-identifiers (do not use dots in the key name). +
-Camel replaces dots & hyphens and the reverse when when consuming JMS
+* Keys starting with `JMS` or `JMSX` are reserved.
+* `exchange.in.headers` keys must be literals and all be valid Java
+identifiers (do not use dots in the key name).
+* Camel replaces dots & hyphens and the reverse when when consuming JMS
 messages:
 
-* is replaced by _DOT_ and the reverse replacement when Camel consumes
+** is replaced by _DOT_ and the reverse replacement when Camel consumes
 the message.
-* is replaced by _HYPHEN_ and the reverse replacement when Camel
+** is replaced by _HYPHEN_ and the reverse replacement when Camel
 consumes the message. +
-See also the option jmsKeyFormatStrategy, which allows use of your own
+See also the option `jmsKeyFormatStrategy`, which allows use of your own
 custom strategy for formatting keys.
 
-For the exchange.in.header, the following rules apply for the header
+For the `exchange.in.header`, the following rules apply for the header
 values:
 
 [[SJMS-MessageContent]]
@@ -607,29 +605,29 @@ Message Content
 To deliver content over the wire we must ensure that the body of the
 message that is being delivered adheres to the JMS Message
 Specification. Therefore, all that are produced must either be
-primitives or their counter objects (such as Integer, Long, Character).
-The types, String, CharSequence, Date, BigDecimal and BigInteger are all
-converted to their toString() representation. All other types are
+primitives or their counter objects (such as `Integer`, `Long`, `Character`).
+The types, `String`, `CharSequence`, `Date`, `BigDecimal` and `BigInteger` are all
+converted to their `toString()` representation. All other types are
 dropped.
 
 [[SJMS-Clustering]]
 Clustering
 ++++++++++
 
-When using InOut with SJMS in a clustered environment you must either
+When using _InOut_ with SJMS in a clustered environment you must either
 use TemporaryQueue destinations or use a unique named reply to
 destination per InOut producer endpoint. Message correlation is handled
 by the endpoint, not with message selectors at the broker. The InOut
 Producer Endpoint uses Java Concurrency Exchangers cached by the Message
-JMSCorrelationID. This provides a nice performance increase while
+`JMSCorrelationID`. This provides a nice performance increase while
 reducing the overhead on the broker since all the messages are consumed
 from the destination in the order they are produced by the interested
 consumer.
 
-Currently the only correlation strategy is to use the JMSCorrelationId.
-The InOut Consumer uses this strategy as well ensuring that all
-responses messages to the included JMSReplyTo destination also have the
-JMSCorrelationId copied from the request as well.
+Currently the only correlation strategy is to use the `JMSCorrelationId`.
+The _InOut_ Consumer uses this strategy as well ensuring that all
+responses messages to the included `JMSReplyTo` destination also have the
+`JMSCorrelationId` copied from the request as well.
 
 [[SJMS-TransactionSupporttransactions]]
 Transaction Support [[SJMS-transactions]]
