@@ -9,6 +9,7 @@
 	* [Exchange](exchange.adoc)
 	* [Exchange Pattern](exchange-pattern.adoc)
 	* [Registry](registry.adoc)
+	* [RX](rx.adoc)
 
 <!--
 	* [Dozer Type Conversion](dozer-type-conversion.adoc)
@@ -52,7 +53,6 @@
 	* [Security](.adoc)
 	* [UuidGenerator](.adoc)
 	* [Binding](.adoc)
-	* [RX](.adoc)
 	* [CEP](.adoc)
 	* [BacklogTracer](.adoc)
 	* [Endpoint Annotations](.adoc)
