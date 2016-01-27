@@ -77,19 +77,30 @@ The AHC component supports 12 endpoint options which are listed below:
 AhcComponent Options
 ^^^^^^^^^^^^^^^^^^^^
 
-[width="100%",cols="10%,10%,80%",options="header",]
+
+
+
+
+
+// component options: START
+The AHC component supports 6 options which are listed below.
+
+
+[width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
-|Name |Default Value |Description
-|`client` |`null` |To use a custom `com.ning.http.client.AsyncHttpClient`.
-|`clientConfig` |`null` |To configure the `AsyncHttpClient` to use a custom
-`com.ning.http.client.AsyncHttpClientConfig`.
-|`binding` |`null` |To use a custom `org.apache.camel.component.ahc.AhcBinding`.
-|`sslContextParameters` |`null` |*Camel 2.9:* To configure custom SSL/TLS configuration options at the
-component level.  See  link:ahc.html[Using the JSSE Configuration
-Utility] for more details.  Note that configuring this option will
-override any SSL/TLS configuration options provided through the
-clientConfig option at the endpoint or component level.
+| Name | Java Type | Description
+| client | AsyncHttpClient | To use a custom AsyncHttpClient
+| binding | AhcBinding | To use a custom AhcBinding which allows to control how to bind between AHC and Camel.
+| clientConfig | AsyncHttpClientConfig | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
+| sslContextParameters | SSLContextParameters | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level.
+| allowJavaSerializedObject | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+| headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
+// component options: END
+
+
+
+
 
 
 Notice that setting any of the options on the `AhcComponent` will

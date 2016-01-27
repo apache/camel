@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ComponentModel {
@@ -34,8 +35,8 @@ public class ComponentModel {
     private String groupId;
     private String artifactId;
     private String version;
-    private List<ComponentOptionModel> componentOptions;
-    private List<EndpointOptionModel> endpointOptions;
+    private final List<ComponentOptionModel> componentOptions = new ArrayList<ComponentOptionModel>();
+    private final List<EndpointOptionModel> endpointOptions = new ArrayList<EndpointOptionModel>();
 
     public String getKind() {
         return kind;
@@ -153,16 +154,16 @@ public class ComponentModel {
         return componentOptions;
     }
 
-    public void setComponentOptions(List<ComponentOptionModel> componentOptions) {
-        this.componentOptions = componentOptions;
+    public void addComponentOption(ComponentOptionModel option) {
+        componentOptions.add(option);
     }
 
     public List<EndpointOptionModel> getEndpointOptions() {
         return endpointOptions;
     }
 
-    public void setEndpointOptions(List<EndpointOptionModel> endpointOptions) {
-        this.endpointOptions = endpointOptions;
+    public void addEndpointOption(EndpointOptionModel option) {
+        endpointOptions.add(option);
     }
 
     public String getShortJavaType() {

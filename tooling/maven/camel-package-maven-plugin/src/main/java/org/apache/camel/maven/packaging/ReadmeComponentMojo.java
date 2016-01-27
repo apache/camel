@@ -18,7 +18,6 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,33 +90,69 @@ public class ReadmeComponentMojo extends AbstractMojo {
         // only if there is components we should update the documentation files
         if (!componentNames.isEmpty()) {
             getLog().info("Found " + componentNames.size() + " components");
-
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
-
-                    // file
                     File file = new File(docDir, componentName + ".adoc");
-
                     ComponentModel model = generateComponentModel(componentName, json);
-                    String header = templateComponentHeader(model);
-                    String options = templateComponentOptions(model);
-                    String options2 = templateEndpointOptions(model);
 
-//                    getLog().info(header);
-//                    getLog().info(options);
-//                    getLog().info(options2);
+                    boolean updated = false;
+                    if (model.getComponentOptions() != null) {
+                        String options = templateComponentOptions(model);
+                        updated |= updateComponentOptions(file, options);
+                    }
+                    if (model.getEndpointOptions() != null) {
+                        String options = templateEndpointOptions(model);
+                        updated |= updateEndpointOptions(file, options);
+                    }
 
-                    // update the endpoint options
-                    updateEndpointOptions(file, options2);
+                    if (updated) {
+                        getLog().info("Updated file: " + file);
+                    } else {
+                        getLog().info("No changes to file: " + file);
+                    }
                 }
             }
         }
     }
 
-    private void updateEndpointOptions(File file, String changed) throws MojoExecutionException {
+    private boolean updateComponentOptions(File file, String changed) throws MojoExecutionException {
         if (!file.exists()) {
-            return;
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "// component options: START", "// component options: END");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "// component options: START");
+                    String after = StringHelper.after(text, "// component options: END");
+                    text = before + "\n// component options: START\n" + changed + "\n// component options: END\n" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t// component options: START");
+                getLog().warn("\t// component options: END");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
+    private boolean updateEndpointOptions(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
         }
 
         try {
@@ -129,19 +164,20 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 existing = existing.trim();
                 changed = changed.trim();
                 if (existing.equals(changed)) {
-                    getLog().info("No changes to file: " + file);
+                    return false;
                 } else {
-                    getLog().info("Updating file: " + file);
                     String before = StringHelper.before(text, "// endpoint options: START");
                     String after = StringHelper.after(text, "// endpoint options: END");
                     text = before + "\n// endpoint options: START\n" + changed + "\n// endpoint options: END\n" + after;
                     writeText(file, text);
+                    return true;
                 }
             } else {
                 getLog().warn("Cannot find markers in file " + file);
                 getLog().warn("Add the following markers");
                 getLog().warn("\t// endpoint options: START");
                 getLog().warn("\t// endpoint options: END");
+                return false;
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
@@ -184,7 +220,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
         component.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
 
         rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-        List<ComponentOptionModel> componentOptions = new ArrayList<ComponentOptionModel>();
         for (Map<String, String> row : rows) {
             ComponentOptionModel option = new ComponentOptionModel();
             option.setName(getSafeValue("name", row));
@@ -193,12 +228,10 @@ public class ReadmeComponentMojo extends AbstractMojo {
             option.setJavaType(getSafeValue("javaType", row));
             option.setDeprecated(getSafeValue("deprecated", row));
             option.setDescription(getSafeValue("description", row));
-            componentOptions.add(option);
+            component.addComponentOption(option);
         }
-        component.setComponentOptions(componentOptions);
 
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-        List<EndpointOptionModel> endpointOptions = new ArrayList<EndpointOptionModel>();
         for (Map<String, String> row : rows) {
             EndpointOptionModel option = new EndpointOptionModel();
             option.setName(getSafeValue("name", row));
@@ -213,16 +246,13 @@ public class ReadmeComponentMojo extends AbstractMojo {
             option.setDeprecated(getSafeValue("deprecated", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
-
             // lets put required in the description
             if ("true".equals(option.getRequired())) {
                 String desc = "*Required* " + option.getDescription();
                 option.setDescription(desc);
             }
-
-            endpointOptions.add(option);
+            component.addEndpointOption(option);
         }
-        component.setEndpointOptions(endpointOptions);
 
         return component;
     }
@@ -283,31 +313,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
             }
         }
         return componentNames;
-    }
-
-    private File initReadMeFile() throws MojoExecutionException {
-        File readmeDir = new File(buildDir, "..");
-        File readmeFile = new File(readmeDir, "readme.md");
-
-        // see if a file with name readme.md exists in any kind of case
-        String[] names = readmeDir.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return "readme.md".equalsIgnoreCase(name);
-            }
-        });
-        if (names != null && names.length == 1) {
-            readmeFile = new File(readmeDir, names[0]);
-        }
-
-        boolean exists = readmeFile.exists();
-        if (exists) {
-            getLog().info("Using existing " + readmeFile.getName() + " file");
-        } else {
-            getLog().info("Creating new readme.md file");
-        }
-
-        return readmeFile;
     }
 
 }
