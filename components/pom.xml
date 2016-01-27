@@ -277,6 +277,13 @@
             </goals>
             <phase>prepare-package</phase>
          </execution>
+         <execution>
+            <id>readme</id>
+            <goals>
+              <goal>update-readme</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
         </executions>
       </plugin>
     </plugins>
