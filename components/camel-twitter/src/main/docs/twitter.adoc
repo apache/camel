@@ -43,17 +43,26 @@ Twitter component
 ^^^^^^^^^^^^^^^^^
 
 The twitter component can be configured with the Twitter account
-settings which is mandatory to configure before using. +
-You can also configure these options directly in the endpoint.
+settings which is mandatory to configure before using.
 
-[width="100%",cols="20%,80%",options="header",]
-|==========================================
-|Option |Description
-|consumerKey |The consumer key
-|consumerSecret |The consumer secret
-|accessToken |The access token
-|accessTokenSecret |The access token secret
-|==========================================
+// component options: START
+The Twitter component supports 8 options which are listed below.
+
+[width="100%",cols="2s,1m,8",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| accessToken | String | The access token
+| accessTokenSecret | String | The access token secret
+| consumerKey | String | The consumer key
+| consumerSecret | String | The consumer secret
+| httpProxyHost | String | The http proxy host which can be used for the camel-twitter.
+| httpProxyUser | String | The http proxy user which can be used for the camel-twitter.
+| httpProxyPassword | String | The http proxy password which can be used for the camel-twitter.
+| httpProxyPort | int | The http proxy port which can be used for the camel-twitter.
+|=======================================================================
+// component options: END
+
+You can also configure these options directly in the endpoint.
 
 [[Twitter-ConsumerEndpoints]]
 Consumer endpoints
@@ -116,7 +125,6 @@ Producer endpoints
 URI options
 ^^^^^^^^^^^
 
-
 // endpoint options: START
 The Twitter component supports 43 endpoint options which are listed below:
 
@@ -168,7 +176,6 @@ The Twitter component supports 43 endpoint options which are listed below:
 | httpProxyUser | proxy |  | String | The http proxy user which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 |=======================================================================
 // endpoint options: END
-
 
 [[Twitter-Messageheaders]]
 Message headers
