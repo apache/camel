@@ -64,8 +64,6 @@ Multiple JMS consumer support is available which allows you to consume
 in parallel using the one route, and at the same time use facilities
 like JMS message groups to group related messages.
 
- 
-
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -154,5 +152,3 @@ This value is effectively the poll time between batches.
 The `completionSize` endpoint attribute is used in conjunction with
 `completionTimeout`, where the first condition to be met will cause the
 aggregated `Exchange` to be emitted down the route.
-
- 
