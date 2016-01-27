@@ -1,7 +1,7 @@
 The @{title} component supports @{endpointOptions.size()} endpoint options which are listed below:
 
-[width="100%",cols="10%,5%,5%,10%,5%,65%",options="header",]
+[width="100%",cols="2s,1,1,1m,1m,4",options="header",]
 |=======================================================================
 | Name | Group | Required | Default | Java Type | Description
-@foreach{row : endpointOptions}| `@{row.name}` | @{row.group} | `@{row.required}` | `@{row.defaultValue}` | `@{row.shortJavaType}` | @{row.description}
+@foreach{row : endpointOptions}| @{row.name} | @{row.group} | @{row.required} | @{row.defaultValue} | @{row.shortJavaType} | @{row.description}
 @end{}|=======================================================================

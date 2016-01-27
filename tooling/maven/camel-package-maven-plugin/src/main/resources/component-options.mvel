@@ -7,7 +7,7 @@ The @{title} component supports @{componentOptions.size()} options which are lis
 
 | Name | Java Type | Description |
 | ---- | --------- | ----------- |
-@foreach{row : componentOptions}| @{row.name} | @{row.shortJavaType} | @{row.description} |
+@foreach{row : componentOptions}| @{row.name} | `@{row.shortJavaType}` | @{row.description} |
 @end{}
 
 #### Configuring component options

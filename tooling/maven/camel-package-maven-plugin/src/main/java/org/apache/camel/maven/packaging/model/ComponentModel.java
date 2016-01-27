@@ -166,6 +166,13 @@ public class ComponentModel {
     }
 
     public String getShortJavaType() {
+        if (javaType.startsWith("java.util.Map")) {
+            return "Map";
+        } else if (javaType.startsWith("java.util.Set")) {
+            return "Set";
+        } else if (javaType.startsWith("java.util.List")) {
+            return "List";
+        }
         int pos = javaType.lastIndexOf(".");
         if (pos != -1) {
             return javaType.substring(pos + 1);
