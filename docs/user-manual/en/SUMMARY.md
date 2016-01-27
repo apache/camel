@@ -90,6 +90,7 @@
 		* [AWS SWF](aws-swf.adoc)
 	* [Bam](bam.adoc)
 	* [Barcode](barcode-data-format.adoc)
+	* [Base64](base64.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
