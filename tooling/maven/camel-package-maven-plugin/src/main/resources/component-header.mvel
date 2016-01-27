@@ -1,6 +1,8 @@
-Welcome to @{title}
+# @{title}
 
 @{description}
+
+### Syntax
 
 The syntax:
 
@@ -12,6 +14,8 @@ An alternative syntax can be used:
     @{alternativeSyntax}
 @end{}
 
+### Maven Dependency
+
 Maven users would need to add dependency:
 
 ```xml
@@ -21,4 +25,3 @@ Maven users would need to add dependency:
       <version>${version}</version>
     </dependency>
 ```
-

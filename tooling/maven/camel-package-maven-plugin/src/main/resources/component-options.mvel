@@ -7,14 +7,14 @@ The @{title} component supports @{componentOptions.size()} options which are lis
 
 | Name | Java Type | Description |
 | ---- | --------- | ----------- |
-@foreach{row : componentOptions}| @{row.name} | @{row.javaType} | @{row.description} |
+@foreach{row : componentOptions}| @{row.name} | @{row.shortJavaType} | @{row.description} |
 @end{}
 
 #### Configuring component options
 
 The @{title} component can be configured using Java code as shown:
 
-```Java
+```java
    @{shortJavaType} @{scheme} = camelContext.getComponent("@{scheme}", @{shortJavaType}.class);
    @{scheme}.setFoo(...);
    @{scheme}.setBar(...);
@@ -22,7 +22,7 @@ The @{title} component can be configured using Java code as shown:
 
 And in XML you can configure the @{title} component as a <bean> as shown:
 
-```XML
+```xml
    <bean id="@{scheme}" class="@{javaType}">
      <property name="foo" value="..."/>
      <property name="bar" value="..."/>
