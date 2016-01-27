@@ -31,6 +31,8 @@ import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
 
 public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+    public static final String UNMARSHALL_CLASS = "CamelJibxUnmarshallClass";
+
     private Class<?> unmarshallClass;
     private String bindingName;
 
@@ -58,8 +60,14 @@ public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        ObjectHelper.notNull(getUnmarshallClass(), "unmarshallClass");
-        IBindingFactory bindingFactory = createBindingFactory(getUnmarshallClass(), bindingName);
+        Class<?> unmarshallType = exchange.getIn().getHeader(UNMARSHALL_CLASS, Class.class);
+        if (unmarshallType == null) {
+            unmarshallType = getUnmarshallClass();
+        }
+
+        ObjectHelper.notNull(unmarshallType, "unmarshallClass or CamelJibxUnmarshallClass header");
+
+        IBindingFactory bindingFactory = createBindingFactory(unmarshallType, bindingName);
         IUnmarshallingContext unmarshallingContext = bindingFactory.createUnmarshallingContext();
         return unmarshallingContext.unmarshalDocument(stream, null);
     }
@@ -74,6 +82,7 @@ public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFo
     protected void doStop() throws Exception {
         // noop
     }
+
     public Class<?> getUnmarshallClass() {
         return unmarshallClass;
     }
