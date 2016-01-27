@@ -34,12 +34,12 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-
 import org.mvel2.templates.TemplateRuntime;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
+import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
 /**
  * Generate or updates the component readme.md file in the project root directory.
@@ -58,11 +58,18 @@ public class ReadmeComponentMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
-     * The output directory for generated readme file
+     * The project build directory
      *
      * @parameter default-value="${project.build.directory}"
      */
     protected File buildDir;
+
+    /**
+     * The documentation directory
+     *
+     * @parameter default-value="${basedir}/src/main/docs"
+     */
+    protected File docDir;
 
     /**
      * build context to check changed files and mark them for refresh (used for
@@ -81,23 +88,60 @@ public class ReadmeComponentMojo extends AbstractMojo {
         final Set<File> jsonFiles = new TreeSet<File>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
 
-        // only if there is components we should create/update the readme file
+        // only if there is components we should update the documentation files
         if (!componentNames.isEmpty()) {
             getLog().info("Found " + componentNames.size() + " components");
-            File readmeFile = initReadMeFile();
 
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
+
+                    // file
+                    File file = new File(docDir, componentName + ".adoc");
+
                     ComponentModel model = generateComponentModel(componentName, json);
                     String header = templateComponentHeader(model);
                     String options = templateComponentOptions(model);
                     String options2 = templateEndpointOptions(model);
-                    getLog().info(header);
-                    getLog().info(options);
-                    getLog().info(options2);
+
+//                    getLog().info(header);
+//                    getLog().info(options);
+//                    getLog().info(options2);
+
+                    // update the endpoint options
+                    updateEndpointOptions(file, options2);
                 }
             }
+        }
+    }
+
+    private void updateEndpointOptions(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "//// endpoint options: START", "//// endpoint options: END");
+            if (existing != null) {
+                if (existing.equals(changed)) {
+                    getLog().info("No changes to file: " + file);
+                } else {
+                    getLog().info("Updating file: " + file);
+                    String before = StringHelper.before(text, "//// endpoint options: START");
+                    String after = StringHelper.after(text, "//// endpoint options: END");
+                    text = before + changed + after;
+                    writeText(file, text);
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t//// endpoint options: START");
+                getLog().warn("\t//// endpoint options: END");
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
         }
     }
 

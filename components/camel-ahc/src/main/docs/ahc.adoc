@@ -43,58 +43,8 @@ You can append query options to the URI in the following format,
 AhcEndpoint Options
 ^^^^^^^^^^^^^^^^^^^
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Default Value |Description
-|`throwExceptionOnFailure` |`true` |Option to disable throwing the `AhcOperationFailedException` in case of
-failed responses from the remote server. This allows you to get all
-responses regardless of the HTTP status code.
-
-|`bridgeEndpoint` |`false` |If the option is true, then the Exchange.HTTP_URI header is ignored, and
-use the endpoint's URI for request. You may also set the
-*throwExcpetionOnFailure* to be false to let the AhcProducer send all
-the fault response back.
-
-|`transferException` |`false` |If enabled and an link:exchange.html[Exchange] failed processing on the
-consumer side, and if the caused `Exception` was send back serialized in
-the response as a `application/x-java-serialized-object` content type
-(for example using link:jetty.html[Jetty] or link:servlet.html[Servlet]
-Camel components). On the producer side the exception will be
-deserialized and thrown as is, instead of the
-`AhcOperationFailedException`. The caused exception is required to be
-serialized.
-
-|`client` |`null` |To use a custom `com.ning.http.client.AsyncHttpClient`.
-
-|`clientConfig` |`null` |To configure the `AsyncHttpClient` to use a custom
-`com.ning.http.client.AsyncHttpClientConfig` instance. This instance
-replaces any instance configured at the component level.
-
-|`clientConfig.x` |`null` |To configure additional properties of the
-`com.ning.http.client.AsyncHttpClientConfig` instance used by the
-endpoint. Note that configuration options set using this parameter will
-be merged with those set using the `clientConfig` parameter or the
-instance set at the component level with properties set using this
-parameter taking priority.
-
-|`clientConfig.realm.x` |`null` |*Camel 2.11:* To configure realm properties of the
-`com.ning.http.client.AsyncHttpClientConfig` The options which can be
-used are the options from `com.ning.http.client.Realm.RealmBuilder`. eg
-to set scheme, you can configure `"clientConfig.realm.scheme=DIGEST"`
-
-|`binding` |`null` |To use a custom `org.apache.camel.component.ahc.AhcBinding`.
-
-|`sslContextParameters` |`null` | *Camel 2.9:* Reference to a
-`org.apache.camel.util.jsse.SSLContextParameters` in the
-link:registry.html[Registry].  This reference overrides any configured
-SSLContextParameters at the component level.  See link:ahc.html[Using
-the JSSE Configuration Utility].  Note that configuring this option will
-override any SSL/TLS configuration options provided through the
-clientConfig option at the endpoint or component level.
-
-|`bufferSize` |`4096` | *Camel 2.10.3:* The initial in-memory buffer size used when transferring
-data between Camel and AHC Client.
-|=======================================================================
+//// endpoint options: START
+//// endpoint options: END
 
 [[AHC-AhcComponentOptions]]
 AhcComponent Options

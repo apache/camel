@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -80,6 +81,15 @@ public final class PackageHelper {
         } finally {
             isr.close();
             in.close();
+        }
+    }
+
+    public static void writeText(File file, String text) throws IOException {
+        FileOutputStream fos = new FileOutputStream(file, false);
+        try {
+            fos.write(text.getBytes());
+        } finally {
+            fos.close();
         }
     }
 
