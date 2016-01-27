@@ -2750,7 +2750,7 @@
           <configuration>
               <source>${jdk.version}</source>
               <target>${jdk.version}</target>
-              <maxmem>256M</maxmem>
+              <maxmem>512M</maxmem>
               <fork>${compiler.fork}</fork>
           </configuration>
         </plugin>
@@ -3170,7 +3170,7 @@
             <configuration>
               <source>${jdk.version}</source>
               <target>${jdk.version}</target>
-              <maxmem>256M</maxmem>
+              <maxmem>512M</maxmem>
               <fork>${compiler.fork}</fork>
               <compilerId>javac-with-errorprone</compilerId>
               <forceJavacCompilerUse>true</forceJavacCompilerUse>
