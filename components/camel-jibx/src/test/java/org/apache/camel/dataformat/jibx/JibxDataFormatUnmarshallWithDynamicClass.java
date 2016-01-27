@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,14 @@ package org.apache.camel.dataformat.jibx;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.xml.sax.SAXException;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
 import org.apache.camel.dataformat.jibx.model.PurchaseOrder2;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.xml.sax.SAXException;
-
 
 public class JibxDataFormatUnmarshallWithDynamicClass extends CamelTestSupport {
     @Test

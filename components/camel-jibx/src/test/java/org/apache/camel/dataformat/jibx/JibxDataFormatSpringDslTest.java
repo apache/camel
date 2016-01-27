@@ -22,7 +22,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -30,6 +29,7 @@ import org.xml.sax.SAXException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
