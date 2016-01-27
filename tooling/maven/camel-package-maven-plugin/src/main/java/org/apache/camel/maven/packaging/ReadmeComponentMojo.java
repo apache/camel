@@ -124,6 +124,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         ComponentModel component = new ComponentModel();
         component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
         component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
+        component.setAlternativeSyntax(JSonSchemaHelper.getSafeValue("alternativeSyntax", rows));
         component.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         component.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
         component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));

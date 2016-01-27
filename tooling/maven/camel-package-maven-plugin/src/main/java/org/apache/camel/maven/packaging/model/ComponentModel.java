@@ -23,6 +23,7 @@ public class ComponentModel {
     private String kind;
     private String scheme;
     private String syntax;
+    private String alternativeSyntax;
     private String title;
     private String description;
     private String label;
@@ -58,6 +59,14 @@ public class ComponentModel {
 
     public void setSyntax(String syntax) {
         this.syntax = syntax;
+    }
+
+    public String getAlternativeSyntax() {
+        return alternativeSyntax;
+    }
+
+    public void setAlternativeSyntax(String alternativeSyntax) {
+        this.alternativeSyntax = alternativeSyntax;
     }
 
     public String getTitle() {
@@ -154,5 +163,14 @@ public class ComponentModel {
 
     public void setEndpointOptions(List<EndpointOptionModel> endpointOptions) {
         this.endpointOptions = endpointOptions;
+    }
+
+    public String getShortJavaType() {
+        int pos = javaType.lastIndexOf(".");
+        if (pos != -1) {
+            return javaType.substring(pos + 1);
+        } else {
+            return javaType;
+        }
     }
 }

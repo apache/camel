@@ -2,7 +2,7 @@
 
 The @{title} component supports @{endpointOptions.size()} endpoint options which are listed below:
 
-| Key | Group | Required | Default | Description |
-| --- | ----- | -------- | ------- | ----------- |
-@foreach{row : endpointOptions}| @{row.name} | @{row.group} | @{row.required} | @{row.defaultValue} | @{row.description} |
+| Name | Group | Required | Default | Java Type | Description |
+| ---- | ----- | -------- | ------- | --------- | ----------- |
+@foreach{row : endpointOptions}| @{row.name} | @{row.group} | @{row.required} | @{row.defaultValue} | @{row.javaType} | @{row.description} |
 @end{}

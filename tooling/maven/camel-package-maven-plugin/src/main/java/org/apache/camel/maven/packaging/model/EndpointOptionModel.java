@@ -126,4 +126,14 @@ public class EndpointOptionModel {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getShortJavaType() {
+        int pos = javaType.lastIndexOf(".");
+        if (pos != -1) {
+            return javaType.substring(pos + 1);
+        } else {
+            return javaType;
+        }
+    }
+
 }

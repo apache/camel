@@ -1,8 +1,31 @@
 ### Component options
 
+@if{componentOptions.isEmpty()}
+The @{title} component has no options.
+@else{}
 The @{title} component supports @{componentOptions.size()} options which are listed below.
 
-| Key | Description |
-| --- | ----------- |
-@foreach{row : componentOptions}| @{row.name} | @{row.description} |
+| Name | Java Type | Description |
+| ---- | --------- | ----------- |
+@foreach{row : componentOptions}| @{row.name} | @{row.javaType} | @{row.description} |
+@end{}
+
+#### Configuring component options
+
+The @{title} component can be configured using Java code as shown:
+
+```Java
+   @{shortJavaType} @{scheme} = camelContext.getComponent("@{scheme}", @{shortJavaType}.class);
+   @{scheme}.setFoo(...);
+   @{scheme}.setBar(...);
+```
+
+And in XML you can configure the @{title} component as a <bean> as shown:
+
+```XML
+   <bean id="@{scheme}" class="@{javaType}">
+     <property name="foo" value="..."/>
+     <property name="bar" value="..."/>
+   </bean>
+```
 @end{}
