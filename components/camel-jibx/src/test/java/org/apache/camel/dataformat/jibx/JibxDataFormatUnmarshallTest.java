@@ -19,11 +19,11 @@ package org.apache.camel.dataformat.jibx;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
