@@ -36,7 +36,6 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -91,6 +90,7 @@ public class XmlConverter {
 
     private volatile DocumentBuilderFactory documentBuilderFactory;
     private volatile TransformerFactory transformerFactory;
+    private volatile XMLReaderPool xmlReaderPool;
 
     public XmlConverter() {
     }
@@ -581,31 +581,25 @@ public class XmlConverter {
         }
         inputSource.setSystemId(source.getSystemId());
         inputSource.setPublicId(source.getPublicId());
+
         XMLReader xmlReader = null;
-        SAXParserFactory sfactory = null;
-        //Need to setup XMLReader security feature by default
         try {
             // use the SAXPaserFactory which is set from exchange
             if (exchange != null) {
-                sfactory = exchange.getProperty(Exchange.SAXPARSER_FACTORY, SAXParserFactory.class);
-            }
-            if (sfactory == null) {
-                sfactory = SAXParserFactory.newInstance();
-                try {
-                    sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
-                } catch (Exception e) {
-                    LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
-                }
-                try {
-                    sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-                } catch (SAXException e) {
-                    LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}."
-                            , new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});                
+                SAXParserFactory sfactory = exchange.getProperty(Exchange.SAXPARSER_FACTORY, SAXParserFactory.class);
+                if (sfactory != null) {
+                    if (!sfactory.isNamespaceAware()) {
+                        sfactory.setNamespaceAware(true);
+                    }
+                    xmlReader = sfactory.newSAXParser().getXMLReader();
                 }
             }
-            sfactory.setNamespaceAware(true);
-            SAXParser parser = sfactory.newSAXParser();
-            xmlReader = parser.getXMLReader();
+            if (xmlReader == null) {
+                if (xmlReaderPool == null) {
+                    xmlReaderPool = new XMLReaderPool(createSAXParserFactory());
+                }
+                xmlReader = xmlReaderPool.createXMLReader();
+            }
         } catch (Exception ex) {
             LOG.warn("Cannot create the SAXParser XMLReader, due to {}", ex);
         }
@@ -1207,5 +1201,23 @@ public class XmlConverter {
                 factory.setAttribute("http://saxon.sf.net/feature/messageEmitterClass", messageWarner.getName());
             }
         }
+    }
+
+    public SAXParserFactory createSAXParserFactory() {
+        SAXParserFactory sfactory = SAXParserFactory.newInstance();
+        // Need to setup XMLReader security feature by default
+        try {
+            sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (Exception e) {
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
+        }
+        try {
+            sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (Exception e) {
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}."
+                    , new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
+        }
+        sfactory.setNamespaceAware(true);
+        return sfactory;
     }
 }
