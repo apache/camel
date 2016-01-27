@@ -100,8 +100,9 @@
 	* [Metrics](metrics.adoc)
 	* [Properties](properties.adoc)
 	* [Quickfix](quickfix.adoc)
-	* [SJMS](sjms.adoc) 
-	* [SJMS Batch](sjms-batch.adoc) 
+	* [SJMS](sjms.adoc)
+	* [SJMS Batch](sjms-batch.adoc)
+	* [Twitter](twitter.adoc)
 
 <!--
 * [Expession Languages](languages.adoc)
