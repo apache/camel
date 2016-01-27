@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,30 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.jibx;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
-import org.xml.sax.SAXException;
-
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
-public class JibxDataFormatUnmarshallTest extends CamelTestSupport {
 
-    @Test
-    public void testUnmarshall() throws InterruptedException, ParserConfigurationException, IOException, SAXException {
+public class JibxDataFormatUnmarshallFail extends CamelTestSupport {
+
+    @Test(expected = CamelExecutionException.class)
+    public void testUnmarshallFail() throws InterruptedException, ParserConfigurationException, IOException,
+            SAXException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
         String name = "foo";
         double price = 1;
         double amount = 2;
-        String purchaseOrderXml = String.format("<order name='%s' price='%s' amount='%s' />", name, price + "", amount + "");
+        String purchaseOrderXml = String.format("<order name='%s' price='%s' amount='%s' />", name, price + "", amount
+                + "");
 
         template.sendBody("direct:start", purchaseOrderXml);
 
@@ -52,12 +56,10 @@ public class JibxDataFormatUnmarshallTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                JibxDataFormat jibxDataFormat = new JibxDataFormat(PurchaseOrder.class);
-
-                from("direct:start").
-                        unmarshal(jibxDataFormat).
-                        convertBodyTo(PurchaseOrder.class).
-                        to("mock:result");
+                from("direct:start")
+                    .unmarshal(new JibxDataFormat())
+                    .convertBodyTo(PurchaseOrder.class)
+                    .to("mock:result");
             }
         };
     }

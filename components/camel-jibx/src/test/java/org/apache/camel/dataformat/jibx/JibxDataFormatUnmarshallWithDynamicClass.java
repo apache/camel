@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,31 +19,32 @@ package org.apache.camel.dataformat.jibx;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
-import org.xml.sax.SAXException;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
+import org.apache.camel.dataformat.jibx.model.PurchaseOrder2;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
-public class JibxDataFormatUnmarshallTest extends CamelTestSupport {
 
+public class JibxDataFormatUnmarshallWithDynamicClass extends CamelTestSupport {
     @Test
-    public void testUnmarshall() throws InterruptedException, ParserConfigurationException, IOException, SAXException {
+    public void testUnmarshallWithDynamicClass() throws InterruptedException, ParserConfigurationException, IOException,
+            SAXException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
         String name = "foo";
         double price = 1;
         double amount = 2;
-        String purchaseOrderXml = String.format("<order name='%s' price='%s' amount='%s' />", name, price + "", amount + "");
+        String purchaseOrderXml = String.format("<order2 name='%s' price='%s' amount='%s' />", name, price + "", amount + "");
 
         template.sendBody("direct:start", purchaseOrderXml);
 
         assertMockEndpointsSatisfied();
 
-        PurchaseOrder body = mock.getReceivedExchanges().get(0).getIn().getBody(PurchaseOrder.class);
+        PurchaseOrder2 body = mock.getReceivedExchanges().get(0).getIn().getBody(PurchaseOrder2.class);
         assertEquals(name, body.getName());
         assertEquals(price, body.getPrice(), 1);
         assertEquals(amount, body.getAmount(), 1);
@@ -52,12 +53,11 @@ public class JibxDataFormatUnmarshallTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                JibxDataFormat jibxDataFormat = new JibxDataFormat(PurchaseOrder.class);
-
-                from("direct:start").
-                        unmarshal(jibxDataFormat).
-                        convertBodyTo(PurchaseOrder.class).
-                        to("mock:result");
+                from("direct:start")
+                    .setHeader(JibxDataFormat.UNMARSHALL_CLASS, constant(PurchaseOrder2.class))
+                    .unmarshal(new JibxDataFormat(PurchaseOrder.class))
+                    .convertBodyTo(PurchaseOrder2.class)
+                    .to("mock:result");
             }
         };
     }

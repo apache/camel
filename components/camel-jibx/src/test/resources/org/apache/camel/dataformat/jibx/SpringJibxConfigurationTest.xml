@@ -25,7 +25,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
         <dataFormats>
-            <jibx id="jibx" unmarshallClass="org.apache.camel.dataformat.jibx.PurchaseOrder"/>
+            <jibx id="jibx" unmarshallClass="org.apache.camel.dataformat.jibx.model.PurchaseOrder"/>
         </dataFormats>
 
         <route>
