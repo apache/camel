@@ -123,7 +123,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         try {
             String text = loadText(new FileInputStream(file));
 
-            String existing = StringHelper.between(text, "//// endpoint options: START", "//// endpoint options: END");
+            String existing = StringHelper.between(text, "// endpoint options: START", "// endpoint options: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -132,16 +132,16 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     getLog().info("No changes to file: " + file);
                 } else {
                     getLog().info("Updating file: " + file);
-                    String before = StringHelper.before(text, "//// endpoint options: START");
-                    String after = StringHelper.after(text, "//// endpoint options: END");
-                    text = before + "//// endpoint options: START\n" + changed + "//// endpoint options: END\n" + after;
+                    String before = StringHelper.before(text, "// endpoint options: START");
+                    String after = StringHelper.after(text, "// endpoint options: END");
+                    text = before + "\n// endpoint options: START\n" + changed + "\n// endpoint options: END\n" + after;
                     writeText(file, text);
                 }
             } else {
                 getLog().warn("Cannot find markers in file " + file);
                 getLog().warn("Add the following markers");
-                getLog().warn("\t//// endpoint options: START");
-                getLog().warn("\t//// endpoint options: END");
+                getLog().warn("\t// endpoint options: START");
+                getLog().warn("\t// endpoint options: END");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
