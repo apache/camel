@@ -42,6 +42,11 @@ public class DefaultMessage extends MessageSupport {
     private Map<String, Object> headers;
     private Map<String, DataHandler> attachments;
 
+    @Override
+    public String toString() {
+        return MessageHelper.extractBodyForLogging(this);
+    }
+
     public boolean isFault() {
         return fault;
     }

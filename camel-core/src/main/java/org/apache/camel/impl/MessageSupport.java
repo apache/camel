@@ -223,11 +223,4 @@ public abstract class MessageSupport implements Message {
         }
         return uuid;
     }
-
-    @Override
-    public String toString() {
-        // do not output details from message body/headers etc as it may contain sensitive data
-        return String.format("Message[%s]", messageId == null ? "" : messageId);
-    }
-
 }
