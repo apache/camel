@@ -2,6 +2,6 @@ The @{title} component supports @{endpointOptions.size()} endpoint options which
 
 [width="100%",cols="10%,5%,5%,10%,5%,65%",options="header",]
 |=======================================================================
-| Name | Group | Required | Default | Java Type | Description |
-@foreach{row : endpointOptions}| `@{row.name}` | `@{row.group}` | `@{row.required}` | `@{row.defaultValue}` | `@{row.shortJavaType}` | @{row.description} |
+| Name | Group | Required | Default | Java Type | Description
+@foreach{row : endpointOptions}| `@{row.name}` | `@{row.group}` | `@{row.required}` | `@{row.defaultValue}` | `@{row.shortJavaType}` | @{row.description}
 @end{}|=======================================================================
