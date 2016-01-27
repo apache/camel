@@ -36,7 +36,7 @@ import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpClientProducerTest extends CamelTestSupport {
     @Rule
-    public MllpServerResource mllpServer = new MllpServerResource(AvailablePortFinder.getNextAvailable());
+    public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
 
     @EndpointInject(uri = "direct://source")
     ProducerTemplate source;
@@ -94,7 +94,7 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
                         .routeId("mllp-sender-test-route")
                         .log(LoggingLevel.INFO, "Sending Message: $simple{header[CamelHL7MessageControl]}")
                         .toF("mllp://%s:%d?connectTimeout=%d&receiveTimeout=%d",
-                                "0.0.0.0", mllpServer.getListenPort(), connectTimeout, responseTimeout)
+                                mllpServer.getListenHost(), mllpServer.getListenPort(), connectTimeout, responseTimeout)
                         .to(acknowledged);
 
                 from("direct://handle-timeout")

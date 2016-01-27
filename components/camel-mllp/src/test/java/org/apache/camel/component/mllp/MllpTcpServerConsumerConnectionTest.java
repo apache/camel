@@ -30,7 +30,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
-    int mllpPort;
+    String mllpHost = "localhost";
+    int mllpPort = AvailablePortFinder.getNextAvailable();
+
     @EndpointInject(uri = "mock://result")
     MockEndpoint result;
 
@@ -41,11 +43,8 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         return new RouteBuilder() {
             String routeId = "mllp-receiver";
 
-            String host = "0.0.0.0";
-            int port = mllpPort;
-
             public void configure() {
-                fromF("mllp:%d?autoAck=false", port)
+                fromF("mllp://%s:%d?autoAck=false", mllpHost, mllpPort)
                         .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
                         .to(result);
             }
@@ -74,7 +73,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         int connectionCount = 10;
 
         Socket dummyLoadBalancerSocket = null;
-        SocketAddress address = new InetSocketAddress("localhost", mllpPort);
+        SocketAddress address = new InetSocketAddress(mllpHost, mllpPort);
         int connectTimeout = 5000;
         try {
             for (int i = 1; i <= connectionCount; ++i) {
