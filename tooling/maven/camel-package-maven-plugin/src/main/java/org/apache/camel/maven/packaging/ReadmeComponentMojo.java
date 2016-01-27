@@ -213,6 +213,13 @@ public class ReadmeComponentMojo extends AbstractMojo {
             option.setDeprecated(getSafeValue("deprecated", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
+
+            // lets put required in the description
+            if ("true".equals(option.getRequired())) {
+                String desc = "*Required* " + option.getDescription();
+                option.setDescription(desc);
+            }
+
             endpointOptions.add(option);
         }
         component.setEndpointOptions(endpointOptions);
