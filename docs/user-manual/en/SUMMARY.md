@@ -94,6 +94,7 @@
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
 	* [Properties](properties.adoc)
+	* [Quickfix](quickfix.adoc)
 	* [SJMS](sjms.adoc) 
 	* [SJMS Batch](sjms-batch.adoc) 
 
