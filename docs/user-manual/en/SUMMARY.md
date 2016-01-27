@@ -92,6 +92,7 @@
 	* [Barcode](barcode-data-format.adoc)
 	* [Base64](base64.adoc)
 	* [BeanIO](beanio.adoc)
+	* [Beanstalk](beanstalk.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
