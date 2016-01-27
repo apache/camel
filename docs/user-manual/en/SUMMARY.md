@@ -93,6 +93,7 @@
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
+	* [Properties](properties.adoc)
 	* [SJMS](sjms.adoc) 
 	* [SJMS Batch](sjms-batch.adoc) 
 
