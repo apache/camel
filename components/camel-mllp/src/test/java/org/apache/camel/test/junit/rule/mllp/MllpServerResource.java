@@ -19,6 +19,7 @@ package org.apache.camel.test.junit.rule.mllp;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -49,6 +50,7 @@ import static  org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 public class MllpServerResource extends ExternalResource {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
+    String listenHost;
     int listenPort;
     int backlog = 5;
 
@@ -87,6 +89,25 @@ public class MllpServerResource extends ExternalResource {
         this.backlog = backlog;
     }
 
+    public MllpServerResource(String listenHost, int listenPort) {
+        this.listenHost = listenHost;
+        this.listenPort = listenPort;
+    }
+
+    public MllpServerResource(String listenHost, int listenPort, int backlog) {
+        this.listenHost = listenHost;
+        this.listenPort = listenPort;
+        this.backlog = backlog;
+    }
+
+    public String getListenHost() {
+        return listenHost;
+    }
+
+    public void setListenHost(String listenHost) {
+        this.listenHost = listenHost;
+    }
+
     public int getListenPort() {
         return listenPort;
     }
@@ -105,10 +126,18 @@ public class MllpServerResource extends ExternalResource {
 
     public void startup() throws IOException {
         this.active = true;
-        serverSocketThread = new ServerSocketThread(listenPort, backlog);
+
+        if ( null != listenHost ) {
+            serverSocketThread = new ServerSocketThread(listenHost, listenPort, backlog);
+        } else {
+            serverSocketThread = new ServerSocketThread(listenPort, backlog);
+            listenHost = serverSocketThread.getListenHost();
+        }
+
         if (0 >= listenPort) {
             listenPort = serverSocketThread.listenPort;
         }
+
         serverSocketThread.setDaemon(true);
         serverSocketThread.start();
     }
@@ -456,10 +485,14 @@ public class MllpServerResource extends ExternalResource {
     class ServerSocketThread extends Thread {
         Logger log = LoggerFactory.getLogger(this.getClass());
 
+        final long bindTimeout = 30000;
+        final long bindRetryDelay = 1000;
+
+
         ServerSocket serverSocket;
         List<ClientSocketThread> clientSocketThreads = new LinkedList<>();
 
-        String listenHost = "0.0.0.0";
+        String listenHost;
         int listenPort;
         int backlog = 5;
 
@@ -500,12 +533,30 @@ public class MllpServerResource extends ExternalResource {
 
             // Set TCP Parameters
             serverSocket.setSoTimeout(acceptTimeout);
-            serverSocket.setReuseAddress(false);
+            serverSocket.setReuseAddress(true);
 
-            if (0 >= listenPort) {
-                serverSocket.bind(null, backlog);
+            InetSocketAddress listenAddress;
+            if ( null != this.listenHost ) {
+                listenAddress = new InetSocketAddress(this.listenHost, this.listenPort);
             } else {
-                serverSocket.bind(new InetSocketAddress(this.listenHost, this.listenPort), backlog);
+                listenAddress = new InetSocketAddress( this.listenPort );
+            }
+
+            long startTicks = System.currentTimeMillis();
+            while (!serverSocket.isBound()) {
+                try {
+                    serverSocket.bind(listenAddress, backlog);
+                } catch ( BindException bindEx ) {
+                    if ( System.currentTimeMillis() < startTicks + bindTimeout) {
+                        log.warn( "Unable to bind to {} - retrying in {} milliseconds", listenAddress.toString(), bindRetryDelay);
+                        try {
+                            Thread.sleep(bindRetryDelay);
+                        } catch (InterruptedException interruptedEx) {
+                            log.error( "Wait for bind retry was interrupted - rethrowing BindException");
+                            throw bindEx;
+                        }
+                    }
+                }
             }
 
             if (0 >= this.listenPort) {

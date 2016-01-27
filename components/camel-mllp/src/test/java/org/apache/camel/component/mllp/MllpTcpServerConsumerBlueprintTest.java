@@ -35,6 +35,8 @@ import org.junit.Test;
 import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSupport {
+    String mllpHost = "localhost";
+
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
@@ -59,11 +61,13 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
 
     @Override
     protected Properties useOverridePropertiesWithPropertiesComponent() {
+        mllpClient.setMllpHost(mllpHost);
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
 
         Properties props = new Properties();
 
         props.setProperty("receivedUri", receivedUri);
+        props.setProperty( "mllp.host", mllpClient.getMllpHost());
         props.setProperty("mllp.port", Integer.toString(mllpClient.getMllpPort()));
 
         return props;
