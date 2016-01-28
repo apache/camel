@@ -45,8 +45,10 @@ Twitter component
 The twitter component can be configured with the Twitter account
 settings which is mandatory to configure before using.
 
+
 // component options: START
 The Twitter component supports 8 options which are listed below.
+
 
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
@@ -61,6 +63,7 @@ The Twitter component supports 8 options which are listed below.
 | httpProxyPort | int | The http proxy port which can be used for the camel-twitter.
 |=======================================================================
 // component options: END
+
 
 You can also configure these options directly in the endpoint.
 
