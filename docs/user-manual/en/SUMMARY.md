@@ -104,6 +104,7 @@
 	* [SJMS](sjms.adoc)
 	* [SJMS Batch](sjms-batch.adoc)
 	* [Twitter](twitter.adoc)
+	* [Yammer](yammer.adoc)
 	* [ZooKeeper](zookeeper.adoc)
 
 <!--
