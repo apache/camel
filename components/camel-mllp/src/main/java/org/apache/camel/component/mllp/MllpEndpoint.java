@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -47,10 +48,10 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MllpEndpoint.class);
 
-    @UriPath(defaultValue = "null")
+    @UriPath @Metadata(required = "true")
     String hostname;
 
-    @UriPath(description = "TCP Port for connection")
+    @UriPath @Metadata(required = "true")
     int port = -1;
 
     @UriParam(defaultValue = "5")
@@ -77,22 +78,19 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "true")
     boolean tcpNoDelay = true;
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     boolean reuseAddress;
 
-    @UriParam(defaultValue = "System Default")
+    @UriParam
     Integer receiveBufferSize;
 
-    @UriParam(defaultValue = "System Default")
+    @UriParam
     Integer sendBufferSize;
-
-    @UriParam(description = "The TCP mode of the endpoint (client or server).  Defaults to client for Producers and server for Consumers")
-    String tcpMode;
 
     @UriParam(defaultValue = "true")
     boolean autoAck = true;
 
-    @UriParam(defaultValue = "System Default")
+    @UriParam
     String charsetName;
 
     public MllpEndpoint(String uri, MllpComponent component) {
@@ -152,7 +150,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     /**
      * Set the CamelCharsetName property on the exchange
      *
-     * @param charsetName
+     * @param charsetName the charset
      */
     public void setCharsetName(String charsetName) {
         this.charsetName = charsetName;
