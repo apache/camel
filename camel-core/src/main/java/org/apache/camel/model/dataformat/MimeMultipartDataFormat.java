@@ -44,6 +44,8 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "false")
     private Boolean headersInline;
     @XmlAttribute
+    private String includeHeaders;
+    @XmlAttribute
     @Metadata(defaultValue = "false")
     private Boolean binaryContent;
 
@@ -61,6 +63,9 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
         }
         if (getHeadersInline() != null) {
             setProperty(camelContext, dataFormat, "headersInline", getHeadersInline());
+        }
+        if (getIncludeHeaders() != null) {
+            setProperty(camelContext, dataFormat, "includeHeaders", getIncludeHeaders());
         }
         if (getBinaryContent() != null) {
             setProperty(camelContext, dataFormat, "binaryContent", getBinaryContent());
@@ -110,6 +115,20 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
 
     public Boolean getBinaryContent() {
         return binaryContent;
+    }
+
+    /**
+     * A regex that defines which Camel headers are also included as MIME headers
+     * into the MIME multipart. This will only work if headersInline is set to true.
+     * <p>
+     * Default is to include no headers
+     */
+    public void setIncludeHeaders(String includeHeaders) {
+        this.includeHeaders = includeHeaders;
+    }
+
+    public String getIncludeHeaders() {
+        return includeHeaders;
     }
 
     /**

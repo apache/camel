@@ -34,6 +34,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
 public class MimeMultipartDataFormatTest extends CamelTestSupport {
@@ -252,6 +254,35 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         assertThat(result.getOut().getHeader("Content-Type", String.class), startsWith("multipart/related"));
     }
 
+    @Test
+    public void marhsalUnmarshalInlineHeaders() throws IOException {
+        in.setBody("Body text");
+        in.setHeader("Content-Type", "text/plain");
+        in.setHeader("included", "must be included");
+        in.setHeader("excluded", "should not be there");
+        in.setHeader("x-foo", "any value");
+        in.setHeader("x-bar", "also there");
+        in.setHeader("xbar", "should not be there");
+        addAttachment("application/octet-stream", "foobar", "attachment.bin");
+        Exchange intermediate = template.send("direct:marshalonlyinlineheaders", exchange);
+        String bodyStr = intermediate.getOut().getBody(String.class);
+        assertThat(bodyStr, containsString("must be included"));
+        assertThat(bodyStr, not(containsString("should not be there")));
+        assertThat(bodyStr, containsString("x-foo:"));
+        assertThat(bodyStr, containsString("x-bar:"));
+        assertThat(bodyStr, not(containsString("xbar")));
+        intermediate.setIn(intermediate.getOut());
+        intermediate.setOut(null);
+        intermediate.getIn().removeHeaders(".*");
+        intermediate.getIn().setHeader("included", "should be replaced");
+        Exchange out = template.send("direct:unmarshalonlyinlineheaders", intermediate);
+        assertEquals("Body text", out.getOut().getBody(String.class));
+        assertEquals("must be included", out.getOut().getHeader("included"));
+        assertNull(out.getOut().getHeader("excluded"));
+        assertEquals("any value", out.getOut().getHeader("x-foo"));
+        assertEquals("also there", out.getOut().getHeader("x-bar"));
+    }
+
     private void addAttachment(String attContentType, String attText, String attFileName) throws IOException {
         DataSource ds = new ByteArrayDataSource(attText, attContentType);
         in.addAttachment(attFileName, new DataHandler(ds));
@@ -268,6 +299,8 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
                 from("direct:roundtripbinarycontent").marshal().mimeMultipart(false, false, true).to("log:mime?showHeaders=true").to("dataformat:mime-multipart:unmarshal");
                 from("direct:marshalonlyrelated").marshal().mimeMultipart("related");
                 from("direct:marshalonlymixed").marshal().mimeMultipart();
+                from("direct:marshalonlyinlineheaders").marshal().mimeMultipart("mixed", false, true, "(included|x-.*)", false);
+                from("direct:unmarshalonlyinlineheaders").unmarshal().mimeMultipart(false, true, false);
             }
         };
     }
