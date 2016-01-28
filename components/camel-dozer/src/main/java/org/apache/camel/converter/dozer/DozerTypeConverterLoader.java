@@ -16,7 +16,6 @@
  */
 package org.apache.camel.converter.dozer;
 
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,17 +27,16 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.dozer.DozerComponent;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.classmap.ClassMap;
 import org.dozer.classmap.MappingFileData;
-import org.dozer.config.GlobalSettings;
 import org.dozer.loader.api.BeanMappingBuilder;
 import org.dozer.loader.xml.MappingFileReader;
 import org.dozer.loader.xml.XMLParserFactory;
@@ -101,15 +99,6 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
      * @param configuration dozer mapping bean configuration.
      */
     public DozerTypeConverterLoader(CamelContext camelContext, DozerBeanMapperConfiguration configuration) {
-        GlobalSettings settings = GlobalSettings.getInstance();
-        try {
-            log.info("Configuring GlobalSettings to use Camel classloader: {}", DozerThreadContextClassLoader.class.getName());
-            Field field = settings.getClass().getDeclaredField("classLoaderBeanName");
-            ReflectionHelper.setField(field, settings, DozerThreadContextClassLoader.class.getName());
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot configure Dozer GlobalSettings to use CamelToDozerClassResolverAdapter as classloader due " + e.getMessage(), e);
-        }
-
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader appcl = camelContext.getApplicationContextClassLoader();
@@ -241,9 +230,9 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
     public static DozerBeanMapper createDozerBeanMapper(DozerBeanMapperConfiguration configuration) {
         DozerBeanMapper mapper;
         if (configuration.getMappingFiles() != null) {
-            mapper = new DozerBeanMapper(configuration.getMappingFiles());
+            mapper = DozerComponent.createDozerBeanMapper(configuration.getMappingFiles());
         } else {
-            mapper = new DozerBeanMapper();
+            mapper = DozerComponent.createDozerBeanMapper(Collections.<String>emptyList());
         }
         if (configuration.getCustomConverters() != null) {
             mapper.setCustomConverters(configuration.getCustomConverters());

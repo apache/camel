@@ -17,6 +17,7 @@
 package org.apache.camel.component.dozer;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,15 +90,15 @@ public class DozerEndpoint extends DefaultEndpoint {
     public void setConfiguration(DozerConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     CustomMapper getCustomMapper() {
         return customMapper;
     }
-    
+
     VariableMapper getVariableMapper() {
         return variableMapper;
     }
-    
+
     ExpressionMapper getExpressionMapper() {
         return expressionMapper;
     }
@@ -122,9 +123,9 @@ public class DozerEndpoint extends DefaultEndpoint {
         super.doStop();
         // noop
     }
-    
+
     private DozerBeanMapper createDozerBeanMapper() throws Exception {
-        DozerBeanMapper answer = new DozerBeanMapper();
+        DozerBeanMapper answer = DozerComponent.createDozerBeanMapper(Collections.<String>emptyList());
         InputStream mapStream = null;
         try {
             LOG.info("Loading Dozer mapping file {}.", configuration.getMappingFile());
@@ -134,7 +135,6 @@ public class DozerEndpoint extends DefaultEndpoint {
         } finally {
             IOHelper.close(mapStream);
         }
-
         return answer;
     }
 
