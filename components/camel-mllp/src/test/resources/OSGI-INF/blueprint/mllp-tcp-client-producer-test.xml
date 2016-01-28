@@ -32,6 +32,7 @@
             <property name="frameErrorUri" value="mock://frame-ex" />
             <property name="errorAcknowledgementUri" value="mock://ae-ack" />
             <property name="rejectAcknowledgementUri" value="mock://ar-ack" />
+            <property name="mllp.host" value="localhost" />
             <property name="mllp.port" value="7777" />
         </default-properties>
     </property-placeholder>
@@ -104,7 +105,7 @@
         <route id="direct-to-mllp">
             <from uri="{{sourceUri}}" />
             <log loggingLevel="DEBUG" message="sending message: $simple{header[CamelMllpMessageControlId]}" />
-            <to uri="mllp://{{mllp.port}}"/>
+            <to uri="mllp://{{mllp.host}}:{{mllp.port}}"/>
             <to uri="{{acknowledgedUri}}"/>
             <log loggingLevel="DEBUG" message="message sent: $simple{header[CamelMllpMessageControlId]}" />
             <to uri="log:direct-to-mllp?level=INFO&amp;groupSize=50" />

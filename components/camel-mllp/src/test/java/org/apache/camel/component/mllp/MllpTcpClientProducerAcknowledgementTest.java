@@ -35,8 +35,10 @@ import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 
 public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
+    String mllpHost = "localhost";
+
     @Rule
-    public MllpServerResource mllpServer = new MllpServerResource(AvailablePortFinder.getNextAvailable());
+    public MllpServerResource mllpServer = new MllpServerResource(mllpHost, AvailablePortFinder.getNextAvailable());
 
     @EndpointInject(uri = "direct://source")
     ProducerTemplate source;
@@ -67,14 +69,11 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
         return new RouteBuilder() {
             String routeId = "mllp-sender";
 
-            String host = "0.0.0.0";
-            int port = mllpServer.getListenPort();
-
             public void configure() {
                 onException(MllpApplicationRejectAcknowledgementException.class)
                         .handled(true)
                         .to(reject)
-                        .log(LoggingLevel.ERROR, routeId, "AR Acknowledgemnet");
+                        .log(LoggingLevel.ERROR, routeId, "AR Acknowledgement");
 
                 onException(MllpApplicationErrorAcknowledgementException.class)
                         .handled(true)
@@ -88,7 +87,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
 
                 from(source.getDefaultEndpoint()).routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Sending Message")
-                        .toF("mllp://%s:%d", host, port)
+                        .toF("mllp://%s:%d", mllpServer.getListenHost(), mllpServer.getListenPort())
                         .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
                         .to(accept);
             }

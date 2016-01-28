@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mllp;
 
-import java.net.BindException;
 import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +35,7 @@ import org.junit.Test;
 
 import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
-public class MllpTcpServerConsumerTest extends CamelTestSupport {
+public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
@@ -51,6 +50,11 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
         context.setName(this.getClass().getSimpleName());
 
         return context;
+    }
+
+    @Override
+    public boolean isUseAdviceWith() {
+        return true;
     }
 
     @Override
@@ -85,86 +89,28 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     public void testReceiveSingleMessage() throws Exception {
         result.expectedMessageCount(1);
 
+        Thread tmpThread = new Thread() {
+            public void run() {
+                try {
+                    ServerSocket tmpSocket = new ServerSocket(mllpClient.getMllpPort());
+                    Thread.sleep(15000);
+                    tmpSocket.close();
+                } catch (Exception ex) {
+                    throw new RuntimeException( "Exception caught in dummy listener", ex);
+                }
+            }
+
+        };
+
+        tmpThread.start();
+
+        context.start();
+
         mllpClient.connect();
 
         mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(), 10000);
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
-    }
-
-    @Test
-    public void testReceiveSingleMessageWithDelayAfterConnection() throws Exception {
-        result.expectedMinimumMessageCount(1);
-
-        mllpClient.connect();
-
-        Thread.sleep(5000);
-        mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(), 10000);
-
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
-    }
-
-    @Test
-    public void testReceiveMultipleMessages() throws Exception {
-        int sendMessageCount = 5;
-        result.expectedMinimumMessageCount(5);
-
-        mllpClient.connect();
-
-        for (int i = 1; i <= sendMessageCount; ++i) {
-            mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(i));
-        }
-
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
-    }
-
-    @Test
-    public void testOpenMllpEnvelopeWithReset() throws Exception {
-        result.expectedMessageCount(4);
-        NotifyBuilder notify1 = new NotifyBuilder(context).whenDone(2).create();
-        NotifyBuilder notify2 = new NotifyBuilder(context).whenDone(5).create();
-
-        mllpClient.connect();
-        mllpClient.setSoTimeout(10000);
-
-        log.info("Sending TEST_MESSAGE_1");
-        String acknowledgement1 = mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(1));
-
-        log.info("Sending TEST_MESSAGE_2");
-        String acknowledgement2 = mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(2));
-
-        assertTrue("First two normal exchanges did not complete", notify1.matches(10, TimeUnit.SECONDS));
-
-        log.info("Sending TEST_MESSAGE_3");
-        mllpClient.setSendEndOfBlock(false);
-        mllpClient.setSendEndOfData(false);
-        // Acknowledgement won't come here
-        try {
-            mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(3));
-        } catch (MllpJUnitResourceException resourceEx) {
-            log.info("Expected exception reading response");
-        }
-        mllpClient.disconnect();
-        Thread.sleep(1000);
-        mllpClient.connect();
-
-        log.info("Sending TEST_MESSAGE_4");
-        mllpClient.setSendEndOfBlock(true);
-        mllpClient.setSendEndOfData(true);
-        String acknowledgement4 = mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(4));
-
-        log.info("Sending TEST_MESSAGE_5");
-        String acknowledgement5 = mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(5));
-
-        assertTrue("Remaining exchanges did not complete", notify2.matches(10, TimeUnit.SECONDS));
-
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
-
-        assertTrue("Should be acknowledgment for message 1", acknowledgement1.contains("MSA|AA|00001"));
-        assertTrue("Should be acknowledgment for message 2", acknowledgement2.contains("MSA|AA|00002"));
-        // assertTrue("Should be acknowledgment for message 3", acknowledgement3.contains("MSA|AA|00003"));
-        assertTrue("Should be acknowledgment for message 4", acknowledgement4.contains("MSA|AA|00004"));
-        assertTrue("Should be acknowledgment for message 5", acknowledgement5.contains("MSA|AA|00005"));
     }
 
 }

@@ -27,6 +27,7 @@
     <property-placeholder persistent-id="MllpTcpServerConsumerBlueprintTest" update-strategy="reload" xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0" >
         <default-properties>
             <property name="receivedUri" value="mock://received" />
+            <property name="mllp.host" value="localhost" />
             <property name="mllp.port" value="7777" />
         </default-properties>
     </property-placeholder>
@@ -36,7 +37,7 @@
     <camelContext id="tcp-server-consumer-context" useMDCLogging="true" xmlns="http://camel.apache.org/schema/blueprint">
         <!-- TODO:  Add exception handlers -->
         <route>
-            <from uri="mllp://{{mllp.port}}" />
+            <from uri="mllp://{{mllp.host}}:{{mllp.port}}" />
             <to uri="{{receivedUri}}" />
         </route>
     </camelContext>

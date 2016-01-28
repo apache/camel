@@ -18,6 +18,7 @@ package org.apache.camel.component.mllp;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -93,8 +94,27 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         // Accept Timeout
         serverSocket.setSoTimeout(endpoint.acceptTimeout);
 
-        InetSocketAddress socketAddress = new InetSocketAddress(endpoint.getHostname(), endpoint.getPort());
-        serverSocket.bind(socketAddress, endpoint.backlog);
+        InetSocketAddress socketAddress;
+        if (null == endpoint.getHostname()) {
+            socketAddress = new InetSocketAddress(endpoint.getPort());
+        } else {
+            socketAddress = new InetSocketAddress(endpoint.getHostname(), endpoint.getPort());
+        }
+        long startTicks = System.currentTimeMillis();
+
+        do {
+            try {
+                serverSocket.bind(socketAddress, endpoint.backlog);
+            } catch (BindException bindException) {
+                if (System.currentTimeMillis() > startTicks + endpoint.getBindTimeout()) {
+                    log.error( "Failed to bind to address {} within timeout {}", socketAddress, endpoint.getBindTimeout());
+                    throw bindException;
+                } else {
+                    log.warn( "Failed to bind to address {} - retrying in {} milliseconds", socketAddress, endpoint.getBindRetryInterval());
+                    Thread.sleep(endpoint.getBindRetryInterval());
+                }
+            }
+        } while ( !serverSocket.isBound() );
 
         serverSocketThread = new ServerSocketThread(serverSocket);
         serverSocketThread.start();
@@ -105,6 +125,12 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         log.debug("doStop()");
+
+        // Close any client sockets that are currently open
+        for (ClientSocketThread clientSocketThread: clientThreads) {
+            clientSocketThread.interrupt();
+        }
+
 
         switch (serverSocketThread.getState()) {
         case TERMINATED:
@@ -195,7 +221,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             log.debug("Starting acceptor thread");
 
             try {
-                while (!isInterrupted() && null != serverSocket && serverSocket.isBound() && !serverSocket.isClosed()) {
+                while (!isInterrupted()  &&  null != serverSocket && serverSocket.isBound()  &&  !serverSocket.isClosed()) {
                     // TODO: Need to check maxConnections and figure out what to do when exceeded
                     Socket socket = null;
                     try {
@@ -370,7 +396,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         @Override
         public void run() {
 
-            while (null != clientSocket && clientSocket.isConnected() && !clientSocket.isClosed()) {
+            while (!isInterrupted()  &&  null != clientSocket  &&  clientSocket.isConnected()  &&  !clientSocket.isClosed()) {
                 byte[] hl7MessageBytes = null;
                 // Send the message on for processing and wait for the response
                 log.debug("Reading data ....");
@@ -379,7 +405,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         hl7MessageBytes = MllpUtil.closeFrame(clientSocket);
                     } else {
                         try {
-                            MllpUtil.openFrame(clientSocket);
+                            if (!MllpUtil.openFrame(clientSocket)) {
+                                continue;
+                            }
                         } catch (SocketTimeoutException timeoutEx) {
                             // When thrown by openFrame, it indicates that no data was available - but no error
                             continue;
@@ -604,6 +632,18 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     }
                 }
             }
+        }
+
+        @Override
+        public void interrupt() {
+            if (null != clientSocket  &&  clientSocket.isConnected()  && !clientSocket.isClosed()) {
+                try {
+                    clientSocket.close();
+                } catch (IOException ex) {
+                    log.warn("Exception encoutered closing client Socket in interrupt", ex);
+                }
+            }
+            super.interrupt();
         }
     }
 }

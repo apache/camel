@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import org.apache.camel.component.mllp.MllpComponent;
@@ -67,25 +68,34 @@ public final class MllpUtil {
      * @throws MllpCorruptFrameException if the MLLP Frame is corrupted in some way
      * @throws MllpException             for other unexpected error conditions
      */
-    public static void openFrame(Socket socket) throws SocketTimeoutException, MllpCorruptFrameException, MllpException {
+    public static boolean openFrame(Socket socket) throws SocketTimeoutException, MllpCorruptFrameException, MllpException {
         if (socket.isConnected() && !socket.isClosed()) {
             InputStream socketInputStream = MllpUtil.getInputStream(socket);
 
-            int readByte;
+            int readByte = -1;
             try {
                 readByte = socketInputStream.read();
                 switch (readByte) {
                 case START_OF_BLOCK:
-                    return;
+                    return true;
                 case END_OF_STREAM:
                     resetConnection(socket);
-                    return;
+                    return false;
                 default:
                     // Continue on and process the out-of-frame data
                 }
             } catch (SocketTimeoutException normaTimeoutEx) {
                 // Just pass this on - the caller will wrap it in a MllpTimeoutException
                 throw normaTimeoutEx;
+            } catch (SocketException socketEx ) {
+                if (socket.isClosed()) {
+                    LOG.debug( "Socket closed while opening MLLP frame - ignoring exception", socketEx);
+                    return false;
+                } else {
+                    LOG.error("Unexpected Exception occurred opening MLLP frame - resetting the connection");
+                    MllpUtil.resetConnection(socket);
+                    throw new MllpException("Unexpected Exception occurred opening MLLP frame", socketEx);
+                }
             } catch (IOException unexpectedException) {
                 LOG.error("Unexpected Exception occurred opening MLLP frame - resetting the connection");
                 MllpUtil.resetConnection(socket);
@@ -152,6 +162,8 @@ public final class MllpUtil {
                 throw new MllpCorruptFrameException("Exception encountered looking for the beginning of the MLLP frame, and out-of-frame data had been read", outOfFrameData.toByteArray());
             }
         }
+
+        return false;
     }
 
     /**
@@ -319,7 +331,7 @@ public final class MllpUtil {
     }
 
     public static void resetConnection(Socket socket) {
-        if (null != socket) {
+        if (null != socket  &&  !socket.isClosed()) {
             try {
                 socket.setSoLinger(true, 0);
             } catch (Exception ex) {

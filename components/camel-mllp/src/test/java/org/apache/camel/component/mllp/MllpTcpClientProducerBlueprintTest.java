@@ -26,6 +26,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.util.KeyValueHolder;
@@ -36,7 +37,7 @@ import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSupport {
     @Rule
-    public MllpServerResource mllpServer = new MllpServerResource();
+    public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
 
     final String sourceUri = "direct://source";
     final String mockAcknowledgedUri = "mock://acknowledged";
