@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.metrics.cdi;
+package org.apache.camel.example.cdi.metrics;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;

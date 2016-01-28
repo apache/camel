@@ -26,8 +26,8 @@
     <version>2.17-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-example-metrics-cdi</artifactId>
-  <name>Camel :: Example :: Metrics :: CDI</name>
+  <artifactId>camel-example-cdi-metrics</artifactId>
+  <name>Camel :: Example :: CDI :: Metrics</name>
   <description>Dropwizard Metrics CDI example</description>
   <packaging>jar</packaging>
 

@@ -14,27 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.example.cdi.metrics;
 
-package org.apache.camel.example.metrics.cdi;
-
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
+import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Meter;
-import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeExchangeException;
+import com.codahale.metrics.RatioGauge;
+import com.codahale.metrics.annotation.Metric;
 
-@ApplicationScoped
-public class UnreliableService {
+class SuccessRatioGauge {
 
     @Inject
-    private Meter attempt;
+    private Meter generated;
 
-    public void unreliable(Exchange exchange) {
-        attempt.mark();
+    @Inject
+    private Meter success;
 
-        if (Math.random() < 0.5) {
-            throw new RuntimeExchangeException("Random failure", exchange);
+    @Produces
+    @Metric(name = "success-ratio")
+    private Gauge<Double> successRatio = new RatioGauge() {
+        @Override
+        protected Ratio getRatio() {
+            return Ratio.of(success.getOneMinuteRate(), generated.getOneMinuteRate());
         }
-    }
+    };
 }
