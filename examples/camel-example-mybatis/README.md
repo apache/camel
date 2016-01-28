@@ -31,7 +31,7 @@ And you can see the application running by tailing the logs
 
 	log:tail
 
-And you can use `ctrl + c` to stop tailing the log.
+And you can use <kbd>ctrl</kbd>+<kbd>c</kbd> to stop tailing the log.
 
 ### Configuration
 

@@ -29,7 +29,7 @@ The example should run if you type:
 	mvn exec:java -PCamelClientRemoting
 	mvn exec:java -PCamelClientEndpoint
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Documentation
 

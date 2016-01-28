@@ -18,7 +18,7 @@ To run the example type
 You can see the routing rules by looking at the XML in the directory:
   `src/main/resources/META-INF/spring`
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 You can also run the example from your editor such as Eclipse, IDEA etc,
 by opening the org.apache.camel.example.console.CamelConsoleMain class

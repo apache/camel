@@ -41,7 +41,7 @@ being logged to the console, e.g.:
 2016-01-28 15:02:46,661 [cdi.Main.main()] INFO  route1              - Hello from CamelContext (hello)
 ```
 
-The Camel application can be stopped pressing `ctrl + c` in the shell.
+The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in the shell.
 
 ### Forum, Help, etc
 

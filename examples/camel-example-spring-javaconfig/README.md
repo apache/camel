@@ -18,7 +18,7 @@ To run the example type
 
 	mvn camel:run
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 
 ### Configuration

@@ -22,7 +22,7 @@ To run the example type
 You can see the routing rules by looking at the java code in the
   `src/main/java` directory
 
-  To stop the example hit `ctrl + c`
+  To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
   
 When we launch the example using the camel maven plugin, a local CDI container
 is created and started.

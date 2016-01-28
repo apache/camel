@@ -28,7 +28,7 @@ The webservice WSDL is exposed at:
 
 <http://localhost:9080/webservices/incident?wsdl>
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Documentation
 

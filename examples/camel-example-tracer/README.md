@@ -23,7 +23,7 @@ In the console you can enter some words separated with space. Try to enter:
 This example will based on the input get some quotes from the input and select the best quote
 to return as response in the console.
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Documentation
 

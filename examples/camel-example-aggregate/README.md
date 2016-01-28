@@ -30,8 +30,8 @@ To run the example type:
 
 	mvn camel:run
 
-To stop the example hit `Ctrl-C`.  If you restart it and resume entering numbers
-you should see that it remembered previously entered values, as it
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>.  If you restart it and resume
+entering numbers you should see that it remembered previously entered values, as it
 uses a persistent store.
 
 ### Documentation
