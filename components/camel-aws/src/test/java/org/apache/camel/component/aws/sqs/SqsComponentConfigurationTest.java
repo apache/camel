@@ -51,7 +51,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
         AmazonSQSClientMock mock = new AmazonSQSClientMock();
         
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSQSClient", mock);
+        context.getRegistry(JndiRegistry.class).bind("amazonSQSClient", mock);
         
         SqsComponent component = new SqsComponent(context);
         SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
@@ -81,8 +81,8 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         messageAttributeNames.add("msgColor");
         messageAttributeNames.add("msgSize");
         
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("attributeNames", attributeNames);
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("messageAttributeNames", messageAttributeNames);
+        context.getRegistry(JndiRegistry.class).bind("attributeNames", attributeNames);
+        context.getRegistry(JndiRegistry.class).bind("messageAttributeNames", messageAttributeNames);
 
         SqsComponent component = new SqsComponent(context);
         SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?amazonSQSEndpoint=sns.eu-west-1.amazonaws.com&accessKey=xxx&secretKey=yyy&attributeNames=#attributeNames"

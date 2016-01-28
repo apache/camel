@@ -30,8 +30,9 @@ public class GetRegistryAsTypeTest extends TestCase {
         JndiRegistry jndi = context.getRegistry(JndiRegistry.class);
         assertNotNull(jndi);
 
-        assertNull(context.getRegistry(Map.class));
-        assertNull(context.getRegistry(SimpleRegistry.class));
+        // These should match the local registry
+        assertNotNull(context.getRegistry(Map.class));
+        assertNotNull(context.getRegistry(SimpleRegistry.class));
 
         context.stop();
     }

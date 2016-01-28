@@ -42,7 +42,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
         
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSNSClient", mock);
+        context.getRegistry(JndiRegistry.class).bind("amazonSNSClient", mock);
         
         SnsComponent component = new SnsComponent(context);
         SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&amazonSNSEndpoint=sns.ap-southeast-2.amazonaws.com");

@@ -193,6 +193,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private boolean autoCreateComponents = true;
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
     private final Map<String, Language> languages = new HashMap<String, Language>();
+    private final SimpleRegistry localRegistry = new SimpleRegistry();
     private Registry registry;
     private List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<LifecycleStrategy>();
     private ManagementStrategy managementStrategy;
@@ -2406,10 +2407,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.autoCreateComponents = autoCreateComponents;
     }
 
+    public SimpleRegistry getLocalRegistry() {
+        return localRegistry;
+    }
+
     public Registry getRegistry() {
         if (registry == null) {
-            registry = createRegistry();
-            setRegistry(registry);
+            setRegistry(createRegistry());
         }
         return registry;
     }
@@ -2425,12 +2429,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (type.isAssignableFrom(reg.getClass())) {
             return type.cast(reg);
         } else if (reg instanceof CompositeRegistry) {
-            List<Registry> list = ((CompositeRegistry) reg).getRegistryList();
-            for (Registry r : list) {
-                if (type.isAssignableFrom(r.getClass())) {
-                    return type.cast(r);
-                }
-            }
+            return ((CompositeRegistry) reg).getRegistry(type);
         }
         return null;
     }
@@ -2445,12 +2444,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         setRegistry(new JndiRegistry(jndiContext));
     }
 
-    public void setRegistry(Registry registry) {
-        // wrap the registry so we always do property placeholder lookups
-        if (!(registry instanceof PropertyPlaceholderDelegateRegistry)) {
-            registry = new PropertyPlaceholderDelegateRegistry(this, registry);
+    public void setRegistry(final Registry registry) {
+        // Always use localRegistry in lookups
+        CompositeRegistry compositeRegistry = new CompositeRegistry();
+        compositeRegistry.addRegistry(localRegistry);
+        if (registry != null) {
+            compositeRegistry.addRegistry(registry);
         }
-        this.registry = registry;
+        // Wrap the registry so we always do property placeholder lookups
+        this.registry = new PropertyPlaceholderDelegateRegistry(this, compositeRegistry);
     }
 
     public List<LifecycleStrategy> getLifecycleStrategies() {
@@ -3680,8 +3682,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             jndi.getContext();
             return jndi;
         } catch (Throwable e) {
-            log.debug("Cannot create javax.naming.InitialContext due " + e.getMessage() + ". Will fallback and use SimpleRegistry instead. This exception is ignored.", e);
-            return new SimpleRegistry();
+            log.debug("Cannot create javax.naming.InitialContext due " + e.getMessage() + ". Will use local SimpleRegistry instead. This exception is ignored.", e);
+            return null;
         }
     }
 

@@ -78,7 +78,7 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
         URL catalogUrl = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(), "org/apache/camel/component/validator/catalog.cat");
         catalogResolver.getCatalog().parseCatalog(catalogUrl);
         LSResourceResolver resourceResolver = new CatalogLSResourceResolver(catalogResolver);
-        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
+        JndiRegistry registry = context.getRegistry(JndiRegistry.class);
         registry.bind("resourceResolver", resourceResolver);
 
         return new RouteBuilder() {

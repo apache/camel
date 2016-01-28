@@ -63,8 +63,8 @@ public class ConcreteCamelRunner extends AbstractCamelRunner implements Lifecycl
     @Override
     protected void createCamelContext(BundleContext bundleContext, Map<String, String> props) {
         super.createCamelContext(bundleContext, props);
-        context.disableJMX();
-        context.addLifecycleStrategy(this);
+        getContext().disableJMX();
+        getContext().addLifecycleStrategy(this);
     }
 
     @Override

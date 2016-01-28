@@ -43,8 +43,7 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
         AmazonSDBClientMock mock = new AmazonSDBClientMock();
         
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
-            .bind("amazonSDBClient", mock);
+        context.getRegistry(JndiRegistry.class).bind("amazonSDBClient", mock);
         
         SdbComponent component = new SdbComponent(context);
         SdbEndpoint endpoint = (SdbEndpoint) component.createEndpoint("aws-sdb://TestDomain?"

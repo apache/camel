@@ -267,7 +267,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         });
         ScheduledExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(null, "unitTestPool", 1);
         DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler(pool);
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("myScheduler", scheduler);
+        context.getRegistry(JndiRegistry.class).bind("myScheduler", scheduler);
         context.start();
 
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);

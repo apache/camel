@@ -16,10 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
@@ -28,12 +30,13 @@ import org.apache.camel.spi.Registry;
 
 /**
  * This registry will look up the object with the sequence of the registry list until it finds the Object.
+ * Nested registries will be searched breadth-first.
  */
 public class CompositeRegistry implements Registry {
     private final List<Registry> registryList;
     
     public CompositeRegistry() {
-        registryList = new ArrayList<Registry>();
+        registryList = new LinkedList<>();
     }
     
     public CompositeRegistry(List<Registry> registries) {
@@ -48,60 +51,133 @@ public class CompositeRegistry implements Registry {
         return registryList;
     }
 
+    public <T> T getRegistry(Class<T> type) {
+        Set<CompositeRegistry> seenCompositeRegistries = new HashSet<CompositeRegistry>();
+        Queue<CompositeRegistry> queue = new LinkedList<CompositeRegistry>();
+        queue.add(this);
+        seenCompositeRegistries.add(this);
+        while (!queue.isEmpty()) {
+            CompositeRegistry root = queue.remove();
+            for (Registry child : root.getRegistryList()) {
+                if (child instanceof CompositeRegistry) {
+                    if (!seenCompositeRegistries.contains(child)) {
+                        queue.add(((CompositeRegistry)child));
+                        seenCompositeRegistries.add((CompositeRegistry)child);
+                    }
+                } else {
+                    if (type.isAssignableFrom(child.getClass())) {
+                        return type.cast(child);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         T answer = null;
         RuntimeCamelException ex = null;
-        for (Registry registry : registryList) {
-            try {
-                answer = registry.lookupByNameAndType(name, type);
-            } catch (Throwable e) {
-                // do not double wrap the exception
-                if (e instanceof NoSuchBeanException) {
-                    ex = (NoSuchBeanException)e;
+        Set<CompositeRegistry> seenCompositeRegistries = new HashSet<CompositeRegistry>();
+        Queue<CompositeRegistry> queue = new LinkedList<CompositeRegistry>();
+        queue.add(this);
+        seenCompositeRegistries.add(this);
+        while (!queue.isEmpty()) {
+            CompositeRegistry root = queue.remove();
+            for (Registry child : root.getRegistryList()) {
+                if (child instanceof CompositeRegistry) {
+                    if (!seenCompositeRegistries.contains(child)) {
+                        queue.add(((CompositeRegistry)child));
+                        seenCompositeRegistries.add((CompositeRegistry)child);
+                    }
                 } else {
-                    ex = new NoSuchBeanException(name, "Cannot lookup: " + name + " from registry: " + registry
-                        + " with expected type: " + type + " due: " + e.getMessage(), e);
+                    try {
+                        answer = child.lookupByNameAndType(name, type);
+                    } catch (Throwable e) {
+                        // do not double wrap the exception
+                        if (e instanceof NoSuchBeanException) {
+                            ex = (NoSuchBeanException)e;
+                        } else {
+                            ex = new NoSuchBeanException(name, "Cannot lookup: " + name + " from registry: " + child
+                                + " with expected type: " + type + " due: " + e.getMessage(), e);
+                        }
+                    }
+                    if (answer != null) {
+                        return answer;
+                    }
                 }
             }
-            if (answer != null) {
-                return answer;
-            }
         }
-        if (ex != null) { 
+        if (ex != null) {
             throw ex;
         } else {
-            return answer;
+            return null;
         }
     }
 
     public Object lookupByName(String name) {
-        Object answer = null;
-        for (Registry registry : registryList) {
-            answer = registry.lookupByName(name);
-            if (answer != null) {
-                break;
+        Object answer;
+        Set<CompositeRegistry> seenCompositeRegistries = new HashSet<CompositeRegistry>();
+        Queue<CompositeRegistry> queue = new LinkedList<CompositeRegistry>();
+        queue.add(this);
+        seenCompositeRegistries.add(this);
+        while (!queue.isEmpty()) {
+            CompositeRegistry root = queue.remove();
+            for (Registry child : root.getRegistryList()) {
+                if (child instanceof CompositeRegistry) {
+                    if (!seenCompositeRegistries.contains(child)) {
+                        queue.add(((CompositeRegistry)child));
+                        seenCompositeRegistries.add((CompositeRegistry)child);
+                    }
+                } else {
+                    answer = child.lookupByName(name);
+                    if (answer != null) {
+                        return answer;
+                    }
+                }
             }
         }
-        return answer;
+        return null;
     }
 
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        Map<String, T> answer = Collections.emptyMap();
-        for (Registry registry : registryList) {
-            answer = registry.findByTypeWithName(type);
-            if (!answer.isEmpty()) {
-                break;
+        Map<String, T> answer = new HashMap<String, T>();
+        Set<CompositeRegistry> seenCompositeRegistries = new HashSet<CompositeRegistry>();
+        Queue<CompositeRegistry> queue = new LinkedList<CompositeRegistry>();
+        queue.add(this);
+        seenCompositeRegistries.add(this);
+        while (!queue.isEmpty()) {
+            CompositeRegistry root = queue.remove();
+            for (Registry child : root.getRegistryList()) {
+                if (child instanceof CompositeRegistry) {
+                    if (!seenCompositeRegistries.contains(child)) {
+                        queue.add(((CompositeRegistry)child));
+                        seenCompositeRegistries.add((CompositeRegistry)child);
+                    }
+                } else {
+                    answer.putAll(child.findByTypeWithName(type));
+                }
             }
         }
         return answer;
     }
 
     public <T> Set<T> findByType(Class<T> type) {
-        Set<T> answer = Collections.emptySet();
-        for (Registry registry : registryList) {
-            answer = registry.findByType(type);
-            if (!answer.isEmpty()) {
-                break;
+        Set<T> answer = new HashSet<T>();
+        Set<CompositeRegistry> seenCompositeRegistries = new HashSet<CompositeRegistry>();
+        Queue<CompositeRegistry> queue = new LinkedList<CompositeRegistry>();
+        queue.add(this);
+        seenCompositeRegistries.add(this);
+        while (!queue.isEmpty()) {
+            CompositeRegistry root = queue.remove();
+            for (Registry child : root.getRegistryList()) {
+                if (child instanceof CompositeRegistry) {
+                    if (!seenCompositeRegistries.contains(child)) {
+                        queue.add(((CompositeRegistry)child));
+                        seenCompositeRegistries.add((CompositeRegistry)child);
+                    }
+                } else {
+                    answer.addAll(child.findByType(type));
+                }
             }
         }
         return answer;
