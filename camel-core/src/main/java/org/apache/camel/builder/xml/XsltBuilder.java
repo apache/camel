@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -51,7 +50,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.jaxp.StaxSource;
+import org.apache.camel.converter.jaxp.StAX2SAXSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -120,7 +119,6 @@ public class XsltBuilder extends ServiceSupport implements Processor, CamelConte
 
         ResultHandler resultHandler = resultHandlerFactory.createResult(exchange);
         Result result = resultHandler.getResult();
-        exchange.setProperty("isXalanTransformer", isXalanTransformer(transformer));
         // let's copy the headers before we invoke the transform in case they modify them
         Message out = exchange.getOut();
         out.copyFrom(exchange.getIn());
@@ -137,6 +135,17 @@ public class XsltBuilder extends ServiceSupport implements Processor, CamelConte
                 Object body = exchange.getIn().getBody();
                 source = getSource(exchange, body);
             }
+
+            if (source instanceof StAXSource) {
+                // Always convert StAXSource to SAXSource.
+                // * Xalan and Saxon-B don't support StAXSource.
+                // * The JDK default implementation (XSLTC) doesn't handle CDATA events
+                //   (see com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX).
+                // * Saxon-HE/PE/EE seem to support StAXSource, but don't advertise this
+                //   officially (via TransformerFactory.getFeature(StAXSource.FEATURE))
+                source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
+            }
+
             LOG.trace("Using {} as source", source);
             transformer.transform(source, result);
             LOG.trace("Transform complete with result {}", result);
@@ -148,10 +157,6 @@ public class XsltBuilder extends ServiceSupport implements Processor, CamelConte
         }
     }
     
-    boolean isXalanTransformer(Transformer transformer) {
-        return transformer.getClass().getName().startsWith("org.apache.xalan.transformer");
-    }
-
     boolean isSaxonTransformer(Transformer transformer) {
         return transformer.getClass().getName().startsWith("net.sf.saxon");
     }
@@ -494,14 +499,13 @@ public class XsltBuilder extends ServiceSupport implements Processor, CamelConte
      * <p/>
      * This implementation will prefer to source in the following order:
      * <ul>
-     *   <li>StAX - Is StAX is allowed</li>
+     *   <li>StAX - If StAX is allowed</li>
      *   <li>SAX - SAX as 2nd choice</li>
      *   <li>Stream - Stream as 3rd choice</li>
      *   <li>DOM - DOM as 4th choice</li>
      * </ul>
      */
     protected Source getSource(Exchange exchange, Object body) {
-        Boolean isXalanTransformer = exchange.getProperty("isXalanTransformer", Boolean.class);
         // body may already be a source
         if (body instanceof Source) {
             return (Source) body;
@@ -509,15 +513,8 @@ public class XsltBuilder extends ServiceSupport implements Processor, CamelConte
         Source source = null;
         if (body != null) {
             if (isAllowStAX()) {
-                if (isXalanTransformer) {
-                    XMLStreamReader reader = exchange.getContext().getTypeConverter().tryConvertTo(XMLStreamReader.class, exchange, body);
-                    if (reader != null) {
-                        // create a new SAXSource with stax parser API
-                        source = new StaxSource(reader);
-                    }
-                } else {
-                    source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
-                }
+                // try StAX if enabled
+                source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
             }
             if (source == null) {
                 // then try SAX

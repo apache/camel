@@ -36,9 +36,9 @@ import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
- * A streaming {@link javax.xml.transform.sax.SAXSource}
+ * Adapter to turn a StAX {@link XMLStreamReader} into a {@link SAXSource}.
  */
-public class StaxSource extends SAXSource implements XMLReader {
+public class StAX2SAXSource extends SAXSource implements XMLReader {
 
     private XMLStreamReader streamReader;
 
@@ -46,7 +46,7 @@ public class StaxSource extends SAXSource implements XMLReader {
 
     private LexicalHandler lexicalHandler;
 
-    public StaxSource(XMLStreamReader streamReader) {
+    public StAX2SAXSource(XMLStreamReader streamReader) {
         this.streamReader = streamReader;
         setInputSource(new InputSource());
     }
@@ -265,11 +265,11 @@ public class StaxSource extends SAXSource implements XMLReader {
     }
 
     public void parse(InputSource input) throws SAXException {
-        StaxSource.this.parse();
+        StAX2SAXSource.this.parse();
     }
 
     public void parse(String systemId) throws SAXException {
-        StaxSource.this.parse();
+        StAX2SAXSource.this.parse();
     }
 
 }
