@@ -25,7 +25,7 @@ Then open a browser to see live twitter updates in the web page
 	http://localhost:9090
 <http://localhost:9090>
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 
 ### Documentation

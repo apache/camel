@@ -31,7 +31,7 @@ You can also execute the fat WAR directly:
 
 You will see the message printed to the console every second.
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Documentation
 

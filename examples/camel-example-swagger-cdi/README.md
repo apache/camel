@@ -35,7 +35,7 @@ The rest services provides Swagger API which can be accessed from the following 
 
 <http://localhost:8080/api-doc>
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Forum, Help, etc
 

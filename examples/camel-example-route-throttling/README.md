@@ -33,7 +33,7 @@ The example should run if you type:
 
 	mvn exec:java -PCamelFileClient
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Documentation
 

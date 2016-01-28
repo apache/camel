@@ -25,7 +25,7 @@ To run the client
 
 	mvn exec:java -PClient
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 
 ### Run inside OSGi container

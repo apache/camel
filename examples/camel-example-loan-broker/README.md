@@ -26,7 +26,7 @@ The example of web services version
 	mvn exec:java -PWS.LoanBroker
 	mvn exec:java -PWS.Client
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Documentation
 

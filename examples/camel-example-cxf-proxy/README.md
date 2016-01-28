@@ -34,7 +34,7 @@ The webservice WSDL is exposed at:
 <http://localhost:9080/camel-example-cxf-proxy/webservices/incident?wsdl>
 
 Because we use dynamic port numbers, you have to check the console to get the used one.
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 To make a SOAP call open soapUI or another SOAP query tool and create a new
 project w/WSDL of <http://localhost:${proxy.port}/camel-example-cxf-proxy/webservices/incident?wsdl>.

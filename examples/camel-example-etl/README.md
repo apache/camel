@@ -20,7 +20,7 @@ You can see the routing rules by looking at the java code in the src/main/java
 directory and the Spring XML configuration lives in
   `src/main/resources/META-INF/spring`
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Build and Run inside OSGi container
 
@@ -39,10 +39,10 @@ from the shell using this example's "features.xml" for easy provisioning.
 	features:addUrl mvn:org.apache.camel/camel-example-etl/${version}/xml/features
 	features:install camel-example-etl
 
-The example outputs logs into the console. When you're done just hit `ctrl + d` to exit the container.
-Next time you start the container again use the 'clean' option so that this example's bundle gets
-removed and you don't see the logs anymore written into the console, e.g. in case of Karaf start it
-again using:
+The example outputs logs into the console. When you're done just hit <kbd>ctrl</kbd>+<kbd>d</kbd>
+to exit the container. Next time you start the container again use the 'clean' option so that
+this example's bundle gets removed and you don't see the logs anymore written into the console,
+e.g. in case of Karaf start it again using:
 
 	karaf clean
 

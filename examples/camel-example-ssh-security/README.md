@@ -65,7 +65,7 @@ To test locally, assuming you have Setup Karaf and have it running, run the foll
 
     mvn camel:run
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Run with Karaf
 

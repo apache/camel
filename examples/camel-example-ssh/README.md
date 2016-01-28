@@ -16,7 +16,7 @@ To run the example using Maven type
 
 	mvn camel:run
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Run with Karaf
 

@@ -31,7 +31,7 @@ You can see the routing rules by looking at the java code in the
 `src/main/java directory` and the `guicejndi.properties` file lives in
 `src/main/resources/guicejndi.properties`
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Documentation
 

@@ -22,7 +22,7 @@ To run the example type
 
 	mvn camel:run
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 This example uses Spring to setup and configure the database,
 as well the CamelContext. You can see this in the following file:
@@ -54,7 +54,7 @@ And you can see the application running by tailing the logs
 
 	log:tail
 
-And you can use `ctrl + c` to stop tailing the log.
+And you can use <kbd>ctrl</kbd>+<kbd>c</kbd> to stop tailing the log.
 
 ### Documentation
 This example is documented at <http://camel.apache.org/sql-example.html>

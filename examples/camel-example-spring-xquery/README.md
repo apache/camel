@@ -23,7 +23,7 @@ To run the example using Maven, type
 You can see the routing rules by looking at the the Spring XML configuration
 at `src/main/resources/META-INF/spring`
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Documentation
 This example is documented at <http://camel.apache.org/spring-xquery-example.html>

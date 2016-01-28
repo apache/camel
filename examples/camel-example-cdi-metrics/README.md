@@ -59,7 +59,7 @@ And every 10 seconds, the metrics report, e.g.:
 2016-01-18 15:19:14,361 [rter-1-thread-1] INFO  metrics - type=METER, name=success, count=12, mean_rate=0.5768131773739456, m1=0.6012785791263936, m5=0.6000546385677541, m15=0.6000061386568257, rate_unit=events/second
 ```
 
-The Camel application can be stopped pressing `ctrl + c` in the shell.
+The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in the shell.
 
 ### Forum, Help, etc
 

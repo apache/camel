@@ -30,7 +30,7 @@ The example has documentation in the home.html page which you can access using t
 This example implements the rest-dsl in XML in the camel-config.xml file. For an example that
 is using Java code, see the `camel-example-swagger-cdi`.
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Forum, Help, etc
 

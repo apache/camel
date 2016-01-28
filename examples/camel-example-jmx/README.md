@@ -24,7 +24,7 @@ You can see the routing rules by looking at the java code in the
 `src/main/java` directory and the Spring XML configuration lives in
 `src/main/resources/META-INF/spring`
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Documentation
 

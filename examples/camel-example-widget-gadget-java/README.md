@@ -36,7 +36,8 @@ Then the broker can be started with
     cd apache-activemq-5.13.0
     bin/activemq console
 
-And then Broker is running (you can press `ctrl + c` in the shell to stop the broker).
+And then Broker is running (you can press <kbd>ctrl</kbd>+<kbd>c</kbd> in the shell
+to stop the broker).
 
 The Camel application connects to the remote broker on url: `tcp://localhost:61616`.
 The url can be changed in the `WidgetMain.java` source code.
@@ -58,7 +59,7 @@ and then browse the queues. You should see the three queues:
  - widget
  - gadget
 
-The Camel application can be stopped pressing `ctrl + c` in the shell.
+The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in the shell.
 
 ### Configuration
 

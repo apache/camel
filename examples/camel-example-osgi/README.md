@@ -14,7 +14,7 @@ To run the example using Maven type
 
 	mvn camel:run
 
-To stop the example hit `ctrl + c`
+To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ### Run inside OSGi container
 You will need to compile and install this example first:
@@ -35,7 +35,7 @@ The example outputs to the log, which you can see using
 
 	log:tail
 
-And use `ctrl+c` to break the tail.
+And use <kbd>ctrl</kbd>+<kbd>c</kbd> to break the tail.
 
 ### Forum, Help, etc
 
