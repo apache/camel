@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
-public class MetricsSampleTest {
+public class ApplicationTest {
 
     @Inject
     private Meter generated;
@@ -65,7 +65,7 @@ public class MetricsSampleTest {
             // Metrics CDI
             .addPackage(MetricsExtension.class.getPackage())
             // Test classes
-            .addPackage(MetricsSampleTest.class.getPackage())
+            .addPackage(Application.class.getPackage())
             // Bean archive deployment descriptor
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
