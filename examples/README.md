@@ -49,7 +49,7 @@ All examples have been sort by type/category
 ##### CDI
 
 * [camel-example-cdi](camel-example-cdi/README.md)
-* [camel-example-metrics-cdi](camel-example-metrics-cdi/README.md)
+* [camel-example-cdi-metrics](camel-example-cdi-metrics/README.md)
 * [camel-example-cdi-properties](camel-example-cdi-properties/README.md)
 * [camel-example-widget-gadget-java](camel-example-widget-gadget-cdi/README.md)
 
