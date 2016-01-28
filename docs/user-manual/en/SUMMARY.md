@@ -95,6 +95,7 @@
 	* [Beanstalk](beanstalk.adoc)
 	* [Bean-validator](bean-validator.adoc)
 	* [Bindy](bindy.adoc)
+	* [Blueprint](blueprint-testing.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
