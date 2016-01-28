@@ -37,6 +37,7 @@
     <module>camel-example-box-osgi</module>
     <module>camel-example-cafe</module>
     <module>camel-example-cdi</module>
+    <module>camel-example-cdi-properties</module>
     <module>camel-example-cxf</module>
     <module>camel-example-cxf-blueprint</module>
     <module>camel-example-cxf-osgi</module>
