@@ -97,6 +97,7 @@
 	* [Bindy](bindy.adoc)
 	* [Blueprint](blueprint-testing.adoc)
 	* [Boon](boon.adoc)
+	* [Box](box.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
