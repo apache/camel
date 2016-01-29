@@ -89,7 +89,7 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
         assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
         assertTrue(json.contains("\"x-className\""));
         assertTrue(json.contains("\"format\" : \"org.apache.camel.swagger.User\""));
-
+        assertFalse(json.contains("\"enum\""));
         context.stop();
     }
 
