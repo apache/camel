@@ -219,7 +219,7 @@ public class RestSwaggerReader {
                         if (param.getDataType() != null) {
                             sp.setType(param.getDataType());
                         }
-                        if (param.getAllowableValues() != null) {
+                        if (param.getAllowableValues() != null && !param.getAllowableValues().isEmpty()) {
                             sp.setEnum(param.getAllowableValues());
                         }
                     }
