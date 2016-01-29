@@ -54,23 +54,23 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
     private String clientKey;
     @UriParam
     private boolean headersOnly;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyAuthMethod;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyAuthUsername;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyAuthPassword;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyAuthDomain;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyAuthHost;
-    @UriParam
+    @UriParam(label = "advanced")
     private HttpClientConfigurer httpClientConfigurer;
-    @UriParam
+    @UriParam(label = "advanced")
     private HttpConnectionManager httpConnectionManager;
 
     public GeoCoderEndpoint() {
