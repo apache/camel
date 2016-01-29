@@ -113,7 +113,7 @@
 * [Expession Languages](languages.adoc)
 	* [Bean Language](bean-language.adoc)
 	* [Constant](constant.adoc)
-
-* [Data Formats](data-format.adoc)
 -->
-	
+
+* Data Formats
+    * [XML JSON](xmljson.adoc)
