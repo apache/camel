@@ -33,7 +33,6 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Adapter to turn a StAX {@link XMLStreamReader} into a {@link SAXSource}.
@@ -60,6 +59,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
     }
 
     protected void parse() throws SAXException {
+        final StAX2SAXAttributes attributes = new StAX2SAXAttributes();
         try {
             while (true) {
                 switch (streamReader.getEventType()) {
@@ -110,19 +110,14 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
                     contentHandler.endDocument();
                     return;
                 case XMLStreamConstants.END_ELEMENT: {
-                    String uri = streamReader.getNamespaceURI();
+                    String uri = nullToEmpty(streamReader.getNamespaceURI());
                     String localName = streamReader.getLocalName();
-                    String prefix = streamReader.getPrefix();
-                    String qname = prefix != null && prefix.length() > 0
-                        ? prefix + ":" + localName : localName;
+                    String qname = getPrefixedName(streamReader.getPrefix(), localName);
                     contentHandler.endElement(uri, localName, qname);
+
                     // namespaces
                     for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
                         String nsPrefix = streamReader.getNamespacePrefix(i);
-                        String nsUri = streamReader.getNamespaceURI(i);
-                        if (nsUri == null) {
-                            nsUri = "";
-                        }
                         contentHandler.endPrefixMapping(nsPrefix);
                     }
                     break;
@@ -138,21 +133,19 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
                     contentHandler.startDocument();
                     break;
                 case XMLStreamConstants.START_ELEMENT: {
-                    String uri = streamReader.getNamespaceURI();
-                    String localName = streamReader.getLocalName();
-                    String prefix = streamReader.getPrefix();
-                    String qname = prefix != null && prefix.length() > 0
-                        ? prefix + ":" + localName : localName;
                     // namespaces
                     for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
                         String nsPrefix = streamReader.getNamespacePrefix(i);
-                        String nsUri = streamReader.getNamespaceURI(i);
-                        if (nsUri == null) {
-                            nsUri = "";
-                        }
+                        String nsUri = nullToEmpty(streamReader.getNamespaceURI(i));
                         contentHandler.startPrefixMapping(nsPrefix, nsUri);
                     }
-                    contentHandler.startElement(uri == null ? "" : uri, localName, qname, getAttributes());
+
+                    String uri = nullToEmpty(streamReader.getNamespaceURI());
+                    String localName = streamReader.getLocalName();
+                    String qname = getPrefixedName(streamReader.getPrefix(), localName);
+                    attributes.init();
+                    contentHandler.startElement(uri, localName, qname, attributes);
+                    attributes.reset();
                     break;
                 }
                 default:
@@ -177,37 +170,114 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
         }
     }
 
-    protected String getQualifiedName() {
-        String prefix = streamReader.getPrefix();
-        if (prefix != null && prefix.length() > 0) {
-            return prefix + ":" + streamReader.getLocalName();
-        } else {
-            return streamReader.getLocalName();
+    private String getPrefixedName(String prefix, String localName) {
+        if (prefix == null || prefix.length() == 0) {
+            return localName;
         }
+        return prefix + ":" + localName;
     }
 
-    protected Attributes getAttributes() {
-        AttributesImpl attrs = new AttributesImpl();
+    private String nullToEmpty(String s) {
+        return s == null ? "" : s;
+    }
 
-        for (int i = 0; i < streamReader.getAttributeCount(); i++) {
-            String uri = streamReader.getAttributeNamespace(i);
-            String localName = streamReader.getAttributeLocalName(i);
-            String prefix = streamReader.getAttributePrefix(i);
-            String qName;
-            if (prefix != null && prefix.length() > 0) {
-                qName = prefix + ':' + localName;
-            } else {
-                qName = localName;
-            }
-            String type = streamReader.getAttributeType(i);
-            String value = streamReader.getAttributeValue(i);
-            if (value == null) {
-                value = "";
-            }
+    class StAX2SAXAttributes implements Attributes {
 
-            attrs.addAttribute(uri == null ? "" : uri, localName, qName, type, value);
+        private int attributeCount;
+
+        void init() {
+            attributeCount = streamReader.getAttributeCount();
         }
-        return attrs;
+
+        void reset() {
+            attributeCount = 0;
+        }
+
+        @Override
+        public int getLength() {
+            return attributeCount;
+        }
+
+        private boolean checkIndex(int index) {
+            return index >= 0 && index < attributeCount;
+        }
+
+        @Override
+        public String getURI(int index) {
+            if (!checkIndex(index))
+                return null;
+            return nullToEmpty(streamReader.getAttributeNamespace(index));
+        }
+
+        @Override
+        public String getLocalName(int index) {
+            if (!checkIndex(index))
+                return null;
+            return streamReader.getAttributeLocalName(index);
+        }
+
+        @Override
+        public String getQName(int index) {
+            if (!checkIndex(index))
+                return null;
+            String localName = streamReader.getAttributeLocalName(index);
+            String prefix = streamReader.getAttributePrefix(index);
+            return getPrefixedName(prefix, localName);
+        }
+
+        @Override
+        public String getType(int index) {
+            if (!checkIndex(index))
+                return null;
+            return streamReader.getAttributeType(index);
+        }
+
+        @Override
+        public String getValue(int index) {
+            if (!checkIndex(index))
+                return null;
+            return nullToEmpty(streamReader.getAttributeType(index));
+        }
+
+        @Override
+        public int getIndex(String searchUri, String searchLocalName) {
+            for (int i = 0; i < attributeCount; i++) {
+                if (getURI(i).equals(searchUri) && getLocalName(i).equals(searchLocalName)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        @Override
+        public int getIndex(String searchQName) {
+            for (int i = 0; i < attributeCount; i++) {
+                if (getQName(i).equals(searchQName)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        @Override
+        public String getType(String uri, String localName) {
+            return getType(getIndex(uri, localName));
+        }
+
+        @Override
+        public String getType(String qName) {
+            return getType(getIndex(qName));
+        }
+
+        @Override
+        public String getValue(String uri, String localName) {
+            return getValue(getIndex(uri, localName));
+        }
+
+        @Override
+        public String getValue(String qName) {
+            return getValue(getIndex(qName));
+        }
     }
 
     public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
