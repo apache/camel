@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -40,6 +41,7 @@ import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
 import org.apache.camel.core.osgi.OsgiServiceRegistry;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
+import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.SimpleRegistry;
@@ -54,15 +56,15 @@ public abstract class AbstractCamelRunner implements Runnable {
 
     public static final int START_DELAY = 5000;
     public static final String PROPERTY_PREFIX = "camel.scr.properties.prefix";
-    
+
     protected Logger log = LoggerFactory.getLogger(getClass());
-    protected CamelContext context;
-    protected Registry registry;
 
     // Configured fields
     private String camelContextId;
     private boolean active;
 
+    private CamelContext context;
+    private SimpleRegistry localRegistry = new SimpleRegistry();
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture starter;
     private volatile boolean activated;
@@ -92,34 +94,32 @@ public abstract class AbstractCamelRunner implements Runnable {
 
     protected void createCamelContext(final BundleContext bundleContext, final Map<String, String> props) {
         if (bundleContext != null) {
-            registry = new OsgiServiceRegistry(bundleContext);
-            context = new OsgiDefaultCamelContext(bundleContext, registry);
+            List<Registry> registries = new LinkedList<>();
+            registries.add(localRegistry);
+            registries.add(new OsgiServiceRegistry(bundleContext));
+            context = new OsgiDefaultCamelContext(bundleContext, new CompositeRegistry(registries));
             // Setup the application context classloader with the bundle classloader
             context.setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
             // and make sure the TCCL is our classloader
             Thread.currentThread().setContextClassLoader(context.getApplicationContextClassLoader());
         } else {
-            registry = new SimpleRegistry();
-            context = new DefaultCamelContext(registry);
+            context = new DefaultCamelContext(localRegistry);
         }
         setupPropertiesComponent(context, props, log);
     }
     
     protected void setupCamelContext(final BundleContext bundleContext, final String camelContextId) throws Exception {
-        // Set up CamelContext
+        // Set up CamelContext ID
         if (camelContextId != null) {
             context.setNameStrategy(new ExplicitCamelContextNameStrategy(camelContextId));
         }
-        // TODO: allow to configure these options and not hardcode
-        context.setUseMDCLogging(true);
-        context.setUseBreadcrumb(true);
 
         // Add routes
         for (RoutesBuilder route : getRouteBuilders()) {
             context.addRoutes(configure(context, route, log));
         }
 
-        // ensure we publish this CamelContext to the OSGi service registry
+        // Ensure we publish this CamelContext to the OSGi service registry
         context.getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
     }
 
@@ -141,13 +141,7 @@ public abstract class AbstractCamelRunner implements Runnable {
             Properties initialProps = new Properties();
             initialProps.putAll(props);
             log.debug(String.format("Added %d initial properties", props.size()));
-            try {
-                pc.setInitialProperties(initialProps);
-            } catch (NoSuchMethodError e) {
-                // For Camel versions without setInitialProperties
-                pc.setOverrideProperties(initialProps);
-                pc.setLocation("default.properties");
-            }
+            pc.setInitialProperties(initialProps);
         }
     }
 
@@ -201,7 +195,6 @@ public abstract class AbstractCamelRunner implements Runnable {
             context.start();
             started = true;
         } catch (Exception e) {
-            // we should have a better way - than just try every 5th second to try to start the bundle
             log.warn("Failed to start Camel context. Will try again when more Camel components have been registered.", e);
         }
     }
@@ -222,6 +215,10 @@ public abstract class AbstractCamelRunner implements Runnable {
     
     public CamelContext getContext() {
         return context;
+    }
+
+    public SimpleRegistry getLocalRegistry() {
+        return localRegistry;
     }
 
     protected void gotCamelComponent(final ServiceReference serviceReference) {

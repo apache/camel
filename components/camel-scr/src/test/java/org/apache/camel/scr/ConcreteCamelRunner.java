@@ -63,14 +63,16 @@ public class ConcreteCamelRunner extends AbstractCamelRunner implements Lifecycl
     @Override
     protected void createCamelContext(BundleContext bundleContext, Map<String, String> props) {
         super.createCamelContext(bundleContext, props);
-        context.disableJMX();
-        context.addLifecycleStrategy(this);
+        getContext().setUseMDCLogging(true);
+        getContext().setUseBreadcrumb(true);
+        getContext().disableJMX();
+        getContext().addLifecycleStrategy(this);
     }
 
     @Override
     public List<RoutesBuilder> getRouteBuilders() {
         List<RoutesBuilder> routesBuilders = new ArrayList<RoutesBuilder>();
-        routesBuilders.add(new TestRouteBuilder());
+        routesBuilders.add(new TestRouteBuilder(getLocalRegistry()));
         routesBuilders.add(new TestRouteBuilder2());
         return routesBuilders;
     }

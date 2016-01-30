@@ -20,15 +20,27 @@
 package ${package}.internal;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.SimpleRegistry;
 
 public class ${className}Route extends RouteBuilder {
+
+    private final SimpleRegistry registry;
 
     // Configured fields
     private String camelRouteId;
 
+    public ${className}Route(final SimpleRegistry registry) {
+        this.registry = registry;
+    }
+
     @Override
 	public void configure() throws Exception {
-        from("{{from}}").routeId(camelRouteId)
+
+        // Add objects to CamelContext's registry
+        // registry.put("key", "value");
+
+        from("{{from}}")
+            .routeId(camelRouteId)
             .to("{{to}}");
 	}
 
