@@ -17,9 +17,12 @@
 package org.apache.camel.scr;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.SimpleRegistry;
 import org.apache.commons.lang.Validate;
 
 public class TestRouteBuilder extends RouteBuilder {
+
+    private final SimpleRegistry registry;
 
     // Configured fields
     @SuppressWarnings("unused")
@@ -33,9 +36,16 @@ public class TestRouteBuilder extends RouteBuilder {
     @SuppressWarnings("unused")
     private String camelRouteId;
 
+    public TestRouteBuilder(final SimpleRegistry registry) {
+        this.registry = registry;
+    }
+
     @Override
     public void configure() throws Exception {
         checkProperties();
+
+        // You can add objects to CamelContext's local registry straight from RouteBuilder.
+        registry.put("key", "value");
 
         errorHandler(defaultErrorHandler()
                 .maximumRedeliveries(maximumRedeliveries)
