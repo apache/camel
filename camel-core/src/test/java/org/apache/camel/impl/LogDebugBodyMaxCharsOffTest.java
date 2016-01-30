@@ -26,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
 
-    private TraceExchangeFormatter myFormatter = new TraceExchangeFormatter();
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -37,7 +35,7 @@ public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("logFormatter", myFormatter);
+        jndi.bind("logFormatter", new TraceExchangeFormatter());
         return jndi;
     }
 
@@ -58,6 +56,7 @@ public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be empty body as toString on the message will return an empty body
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: [Body is not logged]]"));
 

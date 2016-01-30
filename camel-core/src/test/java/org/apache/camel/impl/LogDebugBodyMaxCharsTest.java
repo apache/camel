@@ -26,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
 
-    private TraceExchangeFormatter myFormatter = new TraceExchangeFormatter();
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -37,7 +35,7 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("logFormatter", myFormatter);
+        jndi.bind("logFormatter", new TraceExchangeFormatter());
         return jndi;
     }
 
@@ -58,6 +56,7 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be clipped after 20 chars
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: 01234567890123456789... [Body clipped after 20 chars, total length is 1000]]"));
 
@@ -74,6 +73,7 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should not be clipped as the message is < 20 chars
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: 1234567890]"));
 
