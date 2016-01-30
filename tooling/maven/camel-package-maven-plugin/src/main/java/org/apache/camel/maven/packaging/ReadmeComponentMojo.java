@@ -96,6 +96,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     File file = new File(docDir, componentName + ".adoc");
                     ComponentModel model = generateComponentModel(componentName, json);
 
+                    boolean exists = file.exists();
                     boolean updated = false;
                     if (model.getComponentOptions() != null) {
                         String options = templateComponentOptions(model);
@@ -107,9 +108,11 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     }
 
                     if (updated) {
-                        getLog().info("Updated file: " + file);
+                        getLog().info("Updated doc file: " + file);
+                    } else if (exists) {
+                        getLog().info("No changes to doc file: " + file);
                     } else {
-                        getLog().info("No changes to file: " + file);
+                        getLog().info("No component doc file: " + file);
                     }
                 }
             }
