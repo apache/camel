@@ -624,6 +624,24 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
+     * Sets whether to log exhausted message body with message history.
+     * Requires <tt>logExhaustedMessageHistory</tt> to be enabled.
+     */
+    public OnExceptionDefinition logExhaustedMessageBody(boolean logExhaustedMessageBody) {
+        getOrCreateRedeliveryPolicy().logExhaustedMessageBody(logExhaustedMessageBody);
+        return this;
+    }
+
+    /**
+     * Sets whether to log exhausted message body with message history.
+     * Requires <tt>logExhaustedMessageHistory</tt> to be enabled.
+     */
+    public OnExceptionDefinition logExhaustedMessageBody(String logExhaustedMessageBody) {
+        getOrCreateRedeliveryPolicy().logExhaustedMessageBody(logExhaustedMessageBody);
+        return this;
+    }
+
+    /**
      * Sets the maximum redeliveries
      * <ul>
      * <li>5 = default value</li>

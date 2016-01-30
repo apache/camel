@@ -208,6 +208,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
     
+    public DefaultErrorHandlerBuilder logExhaustedMessageBody(boolean logExhaustedMessageBody) {
+        getRedeliveryPolicy().setLogExhaustedMessageBody(logExhaustedMessageBody);
+        return this;
+    }
+
     public DefaultErrorHandlerBuilder exchangeFormatterRef(String exchangeFormatterRef) {
         getRedeliveryPolicy().setExchangeFormatterRef(exchangeFormatterRef);
         return this;
