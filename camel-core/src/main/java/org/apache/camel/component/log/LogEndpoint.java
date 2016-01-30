@@ -100,7 +100,6 @@ public class LogEndpoint extends ProcessorEndpoint {
             }
             // the logger is the processor
             setProcessor(this.logger);
-            
         }
         ServiceHelper.startService(logger);
     }
