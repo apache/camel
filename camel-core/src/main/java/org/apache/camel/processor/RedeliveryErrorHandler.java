@@ -78,7 +78,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected volatile boolean preparingShutdown;
     protected final ExchangeFormatter exchangeFormatter;
     protected final boolean customExchangeFormatter;
-    protected final Processor onPrepare;
+    protected final Processor onPrepareProcessor;
+    protected final Processor onExceptionProcessor;
 
     /**
      * Contains the current redelivery data
@@ -97,6 +98,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Processor failureProcessor;
         Processor onRedeliveryProcessor;
         Processor onPrepareProcessor;
+        Processor onExceptionProcessor;
         Predicate handledPredicate;
         Predicate continuedPredicate;
         boolean useOriginalInMessage;
@@ -108,7 +110,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             this.currentRedeliveryPolicy = redeliveryPolicy;
             this.deadLetterProcessor = deadLetter;
             this.onRedeliveryProcessor = redeliveryProcessor;
-            this.onPrepareProcessor = onPrepare;
+            this.onPrepareProcessor = RedeliveryErrorHandler.this.onPrepareProcessor;
+            this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
             this.handledPredicate = getDefaultHandledPredicate();
             this.useOriginalInMessage = useOriginalMessagePolicy;
             this.handleNewException = deadLetterHandleNewException;
@@ -202,9 +205,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
-            Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
-            String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy,
-            Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepare) {
+                                  Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
+                                  String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy,
+                                  Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepareProcessor, Processor onExceptionProcessor) {
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
@@ -221,7 +224,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
         this.retryWhilePolicy = retryWhile;
         this.executorService = executorService;
-        this.onPrepare = onPrepare;
+        this.onPrepareProcessor = onPrepareProcessor;
+        this.onExceptionProcessor = onExceptionProcessor;
 
         if (ObjectHelper.isNotEmpty(redeliveryPolicy.getExchangeFormatterRef())) {
             ExchangeFormatter formatter = camelContext.getRegistry().lookupByNameAndType(redeliveryPolicy.getExchangeFormatterRef(), ExchangeFormatter.class);
@@ -368,6 +372,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             boolean handle = shouldHandleException(exchange);
             if (handle) {
                 handleException(exchange, data, isDeadLetterChannel());
+                onExceptionOccurred(exchange, data);
             }
 
             // compute if we are exhausted, and whether redelivery is allowed
@@ -546,6 +551,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         boolean handle = shouldHandleException(exchange);
         if (handle) {
             handleException(exchange, data, isDeadLetterChannel());
+            onExceptionOccurred(exchange, data);
         }
 
         // compute if we are exhausted or not
@@ -805,6 +811,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (processor != null) {
                 data.onRedeliveryProcessor = processor;
             }
+            // route specific on exception occurred?
+            processor = exceptionPolicy.getOnExceptionOccurred();
+            if (processor != null) {
+                data.onExceptionProcessor = processor;
+            }
         }
 
         // only log if not failure handled or not an exhausted unit of work
@@ -818,7 +829,29 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     /**
-     * Gives an optional configure redelivery processor a chance to process before the Exchange
+     * Gives an optional configured OnExceptionOccurred processor a chance to process just after an exception
+     * was thrown while processing the Exchange. This allows to execute the processor at the same time the exception was thrown.
+     */
+    protected void onExceptionOccurred(Exchange exchange, final RedeliveryData data) {
+        if (data.onExceptionProcessor == null) {
+            return;
+        }
+
+        // run this synchronously as its just a Processor
+        try {
+            if (log.isTraceEnabled()) {
+                log.trace("OnExceptionOccurred processor {} is processing Exchange: {} due exception occurred", data.onExceptionProcessor, exchange);
+            }
+            data.onExceptionProcessor.process(exchange);
+        } catch (Throwable e) {
+            // we dont not want new exception to override existing, so log it as a WARN
+            log.warn("Error during processing OnExceptionOccurred. This exception is ignored.", e);
+        }
+        log.trace("OnExceptionOccurred processor done");
+    }
+
+    /**
+     * Gives an optional configured redelivery processor a chance to process before the Exchange
      * will be redelivered. This can be used to alter the Exchange.
      */
     protected void deliverToOnRedeliveryProcessor(final Exchange exchange, final RedeliveryData data) {
@@ -897,10 +930,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             MessageHelper.resetStreamCache(exchange.getIn());
 
             // invoke custom on prepare
-            if (onPrepare != null) {
+            if (onPrepareProcessor != null) {
                 try {
-                    log.trace("OnPrepare processor {} is processing Exchange: {}", onPrepare, exchange);
-                    onPrepare.process(exchange);
+                    log.trace("OnPrepare processor {} is processing Exchange: {}", onPrepareProcessor, exchange);
+                    onPrepareProcessor.process(exchange);
                 } catch (Exception e) {
                     // a new exception was thrown during prepare
                     exchange.setException(e);
@@ -941,10 +974,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         } else {
             try {
                 // invoke custom on prepare
-                if (onPrepare != null) {
+                if (onPrepareProcessor != null) {
                     try {
-                        log.trace("OnPrepare processor {} is processing Exchange: {}", onPrepare, exchange);
-                        onPrepare.process(exchange);
+                        log.trace("OnPrepare processor {} is processing Exchange: {}", onPrepareProcessor, exchange);
+                        onPrepareProcessor.process(exchange);
                     } catch (Exception e) {
                         // a new exception was thrown during prepare
                         exchange.setException(e);

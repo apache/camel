@@ -107,7 +107,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
         TransactionErrorHandler answer = new TransactionErrorHandler(routeContext.getCamelContext(), processor,
             getLogger(), getOnRedelivery(), getRedeliveryPolicy(), getExceptionPolicyStrategy(), transactionTemplate, 
-            getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()), getRollbackLoggingLevel());
+            getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()), getRollbackLoggingLevel(), getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;
