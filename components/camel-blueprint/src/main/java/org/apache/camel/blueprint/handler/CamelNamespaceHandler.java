@@ -32,7 +32,6 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -83,6 +82,7 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -108,11 +108,9 @@ import org.osgi.service.blueprint.reflect.RefMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.osgi.service.blueprint.reflect.ComponentMetadata.ACTIVATION_LAZY;
 import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_MANDATORY;
 import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_OPTIONAL;
-
 
 /**
  * Camel {@link NamespaceHandler} to parse the Camel related namespaces.
@@ -993,8 +991,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 }
             }
 
-            // rest configuration may refer to a component to use
             if (ccfb.getRestConfiguration() != null) {
+                // rest configuration may refer to a component to use
                 String component = ccfb.getRestConfiguration().getComponent();
                 if (component != null) {
                     components.add(component);
@@ -1002,6 +1000,29 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 component = ccfb.getRestConfiguration().getApiComponent();
                 if (component != null) {
                     components.add(component);
+                }
+
+                // check what data formats are used in binding mode
+                RestBindingMode mode = ccfb.getRestConfiguration().getBindingMode();
+                String json = ccfb.getRestConfiguration().getJsonDataFormat();
+                if (json == null && mode != null) {
+                    if (RestBindingMode.json.equals(mode) || RestBindingMode.json_xml.equals(mode)) {
+                        // jackson is the default json data format
+                        json = "json-jackson";
+                    }
+                }
+                if (json != null) {
+                    dataformats.add(json);
+                }
+                String xml = ccfb.getRestConfiguration().getXmlDataFormat();
+                if (xml == null && mode != null) {
+                    if (RestBindingMode.xml.equals(mode) || RestBindingMode.json_xml.equals(mode)) {
+                        // jaxb is the default xml data format
+                        dataformats.add("jaxb");
+                    }
+                }
+                if (xml != null) {
+                    dataformats.add(xml);
                 }
             }
 
