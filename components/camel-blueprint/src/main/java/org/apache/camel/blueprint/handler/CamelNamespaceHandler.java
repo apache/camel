@@ -32,6 +32,7 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -989,6 +990,18 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                     } else if (o instanceof ToDefinition) {
                         findUriComponent(((ToDefinition) o).getUri(), components);
                     }
+                }
+            }
+
+            // rest configuration may refer to a component to use
+            if (ccfb.getRestConfiguration() != null) {
+                String component = ccfb.getRestConfiguration().getComponent();
+                if (component != null) {
+                    components.add(component);
+                }
+                component = ccfb.getRestConfiguration().getApiComponent();
+                if (component != null) {
+                    components.add(component);
                 }
             }
 
