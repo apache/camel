@@ -24,7 +24,6 @@ package $packageName;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonValue;
 
-#set ( $enumName = $utility.enumTypeName($field.Name) )
 /**
  * Salesforce Enumeration DTO for picklist $field.Name
  */

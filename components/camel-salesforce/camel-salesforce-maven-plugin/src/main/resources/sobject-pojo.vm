@@ -52,7 +52,7 @@ public class $desc.Name extends AbstractSObjectBase {
 #foreach ( $field in $desc.Fields )
 #if ( $utility.notBaseField($field.Name) )
 #set ( $fieldName = $field.Name )
-#set ( $fieldType = $utility.getFieldType($field) )
+#set ( $fieldType = $utility.getFieldType($desc, $field) )
 #set ( $isMultiSelectPicklist = $utility.isMultiSelectPicklist($field) )
     // $fieldName
 #if ( $utility.isBlobField($field) )
