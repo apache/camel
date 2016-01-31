@@ -58,7 +58,8 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         if (attributeName.equals("xmlns") || attributeName.startsWith("xmlns:")) {
             return false;
         }
-        return  !attributeName.equals("type")
+        // CHECKSTYLE:OFF
+        return !attributeName.equals("type")
                 && !attributeName.equals("onRedeliveryRef")
                 && !attributeName.equals("onRetryWhileRef")
                 && !attributeName.equals("onPrepareFailureRef")
@@ -66,6 +67,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
                 && !attributeName.equals("redeliveryPolicyRef")
                 && !attributeName.equals("transactionTemplateRef")
                 && !attributeName.equals("transactionManagerRef");
+        // CHECKSTYLE:ON
     }
 
     @Override

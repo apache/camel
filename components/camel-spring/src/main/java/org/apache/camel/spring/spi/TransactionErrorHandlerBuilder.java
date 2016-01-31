@@ -80,7 +80,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
                     LOG.trace("No TransactionTemplate found in registry.");
                 } else if (mapTemplate.size() == 1) {
                     transactionTemplate = mapTemplate.values().iterator().next();
-                }else {
+                } else {
                     LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
                               + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapTemplate.size());
                 }
@@ -92,7 +92,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
                     LOG.trace("No PlatformTransactionManager found in registry.");
                 } else if (mapManager.size() == 1) {
                     transactionTemplate = new TransactionTemplate(mapManager.values().iterator().next());
-                }else {
+                } else {
                     LOG.debug("Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
                               + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapManager.size());
                 }
