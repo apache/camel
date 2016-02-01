@@ -159,6 +159,16 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
+     * Hangup support is enabled by default.
+     *
+     * @deprecated is enabled by default now, so no longer need to call this method.
+     */
+    @Deprecated
+    public void enableHangupSupport() {
+        hangupInterceptorEnabled = true;
+    }
+
+    /**
      * Adds a {@link org.apache.camel.main.MainListener} to receive callbacks when the main is started or stopping
      *
      * @param listener the listener
