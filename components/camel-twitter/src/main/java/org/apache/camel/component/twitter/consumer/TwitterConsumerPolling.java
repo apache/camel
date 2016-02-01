@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.component.twitter.TwitterEndpointPolling;
 import org.apache.camel.component.twitter.consumer.streaming.StreamingConsumer;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
@@ -31,18 +32,14 @@ import org.apache.camel.impl.ScheduledPollConsumer;
  */
 public class TwitterConsumerPolling extends ScheduledPollConsumer {
 
+    public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
     private Twitter4JConsumer twitter4jConsumer;
 
-    public TwitterConsumerPolling(TwitterEndpoint endpoint, Processor processor,
+    public TwitterConsumerPolling(TwitterEndpointPolling endpoint, Processor processor,
                                   Twitter4JConsumer twitter4jConsumer) {
         super(endpoint, processor);
-
+        setDelay(DEFAULT_CONSUMER_DELAY);
         this.twitter4jConsumer = twitter4jConsumer;
-
-        int delay = endpoint.getProperties().getDelay();
-        setInitialDelay(1);
-        setDelay(delay);
-        setTimeUnit(TimeUnit.SECONDS);
     }
 
     @Override

@@ -128,6 +128,9 @@ Producer endpoints
 URI options
 ^^^^^^^^^^^
 
+
+
+
 // endpoint options: START
 The Twitter component supports 43 endpoint options which are listed below:
 
@@ -141,7 +144,6 @@ The Twitter component supports 43 endpoint options which are listed below:
 | consumerSecret | common |  | String | The consumer secret. Can also be configured on the TwitterComponent level instead.
 | user | common |  | String | Username used for user timeline consumption direct message production etc.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| delay | consumer | 60 | int | Delay in seconds between polling from twitter.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | type | consumer | direct | EndpointType | Endpoint type to use. Only streaming supports event type.
 | distanceMetric | consumer (advanced) | km | String | Used by the non-stream geography search to search by radius using the configured metrics. The unit can either be mi for miles or km for kilometers. You need to configure all the following options: longitude latitude radius and distanceMetric.
@@ -157,6 +159,7 @@ The Twitter component supports 43 endpoint options which are listed below:
 | backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
 | backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
 | backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
+| delay | scheduler | 60000 | long | Milliseconds before the next poll.
 | greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
 | initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts.
 | runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
@@ -179,6 +182,9 @@ The Twitter component supports 43 endpoint options which are listed below:
 | httpProxyUser | proxy |  | String | The http proxy user which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 |=======================================================================
 // endpoint options: END
+
+
+
 
 [[Twitter-Messageheaders]]
 Message headers

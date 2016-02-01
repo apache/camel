@@ -35,6 +35,10 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(scheme = "twitter", title = "Twitter", syntax = "twitter:kind", consumerClass = Twitter4JConsumer.class, label = "api,social")
 public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
 
+    @UriParam(optionalPrefix = "consumer.", defaultValue = "" + TwitterConsumerPolling.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
+            description = "Milliseconds before the next poll.")
+    private long delay = TwitterConsumerPolling.DEFAULT_CONSUMER_DELAY;
+
     @UriParam
     private TwitterConfiguration properties;
 
@@ -48,7 +52,7 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
         Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
         // update the pulling lastID with sinceId
         twitter4jConsumer.setLastId(properties.getSinceId());
-        Consumer tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
+        TwitterConsumerPolling tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
         configureConsumer(tc);
         return tc;
     }
@@ -144,6 +148,15 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @Override
     public EndpointType getEndpointType() {
         return EndpointType.POLLING;
+    }
+
+    /**
+     * Milliseconds before the next poll.
+     */
+    @Override
+    public void setDelay(long delay) {
+        super.setDelay(delay);
+        this.delay = delay;
     }
 
 }

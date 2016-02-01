@@ -46,8 +46,6 @@ public class TwitterConfiguration {
     private String consumerSecret;
     @UriParam
     private String user;
-    @UriParam(label = "consumer", defaultValue = "60")
-    private int delay = 60;
     @UriParam(label = "filter")
     private String keywords;
     @UriParam(label = "filter")
@@ -236,17 +234,6 @@ public class TwitterConfiguration {
      */
     public void setKeywords(String keywords) {
         this.keywords = keywords;
-    }
-
-    public int getDelay() {
-        return delay;
-    }
-
-    /**
-     * Delay in seconds between polling from twitter.
-     */
-    public void setDelay(int delay) {
-        this.delay = delay;
     }
 
     public EndpointType getType() {
