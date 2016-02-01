@@ -265,6 +265,7 @@
   	<!-- you've got to install pax-cdi-weld or pax-cdi-openwebbeans in order to make it works -->
   	<feature version='${pax-cdi-version}'>pax-cdi</feature>
     <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cdi/${project.version}</bundle>
   </feature>
   <feature name='camel-chunk' version='${project.version}' resolver='(obr)' start-level='50'>
