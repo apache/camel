@@ -42,7 +42,7 @@ public final class HBaseHelper {
     public static byte[] getHBaseFieldAsBytes(String n) {
         byte[] name = null;
         name = NAMES.get(n);
-        if (name == null) {
+        if (name == null && n != null) {
             name = n.getBytes();
             NAMES.put(n, name);
         }

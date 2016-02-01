@@ -207,20 +207,12 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
         } else {
             scan = new Scan();
         }
-
-        // need to clone the filters as they are not thread safe to use
+        
         if (filters != null && !filters.isEmpty()) {
-            List<Filter> clonedFilters = new LinkedList<Filter>();
-            for (Filter filter : filters) {
-                if (ModelAwareFilter.class.isAssignableFrom(filter.getClass())) {
-                    Object clone = endpoint.getCamelContext().getInjector().newInstance(filter.getClass());
-                    if (clone instanceof ModelAwareFilter) {
-                        ((ModelAwareFilter<?>) clone).apply(endpoint.getCamelContext(), model);
-                        clonedFilters.add((Filter) clone);
-                    }
-                }
-            }
-            scan.setFilter(new FilterList(FilterList.Operator.MUST_PASS_ALL, clonedFilters));
+        	for (int i=0;i<filters.size();i++){
+        		((ModelAwareFilter<?>) filters.get(i)).apply(endpoint.getCamelContext(), model);
+        		scan.setFilter(new FilterList(FilterList.Operator.MUST_PASS_ALL, ((ModelAwareFilter<?>) filters.get(i)).getFilteredList()));
+        	}
         }
 
         Set<HBaseCell> cellModels = model.getCells();
