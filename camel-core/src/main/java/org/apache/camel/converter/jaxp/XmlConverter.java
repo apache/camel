@@ -1048,8 +1048,9 @@ public class XmlConverter {
     }
 
     public void setTransformerFactory(TransformerFactory transformerFactory) {
-        if (transformerFactory != null)
+        if (transformerFactory != null) {
             configureSaxonTransformerFactory(transformerFactory);
+        }
         this.transformerFactory = transformerFactory;
     }
 

@@ -204,22 +204,25 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
 
         @Override
         public String getURI(int index) {
-            if (!checkIndex(index))
+            if (!checkIndex(index)) {
                 return null;
+            }
             return nullToEmpty(streamReader.getAttributeNamespace(index));
         }
 
         @Override
         public String getLocalName(int index) {
-            if (!checkIndex(index))
+            if (!checkIndex(index)) {
                 return null;
+            }
             return streamReader.getAttributeLocalName(index);
         }
 
         @Override
         public String getQName(int index) {
-            if (!checkIndex(index))
+            if (!checkIndex(index)) {
                 return null;
+            }
             String localName = streamReader.getAttributeLocalName(index);
             String prefix = streamReader.getAttributePrefix(index);
             return getPrefixedName(prefix, localName);
@@ -227,15 +230,17 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
 
         @Override
         public String getType(int index) {
-            if (!checkIndex(index))
+            if (!checkIndex(index)) {
                 return null;
+            }
             return streamReader.getAttributeType(index);
         }
 
         @Override
         public String getValue(int index) {
-            if (!checkIndex(index))
+            if (!checkIndex(index)) {
                 return null;
+            }
             return nullToEmpty(streamReader.getAttributeType(index));
         }
 

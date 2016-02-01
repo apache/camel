@@ -69,8 +69,9 @@ public class XMLReaderPool {
         XMLReader xmlReader = null;
         WeakReference<XMLReader> ref;
         while ((ref = pool.poll()) != null) {
-            if ((xmlReader = ref.get()) != null)
+            if ((xmlReader = ref.get()) != null) {
                 break;
+            }
         }
 
         if (xmlReader == null) {
@@ -83,7 +84,7 @@ public class XMLReaderPool {
     /**
      * Wraps another XMLReader for single use only.
      */
-    private class OneTimeXMLReader implements XMLReader {
+    private final class OneTimeXMLReader implements XMLReader {
         private XMLReader xmlReader;
         private final Map<String, Boolean> initFeatures = new HashMap<String, Boolean>();
         private final Map<String, Object> initProperties = new HashMap<String, Object>();
@@ -127,8 +128,9 @@ public class XMLReaderPool {
         }
 
         private void checkValid() {
-            if (xmlReader == null)
+            if (xmlReader == null) {
                 throw new IllegalStateException("OneTimeXMLReader.parse() can only be used once!");
+            }
         }
 
         @Override
@@ -142,8 +144,9 @@ public class XMLReaderPool {
         public void setFeature(String name, boolean value)
                 throws SAXNotRecognizedException, SAXNotSupportedException {
             checkValid();
-            if (!initFeatures.containsKey(name))
+            if (!initFeatures.containsKey(name)) {
                 initFeatures.put(name, Boolean.valueOf(xmlReader.getFeature(name)));
+            }
             xmlReader.setFeature(name, value);
         }
 
@@ -158,8 +161,9 @@ public class XMLReaderPool {
         public void setProperty(String name, Object value)
                 throws SAXNotRecognizedException, SAXNotSupportedException {
             checkValid();
-            if (!initProperties.containsKey(name))
+            if (!initProperties.containsKey(name)) {
                 initProperties.put(name, xmlReader.getProperty(name));
+            }
             xmlReader.setProperty(name, value);
         }
 
