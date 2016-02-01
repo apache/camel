@@ -36,8 +36,11 @@ import org.apache.camel.spi.UriParam;
         syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
         consumerClass = MailConsumer.class, label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {
-    @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer", description = "Milliseconds before the next poll.")
+
+    @UriParam(optionalPrefix = "consumer.", defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
+            description = "Milliseconds before the next poll.")
     private long delay = MailConsumer.DEFAULT_CONSUMER_DELAY;
+
     @UriParam
     private MailConfiguration configuration;
     @UriParam(label = "advanced")
@@ -224,5 +227,14 @@ public class MailEndpoint extends ScheduledPollEndpoint {
      */
     public void setPostProcessAction(MailBoxPostProcessAction postProcessAction) {
         this.postProcessAction = postProcessAction;
+    }
+
+    /**
+     * Milliseconds before the next poll.
+     */
+    @Override
+    public void setDelay(long delay) {
+        super.setDelay(delay);
+        this.delay = delay;
     }
 }
