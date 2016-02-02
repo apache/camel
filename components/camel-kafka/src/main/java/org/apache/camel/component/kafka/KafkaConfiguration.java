@@ -19,13 +19,14 @@ package org.apache.camel.component.kafka;
 import java.util.Properties;
 
 import kafka.producer.DefaultPartitioner;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class KafkaConfiguration {
+public class KafkaConfiguration implements Cloneable {
 
     @UriParam
     private String zookeeperConnect;
@@ -774,4 +775,16 @@ public class KafkaConfiguration {
     public void setDualCommitEnabled(Boolean dualCommitEnabled) {
         this.dualCommitEnabled = dualCommitEnabled;
     }
+
+    /**
+     * Returns a copy of this configuration
+     */
+    public KafkaConfiguration copy() {
+        try {
+            return (KafkaConfiguration)clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
 }
