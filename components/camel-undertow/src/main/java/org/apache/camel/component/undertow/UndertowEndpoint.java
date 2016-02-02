@@ -57,11 +57,11 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
 
     @UriPath @Metadata(required = "true")
     private URI httpURI;
-    @UriParam
+    @UriParam(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private String httpMethodRestrict;

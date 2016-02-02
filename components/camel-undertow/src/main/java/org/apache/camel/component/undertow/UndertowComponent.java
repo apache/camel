@@ -47,6 +47,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
     private UndertowHttpBinding undertowHttpBinding = new DefaultUndertowHttpBinding();
     private final Map<Integer, UndertowRegistry> serversRegistry = new HashMap<Integer, UndertowRegistry>();
+    private SSLContextParameters sslContextParameters;
 
     public UndertowComponent() {
         super(UndertowEndpoint.class);
@@ -73,14 +75,10 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
         // create the endpoint first
         UndertowEndpoint endpoint = createEndpointInstance(endpointUri, this);
-
-        UndertowHttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "undertowHttpBinding", UndertowHttpBinding.class);
-        if (binding != null) {
-            endpoint.setUndertowHttpBinding(binding);
-        } else {
-            endpoint.setUndertowHttpBinding(undertowHttpBinding);
-        }
-
+        // set options from component
+        endpoint.setSslContextParameters(sslContextParameters);
+        endpoint.setUndertowHttpBinding(undertowHttpBinding);
+        // set options from parameters
         setProperties(endpoint, parameters);
         if (options != null) {
             endpoint.setOptions(options);
@@ -301,5 +299,17 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     public void setUndertowHttpBinding(UndertowHttpBinding undertowHttpBinding) {
         this.undertowHttpBinding = undertowHttpBinding;
     }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
 
 }
