@@ -341,13 +341,13 @@ public final class EndpointHelper {
      * @param context     Camel context to use for lookup.
      * @param value       reference parameter value.
      * @param elementType result list element type.
-     * @return list of lookup results.
+     * @return list of lookup results, will always return a list.
      * @throws IllegalArgumentException if any referenced object was not found in registry.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> List<T> resolveReferenceListParameter(CamelContext context, String value, Class<T> elementType) {
         if (value == null) {
-            return Collections.emptyList();
+            return new ArrayList<T>();
         }
         List<String> elements = Arrays.asList(value.split(","));
         if (elements.size() == 1) {
