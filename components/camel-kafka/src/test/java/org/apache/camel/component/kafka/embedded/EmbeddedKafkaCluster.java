@@ -27,9 +27,13 @@ import kafka.admin.AdminUtils;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
 import kafka.utils.ZkUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.Option;
 
 public class EmbeddedKafkaCluster {
+    private static final Logger LOG = LoggerFactory.getLogger(EmbeddedKafkaCluster.class);
+
     private final List<Integer> ports;
     private final String zkConnection;
     private final Properties baseProperties;
@@ -110,8 +114,8 @@ public class EmbeddedKafkaCluster {
             properties.setProperty("log.dir", logDir.getAbsolutePath());
             properties.setProperty("num.partitions",  String.valueOf(1));
             properties.setProperty("auto.create.topics.enable",  String.valueOf(Boolean.TRUE));
-            System.out.println("EmbeddedKafkaCluster: local directory: " + logDir.getAbsolutePath());
             properties.setProperty("log.flush.interval.messages", String.valueOf(1));
+            LOG.info("EmbeddedKafkaCluster: local directory: " + logDir.getAbsolutePath());
 
             KafkaServer broker = startBroker(properties);
 
