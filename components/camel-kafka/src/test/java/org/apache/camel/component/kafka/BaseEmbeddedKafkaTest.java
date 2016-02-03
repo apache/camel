@@ -30,12 +30,15 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BaseEmbeddedKafkaTest extends CamelTestSupport {
-
     static EmbeddedZookeeper embeddedZookeeper;
     static EmbeddedKafkaCluster embeddedKafkaCluster;
     
+    private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
+
     private static volatile int zookeeperPort;
     
     private static volatile int karfkaPort;
@@ -57,9 +60,9 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("### Embedded Zookeeper connection: " + embeddedZookeeper.getConnection());
+        LOG.info("Embedded Zookeeper connection: " + embeddedZookeeper.getConnection());
         embeddedKafkaCluster.startup();
-        System.out.println("### Embedded Kafka cluster broker list: " + embeddedKafkaCluster.getBrokerList());
+        LOG.info("Embedded Kafka cluster broker list: " + embeddedKafkaCluster.getBrokerList());
     }
 
     @AfterClass
