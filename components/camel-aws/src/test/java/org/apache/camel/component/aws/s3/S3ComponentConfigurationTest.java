@@ -38,6 +38,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getAmazonS3Endpoint());
         assertNull(endpoint.getConfiguration().getPolicy());
         assertNull(endpoint.getConfiguration().getPrefix());
+        assertTrue(endpoint.getConfiguration().isIncludeBody());
     }
     
     @Test
@@ -59,6 +60,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getAmazonS3Endpoint());
         assertNull(endpoint.getConfiguration().getPolicy());
         assertNull(endpoint.getConfiguration().getPrefix());
+        assertTrue(endpoint.getConfiguration().isIncludeBody());
     }
 
     @Test
@@ -68,8 +70,8 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
                 + "&accessKey=xxx&secretKey=yyy&region=us-west-1&deleteAfterRead=false&maxMessagesPerPoll=1&policy=%7B%22Version%22%3A%222008-10-17%22,%22Id%22%3A%22Policy4324355464%22,"
                 + "%22Statement%22%3A%5B%7B%22Sid%22%3A%22Stmt456464646477%22,%22Action%22%3A%5B%22s3%3AGetObject%22%5D,%22Effect%22%3A%22Allow%22,"
                 + "%22Resource%22%3A%5B%22arn%3Aaws%3As3%3A%3A%3Amybucket/some/path/*%22%5D,%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D%7D%5D%7D&storageClass=REDUCED_REDUNDANCY"
-                + "&prefix=confidential");
-        
+                + "&prefix=confidential&includeBody=false");
+
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -82,6 +84,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
                 + "[\"arn:aws:s3:::mybucket/some/path/*\"],\"Principal\":{\"AWS\":[\"*\"]}}]}", endpoint.getConfiguration().getPolicy());
         assertEquals("REDUCED_REDUNDANCY", endpoint.getConfiguration().getStorageClass());
         assertEquals("confidential", endpoint.getConfiguration().getPrefix());
+        assertFalse(endpoint.getConfiguration().isIncludeBody());
     }
     
     @Test(expected = IllegalArgumentException.class)
