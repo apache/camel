@@ -103,10 +103,45 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     protected void doHttpRequest(final ContentExchange request, final ClientResponseCallback callback) {
 
+        // use SalesforceSecurityListener for security login retries
+        final SalesforceSecurityListener securityListener;
+        try {
+            final boolean isHttps = HttpSchemes.HTTPS.equals(String.valueOf(request.getScheme()));
+            securityListener = new SalesforceSecurityListener(
+                    httpClient.getDestination(request.getAddress(), isHttps),
+                    request, session, accessToken) {
+
+                private String reason;
+
+                @Override
+                public void onResponseStatus(Buffer version, int status, Buffer reason) throws IOException {
+                    super.onResponseStatus(version, status, reason);
+                    // remember status reason
+                    this.reason = reason.toString(StringUtil.__ISO_8859_1);
+                }
+
+                @Override
+                protected SalesforceException createExceptionResponse() {
+                    final int responseStatus = request.getResponseStatus();
+                    if (responseStatus < HttpStatus.OK_200 || responseStatus >= HttpStatus.MULTIPLE_CHOICES_300) {
+                        final String msg = String.format("Error {%s:%s} executing {%s:%s}",
+                                responseStatus, reason, request.getMethod(), request.getRequestURI());
+                        return new SalesforceException(msg, responseStatus, createRestException(request, reason));
+                    } else {
+                        return super.createExceptionResponse();
+                    }
+                }
+            };
+        } catch (IOException e) {
+            // propagate exception
+            callback.onResponse(null, new SalesforceException(
+                    String.format("Error registering security listener: %s", e.getMessage()),
+                    e));
+            return;
+        }
+
         // use HttpEventListener for lifecycle events
         request.setEventListener(new HttpEventListenerWrapper(request.getEventListener(), true) {
-
-            public String reason;
 
             @Override
             public void onConnectionFailed(Throwable ex) {
@@ -133,12 +168,9 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
             public void onResponseComplete() throws IOException {
                 super.onResponseComplete();
 
-                final int responseStatus = request.getResponseStatus();
-                if (responseStatus < HttpStatus.OK_200 || responseStatus >= HttpStatus.MULTIPLE_CHOICES_300) {
-                    final String msg = String.format("Error {%s:%s} executing {%s:%s}",
-                            responseStatus, reason, request.getMethod(), request.getRequestURI());
-                    final SalesforceException exception = new SalesforceException(msg, responseStatus, createRestException(request, reason));
-                    callback.onResponse(null, exception);
+                SalesforceException e = securityListener.getExceptionResponse();
+                if (e != null) {
+                    callback.onResponse(null, e);
                 } else {
                     // TODO not memory efficient for large response messages,
                     // doesn't seem to be possible in Jetty 7 to directly stream to response parsers
@@ -147,27 +179,11 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
                 }
 
             }
-
-            @Override
-            public void onResponseStatus(Buffer version, int status, Buffer reason) throws IOException {
-                super.onResponseStatus(version, status, reason);
-                // remember status reason
-                this.reason = reason.toString(StringUtil.__ISO_8859_1);
-            }
         });
 
-        // use SalesforceSecurityListener for security login retries
-        try {
-            final boolean isHttps = HttpSchemes.HTTPS.equals(String.valueOf(request.getScheme()));
-            request.setEventListener(new SalesforceSecurityListener(
-                    httpClient.getDestination(request.getAddress(), isHttps),
-                    request, session, accessToken));
-        } catch (IOException e) {
-            // propagate exception
-            callback.onResponse(null, new SalesforceException(
-                    String.format("Error registering security listener: %s", e.getMessage()),
-                    e));
-        }
+        // wrap the above lifecycle event listener with SalesforceSecurityListener
+        securityListener.setEventListener(request.getEventListener());
+        request.setEventListener(securityListener);
 
         // execute the request
         try {

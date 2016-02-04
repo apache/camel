@@ -42,6 +42,7 @@ public class SalesforceSecurityListener extends HttpEventListenerWrapper {
     private boolean retrying;
     private boolean requestComplete;
     private boolean responseComplete;
+    private SalesforceException exceptionResponse;
 
     public SalesforceSecurityListener(HttpDestination destination, HttpExchange exchange,
                                       SalesforceSession session, String accessToken) {
@@ -75,9 +76,37 @@ public class SalesforceSecurityListener extends HttpEventListenerWrapper {
     @Override
     public void onResponseComplete() throws IOException {
         responseComplete = true;
+
+        exceptionResponse = createExceptionResponse();
+        if (!retrying && exceptionResponse != null && isInvalidSessionError(exceptionResponse)) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Retrying on Salesforce InvalidSessionId error: {}",
+                        getRootSalesforceException(exceptionResponse).getMessage());
+            }
+            retrying = true;
+        }
+
         if (checkExchangeComplete()) {
             super.onResponseComplete();
         }
+    }
+
+    private boolean isInvalidSessionError(SalesforceException e) {
+        e = getRootSalesforceException(e);
+        return e.getErrors() != null &&
+                    e.getErrors().size() == 1 &&
+                    "InvalidSessionId".equals(e.getErrors().get(0).getErrorCode());
+    }
+
+    private SalesforceException getRootSalesforceException(SalesforceException e) {
+        while (e.getCause() instanceof SalesforceException) {
+            e = (SalesforceException) e.getCause();
+        }
+        return e;
+    }
+
+    protected SalesforceException createExceptionResponse() {
+        return null;
     }
 
     private boolean checkExchangeComplete() throws IOException {
@@ -86,6 +115,7 @@ public class SalesforceSecurityListener extends HttpEventListenerWrapper {
 
             requestComplete = false;
             responseComplete = false;
+            exceptionResponse = null;
 
             setDelegatingRequests(true);
             setDelegatingResponses(true);
@@ -137,6 +167,7 @@ public class SalesforceSecurityListener extends HttpEventListenerWrapper {
 
             requestComplete = false;
             responseComplete = false;
+            exceptionResponse = null;
         }
         super.onRetry();
     }
@@ -157,4 +188,7 @@ public class SalesforceSecurityListener extends HttpEventListenerWrapper {
         super.onException(ex);
     }
 
+    public SalesforceException getExceptionResponse() {
+        return exceptionResponse;
+    }
 }
