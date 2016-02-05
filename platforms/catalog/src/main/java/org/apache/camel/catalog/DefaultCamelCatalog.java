@@ -1326,11 +1326,18 @@ public class DefaultCamelCatalog implements CamelCatalog {
             options.add(s);
         }
 
+        // need to preserve {{ and }} from the syntax
+        // (we need to use words only as its provisional placeholders)
+        syntax = syntax.replaceAll("\\{\\{", "BEGINCAMELPLACEHOLDER");
+        syntax = syntax.replaceAll("\\}\\}", "ENDCAMELPLACEHOLDER");
+
         // parse the syntax into each options
         Matcher matcher2 = SYNTAX_PATTERN.matcher(syntax);
         List<String> options2 = new ArrayList<String>();
         while (matcher2.find()) {
             String s = matcher2.group(1);
+            s = s.replaceAll("BEGINCAMELPLACEHOLDER", "\\{\\{");
+            s = s.replaceAll("ENDCAMELPLACEHOLDER", "\\}\\}");
             options2.add(s);
         }
 
