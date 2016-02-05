@@ -93,9 +93,7 @@ public class SalesforceSecurityListener extends HttpEventListenerWrapper {
 
     private boolean isInvalidSessionError(SalesforceException e) {
         e = getRootSalesforceException(e);
-        return e.getErrors() != null &&
-                    e.getErrors().size() == 1 &&
-                    "InvalidSessionId".equals(e.getErrors().get(0).getErrorCode());
+        return e.getErrors() != null && e.getErrors().size() == 1 && "InvalidSessionId".equals(e.getErrors().get(0).getErrorCode());
     }
 
     private SalesforceException getRootSalesforceException(SalesforceException e) {
