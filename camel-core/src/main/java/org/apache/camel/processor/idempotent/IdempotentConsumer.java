@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
@@ -48,8 +50,9 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.camel.spi.IdempotentRepository
  * @see org.apache.camel.spi.ExchangeIdempotentRepository
  */
-public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
+public class IdempotentConsumer extends ServiceSupport implements CamelContextAware, AsyncProcessor, Navigate<Processor> {
     private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
+    private CamelContext camelContext;
     private final Expression messageIdExpression;
     private final AsyncProcessor processor;
     private final IdempotentRepository<String> idempotentRepository;
@@ -71,6 +74,16 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     @Override
     public String toString() {
         return "IdempotentConsumer[" + messageIdExpression + " -> " + processor + "]";
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -172,11 +185,20 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     // -------------------------------------------------------------------------
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor);
+        ServiceHelper.startServices(processor, idempotentRepository);
+        if (!camelContext.hasService(idempotentRepository)) {
+            camelContext.addService(idempotentRepository);
+        }
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor);
+        ServiceHelper.stopServices(processor, idempotentRepository);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(processor, idempotentRepository);
+        camelContext.removeService(idempotentRepository);
     }
 
     /**
