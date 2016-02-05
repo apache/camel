@@ -1064,18 +1064,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // if we should not rollback, then check whether logging is enabled
 
-            // depending on what kind of error handler we should
-            boolean logExhausted;
-            if (isDeadLetterChannel) {
-                // if DLC then log exhausted should not be default
-                logExhausted = data.currentRedeliveryPolicy.getLogExhaustedMessageHistory() != null && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory();
-            } else {
-                // for any other error handler log exhausted should be default
-                logExhausted = data.currentRedeliveryPolicy.getLogExhaustedMessageHistory() == null || data.currentRedeliveryPolicy.isLogExhaustedMessageHistory();
-            }
-
-            if (!newException && handled && (!data.currentRedeliveryPolicy.isLogHandled() && !logExhausted)) {
-                // do not log handled (but log exhausted message history can overrule log handled)
+            if (!newException && handled && !data.currentRedeliveryPolicy.isLogHandled()) {
+                // do not log handled
                 return;
             }
 
