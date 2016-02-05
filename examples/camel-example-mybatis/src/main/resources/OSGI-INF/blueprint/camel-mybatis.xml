@@ -48,7 +48,7 @@
     <!-- route that process the orders by picking up new rows from the database
          and when done processing then update the row to mark it as processed -->
     <route id="processOrder-route">
-      <from uri="mybatis:selectOrders?statementType=SelectList&amp;consumer.onConsume=consumeOrder"/>
+      <from uri="mybatis:selectOrders?statementType=SelectList&amp;onConsume=consumeOrder"/>
       <to uri="bean:orderService?method=processOrder"/>
       <log message="${body}"/>
     </route>
