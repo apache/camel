@@ -281,6 +281,7 @@
     <jboss-logging-version>3.3.0.Final</jboss-logging-version>
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jboss-xnio-version>3.3.4.Final</jboss-xnio-version>
+    <jcache-bundle-version>1.0.0_1</jcache-bundle-version>
     <jclouds-version>1.9.2</jclouds-version>
     <!-- jclouds must use this guava version -->
     <jclouds-google-guava-version>16.0.1</jclouds-google-guava-version>
