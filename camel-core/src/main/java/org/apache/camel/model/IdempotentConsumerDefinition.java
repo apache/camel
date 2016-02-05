@@ -225,9 +225,6 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
                 (IdempotentRepository<String>) resolveMessageIdRepository(routeContext);
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", this);
 
-        // add as service to CamelContext so we can managed it and it ensures it will be shutdown when camel shutdowns
-        routeContext.getCamelContext().addService(idempotentRepository);
-
         Expression expression = getExpression().createExpression(routeContext);
 
         // these boolean should be true by default

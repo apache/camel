@@ -85,8 +85,7 @@ public interface IdempotentRepository<E> extends Service {
      * Clear the repository.
      * <p/>
      * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
-     *
-     */  
+     */
     void clear();
 
 }
