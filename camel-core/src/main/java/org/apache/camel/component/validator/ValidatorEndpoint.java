@@ -69,8 +69,11 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "true", label = "advanced",
             description = "Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.")
     private boolean useSharedSchema = true;
-    @UriParam(label = "advanced", description = "To use a custom LSResourceResolver")
+    @UriParam(label = "advanced", description = "To use a custom LSResourceResolver.  Do not use together with resourceResolverFactory")
     private LSResourceResolver resourceResolver;
+    @UriParam(label = "advanced", description = "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. " + //
+    "The default resource resolver factory resturns a resource resolver which can read files from the class path and file system. Do not use together with resourceResolver.")
+    private ValidatorResourceResolverFactory resourceResolverFactory;
     @UriParam(defaultValue = "true", description = "Whether to fail if no body exists.")
     private boolean failOnNullBody = true;
     @UriParam(defaultValue = "true", description = "Whether to fail if no header exists when validating against a header.")
@@ -110,8 +113,13 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         if (!schemaReaderConfigured) {
             if (resourceResolver != null) {
                 schemaReader.setResourceResolver(resourceResolver);
+            } else if (resourceResolverFactory != null) {
+                // set the created resource resolver to the resourceResolver variable, so that it can 
+                // be accessed by the endpoint
+                resourceResolver = resourceResolverFactory.createResourceResolver(getCamelContext(), resourceUri);
+                schemaReader.setResourceResolver(resourceResolver);
             } else {
-                schemaReader.setResourceResolver(new DefaultLSResourceResolver(getCamelContext(), resourceUri));
+                schemaReader.setResourceResolver(new DefaultValidatorResourceResolverFactory().createResourceResolver(getCamelContext(), resourceUri));
             }
             schemaReader.setSchemaLanguage(getSchemaLanguage());
             schemaReader.setSchemaFactory(getSchemaFactory());
@@ -241,10 +249,22 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To use a custom LSResourceResolver
+     * To use a custom LSResourceResolver. See also {@link #setResourceResolverFactory(ValidatorResourceResolverFactory)}
      */
     public void setResourceResolver(LSResourceResolver resourceResolver) {
         this.resourceResolver = resourceResolver;
+    }
+
+    public ValidatorResourceResolverFactory getResourceResolverFactory() {
+        return resourceResolverFactory;
+    }
+
+    /** For creating a resource resolver which depends on the endpoint resource URI. 
+     * Must not be used in combination with method {@link #setResourceResolver(LSResourceResolver). 
+     * If not set then {@link DefaultValidatorResourceResolverFactory} is used 
+     */
+    public void setResourceResolverFactory(ValidatorResourceResolverFactory resourceResolverFactory) {
+        this.resourceResolverFactory = resourceResolverFactory;
     }
 
     public boolean isFailOnNullBody() {
