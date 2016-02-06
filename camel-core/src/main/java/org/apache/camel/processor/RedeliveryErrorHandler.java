@@ -1007,8 +1007,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // special situations when using dead letter channel
             if (isDeadLetterChannel) {
 
-                // use the handled option from the DLC
-                boolean handled = data.handleNewException;
+                // DLC is always handling the first thrown exception,
+                // but if its a new exception then use the configured option
+                boolean handled = newException == null || data.handleNewException;
 
                 // when using DLC then log new exception whether its being handled or not, as otherwise it may appear as
                 // the DLC swallow new exceptions by default (which is by design to ensure the DLC always complete,
@@ -1021,7 +1022,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     } else {
                         msg += ". The new exception is not handled as deadLetterHandleNewException=false.";
                     }
-                    logFailedDelivery(false, true, handled, false, isDeadLetterChannel, exchange, msg, data, newException);
+                    logFailedDelivery(false, true, handled, false, true, exchange, msg, data, newException);
                 }
 
                 if (handled) {
