@@ -35,8 +35,7 @@ public class JpaProducerNoBodyTest extends AbstractJpaTest {
             template.sendBody("direct:start", null);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            InvalidPayloadRuntimeException cause = assertIsInstanceOf(InvalidPayloadRuntimeException.class, e.getCause());
-            assertTrue(cause.getMessage().contains("Body is null"));
+            assertIsInstanceOf(InvalidPayloadRuntimeException.class, e.getCause());
         }
     }
 
