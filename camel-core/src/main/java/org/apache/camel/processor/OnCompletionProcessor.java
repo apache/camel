@@ -203,7 +203,7 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
         if (useOriginalBody) {
             LOG.trace("Using the original IN message instead of current");
 
-            Message original = exchange.getUnitOfWork().getOriginalInMessage();
+            Message original = ExchangeHelper.getOriginalInMessage(exchange);
             answer.setIn(original);
         }
 

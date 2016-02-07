@@ -864,6 +864,32 @@ public final class ExchangeHelper {
         }
     }
 
+    /**
+     * Gets the original IN {@link Message} this Unit of Work was started with.
+     * <p/>
+     * The original message is only returned if the option {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()}
+     * is enabled. If its disabled, then <tt>null</tt> is returned.
+     *
+     * @return the original IN {@link Message}, or <tt>null</tt> if using original message is disabled.
+     */
+    public static Message getOriginalInMessage(Exchange exchange) {
+        Message answer = null;
+
+        // try parent first
+        UnitOfWork uow = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
+        if (uow != null) {
+            answer = uow.getOriginalInMessage();
+        }
+        // fallback to the current exchange
+        if (answer == null) {
+            uow = exchange.getUnitOfWork();
+            if (uow != null) {
+                answer = uow.getOriginalInMessage();
+            }
+        }
+        return answer;
+    }
+
     @SuppressWarnings("unchecked")
     private static Map<String, Object> safeCopy(Map<String, Object> properties) {
         if (properties == null) {

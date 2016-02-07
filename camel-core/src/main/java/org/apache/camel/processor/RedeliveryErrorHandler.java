@@ -882,7 +882,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // prepare original IN body if it should be moved instead of current body
             if (data.useOriginalInMessage) {
                 log.trace("Using the original IN message instead of current");
-                Message original = exchange.getUnitOfWork().getOriginalInMessage();
+                Message original = ExchangeHelper.getOriginalInMessage(exchange);
                 exchange.setIn(original);
                 if (exchange.hasOut()) {
                     log.trace("Removing the out message to avoid some uncertain behavior");
