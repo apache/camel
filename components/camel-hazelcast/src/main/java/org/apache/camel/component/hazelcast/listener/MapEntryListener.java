@@ -14,21 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hazelcast.map;
+package org.apache.camel.component.hazelcast.listener;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
-import org.apache.camel.component.hazelcast.listener.CamelMapListener;
+import com.hazelcast.map.listener.EntryAddedListener;
+import com.hazelcast.map.listener.EntryEvictedListener;
+import com.hazelcast.map.listener.EntryMergedListener;
+import com.hazelcast.map.listener.EntryRemovedListener;
+import com.hazelcast.map.listener.EntryUpdatedListener;
+import com.hazelcast.map.listener.MapClearedListener;
+import com.hazelcast.map.listener.MapEvictedListener;
 
-public class HazelcastMapConsumer extends HazelcastDefaultConsumer {
-
-    public HazelcastMapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
-        super(hazelcastInstance, endpoint, processor, cacheName);
-
-        IMap<Object, Object> cache = hazelcastInstance.getMap(cacheName);
-        cache.addEntryListener(new CamelMapListener(this, cacheName), true);
-    }
+public interface MapEntryListener<K, V> extends MapClearedListener, MapEvictedListener,
+    EntryAddedListener<K, V>, EntryEvictedListener<K, V>, EntryRemovedListener<K, V>,
+    EntryMergedListener<K, V>, EntryUpdatedListener<K, V> {
 }
