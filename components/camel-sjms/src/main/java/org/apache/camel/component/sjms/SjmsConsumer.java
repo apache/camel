@@ -103,9 +103,7 @@ public class SjmsConsumer extends DefaultConsumer {
         return (SjmsEndpoint) super.getEndpoint();
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void startListener() throws Exception {
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
         if (consumers == null) {
             consumers = new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory());
@@ -139,9 +137,7 @@ public class SjmsConsumer extends DefaultConsumer {
         }
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
+    protected void stopListener() throws Exception {
         if (asyncStart != null && !asyncStart.isDone()) {
             asyncStart.cancel(true);
         }
@@ -170,7 +166,34 @@ public class SjmsConsumer extends DefaultConsumer {
         }
         if (this.executor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(this.executor);
+            this.executor = null;
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        startListener();
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        stopListener();
+        super.doStop();
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        // do the same logic as start
+        startListener();
+        super.doResume();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        // do the same logic as stop
+        stopListener();
+        super.doSuspend();
     }
 
     /**
@@ -196,7 +219,6 @@ public class SjmsConsumer extends DefaultConsumer {
         }
         return answer;
     }
-
 
     /**
      * Helper factory method used to create a MessageListener based on the MEP
