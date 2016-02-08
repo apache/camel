@@ -39,7 +39,7 @@ public class InfinispanProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        new InfinispanOperation(getCache(exchange), configuration).process(exchange);
+        InfinispanOperation.process(exchange, configuration, getCache(exchange));
     }
 
     @Override
