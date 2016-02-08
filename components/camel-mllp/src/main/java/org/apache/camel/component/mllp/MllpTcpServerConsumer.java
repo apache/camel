@@ -151,27 +151,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    @Override
-    protected void doSuspend() throws Exception {
-        log.debug("doSuspend()");
-
-        super.doSuspend();
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        log.debug("doResume()");
-
-        super.doSuspend();
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        log.debug("doShutdown()");
-
-        super.doShutdown();
-    }
-
     /**
      * Nested Class to handle the ServerSocket.accept requests
      */

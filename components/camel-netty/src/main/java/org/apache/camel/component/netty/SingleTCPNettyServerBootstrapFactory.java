@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Suspendable;
 import org.apache.camel.support.ServiceSupport;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link NettyServerBootstrapFactory} which is used by a single consumer (not shared).
  */
-public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
+public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory, Suspendable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleTCPNettyServerBootstrapFactory.class);
     private ChannelGroup allChannels;

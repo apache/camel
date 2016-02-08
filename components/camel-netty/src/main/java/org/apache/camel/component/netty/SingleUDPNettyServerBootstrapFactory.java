@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Suspendable;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
@@ -111,16 +112,6 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     @Override
     protected void doStop() throws Exception {
         stopServerBootstrap();
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doSuspend() throws Exception {
-        // noop
     }
 
     protected void startServerBootstrap() throws Exception {

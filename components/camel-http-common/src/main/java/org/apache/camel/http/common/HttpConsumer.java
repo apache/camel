@@ -17,10 +17,10 @@
 package org.apache.camel.http.common;
 
 import org.apache.camel.Processor;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 
-public class HttpConsumer extends DefaultConsumer implements SuspendableService {
+public class HttpConsumer extends DefaultConsumer implements Suspendable {
     private volatile boolean suspended;
     private boolean traceEnabled;
 
@@ -58,12 +58,16 @@ public class HttpConsumer extends DefaultConsumer implements SuspendableService 
         super.doStop();
     }
 
-    public void suspend() {
+    @Override
+    protected void doSuspend() throws Exception {
         suspended = true;
+        super.doSuspend();
     }
 
-    public void resume() {
+    @Override
+    protected void doResume() throws Exception {
         suspended = false;
+        super.doResume();
     }
 
     public boolean isSuspended() {

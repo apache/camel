@@ -27,9 +27,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.rabbitmq.client.Connection;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 
-public class RabbitMQConsumer extends DefaultConsumer {
+public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     private ExecutorService executor;
     private Connection conn;
     private int closeTimeout = 30 * 1000;
@@ -108,13 +109,6 @@ public class RabbitMQConsumer extends DefaultConsumer {
         this.consumers.add(consumer);
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        executor = endpoint.createExecutor();
-        log.debug("Using executor {}", executor);
-        startConsumers();
-    }
-
     private synchronized void reconnect() {
         if (startConsumerCallable != null) {
             return;
@@ -124,11 +118,6 @@ public class RabbitMQConsumer extends DefaultConsumer {
         final long connectionRetryInterval = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
         startConsumerCallable = new StartConsumerCallable(connectionRetryInterval);
         executor.submit(startConsumerCallable);
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        reconnect();
     }
 
     /**
@@ -157,6 +146,18 @@ public class RabbitMQConsumer extends DefaultConsumer {
     @Override
     protected void doSuspend() throws Exception {
         closeConnectionAndChannel();
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        reconnect();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        executor = endpoint.createExecutor();
+        log.debug("Using executor {}", executor);
+        startConsumers();
     }
 
     @Override
