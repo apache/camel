@@ -56,15 +56,15 @@ This example can be executed within Karaf 2.x, 3.x and 4.x. From the command lin
 2. For Karaf 2.x, install the following pre-requisites:
 
     ```sh
-    karaf@root()> features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
-    karaf@root()> features:addUrl mvn:org.apache.activemq/activemq-karaf/5.12.1/xml/features
+    karaf@root()> chooseurl camel 2.17.0
+    karaf@root()> chooseurl activemq 5.12.1
     karaf@root()> features:install activemq-broker-noweb pax-cdi-weld camel-sjms camel-cdi
     ```
 
 3. Then install and start the example:
 
     ```sh
-    karaf@root()> osgi:install -s mvn:org.apache.camel/camel-example-cdi-osgi/${version}
+    karaf@root()> install -s mvn:org.apache.camel/camel-example-cdi-osgi/2.17.0
     ```
 
 Alternatively, with the new commands introduced since Karaf 3.x:
@@ -72,15 +72,15 @@ Alternatively, with the new commands introduced since Karaf 3.x:
 2. Install the pre-requisites:
 
     ```sh
-    karaf@root()> feature:repo-add mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
-    karaf@root()> feature:repo-add mvn:org.apache.activemq/activemq-karaf/5.12.1/xml/features
+    karaf@root()> repo-add camel 2.17.0
+    karaf@root()> repo-add activemq 5.12.1
     karaf@root()> feature:install activemq-broker-noweb pax-cdi-weld camel-sjms camel-cdi
     ```
 
 3. Then install and start the example:
 
     ```sh
-    karaf@root()> bundle:install -s mvn:org.apache.camel/camel-example-cdi-osgi/${version}
+    karaf@root()> install -s mvn:org.apache.camel/camel-example-cdi-osgi/2.17.0
     ```
 
 By tailing the log with:
@@ -165,7 +165,7 @@ context, e.g.:
 Finally, you can stop the example with:
 
 ```sh
-karaf@root()> bundle:uninstall camel-example-cdi-osgi
+karaf@root()> uninstall camel-example-cdi-osgi
 ```
 
 And check in the log that the Camel context has been gracefully
