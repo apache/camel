@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link NettyServerBootstrapFactory} which is used by a single consumer (not shared).
  */
-public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
+public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory, Suspendable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleUDPNettyServerBootstrapFactory.class);
     private static final String LOOPBACK_INTERFACE = "lo";
@@ -112,6 +112,16 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     @Override
     protected void doStop() throws Exception {
         stopServerBootstrap();
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        // noop
     }
 
     protected void startServerBootstrap() throws Exception {

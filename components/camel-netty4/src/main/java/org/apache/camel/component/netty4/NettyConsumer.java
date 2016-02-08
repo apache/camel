@@ -90,11 +90,13 @@ public class NettyConsumer extends DefaultConsumer implements Suspendable {
     @Override
     protected void doSuspend() throws Exception {
         ServiceHelper.suspendService(nettyServerBootstrapFactory);
+        super.doSuspend();
     }
 
     @Override
     protected void doResume() throws Exception {
         ServiceHelper.resumeService(nettyServerBootstrapFactory);
+        super.doResume();
     }
 
     public CamelContext getContext() {
