@@ -3,6 +3,7 @@
 * [Introduction](README.md)
 * [Legal Notice](notice.md)
 * [Getting Started](getting-started.adoc)
+* [Longer Getting Started Guide](book-getting-started.adoc)
 
 * [Architecture](architecture.adoc)
 	* [Endpoint](endpoint.adoc)
