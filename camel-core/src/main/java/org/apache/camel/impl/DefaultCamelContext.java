@@ -72,6 +72,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StatefulService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
@@ -171,7 +172,7 @@ import org.slf4j.LoggerFactory;
  * @version
  */
 @SuppressWarnings("deprecation")
-public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, SuspendableService {
+public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, Suspendable {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
@@ -1169,7 +1170,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // must suspend route service as well
             suspendRouteService(routeService);
             // must suspend the route as well
-            ServiceHelper.suspendService(route);
+            if (route instanceof SuspendableService) {
+                ((SuspendableService) route).suspend();
+            }
         }
     }
 
@@ -1190,7 +1193,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // must suspend route service as well
             suspendRouteService(routeService);
             // must suspend the route as well
-            ServiceHelper.suspendService(route);
+            if (route instanceof SuspendableService) {
+                ((SuspendableService) route).suspend();
+            }
         }
     }
 
