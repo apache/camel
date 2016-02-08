@@ -39,6 +39,7 @@ import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
@@ -682,7 +683,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * Closes a correlation key when its complete. Any <i>late</i> received exchanges which has a correlation key
-     * that has been closed, it will be defined and a {@link org.apache.camel.processor.aggregate.ClosedCorrelationKeyException}
+     * that has been closed, it will be defined and a {@link ClosedCorrelationKeyException}
      * is thrown.
      *
      * @param capacity the maximum capacity of the closed correlation key cache.
