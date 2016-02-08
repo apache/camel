@@ -26,22 +26,18 @@ import org.infinispan.commons.util.concurrent.NotifyingFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InfinispanOperation {
+public final class InfinispanOperation {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanOperation.class);
-    private final BasicCache<Object, Object> cache;
-    private final InfinispanConfiguration configuration;
 
-    public InfinispanOperation(BasicCache<Object, Object> cache, InfinispanConfiguration configuration) {
-        this.cache = cache;
-        this.configuration = configuration;
+    private InfinispanOperation() {
     }
 
-    public void process(Exchange exchange) {
-        Operation operation = getOperation(exchange);
+    public static void process(Exchange exchange, InfinispanConfiguration configuration, BasicCache<Object, Object> cache) {
+        Operation operation = getOperation(exchange, configuration);
         operation.execute(cache, exchange);
     }
 
-    private Operation getOperation(Exchange exchange) {
+    private static Operation getOperation(Exchange exchange, InfinispanConfiguration configuration) {
         String operation = exchange.getIn().getHeader(InfinispanConstants.OPERATION, String.class);
         if (operation == null) {
             if (configuration.getCommand() != null) {
@@ -54,7 +50,7 @@ public class InfinispanOperation {
         return Operation.valueOf(operation.substring(InfinispanConstants.OPERATION.length()).toUpperCase());
     }
 
-    enum Operation {
+    private enum Operation {
         PUT {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
