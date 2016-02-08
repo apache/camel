@@ -118,3 +118,6 @@
 
 * Data Formats
     * [XML JSON](xmljson.adoc)
+
+* User Guide
+    * [Karaf](karaf.adoc)
