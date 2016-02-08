@@ -18,7 +18,6 @@ package org.apache.camel.processor.binding;
 
 import java.util.Locale;
 import java.util.Map;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -369,25 +368,14 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         private void ensureHeaderContentType(String contentType, boolean isXml, boolean isJson, Exchange exchange) {
             // favor given content type
             if (contentType != null) {
-                String type = ExchangeHelper.getContentType(exchange);
-                if (type == null) {
-                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, contentType);
-                }
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, contentType);
             }
 
             // favor json over xml
             if (isJson) {
-                // make sure there is a content-type with json
-                String type = ExchangeHelper.getContentType(exchange);
-                if (type == null) {
-                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
-                }
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
             } else if (isXml) {
-                // make sure there is a content-type with xml
-                String type = ExchangeHelper.getContentType(exchange);
-                if (type == null) {
-                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-                }
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
             }
         }
 
