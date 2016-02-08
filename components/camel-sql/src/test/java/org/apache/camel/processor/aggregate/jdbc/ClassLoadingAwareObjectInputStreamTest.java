@@ -16,18 +16,23 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultExchangeHolder;
-import org.junit.Test;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultExchangeHolder;
+import org.junit.Test;
 
 public class ClassLoadingAwareObjectInputStreamTest {
 
@@ -69,25 +74,31 @@ class MyObject implements Serializable {
     final byte[] content;
 
     public MyObject(String name, byte[] content) {
-	this.name = name;
-	this.content = content;
+        this.name = name;
+        this.content = content;
     }
-    
+
     @Override
     public boolean equals(Object o) {
-	if (this == o) return true;
-	if (o == null || getClass() != o.getClass()) return false;
-	
-	MyObject myObject = (MyObject) o;
-	
-	if (name != null ? !name.equals(myObject.name) : myObject.name != null) return false;
-	return Arrays.equals(content, myObject.content);	
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        MyObject myObject = (MyObject) o;
+
+        if (name != null ? !name.equals(myObject.name) : myObject.name != null) {
+            return false;
+        }
+        return Arrays.equals(content, myObject.content);
     }
-    
+
     @Override
     public int hashCode() {
-	int result = name != null ? name.hashCode() : 0;
-	result = 31 * result + Arrays.hashCode(content);
-	return result;
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + Arrays.hashCode(content);
+        return result;
     }
 }
