@@ -45,7 +45,12 @@ The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in th
 
 #### OSGi / Karaf
 
-This example can be executed within Karaf 2.x, 3.x and 4.x. From the command line:
+This example can be executed within Karaf 2.x, 3.x and 4.x. Note that it uses
+the `pax-cdi-weld` feature from the PAX CDI version used by Camel and which defines
+the Weld version used. For instance, Camel `2.17.0` depends on PAX CDI `1.0.0.RC1`
+whose `pax-cdi-weld` feature relies on Weld version `2.2.11.Final`.
+
+To run the example, from the command line:
 
 1. In the Karaf install root directory, start Karaf:
 
