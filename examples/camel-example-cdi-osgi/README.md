@@ -40,23 +40,49 @@ The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in th
 
 #### OSGi / Karaf
 
-This example can be executed within Karaf. From the command line, in `bin` directory,
-start Karaf:
+This example can be executed within Karaf 2.x, 3.x and 4.x. From the command line:
 
-    $ ./karaf
-    
-Then install the following pre-requisites:
+1. In the Karaf install root directory, start Karaf:
 
+    ```sh
+    $ bin/karaf
+    ```
+
+2. For Karaf 2.x, install the following pre-requisites:
+
+    ```
     features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
     features:addUrl mvn:org.apache.activemq/activemq-karaf/5.12.1/xml/features
     features:install activemq-broker-noweb
     features:install pax-cdi-weld
     features:install camel-cdi
     features:install camel-sjms
-    
-Finally install and start the example:
+    ```
 
+3. Then install and start the example:
+
+    ```
     osgi:install -s mvn:org.apache.camel/camel-example-cdi-osgi/${version}
+    ```
+
+Alternatively, with the new commands introduced since Karaf 3.x:
+
+2. Install the pre-requisites:
+
+    ```
+    feature:repo-add mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
+    feature:repo-add mvn:org.apache.activemq/activemq-karaf/5.12.1/xml/features
+    feature:install activemq-broker-noweb
+    feature:install pax-cdi-weld
+    feature:install camel-cdi
+    feature:install camel-sjms
+    ```
+
+3. Then install and start the example:
+
+    ```
+    bundle:install -s mvn:org.apache.camel/camel-example-cdi-osgi/${version}
+    ```
 
 The following messages should be logged:
 
