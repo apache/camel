@@ -19,6 +19,9 @@ package org.apache.camel.component.validator;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,9 +29,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.SimpleExpression;
+
 import org.junit.Assert;
-import org.w3c.dom.ls.LSInput;
-import org.w3c.dom.ls.LSResourceResolver;
+
 
 public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 

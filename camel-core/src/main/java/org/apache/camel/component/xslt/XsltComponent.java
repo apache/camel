@@ -37,9 +37,9 @@ public class XsltComponent extends UriEndpointComponent {
 
     @Metadata(label = "advanced")
     private XmlConverter xmlConverter;
-    @Metadata(label = "advanced", description="To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'.")
+    @Metadata(label = "advanced", description = "To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'.")
     private URIResolver uriResolver;
-    @Metadata(label = "advanced", description="To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'.")
+    @Metadata(label = "advanced", description = "To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'.")
     private XsltUriResolverFactory uriResolverFactory;
     @Metadata(defaultValue = "true")
     private boolean contentCache = true;
@@ -140,7 +140,7 @@ public class XsltComponent extends UriEndpointComponent {
                 // not in endpoint then use component specific resolver factory
                 resolverFactory = getUriResolverFactory();
             }
-            if (resolverFactory == null){
+            if (resolverFactory == null) {
                 // fallback to use the Default URI resolver factory
                 resolverFactory = new DefaultXsltUriResolverFactory();
             }
