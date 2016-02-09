@@ -339,11 +339,17 @@ public class HttpProducer extends DefaultProducer {
                 return null;
             }
         } else {
-            InputStream response = null;
-            if (!ignoreResponseBody) {
-                response = doExtractResponseBodyAsStream(is, exchange);
+            if (!getEndpoint().isDisableStreamCache()) {
+                // wrap the response in a stream cache so its re-readable
+                InputStream response = null;
+                if (!ignoreResponseBody) {
+                    response = doExtractResponseBodyAsStream(is, exchange);
+                }
+                return response;
+            } else {
+                // use the response stream as-is
+                return is;
             }
-            return response;
         }
     }
 

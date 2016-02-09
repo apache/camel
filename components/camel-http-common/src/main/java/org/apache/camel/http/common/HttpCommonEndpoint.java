@@ -51,7 +51,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     boolean matchOnUriPrefix;
     @UriParam(defaultValue = "true", description = "If this option is false Jetty servlet will disable the HTTP streaming and set the content-length header on the response")
     boolean chunked = true;
-    @UriParam(label = "consumer",
+    @UriParam(label = "common",
             description = "Determines whether or not the raw input stream from Jetty is cached or not"
                     + " (Camel will read the stream into a in memory/overflow to file, Stream caching) cache."
                     + " By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel"
@@ -60,7 +60,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                     + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
                     + " if this option is false to support reading the stream multiple times."
                     + " If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,"
-                    + " in case you do not need to read the message payload multiple times.")
+                    + " in case you do not need to read the message payload multiple times."
+                    + " The http/http4 producer will by default cache the response body stream. If setting this option to true,"
+                    + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
     boolean disableStreamCache;
     @UriParam(label = "producer", description = "The proxy host name")
     String proxyHost;
@@ -262,6 +264,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      * if this option is false to support reading the stream multiple times.
      * If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,
      * in case you do not need to read the message payload multiple times.
+     + The http/http4 producer will by default cache the response body stream. If setting this option to true,
+     + then the producers will not cache the response body stream but use the response stream as-is as the message body.
      */
     public void setDisableStreamCache(boolean disable) {
         this.disableStreamCache = disable;
