@@ -1,4 +1,4 @@
-# Camel Swagger Java example
+# Camel Swagger example
 
 ### Introduction
 This is an example that uses the rest-dsl to define a rest services which provides three operations
@@ -23,9 +23,9 @@ The example is built as a WAR which can also be deployed in a WAR container such
 
 The example has documentation in the home.html page which you can access using the following url
 
-	http://localhost:8080/camel-example-swagger-java/
+	http://localhost:8080/camel-example-swagger-xml/
 
-<http://localhost:8080/camel-example-swagger-java/>
+<http://localhost:8080/camel-example-swagger-xml/>
 
 This example implements the rest-dsl in XML in the camel-config.xml file. For an example that
 is using Java code, see the `camel-example-swagger-cdi`.

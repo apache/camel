@@ -25,9 +25,9 @@
     <version>2.17-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-example-swagger-java</artifactId>
-  <name>Camel :: Example :: Swagger Java</name>
-  <description>An example using REST DSL and Swagger Java with Apache Tomcat</description>
+  <artifactId>camel-example-swagger-xml</artifactId>
+  <name>Camel :: Example :: Swagger</name>
+  <description>An example using REST DSL in XML and Swagger with Swagger UI (web console)</description>
   <packaging>war</packaging>
 
   <properties>

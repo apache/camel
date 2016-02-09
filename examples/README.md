@@ -99,7 +99,7 @@ All examples have been sort by type/category
 ##### Swagger
 
 * [camel-example-swagger-cdi](camel-example-swagger-cdi/README.md)
-* [camel-example-swagger-java](camel-example-swagger-java/README.md)
+* [camel-example-swagger-xml](camel-example-swagger-xml/README.md)
 
 ##### Miscellaneous
 

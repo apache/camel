@@ -18,7 +18,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Apache Camel Swagger Java Example</title>
+    <title>Apache Camel Swagger Example</title>
     <link rel="stylesheet" href="css/foundation.min.css"/>
     <script src="js/vendor/modernizr.js"></script>
 </head>
@@ -26,13 +26,13 @@
 <body>
 <div class="row">
     <div class="large-12 columns">
-        <h2>Apache Camel Example using Swagger Java</h2>
+        <h2>Apache Camel Example using Swagger</h2>
     </div>
 </div>
 
 <div class="row">
     <div class="large-12 columns">
-        This example shows how to use Servlet REST to define REST endpoints in Camel routes using the Rest DSL,
+        This example shows how to use Servlet REST to define REST endpoints in Camel routes using the Rest DSL in XML,
         and using camel-swagger-java to expose the REST service APIs.
 
         <br/>
@@ -61,9 +61,9 @@
 
         From the command shell you can use curl to access the service as shown below:
 <pre>
-    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-swagger-java/rest/user/123
-    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-swagger-java/rest/user/findAll
-    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-swagger-java/rest/user
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-swagger-xml/rest/user/123
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-swagger-xml/rest/user/findAll
+    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-swagger-xml/rest/user
 </pre>
 
         Notice when trying to get user with id 789 then there is a built-in delay of 0.5-2 seconds, to simulate some
@@ -78,7 +78,7 @@
         </ul>
 
         <p/>
-        To use the swagger ui, follow this link. Replace the URL value with this one to access the REST local resources http://localhost:8080/camel-example-swagger-java/rest/api-docs/myCamel
+        To use the swagger ui, follow this link. Replace the URL value with this one to access the REST local resources http://localhost:8080/camel-example-swagger-xml/rest/api-docs/myCamel
         <ul>
             <li><a href="index.html">swagger</a> - swagger ui page</li>
         </ul>

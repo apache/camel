@@ -38,7 +38,7 @@
     <!-- also enable swagger api, using the apiContextPath
          and enable CORS so the swagger-ui web console can access the swagger api docs -->
     <restConfiguration component="servlet" bindingMode="json"
-                       contextPath="camel-example-swagger-java/rest" port="8080"
+                       contextPath="camel-example-swagger-xml/rest" port="8080"
                        apiContextPath="api-docs" apiContextListing="true"
                        enableCORS="true">
 
