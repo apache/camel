@@ -41,70 +41,11 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
-  <!-- to setup Camel Swagger servlet -->
-  <servlet>
-    <servlet-name>SwaggerServlet</servlet-name>
-    <servlet-class>org.apache.camel.swagger.servlet.RestSwaggerServlet</servlet-class>
-    <init-param>
-      <!-- enable context id listing so we can list all the CamelContexts in the JVM that has REST services
-           which we then will be able to show -->
-      <param-name>apiContextIdListing</param-name>
-      <param-value>true</param-value>
-    </init-param>
-    <init-param>
-      <!-- we specify the base.path using relative notation, that means the actual path will be calculated at runtime as
-           http://server:port/contextpath/rest -->
-      <param-name>base.path</param-name>
-      <param-value>rest</param-value>
-    </init-param>
-    <init-param>
-      <!-- we specify the api.path using relative notation, that means the actual path will be calculated at runtime as
-           http://server:port/contextpath/api-docs -->
-      <param-name>api.path</param-name>
-      <param-value>api-docs</param-value>
-    </init-param>
-    <init-param>
-      <param-name>api.version</param-name>
-      <param-value>1.2.3</param-value>
-    </init-param>
-    <init-param>
-      <param-name>api.title</param-name>
-      <param-value>User Services</param-value>
-    </init-param>
-    <init-param>
-      <param-name>api.description</param-name>
-      <param-value>Camel Rest Example with Swagger that provides an User REST service</param-value>
-    </init-param>
-    <init-param>
-      <param-name>api.contact.name</param-name>
-      <param-value>The Apache Camel team</param-value>
-    </init-param>
-    <load-on-startup>2</load-on-startup>
-  </servlet>
-
-  <!-- swagger api declaration -->
-  <servlet-mapping>
-    <servlet-name>SwaggerServlet</servlet-name>
-    <url-pattern>/api-docs/*</url-pattern>
-  </servlet-mapping>
-
   <!-- define that url path for the Camel Servlet to use -->
   <servlet-mapping>
     <servlet-name>CamelServlet</servlet-name>
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
-
-  <!-- enable CORS filter so people can use swagger ui to browse and test the apis -->
-  <filter>
-    <filter-name>RestSwaggerCorsFilter</filter-name>
-    <filter-class>org.apache.camel.swagger.servlet.RestSwaggerCorsFilter</filter-class>
-  </filter>
-
-  <filter-mapping>
-    <filter-name>RestSwaggerCorsFilter</filter-name>
-    <url-pattern>/api-docs/*</url-pattern>
-    <url-pattern>/rest/*</url-pattern>
-  </filter-mapping>
 
   <welcome-file-list>
     <welcome-file>home.html</welcome-file>
