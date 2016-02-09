@@ -35,8 +35,23 @@
          knows the url to the REST services.
          Notice: This is optional, but needed if the RestRegistry should enlist accurate information.
          You can access the RestRegistry from JMX at runtime -->
-    <restConfiguration component="servlet" bindingMode="json" contextPath="camel-example-swagger-java/rest" port="8080">
+    <!-- also enable swagger api, using the apiContextPath
+         and enable CORS so the swagger-ui web console can access the swagger api docs -->
+    <restConfiguration component="servlet" bindingMode="json"
+                       contextPath="camel-example-swagger-java/rest" port="8080"
+                       apiContextPath="api-docs" apiContextListing="true"
+                       enableCORS="true">
+
+      <!-- we want json output in pretty mode -->
       <dataFormatProperty key="prettyPrint" value="true"/>
+
+      <!-- setup swagger api descriptions -->
+      <apiProperty key="base.path" value="rest"/>
+      <apiProperty key="api.version" value="1.2.3"/>
+      <apiProperty key="api.title" value="User Services"/>
+      <apiProperty key="api.description" value="Camel Rest Example with Swagger that provides an User REST service"/>
+      <apiProperty key="api.contact.name" value="The Apache Camel team"/>
+
     </restConfiguration>
 
     <!-- defines the rest services using the context-path /user -->
