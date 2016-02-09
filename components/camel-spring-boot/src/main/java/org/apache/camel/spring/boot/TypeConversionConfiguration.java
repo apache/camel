@@ -33,12 +33,14 @@ import org.springframework.core.convert.support.DefaultConversionService;
 @ConditionalOnProperty(value = "camel.springboot.typeConversion", matchIfMissing = true)
 public class TypeConversionConfiguration {
 
-    @Bean
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
     TypeConverter typeConverter(CamelContext camelContext) {
         return camelContext.getTypeConverter();
     }
 
-    @Bean
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
     SpringTypeConverter springTypeConverter(CamelContext camelContext, ConversionService[] conversionServices) {
         SpringTypeConverter springTypeConverter = new SpringTypeConverter(asList(conversionServices));
         camelContext.getTypeConverterRegistry().addFallbackTypeConverter(springTypeConverter, true);
