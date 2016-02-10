@@ -96,6 +96,7 @@
     <module>camel-ejb</module>
     <module>camel-elasticsearch</module>
     <module>camel-elsql</module>
+    <module>camel-etcd</module>
     <module>camel-eventadmin</module>
     <module>camel-exec</module>
     <module>camel-facebook</module>
