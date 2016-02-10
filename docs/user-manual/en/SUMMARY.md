@@ -99,6 +99,7 @@
 	* [Blueprint](blueprint-testing.adoc)
 	* [Boon](boon.adoc)
 	* [Box](box.adoc)
+	* [Braintree](braintree.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
