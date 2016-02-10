@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.jackson.converter;
 
-import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.component.jackson.JacksonConstants;
@@ -28,21 +28,33 @@ import org.apache.camel.spi.TypeConverterRegistry;
 
 public final class JacksonTypeConverters {
 
-    private final ObjectMapper defaultMapper = new ObjectMapper();
+    private final ObjectMapper defaultMapper;
     private boolean init;
     private Boolean enabled;
+    private boolean pojoOnly = true;
 
     public JacksonTypeConverters() {
+        defaultMapper = new ObjectMapper();
+        // Enables JAXB processing
+        JaxbAnnotationModule module = new JaxbAnnotationModule();
+        defaultMapper.registerModule(module);
     }
 
     @FallbackConverter
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws Exception {
 
         // only do this if enabled
         if (!init && exchange != null) {
             // init to see if this is enabled
             String text = exchange.getContext().getProperties().get(JacksonConstants.ENABLE_TYPE_CONVERTER);
             enabled = "true".equalsIgnoreCase(text);
+
+            // pojo only by default
+            text = exchange.getContext().getProperties().get(JacksonConstants.TYPE_CONVERTER_POJO_ONLY);
+            if (text != null) {
+                pojoOnly = "true".equalsIgnoreCase(text);
+            }
+
             init = true;
         }
 
@@ -50,14 +62,24 @@ public final class JacksonTypeConverters {
             return null;
         }
 
-
-        if (isNotPojoType(type)) {
+        if (pojoOnly && isNotPojoType(type)) {
             return null;
         }
 
-        if (exchange != null && value instanceof Map) {
+        if (exchange != null) {
             ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
-            if (mapper.canSerialize(type)) {
+            if (String.class.isAssignableFrom(type)) {
+                String out = mapper.writeValueAsString(value);
+                return type.cast(out);
+            } else if (byte[].class.isAssignableFrom(type)) {
+                byte[] out = mapper.writeValueAsBytes(value);
+                return type.cast(out);
+            } else if (mapper.canSerialize(type)) {
+                // TODO: favor using mapper readValue
+                // if the input is string or input stream
+                if (String.class.isAssignableFrom(value.getClass())) {
+                    return mapper.readValue((String) value, type);
+                }
                 return mapper.convertValue(value, type);
             }
         }
