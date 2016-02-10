@@ -22,20 +22,15 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Component configuration for Braintree component.
  */
 @UriParams
 public class BraintreeConfiguration {
-    private static final Logger LOG = LoggerFactory.getLogger(BraintreeConfiguration.class);
-
     private static final String ENVIRONMENT = "environment";
     private static final String MERCHANT_ID = "merchant_id";
-    private static final String PUBLIC_KEY = "public_key";
+    private static final String PUBLIC_KEY  = "public_key";
     private static final String PRIVATE_KEY = "private_key";
 
     @UriParam
@@ -53,6 +48,14 @@ public class BraintreeConfiguration {
     @UriParam
     @Metadata(required = "true")
     private String privateKey;
+
+    @UriParam
+    @Metadata(label = "proxy")
+    private String proxyHost;
+
+    @UriParam
+    @Metadata(label = "proxy")
+    private Integer proxyPort;
 
     public String getEnvironment() {
         return ObjectHelper.notNull(environment, ENVIRONMENT);
@@ -98,21 +101,41 @@ public class BraintreeConfiguration {
         this.privateKey = privateKey;
     }
 
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * The proxy host
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * The proxy port
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
     /**
      * Helper method to get and Environment object from its name
      */
     private Environment getBraintreeEnvironment() {
         String name = getEnvironment();
 
-        if (StringUtils.equalsIgnoreCase("development", name)) {
+        if (Environment.DEVELOPMENT.getEnvironmentName().equalsIgnoreCase(name)) {
             return Environment.DEVELOPMENT;
         }
-
-        if (StringUtils.equalsIgnoreCase("sandbox", name)) {
+        if (Environment.SANDBOX.getEnvironmentName().equalsIgnoreCase(name)) {
             return Environment.SANDBOX;
         }
-
-        if (StringUtils.equalsIgnoreCase("production", name)) {
+        if (Environment.PRODUCTION.getEnvironmentName().equalsIgnoreCase(name)) {
             return Environment.PRODUCTION;
         }
 
@@ -124,11 +147,16 @@ public class BraintreeConfiguration {
      * Construct a BraintreeGateway from configuration
      */
     BraintreeGateway newBraintreeGateway() {
-        return new BraintreeGateway(
+        final BraintreeGateway gateway = new BraintreeGateway(
             getBraintreeEnvironment(),
             getMerchantId(),
             getPublicKey(),
             getPrivateKey());
-    }
 
+        if (ObjectHelper.isNotEmpty(proxyHost) && ObjectHelper.isNotEmpty(proxyPort)) {
+            gateway.setProxy(proxyHost, proxyPort);
+        }
+
+        return gateway;
+    }
 }
