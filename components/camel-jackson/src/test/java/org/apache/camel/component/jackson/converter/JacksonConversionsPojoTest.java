@@ -14,35 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jackson;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.apache.camel.component.jackson.converter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson.JacksonConstants;
+import org.apache.camel.component.jackson.converter.Order;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JacksonConversionsTest extends CamelTestSupport {
+public class JacksonConversionsPojoTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // enable jackson type converter by setting this property on CamelContext
         context.getProperties().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+        context.getProperties().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
         return context;
     }
 
     @Test
-    public void shouldConvertMapToPojo() {
-        String name = "someName";
-        Map<String, String> pojoAsMap = new HashMap<String, String>();
-        pojoAsMap.put("name", name);
+    public void shouldConvertPojoToString() {
+        Order order = new Order();
+        order.setAmount(1);
+        order.setCustomerName("Acme");
+        order.setPartName("Camel");
 
-        TestPojo testPojo = (TestPojo) template.requestBody("direct:test", pojoAsMap);
-
-        assertEquals(name, testPojo.getName());
+        String json = (String) template.requestBody("direct:test", order);
+        assertEquals("{\"id\":0,\"partName\":\"Camel\",\"amount\":1,\"customerName\":\"Acme\"}", json);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class JacksonConversionsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:test").convertBodyTo(TestPojo.class);
+                from("direct:test").convertBodyTo(String.class);
             }
         };
     }
