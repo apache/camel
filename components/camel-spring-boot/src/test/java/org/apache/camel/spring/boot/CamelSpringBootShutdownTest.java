@@ -53,7 +53,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 // Let the CamelAutoConfiguration do all the configuration for us
 // including the TypeConverter registration into the ApplicationContext
-@SpringApplicationConfiguration({CamelAutoConfiguration.class, CamelSpringBootShutdownTest.TestRouteConfiguration.class})
+@SpringApplicationConfiguration(classes = {CamelAutoConfiguration.class, CamelSpringBootShutdownTest.TestRouteConfiguration.class})
 public class CamelSpringBootShutdownTest {
 
     @Autowired
