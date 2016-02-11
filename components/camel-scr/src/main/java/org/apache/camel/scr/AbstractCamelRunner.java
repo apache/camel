@@ -56,13 +56,12 @@ public abstract class AbstractCamelRunner implements Runnable {
     public static final String PROPERTY_PREFIX = "camel.scr.properties.prefix";
     
     protected Logger log = LoggerFactory.getLogger(getClass());
-    protected CamelContext context;
-    protected Registry registry;
 
     // Configured fields
     private String camelContextId;
     private boolean active;
 
+    private CamelContext context;
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture starter;
     private volatile boolean activated;
@@ -92,15 +91,13 @@ public abstract class AbstractCamelRunner implements Runnable {
 
     protected void createCamelContext(final BundleContext bundleContext, final Map<String, String> props) {
         if (bundleContext != null) {
-            registry = new OsgiServiceRegistry(bundleContext);
-            context = new OsgiDefaultCamelContext(bundleContext, registry);
+            context = new OsgiDefaultCamelContext(bundleContext, new OsgiServiceRegistry(bundleContext));
             // Setup the application context classloader with the bundle classloader
             context.setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
             // and make sure the TCCL is our classloader
             Thread.currentThread().setContextClassLoader(context.getApplicationContextClassLoader());
         } else {
-            registry = new SimpleRegistry();
-            context = new DefaultCamelContext(registry);
+            context = new DefaultCamelContext();
         }
         setupPropertiesComponent(context, props, log);
     }

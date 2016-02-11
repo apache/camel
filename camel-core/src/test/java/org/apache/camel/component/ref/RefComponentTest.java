@@ -49,8 +49,7 @@ public class RefComponentTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        PropertyPlaceholderDelegateRegistry delegate = (PropertyPlaceholderDelegateRegistry) context.getRegistry();
-        JndiRegistry jndi = (JndiRegistry) delegate.getRegistry();
+        JndiRegistry jndi = context.getRegistry(JndiRegistry.class);
         bindToRegistry(jndi);
 
         template.sendBody("ref:foo", "Hello World");

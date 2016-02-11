@@ -52,18 +52,23 @@ public final class OsgiCamelContextHelper {
         LOG.debug("Using OsgiDataFormatResolver");
         camelContext.setDataFormatResolver(new OsgiDataFormatResolver(bundleContext));
     }
-    
-    public static Registry wrapRegistry(CamelContext camelContext, Registry registry, BundleContext bundleContext) {
+
+    public static Registry createRegistry(CamelContext camelContext, BundleContext bundleContext) {
         ObjectHelper.notNull(bundleContext, "BundleContext");
 
         LOG.debug("Setting up OSGi ServiceRegistry");
         OsgiServiceRegistry osgiServiceRegistry = new OsgiServiceRegistry(bundleContext);
         // Need to clean up the OSGi service when camel context is closed.
         camelContext.addLifecycleStrategy(osgiServiceRegistry);
-        CompositeRegistry compositeRegistry = new CompositeRegistry();
-        compositeRegistry.addRegistry(osgiServiceRegistry);
-        compositeRegistry.addRegistry(registry);
-        return compositeRegistry;
+        return osgiServiceRegistry;
     }
 
+    public static Registry wrapRegistry(CamelContext camelContext, Registry registry, BundleContext bundleContext) {
+        CompositeRegistry compositeRegistry = new CompositeRegistry();
+        compositeRegistry.addRegistry(createRegistry(camelContext, bundleContext));
+        if (registry != null) {
+            compositeRegistry.addRegistry(registry);
+        }
+        return compositeRegistry;
+    }
 }

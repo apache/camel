@@ -45,7 +45,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
         AmazonS3ClientMock mock = new AmazonS3ClientMock();
         
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonS3Client", mock);
+        context.getRegistry(JndiRegistry.class).bind("amazonS3Client", mock);
         
         S3Component component = new S3Component(context);
         S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?amazonS3Client=#amazonS3Client");

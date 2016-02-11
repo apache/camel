@@ -107,7 +107,7 @@ public class AMQPRouteTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        JndiRegistry registry = (JndiRegistry)((PropertyPlaceholderDelegateRegistry)camelContext.getRegistry()).getRegistry();
+        JndiRegistry registry = camelContext.getRegistry(JndiRegistry.class);
         registry.bind("amqpConnection", discoverAMQP(camelContext));
         camelContext.addComponent("amqp-customized", amqpComponent("amqp://localhost:" + amqpPort));
         return camelContext;

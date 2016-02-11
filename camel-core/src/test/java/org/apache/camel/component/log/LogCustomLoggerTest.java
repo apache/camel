@@ -98,15 +98,15 @@ public class LogCustomLoggerTest extends ContextTestSupport {
 
     @Test
     public void testEndpointURIParametrizedLogger() throws Exception {
-        getRegistry().put("logger1", LoggerFactory.getLogger("provided.logger1.name"));
-        getRegistry().put("logger2", LoggerFactory.getLogger("provided.logger2.name"));
+        context.getLocalRegistry().put("logger1", LoggerFactory.getLogger("provided.logger1.name"));
+        context.getLocalRegistry().put("logger2", LoggerFactory.getLogger("provided.logger2.name"));
         template.requestBody("log:irrelevant.logger.name?logger=#logger2", "hello");
         assertThat(sw1.toString(), equalTo("provided.logger2.name"));
     }
 
     @Test
     public void testEndpointURIParametrizedNotResolvableLogger() {
-        getRegistry().put("logger1", LoggerFactory.getLogger("provided.logger1.name"));
+        context.getLocalRegistry().put("logger1", LoggerFactory.getLogger("provided.logger1.name"));
         try {
             template.requestBody("log:irrelevant.logger.name?logger=#logger2", "hello");
         } catch (ResolveEndpointFailedException e) {
@@ -116,15 +116,15 @@ public class LogCustomLoggerTest extends ContextTestSupport {
 
     @Test
     public void testDefaultRegistryLogger() throws Exception {
-        getRegistry().put("logger", LoggerFactory.getLogger("provided.logger1.name"));
+        context.getLocalRegistry().put("logger", LoggerFactory.getLogger("provided.logger1.name"));
         template.requestBody("log:irrelevant.logger.name", "hello");
         assertThat(sw1.toString(), equalTo("provided.logger1.name"));
     }
 
     @Test
     public void testTwoRegistryLoggers() throws Exception {
-        getRegistry().put("logger1", LoggerFactory.getLogger("provided.logger1.name"));
-        getRegistry().put("logger2", LoggerFactory.getLogger("provided.logger2.name"));
+        context.getLocalRegistry().put("logger1", LoggerFactory.getLogger("provided.logger1.name"));
+        context.getLocalRegistry().put("logger2", LoggerFactory.getLogger("provided.logger2.name"));
         template.requestBody("log:irrelevant.logger.name", "hello");
         assertThat(sw1.toString(), equalTo("irrelevant.logger.name"));
         assertThat(sw2.toString(), equalTo(LogComponent.class.getName()));
@@ -132,17 +132,6 @@ public class LogCustomLoggerTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(new SimpleRegistry());
+        return new DefaultCamelContext();
     }
-
-    private SimpleRegistry getRegistry() {
-        SimpleRegistry registry = null;
-        if (context.getRegistry() instanceof PropertyPlaceholderDelegateRegistry) {
-            registry = (SimpleRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        } else {
-            fail("Could not determine Registry type");
-        }
-        return registry;
-    }
-
 }

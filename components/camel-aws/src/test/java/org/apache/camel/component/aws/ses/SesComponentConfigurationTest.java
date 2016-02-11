@@ -43,8 +43,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
         AmazonSESClientMock mock = new AmazonSESClientMock();
         
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
-            .bind("amazonSESClient", mock);
+        context.getRegistry(JndiRegistry.class).bind("amazonSESClient", mock);
         
         SesComponent component = new SesComponent(context);
         SesEndpoint endpoint = (SesEndpoint) component.createEndpoint("aws-ses://from@example.com?"

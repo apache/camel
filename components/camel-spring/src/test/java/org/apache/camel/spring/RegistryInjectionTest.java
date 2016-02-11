@@ -37,9 +37,7 @@ public class RegistryInjectionTest extends SpringTestSupport {
 
     public void testInjectedStrategy() throws Exception {
         CamelContext context = createCamelContext();
-
-        PropertyPlaceholderDelegateRegistry delegate = (PropertyPlaceholderDelegateRegistry) context.getRegistry();
-        assertTrue(delegate.getRegistry() instanceof JndiRegistry);
+        assertNotNull(context.getRegistry(JndiRegistry.class));
     }
 
 }

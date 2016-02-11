@@ -29,6 +29,7 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -875,6 +876,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the type converter registry
      */
     TypeConverterRegistry getTypeConverterRegistry();
+
+    /**
+     * Returns the local registry used for bean lookups
+     *
+     * @return the local registry
+     */
+    SimpleRegistry getLocalRegistry();
 
     /**
      * Returns the registry used to lookup components by name and type such as the Spring ApplicationContext,

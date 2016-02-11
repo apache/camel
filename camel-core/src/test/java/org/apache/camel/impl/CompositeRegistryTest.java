@@ -16,12 +16,16 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class CompositeRegistryTest {
     private CompositeRegistry registry;
@@ -31,19 +35,48 @@ public class CompositeRegistryTest {
         sr1.put("name", new Integer(12));
         SimpleRegistry sr2 = new SimpleRegistry();
         sr2.put("name", "12");
+        CompositeRegistry compositeRegistry = new CompositeRegistry();
+        compositeRegistry.addRegistry(compositeRegistry); // Try to break the search with a loop
+        compositeRegistry.addRegistry(sr2);
+        compositeRegistry.addRegistry(sr1);
         registry = new CompositeRegistry();
-        registry.addRegistry(sr2);
-        registry.addRegistry(sr1);
+        registry.addRegistry(compositeRegistry); // Let's test nested registries
+    }
+
+    @Test
+    public void testGetRegistry() {
+        assertNotNull(registry.getRegistry(Map.class));
+        assertNotNull(registry.getRegistry(SimpleRegistry.class));
     }
     
     @Test
     public void testGetNameAndType() throws Exception {
         Object result = registry.lookupByNameAndType("name", String.class);
         assertNotNull(result);
-        assertEquals("Get a wrong result", result, "12");
+        assertEquals("Got wrong result", result, "12");
         
         result = registry.lookup("test", Integer.class);
         assertNull(result);
     }
 
+    @Test
+    public void testLookupByName() {
+        Object result = registry.lookupByName("name");
+        assertNotNull(result);
+        assertEquals("Got wrong result", result, "12");
+    }
+
+    @Test
+    public void testFindByTypeWithName() {
+        Map<String, Integer> result = registry.findByTypeWithName(Integer.class);
+        assertTrue(result.containsKey("name"));
+        assertEquals(result.get("name"), Integer.valueOf(12));
+    }
+
+    @Test
+    public void testFindByType() {
+        Set<Integer> result = registry.findByType(Integer.class);
+        assertNotNull(result);
+        assertTrue(result.contains(Integer.valueOf(12)));
+    }
 }

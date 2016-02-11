@@ -146,13 +146,9 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     }
     
     private JndiRegistry getRegistryAsJndi() {
-        JndiRegistry registry = null;
-        if (context.getRegistry() instanceof PropertyPlaceholderDelegateRegistry) {
-            registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        } else if (context.getRegistry() instanceof JndiRegistry) {
-            registry = (JndiRegistry) context.getRegistry();
-        } else {
-            fail("Could not determine Registry type");
+        JndiRegistry registry = context.getRegistry(JndiRegistry.class);
+        if (registry == null) {
+            fail("Could not get JndiRegistry");
         }
         return registry;
     }

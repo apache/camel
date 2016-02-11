@@ -48,7 +48,7 @@ public class ${className} extends AbstractCamelRunner {
 
     @Override
     protected List<RoutesBuilder>getRouteBuilders() {
-        List<RoutesBuilder>routesBuilders = new ArrayList<>();
+        List<RoutesBuilder> routesBuilders = new ArrayList<>();
         routesBuilders.add(new ${className}Route());
         return routesBuilders;
     }
