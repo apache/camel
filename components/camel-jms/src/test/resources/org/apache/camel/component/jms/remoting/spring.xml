@@ -41,7 +41,9 @@
     <property name="connectionFactory">
       <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+        <property name="trustAllPackages" value="true"/>
       </bean>
     </property>
   </bean>
+
 </beans>

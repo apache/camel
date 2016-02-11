@@ -43,6 +43,7 @@
   <!-- Camel JMSProducer to be able to send messages to a remote Active MQ server -->
   <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
     <property name="brokerURL" value="tcp://localhost:${tcp.port}"/>
+    <property name="trustAllPackages" value="true"/>
   </bean>
 
 </beans>
