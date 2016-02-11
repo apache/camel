@@ -100,6 +100,7 @@
 	* [Boon](boon.adoc)
 	* [Box](box.adoc)
 	* [Braintree](braintree.adoc)
+	* [Cache](cache.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
