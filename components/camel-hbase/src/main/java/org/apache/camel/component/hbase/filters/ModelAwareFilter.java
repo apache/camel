@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.hbase.filters;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.hadoop.hbase.filter.Filter;

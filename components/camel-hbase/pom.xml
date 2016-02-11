@@ -28,7 +28,6 @@
     <packaging>bundle</packaging>
     <name>Camel :: Hbase</name>
     <description>Camel HBase component</description>
-
     <properties>
         <camel.osgi.import.before.defaults>
             org.apache.hadoop.conf;version="[2,3)",

@@ -46,8 +46,8 @@ public class ModelAwareSkipFilter extends SkipFilter implements ModelAwareFilter
         return new ModelAwareSkipFilter(filter.getFilter());
     }
 
-	@Override
-	public FilterList getFilteredList() {
-		return null;
-	}
+    @Override
+    public FilterList getFilteredList() {
+        return null;
+    }
 }
