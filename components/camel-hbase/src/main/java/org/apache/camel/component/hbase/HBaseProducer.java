@@ -207,12 +207,12 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
         } else {
             scan = new Scan();
         }
-        
+
         if (filters != null && !filters.isEmpty()) {
-        	for (int i=0;i<filters.size();i++){
-        		((ModelAwareFilter<?>) filters.get(i)).apply(endpoint.getCamelContext(), model);
-        		scan.setFilter(new FilterList(FilterList.Operator.MUST_PASS_ALL, ((ModelAwareFilter<?>) filters.get(i)).getFilteredList()));
-        	}
+            for (int i = 0; i < filters.size(); i++) {
+                ((ModelAwareFilter<?>) filters.get(i)).apply(endpoint.getCamelContext(), model);
+                scan.setFilter(new FilterList(FilterList.Operator.MUST_PASS_ALL, ((ModelAwareFilter<?>) filters.get(i)).getFilteredList()));
+            }
         }
 
         Set<HBaseCell> cellModels = model.getCells();

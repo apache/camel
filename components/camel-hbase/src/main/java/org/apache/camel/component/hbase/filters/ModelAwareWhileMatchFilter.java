@@ -45,9 +45,9 @@ public class ModelAwareWhileMatchFilter extends WhileMatchFilter implements Mode
         return new ModelAwareWhileMatchFilter(filter.getFilter());
     }
 
-	@Override
-	public FilterList getFilteredList() {
-		return null;
-	}
+    @Override
+    public FilterList getFilteredList() {
+        return null;
+    }
 
 }

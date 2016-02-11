@@ -21,13 +21,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.16.2</version>
+        <version>2.16.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hbase</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Hbase</name>
-	<description>Camel HBase component</description>
+	  <description>Camel HBase component</description>
 
     <properties>
 		<camel.osgi.import.before.defaults>
