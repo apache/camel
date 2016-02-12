@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.kubernetes;
 
+import java.util.concurrent.ExecutorService;
+
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-
-import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.Namespace;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -31,8 +33,6 @@ import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
-
-import io.fabric8.kubernetes.api.model.Namespace;
 
 public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
 

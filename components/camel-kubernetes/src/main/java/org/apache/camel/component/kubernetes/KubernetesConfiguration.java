@@ -292,14 +292,14 @@ public class KubernetesConfiguration {
      * The Consumer pool size
      */
     public int getPoolSize() {
-		return poolSize;
-	}
+        return poolSize;
+    }
 
-	public void setPoolSize(int poolSize) {
-		this.poolSize = poolSize;
-	}
+    public void setPoolSize(int poolSize) {
+        this.poolSize = poolSize;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient="
                 + kubernetesClient + ", username=" + username + ", password=" + password + ", operation=" + operation

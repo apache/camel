@@ -18,6 +18,10 @@ package org.apache.camel.component.kubernetes.consumer;
 
 import java.util.concurrent.ExecutorService;
 
+import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.Watcher;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -27,10 +31,6 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.client.KubernetesClientException;
-import io.fabric8.kubernetes.client.Watcher;
 
 public class KubernetesServicesConsumer extends DefaultConsumer {
 
@@ -73,7 +73,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
     }
     
     class ServicesConsumerTask implements Runnable {
-    	
+        
         @Override
         public void run() {
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
@@ -91,10 +91,10 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, se.getAction());
                                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                                     try {
-        								processor.process(exchange);
-        							} catch (Exception e) {
-        								getExceptionHandler().handleException("Error during processing", exchange, e);
-        							}
+                                        processor.process(exchange);
+                                    } catch (Exception e) {
+                                        getExceptionHandler().handleException("Error during processing", exchange, e);
+                                    }
 
                                 }
 
@@ -117,10 +117,10 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, se.getAction());
                             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                             try {
-								processor.process(exchange);
-							} catch (Exception e) {
-								getExceptionHandler().handleException("Error during processing", exchange, e);
-							}
+                                processor.process(exchange);
+                            } catch (Exception e) {
+                                getExceptionHandler().handleException("Error during processing", exchange, e);
+                            }
                         }
 
                         @Override
