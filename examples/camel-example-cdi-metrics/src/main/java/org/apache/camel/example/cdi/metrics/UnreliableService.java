@@ -18,21 +18,16 @@
 package org.apache.camel.example.cdi.metrics;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
-import com.codahale.metrics.Meter;
+import com.codahale.metrics.annotation.Metered;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 
 @ApplicationScoped
 public class UnreliableService {
 
-    @Inject
-    private Meter attempt;
-
-    public void unreliable(Exchange exchange) {
-        attempt.mark();
-
+    @Metered
+    public void attempt(Exchange exchange) {
         if (Math.random() < 0.5) {
             throw new RuntimeExchangeException("Random failure", exchange);
         }

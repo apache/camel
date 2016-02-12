@@ -77,6 +77,7 @@ class Application {
                 .log("Processing ${body}...")
                 // The 'generated' meter
                 .to("metrics:meter:generated")
+                // The 'attempt' meter via @Metered interceptor
                 .bean(UnreliableService.class)
                 .filter(header(Exchange.REDELIVERED))
                     .log(LoggingLevel.WARN, "Processed ${body} after ${header.CamelRedeliveryCounter} retries")
