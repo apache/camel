@@ -63,7 +63,7 @@ public final class URISupport {
      * Removes detected sensitive information (such as passwords) from the URI and returns the result.
      *
      * @param uri The uri to sanitize.
-     * @see #SECRETS for the matched pattern
+     * @see #SECRETS and #USERINFO_PASSWORD for the matched pattern
      *
      * @return Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey sanitized.
      */

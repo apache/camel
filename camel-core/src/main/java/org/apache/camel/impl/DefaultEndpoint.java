@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpoint.class);
+    private transient String endpointUriToString;
     private String endpointUri;
     private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
@@ -153,13 +154,16 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public String toString() {
-        String value = null;
-        try {
-            value = getEndpointUri();
-        } catch (RuntimeException e) {
-            // ignore any exception and use null for building the string value
+        if (endpointUriToString == null) {
+            String value = null;
+            try {
+                value = getEndpointUri();
+            } catch (RuntimeException e) {
+                // ignore any exception and use null for building the string value
+            }
+            endpointUriToString = String.format("Endpoint[%s]", URISupport.sanitizeUri(value));
         }
-        return String.format("Endpoint[%s]", URISupport.sanitizeUri(value));
+        return endpointUriToString;
     }
 
     /**
