@@ -101,6 +101,7 @@
 	* [Box](box.adoc)
 	* [Braintree](braintree.adoc)
 	* [Cache](cache.adoc)
+	* [Cassandraql](cassandra.adoc)
 	* [CDI](cdi.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
