@@ -36,6 +36,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExchangeHelper;
@@ -97,7 +98,10 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         // and propagate exceptions which is done by a per exchange specific aggregation strategy
         // to ensure it supports async routing
         if (strategy == null) {
-            UseOriginalAggregationStrategy original = new UseOriginalAggregationStrategy(exchange, true);
+            AggregationStrategy original = new UseOriginalAggregationStrategy(exchange, true);
+            if (isShareUnitOfWork()) {
+                original = new ShareUnitOfWorkAggregationStrategy(original);
+            }
             setAggregationStrategyOnExchange(exchange, original);
         }
 

@@ -20,12 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  *
  */
-public class SplitSubUnitOfWorkTest extends ContextTestSupport {
+public class MulticastCopyOfSplitSubUnitOfWorkTest extends ContextTestSupport {
 
     private static int counter;
 
@@ -33,12 +32,12 @@ public class SplitSubUnitOfWorkTest extends ContextTestSupport {
         counter = 0;
 
         getMockEndpoint("mock:dead").expectedMessageCount(0);
-        getMockEndpoint("mock:a").expectedBodiesReceived("Tiger,Camel");
-        getMockEndpoint("mock:b").expectedBodiesReceived("Tiger", "Camel");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Tiger,Camel");
-        getMockEndpoint("mock:line").expectedBodiesReceived("Tiger", "Camel");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:line").expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Tiger,Camel");
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -46,13 +45,13 @@ public class SplitSubUnitOfWorkTest extends ContextTestSupport {
     public void testError() throws Exception {
         counter = 0;
 
-        getMockEndpoint("mock:dead").expectedBodiesReceived("Tiger,Donkey,Camel");
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
         getMockEndpoint("mock:a").expectedMessageCount(1);
-        getMockEndpoint("mock:b").expectedBodiesReceived("Tiger", "Donkey", "Camel");
+        getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
-        getMockEndpoint("mock:line").expectedBodiesReceived("Tiger", "Camel");
+        getMockEndpoint("mock:line").expectedMessageCount(0);
 
-        template.sendBody("direct:start", "Tiger,Donkey,Camel");
+        template.sendBody("direct:start", "Hello Donkey");
 
         assertMockEndpointsSatisfied();
 
@@ -70,10 +69,10 @@ public class SplitSubUnitOfWorkTest extends ContextTestSupport {
 
                 from("direct:start")
                     .to("mock:a")
-                    // share unit of work in the splitter, which tells Camel to propagate failures from
-                    // processing the splitted messages back to the result of the splitter, which allows
+                    // share unit of work in the multicast, which tells Camel to propagate failures from
+                    // processing the multicast messages back to the result of the splitter, which allows
                     // it to act as a combined unit of work
-                    .split(body().tokenize(",")).shareUnitOfWork()
+                    .multicast().shareUnitOfWork()
                         .to("mock:b")
                         .to("direct:line")
                     .end()

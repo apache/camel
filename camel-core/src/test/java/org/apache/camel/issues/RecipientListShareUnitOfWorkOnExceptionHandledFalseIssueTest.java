@@ -31,7 +31,7 @@ public class RecipientListShareUnitOfWorkOnExceptionHandledFalseIssueTest extend
             template.sendBodyAndHeader("direct:start", "Hello World", "foo", "direct:b,direct:c");
             fail("Should throw exception");
         } catch (Exception e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
             assertEquals("Forced", cause.getMessage());
         }
 

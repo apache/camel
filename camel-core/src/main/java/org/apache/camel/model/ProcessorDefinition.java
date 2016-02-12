@@ -54,7 +54,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -535,16 +534,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             processor = createProcessor(routeContext);
         }
 
-        // unwrap internal processor so we can set id on the actual processor
-        Processor idProcessor = processor;
-        if (processor instanceof CamelInternalProcessor) {
-            idProcessor = ((CamelInternalProcessor) processor).getProcessor();
-        }
-
         // inject id
-        if (idProcessor instanceof IdAware) {
+        if (processor instanceof IdAware) {
             String id = this.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
-            ((IdAware) idProcessor).setId(id);
+            ((IdAware) processor).setId(id);
         }
 
         if (processor == null) {
