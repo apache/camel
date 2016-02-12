@@ -20,8 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.model.rest.RestBindingMode;
 
-import java.net.HttpURLConnection;
-
 import static org.apache.camel.model.rest.RestParamType.body;
 import static org.apache.camel.model.rest.RestParamType.path;
 
@@ -55,14 +53,16 @@ public class UserRouteBuilder extends RouteBuilder {
 
             .get("/{id}").description("Find user by id").outType(User.class)
                 .param().name("id").type(path).description("The id of the user to get").dataType("integer").endParam()
+                .responseMessage().code(200).message("The user").endResponseMessage()
                 .to("bean:userService?method=getUser(${header.id})")
 
             .put().description("Updates or create a user").type(User.class)
                 .param().name("body").type(body).description("The user to update or create").endParam()
-                .responseMessage().code(HttpURLConnection.HTTP_OK).endResponseMessage()
+                .responseMessage().code(200).message("User created or updated").endResponseMessage()
                 .to("bean:userService?method=updateUser")
 
             .get("/findAll").description("Find all users").outTypeList(User.class)
+                .responseMessage().code(200).message("All users").endResponseMessage()
                 .to("bean:userService?method=listUsers");
     }
 
