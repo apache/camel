@@ -92,7 +92,7 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
 
         assertTrue(servDeleted);
 
-        Thread.sleep(1 * 1000);
+        Thread.sleep(3000);
 
         mockResultEndpoint.assertIsSatisfied();
     }

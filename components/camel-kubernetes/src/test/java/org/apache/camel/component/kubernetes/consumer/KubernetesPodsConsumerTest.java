@@ -50,7 +50,7 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
 
         mockResultEndpoint.expectedMessageCount(3);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
-                "MODIFIED", "DELETED");
+                "MODIFIED", "MODIFIED");
         Exchange ex = template.request("direct:createPod", new Processor() {
 
             @Override
@@ -100,7 +100,7 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
 
         assertTrue(podDeleted);
 
-        Thread.sleep(1 * 1000);
+        Thread.sleep(3000);
 
         mockResultEndpoint.assertIsSatisfied();
     }

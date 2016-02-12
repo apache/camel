@@ -16,31 +16,32 @@
  */
 package org.apache.camel.component.kubernetes.consumer;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import io.fabric8.kubernetes.api.model.Secret;
-import io.fabric8.kubernetes.client.KubernetesClientException;
-import io.fabric8.kubernetes.client.Watcher;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.component.kubernetes.consumer.common.SecretEvent;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KubernetesSecretsConsumer extends ScheduledPollConsumer {
+import io.fabric8.kubernetes.api.model.Secret;
+import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.Watcher;
+
+public class KubernetesSecretsConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesSecretsConsumer.class);
 
-    private ConcurrentMap<Long, SecretEvent> map;
+    private final Processor processor;
+    private ExecutorService executor;
 
     public KubernetesSecretsConsumer(KubernetesEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        this.processor = processor;
     }
 
     @Override
@@ -51,68 +52,87 @@ public class KubernetesSecretsConsumer extends ScheduledPollConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        map = new ConcurrentHashMap<Long, SecretEvent>();
+        executor = getEndpoint().createExecutor();
 
-        if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
-                getEndpoint().getKubernetesClient().secrets()
-                        .inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
-                        .watch(new Watcher<Secret>() {
+        executor.submit(new SecretsConsumerTask());       
 
-                            @Override
-                            public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
-                                    Secret resource) {
-                                SecretEvent se = new SecretEvent(action, resource);
-                                map.put(System.currentTimeMillis(), se);
-                            }
-
-                            @Override
-                            public void onClose(KubernetesClientException cause) {
-                                if (cause != null) {
-                                    LOG.error(cause.getMessage(), cause);
-                                }
-
-                            }
-                        });
-            } else {
-                getEndpoint().getKubernetesClient().secrets().watch(new Watcher<Secret>() {
-
-                    @Override
-                    public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Secret resource) {
-                        SecretEvent se = new SecretEvent(action, resource);
-                        map.put(System.currentTimeMillis(), se);
-                    }
-
-                    @Override
-                    public void onClose(KubernetesClientException cause) {
-                        if (cause != null) {
-                            LOG.error(cause.getMessage(), cause);
-                        }
-                    }
-                });
-            }
-        }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        map.clear();
-    }
-
-    @Override
-    protected int poll() throws Exception {
-        int mapSize = map.size();
-        for (ConcurrentMap.Entry<Long, SecretEvent> entry : map.entrySet()) {
-            SecretEvent podEvent = entry.getValue();
-            Exchange e = getEndpoint().createExchange();
-            e.getIn().setBody(podEvent.getSecret());
-            e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, podEvent.getAction());
-            e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, entry.getKey());
-            getProcessor().process(e);
-            map.remove(entry.getKey());
+        
+        LOG.debug("Stopping Kubernetes Secrets Consumer");
+        if (executor != null) {
+            if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            } else {
+                executor.shutdownNow();
+            }
         }
-        return mapSize;
+        executor = null;
+    }
+    
+    class SecretsConsumerTask implements Runnable {
+    	
+        @Override
+        public void run() {
+            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
+                if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
+                    getEndpoint().getKubernetesClient().secrets()
+                            .inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
+                            .watch(new Watcher<Secret>() {
+
+                                @Override
+                                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
+                                        Secret resource) {
+                                    SecretEvent se = new SecretEvent(action, resource);
+                                    Exchange exchange = getEndpoint().createExchange();
+                                    exchange.getIn().setBody(se.getSecret());
+                                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, se.getAction());
+                                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                                    try {
+        								processor.process(exchange);
+        							} catch (Exception e) {
+        								getExceptionHandler().handleException("Error during processing", exchange, e);
+        							}
+                                }
+
+                                @Override
+                                public void onClose(KubernetesClientException cause) {
+                                    if (cause != null) {
+                                        LOG.error(cause.getMessage(), cause);
+                                    }
+
+                                }
+                            });
+                } else {
+                    getEndpoint().getKubernetesClient().secrets().watch(new Watcher<Secret>() {
+
+                        @Override
+                        public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Secret resource) {
+                            SecretEvent se = new SecretEvent(action, resource);
+                            Exchange exchange = getEndpoint().createExchange();
+                            exchange.getIn().setBody(se.getSecret());
+                            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, se.getAction());
+                            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                            try {
+								processor.process(exchange);
+							} catch (Exception e) {
+								getExceptionHandler().handleException("Error during processing", exchange, e);
+							}
+                        }
+
+                        @Override
+                        public void onClose(KubernetesClientException cause) {
+                            if (cause != null) {
+                                LOG.error(cause.getMessage(), cause);
+                            }
+                        }
+                    });
+                }
+            }
+        }
     }
 
 }

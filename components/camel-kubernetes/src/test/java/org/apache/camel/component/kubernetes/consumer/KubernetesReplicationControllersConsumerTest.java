@@ -17,6 +17,7 @@
 package org.apache.camel.component.kubernetes.consumer;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.EditablePodTemplateSpec;
@@ -89,7 +90,7 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
 
         assertTrue(rcDeleted);
 
-        Thread.sleep(1 * 1000);
+        Thread.sleep(3000);
 
         mockResultEndpoint.assertIsSatisfied();
     }

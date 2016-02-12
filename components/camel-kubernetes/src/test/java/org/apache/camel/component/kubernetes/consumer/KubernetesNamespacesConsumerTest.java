@@ -21,8 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.Namespace;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -33,6 +31,8 @@ import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
+
+import io.fabric8.kubernetes.api.model.Namespace;
 
 public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
 
@@ -45,9 +45,9 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
             return;
         }
 
-        mockResultEndpoint.expectedMessageCount(3);
+        mockResultEndpoint.expectedMessageCount(5);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
-                "MODIFIED", "DELETED");
+                "MODIFIED", "MODIFIED", "MODIFIED", "DELETED");
         
         Exchange ex = template.request("direct:createNamespace",
                 new Processor() {
@@ -109,6 +109,8 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
         boolean nsDeleted = ex.getOut().getBody(Boolean.class);
 
         assertTrue(nsDeleted);
+        
+        Thread.sleep(3000);
 
         mockResultEndpoint.assertIsSatisfied();
     }

@@ -16,31 +16,32 @@
  */
 package org.apache.camel.component.kubernetes.consumer;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import io.fabric8.kubernetes.api.model.ReplicationController;
-import io.fabric8.kubernetes.client.KubernetesClientException;
-import io.fabric8.kubernetes.client.Watcher;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.component.kubernetes.consumer.common.ReplicationControllerEvent;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KubernetesReplicationControllersConsumer extends ScheduledPollConsumer {
+import io.fabric8.kubernetes.api.model.ReplicationController;
+import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.Watcher;
+
+public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesReplicationControllersConsumer.class);
 
-    private ConcurrentMap<Long, ReplicationControllerEvent> map;
+    private final Processor processor;
+    private ExecutorService executor;
 
     public KubernetesReplicationControllersConsumer(KubernetesEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        this.processor = processor;
     }
 
     @Override
@@ -51,72 +52,91 @@ public class KubernetesReplicationControllersConsumer extends ScheduledPollConsu
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        map = new ConcurrentHashMap<Long, ReplicationControllerEvent>();
 
-        if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
-                getEndpoint().getKubernetesClient().replicationControllers()
-                        .inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
-                        .watch(new Watcher<ReplicationController>() {
+        executor = getEndpoint().createExecutor();
 
-                            @Override
-                            public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
-                                    ReplicationController resource) {
-                                ReplicationControllerEvent rce = new ReplicationControllerEvent(action, resource);
-                                map.put(System.currentTimeMillis(), rce);
-
-                            }
-
-                            @Override
-                            public void onClose(KubernetesClientException cause) {
-                                if (cause != null) {
-                                    LOG.error(cause.getMessage(), cause);
-                                }
-                            }
-
-                        });
-            } else {
-                getEndpoint().getKubernetesClient().replicationControllers()
-                        .watch(new Watcher<ReplicationController>() {
-
-                            @Override
-                            public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
-                                    ReplicationController resource) {
-                                ReplicationControllerEvent se = new ReplicationControllerEvent(action, resource);
-                                map.put(System.currentTimeMillis(), se);
-
-                            }
-
-                            @Override
-                            public void onClose(KubernetesClientException cause) {
-                                if (cause != null) {
-                                    LOG.error(cause.getMessage(), cause);
-                                }
-                            }
-                        });
-            }
-        }
+        executor.submit(new ReplicationControllersConsumerTask());       
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        map.clear();
-    }
-
-    @Override
-    protected int poll() throws Exception {
-        int mapSize = map.size();
-        for (ConcurrentMap.Entry<Long, ReplicationControllerEvent> entry : map.entrySet()) {
-            ReplicationControllerEvent serviceEvent = entry.getValue();
-            Exchange e = getEndpoint().createExchange();
-            e.getIn().setBody(serviceEvent.getReplicationController());
-            e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, serviceEvent.getAction());
-            e.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, entry.getKey());
-            getProcessor().process(e);
-            map.remove(entry.getKey());
+        
+        LOG.debug("Stopping Kubernetes Replication Controllers Consumer");
+        if (executor != null) {
+            if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            } else {
+                executor.shutdownNow();
+            }
         }
-        return mapSize;
+        executor = null;
+    }
+    
+    class ReplicationControllersConsumerTask implements Runnable {
+    	
+        @Override
+        public void run() {
+        	if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
+                if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
+                    getEndpoint().getKubernetesClient().replicationControllers()
+                            .inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
+                            .watch(new Watcher<ReplicationController>() {
+
+                                @Override
+                                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
+                                        ReplicationController resource) {
+                                    ReplicationControllerEvent rce = new ReplicationControllerEvent(action, resource);
+                                    Exchange exchange = getEndpoint().createExchange();
+                                    exchange.getIn().setBody(rce.getReplicationController());
+                                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, rce.getAction());
+                                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                                    try {
+        								processor.process(exchange);
+        							} catch (Exception e) {
+        								getExceptionHandler().handleException("Error during processing", exchange, e);
+        							}
+
+                                }
+
+                                @Override
+                                public void onClose(KubernetesClientException cause) {
+                                    if (cause != null) {
+                                        LOG.error(cause.getMessage(), cause);
+                                    }
+                                }
+
+                            });
+                } else {
+                    getEndpoint().getKubernetesClient().replicationControllers()
+                            .watch(new Watcher<ReplicationController>() {
+
+                                @Override
+                                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
+                                        ReplicationController resource) {
+                                    ReplicationControllerEvent se = new ReplicationControllerEvent(action, resource);
+                                    ReplicationControllerEvent rce = new ReplicationControllerEvent(action, resource);
+                                    Exchange exchange = getEndpoint().createExchange();
+                                    exchange.getIn().setBody(rce.getReplicationController());
+                                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, rce.getAction());
+                                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                                    try {
+        								processor.process(exchange);
+        							} catch (Exception e) {
+        								getExceptionHandler().handleException("Error during processing", exchange, e);
+        							}
+                                }
+
+                                @Override
+                                public void onClose(KubernetesClientException cause) {
+                                    if (cause != null) {
+                                        LOG.error(cause.getMessage(), cause);
+                                    }
+                                }
+                            });
+                }
+            }
+        }
     }
 
 }

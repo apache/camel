@@ -87,7 +87,7 @@ public class KubernetesSecretsConsumerTest extends KubernetesTestSupport {
 
         assertTrue(secDeleted);
 
-        Thread.sleep(1 * 1000);
+        Thread.sleep(3000);
 
         mockResultEndpoint.assertIsSatisfied();
     }
