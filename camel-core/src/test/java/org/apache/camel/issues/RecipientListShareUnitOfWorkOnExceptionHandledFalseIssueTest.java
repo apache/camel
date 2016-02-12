@@ -19,18 +19,19 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
-public class MulticastShareUnitOfWorkOnExceptionHandledFalseIssueTest extends ContextTestSupport {
+public class RecipientListShareUnitOfWorkOnExceptionHandledFalseIssueTest extends ContextTestSupport {
 
-    public void testMulticast() throws Exception {
+    public void testRecipientList() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
-            template.sendBody("direct:start", "Hello World");
+            template.sendBodyAndHeader("direct:start", "Hello World", "foo", "direct:b,direct:c");
             fail("Should throw exception");
         } catch (Exception e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Forced", cause.getMessage());
         }
 
@@ -47,13 +48,14 @@ public class MulticastShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Co
                     .to("mock:a");
 
                 from("direct:start")
-                    .multicast().shareUnitOfWork().stopOnException()
-                        .to("direct:b")
-                    .end()
+                    .recipientList(header("foo")).shareUnitOfWork().stopOnException()
                     .to("mock:result");
 
                 from("direct:b")
-                    .to("mock:b")
+                    .to("mock:b");
+
+                from("direct:c")
+                    .to("mock:c")
                     .throwException(new IllegalArgumentException("Forced"));
             }
         };

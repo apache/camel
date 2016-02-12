@@ -19,15 +19,15 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
-public class MulticastShareUnitOfWorkOnExceptionHandledFalseIssueTest extends ContextTestSupport {
+public class SplitShareUnitOfWorkOnExceptionHandledFalseIssueTest extends ContextTestSupport {
 
-    public void testMulticast() throws Exception {
+    public void testSplit() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
-        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
-            template.sendBody("direct:start", "Hello World");
+            template.sendBody("direct:start", "Camel,Donkey");
             fail("Should throw exception");
         } catch (Exception e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
@@ -47,14 +47,15 @@ public class MulticastShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Co
                     .to("mock:a");
 
                 from("direct:start")
-                    .multicast().shareUnitOfWork().stopOnException()
+                    .split(body()).shareUnitOfWork().stopOnException()
                         .to("direct:b")
                     .end()
                     .to("mock:result");
 
                 from("direct:b")
                     .to("mock:b")
-                    .throwException(new IllegalArgumentException("Forced"));
+                    .filter(body().contains("Donkey"))
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }
