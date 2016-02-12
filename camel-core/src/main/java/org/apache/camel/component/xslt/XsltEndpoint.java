@@ -18,6 +18,7 @@ package org.apache.camel.component.xslt;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
@@ -38,6 +39,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -49,10 +51,10 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed XsltEndpoint")
 @UriEndpoint(scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true, label = "core,transformation")
 public class XsltEndpoint extends ProcessorEndpoint {
-
     public static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
+
 
     private volatile boolean cacheCleared;
     private volatile XsltBuilder xslt;
@@ -70,6 +72,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private TransformerFactory transformerFactory;
     @UriParam
     private boolean saxon;
+    @UriParam(label = "advanced")
+    private List<Object> saxonExtensionFunctions;
     @UriParam(label = "advanced")
     private ResultHandlerFactory resultHandlerFactory;
     @UriParam(defaultValue = "true")
@@ -196,6 +200,30 @@ public class XsltEndpoint extends ProcessorEndpoint {
      */
     public void setSaxon(boolean saxon) {
         this.saxon = saxon;
+    }
+
+    public List<Object> getSaxonExtensionFunctions() {
+        return saxonExtensionFunctions;
+    }
+
+    /**
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
+     * You would need to add Saxon to the classpath.
+     */
+    public void setSaxonExtensionFunctions(List<Object> extensionFunctions) {
+        this.saxonExtensionFunctions = extensionFunctions;
+    }
+
+    /**
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
+     * You would need to add Saxon to the classpath.
+     */
+    public void setSaxonExtensionFunctions(String extensionFunctions) {
+        this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
+            getCamelContext(),
+            extensionFunctions,
+            Object.class
+        );
     }
 
     public ResultHandlerFactory getResultHandlerFactory() {
@@ -351,7 +379,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
             xslt.setConverter(converter);
         }
 
-        if (transformerFactoryClass == null && saxon) {
+        boolean useSaxon = false;
+        if (transformerFactoryClass == null && (saxon || saxonExtensionFunctions != null)) {
+            useSaxon = true;
             transformerFactoryClass = SAXON_TRANSFORMER_FACTORY_CLASS_NAME;
         }
 
@@ -361,6 +391,15 @@ public class XsltEndpoint extends ProcessorEndpoint {
             Class<?> factoryClass = getCamelContext().getClassResolver().resolveMandatoryClass(transformerFactoryClass, XsltComponent.class.getClassLoader());
             LOG.debug("Using TransformerFactoryClass {}", factoryClass);
             factory = (TransformerFactory) getCamelContext().getInjector().newInstance(factoryClass);
+
+            if (useSaxon) {
+                XsltHelper.registerSaxonExtensionFunctions(
+                    getCamelContext(),
+                    factoryClass,
+                    factory,
+                    saxonExtensionFunctions
+                );
+            }
         }
 
         if (factory != null) {
