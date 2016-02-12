@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    private transient String consumerToString;
     private final Endpoint endpoint;
     private final Processor processor;
     private volatile AsyncProcessor asyncProcessor;
@@ -55,7 +56,10 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
 
     @Override
     public String toString() {
-        return "Consumer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
+        if (consumerToString == null) {
+            consumerToString = "Consumer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
+        }
+        return consumerToString;
     }
 
     public Route getRoute() {
