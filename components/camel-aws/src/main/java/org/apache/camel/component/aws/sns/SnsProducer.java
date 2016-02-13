@@ -36,7 +36,7 @@ public class SnsProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnsProducer.class);
     
-	private transient String snsProducerToString;
+    private transient String snsProducerToString;
 
     public SnsProducer(Endpoint endpoint) {
         super(endpoint);
@@ -95,7 +95,7 @@ public class SnsProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (snsProducerToString == null) {
-        	snsProducerToString = "SnsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            snsProducerToString = "SnsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return snsProducerToString;
     }

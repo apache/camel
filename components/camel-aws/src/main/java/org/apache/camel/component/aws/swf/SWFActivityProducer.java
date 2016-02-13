@@ -28,7 +28,7 @@ public class SWFActivityProducer extends DefaultProducer {
     private SWFEndpoint endpoint;
     private SWFConfiguration configuration;
     
-	private transient String swfActivityProducerToString;
+    private transient String swfActivityProducerToString;
 
     public SWFActivityProducer(SWFEndpoint endpoint, CamelSWFActivityClient camelSWFActivityClient) {
         super(endpoint);
@@ -59,7 +59,7 @@ public class SWFActivityProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (swfActivityProducerToString == null) {
-        	swfActivityProducerToString = "SWFActivityProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            swfActivityProducerToString = "SWFActivityProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return swfActivityProducerToString;
     }
