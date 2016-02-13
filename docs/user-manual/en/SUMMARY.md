@@ -104,6 +104,7 @@
 	* [Cassandraql](cassandra.adoc)
 	* [Castor](castor.adoc)
 	* [CDI](cdi.adoc)
+	* [Chunk](chunk.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
 	* [Properties](properties.adoc)
