@@ -58,6 +58,8 @@ public class S3Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Producer.class);
 
+	private transient String s3ProducerToString;
+	
     public S3Producer(final Endpoint endpoint) {
         super(endpoint);
     }
@@ -313,7 +315,10 @@ public class S3Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "S3Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (s3ProducerToString == null) {
+            s3ProducerToString = "S3Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return s3ProducerToString;
     }
 
     @Override

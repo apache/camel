@@ -48,6 +48,8 @@ import org.apache.camel.util.URISupport;
  */
 public class SesProducer extends DefaultProducer {
     
+	private transient String sesProducerToString;
+	
     public SesProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -183,7 +185,10 @@ public class SesProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (sesProducerToString == null) {
+        	sesProducerToString = "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return sesProducerToString;
     }
 
     @Override

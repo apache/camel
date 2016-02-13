@@ -58,6 +58,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
     
     private static final Logger LOG = LoggerFactory.getLogger(SqsConsumer.class);
     private ScheduledExecutorService scheduledExecutor;
+    
+	private transient String sqsConsumerToString;
 
     public SqsConsumer(SqsEndpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
@@ -265,7 +267,10 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public String toString() {
-        return "SqsConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (sqsConsumerToString == null) {
+        	sqsConsumerToString = "SqsConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return sqsConsumerToString;
     }
 
     @Override

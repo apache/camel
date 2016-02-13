@@ -39,6 +39,8 @@ import org.apache.camel.util.URISupport;
  */
 public class CwProducer extends DefaultProducer {
 
+	private transient String cwProducerToString;
+	
     public CwProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -137,7 +139,10 @@ public class CwProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "CwProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (cwProducerToString == null) {
+            cwProducerToString = "CwProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return cwProducerToString;
     }
 
     @Override
