@@ -173,6 +173,18 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
             callback.done(doneSync);
             return doneSync;
 
+        } catch (final InterruptedException e) {
+            // determine if we can still run, or the camel context is forcing a shutdown
+            boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown(this);
+            if (forceShutdown) {
+                String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
+                log.debug(msg);
+                exchange.setException(new RejectedExecutionException(msg, e));
+            } else {
+                exchange.setException(e);
+            }
+            callback.done(doneSync);
+            return doneSync;
         } catch (final Throwable t) {
             exchange.setException(t);
             callback.done(doneSync);
