@@ -138,11 +138,17 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     // Properties
     //-------------------------------------------------------------------------
 
+    /**
+     * @deprecated use {@link #getHttpBinding()}
+     */
     @Deprecated
     public HttpBinding getBinding() {
         return httpBinding;
     }
 
+    /**
+     * @deprecated use {@link #setHttpBinding(HttpBinding)}
+     */
     @Deprecated
     public void setBinding(HttpBinding httpBinding) {
         setHttpBinding(httpBinding);
