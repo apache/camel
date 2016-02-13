@@ -1069,10 +1069,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         setProperties(endpoint, parameters);
 
-        // disable this filter as we want to use ours
-        endpoint.setEnableMultipartFilter(false);
-        // use the rest binding
-        endpoint.setBinding(new JettyRestHttpBinding(endpoint));
+        if (!map.containsKey("httpBindingRef")) {
+            // use the rest binding, if not using a custom http binding
+            endpoint.setHttpBinding(new JettyRestHttpBinding(endpoint));
+            // disable this filter as we want to use ours
+            endpoint.setEnableMultipartFilter(false);
+        }
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
