@@ -105,6 +105,7 @@
 	* [Castor](castor.adoc)
 	* [CDI](cdi.adoc)
 	* [Chunk](chunk.adoc)
+	* [Cmis](cmis.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
 	* [Properties](properties.adoc)
