@@ -34,6 +34,8 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     protected String endpointPath;
+   
+    private transient String ftpConsumerToString;
 
     public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations) {
         super(endpoint, processor, fileOperations);
@@ -263,6 +265,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     @Override
     public String toString() {
-        return "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (ftpConsumerToString == null) {
+            ftpConsumerToString = "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return ftpConsumerToString;
     }
 }
