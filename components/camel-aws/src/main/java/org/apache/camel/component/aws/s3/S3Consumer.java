@@ -50,7 +50,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(S3Consumer.class);
     private String marker;
     private boolean filesConsumed;
-	private transient String s3ConsumerToString;
+    private transient String s3ConsumerToString;
 
     public S3Consumer(S3Endpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
@@ -227,7 +227,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
     @Override
     public String toString() {
         if (s3ConsumerToString == null) {
-        	s3ConsumerToString = "S3Consumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            s3ConsumerToString = "S3Consumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return s3ConsumerToString;
     }

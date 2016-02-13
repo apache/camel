@@ -32,7 +32,7 @@ public class SWFWorkflowProducer extends DefaultProducer {
     private SWFEndpoint endpoint;
     private SWFConfiguration configuration;
     
-	private transient String swfWorkflowProducerToString;
+    private transient String swfWorkflowProducerToString;
 
     public SWFWorkflowProducer(SWFEndpoint endpoint, CamelSWFWorkflowClient camelSWFClient) {
         super(endpoint);
@@ -164,7 +164,7 @@ public class SWFWorkflowProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (swfWorkflowProducerToString == null) {
-        	swfWorkflowProducerToString = "SWFWorkflowProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            swfWorkflowProducerToString = "SWFWorkflowProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return swfWorkflowProducerToString;
     }

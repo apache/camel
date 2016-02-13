@@ -58,8 +58,8 @@ public class EC2Producer extends DefaultProducer {
     
     private static final Logger LOG = LoggerFactory.getLogger(EC2Producer.class);
     
-	private transient String ec2ProducerToString;
-	
+    private transient String ec2ProducerToString;
+
     public EC2Producer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -113,7 +113,7 @@ public class EC2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (ec2ProducerToString == null) {
-        	ec2ProducerToString = "EC2Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            ec2ProducerToString = "EC2Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return ec2ProducerToString;
     }

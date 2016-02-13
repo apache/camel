@@ -43,8 +43,8 @@ public class SqsProducer extends DefaultProducer {
     
     private static final Logger LOG = LoggerFactory.getLogger(SqsProducer.class);
     
-	private transient String sqsProducerToString;
-    
+    private transient String sqsProducerToString;
+
     public SqsProducer(SqsEndpoint endpoint) throws NoFactoryAvailableException {
         super(endpoint);
     }
@@ -106,7 +106,7 @@ public class SqsProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (sqsProducerToString == null) {
-        	sqsProducerToString = "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            sqsProducerToString = "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return sqsProducerToString;
     }

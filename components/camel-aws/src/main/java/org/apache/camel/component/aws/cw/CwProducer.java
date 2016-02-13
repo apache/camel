@@ -39,8 +39,8 @@ import org.apache.camel.util.URISupport;
  */
 public class CwProducer extends DefaultProducer {
 
-	private transient String cwProducerToString;
-	
+    private transient String cwProducerToString;
+    
     public CwProducer(Endpoint endpoint) {
         super(endpoint);
     }
