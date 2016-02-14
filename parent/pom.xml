@@ -129,11 +129,11 @@
     <compress-lzf-version>1.0.3</compress-lzf-version>
     <concurrentlinkedhashmap.version>1.4.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
-    <cxf-version>3.1.4</cxf-version>
+    <cxf-version>3.1.5</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.0.5</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.0.5</cxf-xjc-utils-version>
-    <deltaspike-version>1.5.2</deltaspike-version>
+    <deltaspike-version>1.5.3</deltaspike-version>
     <derby-version>10.11.1.1</derby-version>
     <disruptor-version>3.3.4</disruptor-version>
     <dnsjava-version>2.1.7</dnsjava-version>
@@ -542,7 +542,7 @@
     <vertx-version>3.2.1</vertx-version>
     <vysper-version>0.7</vysper-version>
     <weld1-version>1.1.28.Final</weld1-version>
-    <weld2-version>2.3.2.Final</weld2-version>
+    <weld2-version>2.3.3.Final</weld2-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <woodstox-version>4.4.1</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
