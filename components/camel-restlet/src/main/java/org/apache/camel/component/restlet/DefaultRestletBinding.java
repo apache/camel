@@ -376,10 +376,10 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // special for certain headers
         if (message.getEntity() != null) {
             // arfg darn restlet you make using your api harder for end users with all this trick just to set those ACL headers
-            if (header.equalsIgnoreCase(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_CREDENTIAL)) {
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_CREDENTIALS)) {
                 Boolean bool = exchange.getContext().getTypeConverter().tryConvertTo(Boolean.class, value);
                 if (bool != null) {
-                    message.setAccessControlAllowCredential(bool);
+                    message.setAccessControlAllowCredentials(bool);
                 }
                 return true;
             }
@@ -414,6 +414,13 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     // set the cache control value directive
                     list.add(new CacheDirective((String) value));
                     message.setCacheDirectives(list);
+                }
+                return true;
+            }
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_LOCATION)) {
+                String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, value);
+                if (text != null) {
+                    message.setLocationRef(text);
                 }
                 return true;
             }
