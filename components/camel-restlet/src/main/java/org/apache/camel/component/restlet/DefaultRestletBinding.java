@@ -212,11 +212,18 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
 
+        // accept
+        String accept = exchange.getIn().getHeader("Accept", String.class);
+        if (accept != null) {
+            MediaType acceptedMediaType = exchange.getContext().getTypeConverter().tryConvertTo(MediaType.class, exchange, accept);
+            if (acceptedMediaType != null) {
+                request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(acceptedMediaType));
+            }
+        }
         MediaType acceptedMediaType = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType.class);
         if (acceptedMediaType != null) {
             request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(acceptedMediaType));
         }
-
     }
 
     public void populateRestletResponseFromExchange(Exchange exchange, Response response) throws Exception {
