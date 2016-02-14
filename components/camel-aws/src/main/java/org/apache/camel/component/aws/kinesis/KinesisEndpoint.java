@@ -24,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -32,8 +34,8 @@ import org.apache.camel.spi.UriPath;
 /**
  * The aws-kinesis component is for consuming records from Amazon Kinesis Streams.
  */
-@UriEndpoint(scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName", consumerOnly = true, consumerClass = KinesisConsumer.class, label = "cloud,messaging")
-public class KinesisEndpoint extends ScheduledPollEndpoint {
+@UriEndpoint(scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName", consumerClass = KinesisConsumer.class, label = "cloud,messaging")
+public class KinesisEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
     @UriPath(label = "consumer", description = "Name of the stream")
     @Metadata(required = "true")
@@ -50,6 +52,9 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records")
     private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;
 
+    @UriParam
+    private HeaderFilterStrategy headerFilterStrategy;
+
     public KinesisEndpoint(String uri, String streamName, KinesisComponent component) {
         super(uri, component);
         this.streamName = streamName;
@@ -57,7 +62,7 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new KinesisProducer(this);
     }
 
     @Override
@@ -120,8 +125,20 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    @Override
+    /**
+     * To use a custom HeaderFilterStrategy to map headers to/from Camel.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    @Override
     public String toString() {
         return "KinesisEndpoint{amazonKinesisClient=[redacted], maxResultsPerRequest=" + maxResultsPerRequest + ", iteratorType=" + iteratorType + ", streamName=" + streamName + '}';
     }
-
 }

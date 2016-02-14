@@ -36,6 +36,8 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.URISupport;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 /**
  * A Producer which sends messages to the Amazon Simple Email Service
  * <a href="http://aws.amazon.com/ses/">AWS SES</a>
@@ -162,15 +164,6 @@ public class SesProducer extends DefaultProducer {
             subject = getConfiguration().getSubject();
         }
         return subject;
-    }
-
-    private Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
     }
 
     protected SesConfiguration getConfiguration() {
