@@ -106,6 +106,7 @@
 	* [CDI](cdi.adoc)
 	* [Chunk](chunk.adoc)
 	* [Cmis](cmis.adoc)
+	* [Cometd](cometd.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
 	* [Properties](properties.adoc)
