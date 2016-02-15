@@ -247,6 +247,9 @@ public class CamelSalesforceMojo extends AbstractMojo {
     @Parameter(property = "camelSalesforce.packageName", defaultValue = "org.apache.camel.salesforce.dto")
     protected String packageName;
 
+    @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
+    protected Boolean useStringsForPicklists;
+
     private VelocityEngine engine;
     private long responseTimeout;
 
@@ -372,7 +375,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
             getLog().info("Generating Java Classes...");
             // generate POJOs for every object description
-            final GeneratorUtility utility = new GeneratorUtility();
+            final GeneratorUtility utility = new GeneratorUtility(useStringsForPicklists);
             // should we provide a flag to control timestamp generation?
             final String generatedDate = new Date().toString();
             for (SObjectDescription description : descriptions) {
@@ -562,6 +565,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
             context.put("utility", utility);
             context.put("desc", description);
             context.put("generatedDate", generatedDate);
+            context.put("useStringsForPicklists", useStringsForPicklists);
 
             Template pojoTemplate = engine.getTemplate(SOBJECT_POJO_VM);
             pojoTemplate.merge(context, writer);
@@ -687,6 +691,11 @@ public class CamelSalesforceMojo extends AbstractMojo {
         private static final String BASE64BINARY = "base64Binary";
         private static final String MULTIPICKLIST = "multipicklist";
         private static final String PICKLIST = "picklist";
+        private Boolean useStringsForPicklists;
+
+        public GeneratorUtility(Boolean useStringsForPicklists) {
+            this.useStringsForPicklists = useStringsForPicklists;
+        }
 
         public boolean isBlobField(SObjectField field) {
             final String soapType = field.getSoapType();
@@ -700,11 +709,19 @@ public class CamelSalesforceMojo extends AbstractMojo {
         public String getFieldType(SObjectDescription description, SObjectField field) throws MojoExecutionException {
             // check if this is a picklist
             if (isPicklist(field)) {
-                // use a pick list enum, which will be created after generating the SObject class
-                return description.getName() + "_" + enumTypeName(field.getName());
+                if (useStringsForPicklists) {
+                    return String.class.getName();
+                } else {
+                    // use a pick list enum, which will be created after generating the SObject class
+                    return description.getName() + "_" + enumTypeName(field.getName());
+                }
             } else if (isMultiSelectPicklist(field)) {
-                // use a pick list enum array, enum will be created after generating the SObject class
-                return description.getName() + "_" + enumTypeName(field.getName()) + "[]";
+                if (useStringsForPicklists) {
+                    return description.getName() + "_" + enumTypeName(field.getName()) + "[]";
+                } else {
+                    // use a pick list enum array, enum will be created after generating the SObject class
+                    return enumTypeName(field.getName()) + "[]";
+                }
             } else {
                 // map field to Java type
                 final String soapType = field.getSoapType();
