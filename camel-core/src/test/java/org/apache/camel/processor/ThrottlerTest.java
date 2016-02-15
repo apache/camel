@@ -149,9 +149,9 @@ public class ThrottlerTest extends ContextTestSupport {
     }
 
     private void assertThrottlerTiming(final long elapsedTimeMs, final int throttle, final int intervalMs, final int messageCount) {
-        // now assert that they have actually been throttled
-        long minimum = calculateMinimum(intervalMs, throttle, messageCount);
-        long maximum = calculateMaximum(intervalMs, throttle, messageCount);
+        // now assert that they have actually been throttled (use +/- 50 as slack)
+        long minimum = calculateMinimum(intervalMs, throttle, messageCount) - 50;
+        long maximum = calculateMaximum(intervalMs, throttle, messageCount) + 50;
         log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", new Object[]{messageCount, elapsedTimeMs, throttle, intervalMs, minimum, maximum});
 
         assertTrue("Should take at least " + minimum + "ms, was: " + elapsedTimeMs, elapsedTimeMs >= minimum);
