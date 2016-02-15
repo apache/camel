@@ -21,10 +21,13 @@
  */
 package $packageName;
 
+#if ( !$useStringsForPicklists )
 ## add imports for XStreamConverter and PicklistEnumConverter if needed
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )
+#end
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+#if ( !$useStringsForPicklists )
 #if ( $hasPicklists || $hasMultiSelectPicklists )
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 #end
@@ -36,9 +39,10 @@ import org.apache.camel.component.salesforce.api.MultiSelectPicklistConverter;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistDeserializer;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
 #end
+#end
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.codehaus.jackson.annotate.JsonProperty;
-#if ( $hasMultiSelectPicklists )
+#if ( !$useStringsForPicklists && $hasMultiSelectPicklists )
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 #end
@@ -61,9 +65,9 @@ public class $desc.Name extends AbstractSObjectBase {
 #set ( $propertyName = $fieldName )
 #end
 ## add a converter annotation if needed
-#if ( !$isMultiSelectPicklist && $utility.isPicklist($field) )
+#if ( !$useStringsForPicklists && !$isMultiSelectPicklist && $utility.isPicklist($field) )
     @XStreamConverter(PicklistEnumConverter.class)
-#elseif ( $isMultiSelectPicklist )
+#elseif ( !$useStringsForPicklists && $isMultiSelectPicklist )
     @XStreamConverter(MultiSelectPicklistConverter.class)
 #else
 ## add an alias for blob field url if needed
