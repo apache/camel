@@ -174,7 +174,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     @Override
