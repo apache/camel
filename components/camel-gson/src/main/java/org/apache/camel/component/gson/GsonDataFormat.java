@@ -57,7 +57,7 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     private String dateFormatPattern;
 
     public GsonDataFormat() {
-        this(Map.class);
+        this(Object.class);
     }
 
     /**
