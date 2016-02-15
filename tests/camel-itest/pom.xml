@@ -328,6 +328,23 @@
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-jdk14</artifactId>
         </exclusion>
+        <!-- we use the version from camel-jetty9 -->
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-continuation</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
