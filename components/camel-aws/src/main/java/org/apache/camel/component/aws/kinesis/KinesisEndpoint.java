@@ -35,18 +35,14 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName", consumerClass = KinesisConsumer.class, label = "cloud,messaging")
 public class KinesisEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath(label = "consumer", description = "Name of the stream")
+    @UriPath(description = "Name of the stream")
     @Metadata(required = "true")
     private String streamName;
-
-    // For now, always assume that we've been supplied a client in the Camel registry.
-    @UriParam(label = "consumer", description = "Amazon Kinesis client to use for all requests for this endpoint")
+    @UriParam(description = "Amazon Kinesis client to use for all requests for this endpoint")
     @Metadata(required = "true")
     private AmazonKinesis amazonKinesisClient;
-
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll", defaultValue = "1")
     private int maxResultsPerRequest = 1;
-
     @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records")
     private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;
 
