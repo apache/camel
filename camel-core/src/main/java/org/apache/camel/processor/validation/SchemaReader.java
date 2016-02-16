@@ -19,6 +19,7 @@ package org.apache.camel.processor.validation;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import javax.xml.XMLConstants;
@@ -30,11 +31,22 @@ import javax.xml.validation.SchemaFactory;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.converter.IOConverter;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Reads the schema used in the processor {@link ValidatingProcessor}. Contains
  * the method {@link clearCachedSchema()} to force re-reading the schema.
  */
 public class SchemaReader {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(SchemaReader.class);
 
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
     // must be volatile because is accessed from different threads see ValidatorEndpoint.clearCachedSchema
@@ -44,8 +56,24 @@ public class SchemaReader {
     private volatile SchemaFactory schemaFactory;
     private URL schemaUrl;
     private File schemaFile;
-    private volatile byte[] schemaAsByteArray;
+    private byte[] schemaAsByteArray;
+    private final String schemaResourceUri;
     private LSResourceResolver resourceResolver;
+    
+    private final CamelContext camelContext;
+    
+    
+    public SchemaReader() {
+        this(null, null);
+    }
+    
+    /** Specify a camel context and a schema resource URI in order to read the schema via the class resolver specified in the Camel context. */
+    public SchemaReader(CamelContext camelContext, String schemaResourceUri) {
+        ObjectHelper.notNull(camelContext, "camelContext");
+        ObjectHelper.notNull(schemaResourceUri, "schemaResourceUri");
+        this.camelContext = camelContext;
+        this.schemaResourceUri = schemaResourceUri;
+    }
 
     public void loadSchema() throws Exception {
         // force loading of schema
@@ -145,7 +173,7 @@ public class SchemaReader {
     }
 
     protected Source createSchemaSource() throws IOException {
-        throw new IllegalArgumentException("You must specify either a schema, schemaFile, schemaSource or schemaUrl property");
+        throw new IllegalArgumentException("You must specify either a schema, schemaFile, schemaSource, schemaUrl, or schemaUri property");
     }
 
     protected Schema createSchema() throws SAXException, IOException {
@@ -171,11 +199,33 @@ public class SchemaReader {
                 return factory.newSchema(new StreamSource(new ByteArrayInputStream(schemaAsByteArray)));
             }
         }
-
+        
+        if (schemaResourceUri != null) {
+            synchronized (this) {
+                bytes = readSchemaResource();
+                return factory.newSchema(new StreamSource(new ByteArrayInputStream(bytes)));
+            }          
+        }
+        
         Source source = getSchemaSource();
         synchronized (this) {
             return factory.newSchema(source);
         }
+
+    }
+    
+    protected byte[] readSchemaResource() throws IOException {
+        LOG.debug("reading schema resource: {}", schemaResourceUri);
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, schemaResourceUri);
+        byte[] bytes = null;
+        try {
+            bytes = IOConverter.toBytes(is);
+        } finally {
+            // and make sure to close the input stream after the schema has been
+            // loaded
+            IOHelper.close(is);
+        }
+        return bytes;
     }
 
 }
