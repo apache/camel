@@ -108,6 +108,8 @@
 	* [Cmis](cmis.adoc)
 	* [Cometd](cometd.adoc)
 	* [Couchdb](couchdb.adoc)
+	* [Crypto](crypto.adoc)
+		* [Crypto Digital Signatures](crypto-digital-signatures.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
 	* [Properties](properties.adoc)
