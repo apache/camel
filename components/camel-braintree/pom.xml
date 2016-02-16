@@ -80,6 +80,7 @@
       <version>${braintree-gateway-version}</version>
       <classifier>javadoc</classifier>
       <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
 
     <!-- logging -->
