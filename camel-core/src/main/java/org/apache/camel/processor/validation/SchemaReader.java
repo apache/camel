@@ -64,7 +64,8 @@ public class SchemaReader {
     
     
     public SchemaReader() {
-        this(null, null);
+        this.camelContext = null;
+        this.schemaResourceUri = null;
     }
     
     /** Specify a camel context and a schema resource URI in order to read the schema via the class resolver specified in the Camel context. */
