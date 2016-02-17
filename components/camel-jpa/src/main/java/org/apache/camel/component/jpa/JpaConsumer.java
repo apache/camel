@@ -88,6 +88,12 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         // must reset for each poll
         shutdownRunningTask = null;
         pendingExchanges = 0;
+        
+        // Recreate EntityManager in case it is disposed due to transaction rollback
+        if (entityManager == null) {
+            entityManager = entityManagerFactory.createEntityManager();
+            LOG.trace("Recreated EntityManager {} on {}", entityManager, this);
+        }
 
         Object messagePolled = transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
@@ -128,6 +134,12 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                     if (!isTransacted()) {
                         LOG.warn("Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.", cause.getMessage(), cause);
                     } else {
+                        // Potentially EntityManager could be in an inconsistent state after transaction rollback,
+                        // so disposing it to have it recreated in next poll. cf. Java Persistence API 3.3.2 Transaction Rollback
+                        LOG.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
+                        entityManager.close();
+                        entityManager = null;
+                        
                         // rollback all by throwning exception
                         throw cause;
                     }
