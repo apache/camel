@@ -55,9 +55,9 @@ public class SqsConfiguration {
     @UriParam(label = "consumer")
     private Integer visibilityTimeout;
     @UriParam(label = "consumer")
-    private Collection<String> attributeNames;
+    private String attributeNames;
     @UriParam(label = "consumer")
-    private Collection<String> messageAttributeNames;
+    private String messageAttributeNames;
     @UriParam(label = "consumer")
     private Integer waitTimeSeconds;
     @UriParam(label = "consumer")
@@ -167,25 +167,25 @@ public class SqsConfiguration {
         this.visibilityTimeout = visibilityTimeout;
     }
 
-    public Collection<String> getAttributeNames() {
+    public String getAttributeNames() {
         return attributeNames;
     }
 
     /**
-     * A list of attribute names to receive when consuming
+     * A list of attribute names to receive when consuming.  Multiple names can be separated by comma.
      */
-    public void setAttributeNames(Collection<String> attributeNames) {
+    public void setAttributeNames(String attributeNames) {
         this.attributeNames = attributeNames;
     }
 
-    public Collection<String> getMessageAttributeNames() {
+    public String getMessageAttributeNames() {
         return messageAttributeNames;
     }
 
     /**
-     * A list of message attribute names to receive when consuming
+     * A list of message attribute names to receive when consuming. Multiple names can be separated by comma.
      */
-    public void setMessageAttributeNames(Collection<String> messageAttributeNames) {
+    public void setMessageAttributeNames(String messageAttributeNames) {
         this.messageAttributeNames = messageAttributeNames;
     }
 
