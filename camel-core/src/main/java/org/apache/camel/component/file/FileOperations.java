@@ -242,6 +242,14 @@ public class FileOperations implements GenericFileOperations<File> {
                     if (renamed) {
                         // try to keep last modified timestamp if configured to do so
                         keepLastModified(exchange, file);
+                        // set permissions if the chmod option was set
+                        if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
+                            Set<PosixFilePermission> permissions = endpoint.getPermissions();
+                            if (!permissions.isEmpty()) {
+                                Files.setPosixFilePermissions(file.toPath(), permissions);
+                                LOG.trace("Setting chmod: {} on file: {} ", PosixFilePermissions.toString(permissions), file);
+                            }
+                        }
                         // clear header as we have renamed the file
                         exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, null);
                         // return as the operation is complete, we just renamed the local work file
@@ -253,6 +261,14 @@ public class FileOperations implements GenericFileOperations<File> {
                     writeFileByFile(source, file);
                     // try to keep last modified timestamp if configured to do so
                     keepLastModified(exchange, file);
+                    // set permissions if the chmod option was set
+                    if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
+                        Set<PosixFilePermission> permissions = endpoint.getPermissions();
+                        if (!permissions.isEmpty()) {
+                            Files.setPosixFilePermissions(file.toPath(), permissions);
+                            LOG.trace("Setting chmod: {} on file: {} ", PosixFilePermissions.toString(permissions), file);
+                        }
+                    }
                     return true;
                 }
             }
@@ -273,9 +289,9 @@ public class FileOperations implements GenericFileOperations<File> {
                 InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
                 writeFileByStream(in, file);
             }
+
             // try to keep last modified timestamp if configured to do so
             keepLastModified(exchange, file);
-
             // set permissions if the chmod option was set
             if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
                 Set<PosixFilePermission> permissions = endpoint.getPermissions();
