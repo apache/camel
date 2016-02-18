@@ -59,10 +59,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected static final String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
     
-    private static final Integer CHMOD_WRITE_MASK = 02;
-    private static final Integer CHMOD_READ_MASK = 04;
-    private static final Integer CHMOD_EXECUTE_MASK = 01;
-
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     // common options
@@ -94,10 +90,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String doneFileName;
     @UriParam(label = "producer,advanced")
     protected boolean allowNullBody;
-    @UriParam(label = "producer,advanced")
-    protected String chmod;
-    @UriParam(label = "producer,advanced")
-    protected String chmodDirectory;
 
     // consumer options
 
@@ -184,8 +176,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     @UriParam(label = "consumer,advanced")
     protected ExceptionHandler onCompletionExceptionHandler;
-    @UriParam(label = "consumer,advanced")
-    protected String extendedAttributes;
 
     public GenericFileEndpoint() {
     }
@@ -312,145 +302,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             return (GenericFileProcessStrategy<T>) ObjectHelper.invokeMethod(factoryMethod, null, getCamelContext(), params);
         } catch (NoSuchMethodException e) {
             throw new TypeNotPresentException(factory.getSimpleName() + ".createGenericFileProcessStrategy method not found", e);
-        }
-    }
-
-    /**
-     * Chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it.
-     */
-    public boolean chmodPermissionsAreValid(String chmod) {
-        if (chmod == null || chmod.length() < 3 || chmod.length() > 4) {
-            return false;
-        }
-        String permissionsString = chmod.trim().substring(chmod.length() - 3);  // if 4 digits chop off leading one
-        for (int i = 0; i < permissionsString.length(); i++) {
-            Character c = permissionsString.charAt(i);
-            if (!Character.isDigit(c) || Integer.parseInt(c.toString()) > 7) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public Set<PosixFilePermission> getPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
-        if (ObjectHelper.isEmpty(chmod)) {
-            return permissions;
-        }
-
-        String chmodString = chmod.substring(chmod.length() - 3);  // if 4 digits chop off leading one
-
-        Integer ownerValue = Integer.parseInt(chmodString.substring(0, 1));
-        Integer groupValue = Integer.parseInt(chmodString.substring(1, 2));
-        Integer othersValue = Integer.parseInt(chmodString.substring(2, 3));
-
-        if ((ownerValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OWNER_WRITE);
-        }
-        if ((ownerValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.OWNER_READ);
-        }
-        if ((ownerValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OWNER_EXECUTE);
-        }
-
-        if ((groupValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.GROUP_WRITE);
-        }
-        if ((groupValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.GROUP_READ);
-        }
-        if ((groupValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.GROUP_EXECUTE);
-        }
-
-        if ((othersValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_WRITE);
-        }
-        if ((othersValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_READ);
-        }
-        if ((othersValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_EXECUTE);
-        }
-
-        return permissions;
-    }
-
-    public String getChmod() {
-        return chmod;
-    }
-
-    /**
-     * Specify the file permissions which is sent by the producer, the chmod value must be between 000 and 777;
-     * If there is a leading digit like in 0755 we will ignore it.
-     */
-    public void setChmod(String chmod) throws Exception {
-        if (ObjectHelper.isNotEmpty(chmod) && chmodPermissionsAreValid(chmod)) {
-            this.chmod = chmod.trim();
-        } else {
-            throw new IllegalArgumentException("chmod option [" + chmod + "] is not valid");
-        }
-    }
-
-    public Set<PosixFilePermission> getDirectoryPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
-        if (ObjectHelper.isEmpty(chmodDirectory)) {
-            return permissions;
-        }
-
-        String chmodString = chmodDirectory.substring(chmodDirectory.length() - 3);  // if 4 digits chop off leading one
-
-        Integer ownerValue = Integer.parseInt(chmodString.substring(0, 1));
-        Integer groupValue = Integer.parseInt(chmodString.substring(1, 2));
-        Integer othersValue = Integer.parseInt(chmodString.substring(2, 3));
-
-        if ((ownerValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OWNER_WRITE);
-        }
-        if ((ownerValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.OWNER_READ);
-        }
-        if ((ownerValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OWNER_EXECUTE);
-        }
-
-        if ((groupValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.GROUP_WRITE);
-        }
-        if ((groupValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.GROUP_READ);
-        }
-        if ((groupValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.GROUP_EXECUTE);
-        }
-
-        if ((othersValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_WRITE);
-        }
-        if ((othersValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_READ);
-        }
-        if ((othersValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_EXECUTE);
-        }
-
-        return permissions;
-    }
-
-    public String getChmodDirectory() {
-        return chmodDirectory;
-    }
-
-    /**
-     * Specify the directory permissions used when the producer creates missing directories, the chmod value must be between 000 and 777;
-     * If there is a leading digit like in 0755 we will ignore it.
-     */
-    public void setChmodDirectory(String chmodDirectory) throws Exception {
-        if (ObjectHelper.isNotEmpty(chmodDirectory) && chmodPermissionsAreValid(chmodDirectory)) {
-            this.chmodDirectory = chmodDirectory.trim();
-        } else {
-            throw new IllegalArgumentException("chmodDirectory option [" + chmodDirectory + "] is not valid");
         }
     }
 
@@ -1251,18 +1102,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setOnCompletionExceptionHandler(ExceptionHandler onCompletionExceptionHandler) {
         this.onCompletionExceptionHandler = onCompletionExceptionHandler;
-    }
-
-    public String getExtendedAttributes() {
-        return extendedAttributes;
-    }
-
-    /**
-     * To define which file attributes of interest. Like posix:permissions,posix:owner,basic:lastAccessTime,
-     * it supports basic wildcard like posix:*, basic:lastAccessTime
-     */
-    public void setExtendedAttributes(String extendedAttributes) {
-        this.extendedAttributes = extendedAttributes;
     }
 
     /**
