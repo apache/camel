@@ -20,9 +20,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.infinispan.remote.InfinispanRemoteOperation;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.util.concurrent.NotifyingFuture;
+import org.infinispan.query.dsl.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -315,7 +317,17 @@ public final class InfinispanOperation {
                 result = cache.clearAsync();
                 setResult(result, exchange);
             }
+        }, QUERY {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                Query query = getQuery(cache, exchange);
+                if (query == null) {
+                    return;
+                }
+                setResult(query.list(), exchange);
+            }
         };
+
 
         void setResult(Object result, Exchange exchange) {
             exchange.getIn().setHeader(InfinispanConstants.RESULT, result);
@@ -335,6 +347,15 @@ public final class InfinispanOperation {
 
         Map<? extends Object, ? extends Object>  getMap(Exchange exchange) {
             return (Map<? extends Object, ? extends Object>) exchange.getIn().getHeader(InfinispanConstants.MAP);
+        }
+
+        Query getQuery(BasicCache<Object, Object> cache, Exchange exchange) {
+            if (InfinispanUtil.isRemote(cache)) {
+                return InfinispanRemoteOperation.buildQuery(cache, exchange);
+            } else {
+                return null;
+            }
+
         }
 
         abstract void execute(BasicCache<Object, Object> cache, Exchange exchange);
