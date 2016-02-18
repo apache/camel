@@ -244,7 +244,7 @@
     <ical4j-version>1.0.7</ical4j-version>
     <ignite-version>1.5.0.final</ignite-version>
     <ignite-version-range>[1.5.0-b1,1.6)</ignite-version-range>
-    <infinispan-version>8.1.1.Final</infinispan-version>
+    <infinispan-version>8.1.2.Final</infinispan-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
