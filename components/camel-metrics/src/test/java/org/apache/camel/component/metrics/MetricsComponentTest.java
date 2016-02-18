@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.metrics;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -189,12 +190,25 @@ public class MetricsComponentTest {
     }
 
     @Test
+    public void testGetOrCreateMetricRegistryFoundInCamelRegistryByType() throws Exception {
+        when(camelRegistry.lookupByNameAndType("name", MetricRegistry.class)).thenReturn(null);
+        when(camelRegistry.findByType(MetricRegistry.class)).thenReturn(Collections.singleton(metricRegistry));
+        MetricRegistry result = component.getOrCreateMetricRegistry(camelRegistry, "name");
+        assertThat(result, is(metricRegistry));
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MetricRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).findByType(MetricRegistry.class);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
     public void testGetOrCreateMetricRegistryNotFoundInCamelRegistry() throws Exception {
         when(camelRegistry.lookupByNameAndType("name", MetricRegistry.class)).thenReturn(null);
+        when(camelRegistry.findByType(MetricRegistry.class)).thenReturn(Collections.<MetricRegistry>emptySet());
         MetricRegistry result = component.getOrCreateMetricRegistry(camelRegistry, "name");
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(metricRegistry)));
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MetricRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).findByType(MetricRegistry.class);
         inOrder.verifyNoMoreInteractions();
     }
 
