@@ -41,6 +41,10 @@ public class InfinispanConfiguration {
     private boolean sync = true;
     @UriParam(label = "consumer", javaType = "java.lang.String")
     private Set<String> eventTypes;
+    @UriParam
+    private InfinispanCustomListener customListener;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean clustered;
 
     public String getCommand() {
         return command;
@@ -66,7 +70,7 @@ public class InfinispanConfiguration {
 
     /**
      * Specifies the cache Container to connect
-     */   
+     */
     public BasicCacheContainer getCacheContainer() {
         return cacheContainer;
     }
@@ -77,7 +81,7 @@ public class InfinispanConfiguration {
 
     /**
      * Specifies the cache name
-     */  
+     */
     public String getCacheName() {
         return cacheName;
     }
@@ -95,6 +99,17 @@ public class InfinispanConfiguration {
 
     public void setSync(boolean sync) {
         this.sync = sync;
+    }
+
+    /**
+     * If true, the listener will be installed for the entire cluster
+     */
+    public boolean isClustered() {
+        return clustered;
+    }
+
+    public void setClustered(boolean clustered) {
+        this.clustered = clustered;
     }
 
     public Set<String> getEventTypes() {
@@ -121,5 +136,20 @@ public class InfinispanConfiguration {
      */
     public void setEventTypes(String eventTypes) {
         this.eventTypes = new HashSet<String>(Arrays.asList(eventTypes.split(",")));
+    }
+
+    /**
+     * Returns the custom listener in use, if provided
+     */
+    public InfinispanCustomListener getCustomListener() {
+        return customListener;
+    }
+
+    public void setCustomListener(InfinispanCustomListener customListener) {
+        this.customListener = customListener;
+    }
+
+    public boolean isCustom() {
+        return customListener != null;
     }
 }
