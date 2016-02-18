@@ -61,9 +61,9 @@
     <atomikos-transactions-version>3.9.3</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avalon-version>4.3.1</avalon-version>
-    <avro-version>1.7.7</avro-version>
-    <avro-bundle-version>1.7.7_2</avro-bundle-version>
-    <avro-ipc-bundle-version>1.7.7_1</avro-ipc-bundle-version>
+    <avro-version>1.8.0</avro-version>
+    <avro-bundle-version>1.8.0_1</avro-bundle-version>
+    <avro-ipc-bundle-version>1.8.0_1</avro-ipc-bundle-version>
     <awaitility.version>1.7.0</awaitility.version>
     <aws-java-sdk-bundle-version>1.10.52_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.10.52</aws-java-sdk-version>
