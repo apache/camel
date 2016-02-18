@@ -42,12 +42,18 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-embedded</artifactId>
+            <artifactId>infinispan-core</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-remote</artifactId>
+            <artifactId>infinispan-query-dsl</artifactId>
+            <version>${infinispan-version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-client-hotrod</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
 
@@ -63,6 +69,35 @@
             <version>${infinispan-version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan.server</groupId>
+            <artifactId>infinispan-server-testsuite</artifactId>
+            <version>${infinispan-version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.remoting3</groupId>
+                    <artifactId>remoting-jmx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.infinispan</groupId>
+                    <artifactId>infinispan-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.infinispan</groupId>
+                    <artifactId>infinispan-client-hotrod</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.infinispan</groupId>
+                    <artifactId>infinispan-query-dsl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.infinispan</groupId>
+                    <artifactId>infinispan-remote-query-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -96,6 +131,137 @@
                         <configuration>
                             <skipTests>true</skipTests>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>infinispan-itests</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <server.dir.parent>${project.build.directory}</server.dir.parent>
+                <server.dir.name>infinispan-server-${infinispan-version}</server.dir.name>
+                <server.dir>${server.dir.parent}/${server.dir.name}</server.dir>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.infinispan.server</groupId>
+                    <artifactId>infinispan-server</artifactId>
+                    <version>${infinispan-version}</version>
+                    <type>zip</type>
+                    <classifier>bin</classifier>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack-server</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.infinispan.server</groupId>
+                                            <artifactId>infinispan-server</artifactId>
+                                            <version>${infinispan-version}</version>
+                                            <classifier>bin</classifier>
+                                            <type>zip</type>
+                                            <outputDirectory>${server.dir.parent}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>deploy-converter-factory</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.infinispan.server</groupId>
+                                            <artifactId>infinispan-server-testsuite</artifactId>
+                                            <classifier>tests</classifier>
+                                            <version>${infinispan-version}</version>
+                                            <outputDirectory>${server.dir}/standalone/deployments</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <version>1.1.0.Alpha6</version>
+                        <executions>
+                            <execution>
+                                <id>start-server</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>${skipTests}</skip>
+                                    <jbossHome>${server.dir}</jbossHome>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>configure-caches</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>execute-commands</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>${skipTests}</skip>
+                                    <executeCommands>
+                                        <commands>
+                                            <!-- Separate cache for protobuf serialized objects. -->
+                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=remote_query:add(configuration=default)</command>
+                                            <!-- Separate cache for converter factory which uses Int keys -->
+                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=static_converter_factory:add(configuration=default)</command>
+                                            <!-- Separate cache for converter factory which uses Int keys -->
+                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=static_filter_factory:add(configuration=default)</command>
+                                            <!-- Separate cache for @ClientListener(includeCurrentState=true) -->
+                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=include_current_state:add(configuration=default)</command>
+                                        </commands>
+                                    </executeCommands>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop-server</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>shutdown</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>${skipTests}</skip>
+                                    <jbossHome>${server.dir}</jbossHome>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

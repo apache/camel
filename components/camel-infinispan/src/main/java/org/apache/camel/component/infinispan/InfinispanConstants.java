@@ -48,4 +48,6 @@ public interface InfinispanConstants {
     String MAX_IDLE_TIME_UNIT = "CamelInfinispanMaxIdleTimeUnit";
     String IGNORE_RETURN_VALUES = "CamelInfinispanIgnoreReturnValues";
     String EVENT_DATA = "CamelInfinispanEventData";
+    String QUERY = "CamelInfinispanOperationQuery";
+    String QUERY_BUILDER = "CamelInfinispanQueryBuilder";
 }
