@@ -54,6 +54,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     private boolean useRecovery = true;
     private int maximumRedeliveries;
     private String deadLetterUri;
+    private boolean allowSerializedHeaders;
 
     /**
      * Creates an aggregation repository
@@ -102,7 +103,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         LOG.debug("Adding key [{}] -> {}", key, exchange);
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
 
             byte[] rc = null;
             if (isReturnOldExchange()) {
@@ -153,7 +154,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
             final String exchangeId = exchange.getExchangeId();
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
 
             // remove the exchange
             byte[] rc = levelDBFile.getDb().get(lDbKey);
@@ -389,6 +390,13 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         this.persistentFileName = persistentFileName;
     }
 
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
 
     @Override
     protected void doStart() throws Exception {

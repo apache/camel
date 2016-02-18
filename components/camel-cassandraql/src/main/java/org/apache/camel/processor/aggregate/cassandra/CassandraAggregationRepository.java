@@ -121,6 +121,8 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     private String deadLetterUri;
 
     private int maximumRedeliveries;
+    
+    private boolean allowSerializedHeaders;
 
     public CassandraAggregationRepository() {
     }
@@ -188,7 +190,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         final Object[] idValues = getPKValues(key);
         LOGGER.debug("Inserting key {} exchange {}", idValues, exchange);
         try {
-            ByteBuffer marshalledExchange = exchangeCodec.marshallExchange(camelContext, exchange);
+            ByteBuffer marshalledExchange = exchangeCodec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
             Object[] cqlParams = concat(idValues, new Object[]{exchange.getExchangeId(), marshalledExchange});
             getSession().execute(insertStatement.bind(cqlParams));
             return exchange;
@@ -467,4 +469,11 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         this.maximumRedeliveries = maximumRedeliveries;
     }
 
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
 }
