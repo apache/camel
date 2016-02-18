@@ -26,7 +26,7 @@
 
   <artifactId>camel-cdi</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: CDI Component</name>
+  <name>Camel :: CDI</name>
   <description>Camel Contexts and Dependency Injection Support</description>
 
   <properties>
