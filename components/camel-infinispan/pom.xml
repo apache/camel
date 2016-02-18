@@ -42,12 +42,12 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-core</artifactId>
+            <artifactId>infinispan-embedded</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-client-hotrod</artifactId>
+            <artifactId>infinispan-remote</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
 

@@ -55,10 +55,13 @@ public final class InfinispanOperation {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.IGNORE_RETURN_VALUES))) {
+                    cache = InfinispanUtil.ignoreReturnValuesCache(cache);
+                }
                 if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
                     long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
                     String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
-                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME))
                         && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
                         long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
                         String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
@@ -75,10 +78,13 @@ public final class InfinispanOperation {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 NotifyingFuture result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.IGNORE_RETURN_VALUES))) {
+                    cache = InfinispanUtil.ignoreReturnValuesCache(cache);
+                }
                 if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
                     long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
                     String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
-                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME))
                         && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
                         long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
                         String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
@@ -97,7 +103,7 @@ public final class InfinispanOperation {
                 if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
                     long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
                     String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
-                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME))
                         && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
                         long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
                         String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
@@ -116,7 +122,7 @@ public final class InfinispanOperation {
                 if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
                     long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
                     String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
-                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME))
                         && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
                         long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
                         String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
@@ -133,10 +139,13 @@ public final class InfinispanOperation {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.IGNORE_RETURN_VALUES))) {
+                    cache = InfinispanUtil.ignoreReturnValuesCache(cache);
+                }
                 if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
                     long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
                     String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
-                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME))
                         && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
                         long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
                         String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
@@ -153,10 +162,13 @@ public final class InfinispanOperation {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 NotifyingFuture result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.IGNORE_RETURN_VALUES))) {
+                    cache = InfinispanUtil.ignoreReturnValuesCache(cache);
+                }
                 if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
                     long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
                     String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
-                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME))
                         && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
                         long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
                         String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
@@ -191,6 +203,9 @@ public final class InfinispanOperation {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.IGNORE_RETURN_VALUES))) {
+                    cache = InfinispanUtil.ignoreReturnValuesCache(cache);
+                }
                 if (ObjectHelper.isEmpty(getValue(exchange))) {
                     result = cache.remove(getKey(exchange));
                 } else {
@@ -202,6 +217,9 @@ public final class InfinispanOperation {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 NotifyingFuture result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.IGNORE_RETURN_VALUES))) {
+                    cache = InfinispanUtil.ignoreReturnValuesCache(cache);
+                }
                 if (ObjectHelper.isEmpty(getValue(exchange))) {
                     result = cache.removeAsync(getKey(exchange));
                 } else {
@@ -213,10 +231,13 @@ public final class InfinispanOperation {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.IGNORE_RETURN_VALUES))) {
+                    cache = InfinispanUtil.ignoreReturnValuesCache(cache);
+                }
                 if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
                     long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
                     String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
-                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME))
                         && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
                         long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
                         String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
@@ -224,7 +245,7 @@ public final class InfinispanOperation {
                             result = cache.replace(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
                         } else {
                             result = cache.replace(getKey(exchange), getOldValue(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
-                        } 
+                        }
                     } else {
                         if (ObjectHelper.isEmpty(getOldValue(exchange))) {
                             result = cache.replace(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit));
@@ -245,10 +266,13 @@ public final class InfinispanOperation {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 NotifyingFuture result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.IGNORE_RETURN_VALUES))) {
+                    cache = InfinispanUtil.ignoreReturnValuesCache(cache);
+                }
                 if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
                     long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
                     String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
-                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME))
                         && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
                         long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
                         String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
@@ -304,11 +328,11 @@ public final class InfinispanOperation {
         Object getValue(Exchange exchange) {
             return exchange.getIn().getHeader(InfinispanConstants.VALUE);
         }
-        
+
         Object getOldValue(Exchange exchange) {
             return exchange.getIn().getHeader(InfinispanConstants.OLD_VALUE);
         }
-        
+
         Map<? extends Object, ? extends Object>  getMap(Exchange exchange) {
             return (Map<? extends Object, ? extends Object>) exchange.getIn().getHeader(InfinispanConstants.MAP);
         }
