@@ -30,7 +30,7 @@
              http://cxf.apache.org/transports/camel/blueprint http://cxf.apache.org/schmemas/blueprint/camel.xsd
              http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
              http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
-             http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
   
   <!-- make sure the destination is injected with the right camel context -->
   <transport:destination id="*.camel-destination" camelContextId="camel1" />
