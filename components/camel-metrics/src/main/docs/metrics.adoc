@@ -40,10 +40,13 @@ metrics:[ meter | counter | histogram | timer ]:metricname[?options]
 [[MetricsComponent-registry]]Metric Registry
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Camel Metrics component uses by default `MetricRegistry` with
-`Slf4jReporter` and 60 second reporting interval. Default registry can
-be replaced with custom one by providing bean with name `metricRegistry`
-in Camel registry. For example using Spring Java Configuration.
+Camel Metrics component uses by default a `MetricRegistry` instance with
+a `Slf4jReporter` that has a 60 second reporting interval.
+This default registry can be replaced with a custom one by providing
+a `MetricRegistry` bean. If multiple `MetricRegistry` beans exist in the
+application, the one with name `metricRegistry` is used.
+
+For example using Spring Java Configuration:
 
 [source,java]
 ----
@@ -64,6 +67,29 @@ public static class MyConfig extends SingleRouteCamelConfiguration {
     @Bean(name = MetricsComponent.METRIC_REGISTRY_NAME)
     public MetricRegistry getMetricRegistry() {
         MetricRegistry registry = ...;
+        return registry;
+    }
+}
+----
+
+Or using CDI:
+[source,java]
+----
+class MyBean extends RouteBuilder {
+
+    @Override
+    public void configure() {
+      from("...")
+          // Register the 'my-meter' meter in the MetricRegistry below
+          .to("metrics:meter:my-meter");
+    }
+
+    @Produces
+    // If multiple MetricRegistry beans
+    // @Named(MetricsComponent.METRIC_REGISTRY_NAME)
+    MetricRegistry registry() {
+        MetricRegistry registry = new MetricRegistry();
+        // ...
         return registry;
     }
 }
@@ -526,3 +552,10 @@ String json = service.dumpStatisticsAsJson();
 
 And the JMX API the MBean is registered in the `type=services` tree
 with `name=MetricsMessageHistoryService`.
+
+[[MetricsComponent-SeeAlso]]
+See Also
+^^^^^^^^
+
+* The `camel-example-cdi-metrics` example that illustrates the integration
+  between Camel, Metrics and CDI.
