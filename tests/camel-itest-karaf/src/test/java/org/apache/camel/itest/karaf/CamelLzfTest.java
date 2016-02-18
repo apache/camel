@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -26,10 +28,14 @@ import org.ops4j.pax.exam.junit.PaxExam;
 public class CamelLzfTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelLzfTest.class);
+    
+    protected DataFormatDefinition createDataformatDefinition(String format) {        
+        return new LZFDataFormat();
+    }
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        testDataFormat(COMPONENT);
     }
 
     @Configuration
