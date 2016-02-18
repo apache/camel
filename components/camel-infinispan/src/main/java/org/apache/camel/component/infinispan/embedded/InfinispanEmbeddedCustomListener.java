@@ -14,48 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.infinispan;
+package org.apache.camel.component.infinispan.embedded;
 
-import java.util.Set;
-
-import org.infinispan.notifications.Listener;
-import org.infinispan.notifications.cachelistener.annotation.CacheEntryActivated;
+import org.apache.camel.component.infinispan.InfinispanCustomListener;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated;
-import org.infinispan.notifications.cachelistener.annotation.CacheEntryInvalidated;
-import org.infinispan.notifications.cachelistener.annotation.CacheEntryLoaded;
+import org.infinispan.notifications.cachelistener.annotation.CacheEntryExpired;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryModified;
-import org.infinispan.notifications.cachelistener.annotation.CacheEntryPassivated;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved;
-import org.infinispan.notifications.cachelistener.annotation.CacheEntryVisited;
 import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@Listener(sync = true)
-public class InfinispanSyncEventListener {
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final InfinispanConsumer infinispanConsumer;
-    private final Set<String> eventTypes;
+/**
+ * This class is supposed to be extended by users and annotated with @Listener
+ * and passed to the consumer endpoint through the 'customListener' parameter.
+ */
+public abstract class InfinispanEmbeddedCustomListener extends InfinispanCustomListener {
 
-    public InfinispanSyncEventListener(InfinispanConsumer infinispanConsumer, Set<String> eventTypes) {
-        this.infinispanConsumer = infinispanConsumer;
-        this.eventTypes = eventTypes;
+    public InfinispanEmbeddedCustomListener() {
+        super(null, null);
     }
 
-    @CacheEntryActivated
     @CacheEntryCreated
-    @CacheEntryInvalidated
-    @CacheEntryLoaded
     @CacheEntryModified
-    @CacheEntryPassivated
     @CacheEntryRemoved
-    @CacheEntryVisited
+    @CacheEntryExpired
     public void processEvent(CacheEntryEvent<Object, Object> event) {
-        logger.trace("Received CacheEntryEvent [{}]", event);
-
-        if (eventTypes == null || eventTypes.isEmpty() || eventTypes.contains(event.getType().toString())) {
+        if (isAccepted(event.getType().toString())) {
             infinispanConsumer.processEvent(event.getType().toString(), event.isPre(), event.getCache().getName(), event.getKey());
         }
     }
-}
 
+}
