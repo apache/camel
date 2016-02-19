@@ -19,13 +19,25 @@ package org.apache.camel.component.elasticsearch;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.exists.ExistsRequest;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.MultiGetRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
@@ -39,111 +51,292 @@ import org.slf4j.LoggerFactory;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 /**
- * The elasticsearch component is used for interfacing with ElasticSearch server.
+ * The elasticsearch component is used for interfacing with ElasticSearch
+ * server.
  */
 @UriEndpoint(scheme = "elasticsearch", title = "Elasticsearch", syntax = "elasticsearch:clusterName", producerOnly = true, label = "monitoring,search")
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchEndpoint.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ElasticsearchEndpoint.class);
 
-    private Node node;
-    private Client client;
-    private volatile boolean closeClient;
-    @UriParam
-    private ElasticsearchConfiguration configuration;
+	private Node node;
+	private Client client;
+	private ElasticsearchHttpClient esHttpClient;
+	private volatile boolean closeClient;
+	@UriParam
+	private ElasticsearchConfiguration configuration;
+	private Boolean useHttpClient = false;
 
-    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config, Client client) throws Exception {
-        super(uri, component);
-        this.configuration = config;
-        this.client = client;
-        this.closeClient = client == null;
-    }
+	public ElasticsearchEndpoint(String uri, ElasticsearchComponent component,
+			ElasticsearchConfiguration config, Client client) throws Exception {
+		super(uri, component);
+		this.configuration = config;
+		this.client = client;
+		this.closeClient = client == null;
+		this.useHttpClient = configuration.getUseHttpClient();
+	}
 
-    public Producer createProducer() throws Exception {
-        return new ElasticsearchProducer(this);
-    }
+	public Producer createProducer() throws Exception {
+		return new ElasticsearchProducer(this);
+	}
 
-    public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Cannot consume from an ElasticsearchEndpoint: " + getEndpointUri());
-    }
+	public Consumer createConsumer(Processor processor) throws Exception {
+		throw new UnsupportedOperationException(
+				"Cannot consume from an ElasticsearchEndpoint: "
+						+ getEndpointUri());
+	}
 
-    public boolean isSingleton() {
-        return true;
-    }
+	public boolean isSingleton() {
+		return true;
+	}
 
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void doStart() throws Exception {
-        super.doStart();
+	@Override
+	@SuppressWarnings("unchecked")
+	protected void doStart() throws Exception {
+		super.doStart();
 
-        if (client == null) {
-            if (configuration.isLocal()) {
-                LOG.info("Starting local ElasticSearch server");
-            } else {
-                LOG.info("Joining ElasticSearch cluster " + configuration.getClusterName());
-            }
-            if (configuration.getIp() != null) {
-                this.client = TransportClient.builder().settings(getSettings()).build()
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
-            } else if (configuration.getTransportAddressesList() != null
-                    && !configuration.getTransportAddressesList().isEmpty()) {
-                List<TransportAddress> addresses = new ArrayList(configuration.getTransportAddressesList().size());
-                for (TransportAddress address : configuration.getTransportAddressesList()) {
-                    addresses.add(address);
-                }
-                this.client = TransportClient.builder().settings(getSettings()).build().addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
-            } else {
-                NodeBuilder builder = nodeBuilder().local(configuration.isLocal()).data(configuration.getData());
-                if (configuration.isLocal()) {
-                    builder.getSettings().put("http.enabled", false);
-                }
-                if (!configuration.isLocal() && configuration.getClusterName() != null) {
-                    builder.clusterName(configuration.getClusterName());
-                }
-                node = builder.node();
-                client = node.client();
-            }
-        }
-    }
+		if (configuration.getUseHttpClient()) {
+			LOG.info("Using HTTP Client ");
+			esHttpClient = new ElasticsearchHttpClient();
+			esHttpClient.setHost(configuration.getIp());
+			esHttpClient.setPort(String.valueOf(configuration.getPort()));
+			return;
+		} else {
+			if (client == null) {
+				if (configuration.isLocal()) {
+					LOG.info("Starting local ElasticSearch server");
+				} else {
+					LOG.info("Joining ElasticSearch cluster "
+							+ configuration.getClusterName());
+				}
 
-    private Settings getSettings() {
-        return Settings.settingsBuilder()
-                .put("cluster.name", configuration.getClusterName())
-                .put("client.transport.ignore_cluster_name", false)
-                .put("node.client", true)
-                .put("client.transport.sniff", configuration.getClientTransportSniff())
-                .put("http.enabled", false)
-                .build();
-    }
+				if (configuration.getIp() != null) {
+					this.client = TransportClient
+							.builder()
+							.settings(getSettings())
+							.build()
+							.addTransportAddress(
+									new InetSocketTransportAddress(InetAddress
+											.getByName(configuration.getIp()),
+											configuration.getPort()));
+				} else if (configuration.getTransportAddressesList() != null
+						&& !configuration.getTransportAddressesList().isEmpty()) {
+					List<TransportAddress> addresses = new ArrayList(
+							configuration.getTransportAddressesList().size());
+					for (TransportAddress address : configuration
+							.getTransportAddressesList()) {
+						addresses.add(address);
+					}
+					this.client = TransportClient
+							.builder()
+							.settings(getSettings())
+							.build()
+							.addTransportAddresses(
+									addresses
+											.toArray(new TransportAddress[addresses
+													.size()]));
+				} else {
+					NodeBuilder builder = nodeBuilder().local(
+							configuration.isLocal()).data(
+							configuration.getData());
+					if (configuration.isLocal()) {
+						builder.getSettings().put("http.enabled", false);
+					}
+					if (!configuration.isLocal()
+							&& configuration.getClusterName() != null) {
+						builder.clusterName(configuration.getClusterName());
+					}
+					node = builder.node();
+					client = node.client();
+				}
+			}
+		}
 
-    @Override
-    protected void doStop() throws Exception {
-        if (closeClient) {
-            if (configuration.isLocal()) {
-                LOG.info("Stopping local ElasticSearch server");
-            } else {
-                LOG.info("Leaving ElasticSearch cluster " + configuration.getClusterName());
-            }
-            client.close();
-            if (node != null) {
-                node.close();
-            }
-            client = null;
-            node = null;
-        }
-        super.doStop();
-    }
+	}
 
-    public Client getClient() {
-        return client;
-    }
+	private Settings getSettings() {
+		return Settings
+				.settingsBuilder()
+				.put("cluster.name", configuration.getClusterName())
+				.put("client.transport.ignore_cluster_name", false)
+				.put("node.client", true)
+				.put("client.transport.sniff",
+						configuration.getClientTransportSniff())
+				.put("http.enabled", false).build();
+	}
 
-    public ElasticsearchConfiguration getConfig() {
-        return configuration;
-    }
+	@Override
+	protected void doStop() throws Exception {
+		if (closeClient) {
+			if (configuration.isLocal()) {
+				LOG.info("Stopping local ElasticSearch server");
+			} else {
+				LOG.info("Leaving ElasticSearch cluster "
+						+ configuration.getClusterName());
+			}
+			if (client != null)
+				client.close();
+			if (node != null) {
+				node.close();
+			}
+			client = null;
+			node = null;
+		}
+		super.doStop();
+	}
 
-    public void setOperation(String operation) {
-        configuration.setOperation(operation);
-    }
+	public Client getClient() {
+		return client;
+	}
+
+	public ElasticsearchConfiguration getConfig() {
+		return configuration;
+	}
+
+	public void setOperation(String operation) {
+		configuration.setOperation(operation);
+	}
+
+	private String getIndexName(Message message) {
+		return message.getHeader(ElasticsearchConstants.PARAM_INDEX_NAME,
+				String.class);
+	}
+
+	private String getIndexType(Message message) {
+		return message.getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE,
+				String.class);
+	}
+
+	public String index(Message message) {
+		if (useHttpClient) {
+			LOG.info("Indexing into Elasticsearch using HTTP Client ");
+			esHttpClient.index(getIndexName(message), getIndexType(message),
+					message.getBody(String.class));
+		} else {
+			IndexRequest indexRequest = message.getBody(IndexRequest.class);
+			return client.index(indexRequest).actionGet().getId();
+		}
+		return null;
+	}
+
+	public Object update(Message message) {
+		if (useHttpClient) {
+			String id = message
+					.getExchange()
+					.getIn()
+					.getHeader(ElasticsearchConstants.PARAM_INDEX_ID,
+							String.class);
+			return esHttpClient.update(getIndexName(message),
+					getIndexType(message), id, message.getBody(Map.class));
+		} else {
+			UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
+			return client.update(updateRequest).actionGet().getId();
+		}
+
+	}
+
+	public void get(Message message) {
+		GetRequest getRequest = message.getBody(GetRequest.class);
+		message.setBody(client.get(getRequest));
+	}
+
+	public Object multiget(Message message) {
+		if (useHttpClient) {
+			String indexName = getIndexName(message);
+			String indexType = getIndexType(message);
+			return esHttpClient.multiget(indexName, indexType,
+					message.getBody(List.class));
+		} else {
+			MultiGetRequest multiGetRequest = message
+					.getBody(MultiGetRequest.class);
+			return client.multiGet(multiGetRequest);
+		}
+
+	}
+
+	public Object bulk(Message message) {
+		if(useHttpClient)
+			throw new UnsupportedOperationException();
+		else {
+			BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+			return client.bulk(bulkRequest).actionGet();
+		}
+	}
+
+	public List<String> bulkIndex(Message message) {
+		List<String> indexedIds = new ArrayList<String>();
+
+		if (useHttpClient) {
+			List<Object> objects = message.getBody(List.class);
+			List<String> documents = new ArrayList<String>(objects.size());
+			for (Object obj : objects) {
+				documents.add((String) obj);
+			}
+			return esHttpClient.bulkIndex(getIndexName(message),
+					getIndexType(message), documents);
+		} else {
+			BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+			for (BulkItemResponse response : client.bulk(bulkRequest)
+					.actionGet().getItems()) {
+				indexedIds.add(response.getId());
+			}
+		}
+		return indexedIds;
+	}
+
+	public Object delete(Message message) {
+		if (useHttpClient) {
+			return esHttpClient.delete(getIndexName(message),
+					getIndexType(message), message.getBody(String.class));
+		} else {
+			DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
+			return client.delete(deleteRequest).actionGet();
+		}
+	}
+
+	public boolean indexExists(Message message) {
+		if (useHttpClient) {
+			return esHttpClient.indexExists(getIndexName(message));
+
+		} else {
+			ExistsRequest existsRequest = message.getBody(ExistsRequest.class);
+			return client.admin().indices()
+					.prepareExists(existsRequest.indices()).get().isExists();
+		}
+
+	}
+
+	public Object search(Message message) {
+		if (useHttpClient) {
+			Map queryObject = message.getBody(Map.class);
+			return esHttpClient.search(getIndexName(message), getIndexType(message), queryObject);
+		} else {
+			SearchRequest searchRequest = message.getBody(SearchRequest.class);
+			return client.search(searchRequest).actionGet();
+		}
+
+	}
+
+	public Object getById(Message message) {
+		if (useHttpClient) {
+			return esHttpClient.getById(getIndexName(message),
+					getIndexType(message), message.getBody(String.class));
+		} else {
+			GetRequest getRequest = message.getBody(GetRequest.class);
+			return client.get(getRequest);
+		}
+	}
+
+	public Object multisearch(Message message) {
+		if(useHttpClient) {
+			List queryObjects = message.getBody(List.class);
+			return esHttpClient.multisearch(getIndexName(message), getIndexType(message), queryObjects);			
+		} else {
+			MultiSearchRequest multiSearchRequest = message
+					.getBody(MultiSearchRequest.class);
+			return client.multiSearch(multiSearchRequest);
+		}
+	}
 
 }
