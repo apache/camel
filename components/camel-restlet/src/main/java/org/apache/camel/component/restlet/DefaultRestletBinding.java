@@ -150,17 +150,21 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
     public void populateRestletRequestFromExchange(Request request, Exchange exchange) {
         request.setReferrerRef("camel-restlet");
-        String body = exchange.getIn().getBody(String.class);
-        Form form = new Form();
-        // add the body as the key in the form with null value
-        form.add(body, null);
+
+        final Method method = request.getMethod();
 
         MediaType mediaType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, MediaType.class);
         if (mediaType == null) {
             mediaType = MediaType.APPLICATION_WWW_FORM;
         }
 
-        LOG.debug("Populate Restlet request from exchange body: {} using media type {}", body, mediaType);
+        Form form = null;
+        // Use forms only for PUT, POST and x-www-form-urlencoded
+        if ((Method.PUT == method || Method.POST == method) && mediaType == MediaType.APPLICATION_WWW_FORM) {
+            form = new Form();
+            String body = exchange.getIn().getBody(String.class);
+            form.add(body, null);
+        }
 
         // login and password are filtered by header filter strategy
         String login = exchange.getIn().getHeader(RestletConstants.RESTLET_LOGIN, String.class);
@@ -176,8 +180,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             String key = entry.getKey();
             Object value = entry.getValue();
             if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                // Use forms only for GET and POST/x-www-form-urlencoded
-                if (request.getMethod() == Method.GET || (request.getMethod() == Method.POST && mediaType == MediaType.APPLICATION_WWW_FORM)) {
+                // Use forms only for PUT, POST and x-www-form-urlencoded
+                if (form != null) {
                     if (key.startsWith("org.restlet.")) {
                         // put the org.restlet headers in attributes
                         request.getAttributes().put(key, value);
@@ -199,16 +203,19 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
 
-        LOG.debug("Using Content Type: {} for POST data: {}", mediaType, body);
-
-        // Only URL Encode for GET and form POST
-        if (request.getMethod() == Method.GET || (request.getMethod() == Method.POST && mediaType == MediaType.APPLICATION_WWW_FORM)) {
+        if (form != null) {
             request.setEntity(form.getWebRepresentation());
+            LOG.debug("Populate Restlet {} request from exchange body as form using media type {}", method, mediaType);
         } else {
-            if (body == null) {
-                request.setEntity(null);
-            } else {
+            // include body if PUT or POST
+            if (request.getMethod() == Method.PUT || request.getMethod() == Method.POST) {
+                String body = exchange.getIn().getBody(String.class);
                 request.setEntity(body, mediaType);
+                LOG.debug("Populate Restlet {} request from exchange body: {} using media type {}", method, body, mediaType);
+            } else {
+                // no body
+                LOG.debug("Populate Restlet {} request from exchange using media type {}", method, mediaType);
+                request.setEntity(null);
             }
         }
 
@@ -224,6 +231,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (acceptedMediaType != null) {
             request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(acceptedMediaType));
         }
+
     }
 
     public void populateRestletResponseFromExchange(Exchange exchange, Response response) throws Exception {
