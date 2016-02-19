@@ -15,13 +15,13 @@ public class SSPTParser implements SSPTParserConstants {
     Template template = new Template();
     Object parameter = null;
     procedureName = jj_consume_token(IDENTIFIER);
-    jj_consume_token(1);
+    jj_consume_token(PROCEDURE_BEGIN);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 4:
+    case 2:
     case NUMBER:
     case IDENTIFIER:
       parameter = Parameter();
-                                                                 template.addParameter(parameter);
+                                                                               template.addParameter(parameter);
       label_1:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -41,7 +41,7 @@ public class SSPTParser implements SSPTParserConstants {
       jj_la1[1] = jj_gen;
       ;
     }
-    jj_consume_token(2);
+    jj_consume_token(PROCEDURE_END);
     jj_consume_token(0);
    template.setProcedureName(procedureName.toString());
    {if (true) return template;}
@@ -56,7 +56,7 @@ public class SSPTParser implements SSPTParserConstants {
       param = InputParameter();
                                 {if (true) return param;}
       break;
-    case 4:
+    case 2:
       param = OutParameter();
                                                                           {if (true) return param;}
       break;
@@ -73,7 +73,7 @@ public class SSPTParser implements SSPTParserConstants {
      String name;
      Token valueSrcToken;
     sqlTypeToken = ParameterSqlType();
-    jj_consume_token(3);
+    jj_consume_token(1);
     valueSrcToken = InputParameterSrc();
         int sqlType = ParseHelper.parseSqlType(sqlTypeToken);
         {if (true) return new InputParameter(createNextParameterName(),sqlType,valueSrcToken);}
@@ -84,10 +84,10 @@ public class SSPTParser implements SSPTParserConstants {
      Token sqlTypeToken;
      String name;
      String outValueMapKey;
-    jj_consume_token(4);
-    jj_consume_token(3);
+    jj_consume_token(2);
+    jj_consume_token(1);
     sqlTypeToken = ParameterSqlType();
-    jj_consume_token(3);
+    jj_consume_token(1);
     outValueMapKey = OutHeader();
         {if (true) return new OutParameter(createNextParameterName(),ParseHelper.parseSqlType(sqlTypeToken),outValueMapKey);}
     throw new Error("Missing return statement in function");
@@ -152,7 +152,7 @@ public class SSPTParser implements SSPTParserConstants {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x800,0x4030,0x4030,0x4020,0x3000,};
+      jj_la1_0 = new int[] {0x200,0x400c,0x400c,0x4008,0x3000,};
    }
 
   /** Constructor with InputStream. */

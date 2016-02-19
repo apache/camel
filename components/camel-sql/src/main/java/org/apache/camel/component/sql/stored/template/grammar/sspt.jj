@@ -45,9 +45,9 @@ public Template parse() :
     Object parameter = null;
 }
 {
-  (procedureName = <IDENTIFIER> "(" ( (parameter = Parameter() { template.addParameter(parameter);}) (<SEPARATOR>
+  (procedureName = <IDENTIFIER> <PROCEDURE_BEGIN> ( (parameter = Parameter() { template.addParameter(parameter);}) (<SEPARATOR>
   parameter
-  = Parameter(){template.addParameter(parameter);})*)? ")" <EOF>)
+  = Parameter(){template.addParameter(parameter);})*)? <PROCEDURE_END> <EOF>)
   {
    template.setProcedureName(procedureName.toString());
    return template;
@@ -133,7 +133,6 @@ TOKEN: {
     <NUMBER: (["0"-"9"])+>
 }
 
-
 TOKEN: {
     <#DIGIT: (["0"-"9"])>
 }
@@ -147,7 +146,7 @@ TOKEN: {
 }
 
 TOKEN: {
-    <#WHITESPACE: (" "|"\n"|"\t")>
+    <WHITESPACE: (" "|"\n"|"\r"|"\t")>
 }
 
 TOKEN: {
@@ -158,6 +157,14 @@ TOKEN: {
     <SEPARATOR: ( ( <WHITESPACE> )* (<COMMA>) ( <WHITESPACE> )* )>
 }
 
+TOKEN: {
+    <PROCEDURE_BEGIN: ( ( <WHITESPACE> )* "(" ( <WHITESPACE> )* )>
+}
+
+TOKEN: {
+    <PROCEDURE_END: ( ( <WHITESPACE> )* ")" ( <WHITESPACE> )* )>
+}
+
 TOKEN : {
     <SIMPLE_EXP_TOKEN: "${"(<LETTER>|<DIGIT> | <SPECIAL> | " ")+ "}">
 }
@@ -165,7 +172,6 @@ TOKEN : {
 TOKEN : {
     <PARAMETER_POS_TOKEN: ":#"(<LETTER>|<DIGIT>|<SPECIAL> )+>
 }
-
 
 TOKEN : {
     <IDENTIFIER: ( <LETTER> | <DIGIT> | <SPECIAL> )+ >
