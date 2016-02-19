@@ -11,19 +11,25 @@ public interface SSPTParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int NUMBER = 6;
+  int NUMBER = 5;
   /** RegularExpression Id. */
-  int DIGIT = 7;
+  int DIGIT = 6;
   /** RegularExpression Id. */
-  int LETTER = 8;
+  int LETTER = 7;
   /** RegularExpression Id. */
-  int SPECIAL = 9;
+  int SPECIAL = 8;
   /** RegularExpression Id. */
-  int SIMPLE_EXP_TOKEN = 10;
+  int WHITESPACE = 9;
   /** RegularExpression Id. */
-  int PARAMETER_POS_TOKEN = 11;
+  int COMMA = 10;
   /** RegularExpression Id. */
-  int IDENTIFIER = 12;
+  int SEPARATOR = 11;
+  /** RegularExpression Id. */
+  int SIMPLE_EXP_TOKEN = 12;
+  /** RegularExpression Id. */
+  int PARAMETER_POS_TOKEN = 13;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 14;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -32,7 +38,6 @@ public interface SSPTParserConstants {
   String[] tokenImage = {
     "<EOF>",
     "\"(\"",
-    "\",\"",
     "\")\"",
     "\" \"",
     "\"OUT\"",
@@ -40,6 +45,9 @@ public interface SSPTParserConstants {
     "<DIGIT>",
     "<LETTER>",
     "<SPECIAL>",
+    "<WHITESPACE>",
+    "\",\"",
+    "<SEPARATOR>",
     "<SIMPLE_EXP_TOKEN>",
     "<PARAMETER_POS_TOKEN>",
     "<IDENTIFIER>",

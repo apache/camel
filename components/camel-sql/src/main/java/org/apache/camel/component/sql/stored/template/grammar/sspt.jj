@@ -45,7 +45,7 @@ public Template parse() :
     Object parameter = null;
 }
 {
-  (procedureName = <IDENTIFIER> "(" ( (parameter = Parameter() { template.addParameter(parameter);}) (","
+  (procedureName = <IDENTIFIER> "(" ( (parameter = Parameter() { template.addParameter(parameter);}) (<SEPARATOR>
   parameter
   = Parameter(){template.addParameter(parameter);})*)? ")" <EOF>)
   {
@@ -144,6 +144,18 @@ TOKEN: {
 
 TOKEN: {
     <#SPECIAL: (["#","_","-","'",".","$","{","}","\""])>
+}
+
+TOKEN: {
+    <#WHITESPACE: (" "|"\n"|"\t")>
+}
+
+TOKEN: {
+    <#COMMA: ",">
+}
+
+TOKEN: {
+    <SEPARATOR: ( ( <WHITESPACE> )* (<COMMA>) ( <WHITESPACE> )* )>
 }
 
 TOKEN : {
