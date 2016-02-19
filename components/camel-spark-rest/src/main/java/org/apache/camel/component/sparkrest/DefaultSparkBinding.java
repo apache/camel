@@ -127,6 +127,12 @@ public class DefaultSparkBinding implements SparkBinding {
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
+
+            if (Exchange.CONTENT_TYPE.equalsIgnoreCase(key)) {
+               // we set content-type later
+                continue;
+            }
+
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null);
             while (it.hasNext()) {
