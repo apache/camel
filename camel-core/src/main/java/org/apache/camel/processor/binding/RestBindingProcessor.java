@@ -331,12 +331,21 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
                 return;
             }
 
+            String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+            // need to lower-case so the contains check below can match if using upper case
+            contentType = contentType.toLowerCase(Locale.US);
             try {
                 // favor json over xml
                 if (isJson && jsonMarshal != null) {
-                    jsonMarshal.process(exchange);
+                    // only marshal if its json content type
+                    if (contentType.contains("json")) {
+                        jsonMarshal.process(exchange);
+                    }
                 } else if (isXml && xmlMarshal != null) {
-                    xmlMarshal.process(exchange);
+                    // only marshal if its xml content type
+                    if (contentType.contains("xml")) {
+                        xmlMarshal.process(exchange);
+                    }
                 } else {
                     // we could not bind
                     if (bindingMode.equals("auto")) {
