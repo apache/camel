@@ -30,26 +30,26 @@ package org.apache.camel.component.sql.stored.template.generated;
 import org.apache.camel.component.sql.stored.template.ast.*;
 
 public class SSPTParser {
-   int paramaterNameCounter = 0;
+   int parameterNameCounter = 0;
 
    String createNextParameterName() {
-      return "_"+(paramaterNameCounter++);
+      return "_"+(parameterNameCounter++);
    }
 }
 
 PARSER_END(SSPTParser)
 
 public Template parse() :
-{   Token procudureName;
+{   Token procedureName;
     Template template = new Template();
     Object parameter = null;
 }
 {
-  (procudureName = <IDENTIFIER> "(" ( (parameter = Parameter() { template.addParameter(parameter);}) (","
+  (procedureName = <IDENTIFIER> "(" ( (parameter = Parameter() { template.addParameter(parameter);}) (","
   parameter
   = Parameter(){template.addParameter(parameter);})*)? ")" <EOF>)
   {
-   template.setProcedureName(procudureName.toString());
+   template.setProcedureName(procedureName.toString());
    return template;
   }
 }
