@@ -4,17 +4,17 @@ package org.apache.camel.component.sql.stored.template.generated;
 import org.apache.camel.component.sql.stored.template.ast.*;
 
 public class SSPTParser implements SSPTParserConstants {
-   int paramaterNameCounter = 0;
+   int parameterNameCounter = 0;
 
    String createNextParameterName() {
-      return "_"+(paramaterNameCounter++);
+      return "_"+(parameterNameCounter++);
    }
 
   final public Template parse() throws ParseException {
-    Token procudureName;
+    Token procedureName;
     Template template = new Template();
     Object parameter = null;
-    procudureName = jj_consume_token(IDENTIFIER);
+    procedureName = jj_consume_token(IDENTIFIER);
     jj_consume_token(1);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case 5:
@@ -43,7 +43,7 @@ public class SSPTParser implements SSPTParserConstants {
     }
     jj_consume_token(3);
     jj_consume_token(0);
-   template.setProcedureName(procudureName.toString());
+   template.setProcedureName(procedureName.toString());
    {if (true) return template;}
     throw new Error("Missing return statement in function");
   }

@@ -41,6 +41,8 @@ import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSqlPrepareStatementStrategy.class);
+    private static final Pattern REPLACE_PATTERN = Pattern.compile("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}", Pattern.MULTILINE);
+    private static final Pattern NAME_PATTERN = Pattern.compile("\\:\\?(\\w+|\\$\\{[^\\}]+\\})", Pattern.MULTILINE);
     private final char separator;
 
     public DefaultSqlPrepareStatementStrategy() {
@@ -56,7 +58,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         String answer;
         if (allowNamedParameters && hasNamedParameters(query)) {
             // replace all :?word and :?${foo} with just ?
-            answer = query.replaceAll("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}", "\\?");
+            answer = REPLACE_PATTERN.matcher(query).replaceAll("\\?");
         } else {
             answer = query;
         }
@@ -125,11 +127,10 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
     private static final class NamedQueryParser {
 
-        private static final Pattern PATTERN = Pattern.compile("\\:\\?(\\w+|\\$\\{[^\\}]+\\})");
         private final Matcher matcher;
 
         private NamedQueryParser(String query) {
-            this.matcher = PATTERN.matcher(query);
+            this.matcher = NAME_PATTERN.matcher(query);
         }
 
         public String next() {

@@ -16,11 +16,21 @@
  */
 package org.apache.camel.component.sql.stored;
 
-import java.sql.SQLException;
+import org.apache.camel.builder.RouteBuilder;
 
-import org.springframework.dao.DataAccessException;
+public class ProducerClasspathTest extends ProducerTest {
 
-public interface WrapperExecuteCallback {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // required for the sql component
+                getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
-    void execute(StatementWrapper statementWrapper) throws SQLException, DataAccessException;
+                from("direct:query").to("sql-stored:classpath:sql/selectStored.sql").to("mock:query");
+            }
+        };
+    }
+
 }

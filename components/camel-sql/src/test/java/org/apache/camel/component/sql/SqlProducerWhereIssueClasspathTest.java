@@ -14,28 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sql.stored;
+package org.apache.camel.component.sql;
 
-import java.sql.SQLException;
+import org.apache.camel.builder.RouteBuilder;
 
-import org.apache.camel.Exchange;
+public class SqlProducerWhereIssueClasspathTest extends SqlProducerWhereIssueTest {
 
-/**
- * Wrapper that simplifies operations on  {@link java.sql.CallableStatement}
- * in {@link SqlStoredProducer}.
- * Wrappers are statefull objects and must not be reused.
- */
-public interface StamentWrapper {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // required for the sql component
+                getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-    void call(WrapperExecuteCallback cb) throws Exception;
-
-    int[] executeBatch() throws SQLException;
-
-    Integer getUpdateCount() throws SQLException;
-
-    Object executeStatement() throws SQLException;
-
-    void populateStatement(Object value, Exchange exchange) throws SQLException;
-
-    void addBatch(Object value, Exchange exchange);
+                from("direct:query")
+                    .to("sql:classpath:sql/projectsRowCount.sql")
+                    .to("log:query")
+                    .to("mock:query");
+            }
+        };
+    }
 }

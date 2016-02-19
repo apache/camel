@@ -14,13 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sql.stored;
+package org.apache.camel.component.sql;
 
-import java.sql.SQLException;
+import org.apache.camel.builder.RouteBuilder;
 
-import org.springframework.dao.DataAccessException;
+/**
+ *
+ */
+public class SqlConsumerFromClasspathTest extends SqlConsumerTest {
 
-public interface WrapperExecuteCallback {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-    void execute(StatementWrapper statementWrapper) throws SQLException, DataAccessException;
+                from("sql:classpath:sql/selectProjects.sql")
+                    .to("mock:result");
+            }
+        };
+    }
 }

@@ -18,9 +18,23 @@ package org.apache.camel.component.sql.stored;
 
 import java.sql.SQLException;
 
-import org.springframework.dao.DataAccessException;
+import org.apache.camel.Exchange;
 
-public interface WrapperExecuteCallback {
+/**
+ * Wrapper that simplifies operations on  {@link java.sql.CallableStatement} in {@link SqlStoredProducer}.
+ * Wrappers are stateful objects and must not be reused.
+ */
+public interface StatementWrapper {
 
-    void execute(StatementWrapper statementWrapper) throws SQLException, DataAccessException;
+    void call(WrapperExecuteCallback cb) throws Exception;
+
+    int[] executeBatch() throws SQLException;
+
+    Integer getUpdateCount() throws SQLException;
+
+    Object executeStatement() throws SQLException;
+
+    void populateStatement(Object value, Exchange exchange) throws SQLException;
+
+    void addBatch(Object value, Exchange exchange);
 }

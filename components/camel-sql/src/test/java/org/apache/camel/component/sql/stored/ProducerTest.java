@@ -32,7 +32,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class ProducerTest extends CamelTestSupport {
 
-    private EmbeddedDatabase db;
+    EmbeddedDatabase db;
 
     @Before
     public void setUp() throws Exception {

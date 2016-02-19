@@ -62,10 +62,10 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
 
         wrapper.call(new WrapperExecuteCallback() {
             @Override
-            public void execute(StamentWrapper stamentWrapper) throws SQLException, DataAccessException {
-                stamentWrapper.populateStatement(null, exchange);
+            public void execute(StatementWrapper statementWrapper) throws SQLException, DataAccessException {
+                statementWrapper.populateStatement(null, exchange);
 
-                Map resultOfQuery = (Map) stamentWrapper.executeStatement();
+                Map resultOfQuery = (Map) statementWrapper.executeStatement();
                 Assert.assertEquals(Integer.valueOf(-1), ((Map) resultOfQuery).get("resultofsub"));
             }
         });
@@ -78,10 +78,10 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
 
         wrapper.call(new WrapperExecuteCallback() {
             @Override
-            public void execute(StamentWrapper stamentWrapper) throws SQLException, DataAccessException {
+            public void execute(StatementWrapper statementWrapper) throws SQLException, DataAccessException {
 
-                stamentWrapper.populateStatement(null, null);
-                Map result = (Map) stamentWrapper.executeStatement();
+                statementWrapper.populateStatement(null, null);
+                Map result = (Map) statementWrapper.executeStatement();
                 //no output parameter in stored procedure NILADIC()
                 //Spring sets #update-count-1
                 assertNotNull(result.get("#update-count-1"));

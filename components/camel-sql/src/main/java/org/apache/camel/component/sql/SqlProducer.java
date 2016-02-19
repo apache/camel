@@ -36,6 +36,7 @@ import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 
 public class SqlProducer extends DefaultProducer {
     private final String query;
+    private String resolvedQuery;
     private final JdbcTemplate jdbcTemplate;
     private final boolean batch;
     private final boolean alwaysPopulateStatement;
@@ -59,13 +60,21 @@ public class SqlProducer extends DefaultProducer {
         return (SqlEndpoint) super.getEndpoint();
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+        resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
+    }
+
     public void process(final Exchange exchange) throws Exception {
         final String sql;
         if (useMessageBodyForSql) {
             sql = exchange.getIn().getBody(String.class);
         } else {
             String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
-            sql = queryHeader != null ? queryHeader : query;
+            sql = queryHeader != null ? queryHeader : resolvedQuery;
         }
         final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters());
 

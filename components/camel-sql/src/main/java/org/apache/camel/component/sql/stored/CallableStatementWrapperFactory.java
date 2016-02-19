@@ -46,7 +46,7 @@ public class CallableStatementWrapperFactory extends ServiceSupport {
         this.templateParser = templateParser;
     }
 
-    public StamentWrapper create(String sql) throws SQLException {
+    public StatementWrapper create(String sql) throws SQLException {
         return new CallableStatementWrapper(sql, this);
     }
 
