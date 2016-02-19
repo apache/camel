@@ -15,7 +15,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -30,10 +31,10 @@
   <description>Camel REST (Restlet based) Component</description>
 
   <properties>
-        <camel.osgi.export.pkg>
-            org.apache.camel.component.restlet.*
-        </camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=restlet</camel.osgi.export.service>
+    <camel.osgi.export.pkg>
+      org.apache.camel.component.restlet.*
+    </camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=restlet</camel.osgi.export.service>
   </properties>
 
   <repositories>
@@ -45,6 +46,7 @@
   </repositories>
 
   <dependencies>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -54,25 +56,18 @@
       <groupId>org.restlet.jee</groupId>
       <artifactId>org.restlet</artifactId>
     </dependency>
-
+    <!-- used for restlet producer -->
     <dependency>
-     <groupId>org.restlet.jee</groupId>
-     <artifactId>org.restlet.ext.httpclient</artifactId>
+      <groupId>org.restlet.jee</groupId>
+      <artifactId>org.restlet.ext.httpclient</artifactId>
     </dependency>
 
-    <dependency>
-     <groupId>org.apache.httpcomponents</groupId>
-     <artifactId>httpclient</artifactId>
-     <version>${httpclient4-version}</version>
-    </dependency>
-
-    <!-- test dependencies -->
+    <!-- camel test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jetty</artifactId>
@@ -101,18 +96,17 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- other test dependencies -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -126,15 +120,4 @@
 
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <reportFormat>brief</reportFormat>
-          <useFile>false</useFile>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
