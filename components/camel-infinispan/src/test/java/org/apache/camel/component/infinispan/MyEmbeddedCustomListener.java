@@ -16,14 +16,29 @@
  */
 package org.apache.camel.component.infinispan;
 
-import java.util.Set;
-
+import org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener;
 import org.infinispan.notifications.Listener;
+import org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated;
+import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
+import static org.junit.Assert.assertEquals;
 
-@Listener(sync = false)
-public class InfinispanAsyncEventListener extends InfinispanSyncEventListener {
+/**
+ * @author mgencur
+ */
+@Listener(sync = true)
+public class MyEmbeddedCustomListener extends InfinispanEmbeddedCustomListener {
 
-    public InfinispanAsyncEventListener(InfinispanConsumer consumer, Set<String> eventTypes) {
-        super(consumer, eventTypes);
+    private final String cacheName;
+
+    public MyEmbeddedCustomListener(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    @CacheEntryCreated
+    public void processEvent(CacheEntryEvent<Object, Object> event) {
+        if (isAccepted(event.getType().toString())) {
+            infinispanConsumer.processEvent(event.getType().toString(), event.isPre(), event.getCache().getName(), event.getKey());
+            assertEquals(cacheName, event.getCache().getName());
+        }
     }
 }
