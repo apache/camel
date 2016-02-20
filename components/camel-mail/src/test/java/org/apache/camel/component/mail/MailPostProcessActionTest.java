@@ -90,6 +90,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
         Message[] messages = new Message[1];
         messages[0] = new MimeMessage(sender.getSession());
         messages[0].setSubject("TestSubject");
+        messages[0].setHeader("Message-ID", "0");
         messages[0].setText("TestText");
 
         folder.appendMessages(messages);

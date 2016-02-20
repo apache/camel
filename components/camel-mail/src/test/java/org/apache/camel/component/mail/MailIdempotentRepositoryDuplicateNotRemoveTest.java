@@ -16,32 +16,25 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * Unit test for copyTo.
+ * Unit test for idempotent repository.
  */
-public class MailCopyToTest extends CamelTestSupport {
-
-    @Override
-    public void setUp() throws Exception {
-        prepareMailbox();
-        super.setUp();
-    }
+public class MailIdempotentRepositoryDuplicateNotRemoveTest extends MailIdempotentRepositoryDuplicateTest {
 
     @Test
-    public void testCopyTo() throws Exception {
+    public void testIdempotent() throws Exception {
+        assertEquals(1, myRepo.getCacheSize());
+
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(5);
+        // no 3 is already in the idempotent repo
+        mock.expectedBodiesReceived("Message 0", "Message 1", "Message 2", "Message 4");
+
+        context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
 
@@ -49,34 +42,16 @@ public class MailCopyToTest extends CamelTestSupport {
         Thread.sleep(500);
 
         assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount());
-        assertEquals(5, Mailbox.get("backup-jones@localhost").getNewMessageCount());
-    }
 
-    private void prepareMailbox() throws Exception {
-        // connect to mailbox
-        Mailbox.clearAll();
-        JavaMailSender sender = new DefaultJavaMailSender();
-        Store store = sender.getSession().getStore("pop3");
-        store.connect("localhost", 25, "jones", "secret");
-        Folder folder = store.getFolder("INBOX");
-        folder.open(Folder.READ_WRITE);
-        folder.expunge();
-
-        // inserts 5 new messages
-        Message[] messages = new Message[5];
-        for (int i = 0; i < 5; i++) {
-            messages[i] = new MimeMessage(sender.getSession());
-            messages[i].setHeader("Message-ID", "" + i);
-            messages[i].setText("Message " + i);
-        }
-        folder.appendMessages(messages);
-        folder.close(true);
+        // they are not removed so we should have all 5 in the repo now
+        assertEquals(5, myRepo.getCacheSize());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("imap://jones@localhost?password=secret&copyTo=backup").to("mock:result");
+                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&idempotentRepositoryRemoveOnCommit=false").routeId("foo").noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

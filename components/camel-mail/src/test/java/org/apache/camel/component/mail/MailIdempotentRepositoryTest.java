@@ -21,17 +21,27 @@ import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * Unit test for batch consumer.
+ * Unit test for idempotent repository.
  */
-public class MailMaxMessagesPerPollTest extends CamelTestSupport {
+public class MailIdempotentRepositoryTest extends CamelTestSupport {
+
+    private MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myRepo", myRepo);
+        return jndi;
+    }
 
     @Override
     public void setUp() throws Exception {
@@ -40,24 +50,22 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBatchConsumer() throws Exception {
+    public void testIdempotent() throws Exception {
+        assertEquals(0, myRepo.getCacheSize());
+
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.setResultWaitTime(2000);
-        mock.expectedMessageCount(3);
-        mock.message(0).body().isEqualTo("Message 0");
-        mock.message(1).body().isEqualTo("Message 1");
-        mock.message(2).body().isEqualTo("Message 2");
-        mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 3);
+        mock.expectedMessageCount(5);
+
+        context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
 
-        mock.reset();
-        mock.expectedMessageCount(2);
-        mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
-        mock.message(0).body().isEqualTo("Message 3");
-        mock.message(1).body().isEqualTo("Message 4");
+        // windows need a little slack
+        Thread.sleep(500);
 
-        assertMockEndpointsSatisfied();
+        assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount());
+        // they get deleted after processing by default so we should be back to 0
+        assertEquals(0, myRepo.getCacheSize());
     }
 
     private void prepareMailbox() throws Exception {
@@ -74,8 +82,8 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
         Message[] messages = new Message[5];
         for (int i = 0; i < 5; i++) {
             messages[i] = new MimeMessage(sender.getSession());
-            messages[i].setHeader("Message-ID", "" + i);
             messages[i].setText("Message " + i);
+            messages[i].setHeader("Message-ID", "myuid-" + i);
         }
         folder.appendMessages(messages);
         folder.close(true);
@@ -84,8 +92,8 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&consumer.delay=3000&maxMessagesPerPoll=3"
-                    + "&delete=true").to("mock:result");
+                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo").routeId("foo").noAutoStartup()
+                        .to("mock:result");
             }
         };
     }
