@@ -230,8 +230,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         correlation = new CorrelationTimeoutMap(executorService, endpoint.getRequestTimeoutCheckerInterval());
         ServiceHelper.startService(correlation);
 
-        // create JMS listener and start it
-        
+        // create listener and start it
         listenerContainer = createListenerContainer();
         
         log.debug("Using executor {}", executorService);
