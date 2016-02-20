@@ -144,13 +144,15 @@ public class KinesisConsumerTest {
 
     @Test
     public void exchangePropertiesAreSet() throws Exception {
+        String partitionKey = "partitionKey";
+        String sequenceNumber = "1";
         when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
             .thenReturn(new GetRecordsResult()
                 .withNextShardIterator("nextShardIterator")
                 .withRecords(new Record()
-                    .withSequenceNumber("1")
+                    .withSequenceNumber(sequenceNumber)
                     .withApproximateArrivalTimestamp(new Date(42))
-                    .withPartitionKey("shardId")
+                    .withPartitionKey(partitionKey)
                 )
             );
 
@@ -160,9 +162,8 @@ public class KinesisConsumerTest {
 
         verify(processor).process(exchangeCaptor.capture(), any(AsyncCallback.class));
         assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.APPROX_ARRIVAL_TIME, long.class), is(42L));
-        assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.PARTITION_KEY, String.class), is("shardId"));
-        assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER, String.class), is("1"));
-        assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.SHARD_ID, String.class), is("shardId"));
+        assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.PARTITION_KEY, String.class), is(partitionKey));
+        assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER, String.class), is(sequenceNumber));
     }
 
 }

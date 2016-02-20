@@ -43,6 +43,7 @@ public class KinesisProducerTest {
     private static final String SEQUENCE_NUMBER = "SEQ123";
     private static final String STREAM_NAME = "streams";
     private static final String SAMPLE_RECORD_BODY = "SAMPLE";
+    private static final String PARTITION_KEY = "partition";
     private static final ByteBuffer SAMPLE_BUFFER = ByteBuffer.wrap(SAMPLE_RECORD_BODY.getBytes());
 
     @Mock
@@ -70,6 +71,7 @@ public class KinesisProducerTest {
         when(exchange.getPattern()).thenReturn(ExchangePattern.InOut);
 
         when(inMessage.getBody(ByteBuffer.class)).thenReturn(SAMPLE_BUFFER);
+        when(inMessage.getHeader(KinesisConstants.PARTITION_KEY)).thenReturn(PARTITION_KEY);
 
         when(putRecordResult.getSequenceNumber()).thenReturn(SEQUENCE_NUMBER);
         when(putRecordResult.getShardId()).thenReturn(SHARD_ID);
@@ -95,10 +97,8 @@ public class KinesisProducerTest {
 
     @Test
     public void shouldHaveProperHeadersWhenSending() throws Exception {
-        String partitionKey = "partition";
         String seqNoForOrdering = "1851";
         when(inMessage.getHeader(KinesisConstants.SEQUENCE_NUMBER)).thenReturn(seqNoForOrdering);
-        when(inMessage.getHeader(KinesisConstants.PARTITION_KEY)).thenReturn(partitionKey);
 
         kinesisProducer.process(exchange);
 
@@ -106,7 +106,7 @@ public class KinesisProducerTest {
         verify(kinesisClient).putRecord(capture.capture());
         PutRecordRequest request = capture.getValue();
 
-        assertEquals(partitionKey, request.getPartitionKey());
+        assertEquals(PARTITION_KEY, request.getPartitionKey());
         assertEquals(seqNoForOrdering, request.getSequenceNumberForOrdering());
         verify(outMessage).setHeader(KinesisConstants.SEQUENCE_NUMBER, SEQUENCE_NUMBER);
         verify(outMessage).setHeader(KinesisConstants.SHARD_ID, SHARD_ID);

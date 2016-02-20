@@ -114,6 +114,35 @@ however, a
 different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
 
+[[AWS-Kinesis-MessageheaderssetbytheKinesisproducer]]
+Message headers used by the Kinesis producer to write to Kinesis.  The producer expects that the message body is a `ByteBuffer`.
++++++++++++++++++++++++++++++++++++++++
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsKinesisPartitionKey` |`String` |The PartitionKey to pass to Kinesis to store this record.
+
+|`CamelAwsKinesisSequenceNumber` |`String` |Optional paramter to indicate the sequence number of this record.
+
+|=======================================================================
+
+Message headers set by the Kinesis producer on successful storage of a Record
++++++++++++++++++++++++++++++++++++++++
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsKinesisSequenceNumber` |`String` |The sequence number of the record, as defined in
+http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntax[Response Syntax]
+
+|`CamelAwsKinesisShardId` |`String` |The shard ID of where the Record was stored
+
+
+|=======================================================================
+
 [[AWS-KINESIS-Dependencies]]
 Dependencies
 ^^^^^^^^^^^^

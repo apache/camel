@@ -54,11 +54,9 @@ public class KinesisProducer extends DefaultProducer {
         PutRecordRequest putRecordRequest = new PutRecordRequest();
         putRecordRequest.setData(body);
         putRecordRequest.setStreamName(getEndpoint().getStreamName());
+        putRecordRequest.setPartitionKey(partitionKey.toString());
         if (sequenceNumber != null) {
             putRecordRequest.setSequenceNumberForOrdering(sequenceNumber.toString());
-        }
-        if (partitionKey != null) {
-            putRecordRequest.setPartitionKey(partitionKey.toString());
         }
         return putRecordRequest;
     }
