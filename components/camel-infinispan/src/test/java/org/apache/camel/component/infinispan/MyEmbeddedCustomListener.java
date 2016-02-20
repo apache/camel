@@ -22,9 +22,6 @@ import org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated;
 import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author mgencur
- */
 @Listener(sync = true)
 public class MyEmbeddedCustomListener extends InfinispanEmbeddedCustomListener {
 

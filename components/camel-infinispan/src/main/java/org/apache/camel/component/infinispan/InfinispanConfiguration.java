@@ -41,7 +41,7 @@ public class InfinispanConfiguration {
     private boolean sync = true;
     @UriParam(label = "consumer", javaType = "java.lang.String")
     private Set<String> eventTypes;
-    @UriParam
+    @UriParam(label = "consumer")
     private InfinispanCustomListener customListener;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean clustered;
