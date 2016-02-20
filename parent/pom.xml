@@ -413,8 +413,9 @@
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
     <openwebbeans-version>1.6.2</openwebbeans-version>
     <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>
-    <olingo2-version>2.0.5</olingo2-version>
-    <olingo-odata2-core-bundle-version>2.0.5_1</olingo-odata2-core-bundle-version>
+    <olingo2-version>2.0.6</olingo2-version>
+    <olingo-odata2-core-bundle-version>2.0.6_1</olingo-odata2-core-bundle-version>
+    <olingo2-gson-version>2.4</olingo2-gson-version>
     <ognl-version>3.1.2</ognl-version>
     <ognl-bundle-version>3.1.2_1</ognl-bundle-version>
     <oncrpc-version>1.1.2</oncrpc-version>
