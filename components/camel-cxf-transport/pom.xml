@@ -30,6 +30,9 @@
   <description>Camel Transport for CXF </description>
 
    <properties>
+     <camel.osgi.import.before.defaults>
+       javax.servlet.*;version="${servlet-version-range}"
+     </camel.osgi.import.before.defaults>
     <camel.osgi.import>
       !org.apache.camel.component.cxf.*,
       !META-INF.cxf.camel,
@@ -39,7 +42,6 @@
       javax.ws.rs*;version="[0.0,2)",
       javax.xml.stream*;version="[0.0,2)",
       javax.xml.ws*;version="[0.0,3.0)",
-      javax.servlet*;resolution="optional";version="[0,4)",
       org.apache.camel.*;${camel.osgi.import.camel.version},
       org.springframework*;version="${spring-version-range}";resolution:=optional,
       ${camel.osgi.import.defaults},
