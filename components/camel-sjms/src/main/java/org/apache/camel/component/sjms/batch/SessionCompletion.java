@@ -41,8 +41,7 @@ class SessionCompletion implements Synchronization {
             LOG.debug("Committing");
             session.commit();
         } catch (JMSException ex) {
-            LOG.error("Exception caught while committing: {}", ex.getMessage());
-            exchange.setException(ex);
+            LOG.warn("Exception caught while committing JMS session", ex);
         }
     }
 
@@ -52,8 +51,7 @@ class SessionCompletion implements Synchronization {
             LOG.debug("Rolling back");
             session.rollback();
         } catch (JMSException ex) {
-            LOG.error("Exception caught while rolling back: {}", ex.getMessage());
-            exchange.setException(ex);
+            LOG.warn("Exception caught while rolling back JMS session", ex);
         }
     }
 }
