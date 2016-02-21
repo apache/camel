@@ -115,8 +115,8 @@ import org.slf4j.LoggerFactory;
 public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
-    
-    @UriPath
+
+    @UriParam(label = "advanced")
     protected Bus bus;
 
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
@@ -136,59 +136,59 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @UriPath(description = "To lookup an existing configured CxfEndpoint. Must used bean: as prefix.")
     private String beanId;
-    @UriPath
+    @UriParam(defaultValue = "POJO")
+    private DataFormat dataFormat = DataFormat.POJO;
+    @UriPath(label = "service")
     private String address;
-    @UriParam
+    @UriParam(label = "service")
     private String wsdlURL;
-    @UriParam
+    @UriParam(label = "service")
     private Class<?> serviceClass;
-    @UriParam(name = "portName")
+    @UriParam(label = "service", name = "portName")
     private String portNameString;
     private QName portName;
-    @UriParam(name = "serviceName")
+    @UriParam(label = "service", name = "serviceName")
     private String serviceNameString;
     private QName serviceName;
+    @UriParam(label = "service")
+    private String bindingId;
+    @UriParam(label = "service")
+    private String publishedEndpointUrl;
     @UriParam(label = "producer")
     private String defaultOperationName;
     @UriParam(label = "producer")
     private String defaultOperationNamespace;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean wrapped;
     @UriParam
     private Boolean wrappedStyle;
-    @UriParam
+    @UriParam(label = "advanced")
     private Boolean allowStreaming;
-    @UriParam(defaultValue = "POJO")
-    private DataFormat dataFormat = DataFormat.POJO;
-    @UriParam
-    private String publishedEndpointUrl;
-    @UriParam
+    @UriParam(label = "advanced")
     private CxfBinding cxfBinding;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean defaultBus;
-    @UriParam
+    @UriParam(label = "logging")
     private boolean loggingFeatureEnabled;
-    @UriParam(defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT)
+    @UriParam(label = "logging", defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT)
     private int loggingSizeLimit;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean mtomEnabled;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean skipPayloadMessagePartCheck;
-    @UriParam
+    @UriParam(label = "logging")
     private boolean skipFaultLogging;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean mergeProtocolHeaders;
-    @UriParam
-    private String bindingId;
-    @UriParam
+    @UriParam(label = "advanced")
     private CxfEndpointConfigurer cxfEndpointConfigurer;
-    @UriParam(defaultValue = "30000")
+    @UriParam(label = "advanced", defaultValue = "30000")
     private long continuationTimeout = 30000;
-    @UriParam
+    @UriParam(label = "security")
     private String username;
-    @UriParam
+    @UriParam(label = "security")
     private String password;
     @UriParam(label = "advanced", prefix = "properties.", multiValue = true)
     private Map<String, Object> properties;
