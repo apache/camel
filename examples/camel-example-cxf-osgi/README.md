@@ -25,26 +25,15 @@ Remarks:
 
 ### Run
 
-To run the example on Apache ServiceMix 4.x or Apache Karaf 2.2.x
+To run the example on Apache Karaf 2.4.x
 
 #### Step 1: launch the server
 
 	karaf / karaf.bat
 
-Note for Karaf 2.2.x:
-  a) edit the etc/jre.properties file to add the following packages to be exported
-  jre-1.6=, \
-  com.sun.org.apache.xerces.internal.dom, \
-  com.sun.org.apache.xerces.internal.jaxp, \
-
-  b) from the same file comment out the following exports already provided by the bundles
-  that will be imported next: javax.xml.bind*, javax.jws*, javax.xml.soap*, javax.xml.ws*,
-  javax.activation, javax.annotation, javax.xml.stream*.
-
-
 #### Step 2: Add features required
 
-	features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
+	features:chooseurl camel ${version}
 	features:install war
 	features:install cxf
 	features:install camel-spring
@@ -53,6 +42,7 @@ Note for Karaf 2.2.x:
 
 
 #### Step 3: Deploy the example
+
 	osgi:install -s mvn:org.apache.camel/camel-example-cxf-osgi/${version}
 
 #### Step 4: Verify that your service is available using the following url in the browser.
