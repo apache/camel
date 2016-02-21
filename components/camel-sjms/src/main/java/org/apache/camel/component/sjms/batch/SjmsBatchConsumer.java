@@ -88,6 +88,10 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         if (completionInterval > 0 && completionTimeout != SjmsBatchEndpoint.DEFAULT_COMPLETION_TIMEOUT) {
             throw new IllegalArgumentException("Only one of completionInterval or completionTimeout can be used, not both.");
         }
+        if (sjmsBatchEndpoint.isSendEmptyMessageWhenIdle() && completionTimeout <= 0 && completionInterval <= 0) {
+            throw new IllegalArgumentException("SendEmptyMessageWhenIdle can only be enabled if either completionInterval or completionTimeout is also set");
+        }
+
         pollDuration = sjmsBatchEndpoint.getPollDuration();
         if (pollDuration < 0) {
             throw new IllegalArgumentException("pollDuration must be 0 or greater");
@@ -205,6 +209,9 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     }
 
     private class BatchConsumptionLoop implements Runnable {
+
+        private final BatchConsumptionTask task = new BatchConsumptionTask(completionTimeoutTrigger);
+
         @Override
         public void run() {
             try {
@@ -217,7 +224,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     MessageConsumer consumer = session.createConsumer(queue);
 
                     try {
-                        consumeBatchesOnLoop(session, consumer, completionTimeoutTrigger);
+                        task.consumeBatchesOnLoop(session, consumer);
                     } finally {
                         try {
                             consumer.close();
@@ -250,22 +257,44 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             }
         }
 
-        private void consumeBatchesOnLoop(final Session session, final MessageConsumer consumer, final AtomicBoolean timeoutInterval) throws JMSException {
-            final boolean usingTimeout = completionTimeout > 0;
+        private final class BatchConsumptionTask {
 
-        batchConsumption:
-            while (running.get()) {
-                // reset the state
-                boolean timeout = false;
-                int messageCount = 0;
-                long timeElapsed = 0;
-                long startTime = 0;
-                Exchange aggregatedExchange = null;
+            // state
+            private final AtomicBoolean timeoutInterval;
+            private final AtomicBoolean timeout = new AtomicBoolean();
+            private int messageCount;
+            private long timeElapsed;
+            private long startTime;
+            private Exchange aggregatedExchange;
 
-            batch:
-                // loop while no timeout or interval triggered and while we have room still for messages in the batch
-                while (!timeout && !timeoutInterval.compareAndSet(true, false)
-                        && (usingTimeout || (completionSize > 0 && messageCount < completionSize))) {
+            public BatchConsumptionTask(AtomicBoolean timeoutInterval) {
+                this.timeoutInterval = timeoutInterval;
+            }
+
+            private void consumeBatchesOnLoop(final Session session, final MessageConsumer consumer) throws JMSException {
+                final boolean usingTimeout = completionTimeout > 0;
+
+                LOG.trace("BatchConsumptionTask +++ start +++");
+
+                while (running.get()) {
+
+                    LOG.trace("BatchConsumptionTask running");
+
+                    if (timeout.compareAndSet(true, false) || timeoutInterval.compareAndSet(true, false)) {
+                        // trigger timeout
+                        LOG.trace("Completion batch due timeout");
+                        completionBatch(session);
+                        reset();
+                        continue;
+                    }
+
+                    if (completionSize > 0 && messageCount >= completionSize) {
+                        // trigger completion size
+                        LOG.trace("Completion batch due size");
+                        completionBatch(session);
+                        reset();
+                        continue;
+                    }
 
                     // check periodically to see whether we should be shutting down
                     long waitTime = (usingTimeout && (timeElapsed > 0))
@@ -273,16 +302,20 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                             : pollDuration;
                     Message message = consumer.receive(waitTime);
 
-                    if (running.get()) { // no interruptions received
+                    if (running.get()) {
+                        // no interruptions received
                         if (message == null) {
                             // timed out, no message received
                             LOG.trace("No message received");
                         } else {
-                            if (usingTimeout && messageCount == 0) { // this is the first message
-                                startTime = new Date().getTime(); // start counting down the period for this batch
-                            }
                             messageCount++;
                             LOG.debug("#{} messages received", messageCount);
+
+                            if (usingTimeout && startTime == 0) {
+                                // this is the first message start counting down the period for this batch
+                                startTime = new Date().getTime();
+                            }
+
                             // TODO: why only object or text messages?
                             if (message instanceof ObjectMessage || message instanceof TextMessage) {
                                 final Exchange exchange = getEndpoint().createExchange(message, session);
@@ -300,17 +333,29 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
                             if (timeElapsed > completionTimeout) {
                                 // batch finished by timeout
-                                timeout = true;
+                                timeout.set(true);
+                            } else {
+                                LOG.trace("This batch has more time until the timeout, elapsed: {} timeout: {}", timeElapsed, completionTimeout);
                             }
                         }
 
                     } else {
-                        LOG.info("Shutdown signal received - rolling batch back");
+                        LOG.info("Shutdown signal received - rolling back batch");
                         session.rollback();
-                        break batchConsumption;
                     }
                 }
 
+                LOG.trace("BatchConsumptionTask +++ end +++");
+            }
+
+            private void reset() {
+                messageCount = 0;
+                timeElapsed = 0;
+                startTime = 0;
+                aggregatedExchange = null;
+            }
+
+            private void completionBatch(final Session session) {
                 // batch
                 if (aggregatedExchange == null && getEndpoint().isSendEmptyMessageWhenIdle()) {
                     processEmptyMessage();
@@ -318,6 +363,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     processBatch(aggregatedExchange, session);
                 }
             }
+
         }
 
         /**
