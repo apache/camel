@@ -185,6 +185,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // extract httpClient. parameters
         Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
 
+        // extract filterInit. parameters
+        Map<String, String> filterInitParameters =  IntrospectionSupport.extractStringProperties(IntrospectionSupport.extractProperties(parameters, "filterInit."));
+
         String address = remaining;
         URI addressUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(address));
         URI endpointUri = URISupport.createRemainingURI(addressUri, parameters);
@@ -217,9 +220,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         }
         // setup the proxy host and proxy port
         
-
         if (httpClientParameters != null && !httpClientParameters.isEmpty()) {
             endpoint.setHttpClientParameters(httpClientParameters);
+        }
+        if (filterInitParameters != null && !filterInitParameters.isEmpty()) {
+            endpoint.setFilterInitParameters(filterInitParameters);
         }
         if (handlerList.size() > 0) {
             endpoint.setHandlers(handlerList);
@@ -369,6 +374,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         List<Filter> filters = endpoint.getFilters();
         for (Filter filter : filters) {
             FilterHolder filterHolder = new FilterHolder();
+            if (endpoint.getFilterInitParameters() != null) {
+                filterHolder.setInitParameters(endpoint.getFilterInitParameters());
+            }
             filterHolder.setFilter(new CamelFilterWrapper(filter));
             String pathSpec = endpoint.getPath();
             if (pathSpec == null || "".equals(pathSpec)) {

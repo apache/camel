@@ -95,6 +95,10 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
             description = "Allows using a custom filters which is putted into a list and can be find in the Registry."
             + " Multiple values can be separated by comma.")
     private List<Filter> filters;
+    @UriParam(label = "consumer, advanced", prefix = "filter.", multiValue = true,
+            description = "Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server.")
+    private Map<String, String> filterInitParameters;
+
     @UriParam(label = "producer,advanced",
         description = "To use a custom JettyHttpBinding which be used to customize how a response should be written for the producer.")
     private JettyHttpBinding jettyBinding;
@@ -405,6 +409,17 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
      */
     public void setHttpClientParameters(Map<String, Object> httpClientParameters) {
         this.httpClientParameters = httpClientParameters;
+    }
+
+    public Map<String, String> getFilterInitParameters() {
+        return filterInitParameters;
+    }
+
+    /**
+     *  Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server.
+     */
+    public void setFilterInitParameters(Map<String, String> filterInitParameters) {
+        this.filterInitParameters = filterInitParameters;
     }
 
     public boolean isEnableCORS() {
