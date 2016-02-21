@@ -714,6 +714,7 @@
     <bundle>mvn:org.apache.camel/camel-ibatis/${project.version}</bundle>
   </feature>
   <feature name='camel-ignite' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>The camel-ignite feature can only run on a SUN JVM. You need to add the package sun.nio.ch to the java platform packages in the etc/jre.properties file.</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${ignite-version-range}'>ignite-core</feature>
     <bundle>mvn:org.apache.camel/camel-ignite/${project.version}</bundle>
