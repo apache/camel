@@ -57,6 +57,13 @@ public final class CamelSpark {
     }
 
     /**
+     * Configures connection to be secure
+     */
+    public static void security(String keystoreFile, String keystorePassword, String truststoreFile, String truststorePassword) {
+        Spark.secure(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
+    }
+
+    /**
      * Adds a Spark REST verb that routes to the given spark route
      *
      * @param verb   the HTTP verb

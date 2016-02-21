@@ -38,9 +38,16 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
     private int port = 4567;
     private String ipAddress;
+
     private int minThreads;
     private int maxThreads;
     private int timeOutMillis;
+
+    private String keystoreFile;
+    private String keystorePassword;
+    private String truststoreFile;
+    private String truststorePassword;
+
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
     private SparkBinding sparkBinding = new DefaultSparkBinding();
 
@@ -105,6 +112,50 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         this.timeOutMillis = timeOutMillis;
     }
 
+    public String getKeystoreFile() {
+        return keystoreFile;
+    }
+
+    /**
+     * Configures connection to be secure to use the keystore file
+     */
+    public void setKeystoreFile(String keystoreFile) {
+        this.keystoreFile = keystoreFile;
+    }
+
+    public String getKeystorePassword() {
+        return keystorePassword;
+    }
+
+    /**
+     * Configures connection to be secure to use the keystore password
+     */
+    public void setKeystorePassword(String keystorePassword) {
+        this.keystorePassword = keystorePassword;
+    }
+
+    public String getTruststoreFile() {
+        return truststoreFile;
+    }
+
+    /**
+     * Configures connection to be secure to use the truststore file
+     */
+    public void setTruststoreFile(String truststoreFile) {
+        this.truststoreFile = truststoreFile;
+    }
+
+    public String getTruststorePassword() {
+        return truststorePassword;
+    }
+
+    /**
+     * Configures connection to be secure to use the truststore password
+     */
+    public void setTruststorePassword(String truststorePassword) {
+        this.truststorePassword = truststorePassword;
+    }
+
     public SparkConfiguration getSparkConfiguration() {
         return sparkConfiguration;
     }
@@ -163,6 +214,10 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         }
         if (getIpAddress() != null) {
             CamelSpark.ipAddress(getIpAddress());
+        }
+
+        if (keystoreFile != null || truststoreFile != null) {
+            CamelSpark.security(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
         }
 
         // configure component options
