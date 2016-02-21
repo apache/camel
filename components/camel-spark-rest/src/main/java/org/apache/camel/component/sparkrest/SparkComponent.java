@@ -38,6 +38,9 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
     private int port = 4567;
     private String ipAddress;
+    private int minThreads;
+    private int maxThreads;
+    private int timeOutMillis;
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
     private SparkBinding sparkBinding = new DefaultSparkBinding();
 
@@ -67,6 +70,39 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
      */
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
+    }
+
+    public int getMinThreads() {
+        return minThreads;
+    }
+
+    /**
+     * Minimum number of threads in Spark thread-pool (shared globally)
+     */
+    public void setMinThreads(int minThreads) {
+        this.minThreads = minThreads;
+    }
+
+    public int getMaxThreads() {
+        return maxThreads;
+    }
+
+    /**
+     * Maximum number of threads in Spark thread-pool (shared globally)
+     */
+    public void setMaxThreads(int maxThreads) {
+        this.maxThreads = maxThreads;
+    }
+
+    public int getTimeOutMillis() {
+        return timeOutMillis;
+    }
+
+    /**
+     * Thread idle timeout in millis where threads that has been idle for a longer period will be terminated from the thread pool
+     */
+    public void setTimeOutMillis(int timeOutMillis) {
+        this.timeOutMillis = timeOutMillis;
     }
 
     public SparkConfiguration getSparkConfiguration() {

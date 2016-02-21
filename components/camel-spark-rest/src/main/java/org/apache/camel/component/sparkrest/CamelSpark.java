@@ -46,6 +46,17 @@ public final class CamelSpark {
     }
 
     /**
+     * Configures the thread pool
+     */
+    public static void threadPool(int minThreads, int maxThreads, int timeOutMillis) {
+        int min = minThreads > 0 ? minThreads : -1;
+        int max = maxThreads > 0 ? maxThreads : -1;
+        int idle = timeOutMillis > 0 ? timeOutMillis : -1;
+
+        Spark.threadPool(max, min, idle);
+    }
+
+    /**
      * Adds a Spark REST verb that routes to the given spark route
      *
      * @param verb   the HTTP verb
