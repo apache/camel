@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,35 @@ public final class CamelSpark {
     private CamelSpark() {
     }
 
+    /**
+     * Stops the Spark Server
+     */
+    public static void stop() {
+        Spark.stop();
+    }
+
+    /**
+     * Configures the port number to use
+     */
+    public static void port(int port) {
+        Spark.port(port);
+    }
+
+    /**
+     * Configures the IP address to use
+     */
+    public static void ipAddress(String ip) {
+        Spark.ipAddress(ip);
+    }
+
+    /**
+     * Adds a Spark REST verb that routes to the given Camel route
+     *
+     * @param verb   the HTTP verb
+     * @param path   the context path
+     * @param accept the accept header
+     * @param route  the Camel route
+     */
     public static void spark(String verb, String path, String accept, Route route) {
         if ("get".equals(verb)) {
             if (accept != null) {

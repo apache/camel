@@ -31,13 +31,12 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import spark.SparkBase;
 
 public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory {
 
     private final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
 
-    private int port = SparkBase.SPARK_DEFAULT_PORT;
+    private int port = 4567;
     private String ipAddress;
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
     private SparkBinding sparkBinding = new DefaultSparkBinding();
@@ -116,18 +115,18 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (getPort() != SparkBase.SPARK_DEFAULT_PORT) {
-            SparkBase.setPort(getPort());
+        if (getPort() != 4567) {
+            CamelSpark.port(getPort());
         } else {
             // if no explicit port configured, then use port from rest configuration
             RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
             int port = config.getPort();
             if (port > 0) {
-                SparkBase.setPort(port);
+                CamelSpark.port(port);
             }
         }
         if (getIpAddress() != null) {
-            SparkBase.setIpAddress(getIpAddress());
+            CamelSpark.ipAddress(getIpAddress());
         }
 
         // configure component options
@@ -141,7 +140,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        SparkBase.stop();
+        CamelSpark.stop();
     }
 
     @Override
