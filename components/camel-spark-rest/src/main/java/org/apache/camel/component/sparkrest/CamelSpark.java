@@ -46,12 +46,12 @@ public final class CamelSpark {
     }
 
     /**
-     * Adds a Spark REST verb that routes to the given Camel route
+     * Adds a Spark REST verb that routes to the given spark route
      *
      * @param verb   the HTTP verb
      * @param path   the context path
      * @param accept the accept header
-     * @param route  the Camel route
+     * @param route  the spark route (we call a Camel route from here)
      */
     public static void spark(String verb, String path, String accept, Route route) {
         if ("get".equals(verb)) {
