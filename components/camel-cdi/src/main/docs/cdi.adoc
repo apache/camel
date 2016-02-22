@@ -55,7 +55,7 @@ route is as simple as declaring a class, e.g.:
 
 [source,java]
 ----
-class MyRouteBean extends RoutesBuilder {
+class MyRouteBean extends RouteBuilder {
  
     @Override
     public void configure() {
@@ -103,7 +103,7 @@ you can used the `@ContextName` qualifier provided by Camel CDI, e.g.:
 [source,java]
 ----
 @ContextName("camel-context")
-class MyRouteBean extends RoutesBuilder {
+class MyRouteBean extends RouteBuilder {
  
     @Override
     public void configure() {
@@ -215,7 +215,7 @@ class BarCamelContext extends DefaultCamelContext {
 }
  
 @ContextName("foo")
-class RouteAddedToFooCamelContext extends RoutesBuilder {
+class RouteAddedToFooCamelContext extends RouteBuilder {
 
     @Override
     public void configure() {
@@ -224,7 +224,7 @@ class RouteAddedToFooCamelContext extends RoutesBuilder {
 }
  
 @BarContextQualifier
-class RouteAddedToBarCamelContext extends RoutesBuilder {
+class RouteAddedToBarCamelContext extends RouteBuilder {
 
     @Override
     public void configure() {
@@ -233,7 +233,7 @@ class RouteAddedToBarCamelContext extends RoutesBuilder {
 }
  
 @ContextName("baz")
-class RouteAddedToBazCamelContext extends RoutesBuilder {
+class RouteAddedToBazCamelContext extends RouteBuilder {
 
     @Override
     public void configure() {
@@ -242,7 +242,7 @@ class RouteAddedToBazCamelContext extends RoutesBuilder {
 }
  
 @MyOtherQualifier
-class RouteNotAddedToAnyCamelContext extends RoutesBuilder {
+class RouteNotAddedToAnyCamelContext extends RouteBuilder {
 
     @Override
     public void configure() {

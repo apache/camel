@@ -79,13 +79,6 @@
 
     <!-- DeltaSpike is only used to provide Main support thus optional -->
     <dependency>
-      <groupId>org.apache.deltaspike.core</groupId>
-      <artifactId>deltaspike-core-api</artifactId>
-      <version>${deltaspike-version}</version>
-      <optional>true</optional>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.deltaspike.cdictrl</groupId>
       <artifactId>deltaspike-cdictrl-api</artifactId>
       <version>${deltaspike-version}</version>
