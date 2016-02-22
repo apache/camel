@@ -1368,8 +1368,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         // determine if redeliver is enabled or not
         redeliveryEnabled = determineIfRedeliveryIsEnabled();
-        if (log.isDebugEnabled()) {
-            log.debug("Redelivery enabled: {} on error handler: {}", redeliveryEnabled, this);
+        if (log.isTraceEnabled()) {
+            log.trace("Redelivery enabled: {} on error handler: {}", redeliveryEnabled, this);
         }
 
         // we only need thread pool if redelivery is enabled
@@ -1378,8 +1378,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // use default shared executor service
                 executorService = camelContext.getErrorHandlerExecutorService();
             }
-            if (log.isTraceEnabled()) {
-                log.trace("Using ExecutorService: {} for redeliveries on error handler: {}", executorService, this);
+            if (log.isDebugEnabled()) {
+                log.debug("Using ExecutorService: {} for redeliveries on error handler: {}", executorService, this);
             }
         }
 
