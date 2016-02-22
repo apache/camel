@@ -50,7 +50,6 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
     public static final int DEFAULT_COMPLETION_SIZE = 200; // the default dispatch queue size in ActiveMQ
     public static final int DEFAULT_COMPLETION_TIMEOUT = 500;
-    public static final String PROPERTY_BATCH_SIZE = "CamelSjmsBatchSize";
 
     private JmsBinding binding;
 

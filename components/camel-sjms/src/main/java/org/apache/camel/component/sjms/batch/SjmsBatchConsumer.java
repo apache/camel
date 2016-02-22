@@ -32,10 +32,8 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
-import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -327,14 +325,9 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                                 startTime = new Date().getTime();
                             }
 
-                            // TODO: why only object or text messages?
-                            if (message instanceof ObjectMessage || message instanceof TextMessage) {
-                                final Exchange exchange = getEndpoint().createExchange(message, session);
-                                aggregatedExchange = aggregationStrategy.aggregate(aggregatedExchange, exchange);
-                                aggregatedExchange.setProperty(SjmsBatchEndpoint.PROPERTY_BATCH_SIZE, messageCount);
-                            } else {
-                                throw new IllegalArgumentException("Unexpected message type: " + message.getClass().toString());
-                            }
+                            final Exchange exchange = getEndpoint().createExchange(message, session);
+                            aggregatedExchange = aggregationStrategy.aggregate(aggregatedExchange, exchange);
+                            aggregatedExchange.setProperty(Exchange.BATCH_SIZE, messageCount);
                         }
 
                         if (usingTimeout && startTime > 0) {
@@ -422,9 +415,10 @@ public class SjmsBatchConsumer extends DefaultConsumer {
          */
         private void processBatch(Exchange exchange, Session session) {
             int id = BATCH_COUNT.getAndIncrement();
-            int batchSize = exchange.getProperty(SjmsBatchEndpoint.PROPERTY_BATCH_SIZE, Integer.class);
+            int batchSize = exchange.getProperty(Exchange.BATCH_SIZE, Integer.class);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Processing batch[" + id + "]:size=" + batchSize + ":total=" + MESSAGE_RECEIVED.addAndGet(batchSize));
+                long total = MESSAGE_RECEIVED.get() + batchSize;
+                LOG.debug("Processing batch[" + id + "]:size=" + batchSize + ":total=" + total);
             }
 
             SessionCompletion sessionCompletion = new SessionCompletion(session);
