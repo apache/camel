@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 @RunWith(Arquillian.class)
-public class RestCdiTest {
+public class CdiRestServletTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
@@ -50,12 +50,14 @@ public class RestCdiTest {
     @Test
     @RunAsClient
     public void testWithPath(@ArquillianResource URL url) throws Exception {
-        assertThat(IOHelper.loadText(new URL(url, "camel/say/hello").openStream()), is(equalTo("Hello World!\n")));
+        assertThat(IOHelper.loadText(new URL(url, "camel/say/hello").openStream()),
+            is(equalTo("Hello World!\n")));
     }
 
     @Test
     @RunAsClient
     public void testWithUriTemplate(@ArquillianResource URL url) throws Exception {
-        assertThat(IOHelper.loadText(new URL(url, "camel/say/hello/Antonin").openStream()), is(equalTo("Hello Antonin, I'm CamelContext(hello)!\n")));
+        assertThat(IOHelper.loadText(new URL(url, "camel/say/hello/Antonin").openStream()),
+            is(equalTo("Hello Antonin, I'm CamelContext(hello)!\n")));
     }
 }

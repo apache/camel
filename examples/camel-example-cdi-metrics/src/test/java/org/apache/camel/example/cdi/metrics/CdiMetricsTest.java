@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.cdi.properties;
+package org.apache.camel.example.cdi.metrics;
 
-import javax.enterprise.event.Observes;
-
-import org.apache.camel.builder.AdviceWithRouteBuilder;
+import javax.inject.Inject;
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.annotation.Metric;
+import io.astefanutti.metrics.cdi.MetricsExtension;
+import org.apache.camel.CamelContext;
 import org.apache.camel.cdi.CdiCamelExtension;
-import org.apache.camel.cdi.Uri;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.event.CamelContextStartingEvent;
-import org.apache.camel.model.ModelCamelContext;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,40 +32,63 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
-public class ApplicationTest {
+public class CdiMetricsTest {
+
+    @Inject
+    private Meter generated;
+    @Inject
+    private Meter attempt;
+    @Inject
+    private Meter success;
+    @Inject
+    private Meter redelivery;
+    @Inject
+    private Meter error;
+
+    @Inject
+    @Metric(name = "success-ratio")
+    private Gauge<Double> ratio;
+
+    @Inject
+    private CamelContext context;
 
     @Deployment
-    public static Archive deployment() {
+    public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
             // Camel CDI
             .addPackage(CdiCamelExtension.class.getPackage())
-            // DeltaSpike
-            .addPackages(true, "org.apache.deltaspike.core.impl")
+            // Metrics CDI
+            .addPackage(MetricsExtension.class.getPackage())
             // Test classes
             .addPackage(Application.class.getPackage())
             // Bean archive deployment descriptor
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    static void advice(@Observes CamelContextStartingEvent event, ModelCamelContext context) throws Exception {
-        // Add a mock endpoint to the end of the route
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() {
-                weaveAddLast().to("mock:outbound");
-            }
-        });
+    @Test
+    public void testContextName() {
+        assertThat("Context name is incorrect!", context.getName(), is(equalTo("camel-example-metrics-cdi")));
     }
 
     @Test
-    public void testMessage(@Uri("mock:outbound") MockEndpoint outbound) {
-        assertThat("Exchange count is incorrect!", outbound.getExchanges(), hasSize(1));
-        assertThat("Exchange body is incorrect!", outbound.getExchanges().get(0).getIn().getBody(String.class), is(equalTo("Hello")));
+    public void testMetricsValues() throws Exception {
+        // Wait a while so that the timer can kick in
+        Thread.sleep(5000);
+
+        // And stop the Camel context so that inflight exchanges get completed
+        context.stop();
+
+        assertThat("Meter counts are not consistent!",
+            attempt.getCount() - redelivery.getCount() - success.getCount() - error.getCount(),
+            is(equalTo(0L)));
+
+        assertThat("Success rate gauge value is incorrect!",
+            ratio.getValue(),
+            is(equalTo(success.getOneMinuteRate() / generated.getOneMinuteRate())));
     }
 }
