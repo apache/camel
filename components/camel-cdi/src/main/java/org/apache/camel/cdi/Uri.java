@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.enterprise.util.Nonbinding;
 import javax.inject.Qualifier;
 
@@ -60,4 +61,29 @@ public @interface Uri {
      */
     @Deprecated
     @Nonbinding String context() default "";
+
+    final class Literal extends AnnotationLiteral<Uri> implements Uri {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String uri;
+
+        private Literal(String uri) {
+            this.uri = uri;
+        }
+
+        public static Literal of(String uri) {
+            return new Literal(uri);
+        }
+
+        @Override
+        public String value() {
+            return uri;
+        }
+
+        @Override
+        public String context() {
+            return "";
+        }
+    }
 }

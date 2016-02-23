@@ -172,7 +172,7 @@ public class CdiCamelExtension implements Extension {
             Class<?> type = CdiSpiHelper.getRawType(am.getBaseType());
             if (Endpoint.class.isAssignableFrom(type) || ProducerTemplate.class.equals(type)) {
                 Set<Annotation> qualifiers = CdiSpiHelper.getQualifiers(am, manager);
-                producerQualifiers.put(am.getJavaMember(), qualifiers.isEmpty() ? Collections.<Annotation>singleton(DefaultLiteral.INSTANCE) : qualifiers);
+                producerQualifiers.put(am.getJavaMember(), qualifiers);
                 Set<Annotation> annotations = new HashSet<>(am.getAnnotations());
                 annotations.removeAll(qualifiers);
                 annotations.add(Excluded.INSTANCE);
@@ -239,7 +239,7 @@ public class CdiCamelExtension implements Extension {
                 }
             } else {
                 if (Endpoint.class.isAssignableFrom(type) || ProducerTemplate.class.isAssignableFrom(type)) {
-                    qualifiers.addAll(CdiSpiHelper.excludeElementOfTypes(contextQualifiers, Any.class, Default.class, Named.class));
+                    qualifiers.addAll(CdiSpiHelper.excludeElementOfTypes(contextQualifiers, Default.class, Named.class));
                 }
             }
             // TODO: would be more correct to add a bean for each Camel context bean

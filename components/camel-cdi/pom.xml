@@ -264,6 +264,8 @@
                 <exclude>**/*Cdi12Test.java</exclude>
                 <!-- OWB does not call the InjectionTarget#preDestroy method -->
                 <exclude>**/UnstoppedCamelContext*Test.java</exclude>
+                <!-- Reactivate when OWB-1122 is fixed -->
+                <exclude>**/ProgrammaticLookupTest.java</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -316,6 +318,21 @@
 
     <profile>
       <id>owb-1.2</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <!-- Reactivate when OWB-1122 is fixed -->
+                <exclude>**/ProgrammaticLookupTest.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
 
       <dependencies>
 
