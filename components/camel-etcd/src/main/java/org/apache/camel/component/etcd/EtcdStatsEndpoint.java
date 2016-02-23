@@ -35,7 +35,9 @@ public class EtcdStatsEndpoint extends AbstractEtcdEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new EtcdStatsConsumer(this, processor, getConfiguration(), getNamespace(), getPath());
+        EtcdStatsConsumer consumer = new EtcdStatsConsumer(this, processor, getConfiguration(), getNamespace(), getPath());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     Object getStats(EtcdClient client) {

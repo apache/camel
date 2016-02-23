@@ -33,14 +33,12 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
 
     private final EtcdWatchEndpoint endpoint;
     private final EtcdConfiguration configuration;
-    private final String defaultPath;
 
     public EtcdWatchConsumer(EtcdWatchEndpoint endpoint, Processor processor, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(endpoint, processor, configuration, namespace, path);
 
         this.endpoint = endpoint;
         this.configuration = configuration;
-        this.defaultPath = endpoint.getRemainingPath(path);
     }
 
     @Override
@@ -72,18 +70,18 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
 
             watch();
         } catch (TimeoutException e) {
-            LOGGER.debug("Timeout watching for " + defaultPath);
+            LOGGER.debug("Timeout watching for {}", getPath());
 
             if (configuration.isSendEmptyExchangeOnTimeout()) {
+                Exchange exchange = endpoint.createExchange();
                 try {
-                    Exchange exchange = endpoint.createExchange();
                     exchange.getIn().setHeader(EtcdConstants.ETCD_TIMEOUT, true);
-                    exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, defaultPath);
+                    exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, getPath());
                     exchange.getIn().setBody(null);
 
                     getProcessor().process(exchange);
                 } catch (Exception e1) {
-                    throw new IllegalArgumentException(e);
+                    getExceptionHandler().handleException("Error processing exchange", exchange, e1);
                 }
             }
         } catch (Exception e) {
@@ -96,7 +94,7 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
             return;
         }
 
-        EtcdKeyGetRequest request = getClient().get(defaultPath).waitForChange();
+        EtcdKeyGetRequest request = getClient().get(getPath()).waitForChange();
         if (configuration.isRecursive()) {
             request.recursive();
         }

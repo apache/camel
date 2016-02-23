@@ -90,15 +90,6 @@ public abstract class AbstractEtcdEndpoint extends DefaultEndpoint {
         return this.path;
     }
 
-    public String getRemainingPath(String defaultPath) {
-        String path = getPath().substring(namespace.path().length());
-        if (ObjectHelper.isEmpty(path)) {
-            path = defaultPath;
-        }
-
-        return path;
-    }
-
     private SSLContext createSslContext(EtcdConfiguration configuration) throws Exception {
         if (configuration.getSslContextParameters() != null) {
             return configuration.getSslContextParameters().createSSLContext();

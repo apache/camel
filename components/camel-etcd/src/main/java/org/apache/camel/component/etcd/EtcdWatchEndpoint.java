@@ -34,6 +34,8 @@ public class EtcdWatchEndpoint extends AbstractEtcdEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new EtcdWatchConsumer(this, processor, getConfiguration(), getNamespace(), getPath());
+        EtcdWatchConsumer consumer = new EtcdWatchConsumer(this, processor, getConfiguration(), getNamespace(), getPath());
+        configureConsumer(consumer);
+        return consumer;
     }
 }

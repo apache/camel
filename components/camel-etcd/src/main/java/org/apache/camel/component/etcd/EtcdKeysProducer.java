@@ -29,13 +29,11 @@ import org.apache.camel.util.ObjectHelper;
 
 public class EtcdKeysProducer extends AbstractEtcdProducer {
     private final EtcdConfiguration configuration;
-    private final String defaultPath;
 
     public EtcdKeysProducer(EtcdKeysEndpoint endpoint, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(endpoint, configuration, namespace, path);
 
         this.configuration = configuration;
-        this.defaultPath = endpoint.getRemainingPath(path);
     }
 
     @Override
@@ -43,7 +41,7 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
         String action = exchange.getIn().getHeader(EtcdConstants.ETCD_ACTION, String.class);
         String path = exchange.getIn().getHeader(EtcdConstants.ETCD_PATH, String.class);
         if (path == null) {
-            path = defaultPath;
+            path = getPath();
         }
 
         ObjectHelper.notEmpty(path, EtcdConstants.ETCD_PATH);

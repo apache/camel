@@ -83,17 +83,17 @@ public class EtcdWatchTest extends EtcdTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("etcd:/watch/myKey1")
+                from("etcd:watch/myKey1")
                     .process(NODE_TO_VALUE_IN)
                     .to("mock:watch-with-path");
-                from("etcd:/watch/recursive?recursive=true")
+                from("etcd:watch/recursive?recursive=true")
                     .process(NODE_TO_VALUE_IN)
                     .to("log:org.apache.camel.component.etcd?level=INFO")
                     .to("mock:watch-recursive");
-                from("etcd:/watch?path=/myKey2")
+                from("etcd:watch/myKey2")
                     .process(NODE_TO_VALUE_IN)
                     .to("mock:watch-with-config-path");
-                from("etcd:/watch/timeoutKey?timeout=250&sendEmptyExchangeOnTimeout=true")
+                from("etcd:watch/timeoutKey?timeout=250&sendEmptyExchangeOnTimeout=true")
                     .to("mock:watch-with-timeout");
             }
         };

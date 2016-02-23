@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the component that manages {@link AbstractEtcdEndpoint}.
@@ -36,36 +37,42 @@ public class EtcdComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EtcdNamespace namespace = EtcdNamespace.fromPath(remaining);
+
+        String ns = ObjectHelper.before(remaining, "/");
+        String path = ObjectHelper.after(remaining, "/");
+
+        EtcdNamespace namespace = getCamelContext().getTypeConverter().mandatoryConvertTo(EtcdNamespace.class, ns);
+
         if (namespace != null) {
-            if (!remaining.startsWith("/")) {
-                remaining = "/" + remaining;
+            // path must start with leading slash
+            if (!path.startsWith("/")) {
+                path = "/" + path;
             }
 
             switch (namespace) {
-            case STATS:
+            case stats:
                 return new EtcdStatsEndpoint(
                     uri,
                     this,
                     loadConfiguration(new EtcdConfiguration(), parameters),
                     namespace,
-                    remaining
+                    path
                 );
-            case WATCH:
+            case watch:
                 return new EtcdWatchEndpoint(
                     uri,
                     this,
                     loadConfiguration(new EtcdConfiguration(), parameters),
                     namespace,
-                    remaining
+                    path
                 );
-            case KEYS:
+            case keys:
                 return new EtcdKeysEndpoint(
                     uri,
                     this,
                     loadConfiguration(new EtcdConfiguration(), parameters),
                     namespace,
-                    remaining
+                    path
                 );
             default:
                 throw new IllegalStateException("No endpoint for " + remaining);

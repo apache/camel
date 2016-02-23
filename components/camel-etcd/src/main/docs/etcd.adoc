@@ -4,15 +4,15 @@
 
 
 
+
 // endpoint options: START
-The etcd component supports 15 endpoint options which are listed below:
+The etcd component supports 14 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | namespace | common |  | EtcdNamespace | *Required* The namespace
 | path | common |  | String | The path
-| path | common |  | String | TODO: document me
 | recursive | common | false | boolean | TODO: document me
 | sendEmptyExchangeOnTimeout | common | false | boolean | TODO: document me
 | timeout | common |  | Long | TODO: document me
@@ -27,6 +27,7 @@ The etcd component supports 15 endpoint options which are listed below:
 | userName | security |  | String | TODO: document me
 |=======================================================================
 // endpoint options: END
+
 
 
 

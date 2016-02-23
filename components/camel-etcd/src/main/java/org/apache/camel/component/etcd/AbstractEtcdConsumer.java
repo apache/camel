@@ -56,4 +56,15 @@ public abstract class AbstractEtcdConsumer extends DefaultConsumer {
         return client;
     }
 
+    public EtcdConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public EtcdNamespace getNamespace() {
+        return namespace;
+    }
+
+    public String getPath() {
+        return path;
+    }
 }

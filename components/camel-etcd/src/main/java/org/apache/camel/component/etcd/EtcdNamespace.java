@@ -16,34 +16,7 @@
  */
 package org.apache.camel.component.etcd;
 
-import org.apache.camel.util.ObjectHelper;
-
 public enum EtcdNamespace {
-    STATS(EtcdConstants.ETCD_PATH_STATS),
-    WATCH(EtcdConstants.ETCD_PATH_WATCH),
-    KEYS(EtcdConstants.ETCD_PATH_KEYS);
 
-    static final EtcdNamespace[] VALUES = values();
-    
-    final String path;
-
-    EtcdNamespace(String path) {
-        this.path = path;
-    }
-
-    public String path() {
-        return path;
-    }
-
-    static EtcdNamespace fromPath(String name) {
-        if (ObjectHelper.isNotEmpty(name)) {
-            for (int i = VALUES.length - 1; i >= 0; --i) {
-                if (name.startsWith(VALUES[i].path)) {
-                    return VALUES[i];
-                }
-            }
-        }
-
-        return null;
-    }
+    stats, watch, keys
 }

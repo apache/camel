@@ -65,22 +65,22 @@ public class EtcdStatsTest extends EtcdTest {
         return new RouteBuilder() {
             public void configure() {
                 // CONSUMER
-                from("etcd:/stats/leader?consumer.delay=50&consumer.initialDelay=0")
+                from("etcd:stats/leader?consumer.delay=50&consumer.initialDelay=0")
                     .to("mock:stats-leader-consumer");
-                from("etcd:/stats/self?consumer.delay=50&consumer.initialDelay=0")
+                from("etcd:stats/self?consumer.delay=50&consumer.initialDelay=0")
                     .to("mock:stats-self-consumer");
-                from("etcd:/stats/store?consumer.delay=50&consumer.initialDelay=0")
+                from("etcd:stats/store?consumer.delay=50&consumer.initialDelay=0")
                     .to("mock:stats-store-consumer");
 
                 // PRODUCER
                 from("direct:stats-leader")
-                    .to("etcd:/stats/leader")
+                    .to("etcd:stats/leader")
                         .to("mock:stats-leader-producer");
                 from("direct:stats-self")
-                    .to("etcd:/stats/self")
+                    .to("etcd:stats/self")
                         .to("mock:stats-self-producer");
                 from("direct:stats-store")
-                    .to("etcd:/stats/store")
+                    .to("etcd:stats/store")
                         .to("mock:stats-store-producer");
             }
         };

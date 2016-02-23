@@ -111,13 +111,13 @@ public class EtcdKeysTest extends EtcdTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:keys-set")
-                    .to("etcd:/keys")
+                    .to("etcd:keys")
                         .to("mock:result-set");
                 from("direct:keys-get")
-                    .to("etcd:/keys")
+                    .to("etcd:keys")
                         .to("mock:result-get");
                 from("direct:keys-del")
-                    .to("etcd:/keys")
+                    .to("etcd:keys")
                         .to("mock:result-del");
             }
         };

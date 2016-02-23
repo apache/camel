@@ -23,10 +23,6 @@ public interface EtcdConstants {
         "http://localhost:4001"
     };
 
-    String ETCD_PATH_STATS         = "/stats";
-    String ETCD_PATH_WATCH         = "/watch";
-    String ETCD_PATH_KEYS          = "/keys";
-
     String ETCD_ACTION             = "CamelEtcdAction";
     String ETCD_PATH               = "CamelEtcdPath";
     String ETCD_TIMEOUT            = "CamelEtcdTimeout";
