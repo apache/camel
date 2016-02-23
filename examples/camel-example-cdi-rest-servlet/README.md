@@ -19,13 +19,17 @@ in any CDI compliant container and Servlet container.
 
 You can build this example using:
 
-    mvn package
+```sh
+$ mvn package
+```
 
 ### Run
 
 You can run this example using:
 
-    mvn jetty:run
+```sh
+$ mvn jetty:run
+```
 
 When the Camel application runs, you should see the following messages
 being logged to the console, e.g.:
@@ -72,7 +76,7 @@ The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in th
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums
-	<http://camel.apache.org/discussion-forums.html>
+<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may have. Enjoy!
 
