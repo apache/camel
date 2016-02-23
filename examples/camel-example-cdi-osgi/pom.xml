@@ -227,7 +227,7 @@
 
   <build>
     <!-- Easier to get the local artifact from the integration tests -->
-    <finalName>${artifactId}</finalName>
+    <finalName>${project.artifactId}</finalName>
 
     <plugins>
 
