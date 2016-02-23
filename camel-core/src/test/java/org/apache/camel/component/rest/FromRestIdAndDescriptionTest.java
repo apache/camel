@@ -17,6 +17,7 @@
 package org.apache.camel.component.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.rest.AllowMultiple;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 
@@ -53,10 +54,10 @@ public class FromRestIdAndDescriptionTest extends FromRestGetTest {
                 rest("/say/bye").description("bye", "Bye Service", "en")
                         .get().description("Says bye to you").consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
-                        .defaultValue("1").allowMultiple(false).name("header_count").required(true).access("acc1")
+                        .defaultValue("1").name("header_count").required(true).access("acc1")
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
-                        .defaultValue("b").allowMultiple(true).name("header_letter").required(false).access("acc2")
+                        .defaultValue("b").allowMultiple(AllowMultiple.multi).name("header_letter").required(false).access("acc2")
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .responseMessage().code("error").message("does not work").endResponseMessage()

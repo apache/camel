@@ -65,8 +65,12 @@ public class RestOperationParamDefinition {
     private Boolean required;
 
     @XmlAttribute
-    @Metadata(defaultValue = "false")
-    private Boolean allowMultiple;
+    @Metadata(defaultValue = "csv")
+    private AllowMultiple allowMultiple;
+
+    @XmlAttribute
+    @Metadata(defaultValue = "string")
+    private String arrayType;
 
     @XmlAttribute
     @Metadata(defaultValue = "string")
@@ -142,15 +146,27 @@ public class RestOperationParamDefinition {
         this.required = required;
     }
 
-    public Boolean getAllowMultiple() {
-        return allowMultiple != null ? allowMultiple : false;
+    public AllowMultiple getAllowMultiple() {
+        return allowMultiple;
     }
 
     /**
-     * Sets the Swagger Parameter allowMultiple flag.
+     * Sets the Swagger Parameter allowMultiple type.
      */
-    public void setAllowMultiple(Boolean allowMultiple) {
+    public void setAllowMultiple(AllowMultiple allowMultiple) {
         this.allowMultiple = allowMultiple;
+    }
+
+    public String getArrayType() {
+        return arrayType;
+    }
+
+    /**
+     * Sets the Swagger Parameter array type.
+     * Required if data type is "array". Describes the type of items in the array.
+     */
+    public void setArrayType(String arrayType) {
+        this.arrayType = arrayType;
     }
 
     public String getDataType() {
@@ -227,8 +243,16 @@ public class RestOperationParamDefinition {
     /**
      * Whether the parameter can be used multiple times
      */
-    public RestOperationParamDefinition allowMultiple(Boolean allowMultiple) {
+    public RestOperationParamDefinition allowMultiple(AllowMultiple allowMultiple) {
         setAllowMultiple(allowMultiple);
+        return this;
+    }
+
+    /**
+     * The data type of the array data type
+     */
+    public RestOperationParamDefinition arrayType(String arrayType) {
+        setArrayType(arrayType);
         return this;
     }
 
