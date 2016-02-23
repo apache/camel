@@ -46,6 +46,7 @@ public class EtcdWatchTest extends EtcdTest {
     public void testWatchWithTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:watch-with-timeout");
         mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.watch.name());
         mock.expectedHeaderReceived(EtcdConstants.ETCD_PATH, "/timeoutKey");
         mock.expectedHeaderReceived(EtcdConstants.ETCD_TIMEOUT, true);
         mock.expectedMessagesMatches(new Predicate() {
@@ -61,6 +62,7 @@ public class EtcdWatchTest extends EtcdTest {
     private void testWatch(String mockEndpoint, final String key, boolean updateKey) throws Exception {
         MockEndpoint mock = getMockEndpoint(mockEndpoint);
         mock.expectedMessageCount(2);
+        mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.watch.name());
         mock.expectedHeaderReceived(EtcdConstants.ETCD_PATH, key);
         mock.expectedMessagesMatches(new Predicate() {
             @Override

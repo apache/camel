@@ -35,6 +35,7 @@ public class EtcdStatsProducer extends AbstractEtcdProducer {
         Object answer = endpoint.getStats(getClient());
 
         if (answer != null) {
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
             exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, getPath());
             exchange.getIn().setBody(answer);
         }

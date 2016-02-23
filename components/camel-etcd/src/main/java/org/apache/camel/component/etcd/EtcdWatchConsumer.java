@@ -63,6 +63,7 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
             EtcdKeysResponse response = promise.get();
 
             Exchange exchange = endpoint.createExchange();
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
             exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, response.node.key);
             exchange.getIn().setBody(response);
 
@@ -75,6 +76,7 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
             if (configuration.isSendEmptyExchangeOnTimeout()) {
                 Exchange exchange = endpoint.createExchange();
                 try {
+                    exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
                     exchange.getIn().setHeader(EtcdConstants.ETCD_TIMEOUT, true);
                     exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, getPath());
                     exchange.getIn().setBody(null);

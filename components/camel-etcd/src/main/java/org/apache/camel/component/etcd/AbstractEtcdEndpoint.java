@@ -26,7 +26,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a etcd endpoint.
@@ -34,10 +33,11 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(scheme = "etcd", title = "etcd", syntax = "etcd:namespace/path", consumerClass = AbstractEtcdConsumer.class, label = "etcd")
 public abstract class AbstractEtcdEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "The namespace") // TODO: document me
+    @UriPath(description = "The API namespace to use", enums = "keys,stats,watch")
     @Metadata(required = "true")
     private final EtcdNamespace namespace;
-    @UriPath(description = "The path") // TODO: document me
+    @UriPath(description = "The path the enpoint refers to")
+    @Metadata(required = "false")
     private final String path;
     @UriParam
     private final EtcdConfiguration configuration;
@@ -63,11 +63,16 @@ public abstract class AbstractEtcdEndpoint extends DefaultEndpoint {
         return this.namespace;
     }
 
-    public EtcdClient createClient() throws Exception {
+    public String getPath() {
+        return this.path;
+    }
 
-        String[] uris = EtcdConstants.ETCD_DEFAULT_URIS;
+    public EtcdClient createClient() throws Exception {
+        String[] uris;
         if (configuration.getUris() != null) {
             uris = configuration.getUris().split(",");
+        } else {
+            uris = EtcdConstants.ETCD_DEFAULT_URIS.split(",");
         }
 
         URI[] etcdUriList = new URI[uris.length];
@@ -86,15 +91,10 @@ public abstract class AbstractEtcdEndpoint extends DefaultEndpoint {
         );
     }
 
-    public String getPath() {
-        return this.path;
-    }
-
     private SSLContext createSslContext(EtcdConfiguration configuration) throws Exception {
         if (configuration.getSslContextParameters() != null) {
             return configuration.getSslContextParameters().createSSLContext();
         }
         return null;
     }
-
 }
