@@ -112,6 +112,7 @@
 		* [Crypto Digital Signatures](crypto-digital-signatures.adoc)
 	* [CSV](csv.adoc)
 	* [Disruptor](disruptor.adoc)
+	* [DNS](dns.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
 	* [Properties](properties.adoc)
