@@ -17,6 +17,7 @@
 package org.apache.camel.component.etcd;
 
 public interface EtcdConstants {
+
     String[] ETCD_DEFAULT_URIS = new String [] {
         "http://localhost:2379",
         "http://localhost:4001"

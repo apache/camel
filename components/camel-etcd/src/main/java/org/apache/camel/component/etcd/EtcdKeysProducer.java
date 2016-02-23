@@ -27,12 +27,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.util.ObjectHelper;
 
-
-class EtcdKeysProducer extends AbstractEtcdProducer {
-    private final EtcdKeysConfiguration configuration;
+public class EtcdKeysProducer extends AbstractEtcdProducer {
+    private final EtcdConfiguration configuration;
     private final String defaultPath;
 
-    EtcdKeysProducer(EtcdKeysEndpoint endpoint, EtcdKeysConfiguration configuration, EtcdNamespace namespace, String path) {
+    public EtcdKeysProducer(EtcdKeysEndpoint endpoint, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(endpoint, configuration, namespace, path);
 
         this.configuration = configuration;
@@ -74,10 +73,10 @@ class EtcdKeysProducer extends AbstractEtcdProducer {
 
     private void processSet(EtcdClient client, String path, Exchange exchange) throws Exception {
         EtcdKeyPutRequest request = client.put(path, exchange.getIn().getBody(String.class));
-        if (configuration.hasTimeToLive()) {
+        if (configuration.getTimeToLive() != null) {
             request.ttl(configuration.getTimeToLive());
         }
-        if (configuration.hasTimeout()) {
+        if (configuration.getTimeout() != null) {
             request.timeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
         }
 
@@ -90,7 +89,7 @@ class EtcdKeysProducer extends AbstractEtcdProducer {
 
     private void processGet(EtcdClient client, String path, Exchange exchange) throws Exception {
         EtcdKeyGetRequest request = client.get(path);
-        if (configuration.hasTimeout()) {
+        if (configuration.getTimeout() != null) {
             request.timeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
         }
         if (configuration.isRecursive()) {
@@ -106,7 +105,7 @@ class EtcdKeysProducer extends AbstractEtcdProducer {
 
     private void processDel(EtcdClient client, String path, boolean dir, Exchange exchange) throws Exception {
         EtcdKeyDeleteRequest request = client.delete(path);
-        if (configuration.hasTimeout()) {
+        if (configuration.getTimeout() != null) {
             request.timeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
         }
         if (configuration.isRecursive()) {

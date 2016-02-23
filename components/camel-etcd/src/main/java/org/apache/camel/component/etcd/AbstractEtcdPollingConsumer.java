@@ -23,7 +23,7 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 /**
  * The etcd consumer.
  */
-abstract class AbstractEtcdPollingConsumer extends ScheduledPollConsumer {
+public abstract class AbstractEtcdPollingConsumer extends ScheduledPollConsumer {
     private final EtcdConfiguration configuration;
     private final EtcdNamespace namespace;
     private final String path;

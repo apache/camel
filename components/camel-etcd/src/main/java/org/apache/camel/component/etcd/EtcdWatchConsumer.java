@@ -28,14 +28,14 @@ import org.apache.camel.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponsePromise.IsSimplePromiseResponseHandler<EtcdKeysResponse> {
+public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponsePromise.IsSimplePromiseResponseHandler<EtcdKeysResponse> {
     private static final Logger LOGGER = LoggerFactory.getLogger(EtcdWatchConsumer.class);
 
     private final EtcdWatchEndpoint endpoint;
-    private final EtcdWatchConfiguration configuration;
+    private final EtcdConfiguration configuration;
     private final String defaultPath;
 
-    EtcdWatchConsumer(EtcdWatchEndpoint endpoint, Processor processor, EtcdWatchConfiguration configuration, EtcdNamespace namespace, String path) {
+    public EtcdWatchConsumer(EtcdWatchEndpoint endpoint, Processor processor, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(endpoint, processor, configuration, namespace, path);
 
         this.endpoint = endpoint;
@@ -100,7 +100,7 @@ class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponsePromise.
         if (configuration.isRecursive()) {
             request.recursive();
         }
-        if (configuration.hasTimeout()) {
+        if (configuration.getTimeout() != null) {
             request.timeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
         }
 

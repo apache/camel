@@ -20,15 +20,16 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 
-class EtcdKeysEndpoint extends AbstractEtcdEndpoint<EtcdKeysConfiguration> {
+public class EtcdKeysEndpoint extends AbstractEtcdEndpoint {
+
     public EtcdKeysEndpoint(
-        String uri, EtcdComponent component, EtcdKeysConfiguration configuration, EtcdNamespace namespace, String path) {
+        String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(uri, component, configuration, namespace, path);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new EtcdKeysProducer(this, getConfiguration(), getActionNamespace(), getPath());
+        return new EtcdKeysProducer(this, getConfiguration(), getNamespace(), getPath());
     }
 
     @Override

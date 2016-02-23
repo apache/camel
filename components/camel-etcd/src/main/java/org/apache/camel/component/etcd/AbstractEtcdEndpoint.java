@@ -17,28 +17,32 @@
 package org.apache.camel.component.etcd;
 
 import java.net.URI;
+import javax.net.ssl.SSLContext;
 
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.EtcdSecurityContext;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a etcd endpoint.
  */
-@UriEndpoint(scheme = "etcd", title = "etcd", syntax = "etcd:namespace", consumerClass = AbstractEtcdConsumer.class, label = "etcd")
-abstract class AbstractEtcdEndpoint<C extends EtcdConfiguration> extends DefaultEndpoint {
+@UriEndpoint(scheme = "etcd", title = "etcd", syntax = "etcd:namespace/path", consumerClass = AbstractEtcdConsumer.class, label = "etcd")
+public abstract class AbstractEtcdEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "The namespace")
+    @UriPath(description = "The namespace") // TODO: document me
     @Metadata(required = "true")
     private final EtcdNamespace namespace;
-    private final C configuration;
+    @UriPath(description = "The path") // TODO: document me
     private final String path;
+    @UriParam
+    private final EtcdConfiguration configuration;
 
-    protected AbstractEtcdEndpoint(String uri, EtcdComponent component, C configuration, EtcdNamespace namespace, String path) {
+    protected AbstractEtcdEndpoint(String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(uri, component);
 
         this.configuration = configuration;
@@ -51,18 +55,18 @@ abstract class AbstractEtcdEndpoint<C extends EtcdConfiguration> extends Default
         return true;
     }
 
-    public C getConfiguration() {
+    public EtcdConfiguration getConfiguration() {
         return this.configuration;
     }
 
-    public EtcdNamespace getActionNamespace() {
+    public EtcdNamespace getNamespace() {
         return this.namespace;
     }
 
     public EtcdClient createClient() throws Exception {
 
         String[] uris = EtcdConstants.ETCD_DEFAULT_URIS;
-        if (configuration.hasUris()) {
+        if (configuration.getUris() != null) {
             uris = configuration.getUris().split(",");
         }
 
@@ -75,7 +79,7 @@ abstract class AbstractEtcdEndpoint<C extends EtcdConfiguration> extends Default
 
         return new EtcdClient(
             new EtcdSecurityContext(
-                configuration.createSslContext(),
+                createSslContext(configuration),
                 configuration.getUserName(),
                 configuration.getPassword()),
             etcdUriList
@@ -94,4 +98,12 @@ abstract class AbstractEtcdEndpoint<C extends EtcdConfiguration> extends Default
 
         return path;
     }
+
+    private SSLContext createSslContext(EtcdConfiguration configuration) throws Exception {
+        if (configuration.getSslContextParameters() != null) {
+            return configuration.getSslContextParameters().createSSLContext();
+        }
+        return null;
+    }
+
 }

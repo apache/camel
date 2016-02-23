@@ -3,19 +3,31 @@
 
 
 
+
 // endpoint options: START
-The etcd component supports 5 endpoint options which are listed below:
+The etcd component supports 15 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | namespace | common |  | EtcdNamespace | *Required* The namespace
+| path | common |  | String | The path
+| path | common |  | String | TODO: document me
+| recursive | common | false | boolean | TODO: document me
+| sendEmptyExchangeOnTimeout | common | false | boolean | TODO: document me
+| timeout | common |  | Long | TODO: document me
+| uris | common |  | String | TODO: document me
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| timeToLive | producer |  | Integer | TODO: document me
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| password | security |  | String | TODO: document me
+| sslContextParameters | security |  | SSLContextParameters | TODO: document me
+| userName | security |  | String | TODO: document me
 |=======================================================================
 // endpoint options: END
+
 
 
 

@@ -19,9 +19,9 @@ package org.apache.camel.component.etcd;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-class EtcdStatsConsumer extends AbstractEtcdPollingConsumer {
+public class EtcdStatsConsumer extends AbstractEtcdPollingConsumer {
 
-    EtcdStatsConsumer(EtcdStatsEndpoint endpoint, Processor processor, EtcdStatsConfiguration configuration, EtcdNamespace namespace, String path) {
+    public EtcdStatsConsumer(EtcdStatsEndpoint endpoint, Processor processor, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(endpoint, processor, configuration, namespace, path);
     }
 

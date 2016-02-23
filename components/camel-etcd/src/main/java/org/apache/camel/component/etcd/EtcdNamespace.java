@@ -18,7 +18,7 @@ package org.apache.camel.component.etcd;
 
 import org.apache.camel.util.ObjectHelper;
 
-enum EtcdNamespace {
+public enum EtcdNamespace {
     STATS(EtcdConstants.ETCD_PATH_STATS),
     WATCH(EtcdConstants.ETCD_PATH_WATCH),
     KEYS(EtcdConstants.ETCD_PATH_KEYS);
@@ -34,7 +34,6 @@ enum EtcdNamespace {
     public String path() {
         return path;
     }
-
 
     static EtcdNamespace fromPath(String name) {
         if (ObjectHelper.isNotEmpty(name)) {

@@ -47,7 +47,7 @@ public class EtcdComponent extends UriEndpointComponent {
                 return new EtcdStatsEndpoint(
                     uri,
                     this,
-                    loadConfiguration(new EtcdStatsConfiguration(), parameters),
+                    loadConfiguration(new EtcdConfiguration(), parameters),
                     namespace,
                     remaining
                 );
@@ -55,7 +55,7 @@ public class EtcdComponent extends UriEndpointComponent {
                 return new EtcdWatchEndpoint(
                     uri,
                     this,
-                    loadConfiguration(new EtcdWatchConfiguration(), parameters),
+                    loadConfiguration(new EtcdConfiguration(), parameters),
                     namespace,
                     remaining
                 );
@@ -63,7 +63,7 @@ public class EtcdComponent extends UriEndpointComponent {
                 return new EtcdKeysEndpoint(
                     uri,
                     this,
-                    loadConfiguration(new EtcdKeysConfiguration(), parameters),
+                    loadConfiguration(new EtcdConfiguration(), parameters),
                     namespace,
                     remaining
                 );

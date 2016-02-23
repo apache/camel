@@ -21,21 +21,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 
+public class EtcdStatsEndpoint extends AbstractEtcdEndpoint {
 
-class EtcdStatsEndpoint extends AbstractEtcdEndpoint<EtcdStatsConfiguration> {
     public EtcdStatsEndpoint(
-        String uri, EtcdComponent component, EtcdStatsConfiguration configuration, EtcdNamespace namespace, String path) {
+        String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(uri, component, configuration, namespace, path);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new EtcdStatsProducer(this, getConfiguration(), getActionNamespace(), getPath());
+        return new EtcdStatsProducer(this, getConfiguration(), getNamespace(), getPath());
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new EtcdStatsConsumer(this, processor, getConfiguration(), getActionNamespace(), getPath());
+        return new EtcdStatsConsumer(this, processor, getConfiguration(), getNamespace(), getPath());
     }
 
     Object getStats(EtcdClient client) {

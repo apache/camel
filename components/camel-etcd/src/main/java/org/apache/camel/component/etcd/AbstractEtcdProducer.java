@@ -22,7 +22,7 @@ import org.apache.camel.impl.DefaultProducer;
 /**
  * The etcd producer.
  */
-abstract class AbstractEtcdProducer extends DefaultProducer {
+public abstract class AbstractEtcdProducer extends DefaultProducer {
     private final EtcdConfiguration configuration;
     private final EtcdNamespace namespace;
     private final String path;

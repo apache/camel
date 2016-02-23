@@ -23,29 +23,34 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
-class EtcdConfiguration {
+public class EtcdConfiguration {
 
     @UriParam(multiValue = true)
     private String uris;
-
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-
     @UriParam(label = "security")
     private String userName;
-
     @UriParam(label = "security")
     private String password;
-
+    @UriParam
+    boolean sendEmptyExchangeOnTimeout;
+    @UriParam
+    private String path;
+    @UriParam
+    private boolean recursive;
+    @UriParam(label = "producer")
+    private Integer timeToLive;
+    @UriParam
+    private Long timeout;
 
     public String getUris() {
         return uris;
     }
 
-    public boolean hasUris() {
-        return uris != null;
-    }
-
+    /**
+     * TODO: document me
+     */
     public void setUris(String uris) {
         this.uris = uris;
     }
@@ -54,6 +59,9 @@ class EtcdConfiguration {
         return sslContextParameters;
     }
 
+    /**
+     * TODO: document me
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -62,6 +70,9 @@ class EtcdConfiguration {
         return userName;
     }
 
+    /**
+     * TODO: document me
+     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -70,11 +81,66 @@ class EtcdConfiguration {
         return password;
     }
 
+    /**
+     * TODO: document me
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    SSLContext createSslContext() throws Exception {
-        return sslContextParameters != null ? sslContextParameters.createSSLContext() : null;
+    public boolean isSendEmptyExchangeOnTimeout() {
+        return sendEmptyExchangeOnTimeout;
     }
+
+    /**
+     * TODO: document me
+     */
+    public void setSendEmptyExchangeOnTimeout(boolean sendEmptyExchangeOnTimeout) {
+        this.sendEmptyExchangeOnTimeout = sendEmptyExchangeOnTimeout;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * TODO: document me
+     */
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public boolean isRecursive() {
+        return recursive;
+    }
+
+    /**
+     * TODO: document me
+     */
+    public void setRecursive(boolean recursive) {
+        this.recursive = recursive;
+    }
+
+    public Integer getTimeToLive() {
+        return timeToLive;
+    }
+
+    /**
+     * TODO: document me
+     */
+    public void setTimeToLive(Integer timeToLive) {
+        this.timeToLive = timeToLive;
+    }
+
+    public Long getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * TODO: document me
+     */
+    public void setTimeout(Long timeout) {
+        this.timeout = timeout;
+    }
+
 }

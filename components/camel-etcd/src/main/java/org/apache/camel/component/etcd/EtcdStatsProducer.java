@@ -18,9 +18,9 @@ package org.apache.camel.component.etcd;
 
 import org.apache.camel.Exchange;
 
+public class EtcdStatsProducer extends AbstractEtcdProducer {
 
-class EtcdStatsProducer extends AbstractEtcdProducer {
-    EtcdStatsProducer(EtcdStatsEndpoint endpoint, EtcdStatsConfiguration configuration, EtcdNamespace namespace, String path) {
+    public EtcdStatsProducer(EtcdStatsEndpoint endpoint, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(endpoint, configuration, namespace, path);
     }
 

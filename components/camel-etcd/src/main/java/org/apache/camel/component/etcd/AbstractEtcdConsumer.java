@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultConsumer;
 /**
  * The etcd consumer.
  */
-abstract class AbstractEtcdConsumer extends DefaultConsumer {
+public abstract class AbstractEtcdConsumer extends DefaultConsumer {
     private final EtcdConfiguration configuration;
     private final EtcdNamespace namespace;
     private final String path;
@@ -56,15 +56,4 @@ abstract class AbstractEtcdConsumer extends DefaultConsumer {
         return client;
     }
 
-    protected EtcdConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    protected EtcdNamespace getActionNamespace() {
-        return namespace;
-    }
-
-    protected String getPath() {
-        return this.path;
-    }
 }

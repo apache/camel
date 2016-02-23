@@ -20,10 +20,10 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 
+public class EtcdWatchEndpoint extends AbstractEtcdEndpoint {
 
-class EtcdWatchEndpoint extends AbstractEtcdEndpoint<EtcdWatchConfiguration> {
     public EtcdWatchEndpoint(
-        String uri, EtcdComponent component, EtcdWatchConfiguration configuration, EtcdNamespace namespace, String path) {
+        String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(uri, component, configuration, namespace, path);
     }
 
@@ -34,6 +34,6 @@ class EtcdWatchEndpoint extends AbstractEtcdEndpoint<EtcdWatchConfiguration> {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new EtcdWatchConsumer(this, processor, getConfiguration(), getActionNamespace(), getPath());
+        return new EtcdWatchConsumer(this, processor, getConfiguration(), getNamespace(), getPath());
     }
 }
