@@ -35,7 +35,7 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
         super(endpoint, configuration, namespace, path);
 
         this.configuration = configuration;
-        this.defaultPath = endpoint.getRemainingPath(configuration.getPath());
+        this.defaultPath = endpoint.getRemainingPath(path);
     }
 
     @Override

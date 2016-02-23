@@ -26,7 +26,7 @@ public class EtcdStatsProducer extends AbstractEtcdProducer {
 
     @Override
     public EtcdStatsEndpoint getEndpoint() {
-        return (EtcdStatsEndpoint)super.getEndpoint();
+        return (EtcdStatsEndpoint) super.getEndpoint();
     }
 
     @Override

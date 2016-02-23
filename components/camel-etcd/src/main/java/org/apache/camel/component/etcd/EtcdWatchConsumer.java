@@ -40,7 +40,7 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
 
         this.endpoint = endpoint;
         this.configuration = configuration;
-        this.defaultPath = endpoint.getRemainingPath(configuration.getPath());
+        this.defaultPath = endpoint.getRemainingPath(path);
     }
 
     @Override

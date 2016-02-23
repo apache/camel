@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.etcd;
 
-import javax.net.ssl.SSLContext;
-
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -25,7 +23,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 @UriParams
 public class EtcdConfiguration {
 
-    @UriParam(multiValue = true)
+    @UriParam
     private String uris;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -34,9 +32,7 @@ public class EtcdConfiguration {
     @UriParam(label = "security")
     private String password;
     @UriParam
-    boolean sendEmptyExchangeOnTimeout;
-    @UriParam
-    private String path;
+    private boolean sendEmptyExchangeOnTimeout;
     @UriParam
     private boolean recursive;
     @UriParam(label = "producer")
@@ -97,17 +93,6 @@ public class EtcdConfiguration {
      */
     public void setSendEmptyExchangeOnTimeout(boolean sendEmptyExchangeOnTimeout) {
         this.sendEmptyExchangeOnTimeout = sendEmptyExchangeOnTimeout;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    /**
-     * TODO: document me
-     */
-    public void setPath(String path) {
-        this.path = path;
     }
 
     public boolean isRecursive() {
