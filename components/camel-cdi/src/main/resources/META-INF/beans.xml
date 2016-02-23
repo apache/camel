@@ -20,5 +20,9 @@
        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
                            http://xmlns.jcp.org/xml/ns/javaee/beans_1_0.xsd"
        version="1.0" bean-discovery-mode="all">
-       
+
+    <scan>
+        <exclude name="org.apache.camel.cdi.Main"/>
+    </scan>
+
 </beans>
