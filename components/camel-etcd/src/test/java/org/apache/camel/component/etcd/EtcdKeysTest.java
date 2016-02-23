@@ -52,6 +52,7 @@ public class EtcdKeysTest extends EtcdTest {
 
         MockEndpoint mockSet = getMockEndpoint("mock:result-set");
         mockSet.expectedMinimumMessageCount(1);
+        mockSet.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.keys.name());
         mockSet.expectedHeaderReceived(EtcdConstants.ETCD_PATH, path);
         mockSet.assertIsSatisfied();
 
@@ -67,6 +68,7 @@ public class EtcdKeysTest extends EtcdTest {
 
         MockEndpoint mockGet = getMockEndpoint("mock:result-get");
         mockGet.expectedMinimumMessageCount(1);
+        mockSet.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.keys.name());
         mockGet.expectedHeaderReceived(EtcdConstants.ETCD_PATH, path);
         mockGet.expectedMessagesMatches(new Predicate() {
             @Override
@@ -94,6 +96,7 @@ public class EtcdKeysTest extends EtcdTest {
 
         MockEndpoint mockDel = getMockEndpoint("mock:result-del");
         mockDel.expectedMinimumMessageCount(1);
+        mockSet.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.keys.name());
         mockDel.expectedHeaderReceived(EtcdConstants.ETCD_PATH, path);
         mockDel.assertIsSatisfied();
 

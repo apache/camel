@@ -37,9 +37,16 @@ public class EtcdComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
         String ns = ObjectHelper.before(remaining, "/");
         String path = ObjectHelper.after(remaining, "/");
+
+        if (ns == null) {
+            ns = remaining;
+        }
+
+        if (path == null) {
+            path = remaining;
+        }
 
         EtcdNamespace namespace = getCamelContext().getTypeConverter().mandatoryConvertTo(EtcdNamespace.class, ns);
 

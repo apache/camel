@@ -59,7 +59,7 @@ public abstract class AbstractEtcdProducer extends DefaultProducer {
         return configuration;
     }
 
-    protected EtcdNamespace getActionNamespace() {
+    protected EtcdNamespace getNamespace() {
         return namespace;
     }
 

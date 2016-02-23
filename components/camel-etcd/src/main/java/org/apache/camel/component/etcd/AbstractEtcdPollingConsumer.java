@@ -60,7 +60,7 @@ public abstract class AbstractEtcdPollingConsumer extends ScheduledPollConsumer 
         return configuration;
     }
 
-    protected EtcdNamespace getActionNamespace() {
+    protected EtcdNamespace getNamespace() {
         return namespace;
     }
 

@@ -417,8 +417,20 @@
   </feature>
   <feature name='camel-etcd' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
-     <bundle dependency='true'>mvn:org.mousio/etcd4j/${etcd4j-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jzlib/${jzlib-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-afterburner/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty41-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty41-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty41-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty41-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty41-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty41-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty41-version}</bundle>
+    <bundle dependency='true'>mvn:org.mousio/etcd4j/${etcd4j-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-etcd/${project.version}</bundle>
   </feature>
   <feature name='camel-eventadmin' version='${project.version}' resolver='(obr)' start-level='50'>

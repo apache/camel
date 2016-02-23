@@ -43,6 +43,7 @@ public class EtcdStatsTest extends EtcdTest {
     protected void testStatsConsumer(String mockEnpoint, String expectedPath, final Class<?> expectedType) throws Exception {
         MockEndpoint mock = getMockEndpoint(mockEnpoint);
         mock.expectedMinimumMessageCount(1);
+        mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.stats.name());
         mock.expectedHeaderReceived(EtcdConstants.ETCD_PATH, expectedPath);
         mock.expectedMessagesMatches(new Predicate() {
             @Override

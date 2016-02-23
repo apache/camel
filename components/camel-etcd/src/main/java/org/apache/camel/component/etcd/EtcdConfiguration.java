@@ -23,15 +23,15 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 @UriParams
 public class EtcdConfiguration {
 
-    @UriParam
-    private String uris;
+    @UriParam(defaultValue = EtcdConstants.ETCD_DEFAULT_URIS)
+    private String uris = EtcdConstants.ETCD_DEFAULT_URIS;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "security")
     private String userName;
     @UriParam(label = "security")
     private String password;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean sendEmptyExchangeOnTimeout;
     @UriParam
     private boolean recursive;
@@ -45,7 +45,7 @@ public class EtcdConfiguration {
     }
 
     /**
-     * TODO: document me
+     * To set the URIs the client connects.
      */
     public void setUris(String uris) {
         this.uris = uris;
@@ -56,7 +56,7 @@ public class EtcdConfiguration {
     }
 
     /**
-     * TODO: document me
+     * To configure security using SSLContextParameters.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -67,7 +67,7 @@ public class EtcdConfiguration {
     }
 
     /**
-     * TODO: document me
+     * The user name to use for basic authentication.
      */
     public void setUserName(String userName) {
         this.userName = userName;
@@ -78,7 +78,7 @@ public class EtcdConfiguration {
     }
 
     /**
-     * TODO: document me
+     * The password to use for basic authentication.
      */
     public void setPassword(String password) {
         this.password = password;
@@ -89,7 +89,7 @@ public class EtcdConfiguration {
     }
 
     /**
-     * TODO: document me
+     * To send an empty message in case of timeout watching for a key.
      */
     public void setSendEmptyExchangeOnTimeout(boolean sendEmptyExchangeOnTimeout) {
         this.sendEmptyExchangeOnTimeout = sendEmptyExchangeOnTimeout;
@@ -100,7 +100,7 @@ public class EtcdConfiguration {
     }
 
     /**
-     * TODO: document me
+     * To apply an action recursively.
      */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
@@ -111,7 +111,7 @@ public class EtcdConfiguration {
     }
 
     /**
-     * TODO: document me
+     * To set the lifespan of a key in milliseconds.
      */
     public void setTimeToLive(Integer timeToLive) {
         this.timeToLive = timeToLive;
@@ -122,7 +122,7 @@ public class EtcdConfiguration {
     }
 
     /**
-     * TODO: document me
+     * To set the maximum time an action could take to complete.
      */
     public void setTimeout(Long timeout) {
         this.timeout = timeout;

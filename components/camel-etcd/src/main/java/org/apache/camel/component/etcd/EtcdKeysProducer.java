@@ -23,6 +23,7 @@ import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.requests.EtcdKeyDeleteRequest;
 import mousio.etcd4j.requests.EtcdKeyGetRequest;
 import mousio.etcd4j.requests.EtcdKeyPutRequest;
+import mousio.etcd4j.requests.EtcdRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.util.ObjectHelper;
@@ -71,14 +72,11 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
 
     private void processSet(EtcdClient client, String path, Exchange exchange) throws Exception {
         EtcdKeyPutRequest request = client.put(path, exchange.getIn().getBody(String.class));
-        if (configuration.getTimeToLive() != null) {
-            request.ttl(configuration.getTimeToLive());
-        }
-        if (configuration.getTimeout() != null) {
-            request.timeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
-        }
+        setRequestTimeToLive(request, exchange);
+        setRequestTimeout(request, exchange);
 
         try {
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
             exchange.getIn().setBody(request.send().get());
         } catch (TimeoutException e) {
             throw new ExchangeTimedOutException(exchange, configuration.getTimeout());
@@ -87,14 +85,11 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
 
     private void processGet(EtcdClient client, String path, Exchange exchange) throws Exception {
         EtcdKeyGetRequest request = client.get(path);
-        if (configuration.getTimeout() != null) {
-            request.timeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
-        }
-        if (configuration.isRecursive()) {
-            request.recursive();
-        }
+        setRequestTimeout(request, exchange);
+        setRequestRecursive(request, exchange);
 
         try {
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
             exchange.getIn().setBody(request.send().get());
         } catch (TimeoutException e) {
             throw new ExchangeTimedOutException(exchange, configuration.getTimeout());
@@ -103,20 +98,57 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
 
     private void processDel(EtcdClient client, String path, boolean dir, Exchange exchange) throws Exception {
         EtcdKeyDeleteRequest request = client.delete(path);
-        if (configuration.getTimeout() != null) {
-            request.timeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
-        }
-        if (configuration.isRecursive()) {
-            request.recursive();
-        }
+        setRequestTimeout(request, exchange);
+        setRequestRecursive(request, exchange);
+
         if (dir) {
             request.dir();
         }
 
         try {
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
             exchange.getIn().setBody(request.send().get());
         } catch (TimeoutException e) {
             throw new ExchangeTimedOutException(exchange, configuration.getTimeout());
         }
+    }
+
+    private void setRequestTimeout(EtcdRequest<?> request, Exchange exchange) {
+        Long timeout = exchange.getIn().getHeader(EtcdConstants.ETCD_TIMEOUT, Long.class);
+        if (timeout != null) {
+            request.timeout(timeout, TimeUnit.MILLISECONDS);
+        } else if (configuration.getTimeout() != null) {
+            request.timeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private void setRequestTimeToLive(EtcdKeyPutRequest request, Exchange exchange) {
+        Integer ttl = exchange.getIn().getHeader(EtcdConstants.ETCD_TTL, Integer.class);
+        if (ttl != null) {
+            request.ttl(ttl);
+        } else if (configuration.getTimeToLive() != null) {
+            request.ttl(configuration.getTimeToLive());
+        }
+    }
+
+    private void setRequestRecursive(EtcdKeyGetRequest request, Exchange exchange) {
+        if (isRecursive(exchange)) {
+            request.recursive();
+        }
+    }
+
+    private void setRequestRecursive(EtcdKeyDeleteRequest request, Exchange exchange) {
+        if (isRecursive(exchange)) {
+            request.recursive();
+        }
+    }
+
+    private boolean isRecursive(Exchange exchange) {
+        Boolean recursive = exchange.getIn().getHeader(EtcdConstants.ETCD_RECURSIVE, Boolean.class);
+        if (recursive != null) {
+            return recursive;
+        }
+
+        return configuration.isRecursive();
     }
 }
