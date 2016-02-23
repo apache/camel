@@ -42,10 +42,7 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.parameters.SerializableParameter;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.models.properties.*;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
@@ -214,13 +211,38 @@ public class RestSwaggerReader {
 
                     // set type on parameter
                     if (parameter instanceof SerializableParameter) {
-                        SerializableParameter sp = (SerializableParameter) parameter;
+                        SerializableParameter serializableParameter = (SerializableParameter) parameter;
 
                         if (param.getDataType() != null) {
-                            sp.setType(param.getDataType());
+                            serializableParameter.setType(param.getDataType());
+                            if (param.getDataType().equalsIgnoreCase("array")) {
+                                if (param.getArrayType() != null) {
+                                    if (param.getArrayType().equalsIgnoreCase("string")) {
+                                        serializableParameter.setItems(new StringProperty());
+                                    }
+                                    if (param.getArrayType().equalsIgnoreCase("integer")) {
+                                        serializableParameter.setItems(new IntegerProperty());
+                                    }
+                                    if (param.getArrayType().equalsIgnoreCase("long")) {
+                                        serializableParameter.setItems(new LongProperty());
+                                    }
+                                    if (param.getArrayType().equalsIgnoreCase("float")) {
+                                        serializableParameter.setItems(new FloatProperty());
+                                    }
+                                    if (param.getArrayType().equalsIgnoreCase("double")) {
+                                        serializableParameter.setItems(new DoubleProperty());
+                                    }
+                                    if (param.getArrayType().equalsIgnoreCase("boolean")) {
+                                        serializableParameter.setItems(new BooleanProperty());
+                                    }
+                                }
+                            }
+                        }
+                        if (param.getAllowMultiple() != null) {
+                            serializableParameter.setCollectionFormat(param.getAllowMultiple().name());
                         }
                         if (param.getAllowableValues() != null && !param.getAllowableValues().isEmpty()) {
-                            sp.setEnum(param.getAllowableValues());
+                            serializableParameter.setEnum(param.getAllowableValues());
                         }
                     }
 
