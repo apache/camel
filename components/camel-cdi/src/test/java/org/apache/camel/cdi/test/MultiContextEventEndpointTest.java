@@ -113,9 +113,9 @@ public class MultiContextEventEndpointTest {
         secondConsumeString.expectedMessageCount(2);
         secondConsumeString.expectedBodiesReceived("testSecond1", "testSecond2");
 
-        objectEvent.select(String.class, new ContextName.Literal("first")).fire("testFirst");
-        objectEvent.select(String.class, new ContextName.Literal("second")).fire("testSecond1");
-        objectEvent.select(String.class, new ContextName.Literal("second")).fire("testSecond2");
+        objectEvent.select(String.class, ContextName.Literal.of("first")).fire("testFirst");
+        objectEvent.select(String.class, ContextName.Literal.of("second")).fire("testSecond1");
+        objectEvent.select(String.class, ContextName.Literal.of("second")).fire("testSecond2");
 
         assertIsSatisfied(2L, TimeUnit.SECONDS, firstConsumeString, secondConsumeString);
     }
