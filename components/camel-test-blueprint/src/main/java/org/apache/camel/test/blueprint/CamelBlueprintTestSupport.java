@@ -154,8 +154,10 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         // to the same state of BP container
         Set<Long> bpEvents = new HashSet<>();
 
-        CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, null);
-
+        if(!expectReload){
+            CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, null);
+        }
+        
         // must reuse props as we can do both load from .cfg file and override afterwards
         final Dictionary props = new Properties();
 
