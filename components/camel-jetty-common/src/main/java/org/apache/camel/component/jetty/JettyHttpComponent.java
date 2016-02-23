@@ -1095,28 +1095,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         addJettyHandlers(server, handlers);
 
-        CamelServlet camelServlet;
-        boolean jetty = endpoint.getUseContinuation() != null ? endpoint.getUseContinuation() : isUseContinuation();
-        if (jetty) {
-            // use Jetty continuations
-            CamelContinuationServlet jettyServlet = new CamelContinuationServlet();
-            // configure timeout and log it so end user know what we are using
-            Long timeout = endpoint.getContinuationTimeout() != null ? endpoint.getContinuationTimeout() : getContinuationTimeout();
-            if (timeout != null) {
-                LOG.info("Using Jetty continuation timeout: " + timeout + " millis for: " + endpoint);
-                jettyServlet.setContinuationTimeout(timeout);
-            } else {
-                LOG.info("Using default Jetty continuation timeout for: " + endpoint);
-            }
-
-            // use the jetty servlet
-            camelServlet = jettyServlet;
-        } else {
-            // do not use jetty so use a plain servlet
-            camelServlet = new CamelServlet();
-            LOG.info("Jetty continuation is disabled for: " + endpoint);
-        }
-
+        CamelServlet camelServlet = new CamelContinuationServlet();
         ServletHolder holder = new ServletHolder();
         holder.setServlet(camelServlet);
         context.addServlet(holder, "/*");
@@ -1231,7 +1210,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             && Server.getVersion().startsWith("8")) {
             //JETTY8 only
             try {
-                boolean b = (boolean)mbContainer.getClass().getMethod("isStarted").invoke(mbContainer);
+                boolean b = (Boolean)mbContainer.getClass().getMethod("isStarted").invoke(mbContainer);
                 if (b) {
                     mbContainer.getClass().getMethod("start").invoke(mbContainer);
                     // Publish the container itself for consistency with

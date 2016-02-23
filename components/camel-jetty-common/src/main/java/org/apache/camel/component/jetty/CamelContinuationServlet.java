@@ -28,6 +28,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.http.common.CamelServlet;
+import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpConstants;
 import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.http.common.HttpHelper;
@@ -48,8 +49,6 @@ public class CamelContinuationServlet extends CamelServlet {
     static final String EXCHANGE_ATTRIBUTE_ID = "CamelExchangeId";
 
     private static final long serialVersionUID = 1L;
-    // jetty will by default use 30000 millis as default timeout
-    private Long continuationTimeout;
     // we must remember expired exchanges as Jetty will initiate a new continuation when we send
     // back the error when timeout occurred, and thus in the async callback we cannot check the
     // continuation if it was previously expired. So that's why we have our own map for that
@@ -65,9 +64,35 @@ public class CamelContinuationServlet extends CamelServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+        boolean useContinuation = false;
+        Long continuationTimeout = null;
+        HttpCommonEndpoint endpoint = consumer.getEndpoint();
+        if (endpoint instanceof JettyHttpEndpoint) {
+            JettyHttpEndpoint jettyEndpoint = (JettyHttpEndpoint) endpoint;
+            Boolean epUseContinuation = jettyEndpoint.getUseContinuation();
+            Long epContinuationTimeout = jettyEndpoint.getContinuationTimeout();
+            if (epUseContinuation != null) {
+                useContinuation = epUseContinuation.booleanValue(); 
+            } else {
+                useContinuation = jettyEndpoint.getComponent().isUseContinuation();
+            }
+            if(epContinuationTimeout != null) {
+                continuationTimeout = epContinuationTimeout;
+            } else {
+                continuationTimeout = jettyEndpoint.getComponent().getContinuationTimeout();
+            }
+        }
+        if (useContinuation) {
+            log.trace("Start request with continuation timeout of {}", continuationTimeout!= null?continuationTimeout:"jetty default");
+        } else {
+            log.trace("Usage of continuation is disabled, either by component or endpoint configuration, fall back to normal servlet processing instead");
+            super.service(request, response);
+            return;
+        }
+        
 
         if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
-            Iterator it = ObjectHelper.createIterable(consumer.getEndpoint().getHttpMethodRestrict()).iterator();
+            Iterator<?> it = ObjectHelper.createIterable(consumer.getEndpoint().getHttpMethodRestrict()).iterator();
             boolean match = false;
             while (it.hasNext()) {
                 String method = it.next().toString();
@@ -213,14 +238,6 @@ public class CamelContinuationServlet extends CamelServlet {
         } finally {
             consumer.doneUoW(result);
         }
-    }
-
-    public Long getContinuationTimeout() {
-        return continuationTimeout;
-    }
-
-    public void setContinuationTimeout(Long continuationTimeout) {
-        this.continuationTimeout = continuationTimeout;
     }
 
     @Override
