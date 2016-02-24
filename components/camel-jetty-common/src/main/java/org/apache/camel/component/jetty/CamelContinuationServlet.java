@@ -64,6 +64,32 @@ public class CamelContinuationServlet extends CamelServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+        boolean useContinuation = false;
+        Long continuationTimeout = null;
+        HttpCommonEndpoint endpoint = consumer.getEndpoint();
+        if (endpoint instanceof JettyHttpEndpoint) {
+            JettyHttpEndpoint jettyEndpoint = (JettyHttpEndpoint) endpoint;
+            Boolean epUseContinuation = jettyEndpoint.getUseContinuation();
+            Long epContinuationTimeout = jettyEndpoint.getContinuationTimeout();
+            if (epUseContinuation != null) {
+                useContinuation = epUseContinuation.booleanValue(); 
+            } else {
+                useContinuation = jettyEndpoint.getComponent().isUseContinuation();
+            }
+            if(epContinuationTimeout != null) {
+                continuationTimeout = epContinuationTimeout;
+            } else {
+                continuationTimeout = jettyEndpoint.getComponent().getContinuationTimeout();
+            }
+        }
+        if (useContinuation) {
+            log.trace("Start request with continuation timeout of {}", continuationTimeout!= null?continuationTimeout:"jetty default");
+        } else {
+            log.trace("Usage of continuation is disabled, either by component or endpoint configuration, fall back to normal servlet processing instead");
+            super.service(request, response);
+            return;
+        }
+        
 
         // figure out if continuation is enabled and what timeout to use
         boolean useContinuation = false;
