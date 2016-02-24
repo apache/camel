@@ -22,6 +22,63 @@ SomeEndpoint endpoint = camelContext.getEndpoint("someURI", SomeEndpoint.class);
 endpoint.setSomething("aValue");
 ----
 
+[[HowdoIconfigureendpoints-UsingCDI]]
+Using CDI
+^^^^^^^^^
+
+You can use link:cdi.html[CDI] as dependency injection framework to configure
+your link:component.html[Component] or link:endpoint.html[Endpoint] instances.
+
+For example, to configure the SJMS component, you can declare a producer method
+in a CDI bean:
+
+[source,java]
+----
+class MyCdiComponent {
+
+  @PropertyInject("jms.maxConnections")
+  int maxConnections;
+
+  @Produces
+  @Named("sjms")
+  @ApplicationScoped
+    SjmsComponent sjms() {
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(new ActiveMQConnectionFactory("vm://broker?broker.persistent=false"));
+        component.setConnectionCount(maxConnections);
+        return component;
+    }
+}
+----
+
+Then, the component is lazily looked-up by Camel CDI whenever it is referenced,
+e.g. from the Camel Java DSL:
+
+[source,java]
+----
+class MyCdiRoute extends RouteBuilder {
+
+    @Override
+    public void configure() {
+        from("sjms:sample.queue")
+            .log("Received message [${body}]");
+    }
+}
+----
+
+Besides, endpoints of that component can be injected in any CDI beans, e.g.:
+
+[source,java]
+----
+class MyCdiBean {
+
+    @Inject
+    @Uri("sjms:sample.queue")
+    Endpoint endpoint;
+}
+----
+
+
 [[HowdoIconfigureendpoints-UsingGuice]]
 Using Guice
 ^^^^^^^^^^^
@@ -267,6 +324,7 @@ See Also
 ~~~~~~~~
 
 * link:how-do-i-add-a-component.html[How do I add a component]
+* link:cdi.html[CDI]
 * link:spring.html[Spring]
 * link:uris.html[URIs]
 * link:using-propertyplaceholder.html[Using `PropertyPlaceholder`]
