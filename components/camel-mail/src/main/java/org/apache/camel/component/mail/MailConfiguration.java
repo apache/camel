@@ -261,8 +261,7 @@ public class MailConfiguration implements Cloneable {
         if (additionalJavaMailProperties != null) {
             return ObjectHelper.equal(
                 additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.enable"),
-                "true",
-                true);
+                "true");
         }
 
         return false;
