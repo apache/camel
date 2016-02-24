@@ -154,7 +154,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         // to the same state of BP container
         Set<Long> bpEvents = new HashSet<>();
 
-        if(!expectReload){
+        if (!expectReload) {
             CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, null);
         }
         
