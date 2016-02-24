@@ -17,6 +17,7 @@
 package org.apache.camel.test.blueprint;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -104,6 +105,12 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
                 throw new IllegalArgumentException("The provided file \"" + file[0] + "\" from loadConfigAdminConfigurationFile doesn't exist");
             }
         }
+        // fetch initial configadmin configuration if provided programmatically
+        Properties initialConfiguration = new Properties();
+        String pid = setConfigAdminInitialConfiguration(initialConfiguration);
+        if (pid != null) {
+            file = new String[] {prepareInitialConfigFile(initialConfiguration), pid};
+        }
 
         final String symbolicName = getClass().getSimpleName();
         final BundleContext answer = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
@@ -160,7 +167,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         final Dictionary props = new Properties();
 
         // allow end user to override properties
-        String pid = useOverridePropertiesWithConfigAdmin(props);
+        pid = useOverridePropertiesWithConfigAdmin(props);
         if (pid != null) {
             // we will update the configuration again
             ConfigurationAdmin configAdmin = CamelBlueprintHelper.getOsgiService(answer, ConfigurationAdmin.class);
@@ -322,14 +329,16 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     }
 
     /**
-     * Override this method to override config admin properties. Overriden properties will be passed to
+     * <p>Override this method to override config admin properties. Overriden properties will be passed to
      * {@link Configuration#update(Dictionary)} and may or may not lead to reload of Blueprint container - this
-     * depends on <code>update-strategy="reload|none"</code> in <code>&lt;cm:property-placeholder&gt;</code>
+     * depends on <code>update-strategy="reload|none"</code> in <code>&lt;cm:property-placeholder&gt;</code></p>
+     * <p>This method should be used to simulate configuration update <strong>after</strong> Blueprint container
+     * is already initialized and started. Don't use this method to initialized ConfigAdmin configuration.</p>
      *
      * @param props properties where you add the properties to override
      * @return the PID of the OSGi {@link ConfigurationAdmin} which are defined in the Blueprint XML file.
      */
-    protected String useOverridePropertiesWithConfigAdmin(Dictionary props) throws Exception {
+    protected String useOverridePropertiesWithConfigAdmin(Dictionary<String, String> props) throws Exception {
         return null;
     }
 
@@ -341,6 +350,18 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      * @return the name of the path for the .cfg file to load, and the persistence-id of the property placeholder.
      */
     protected String[] loadConfigAdminConfigurationFile() {
+        return null;
+    }
+
+    /**
+     * Override this method as an alternative to {@link #loadConfigAdminConfigurationFile()} if there's a need
+     * to set initial ConfigAdmin configuration without using files.
+     *
+     * @param props always non-null. Tests may initialize ConfigAdmin configuration by returning PID.
+     * @return persistence-id of the property placeholder. If non-null, <code>props</code> will be used as
+     * initial ConfigAdmin configuration
+     */
+    protected String setConfigAdminInitialConfiguration(Properties props) {
         return null;
     }
 
@@ -482,6 +503,22 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         return CamelBlueprintHelper.getOsgiService(bundleContext, type, filter, timeout);
     }
 
+    /**
+     * Create a temporary File with persisted configuration for ConfigAdmin
+     * @param initialConfiguration
+     * @return
+     */
+    private String prepareInitialConfigFile(Properties initialConfiguration) throws IOException {
+        File dir = new File("target/etc");
+        dir.mkdirs();
+        File cfg = File.createTempFile("properties-", ".cfg", dir);
+        FileWriter writer = new FileWriter(cfg);
+        try {
+            initialConfiguration.store(writer, null);
+        } finally {
+            writer.close();
+        }
+        return cfg.getAbsolutePath();
+    }
+
 }
-
-
