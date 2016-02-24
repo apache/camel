@@ -314,13 +314,20 @@ public final class CamelBlueprintHelper {
                                                  final String symbolicName, final int bpEvent, final Runnable runAndWait)
         throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
+        final Throwable[] pThrowable = new Throwable[] {null};
         ServiceRegistration<BlueprintListener> registration = context.registerService(BlueprintListener.class, new BlueprintListener() {
             @Override
             public void blueprintEvent(BlueprintEvent event) {
-                if (event.getType() == bpEvent && event.getBundle().getSymbolicName().equals(symbolicName)) {
-                    // we skip events that we've already seen
-                    // it works with BP container reloads if next CREATE state is at least 1ms after previous one
-                    if (eventHistory == null || eventHistory.add(event.getTimestamp())) {
+                if (event.getBundle().getSymbolicName().equals(symbolicName)) {
+                    if (event.getType() == bpEvent) {
+                        // we skip events that we've already seen
+                        // it works with BP container reloads if next CREATE state is at least 1ms after previous one
+                        if (eventHistory == null || eventHistory.add(event.getTimestamp())) {
+                            latch.countDown();
+                        }
+                    } else if (event.getType() == BlueprintEvent.FAILURE) {
+                        // we didn't wait for FAILURE, but we got it - fail fast then
+                        pThrowable[0] = event.getCause();
                         latch.countDown();
                     }
                 }
@@ -331,6 +338,10 @@ public final class CamelBlueprintHelper {
         }
         latch.await(CamelBlueprintHelper.DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
         registration.unregister();
+
+        if (pThrowable[0] != null) {
+            throw new RuntimeException(pThrowable[0].getMessage(), pThrowable[0]);
+        }
     }
 
     protected static TinyBundle createTestBundle(String name, String version, String descriptors, String[] ... configAdminPidFiles) throws IOException {

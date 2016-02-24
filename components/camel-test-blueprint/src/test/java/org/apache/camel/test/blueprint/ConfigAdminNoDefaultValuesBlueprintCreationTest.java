@@ -16,18 +16,23 @@
  */
 package org.apache.camel.test.blueprint;
 
-import java.util.Dictionary;
-
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+
 /**
- *
+ * A test showing that if Blueprint XML contains property placeholders, some property source has to be defined.
  */
 public class ConfigAdminNoDefaultValuesBlueprintCreationTest extends CamelBlueprintTestSupport {
 
     @Override
-    protected boolean expectBlueprintContainerReloadOnConfigAdminUpdate() {
-        return true;
+    public void setUp() throws Exception {
+        try {
+            super.setUp();
+            fail("Should fail, because Blueprint XML uses property placeholders, but we didn't define any property sources");
+        } catch (Exception e) {
+            assertThat(e.getCause().getCause().getMessage(), equalTo("Property placeholder key: destination not found"));
+        }
     }
 
     @Override
@@ -35,20 +40,8 @@ public class ConfigAdminNoDefaultValuesBlueprintCreationTest extends CamelBluepr
         return "org/apache/camel/test/blueprint/configadmin-endpoint-no-defaults.xml";
     }
 
-    @Override
-    protected String useOverridePropertiesWithConfigAdmin(Dictionary props) throws Exception {
-        props.put("greeting", "Bye");
-        props.put("destination", "mock:result");
-        return "my-placeholders";
-    }
-
     @Test
-    public void testConfigAdmin() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-
-        template.sendBody("direct:start", "World");
-
-        assertMockEndpointsSatisfied();
+    public void test() throws Exception {
     }
 
 }
