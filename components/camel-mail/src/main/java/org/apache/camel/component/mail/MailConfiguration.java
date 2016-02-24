@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
@@ -227,7 +228,7 @@ public class MailConfiguration implements Cloneable {
             properties.put("javax.net.debug", "all");
         }
 
-        if (sslContextParameters != null && isSecureProtocol()) {
+        if (sslContextParameters != null && (isSecureProtocol() || isStartTlsEnabled())) {
             SSLContext sslContext;
             try {
                 sslContext = sslContextParameters.createSSLContext();
@@ -238,7 +239,7 @@ public class MailConfiguration implements Cloneable {
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
             properties.put("mail." + protocol + ".socketFactory.port", "" + port);
         }
-        if (dummyTrustManager && isSecureProtocol()) {
+        if (dummyTrustManager && (isSecureProtocol() || isStartTlsEnabled())) {
             // set the custom SSL properties
             properties.put("mail." + protocol + ".socketFactory.class", "org.apache.camel.component.mail.security.DummySSLSocketFactory");
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
@@ -254,6 +255,17 @@ public class MailConfiguration implements Cloneable {
     public boolean isSecureProtocol() {
         return this.protocol.equalsIgnoreCase("smtps") || this.protocol.equalsIgnoreCase("pop3s")
                || this.protocol.equalsIgnoreCase("imaps");
+    }
+
+    public boolean isStartTlsEnabled() {
+        if (additionalJavaMailProperties != null) {
+            return ObjectHelper.equal(
+                additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.enable"),
+                "true",
+                true);
+        }
+
+        return false;
     }
 
     public String getMailStoreLogInformation() {
