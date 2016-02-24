@@ -193,7 +193,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             if (close != null) {
                 disconnect = close;
             }
-            if (disconnect) {
+            // we should not close if we are reusing the channel
+            if (!producer.getConfiguration().isReuseChannel() && disconnect) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Closing channel when complete at address: {}", producer.getConfiguration().getAddress());
                 }
