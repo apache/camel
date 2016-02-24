@@ -466,9 +466,13 @@ public class NettyProducer extends DefaultAsyncProducer {
                 if (channel.isActive()) {
                     LOG.trace("Putting channel back to pool {}", channel);
                     pool.returnObject(channel);
+                } else {
+                    // and if its not active then invalidate it
+                    LOG.trace("Invalidating channel from pool {}", channel);
+                    pool.invalidateObject(channel);
                 }
             } catch (Exception e) {
-                LOG.warn("Error returning channel to pool {}. This exception will be ignored.", channel);
+                LOG.warn("Error returning channel to pool " + channel + ". This exception will be ignored.", e);
             } finally {
                 // ensure we call the delegated callback
                 callback.done(doneSync);
