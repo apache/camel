@@ -16,8 +16,9 @@
  */
 package org.apache.camel.test.blueprint;
 
-import org.junit.Test;
 import java.util.Dictionary;
+
+import org.junit.Test;
 
 /**
  *
@@ -25,7 +26,7 @@ import java.util.Dictionary;
 public class ConfigAdminNoDefaultValuesBlueprintCreationTest extends CamelBlueprintTestSupport {
 
     @Override
-    protected boolean expectBlueprintContainerReloadOnConfigAdminUpdate(){
+    protected boolean expectBlueprintContainerReloadOnConfigAdminUpdate() {
         return true;
     }
 
@@ -35,8 +36,7 @@ public class ConfigAdminNoDefaultValuesBlueprintCreationTest extends CamelBluepr
     }
 
     @Override
-    protected String useOverridePropertiesWithConfigAdmin(Dictionary props)
-            throws Exception {
+    protected String useOverridePropertiesWithConfigAdmin(Dictionary props) throws Exception {
         props.put("greeting", "Bye");
         props.put("destination", "mock:result");
         return "my-placeholders";
