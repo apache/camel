@@ -320,7 +320,7 @@ public final class HttpHelper {
         if (queryString == null) {
             queryString = endpoint.getHttpUri().getRawQuery();
         }
-        // We should user the query string from the HTTP_URI header
+        // We should use the query string from the HTTP_URI header
         if (queryString == null) {
             queryString = uri.getRawQuery();
         }
