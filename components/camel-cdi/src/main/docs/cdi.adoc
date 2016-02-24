@@ -261,6 +261,10 @@ user-defined `@MyOtherQualifier` qualifier does not get added to any
 Camel contexts. That may be useful, for example, for Camel routes that
 may be required to be added later during the application execution.
 
+NOTE: Since Camel version 2.17.0, Camel CDI is capable of managing any kind of
+`CamelContext` beans (e.g. `DefaultCamelContext`). In previous versions, it is only capable of managing beans
+of type `CdiCamelContext` so it is required to extend it.
+
 The CDI qualifiers declared on the `CamelContext` beans are also used to
 bind the corresponding Camel primitives, e.g.:
 
@@ -793,8 +797,8 @@ following runtimes:
 |Container |Version |Runtime
 |Weld SE |1.1.28.Final |CDI 1.0 / Java SE 7
 |OpenWebBeans |1.2.7 |CDI 1.0 / Java SE 7
-|Weld SE |2.3.2.Final |CDI 1.2 / Java SE 7
-|OpenWebBeans |1.6.2 |CDI 1.2 / Java SE 7
+|Weld SE |2.3.3.Final |CDI 1.2 / Java SE 7
+|OpenWebBeans |1.6.3 |CDI 1.2 / Java SE 7
 |WildFly |8.2.1.Final |CDI 1.2 / Java EE 7
 |WildFly |9.0.1.Final |CDI 1.2 / Java EE 7
 |Karaf |2.4.4 |CDI 1.2 / OSGi 4 / PAX CDI
@@ -809,6 +813,8 @@ Examples
 The following examples are available in the `examples` directory of the
 Camel project:
 
+* `camel-example-cdi` - illustrates how to work with Camel using CDI
+to configure components, endpoints and beans,
 * `camel-example-cdi-metrics` - illustrates the integration between
 Camel, Dropwizard Metrics and CDI,
 * `camel-example-cdi-properties` - illustrates the integration between
@@ -827,7 +833,9 @@ Java with CDI.
 See Also
 ^^^^^^^^
 
-* http://www.cdi-spec.org[CDI Web site]
+* http://www.cdi-spec.org[CDI specification Web site]
 * http://www.cdi-spec.org/ecosystem/[CDI ecosystem]
-* https://github.com/astefanutti/further-cdi[Going further with CDI]
+* http://weld.cdi-spec.org[Weld home page]
+* http://openwebbeans.apache.org[OpenWebBeans home page]
+* https://github.com/astefanutti/further-cdi[Going further with CDI and Camel]
 (See Camel CDI section)
