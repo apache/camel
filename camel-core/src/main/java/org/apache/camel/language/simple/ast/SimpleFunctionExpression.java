@@ -141,8 +141,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // file: prefix
         remainder = ifStartsWithReturnRemainder("file:", function);
         if (remainder != null) {
-            Expression fileExpression = createSimpleFileExpression(remainder);
-            if (function != null) {
+            Expression fileExpression = createSimpleFileExpression(remainder, strict);
+            if (fileExpression != null) {
                 return fileExpression;
             }
         }
@@ -376,7 +376,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
-    private Expression createSimpleFileExpression(String remainder) {
+    private Expression createSimpleFileExpression(String remainder, boolean strict) {
         if (ObjectHelper.equal(remainder, "name")) {
             return ExpressionBuilder.fileNameExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext")) {
@@ -406,7 +406,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else if (ObjectHelper.equal(remainder, "modified")) {
             return ExpressionBuilder.fileLastModifiedExpression();
         }
-        throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
+        if (strict) {
+            throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
+        }
+        return null;
     }
 
     private String ifStartsWithReturnRemainder(String prefix, String text) {

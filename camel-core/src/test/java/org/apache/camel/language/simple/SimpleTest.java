@@ -105,6 +105,10 @@ public class SimpleTest extends LanguageTestSupport {
         assertNull(SimpleLanguage.simple("${null}").evaluate(exchange, Object.class));
     }
 
+    public void testSimpleFileDir() throws Exception {
+        assertExpression("file:mydir", "file:mydir");
+    }
+
     public void testEmptyExpression() throws Exception {
         assertExpression("", "");
         assertExpression(" ", " ");
