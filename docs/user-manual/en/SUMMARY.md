@@ -69,6 +69,11 @@
 	* [Message](message.adoc)
 	* [Request Reply](request-reply.adoc)
 
+* Community
+    * FAQ
+        * Using Camel questions
+            * [How do I configure endpoints](how-do-i-configure-endpoints.adoc)
+
 * Components
 	* [Async Http Client (AHC)](ahc.adoc)
 	* [AHC Websocket (AHC-WS)](ahc-ws.adoc)
