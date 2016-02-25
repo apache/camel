@@ -771,6 +771,93 @@ karaf@root()> camel:context-list
 See the `camel-example-cdi-osgi` example for a working example of the
 Camel CDI OSGi integration.
 
+
+[[CDI-ProgrammaticLazyInjectionProgrammaticLookup]]
+Lazy Injection / Programmatic Lookup
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+While the CDI programmatic model favors a http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#typesafe_resolution[typesafe resolution]
+mechanism that occurs at application initialization time, it is possible to perform
+dynamic / lazy injection later during the application execution using the
+http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#programmatic_lookup[programmatic lookup]
+mechanism.
+
+Camel CDI provides for convenience the annotation literals corresponding to the
+CDI qualifiers that you can use for standard injection of Camel primitives.
+These annotation literals can be used in conjunction with the `javax.enterprise.inject.Instance`
+interface which is the CDI entry point to perform lazy injection / programmatic lookup.
+
+For example, you can use the provided annotation literal for the `@Uri` qualifier
+to lazily lookup for Camel primitives, e.g. for `ProducerTemplate` beans:
+
+[source,java]
+----
+@Any
+@Inject
+Instance<ProducerTemplate> producers;
+
+ProducerTemplate inbound = producers
+    .select(Uri.Literal.of("direct:inbound"))
+    .get();
+----
+
+Or for `Endpoint` beans, e.g.:
+
+[source,java]
+----
+@Any
+@Inject
+Instance<Endpoint> endpoints;
+
+MockEndpoint outbound = endpoints
+    .select(MockEndpoint.class, Uri.Literal.of("mock:outbound"))
+    .get();
+----
+
+Similarly, you can use the provided annotation literal for
+the `@ContextName` qualifier to lazily lookup for `CamelContext`
+beans, e.g.:
+
+[source,java]
+----
+@Any
+@Inject
+Instance<CamelContext> contexts;
+
+CamelContext context = contexts
+    .select(ContextName.Literal.of("foo"))
+    .get();
+----
+
+You can also refined the selection based on the Camel context type, e.g.:
+
+[source,java]
+----
+@Any
+@Inject
+Instance<CamelContext> contexts;
+
+// Refine the selection by type
+Instance<DefaultCamelContext> context = contexts.select(DefaultCamelContext.class);
+
+// Check if such a bean exists then retrieve a reference
+if (!context.isUnsatisfied())
+    context.get();
+----
+
+Or even iterate over a selection of Camel contexts, e.g.:
+
+[source,java]
+----
+@Any
+@Inject
+Instance<CamelContext> contexts;
+
+for (CamelContext context : contexts)
+    context.setUseBreadcrumb(true);
+----
+
+
 [[CDI-MavenArchetype]]
 Maven Archetype
 ^^^^^^^^^^^^^^^
