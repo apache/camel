@@ -50,15 +50,15 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
             Endpoint endpoint = context.getEndpoint("direct:scan");
 
             Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
-            exchange.getIn().setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
-            exchange.getIn().setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
-            exchange.getIn().setHeader(HbaseAttribute.HBASE_VALUE.asHeader(), body[0][0][0]);
+            exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+            exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
+            exchange.getIn().setHeader(HBaseAttribute.HBASE_VALUE.asHeader(), body[0][0][0]);
             Exchange resp = template.send(endpoint, exchange);
             Message out = resp.getOut();
             assertTrue("two first keys returned",
-                    out.getHeaders().containsValue(body[0][0][0])
-                            && out.getHeaders().containsValue(body[1][0][0])
-                            && !out.getHeaders().containsValue(body[2][0][0]));
+                out.getHeaders().containsValue(body[0][0][0])
+                    && out.getHeaders().containsValue(body[1][0][0])
+                    && !out.getHeaders().containsValue(body[2][0][0]));
         }
     }
 
@@ -73,7 +73,6 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
             public void configure() {
                 from("direct:start")
                     .to("hbase://" + PERSON_TABLE);
-
                 from("direct:scan")
                     .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2");
             }

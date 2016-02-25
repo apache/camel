@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.hbase;
 
-public enum HbaseAttribute {
+public enum HBaseAttribute {
 
     HBASE_ROW_ID("CamelHBaseRowId"),
     HBASE_ROW_TYPE("CamelHBaseRowType"),
@@ -27,9 +27,11 @@ public enum HbaseAttribute {
     HBASE_VALUE_TYPE("CamelHBaseValueType");
 
     private final String value;
+    private final String option;
 
-    private HbaseAttribute(String value) {
+    HBaseAttribute(String value) {
         this.value = value;
+        this.option = asOption(value);
     }
 
     public String asHeader(int i) {
@@ -45,12 +47,10 @@ public enum HbaseAttribute {
     }
 
     public String asOption() {
-        String normalizedValue = value.replaceAll("CamelHBase", "");
-        return normalizedValue.substring(0, 1).toLowerCase() + normalizedValue.substring(1);
+        return option;
     }
 
     public String asOption(int i) {
-        String option = asOption();
         if (i > 1) {
             return option + i;
         } else {
@@ -61,5 +61,13 @@ public enum HbaseAttribute {
     @Override
     public String toString() {
         return value;
+    }
+
+    private static String asOption(String name) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name, "CamelHBase".length(), name.length());
+        sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));
+
+        return sb.toString();
     }
 }
