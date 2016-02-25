@@ -31,24 +31,22 @@ import org.slf4j.LoggerFactory;
  */
 public class CMISConsumer extends ScheduledPollConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(CMISConsumer.class);
+    private final CMISSessionFacadeFactory sessionFacadeFactory;
     private CMISSessionFacade sessionFacade;
 
-    public CMISConsumer(CMISEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-    }
-
-    public CMISConsumer(CMISEndpoint cmisEndpoint, Processor processor, CMISSessionFacade sessionFacade) {
-        this(cmisEndpoint, processor);
-        this.sessionFacade = sessionFacade;
+    public CMISConsumer(CMISEndpoint cmisEndpoint, Processor processor, CMISSessionFacadeFactory sessionFacadeFactory) {
+        super(cmisEndpoint, processor);
+        this.sessionFacadeFactory = sessionFacadeFactory;
+        this.sessionFacade = null;
     }
 
     @Override
     protected int poll() throws Exception {
-        return this.sessionFacade.poll(this);
+        return getSessionFacade().poll(this);
     }
     
-    public OperationContext createOperationContext() {
-        return sessionFacade.createOperationContext();
+    public OperationContext createOperationContext() throws Exception {
+        return getSessionFacade().createOperationContext();
     }
 
     int sendExchangeWithPropsAndBody(Map<String, Object> properties, InputStream inputStream)
@@ -59,5 +57,14 @@ public class CMISConsumer extends ScheduledPollConsumer {
         LOG.debug("Polling node : {}", properties.get("cmis:name"));
         getProcessor().process(exchange);
         return 1;
+    }
+
+    private CMISSessionFacade getSessionFacade() throws Exception {
+        if (sessionFacade == null) {
+            sessionFacade = sessionFacadeFactory.create();
+            sessionFacade.initSession();
+        }
+
+        return sessionFacade;
     }
 }
