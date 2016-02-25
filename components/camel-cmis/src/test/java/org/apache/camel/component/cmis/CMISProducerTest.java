@@ -25,13 +25,13 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.Produce;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.junit.Test;
 
 public class CMISProducerTest extends CMISTestSupport {
@@ -146,7 +146,7 @@ public class CMISProducerTest extends CMISTestSupport {
         assertEquals("secondaryTypePropValue", newNode.getPropertyValue("SecondaryStringProp"));
     }
 
-    @Test(expected = ResolveEndpointFailedException.class)
+    @Test(expected = CmisInvalidArgumentException.class)
     public void failConnectingToNonExistingRepository() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl()
                 + "?username=admin&password=admin&repositoryId=NON_EXISTING_ID");
