@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.hbase.HbaseAttribute;
+import org.apache.camel.component.hbase.HBaseAttribute;
 import org.apache.camel.component.hbase.model.HBaseCell;
 import org.apache.camel.component.hbase.model.HBaseData;
 import org.apache.camel.component.hbase.model.HBaseRow;
@@ -47,14 +47,14 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
         HBaseCell hCell = new HBaseCell();
 
         if (message != null) {
-            Object id =  message.getHeader(HbaseAttribute.HBASE_ROW_ID.asHeader(index));
-            String rowClassName = message.getHeader(HbaseAttribute.HBASE_ROW_TYPE.asHeader(index), String.class);
+            Object id =  message.getHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(index));
+            String rowClassName = message.getHeader(HBaseAttribute.HBASE_ROW_TYPE.asHeader(index), String.class);
             Class<?> rowClass = rowClassName == null || rowClassName.isEmpty() ? String.class : message.getExchange().getContext().getClassResolver().resolveClass(rowClassName);
-            String columnFamily = (String) message.getHeader(HbaseAttribute.HBASE_FAMILY.asHeader(index));
-            String columnName = (String) message.getHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(index));
-            Object value =  message.getHeader(HbaseAttribute.HBASE_VALUE.asHeader(index));
+            String columnFamily = (String) message.getHeader(HBaseAttribute.HBASE_FAMILY.asHeader(index));
+            String columnName = (String) message.getHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(index));
+            Object value =  message.getHeader(HBaseAttribute.HBASE_VALUE.asHeader(index));
 
-            String valueClassName = message.getHeader(HbaseAttribute.HBASE_VALUE_TYPE.asHeader(index), String.class);
+            String valueClassName = message.getHeader(HBaseAttribute.HBASE_VALUE_TYPE.asHeader(index), String.class);
             Class<?> valueClass = valueClassName == null || valueClassName.isEmpty() ? String.class : message.getExchange().getContext().getClassResolver().resolveClass(valueClassName);
 
             //Id can be accepted as null when using get, scan etc.
@@ -84,7 +84,7 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
         int index = 1;
         HBaseData data = new HBaseData();
         //We use a LinkedHashMap to preserve the order.
-        Map<Object, HBaseRow> rows = new LinkedHashMap<Object, HBaseRow>();
+        Map<Object, HBaseRow> rows = new LinkedHashMap<>();
         HBaseRow hRow = new HBaseRow();
         while (hRow != null) {
             hRow = resolveRow(message, index++);
@@ -116,7 +116,7 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
             if (hRow.getId() != null) {
                 Set<HBaseCell> cells = hRow.getCells();
                 for (HBaseCell cell : cells) {
-                    message.setHeader(HbaseAttribute.HBASE_VALUE.asHeader(index++), getValueForColumn(cells, cell.getFamily(), cell.getQualifier()));
+                    message.setHeader(HBaseAttribute.HBASE_VALUE.asHeader(index++), getValueForColumn(cells, cell.getFamily(), cell.getQualifier()));
                 }
             }
         }
@@ -136,10 +136,10 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
         for (HBaseRow hRow : data.getRows()) {
             Set<HBaseCell> cells = hRow.getCells();
             for (HBaseCell cell : cells) {
-                message.setHeader(HbaseAttribute.HBASE_ROW_ID.asHeader(index), hRow.getId());
-                message.setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(index), cell.getFamily());
-                message.setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(index), cell.getQualifier());
-                message.setHeader(HbaseAttribute.HBASE_VALUE.asHeader(index), cell.getValue());
+                message.setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(index), hRow.getId());
+                message.setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(index), cell.getFamily());
+                message.setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(index), cell.getQualifier());
+                message.setHeader(HBaseAttribute.HBASE_VALUE.asHeader(index), cell.getValue());
             }
             index++;
         }
