@@ -21,14 +21,11 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
 
-/**
- * Rest parameter types
- */
 @Metadata(label = "rest")
 @XmlType
-@XmlEnum(String.class)
-public enum RestParamType {
+@XmlEnum
+public enum CollectionFormat {
 
-    body, formData, header, path, query
+    csv, ssv, tsv, pipes, multi
 
 }
