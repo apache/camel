@@ -55,7 +55,9 @@
               <value>d</value>
           </allowableValues>
         </param>
-        <responseMessage code="300" message="test msg" responseModel="java.lang.Integer"/>
+        <responseMessage code="300" message="test msg" responseModel="java.lang.Integer">
+          <header name="rate" description="Rate limit" dataType="integer"/>
+        </responseMessage>
         <to uri="direct:bye"/>
       </get>
       <post>

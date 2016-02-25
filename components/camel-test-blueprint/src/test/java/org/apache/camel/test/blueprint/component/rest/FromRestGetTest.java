@@ -78,6 +78,9 @@ public class FromRestGetTest extends CamelBlueprintTestSupport {
         assertEquals("acc2", rest.getVerbs().get(0).getParams().get(1).getAccess());
 
         assertEquals("300", rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
+        assertEquals("rate", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getName());
+        assertEquals("Rate limit", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getDescription());
+        assertEquals("integer", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getDataType());
         assertEquals("test msg", rest.getVerbs().get(0).getResponseMsgs().get(0).getMessage());
         assertEquals(Integer.class.getCanonicalName(), rest.getVerbs().get(0).getResponseMsgs().get(0).getResponseModel());
         

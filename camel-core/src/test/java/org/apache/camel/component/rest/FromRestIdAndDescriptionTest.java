@@ -59,7 +59,9 @@ public class FromRestIdAndDescriptionTest extends FromRestGetTest {
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
                         .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false).access("acc2")
                         .endParam()
-                        .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
+                        .responseMessage().code(300).message("test msg").responseModel(Integer.class)
+                            .header("rate").description("Rate limit").dataType("integer").endHeader()
+                        .endResponseMessage()
                         .responseMessage().code("error").message("does not work").endResponseMessage()
                         .to("direct:bye")
                         .post().description("Updates the bye message").to("mock:update");

@@ -81,6 +81,9 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("acc2", rest.getVerbs().get(0).getParams().get(1).getAccess());
 
         assertEquals("300", rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
+        assertEquals("rate", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getName());
+        assertEquals("Rate limit", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getDescription());
+        assertEquals("integer", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getDataType());
         assertEquals("error", rest.getVerbs().get(0).getResponseMsgs().get(1).getCode());
         assertEquals("test msg", rest.getVerbs().get(0).getResponseMsgs().get(0).getMessage());
         assertEquals(Integer.class.getCanonicalName(), rest.getVerbs().get(0).getResponseMsgs().get(0).getResponseModel());
@@ -116,7 +119,9 @@ public class FromRestGetTest extends ContextTestSupport {
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
                         .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false).access("acc2")
                         .endParam()
-                        .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
+                        .responseMessage().code(300).message("test msg").responseModel(Integer.class)
+                            .header("rate").description("Rate limit").dataType("integer").endHeader()
+                        .endResponseMessage()
                         .responseMessage().code("error").message("does not work").endResponseMessage()
                         .to("direct:bye")
                         .post().to("mock:update");

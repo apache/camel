@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,36 +31,24 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To specify the rest operation parameters using Swagger.
- * <p/>
- * This maps to the Swagger Parameter Message Object.
+ * To specify the rest operation response headers using Swagger.
+ * <p>
+ * This maps to the Swagger Response Header Object.
  */
 @Metadata(label = "rest")
-@XmlRootElement(name = "param")
+@XmlRootElement(name = "responseHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestOperationParamDefinition {
+public class RestOperationResponseHeaderDefinition {
 
     @XmlTransient
-    private VerbDefinition verb;
+    private RestOperationResponseMsgDefinition response;
 
     @XmlAttribute(required = true)
     private String name;
 
-    @XmlAttribute(required = true)
-    @Metadata(defaultValue = "path")
-    private RestParamType type;
-
     @XmlAttribute
     @Metadata(defaultValue = "")
     private String description;
-
-    @XmlAttribute
-    @Metadata(defaultValue = "")
-    private String defaultValue;
-
-    @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean required;
 
     @XmlAttribute
     @Metadata(defaultValue = "csv")
@@ -78,70 +66,38 @@ public class RestOperationParamDefinition {
     @XmlElement(name = "value")
     private List<String> allowableValues;
 
-    @XmlAttribute
-    @Metadata(defaultValue = "")
-    private String access;
-
-    public RestOperationParamDefinition() {
+    public RestOperationResponseHeaderDefinition(RestOperationResponseMsgDefinition response) {
+        this();
+        this.response = response;
     }
 
-    public RestOperationParamDefinition(VerbDefinition verb) {
-        this.verb = verb;
-    }
-
-    public RestParamType getType() {
-        return type != null ? type : RestParamType.path;
+    public RestOperationResponseHeaderDefinition() {
+        this.collectionFormat = CollectionFormat.csv;
+        this.arrayType = "string";
+        this.dataType = "string";
     }
 
     /**
-     * Sets the Swagger Parameter type.
+     * Ends the configuration of this response message
      */
-    public void setType(RestParamType type) {
-        this.type = type;
+    public RestOperationResponseMsgDefinition endResponseHeader() {
+        return response;
     }
 
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets the Swagger Parameter name.
-     */
     public void setName(String name) {
         this.name = name;
     }
 
     public String getDescription() {
-        return description != null ? description : "";
+        return description;
     }
 
-    /**
-     * Sets the Swagger Parameter description.
-     */
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    /**
-     * Sets the Swagger Parameter default value.
-     */
-    public String getDefaultValue() {
-        return defaultValue != null ? defaultValue : "";
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public Boolean getRequired() {
-        return required != null ? required : true;
-    }
-
-    /**
-     * Sets the Swagger Parameter required flag.
-     */
-    public void setRequired(Boolean required) {
-        this.required = required;
     }
 
     public CollectionFormat getCollectionFormat() {
@@ -154,6 +110,7 @@ public class RestOperationParamDefinition {
     public void setCollectionFormat(CollectionFormat collectionFormat) {
         this.collectionFormat = collectionFormat;
     }
+
 
     public String getArrayType() {
         return arrayType;
@@ -168,11 +125,11 @@ public class RestOperationParamDefinition {
     }
 
     public String getDataType() {
-        return dataType != null ? dataType : "string";
+        return dataType;
     }
 
     /**
-     * Sets the Swagger Parameter data type.
+     * Sets the Swagger header data type.
      */
     public void setDataType(String dataType) {
         this.dataType = dataType;
@@ -187,29 +144,18 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter list of allowable values (enum).
+     * Sets the Swagger Parameter list of allowable values.
      */
     public void setAllowableValues(List<String> allowableValues) {
         this.allowableValues = allowableValues;
     }
 
-    public String getAccess() {
-        return access != null ? access : "";
-    }
-
-    /**
-     * Sets the Swagger Parameter paramAccess flag.
-     */
-    public void setAccess(String access) {
-        this.access = access;
-    }
-
     /**
      * Name of the parameter.
-     * <p/>
+     * <p>
      * This option is mandatory.
      */
-    public RestOperationParamDefinition name(String name) {
+    public RestOperationResponseHeaderDefinition name(String name) {
         setName(name);
         return this;
     }
@@ -217,31 +163,15 @@ public class RestOperationParamDefinition {
     /**
      * Description of the parameter.
      */
-    public RestOperationParamDefinition description(String name) {
+    public RestOperationResponseHeaderDefinition description(String name) {
         setDescription(name);
-        return this;
-    }
-
-    /**
-     * The default value of the parameter.
-     */
-    public RestOperationParamDefinition defaultValue(String name) {
-        setDefaultValue(name);
-        return this;
-    }
-
-    /**
-     * Whether the parameter is required
-     */
-    public RestOperationParamDefinition required(Boolean required) {
-        setRequired(required);
         return this;
     }
 
     /**
      * Sets the collection format.
      */
-    public RestOperationParamDefinition collectionFormat(CollectionFormat collectionFormat) {
+    public RestOperationResponseHeaderDefinition collectionFormat(CollectionFormat collectionFormat) {
         setCollectionFormat(collectionFormat);
         return this;
     }
@@ -249,23 +179,23 @@ public class RestOperationParamDefinition {
     /**
      * The data type of the array data type
      */
-    public RestOperationParamDefinition arrayType(String arrayType) {
+    public RestOperationResponseHeaderDefinition arrayType(String arrayType) {
         setArrayType(arrayType);
         return this;
     }
 
     /**
-     * The data type of the parameter such as <tt>string</tt>, <tt>integer</tt>, <tt>boolean</tt>
+     * The data type of the header such as <tt>string</tt>, <tt>integer</tt>, <tt>boolean</tt>
      */
-    public RestOperationParamDefinition dataType(String type) {
+    public RestOperationResponseHeaderDefinition dataType(String type) {
         setDataType(type);
         return this;
     }
 
     /**
-     * Allowed values of the parameter when its an enum type
+     * Allowed values of the header when its an enum type
      */
-    public RestOperationParamDefinition allowableValues(List<String> allowableValues) {
+    public RestOperationResponseHeaderDefinition allowableValues(List<String> allowableValues) {
         setAllowableValues(allowableValues);
         return this;
     }
@@ -273,36 +203,19 @@ public class RestOperationParamDefinition {
     /**
      * Allowed values of the parameter when its an enum type
      */
-    public RestOperationParamDefinition allowableValues(String... allowableValues) {
+    public RestOperationResponseHeaderDefinition allowableValues(String... allowableValues) {
         setAllowableValues(Arrays.asList(allowableValues));
         return this;
     }
 
     /**
-     * The parameter type such as body, form, header, path, query
+     * Ends the configuration of this header
      */
-    public RestOperationParamDefinition type(RestParamType type) {
-        setType(type);
-        return this;
-    }
-
-    /**
-     * Parameter access. Use <tt>false</tt> or <tt>internal</tt> to indicate the parameter
-     * should be hidden for the public.
-     */
-    public RestOperationParamDefinition access(String paramAccess) {
-        setAccess(paramAccess);
-        return this;
-    }
-
-    /**
-     * Ends the configuration of this parameter
-     */
-    public RestDefinition endParam() {
-        // name is mandatory
+    public RestOperationResponseMsgDefinition endHeader() {
+        // name and type is mandatory
         ObjectHelper.notEmpty(name, "name");
-        verb.getParams().add(this);
-        return verb.getRest();
+        ObjectHelper.notEmpty(dataType, "dataType");
+        return response;
     }
 
 }

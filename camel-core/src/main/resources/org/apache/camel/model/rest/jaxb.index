@@ -28,6 +28,7 @@ RestDefinition
 RestHostNameResolver
 RestOperationParamDefinition
 RestOperationResponseMsgDefinition
+RestOperationResponseHeaderDefinition
 RestParamType
 RestPropertyDefinition
 RestsDefinition
