@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.model.rest.AllowMultiple;
+import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 
@@ -70,8 +70,8 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getDefaultValue());
         assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getDefaultValue());
 
-        assertEquals(Boolean.FALSE, rest.getVerbs().get(0).getParams().get(0).getAllowMultiple());
-        assertEquals(Boolean.TRUE, rest.getVerbs().get(0).getParams().get(1).getAllowMultiple());
+        assertEquals(null, rest.getVerbs().get(0).getParams().get(0).getCollectionFormat());
+        assertEquals(CollectionFormat.multi, rest.getVerbs().get(0).getParams().get(1).getCollectionFormat());
 
         assertEquals("header_count", rest.getVerbs().get(0).getParams().get(0).getName());
         assertEquals("header_letter", rest.getVerbs().get(0).getParams().get(1).getName());
@@ -114,7 +114,7 @@ public class FromRestGetTest extends ContextTestSupport {
                         .defaultValue("1").name("header_count").required(true).access("acc1")
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
-                        .defaultValue("b").allowMultiple(AllowMultiple.multi).name("header_letter").required(false).access("acc2")
+                        .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false).access("acc2")
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .responseMessage().code("error").message("does not work").endResponseMessage()

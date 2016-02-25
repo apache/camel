@@ -33,9 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To specify the rest operation parameters using Swagger.
  * <p/>
- * This maps to the Swagger Parameter Object.
- * see com.wordnik.swagger.model.Parameter
- * and https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md#524-parameter-object.
+ * This maps to the Swagger Parameter Message Object.
  */
 @Metadata(label = "rest")
 @XmlRootElement(name = "param")
@@ -66,7 +64,7 @@ public class RestOperationParamDefinition {
 
     @XmlAttribute
     @Metadata(defaultValue = "csv")
-    private AllowMultiple allowMultiple;
+    private CollectionFormat collectionFormat;
 
     @XmlAttribute
     @Metadata(defaultValue = "string")
@@ -146,15 +144,15 @@ public class RestOperationParamDefinition {
         this.required = required;
     }
 
-    public AllowMultiple getAllowMultiple() {
-        return allowMultiple;
+    public CollectionFormat getCollectionFormat() {
+        return collectionFormat;
     }
 
     /**
-     * Sets the Swagger Parameter allowMultiple type.
+     * Sets the Swagger Parameter collection format.
      */
-    public void setAllowMultiple(AllowMultiple allowMultiple) {
-        this.allowMultiple = allowMultiple;
+    public void setCollectionFormat(CollectionFormat collectionFormat) {
+        this.collectionFormat = collectionFormat;
     }
 
     public String getArrayType() {
@@ -241,10 +239,10 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Whether the parameter can be used multiple times
+     * Sets the collection format.
      */
-    public RestOperationParamDefinition allowMultiple(AllowMultiple allowMultiple) {
-        setAllowMultiple(allowMultiple);
+    public RestOperationParamDefinition collectionFormat(CollectionFormat collectionFormat) {
+        setCollectionFormat(collectionFormat);
         return this;
     }
 
@@ -257,7 +255,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * The data type of the parameter such as <tt>string</tt>, <tt>long</tt>, <tt>int</tt>, <tt>boolean</tt>
+     * The data type of the parameter such as <tt>string</tt>, <tt>integer</tt>, <tt>boolean</tt>
      */
     public RestOperationParamDefinition dataType(String type) {
         setDataType(type);

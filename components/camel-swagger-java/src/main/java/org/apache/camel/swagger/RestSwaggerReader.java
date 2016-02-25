@@ -42,7 +42,15 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.parameters.SerializableParameter;
-import io.swagger.models.properties.*;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.BooleanProperty;
+import io.swagger.models.properties.DoubleProperty;
+import io.swagger.models.properties.FloatProperty;
+import io.swagger.models.properties.IntegerProperty;
+import io.swagger.models.properties.LongProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
@@ -54,6 +62,8 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A Camel REST-DSL swagger reader that parse the rest-dsl into a swagger model representation.
+ * <p/>
+ * This reader supports the <a href="http://swagger.io/specification/">Swagger Specification 2.0</a>
  */
 public class RestSwaggerReader {
 
@@ -193,7 +203,7 @@ public class RestSwaggerReader {
                 Parameter parameter = null;
                 if (param.getType().equals(RestParamType.body)) {
                     parameter = new BodyParameter();
-                } else if (param.getType().equals(RestParamType.form)) {
+                } else if (param.getType().equals(RestParamType.formData)) {
                     parameter = new FormParameter();
                 } else if (param.getType().equals(RestParamType.header)) {
                     parameter = new HeaderParameter();
@@ -220,7 +230,7 @@ public class RestSwaggerReader {
                                     if (param.getArrayType().equalsIgnoreCase("string")) {
                                         serializableParameter.setItems(new StringProperty());
                                     }
-                                    if (param.getArrayType().equalsIgnoreCase("integer")) {
+                                    if (param.getArrayType().equalsIgnoreCase("int") || param.getArrayType().equalsIgnoreCase("integer")) {
                                         serializableParameter.setItems(new IntegerProperty());
                                     }
                                     if (param.getArrayType().equalsIgnoreCase("long")) {
@@ -238,8 +248,8 @@ public class RestSwaggerReader {
                                 }
                             }
                         }
-                        if (param.getAllowMultiple() != null) {
-                            serializableParameter.setCollectionFormat(param.getAllowMultiple().name());
+                        if (param.getCollectionFormat() != null) {
+                            serializableParameter.setCollectionFormat(param.getCollectionFormat().name());
                         }
                         if (param.getAllowableValues() != null && !param.getAllowableValues().isEmpty()) {
                             serializableParameter.setEnum(param.getAllowableValues());
