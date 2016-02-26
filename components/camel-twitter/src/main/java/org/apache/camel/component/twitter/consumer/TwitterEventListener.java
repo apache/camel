@@ -14,27 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.twitter.consumer.streaming;
+package org.apache.camel.component.twitter.consumer;
 
-import org.apache.camel.component.twitter.TwitterEndpoint;
-import twitter4j.StallWarning;
+import java.util.EventListener;
 
-/**
- * Consumes the sample stream
- */
-public class SampleConsumer extends StreamingConsumer {
+import org.apache.camel.Exchange;
 
-    public SampleConsumer(TwitterEndpoint te) {
-        super(te);
-    }
+public interface TwitterEventListener extends EventListener {
 
-    @Override
-    protected void startStreaming() {
-        twitterStream.sample();
-    }
-
-    @Override
-    public void onStallWarning(StallWarning stallWarning) {
-        // noop
-    }
+    void onEvent(Exchange exchange);
 }

@@ -19,30 +19,25 @@ package org.apache.camel.component.twitter.consumer.timeline;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-
-import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
 /**
  * Consumes the timeline of a given user.
  */
-public class UserConsumer extends Twitter4JConsumer {
+public class UserConsumer extends AbstractStatusConsumer {
 
-    public UserConsumer(TwitterEndpoint te) {
-        super(te);
+    public UserConsumer(TwitterEndpoint endpoint) {
+        super(endpoint);
     }
 
-    public List<Status> pollConsume() throws TwitterException {
-        List<Status> list = te.getProperties().getTwitter().getUserTimeline(te.getProperties().getUser(), new Paging(lastId));
-        for (Status s : list) {
-            checkLastId(s.getId());
-        }
-        return list;
+    @Override
+    protected List<Status> doPoll() throws TwitterException {
+        return getTwitter().getUserTimeline(endpoint.getProperties().getUser(), getLastIdPaging());
     }
 
-    public List<Status> directConsume() throws TwitterException {
-        return te.getProperties().getTwitter().getUserTimeline(te.getProperties().getUser());
+    @Override
+    protected List<Status> doDirect() throws TwitterException {
+        return getTwitter().getUserTimeline(endpoint.getProperties().getUser());
     }
 }

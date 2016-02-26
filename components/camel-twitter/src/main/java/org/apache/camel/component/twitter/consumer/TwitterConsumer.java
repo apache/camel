@@ -16,38 +16,30 @@
  */
 package org.apache.camel.component.twitter.consumer;
 
-import java.io.Serializable;
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-
+import twitter4j.Paging;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 
-public abstract class Twitter4JConsumer {
+public abstract class TwitterConsumer {
 
     /**
      * Instance of TwitterEndpoint.
      */
-    protected TwitterEndpoint te;
+    protected final TwitterEndpoint endpoint;
 
     /**
      * The last tweet ID received.
      */
-    protected long lastId = 1;
+    private long lastId;
 
-    protected Twitter4JConsumer(TwitterEndpoint te) {
-        this.te = te;
-    }
-
-    /**
-     * Can't assume that the end of the list will be the most recent ID.
-     * The Twitter API sometimes returns them slightly out of order.
-     */
-    protected void checkLastId(long newId) {
-        if (newId > lastId) {
-            lastId = newId;
-        }
+    protected TwitterConsumer(TwitterEndpoint endpoint) {
+        this.endpoint = endpoint;
+        this.lastId = -1;
     }
 
     /**
@@ -55,18 +47,40 @@ public abstract class Twitter4JConsumer {
      * from directConsume() since, as an example, streaming API polling allows
      * tweets to build up between polls.
      */
-    public abstract List<? extends Serializable> pollConsume() throws TwitterException;
+    public abstract List<Exchange> pollConsume() throws TwitterException;
 
     /**
      * Called by direct consumers.
      */
-    public abstract List<? extends Serializable> directConsume() throws TwitterException;
-    
+    public abstract List<Exchange> directConsume() throws TwitterException;
+
+    /**
+     * Can't assume that the end of the list will be the most recent ID.
+     * The Twitter API sometimes returns them slightly out of order.
+     */
+    protected void setLastIdIfGreater(long newId) {
+        if (newId > lastId) {
+            lastId = newId;
+        }
+    }
+
     /**
      * Support to update the Consumer's lastId when starting the consumer
      * @param sinceId
      */
     public void setLastId(long sinceId) {
         lastId = sinceId;
+    }
+
+    protected Twitter getTwitter() {
+        return endpoint.getProperties().getTwitter();
+    }
+
+    protected long getLastId() {
+        return lastId;
+    }
+
+    protected Paging getLastIdPaging() {
+        return new Paging(lastId);
     }
 }

@@ -22,15 +22,16 @@ import org.apache.camel.impl.DefaultProducer;
 /**
  * Abstracts common producer capabilities.
  */
-public abstract class Twitter4JProducer extends DefaultProducer {
+public abstract class TwitterProducer extends DefaultProducer {
 
     /**
      * Instance of TwitterEndpoint.
      */
-    protected TwitterEndpoint te;
+    protected TwitterEndpoint endpoint;
 
-    protected Twitter4JProducer(TwitterEndpoint te) {
-        super(te);
-        this.te = te;
+    protected TwitterProducer(TwitterEndpoint endpoint) {
+        super(endpoint);
+
+        this.endpoint = endpoint;
     }
 }

@@ -23,15 +23,15 @@ import twitter4j.StallWarning;
 /**
  * Consumes the filter stream
  */
-public class FilterConsumer extends StreamingConsumer {
+public class FilterStreamingConsumer extends AbstractStreamingConsumer {
 
-    public FilterConsumer(TwitterEndpoint te) {
-        super(te);
+    public FilterStreamingConsumer(TwitterEndpoint endpoint) {
+        super(endpoint);
     }
 
     @Override
-    protected void startStreaming() {
-        twitterStream.filter(createFilter(te));
+    public void start() {
+        getTwitterStream().filter(createFilter());
     }
 
     @Override
@@ -39,9 +39,9 @@ public class FilterConsumer extends StreamingConsumer {
         // noop
     }
 
-    private FilterQuery createFilter(TwitterEndpoint te) {
+    private FilterQuery createFilter() {
         FilterQuery filterQuery = new FilterQuery();
-        String allLocationsString = te.getProperties().getLocations();
+        String allLocationsString = endpoint.getProperties().getLocations();
         if (allLocationsString != null) {
             String[] locationStrings = allLocationsString.split(";");
             double[][] locations = new double[locationStrings.length][2];
@@ -53,12 +53,12 @@ public class FilterConsumer extends StreamingConsumer {
             filterQuery.locations(locations);
         }
 
-        String keywords = te.getProperties().getKeywords();
+        String keywords = endpoint.getProperties().getKeywords();
         if (keywords != null && keywords.length() > 0) {
             filterQuery.track(keywords.split(","));
         }
 
-        String userIds = te.getProperties().getUserIds();
+        String userIds = endpoint.getProperties().getUserIds();
         if (userIds != null) {
             String[] stringUserIds = userIds.split(",");
             long[] longUserIds = new long[stringUserIds.length];
