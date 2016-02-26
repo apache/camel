@@ -18,26 +18,38 @@ package org.apache.camel.component.twitter.consumer.timeline;
 
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.component.twitter.consumer.TwitterConsumer;
+import org.apache.camel.component.twitter.consumer.TwitterEventType;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
 /**
  * Consumes the user's home timeline.
  */
-public class HomeConsumer extends AbstractStatusConsumer {
+abstract class AbstractStatusConsumer extends TwitterConsumer {
 
-    public HomeConsumer(TwitterEndpoint endpoint) {
+    public AbstractStatusConsumer(TwitterEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    protected List<Status> doPoll() throws TwitterException {
-        return getTwitter().getHomeTimeline(getLastIdPaging());
+    public List<Exchange> pollConsume() throws TwitterException {
+        List<Status> statusList =  doPoll();
+        for (int i = 0; i < statusList.size(); i++) {
+            setLastIdIfGreater(statusList.get(i).getId());
+        }
+
+        return TwitterEventType.STATUS.createExchangeList(endpoint, statusList);
     }
 
     @Override
-    protected List<Status> doDirect() throws TwitterException {
-        return getTwitter().getHomeTimeline();
+    public List<Exchange> directConsume() throws TwitterException {
+        return TwitterEventType.STATUS.createExchangeList(endpoint, doDirect());
     }
+
+    protected abstract List<Status> doPoll() throws TwitterException;
+
+    protected abstract List<Status> doDirect() throws TwitterException;
 }

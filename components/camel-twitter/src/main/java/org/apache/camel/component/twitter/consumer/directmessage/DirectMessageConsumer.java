@@ -18,31 +18,37 @@ package org.apache.camel.component.twitter.consumer.directmessage;
 
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-
+import org.apache.camel.component.twitter.consumer.TwitterConsumer;
+import org.apache.camel.component.twitter.consumer.TwitterEventType;
 import twitter4j.DirectMessage;
-import twitter4j.Paging;
 import twitter4j.TwitterException;
 
 /**
  * Consumes a user's direct messages
  */
-public class DirectMessageConsumer extends Twitter4JConsumer {
+public class DirectMessageConsumer extends TwitterConsumer {
 
     public DirectMessageConsumer(TwitterEndpoint te) {
         super(te);
     }
 
-    public List<DirectMessage> pollConsume() throws TwitterException {
-        List<DirectMessage> list = te.getProperties().getTwitter().getDirectMessages(new Paging(lastId));
-        for (DirectMessage dm : list) {
-            checkLastId(dm.getId());
+    @Override
+    public List<Exchange> pollConsume() throws TwitterException {
+        List<DirectMessage> directMessages =  getTwitter().getDirectMessages(getLastIdPaging());
+        for (int i = 0; i < directMessages.size(); i++) {
+            setLastIdIfGreater(directMessages.get(i).getId());
         }
-        return list;
+
+        return TwitterEventType.DIRECT_MESSAGE.createExchangeList(endpoint, directMessages);
     }
 
-    public List<DirectMessage> directConsume() throws TwitterException {
-        return te.getProperties().getTwitter().getDirectMessages();
+    @Override
+    public List<Exchange> directConsume() throws TwitterException {
+        return TwitterEventType.DIRECT_MESSAGE.createExchangeList(
+            endpoint,
+            getTwitter().getDirectMessages()
+        );
     }
 }

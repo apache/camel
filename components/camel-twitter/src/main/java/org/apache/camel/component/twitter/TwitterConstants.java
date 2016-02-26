@@ -19,19 +19,14 @@ package org.apache.camel.component.twitter;
 /**
  * Defines common constants
  */
-public final class TwitterConstants {
-
-    public static final String TWITTER_KEYWORDS = "CamelTwitterKeywords";
-
-    public static final String TWITTER_SEARCH_LANGUAGE = "CamelTwitterSearchLanguage";
-    public static final String TWITTER_COUNT = "CamelTwitterCount";
-    public static final String TWITTER_NUMBER_OF_PAGES = "CamelTwitterNumberOfPages";    
-    public static final String TWITTER_SINCEID = "CamelTwitterSinceId";
-    public static final String TWITTER_MAXID = "CamelTwitterMaxId";
-    public static final String TWITTER_USER = "CamelTwitterUser";
-
-    private TwitterConstants() {
-        // utility
-    }
-
+public interface TwitterConstants {
+    String TWITTER_KEYWORDS = "CamelTwitterKeywords";
+    String TWITTER_SEARCH_LANGUAGE = "CamelTwitterSearchLanguage";
+    String TWITTER_COUNT = "CamelTwitterCount";
+    String TWITTER_NUMBER_OF_PAGES = "CamelTwitterNumberOfPages";    
+    String TWITTER_SINCEID = "CamelTwitterSinceId";
+    String TWITTER_MAXID = "CamelTwitterMaxId";
+    String TWITTER_USER = "CamelTwitterUser";
+    String TWITTER_USER_ROLE = "CamelTwitterUserRole";
+    String TWITTER_EVENT_TYPE = "CamelTwitterEventType";
 }
