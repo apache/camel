@@ -16,19 +16,22 @@
  */
 package org.apache.camel.component.gridfs;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
 import com.mongodb.util.JSON;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
 
 public class GridFsProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GridFsProducer.class);
     private GridFsEndpoint endpoint;
 
     public GridFsProducer(GridFsEndpoint endpoint) {
@@ -37,54 +40,102 @@ public class GridFsProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        // set DBObject for query
-        DBObject dbObjQuery = (DBObject) JSON.parse("{_id:'inventory'}");
-
-        // set DBObject for update
-        DBObject dbObjUpdate = (DBObject) JSON.parse("{$inc:{seq:1}}");
-
-        // get inventoryID
-        DBObject invID = endpoint.getDbColCounters().findAndModify(dbObjQuery, dbObjUpdate);
-
-        // get the in message body
-        String TPID = exchange.getIn().getBody().toString();
-
-        // TODO set generic
-        // specific: get trading partner name, load_type, do_legacy
-        DBObject dbObjTPQuery = (DBObject) JSON.parse("{'tpid':'" + TPID + "'}");
-        DBObject tpName = endpoint.getDbColTP().findOne(dbObjTPQuery);
-
-        // set the tpName and tpLoadType in the headers
-        exchange.getIn().setHeader("tpName", tpName.get("name").toString());
-        exchange.getIn().setHeader("tpLoadType", tpName.get("load_type").toString());
-        // most won't have do_legacy, so catch error and default to 'Y'
-        try {
-            exchange.getIn().setHeader("tpDoLegacy", tpName.get("do_legacy").toString());
-        } catch (Exception e) {
-            exchange.getIn().setHeader("tpDoLegacy", "Y");
+        String operation = endpoint.getOperation();
+        if (operation == null) {
+            operation = exchange.getIn().getHeader("gridfs.operation", String.class);
         }
+        if (operation == null || "create".equals(operation)) {
+            final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+            Long chunkSize = exchange.getIn().getHeader("gridfs.chunksize", Long.class);
 
-        // save the TPID for move
-        exchange.getIn().setHeader("TPID", TPID);
-
-        String sInv = invID.get("seq").toString();
-        // strip off decimal
-        sInv = sInv.substring(0, sInv.lastIndexOf("."));
-        exchange.getIn().setHeader("mInv", sInv);
-
-        File file = new File(exchange.getIn().getHeader("gridFsInputFile").toString());
-        GridFSInputFile gfsFile = endpoint.getGridFs().createFile(file);
-
-        // set filename
-        gfsFile.setFilename(exchange.getIn().getHeader("gridFsFileName").toString());
-
-        // add metadata
-        String metaData = "{'inventoryID':" + sInv + ", 'TPID':'" + TPID + "', 'doc_type':'original', 'status':'initial_save'}";
-        DBObject dbObject = (DBObject) JSON.parse(metaData);
-        gfsFile.setMetaData(dbObject);
-
-        // save the input file into mongoDB
-        gfsFile.save();
+            InputStream ins = exchange.getIn().getMandatoryBody(InputStream.class);
+            GridFSInputFile gfsFile = endpoint.getGridFs().createFile(ins, filename, true);
+            if (chunkSize != null && chunkSize > 0) {
+                gfsFile.setChunkSize(chunkSize);
+            }
+            final String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+            if (ct != null) {
+                gfsFile.setContentType(ct);
+            }
+            String metaData = exchange.getIn().getHeader("gridfs.metadata", String.class);
+            DBObject dbObject = (DBObject) JSON.parse(metaData);
+            gfsFile.setMetaData(dbObject);
+            gfsFile.save();
+            exchange.getIn().setHeader(Exchange.FILE_NAME_PRODUCED, gfsFile.getFilename());
+        } else if ("remove".equals(operation)) {
+            final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+            endpoint.getGridFs().remove(filename);
+        } else if ("findOne".equals(operation)) {
+            final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+            GridFSDBFile file = endpoint.getGridFs().findOne(filename);
+            if (file != null) {
+                exchange.getIn().setBody(file.getInputStream(), InputStream.class);
+            } else {
+                throw new FileNotFoundException("No GridFS file for " + filename);
+            }
+        } else if ("listAll".equals(operation)) {
+            final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+            DBCursor cursor;
+            if (filename == null) {
+                cursor = endpoint.getGridFs().getFileList();
+            } else {
+                cursor = endpoint.getGridFs().getFileList(new BasicDBObject("filename", filename));
+            }
+            exchange.getIn().setBody(new DBCursorFilenameReader(cursor), Reader.class);
+        } else if ("count".equals(operation)) {
+            final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+            DBCursor cursor;
+            if (filename == null) {
+                cursor = endpoint.getGridFs().getFileList();
+            } else {
+                cursor = endpoint.getGridFs().getFileList(new BasicDBObject("filename", filename));
+            }
+            exchange.getIn().setBody(cursor.count(), Integer.class);
+        } 
+        
     }
 
+    
+    private class DBCursorFilenameReader extends Reader {
+        DBCursor cursor;
+        StringBuilder current;
+        int pos;
+        
+        DBCursorFilenameReader(DBCursor c) {
+            cursor = c;
+            current = new StringBuilder(4096);
+            pos = 0;
+            fill();
+        }
+        void fill() {
+            if (pos > 0) {
+                current.delete(0, pos);
+                pos = 0;
+            }
+            while (cursor.hasNext() && current.length() < 4000) {
+                DBObject o = cursor.next();
+                current.append(o.get("filename")).append("\n");
+            }
+        }
+        @Override
+        public int read(char[] cbuf, int off, int len) throws IOException {
+            if (pos == current.length()) {
+                fill();
+            }
+            if (pos == current.length()) {
+                return -1;
+            }
+            if (len > (current.length() - pos)) {
+                len = current.length() - pos;
+            }
+            current.getChars(pos, pos + len, cbuf, off);
+            pos += len;
+            return len;
+        }
+
+        @Override
+        public void close() throws IOException {
+            cursor.close();
+        }
+    }
 }

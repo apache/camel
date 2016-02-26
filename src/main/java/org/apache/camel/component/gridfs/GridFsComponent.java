@@ -18,29 +18,35 @@ package org.apache.camel.component.gridfs;
 
 import com.mongodb.Mongo;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class GridFsComponent extends DefaultComponent {
+public class GridFsComponent extends UriEndpointComponent {
 
     private final static Logger LOG = LoggerFactory.getLogger(GridFsComponent.class);
 
     private volatile Mongo db;
 
+    public GridFsComponent() {
+        super(GridFsEndpoint.class);
+    }
+    
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (db == null) {
             db = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, Mongo.class);
             LOG.debug("Resolved the connection with the name {} as {}", remaining, db);
         }
 
-        Endpoint endpoint = new GridFsEndpoint(uri, this);
+        GridFsEndpoint endpoint = new GridFsEndpoint(uri, this);
         parameters.put("mongoConnection", db);
+        endpoint.setConnectionBean(remaining);
+        endpoint.setMongoConnection(db);
         setProperties(endpoint, parameters);
-
+        
         return endpoint;
     }
 
