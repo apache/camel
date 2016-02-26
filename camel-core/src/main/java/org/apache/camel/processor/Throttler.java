@@ -301,7 +301,7 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
     private class ThrottlePermit implements Delayed {
         private volatile long scheduledTime;
 
-        public ThrottlePermit(final long delayMs) {
+        ThrottlePermit(final long delayMs) {
             setDelayMs(delayMs);
         }
 

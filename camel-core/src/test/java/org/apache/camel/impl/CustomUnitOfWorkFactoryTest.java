@@ -65,7 +65,7 @@ public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
 
     private class MyUnitOfWork extends DefaultUnitOfWork {
 
-        public MyUnitOfWork(Exchange exchange) {
+        MyUnitOfWork(Exchange exchange) {
             super(exchange);
         }
 

@@ -2033,8 +2033,8 @@ public final class ExpressionBuilder {
         private final String toStringValue;
         private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
 
-        public KeyedOgnlExpressionAdapter(String ognl, String toStringValue, 
-                                          KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
+        KeyedOgnlExpressionAdapter(String ognl, String toStringValue, 
+                                   KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
             this.ognl = ognl;
             this.toStringValue = toStringValue;
             this.keyedEntityRetrievalStrategy = keyedEntityRetrievalStrategy;

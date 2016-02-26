@@ -470,7 +470,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         }
     }
 
-    public static enum MatchType {
+    public enum MatchType {
         EXACT, SUBSET, SUPER_SET
     }
 

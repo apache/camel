@@ -224,7 +224,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
         private final Properties properties;
 
-        public BridgePropertyPlaceholderResolver(Properties properties) {
+        BridgePropertyPlaceholderResolver(Properties properties) {
             this.properties = properties;
         }
 

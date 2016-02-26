@@ -1108,8 +1108,8 @@ public class XmlConverter {
             // Disable the external-general-entities by default
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}."
-                     , new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
+            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                     new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
         }
         // setup the SecurityManager by default if it's apache xerces
         try {
@@ -1120,8 +1120,8 @@ public class XmlConverter {
                 factory.setAttribute("http://apache.org/xml/properties/security-manager", sm);
             }
         } catch (Exception e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}."
-                     , new Object[]{"http://apache.org/xml/properties/security-manager", e});
+            LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}.",
+                     new Object[]{"http://apache.org/xml/properties/security-manager", e});
         }
         // setup the feature from the system property
         setupFeatures(factory);
@@ -1215,8 +1215,8 @@ public class XmlConverter {
         try {
             sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (Exception e) {
-            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}."
-                    , new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
+                     new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
         }
         sfactory.setNamespaceAware(true);
         return sfactory;

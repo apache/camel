@@ -96,7 +96,7 @@ public final class GZIPHelper {
         return isGzip(message.getHeader(Exchange.CONTENT_ENCODING, String.class), message.getExchange());
     }
     
-    public static boolean isGzip(String header , Exchange exchange) {
+    public static boolean isGzip(String header, Exchange exchange) {
         if (exchange == null || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             return isGzip(header);
         } else {

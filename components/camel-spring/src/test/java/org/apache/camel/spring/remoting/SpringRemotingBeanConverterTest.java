@@ -35,7 +35,7 @@ public class SpringRemotingBeanConverterTest extends TestCase {
         
         Invoker invoker = applicationContext.getBean("invokerProxy", Invoker.class);
         String response = invoker.invoke(new Bean.SubClass());
-        assertEquals("Hello from Sub" , response);
+        assertEquals("Hello from Sub", response);
 
         camelContext.stop();
         IOHelper.close(applicationContext);

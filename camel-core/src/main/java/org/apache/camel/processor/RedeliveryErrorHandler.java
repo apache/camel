@@ -129,7 +129,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         private final AsyncCallback callback;
         private final RedeliveryData data;
 
-        public AsyncRedeliveryTask(Exchange exchange, AsyncCallback callback, RedeliveryData data) {
+        AsyncRedeliveryTask(Exchange exchange, AsyncCallback callback, RedeliveryData data) {
             this.exchange = exchange;
             this.callback = callback;
             this.data = data;

@@ -151,7 +151,7 @@ public final class EndpointHelper {
 
         private final String syntax;
 
-        public EndpointPathComparator(String syntax) {
+        EndpointPathComparator(String syntax) {
             this.syntax = syntax;
         }
 

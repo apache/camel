@@ -44,7 +44,7 @@ public interface Container {
     /**
      * The <code>Instance</code> class holds a <code>Container</code> singleton.
      */
-    public static final class Instance {
+    final class Instance {
 
         private static final Logger LOG = LoggerFactory.getLogger(Container.class);
         private static Container container;

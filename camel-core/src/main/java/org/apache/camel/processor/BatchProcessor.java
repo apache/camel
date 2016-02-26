@@ -339,7 +339,7 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
         private final Queue<String> completionPredicateMatched = new ConcurrentLinkedQueue<String>();
         private Condition exchangeEnqueuedCondition = queueLock.newCondition();
 
-        public BatchSender() {
+        BatchSender() {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Batch Sender"));
             this.queue = new LinkedList<Exchange>();
         }

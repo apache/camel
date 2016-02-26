@@ -71,7 +71,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         private final Exchange exchange;
         private final AsyncCallback callback;
 
-        public ProcessCall(Exchange exchange, AsyncCallback callback) {
+        ProcessCall(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
             this.callback = callback;
         }

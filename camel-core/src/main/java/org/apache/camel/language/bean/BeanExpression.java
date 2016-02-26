@@ -228,7 +228,7 @@ public class BeanExpression implements Expression, Predicate {
         private final BeanHolder beanHolder;
         private Object result;
 
-        public OgnlInvokeProcessor(BeanHolder beanHolder, String ognl) {
+        OgnlInvokeProcessor(BeanHolder beanHolder, String ognl) {
             this.beanHolder = beanHolder;
             this.ognl = ognl;
             // we must start with having bean as the result

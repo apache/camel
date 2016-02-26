@@ -64,7 +64,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
 
     private static final class MyProducer extends DefaultProducer implements ServicePoolAware {
 
-        public MyProducer(Endpoint endpoint) {
+        MyProducer(Endpoint endpoint) {
             super(endpoint);
         }
 

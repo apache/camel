@@ -19,7 +19,6 @@ package org.apache.camel.component.jackson.converter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonConstants;
-import org.apache.camel.component.jackson.converter.Order;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
