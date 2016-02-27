@@ -30,21 +30,21 @@
 
   <dependencies>
 
+    <!-- camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cdi</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-swagger-java</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-netty4-http</artifactId>
+      <artifactId>camel-undertow</artifactId>
     </dependency>
 
+    <!-- for json support -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>

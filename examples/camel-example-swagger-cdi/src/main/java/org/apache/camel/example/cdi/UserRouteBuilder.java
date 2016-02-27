@@ -32,9 +32,9 @@ public class UserRouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        // configure we want to use servlet as the component for the rest DSL
+        // configure we want to use undertow as the component for the rest DSL
         // and we enable json binding mode
-        restConfiguration().component("netty4-http")
+        restConfiguration().component("undertow")
             // use json binding mode so Camel automatic binds json <--> pojo
             .bindingMode(RestBindingMode.json)
             // and output using pretty print
