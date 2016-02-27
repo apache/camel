@@ -116,7 +116,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                     DataHolder holder = new DataHolder();
                     holder.manager = entityManager;
                     holder.result = result;
-                    holder.exchange = createExchange(result);
+                    holder.exchange = createExchange(result, entityManager);
                     answer.add(holder);
                 }
 
@@ -502,10 +502,10 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    protected Exchange createExchange(Object result) {
+    protected Exchange createExchange(Object result, EntityManager entityManager) {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setBody(result);
-        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
+        exchange.getIn().setHeader(JpaConstants.ENTITY_MANAGER, entityManager);
         return exchange;
     }
 
