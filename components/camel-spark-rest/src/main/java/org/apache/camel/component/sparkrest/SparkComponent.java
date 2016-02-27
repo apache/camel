@@ -181,8 +181,11 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        SparkConfiguration config = getSparkConfiguration().copy();
+        setProperties(config, parameters);
+
         SparkEndpoint answer = new SparkEndpoint(uri, this);
-        answer.setSparkConfiguration(getSparkConfiguration());
+        answer.setSparkConfiguration(config);
         answer.setSparkBinding(getSparkBinding());
         setProperties(answer, parameters);
 

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.sparkrest;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
-public class SparkConfiguration {
+public class SparkConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "true")
     private boolean mapHeaders = true;
@@ -30,9 +31,23 @@ public class SparkConfiguration {
     private boolean urlDecodeHeaders;
     @UriParam
     private boolean transferException;
+    @UriParam(label = "advanced")
+    private boolean matchOnUriPrefix;
 
     public boolean isMapHeaders() {
         return mapHeaders;
+    }
+
+    /**
+     * Returns a copy of this configuration
+     */
+    public SparkConfiguration copy() {
+        try {
+            SparkConfiguration copy = (SparkConfiguration) clone();
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     /**
@@ -87,4 +102,16 @@ public class SparkConfiguration {
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
+
+    public boolean isMatchOnUriPrefix() {
+        return matchOnUriPrefix;
+    }
+
+    /**
+     * Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
+     */
+    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
+    }
+
 }
