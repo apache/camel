@@ -27,9 +27,11 @@ public class UserRouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        // configure we want to use spark-rest as the component for the rest DSL
-        // and we enable json binding mode
-        restConfiguration().component("spark-rest").bindingMode(RestBindingMode.json)
+        // configure we want to use spark-rest on port 8080 as the component for the rest DSL
+        // and for the swagger api-doc as well
+        restConfiguration().component("spark-rest").apiContextPath("api-doc").port(8080)
+            // and we enable json binding mode
+            .bindingMode(RestBindingMode.json)
             // and output using pretty print
             .dataFormatProperty("prettyPrint", "true");
 

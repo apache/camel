@@ -25,10 +25,9 @@
     <version>2.17-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-example-spark-rest-tomcat</artifactId>
-  <name>Camel :: Example :: Spark REST Tomcat</name>
-  <description>An example using Spark REST with Apache Tomcat</description>
-  <packaging>war</packaging>
+  <artifactId>camel-example-spark-rest</artifactId>
+  <name>Camel :: Example :: Spark REST</name>
+  <description>An example using Spark REST</description>
 
   <dependencies>
 
@@ -44,13 +43,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spark-rest</artifactId>
-      <!-- exclude javax servlet as its already part of the servlet container -->
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.jetty.orbit</groupId>
-          <artifactId>javax.servlet</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-swagger-java</artifactId>
     </dependency>
 
     <!-- use for json binding -->
@@ -78,20 +74,13 @@
   </dependencies>
 
   <build>
-    <!-- we do not want version in the WAR name -->
- 	<finalName>${project.artifactId}</finalName>
 
+    <!-- to run with mvn camel:run -->
     <plugins>
       <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty9-version}</version>
-        <configuration>
-        	<webApp>
-        		<contextPath>/${project.artifactId}</contextPath>
-        	</webApp>
-        </configuration>
-
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
       </plugin>
     </plugins>
   </build>

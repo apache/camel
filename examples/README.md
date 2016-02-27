@@ -41,11 +41,6 @@ All examples have been sort by type/category
 * [camel-example-cafe](camel-example-cafe/README.md)
 * [camel-example-bam](camel-example-bam/README.md)
 
-##### Big data
-
-* [camel-example-spark-rest-tomcat](camel-example-spark-rest-tomcat/README.md)
-* [camel-example-splunk](camel-example-splunk/README.md)
-
 ##### CDI
 
 * [camel-example-cdi](camel-example-cdi/README.md)
@@ -69,7 +64,7 @@ All examples have been sort by type/category
 * [camel-example-restlet-jdbc](camel-example-restlet-jdbc/README.md)
 * [camel-example-sql](camel-example-sql/README.md)
 
-##### MoM  
+##### Messaging 
 
 * [camel-example-activemq-tomcat](camel-example-activemq-tomcat/README.md)
 * [camel-example-jms-file](camel-example-jms-file/README.md)
@@ -96,17 +91,22 @@ All examples have been sort by type/category
 * [camel-example-spring-ws](camel-example-spring-ws/README.md)
 * [camel-example-spring-xquery](camel-example-spring-xquery/README.md)
 
-##### Swagger
+##### Rest & Swagger
 
+* [camel-example-spark-rest](camel-example-spark-rest/README.md)
 * [camel-example-swagger-cdi](camel-example-swagger-cdi/README.md)
 * [camel-example-swagger-xml](camel-example-swagger-xml/README.md)
+
+##### Management & Monitoring
+
+* [camel-example-splunk](camel-example-splunk/README.md)
+* [camel-example-management](camel-example-management/README.md)
 
 ##### Miscellaneous
 
 * [camel-example-servlet-tomcat](camel-example-servlet-tomcat/README.md)
 * [camel-example-servlet-tomcat-no-spring](camel-example-servlet-tomcat-no-spring/README.md)
 * [camel-example-netty-http](camel-example-netty-http/README.md)
-* [camel-example-management](camel-example-management/README.md)
 
 ##### WS-SOAP
 
