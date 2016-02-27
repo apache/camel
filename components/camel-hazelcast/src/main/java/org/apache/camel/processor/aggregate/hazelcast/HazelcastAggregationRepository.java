@@ -399,10 +399,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     @Override
     protected void doStop() throws Exception {
-        if (useRecovery) {
-            persistedCache.clear();
-        }
-        cache.clear();
+        //noop
         if (useLocalHzInstance) {
             hzInstance.getLifecycleService().shutdown();
         }
