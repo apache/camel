@@ -38,10 +38,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-spark-rest</artifactId>
     </dependency>
     <dependency>
@@ -53,12 +49,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>
-    </dependency>
-
-    <!-- we need spring web -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
     </dependency>
 
     <!-- logging -->
@@ -81,6 +71,9 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>${project.version}</version>
+        <configuration>
+          <mainClass>org.apache.camel.example.spark.UserMain</mainClass>
+        </configuration>
       </plugin>
     </plugins>
   </build>
