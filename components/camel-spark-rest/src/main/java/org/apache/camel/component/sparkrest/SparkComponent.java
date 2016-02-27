@@ -26,13 +26,14 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
-public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory {
+public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
     private final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
 
@@ -237,6 +238,18 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration, parameters, false);
+    }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
+        return doCreateConsumer(camelContext, processor, "get", contextPath, null, null, null, configuration, parameters, true);
+    }
+
+    Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                              String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -280,11 +293,16 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             }
         }
 
-        String uri = String.format("spark-rest:%s:%s", verb, path);
+        String url;
+        if (api) {
+            url = "spark-rest:%s:%s?matchOnUriPrefix=true";
+        } else {
+            url = "spark-rest:%s:%s";
+        }
+
+        url = String.format(url, verb, path);
 
         String query = URISupport.createQueryString(map);
-
-        String url = uri;
         if (!query.isEmpty()) {
             url = url + "?" + query;
         }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sparkrest;
 
+import spark.Filter;
 import spark.Route;
 import spark.Spark;
 

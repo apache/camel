@@ -43,6 +43,8 @@ public class SparkEndpoint extends DefaultEndpoint {
     private SparkConfiguration sparkConfiguration;
     @UriParam
     private SparkBinding sparkBinding;
+    @UriParam
+    private boolean matchOnUriPrefix;
 
     public SparkEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -103,6 +105,17 @@ public class SparkEndpoint extends DefaultEndpoint {
         this.accept = accept;
     }
 
+    public boolean isMatchOnUriPrefix() {
+        return matchOnUriPrefix;
+    }
+
+    /**
+     * Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
+     */
+    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Producer not supported");
@@ -128,7 +141,8 @@ public class SparkEndpoint extends DefaultEndpoint {
         ObjectHelper.notEmpty(verb, "verb", this);
         ObjectHelper.notEmpty(path, "path", this);
 
-        // verb must be supported by Spark
-        HttpMethod.valueOf(verb);
+        // verb must be supported by Spark and lets convert to the actual name
+        HttpMethod method = getCamelContext().getTypeConverter().mandatoryConvertTo(HttpMethod.class, verb);
+        verb = method.name();
     }
 }
