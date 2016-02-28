@@ -114,7 +114,10 @@ public class BeanExpression implements Expression, Predicate {
                 ognl.process(exchange);
                 return ognl.getResult();
             } catch (Exception e) {
-                throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
+                if (e instanceof RuntimeBeanExpressionException) {
+                    throw (RuntimeBeanExpressionException) e;
+                }
+                throw new RuntimeBeanExpressionException(exchange, getBeanName(beanName, beanHolder), method, e);
             }
         } else {
             // regular non ognl invocation
@@ -123,7 +126,10 @@ public class BeanExpression implements Expression, Predicate {
                 invoke.process(exchange);
                 return invoke.getResult();
             } catch (Exception e) {
-                throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
+                if (e instanceof RuntimeBeanExpressionException) {
+                    throw (RuntimeBeanExpressionException) e;
+                }
+                throw new RuntimeBeanExpressionException(exchange, getBeanName(beanName, beanHolder), method, e);
             }
         }
     }
@@ -160,6 +166,17 @@ public class BeanExpression implements Expression, Predicate {
             throw new IllegalArgumentException("Either bean, beanName or type should be set on " + this);
         }
         return holder;
+    }
+
+    private static String getBeanName(String beanName, BeanHolder beanHolder) {
+        String name = beanName;
+        if (name == null && beanHolder != null && beanHolder.getBean() != null) {
+            name = beanHolder.getBean().getClass().getCanonicalName();
+        }
+        if (name == null && beanHolder != null && beanHolder.getBeanInfo() != null && beanHolder.getBeanInfo().getType() != null) {
+            name = beanHolder.getBeanInfo().getType().getCanonicalName();
+        }
+        return name;
     }
 
     /**
@@ -251,20 +268,35 @@ public class BeanExpression implements Expression, Predicate {
 
             // loop and invoke each method
             Object beanToCall = beanHolder.getBean();
+            Class<?> beanType = beanHolder.getBeanInfo().getType();
+
             // there must be a bean to call with, we currently does not support OGNL expressions on using purely static methods
-            if (beanToCall == null) {
-                throw new IllegalArgumentException("Bean instance is null. OGNL bean expressions requires bean instances.");
+            if (beanToCall == null && beanType == null) {
+                throw new IllegalArgumentException("Bean instance and bean type is null. OGNL bean expressions requires to have either a bean instance of the class name of the bean to use.");
             }
 
             // Split ognl except when this is not a Map, Array
             // and we would like to keep the dots within the key name
             List<String> methods = OgnlHelper.splitOgnl(ognl);
 
+            String methodChain = "";
             for (String methodName : methods) {
-                BeanHolder holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
+                BeanHolder holder;
+                if (beanToCall != null) {
+                    holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
+                } else if (beanType != null) {
+                    holder = new ConstantTypeBeanHolder(beanType, exchange.getContext());
+                } else {
+                    holder = null;
+                }
 
                 // support the null safe operator
                 boolean nullSafe = OgnlHelper.isNullSafeOperator(methodName);
+
+                if (holder == null) {
+                    String name = getBeanName(null, beanHolder);
+                    throw new RuntimeBeanExpressionException(exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method " + methodName + " on a null instance");
+                }
 
                 // keep up with how far are we doing
                 ognlPath += methodName;
@@ -291,6 +323,7 @@ public class BeanExpression implements Expression, Predicate {
                     }
 
                     result = invoke.getResult();
+                    methodChain += "." + methodName;
                 }
 
                 // if there was a key then we need to lookup using the key
@@ -305,6 +338,7 @@ public class BeanExpression implements Expression, Predicate {
 
                 // prepare for next bean to invoke
                 beanToCall = result;
+                beanType = null;
             }
         }
 

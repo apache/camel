@@ -76,6 +76,7 @@ public class BeanInfo {
     private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
     private List<MethodInfo> operationsWithHandlerAnnotation = new ArrayList<MethodInfo>();
     private Map<Method, MethodInfo> methodMap = new HashMap<Method, MethodInfo>();
+    private boolean publicConstructors;
 
     static {
         // exclude all java.lang.Object methods as we dont want to invoke them
@@ -122,6 +123,7 @@ public class BeanInfo {
             operationsWithCustomAnnotation = beanInfo.operationsWithCustomAnnotation;
             operationsWithHandlerAnnotation = beanInfo.operationsWithHandlerAnnotation;
             methodMap = beanInfo.methodMap;
+            publicConstructors = beanInfo.publicConstructors;
             return;
         }
 
@@ -298,6 +300,9 @@ public class BeanInfo {
         ObjectHelper.notNull(clazz, "clazz", this);
 
         LOG.trace("Introspecting class: {}", clazz);
+
+        // does the class have any public constructors?
+        publicConstructors = clazz.getConstructors().length > 0;
 
         // favor declared methods, and then filter out duplicate interface methods
         List<Method> methods;
@@ -1140,6 +1145,13 @@ public class BeanInfo {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns whether the bean class has any public constructors.
+     */
+    public boolean hasPublicConstructors() {
+        return publicConstructors;
     }
 
     /**
