@@ -24,7 +24,7 @@ All examples have been sort by type/category
 
 ##### EIP
 
-* [camel-example-widget-gadget-java](camel-example-widget-gadget-cdi/README.md)
+* [camel-example-widget-gadget-cdi](camel-example-widget-gadget-cdi/README.md)
 * [camel-example-widget-gadget-java](camel-example-widget-gadget-java/README.md)
 * [camel-example-widget-gadget-xml](camel-example-widget-gadget-xml/README.md)
 * [camel-example-tracer](camel-example-tracer/README.md)
@@ -33,13 +33,12 @@ All examples have been sort by type/category
 * [camel-example-etl](camel-example-etl/README.md)
 * [camel-example-loadbalancing](camel-example-loadbalancing/README.md)
 
-##### "Real" use case
+##### Tutorials
 
 * [camel-example-loan-broker](camel-example-loan-broker/README.md)
 * [camel-example-reportincident](camel-example-reportincident/README.md)
 * [camel-example-reportincident-wssecurity](camel-example-reportincident-wssecurity/README.md)
 * [camel-example-cafe](camel-example-cafe/README.md)
-* [camel-example-bam](camel-example-bam/README.md)
 
 ##### CDI
 
@@ -56,7 +55,7 @@ All examples have been sort by type/category
 * [camel-example-sql-blueprint](camel-example-sql-blueprint/README.md)
 * [camel-example-servlet-rest-blueprint](camel-example-servlet-rest-blueprint/README.md)
 
-##### DB
+##### Database
 
 * [camel-example-restlet-jdbc](camel-example-restlet-jdbc/README.md)
 * [camel-example-mybatis](camel-example-mybatis/README.md)
@@ -99,8 +98,9 @@ All examples have been sort by type/category
 
 ##### Management & Monitoring
 
-* [camel-example-splunk](camel-example-splunk/README.md)
+* [camel-example-bam](camel-example-bam/README.md)
 * [camel-example-management](camel-example-management/README.md)
+* [camel-example-splunk](camel-example-splunk/README.md)
 
 ##### Miscellaneous
 
@@ -108,7 +108,7 @@ All examples have been sort by type/category
 * [camel-example-servlet-tomcat-no-spring](camel-example-servlet-tomcat-no-spring/README.md)
 * [camel-example-netty-http](camel-example-netty-http/README.md)
 
-##### WS-SOAP
+##### WebService SOAP
 
 * [camel-example-cxf](camel-example-cxf/README.md)
 * [camel-example-cxf-blueprint](camel-example-cxf-blueprint/README.md)
