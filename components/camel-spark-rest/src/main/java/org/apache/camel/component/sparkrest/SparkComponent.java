@@ -30,6 +30,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -216,8 +217,24 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
                 CamelSpark.port(port);
             }
         }
-        if (getIpAddress() != null) {
-            CamelSpark.ipAddress(getIpAddress());
+
+        String host = getIpAddress();
+        if (host != null) {
+            CamelSpark.ipAddress(host);
+        } else {
+            // if no explicit port configured, then use port from rest configuration
+            RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
+            host = config.getHost();
+            if (ObjectHelper.isEmpty(host)) {
+                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                    host = "0.0.0.0";
+                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                    host = HostUtils.getLocalHostName();
+                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                    host = HostUtils.getLocalIp();
+                }
+            }
+            CamelSpark.ipAddress(host);
         }
 
         if (keystoreFile != null || truststoreFile != null) {
