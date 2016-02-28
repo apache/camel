@@ -51,7 +51,7 @@ public class IronMQConfiguration {
 
     // consumer properties
     @UriParam(defaultValue = "1", label = "consumer")
-    private Integer concurrentConsumers = 1;
+    private int concurrentConsumers = 1;
     
     @UriParam(label = "consumer")
     private boolean batchDelete;
@@ -76,14 +76,14 @@ public class IronMQConfiguration {
         this.client = client;
     }
 
-    public Integer getConcurrentConsumers() {
+    public int getConcurrentConsumers() {
         return concurrentConsumers;
     }
 
     /**
      * The number of concurrent consumers.
      */
-    public void setConcurrentConsumers(Integer concurrentConsumers) {
+    public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
 
@@ -92,7 +92,7 @@ public class IronMQConfiguration {
     }
 
     /**
-     * IronMq projectId
+     * IronMQ projectId
      */
     public void setProjectId(String projectId) {
         this.projectId = projectId;
@@ -103,7 +103,7 @@ public class IronMQConfiguration {
     }
 
     /**
-     * IronMq token
+     * IronMQ token
      */
     public void setToken(String token) {
         this.token = token;
@@ -136,7 +136,7 @@ public class IronMQConfiguration {
     }
 
     /**
-     * sets the timeout
+     * After timeout (in seconds), item will be placed back onto the queue.
      */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
@@ -147,7 +147,7 @@ public class IronMQConfiguration {
     }
 
     /**
-     * Number of messages to poll pr. call
+     * Number of messages to poll pr. call. Maximum is 100.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
@@ -158,7 +158,8 @@ public class IronMQConfiguration {
     }
 
     /**
-     * Set's the visibility delay in seconds.
+     * The item will not be available on the queue until this many seconds have passed. 
+     * Default is 0 seconds.
      */
     public void setVisibilityDelay(int visibilityDelay) {
         this.visibilityDelay = visibilityDelay;
@@ -169,7 +170,9 @@ public class IronMQConfiguration {
     }
 
     /**
-     * Should camel message headers be preserved when publishing messages
+     * Should message headers be preserved when publishing messages.
+     * This will add the Camel headers to the Iron MQ message as a json payload with a header list, and a message body.
+     * Useful when Camel is both consumer and producer.
      */
     public void setPreserveHeaders(boolean preserveHeaders) {
         this.preserveHeaders = preserveHeaders;
@@ -180,7 +183,9 @@ public class IronMQConfiguration {
     }
 
     /**
-     * Shold messages be deleted in one batch or one at the time
+     * Should messages be deleted in one batch. 
+     * This will limit the number of api requests since messages are deleted in one request, instead of one pr. exchange. 
+     * If enabled care should be taken that the consumer is idempotent when processing exchanges.
      */
     public void setBatchDelete(boolean batchDelete) {
         this.batchDelete = batchDelete;
@@ -191,7 +196,8 @@ public class IronMQConfiguration {
     }
 
     /**
-     * Sets the wait
+     * Time in seconds to wait for a message to become available. 
+     * This enables long polling. Default is 0 (does not wait), maximum is 30.
      */
     public void setWait(int wait) {
         this.wait = wait;
