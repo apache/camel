@@ -302,7 +302,7 @@
   <feature name='camel-couchdb' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lightcouch/${lightcouch-bundle-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.code.gson/gson/${lightcouch-gson-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.code.gson/gson/${lightcouch-gson-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
@@ -514,7 +514,7 @@
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.code.gson/gson/${gson-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.code.geocoder-java/geocoder-java/${geocoder-java-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-geocoder/${project.version}</bundle>
   </feature>
@@ -586,7 +586,7 @@
     <bundle>mvn:org.apache.camel/camel-groovy/${project.version}</bundle>
   </feature>
   <feature name='camel-gson' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>wrap:mvn:com.google.code.gson/gson/${gson-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-gson/${project.version}</bundle>
   </feature>
@@ -939,7 +939,7 @@
     <bundle>mvn:net.minidev/json-smart/${json-smart-version}</bundle>
     <bundle>mvn:net.minidev/accessors-smart/${json-accessors-smart-version}</bundle>
     <!-- should be optional: https://code.google.com/p/json-path/issues/detail?id=66 -->
-    <bundle dependency='true'>wrap:mvn:com.google.code.gson/gson/${gson-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
