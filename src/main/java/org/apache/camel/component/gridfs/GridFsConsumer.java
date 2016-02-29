@@ -19,22 +19,102 @@
 
 package org.apache.camel.component.gridfs;
 
+import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.gridfs.GridFSDBFile;
+import com.mongodb.util.JSON;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * 
  */
-public class GridFsConsumer extends DefaultConsumer {
-    final GridFsEndpoint ep;
-    
+public class GridFsConsumer extends DefaultConsumer implements Runnable {
+    final GridFsEndpoint endpoint;
+    private ExecutorService executor;
+
     /**
      * @param endpoint
      * @param processor
      */
     public GridFsConsumer(GridFsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        ep = endpoint;
+        this.endpoint = endpoint;
     }
 
+    
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (executor != null) {
+            executor.shutdown();
+            executor = null;
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), 1);
+        executor.execute(this);
+    }
+
+    @Override
+    public void run() {
+        DBCursor c = null;
+        java.util.Date fromDate = new java.util.Date();
+        try {
+            Thread.sleep(endpoint.getInitialDelay());
+            while (isStarted()) {                
+                if (c == null || c.getCursorId() == 0) {
+                    if (c != null) {
+                        c.close();
+                    }
+                    String queryString = endpoint.getQuery();
+                    DBObject query;
+                    if (queryString == null) {
+                        query = new BasicDBObject();
+                    } else {
+                        query = (DBObject) JSON.parse(queryString);
+                    }
+                    
+                    query.put("uploadDate", new BasicDBObject("$gte", fromDate));
+                    c = endpoint.getFilesCollection().find(query);
+                    fromDate = new java.util.Date();
+                }
+                while (c.hasNext() && isStarted()) {
+                    GridFSDBFile file = (GridFSDBFile)c.next();
+                    file = endpoint.getGridFs().findOne(new BasicDBObject("_id", file.getId()));
+                    
+                    Exchange exchange = endpoint.createExchange();
+                    exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_METADATA, JSON.serialize(file.getMetaData()));
+                    exchange.getIn().setHeader(Exchange.FILE_CONTENT_TYPE, file.getContentType());
+                    exchange.getIn().setHeader(Exchange.FILE_LENGTH, file.getLength());
+                    exchange.getIn().setHeader(Exchange.FILE_LAST_MODIFIED, file.getUploadDate());
+                    exchange.getIn().setBody(file.getInputStream(), InputStream.class);
+                    try {
+                        getProcessor().process(exchange);
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+                Thread.sleep(endpoint.getDelay());
+            }
+        } catch (Throwable e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        if (c != null) {
+            c.close();
+        }
+    }
+    
 }

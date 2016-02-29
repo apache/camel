@@ -24,18 +24,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class GridFsConsumerOperationsTest extends AbstractMongoDbTest {
+public class GridFsProducerOperationsTest extends AbstractMongoDbTest {
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:create").to("gridfs:myDb?database={{mongodb.testDb}}&operation=create");
-                from("direct:remove").to("gridfs:myDb?database={{mongodb.testDb}}&operation=remove");
-                from("direct:findOne").to("gridfs:myDb?database={{mongodb.testDb}}&operation=findOne");
-                from("direct:listAll").to("gridfs:myDb?database={{mongodb.testDb}}&operation=listAll");
-                from("direct:count").to("gridfs:myDb?database={{mongodb.testDb}}&operation=count");
-                from("direct:headerOp").to("gridfs:myDb?database={{mongodb.testDb}}");
+                from("direct:create").to("gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
+                from("direct:remove").to("gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=" + getBucket());
+                from("direct:findOne").to("gridfs:myDb?database={{mongodb.testDb}}&operation=findOne&bucket=" + getBucket());
+                from("direct:listAll").to("gridfs:myDb?database={{mongodb.testDb}}&operation=listAll&bucket=" + getBucket());
+                from("direct:count").to("gridfs:myDb?database={{mongodb.testDb}}&operation=count&bucket=" + getBucket());
+                from("direct:headerOp").to("gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket());
             }
         };
     }

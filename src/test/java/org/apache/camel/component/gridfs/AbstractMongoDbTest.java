@@ -29,8 +29,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
-    protected static MongoClient mongo;
-    protected static GridFS gridfs;
+    protected MongoClient mongo;
+    protected GridFS gridfs;
 
     protected ApplicationContext applicationContext;
 
@@ -38,9 +38,18 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     @Override
     public void doPostSetup() {
         mongo = applicationContext.getBean(MongoClient.class);
-        gridfs = new GridFS(mongo.getDB("test"));
+        gridfs = new GridFS(mongo.getDB("test"), getBucket());
     }
 
+    public String getBucket() {
+        return this.getClass().getSimpleName();
+    }
+    
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        mongo.close();
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

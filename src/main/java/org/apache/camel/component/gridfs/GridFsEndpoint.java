@@ -17,6 +17,7 @@
 package org.apache.camel.component.gridfs;
 
 import com.mongodb.DB;
+import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
@@ -35,6 +36,9 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "gridfs", title = "MongoDBGridFS", syntax = "gridfs:connectionBean", 
             label = "database,nosql")
 public class GridFsEndpoint extends DefaultEndpoint {
+    public static final String GRIDFS_OPERATION = "gridfs.operation";
+    public static final String GRIDFS_METADATA = "gridfs.metadata";
+    public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
 
     private static final Logger LOG = LoggerFactory.getLogger(GridFsEndpoint.class);
 
@@ -53,10 +57,18 @@ public class GridFsEndpoint extends DefaultEndpoint {
     @UriParam
     private String operation;
 
+    @UriParam
+    private String query;
+    @UriParam
+    private long initialDelay = 1000;
+    @UriParam
+    private long delay = 500;
+    
     
     private Mongo mongoConnection;
     private DB db;
     private GridFS gridFs;
+    private DBCollection filesCollection;
 
     public GridFsEndpoint(String uri, GridFsComponent component) {
         super(uri, component);
@@ -88,7 +100,11 @@ public class GridFsEndpoint extends DefaultEndpoint {
         if (db == null) {
             throw new IllegalStateException("Could not initialize GridFsComponent. Database " + database + " does not exist.");
         }
-        gridFs = new GridFS(db, bucket == null ? GridFS.DEFAULT_BUCKET : bucket);
+        gridFs = new GridFS(db, bucket == null ? GridFS.DEFAULT_BUCKET : bucket) {
+            {
+                filesCollection = getFilesCollection();
+            }
+        };
     }
 
     
@@ -121,8 +137,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
     
     
     // ======= Getters and setters ===============================================
-
-
     public String getConnectionBean() {
         return connectionBean;
     }
@@ -151,6 +165,25 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
     public void setBucket(String bucket) {
         this.bucket = bucket;
+    }
+    
+    public String getQuery() {
+        return query;
+    }
+    public void setQuery(String query) {
+        this.query = query;
+    }
+    public long getDelay() {
+        return delay;
+    }
+    public void setDelay(long delay) {
+        this.delay = delay;
+    }
+    public long getInitialDelay() {
+        return initialDelay;
+    }
+    public void setInitialDelay(long initialDelay) {
+        this.initialDelay = delay;
     }
     
     /**
@@ -225,4 +258,8 @@ public class GridFsEndpoint extends DefaultEndpoint {
     public void setGridFs(GridFS gridFs) {
         this.gridFs = gridFs;
     }
+    public DBCollection getFilesCollection() {
+        return filesCollection;
+    }
+
 }

@@ -31,11 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
 
-public class GridFsProducer extends DefaultProducer {
-    public static final String GRIDFS_OPERATION = "gridfs.operation";
-    public static final String GRIDFS_METADATA = "gridfs.metadata";
-    public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
-    
+public class GridFsProducer extends DefaultProducer {    
     private GridFsEndpoint endpoint;
 
     public GridFsProducer(GridFsEndpoint endpoint) {
@@ -46,11 +42,11 @@ public class GridFsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String operation = endpoint.getOperation();
         if (operation == null) {
-            operation = exchange.getIn().getHeader(GRIDFS_OPERATION, String.class);
+            operation = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_OPERATION, String.class);
         }
         if (operation == null || "create".equals(operation)) {
             final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-            Long chunkSize = exchange.getIn().getHeader(GRIDFS_CHUNKSIZE, Long.class);
+            Long chunkSize = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_CHUNKSIZE, Long.class);
 
             InputStream ins = exchange.getIn().getMandatoryBody(InputStream.class);
             GridFSInputFile gfsFile = endpoint.getGridFs().createFile(ins, filename, true);
@@ -61,7 +57,7 @@ public class GridFsProducer extends DefaultProducer {
             if (ct != null) {
                 gfsFile.setContentType(ct);
             }
-            String metaData = exchange.getIn().getHeader(GRIDFS_METADATA, String.class);
+            String metaData = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_METADATA, String.class);
             DBObject dbObject = (DBObject) JSON.parse(metaData);
             gfsFile.setMetaData(dbObject);
             gfsFile.save();
@@ -73,7 +69,7 @@ public class GridFsProducer extends DefaultProducer {
             final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
             GridFSDBFile file = endpoint.getGridFs().findOne(filename);
             if (file != null) {
-                exchange.getIn().setHeader(GRIDFS_METADATA, JSON.serialize(file.getMetaData()));
+                exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_METADATA, JSON.serialize(file.getMetaData()));
                 exchange.getIn().setHeader(Exchange.FILE_CONTENT_TYPE, file.getContentType());
                 exchange.getIn().setHeader(Exchange.FILE_LENGTH, file.getLength());
                 exchange.getIn().setHeader(Exchange.FILE_LAST_MODIFIED, file.getUploadDate());
