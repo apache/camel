@@ -74,7 +74,7 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(UserList userList) throws ParseException {
-         return new StringBuilder()
+        return new StringBuilder()
              .append(userList.getCreatedAt()).append(" (").append(userList.getUser().getScreenName()).append(") ")
              .append(userList.getFullName())
              .append(',')
