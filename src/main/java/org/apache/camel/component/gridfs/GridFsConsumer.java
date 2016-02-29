@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultConsumer;
  * 
  */
 public class GridFsConsumer extends DefaultConsumer {
-    GridFsEndpoint ep;
+    final GridFsEndpoint ep;
     
     /**
      * @param endpoint
