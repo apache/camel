@@ -36,6 +36,14 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "gridfs", title = "MongoDBGridFS", syntax = "gridfs:connectionBean", 
             label = "database,nosql")
 public class GridFsEndpoint extends DefaultEndpoint {
+    
+    public enum QueryStrategy {
+        TimeStamp,
+        PersistentTimestamp,
+        FileAttribute,
+        TimeStampAndFileAttribute,
+        PersistentTimestampAndFileAttribute
+    };
     public static final String GRIDFS_OPERATION = "gridfs.operation";
     public static final String GRIDFS_METADATA = "gridfs.metadata";
     public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
@@ -64,7 +72,16 @@ public class GridFsEndpoint extends DefaultEndpoint {
     @UriParam
     private long delay = 500;
     
-    
+    @UriParam 
+    private QueryStrategy queryStrategy = QueryStrategy.TimeStamp;
+    @UriParam
+    private String persistentTSCollection = "camel-timestamps";
+    @UriParam
+    private String persistentTSObject = "camel-timestamp";
+    @UriParam
+    private String fileAttributeName = "camel-processed";
+
+
     private Mongo mongoConnection;
     private DB db;
     private GridFS gridFs;
@@ -154,6 +171,10 @@ public class GridFsEndpoint extends DefaultEndpoint {
         this.mongoConnection = mongoConnection;
     }
 
+    public DB getDB() {
+        return db;
+    }
+    
     public String getDatabase() {
         return database;
     }
@@ -185,6 +206,31 @@ public class GridFsEndpoint extends DefaultEndpoint {
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = delay;
     }
+    
+    public void setQueryStrategy(String s) {
+        queryStrategy = QueryStrategy.valueOf(s);
+    }
+    public QueryStrategy getQueryStrategy() {
+        return queryStrategy;
+    }
+    public void setPersistentTSCollection(String s) {
+        persistentTSCollection = s;
+    }
+    public String getPersistentTSCollection() {
+        return persistentTSCollection;
+    }
+    public void setPersistentTSObject(String s) {
+        persistentTSObject = s;
+    }
+    public String getPersistentTSObject() {
+        return persistentTSObject;
+    }
+    public void setFileAttributeName(String f) {
+        fileAttributeName = f;
+    }
+    public String getFileAttributeName() {
+        return fileAttributeName;
+    }   
     
     /**
      * Set the {@link WriteConcern} for write operations on MongoDB using the standard ones.

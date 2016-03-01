@@ -22,6 +22,8 @@ package org.apache.camel.component.gridfs;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mongodb.gridfs.GridFS;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -37,14 +39,36 @@ public class GridFsConsumerTest extends AbstractMongoDbTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:create").to("gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
+                from("direct:create-a").to("gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-a");
+                from("direct:create-pts").to("gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-pts");
+                
                 from("gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()).convertBodyTo(String.class).to("mock:test");
+                from("gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket() + "-a&queryStrategy=FileAttribute")
+                    .convertBodyTo(String.class).to("mock:test");
+                from("gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket() + "-pts&queryStrategy=PersistentTimestamp")
+                    .convertBodyTo(String.class).to("mock:test");
             }
         };
     }
     
     
     @Test
-    public void test() throws Exception {
+    public void testTimestamp() throws Exception {
+        runTest("direct:create", gridfs);
+    }
+    @Test
+    @SuppressWarnings("deprecation")
+    public void testAttribute() throws Exception {
+        runTest("direct:create-a", new GridFS(mongo.getDB("test"), getBucket() + "-a"));
+    }
+    
+    @Test
+    @SuppressWarnings("deprecation")
+    public void testPersistentTS() throws Exception {
+        runTest("direct:create-pts", new GridFS(mongo.getDB("test"), getBucket() + "-pts"));
+    }
+    
+    public void runTest(String target, GridFS gridfs) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:test");
         String data = "This is some stuff to go into the db";
         mock.expectedMessageCount(1);
@@ -55,7 +79,7 @@ public class GridFsConsumerTest extends AbstractMongoDbTest {
         assertEquals(0, gridfs.find(fn).size());
         
         headers.put(Exchange.FILE_NAME, fn);
-        template.requestBodyAndHeaders("direct:create", data, headers);
+        template.requestBodyAndHeaders(target, data, headers);
         
         mock.assertIsSatisfied();
         mock.reset();
@@ -64,11 +88,13 @@ public class GridFsConsumerTest extends AbstractMongoDbTest {
         mock.expectedBodiesReceived(data, data, data);
         
         headers.put(Exchange.FILE_NAME, fn + "_1");
-        template.requestBodyAndHeaders("direct:create", data, headers);
+        template.requestBodyAndHeaders(target, data, headers);
         headers.put(Exchange.FILE_NAME, fn + "_2");
-        template.requestBodyAndHeaders("direct:create", data, headers);
+        template.requestBodyAndHeaders(target, data, headers);
         headers.put(Exchange.FILE_NAME, fn + "_3");
-        template.requestBodyAndHeaders("direct:create", data, headers);
+        template.requestBodyAndHeaders(target, data, headers);
+        mock.assertIsSatisfied();
+        Thread.sleep(1000);
         mock.assertIsSatisfied();
     }
 
