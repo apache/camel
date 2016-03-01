@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.gridfs;
 
+import java.util.Map;
+
 import com.mongodb.Mongo;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 
 public class GridFsComponent extends UriEndpointComponent {
 
-    private final static Logger LOG = LoggerFactory.getLogger(GridFsComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GridFsComponent.class);
 
     private volatile Mongo db;
 
