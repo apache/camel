@@ -1090,6 +1090,12 @@
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-jackson</feature>
   </feature>
+  <feature name='camel-gridfs' version='${project.version}' resolver='(obr)' start-level='50'>
+      <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo-java-driver-version}</bundle>
+      <bundle>mvn:org.apache.camel/camel-gridfs/${project.version}</bundle>
+      <feature version='${project.version}'>camel-core</feature>
+      <feature version='${project.version}'>camel-jackson</feature>
+  </feature>
   <feature name='camel-mqtt' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.fusesource.mqtt-client/mqtt-client/${mqtt-client-version}</bundle>
     <bundle dependency='true'>mvn:org.fusesource.hawtdispatch/hawtdispatch/${hawtdispatch-version}</bundle>
