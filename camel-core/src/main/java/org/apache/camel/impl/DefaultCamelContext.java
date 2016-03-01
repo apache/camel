@@ -295,9 +295,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTrackerRegistry.INSTANCE.contextCreated(this);
-
-        // [TODO] Remove in 3.0
-        Container.Instance.manage(this);
     }
 
     /**
@@ -898,7 +895,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         return answer;
     }
-    
+
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         if (routeDefinitions == null || routeDefinitions.isEmpty()) {
             return;
@@ -2521,7 +2518,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void addRestConfiguration(RestConfiguration restConfiguration) {
-        restConfigurations.put(restConfiguration.getComponent(), restConfiguration);        
+        restConfigurations.put(restConfiguration.getComponent(), restConfiguration);
     }
     public RestConfiguration getRestConfiguration(String component, boolean defaultIfNotExist) {
         if (component == null) {
@@ -2537,7 +2534,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
         return config;
     }
-    
+
     public List<InterceptStrategy> getInterceptStrategies() {
         return interceptStrategies;
     }
@@ -2795,6 +2792,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         startDate = new Date();
         stopWatch.restart();
         log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
+
+        // Note: This is done on context start as we want to avoid doing it during object construction
+        // where we could be dealing with CDI proxied camel contexts which may never be started (CAMEL-9657)
+        // [TODO] Remove in 3.0
+        Container.Instance.manage(this);
 
         doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
 
