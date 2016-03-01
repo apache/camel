@@ -52,9 +52,9 @@ public class GridFsEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String connectionBean;
-    @UriParam
+    @UriParam @Metadata(required = "true")
     private String database;
-    @UriParam
+    @UriParam(defaultValue = GridFS.DEFAULT_BUCKET)
     private String bucket;
     @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY,SAFE")
     private WriteConcern writeConcern;
@@ -62,23 +62,24 @@ public class GridFsEndpoint extends DefaultEndpoint {
     private WriteConcern writeConcernRef;
     @UriParam
     private ReadPreference readPreference;
-    @UriParam
+    
+    @UriParam(label = "producer")
     private String operation;
 
-    @UriParam
+    @UriParam(label = "consumer")
     private String query;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "1000")
     private long initialDelay = 1000;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "500")
     private long delay = 500;
     
-    @UriParam 
+    @UriParam(label = "consumer", defaultValue = "TimeStamp")
     private QueryStrategy queryStrategy = QueryStrategy.TimeStamp;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "camel-timestamps")
     private String persistentTSCollection = "camel-timestamps";
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "camel-timestamp")
     private String persistentTSObject = "camel-timestamp";
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "camel-processed")
     private String fileAttributeName = "camel-processed";
 
 
@@ -167,6 +168,11 @@ public class GridFsEndpoint extends DefaultEndpoint {
     public Mongo getMongoConnection() {
         return mongoConnection;
     }
+    /**
+     * Sets the Mongo instance that represents the backing connection
+     * 
+     * @param mongoConnection the connection to the database
+     */
     public void setMongoConnection(Mongo mongoConnection) {
         this.mongoConnection = mongoConnection;
     }
@@ -178,9 +184,19 @@ public class GridFsEndpoint extends DefaultEndpoint {
     public String getDatabase() {
         return database;
     }
+    /**
+     * Sets the name of the MongoDB database to target
+     * 
+     * @param database name of the MongoDB database
+     */
     public void setDatabase(String database) {
         this.database = database;
     }
+    /**
+     * Sets the name of the GridFS bucket within the database.   Default is "fs".
+     * 
+     * @param database name of the MongoDB database
+     */
     public String getBucket() {
         return bucket;
     }
@@ -191,40 +207,73 @@ public class GridFsEndpoint extends DefaultEndpoint {
     public String getQuery() {
         return query;
     }
+    /**
+     * Additional query parameters (in JSON) that are used to configure the query used for finding
+     * files in the GridFsConsumer
+     * @param query
+     */
     public void setQuery(String query) {
         this.query = query;
     }
     public long getDelay() {
         return delay;
     }
+    /**
+     * Sets the delay between polls within the Consumer.  Default is 500ms
+     * @param delay
+     */
     public void setDelay(long delay) {
         this.delay = delay;
     }
     public long getInitialDelay() {
         return initialDelay;
     }
+    /**
+     * Sets the initialDelay before the consumer will start polling.  Default is 1000ms
+     * @param initialDelay
+     */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = delay;
     }
     
+    /**
+     * Sets the QueryStrategy that is used for polling for new files.  Default is Timestamp
+     * @see QueryStrategy
+     * @param s
+     */
     public void setQueryStrategy(String s) {
         queryStrategy = QueryStrategy.valueOf(s);
     }
     public QueryStrategy getQueryStrategy() {
         return queryStrategy;
     }
+    /**
+     * If the QueryType uses a persistent timestamp, this sets the name of the collection within
+     * the DB to store the timestamp.
+     * @param s
+     */
     public void setPersistentTSCollection(String s) {
         persistentTSCollection = s;
     }
     public String getPersistentTSCollection() {
         return persistentTSCollection;
     }
-    public void setPersistentTSObject(String s) {
-        persistentTSObject = s;
+    /**
+     * If the QueryType uses a persistent timestamp, this is the ID of the object in the collection
+     * to store the timestamp.   
+     * @param s
+     */
+    public void setPersistentTSObject(String id) {
+        persistentTSObject = id;
     }
     public String getPersistentTSObject() {
         return persistentTSObject;
     }
+    
+    /**
+     * If the QueryType uses a FileAttribute, this sets the name of the attribute that is used. Default is "camel-processed".
+     * @param f
+     */
     public void setFileAttributeName(String f) {
         fileAttributeName = f;
     }
