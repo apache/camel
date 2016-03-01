@@ -137,11 +137,12 @@ public class DefaultHttpBinding implements HttpBinding {
         }
 
         // store the method and query and other info in headers as String types
+        String rawPath = getRawPath(request);
         headers.put(Exchange.HTTP_METHOD, request.getMethod());
         headers.put(Exchange.HTTP_QUERY, request.getQueryString());
         headers.put(Exchange.HTTP_URL, request.getRequestURL().toString());
         headers.put(Exchange.HTTP_URI, request.getRequestURI());
-        headers.put(Exchange.HTTP_PATH, request.getPathInfo());
+        headers.put(Exchange.HTTP_PATH, rawPath);
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
 
         if (LOG.isTraceEnabled()) {
@@ -149,7 +150,7 @@ public class DefaultHttpBinding implements HttpBinding {
             LOG.trace("HTTP query {}", request.getQueryString());
             LOG.trace("HTTP url {}", request.getRequestURL());
             LOG.trace("HTTP uri {}", request.getRequestURI());
-            LOG.trace("HTTP path {}", request.getPathInfo());
+            LOG.trace("HTTP path {}", rawPath);
             LOG.trace("HTTP content-type {}", request.getContentType());
         }
 
@@ -224,7 +225,14 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
     }
-    
+
+    private String getRawPath(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String servletPath = request.getServletPath();
+        return uri.substring(contextPath.length() + servletPath.length());
+    }
+
     protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
         // check if there is multipart files, if so will put it into DataHandler
         Enumeration<?> names = request.getAttributeNames();

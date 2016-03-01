@@ -132,7 +132,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         headers.put(Exchange.HTTP_RAW_QUERY, uri.getRawQuery());
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
-        String path = uri.getPath();
+        String path = uri.getRawPath();
         if (configuration.getPath() != null) {
             // need to match by lower case as we want to ignore case on context-path
             String matchPath = path.toLowerCase(Locale.US);
