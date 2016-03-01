@@ -65,7 +65,8 @@ public class RestJettyDefaultValueTest extends BaseJettyTest {
 
                                 if ("true".equals(verbose)) {
                                     exchange.getOut().setBody(id + ";Donald Duck;1113 Quack Street Duckburg");
-                                } if ("false".equals(verbose)) {
+                                }
+                                if ("false".equals(verbose)) {
                                     exchange.getOut().setBody(id + ";Donald Duck");
                                 }
                             }
