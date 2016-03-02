@@ -106,4 +106,18 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
 
         assertExchange(exchange);
     }
+
+    @Test
+    public void unsafeCharsInHttpURIHeader() throws Exception {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/?bridgeEndpoint=true", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_URI, "/<>{}");
+            }
+        });
+
+        assertNull(exchange.getException());
+        assertExchange(exchange);
+    }
+
 }
