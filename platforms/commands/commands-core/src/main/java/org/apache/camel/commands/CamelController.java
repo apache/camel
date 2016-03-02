@@ -284,6 +284,15 @@ public interface CamelController {
     Map<String, Set<String>> listEipsLabelCatalog() throws Exception;
 
     /**
+     * Collects information about a Camel component from catalog
+     *
+     * @param name the component name
+     * @return a map of key/value pairs with component information
+     * @throws java.lang.Exception can be thrown
+     */
+    Map<String, Object> componentInfo(String name) throws Exception;
+
+    /**
      * Lists all components from the Camel components catalog
      *
      * @param filter optional filter to filter by labels
