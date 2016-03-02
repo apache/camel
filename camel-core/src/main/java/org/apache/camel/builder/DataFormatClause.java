@@ -20,8 +20,6 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.zip.Deflater;
 
-import org.w3c.dom.Node;
-
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
@@ -55,10 +53,13 @@ import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.XmlJsonDataFormat;
+import org.apache.camel.model.dataformat.YAMLDataFormat;
+import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.w3c.dom.Node;
 
 /**
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
@@ -868,6 +869,25 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
             csb.append(clazz.getName());
         }
         return xstream(encoding, csb.toString());
+    }
+
+    /**
+     * Uses the YAML data format
+     *
+     * @param library the yaml library to use
+     */
+    public T yaml(YAMLLibrary library) {
+        return dataFormat(new YAMLDataFormat(library));
+    }
+
+    /**
+     * Uses the YAML data format
+     *
+     * @param type          the yaml type to use
+     * @param type          the type for json snakeyaml type
+     */
+    public T yaml(YAMLLibrary library, Class<?> type) {
+        return dataFormat(new YAMLDataFormat(library, type));
     }
 
     /**

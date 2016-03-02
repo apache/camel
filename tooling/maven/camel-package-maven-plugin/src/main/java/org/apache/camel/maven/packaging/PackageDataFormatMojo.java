@@ -315,6 +315,8 @@ public class PackageDataFormatMojo extends AbstractMojo {
         } else if ("zipfile".equals(name)) {
             // darn should have been lower case
             return "zipFile";
+        } else if ("yaml-snakeyaml".equals(name)) {
+            return "yaml";
         }
         return name;
     }
@@ -333,6 +335,8 @@ public class PackageDataFormatMojo extends AbstractMojo {
             return "Bindy Fixed Length";
         } else if ("bindy-kvp".equals(name)) {
             return "Bindy Key Value Pair";
+        } else if ("yaml-snakeyaml".equals(name)) {
+            return "YAML SnakeYAML";
         }
         return title;
     }

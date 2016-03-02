@@ -195,6 +195,7 @@
         <include>org.apache.camel:camel-sjms</include>
         <include>org.apache.camel:camel-slack</include>
         <include>org.apache.camel:camel-smpp</include>
+        <include>org.apache.camel:camel-snakeyaml</include>
         <include>org.apache.camel:camel-snmp</include>
         <include>org.apache.camel:camel-soap</include>
         <include>org.apache.camel:camel-solr</include>

@@ -48,5 +48,7 @@ UniVocityTsvDataFormat
 XMLBeansDataFormat
 XMLSecurityDataFormat
 XStreamDataFormat
+YAMLDataFormat
+YAMLLibrary
 ZipDataFormat
 ZipFileDataFormat
