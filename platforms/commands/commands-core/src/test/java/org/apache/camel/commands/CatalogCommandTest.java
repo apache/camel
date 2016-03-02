@@ -54,4 +54,26 @@ public class CatalogCommandTest {
         context.stop();
     }
 
+
+    @Test
+    public void testComponentInfo() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.setNameStrategy(new ExplicitCamelContextNameStrategy("foobar"));
+        context.start();
+
+        CamelController controller = new DummyCamelController(context);
+
+        OutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+
+        CatalogComponentInfoCommand command = new CatalogComponentInfoCommand("hdfs", true, "consumer");
+        command.execute(controller, ps, null);
+
+        String out = os.toString();
+        assertNotNull(out);
+        LOG.info("\n\n{}\n", out);
+
+        context.stop();
+    }
+
 }
