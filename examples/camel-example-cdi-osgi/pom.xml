@@ -33,11 +33,15 @@
 
   <dependencies>
 
-    <!-- Camel -->
+    <!-- CDI API -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>${cdi-api-1.2-version}</version>
+      <scope>provided</scope>
     </dependency>
+
+    <!-- Camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cdi</artifactId>
@@ -52,13 +56,10 @@
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
     </dependency>
-
-    <!-- CDI API -->
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>${cdi-api-1.2-version}</version>
-      <scope>provided</scope>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- OSGi API -->
@@ -77,10 +78,12 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- test -->
@@ -203,26 +206,6 @@
       </exclusions>
     </dependency>
 
-    <!-- for camel:run -->
-    <dependency>
-      <groupId>org.apache.deltaspike.cdictrl</groupId>
-      <artifactId>deltaspike-cdictrl-weld</artifactId>
-      <version>${deltaspike-version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.weld.se</groupId>
-      <artifactId>weld-se</artifactId>
-      <version>${weld2-version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
-      <version>${activemq-version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -236,6 +219,18 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>${project.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.deltaspike.cdictrl</groupId>
+            <artifactId>deltaspike-cdictrl-weld</artifactId>
+            <version>${deltaspike-version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se</artifactId>
+            <version>${weld2-version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
 
       <plugin>

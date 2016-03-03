@@ -30,7 +30,15 @@
 
   <dependencies>
 
-    <!-- camel -->
+    <!-- CDI API -->
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>1.2</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cdi</artifactId>
@@ -42,48 +50,13 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-undertow</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
-    <!-- for json support -->
+    <!-- JSON support -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>
-    </dependency>
-
-    <!-- cdi api -->
-    <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>1.2</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- need to use a CDI container such as JBoss Weld -->
-    <!-- lets use weld for CDI -->
-    <dependency>
-      <groupId>org.jboss.weld.se</groupId>
-      <artifactId>weld-se</artifactId>
-      <version>${weld2-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.weld</groupId>
-      <artifactId>weld-core</artifactId>
-      <version>${weld2-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.deltaspike.cdictrl</groupId>
-      <artifactId>deltaspike-cdictrl-weld</artifactId>
-      <version>${deltaspike-version}</version>
-    </dependency>
-
-    <!-- use log4j as logger -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
     </dependency>
 
   </dependencies>
@@ -96,6 +69,28 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>${project.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.deltaspike.cdictrl</groupId>
+            <artifactId>deltaspike-cdictrl-weld</artifactId>
+            <version>${deltaspike-version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se</artifactId>
+            <version>${weld2-version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j-version}</version>
+          </dependency>
+          <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j-version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
 

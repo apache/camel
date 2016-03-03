@@ -33,11 +33,15 @@
 
   <dependencies>
 
-    <!-- Camel -->
+    <!-- CDI API -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>${cdi-api-1.2-version}</version>
+      <scope>provided</scope>
     </dependency>
+
+    <!-- Camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cdi</artifactId>
@@ -48,22 +52,16 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- CDI API -->
-    <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>${cdi-api-1.2-version}</version>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- logging -->
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- test -->
