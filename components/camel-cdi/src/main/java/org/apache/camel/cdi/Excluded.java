@@ -35,6 +35,7 @@ import javax.inject.Qualifier;
 
     Excluded INSTANCE = new ExcludedLiteral();
 
-    final class ExcludedLiteral extends AnnotationLiteral<Excluded>implements Excluded {
+    @Vetoed
+    final class ExcludedLiteral extends AnnotationLiteral<Excluded> implements Excluded {
     }
 }
