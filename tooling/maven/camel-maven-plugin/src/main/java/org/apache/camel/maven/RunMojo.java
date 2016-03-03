@@ -524,7 +524,7 @@ public class RunMojo extends AbstractExecMojo {
     class IsolatedThreadGroup extends ThreadGroup {
         Throwable uncaughtException; // synchronize access to this
 
-        public IsolatedThreadGroup(String name) {
+        IsolatedThreadGroup(String name) {
             super(name);
         }
 
